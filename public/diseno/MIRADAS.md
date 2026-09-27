@@ -438,5 +438,25 @@ columnas en teléfono; la cifra de cada criterio le quitaba ancho a la regla en 
 también; la tabla de 20 no tenía aire arriba ni el rótulo «Tipo»; el rótulo del experto iba en mono
 y mayúsculas espaciadas.
 
-**Lo que dijo el usuario:** _(pendiente)_
+**Lo que dijo el usuario (2026-09-27, con las dos páginas abiertas en el preview):**
+
+> «Brecha se entiende muchomejor y play gorund muy bien 1. si se entiende 2. La letra se ve mejor 3.
+> ahora si hay una diferenci clara tanto visual como en contenido porque son dos audiencias distintas»
+
+**Veredicto: MIRADA 3 APROBADA.** No escribió «lo abrí y apruebo», pero sus comentarios delatan las
+páginas abiertas —la letra «se ve mejor», la diferencia de perfil es «clara tanto visual como en
+contenido»— y responde que sí a las tres preguntas sin pedir cambios: es la otra vía que la regla del
+gate de mirada admite. Queda sellado:
+
+- **Brecha:** el balance al frente (matriz del plan frente a la corrida, lo que falló renglón por
+  renglón, lo que quedó sin probar, lo que cumplió con nota, lo cumplido uno por uno) y las 9
+  secciones del informe real. Se entiende qué se cumplió y qué falló.
+- **Playground:** los 4 umbrales sobre las señales reales, con la frase llana del líder y la regla viva
+  y las 20 decisiones del experto.
+- **Perfiles:** líder y experto son dos audiencias con contenido y aspecto distintos; el aviso, el
+  cambio en lo primero que se ve y los bloques marcados son el patrón para las pantallas que siguen.
+- La letra de lectura a 15 px y la matriz de mirada quedan como reglas de la etapa.
+
+**Qué cambió:** nada en las dos páginas. Siguiente: mirada 4 (`01-entrada.html`, `02-plan.html`,
+`06-caso.html`, `07-fichas.html` e `index.html`), según el plan de miradas aprobado.
 
