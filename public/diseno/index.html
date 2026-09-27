@@ -2,6 +2,16 @@
 <html lang="es" data-theme="oscuro" data-lang="es">
 <head>
 <meta charset="utf-8">
+<script>
+  // Vercel (cleanUrls) sirve este índice en /diseno, sin barra final: sin esta base, «03-agente.html» y
+  // «assets/…» se resolverían contra la raíz del sitio y darían 404. En local (file://) no hace nada.
+  (function () {
+    var p = location.pathname;
+    if (/^https?:$/.test(location.protocol) && !/(\/|\/index(\.html)?)$/.test(p)) {
+      var b = document.createElement("base"); b.href = p + "/"; document.head.appendChild(b);
+    }
+  })();
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title data-es="planlang · Sala de diseño · Recorrido" data-en="planlang · Design room · Tour">planlang · Sala de diseño · Recorrido</title>
 <link rel="stylesheet" href="assets/fuentes.css">

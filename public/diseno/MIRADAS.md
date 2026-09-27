@@ -647,4 +647,36 @@ en oscuro-ES y claro-EN a doble resolución; los paneles de `decision` (cuatro p
 **El gate de G-Diseño:** «apruebo G-Diseño» + el gate ⭐ de lectura: una persona no técnica lee la
 Entrada y la Brecha y explica qué se planeó y qué falló.
 
+**Lo que dijo el usuario (2026-09-27, con el recorrido abierto en el preview):**
+
+> «Esto no sirve [URL del preview omitida: regla de cero enlaces] aparece una pantalla incial con links
+> y cuando abri agen otra vez 404»
+
+**Veredicto: G-DISEÑO NO APROBADO TODAVÍA — ronda 2.** El recorrido del preview no se podía caminar:
+el índice abría sin estilos y cada enlace daba 404. La causa: Vercel (`cleanUrls`) sirve el índice en
+`/diseno`, sin barra final, y ahí los enlaces relativos del índice (`03-agente.html`, `assets/…`) se
+resuelven contra la raíz del sitio (`/03-agente`, `/assets/…`), que no existe. Las páginas internas
+no fallaban: se sirven en `/diseno/<página>` y resuelven bien. Pero su enlace «Recorrido» vuelve a
+`/diseno`, así que también llevaba a la página rota. Ninguna pasada lo había visto porque todas
+abrían los archivos en local (`file://`) o entraban directo a una página interna, nunca por el
+índice servido como lo sirve Vercel.
+
+## Mirada 5, ronda 2 = G-Diseño (2026-09-27)
+
+**Lo que cambió:** el índice, al servirse en una ruta sin barra final, fija su base en `/diseno/`
+antes de cargar hojas y enlaces (una línea de script al comienzo del `<head>`; en local, con doble
+clic, no hace nada). Ninguna otra página cambió.
+
+**Cómo se probó (rojo → verde):** un servidor local con las mismas reglas de Vercel (`cleanUrls`) y
+un recorrido automático que entra por `/diseno`, comprueba que el índice cargó sus 4 hojas de estilo,
+abre cada una de las 9 páginas desde el índice y vuelve al índice desde cada una.
+- **Antes de la corrección:** 0 hojas cargadas y las 9 páginas en 404 (`/03-agente`, `/kit`…), como
+  lo vio el usuario.
+- **Después:** 4 hojas y las 9 páginas abiertas, entrando por `/diseno`, por `/diseno/` y por
+  `/diseno/index`.
+- Queda un rastro sin efecto: al entrar por `/diseno`, el navegador pide por adelantado
+  `/assets/*.css`, antes de que corra el script, y esas peticiones dan 404. La página no las usa:
+  carga sus hojas desde `/diseno/assets/`.
+- La revisión de enlaces y errores de las 10 páginas sigue limpia.
+
 **Lo que dijo el usuario:** _(pendiente)_.
