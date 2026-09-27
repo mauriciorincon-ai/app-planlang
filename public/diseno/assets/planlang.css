@@ -2369,19 +2369,23 @@ html[data-perfil="experto"] .solo-lider {
   gap: var(--e-5) var(--e-7);
   align-items: start;
 }
-.dictamen .veredicto {
+.dictamen .veredicto,
+.veredicto-linea > .veredicto {
+  justify-self: start;
   height: 34px;
   padding: 0 14px 0 10px;
   font-size: var(--t-sub);
 }
-.dictamen .veredicto svg {
+.dictamen .veredicto svg,
+.veredicto-linea > .veredicto svg {
   width: 16px;
   height: 16px;
 }
 .dictamen .frase {
   margin-top: var(--e-3);
-  font-size: var(--t-guia);
-  line-height: 1.5;
+  font-size: var(--t-texto);
+  line-height: 1.6;
+  max-width: 76ch;
 }
 .recomendacion {
   display: grid;
@@ -2454,8 +2458,8 @@ html[data-perfil="experto"] .solo-lider {
   color: var(--tinta-2);
 }
 .lectura {
-  font-size: var(--t-guia);
-  line-height: 1.55;
+  font-size: var(--t-texto);
+  line-height: 1.6;
   color: var(--tinta-1);
   max-width: 72ch;
   margin-bottom: var(--e-5);
@@ -2792,5 +2796,356 @@ pre,
   }
   .curva .punto-et {
     font-size: 13px;
+  }
+}
+
+/* ---------- Mirada 3 · ronda 2: balance del plan y perfil evidente ----------
+   Aviso de perfil: dice qué ve quien lee y ofrece el cambio. */
+.perfil-aviso > div {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 14px;
+  border: 1px solid var(--linea);
+  border-radius: var(--radio);
+  font-size: var(--t-chico);
+  line-height: 1.5;
+  color: var(--tinta-2);
+}
+.perfil-aviso .ico {
+  width: 18px;
+  height: 18px;
+  color: var(--tinta-1);
+}
+.perfil-aviso b {
+  color: var(--tinta-1);
+  font-weight: 500;
+}
+.perfil-aviso > .solo-experto {
+  background: var(--sup-2);
+  border-left: 2px solid var(--tinta-2);
+}
+.perfil-aviso .boton {
+  white-space: nowrap;
+}
+/* Bloque que solo ve el experto: fondo elevado, filete y rótulo «experto». */
+html[data-perfil="experto"] .marcado {
+  background: var(--sup-2);
+  border-left: 2px solid var(--tinta-2);
+  border-radius: 0 var(--radio) var(--radio) 0;
+  padding: 10px 12px;
+}
+html[data-perfil="experto"] .marcado::before {
+  content: "Experto";
+  display: block;
+  margin-bottom: 6px;
+  font: 500 var(--t-dato) / 1.3 var(--letra);
+  color: var(--tinta-2);
+}
+html[data-perfil="experto"][data-lang="en"] .marcado::before {
+  content: "Expert";
+}
+html[data-perfil="experto"] .marcado.sutil {
+  padding: 4px 8px;
+  margin-top: 6px;
+}
+html[data-perfil="experto"] .marcado.sutil::before {
+  display: none;
+}
+.tag-exp {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 6px;
+  border: 1px solid var(--tinta-3);
+  border-radius: var(--radio-chip);
+  font: 500 var(--t-dato) / 1.3 var(--letra);
+  color: var(--tinta-2);
+}
+@keyframes perfil-entra {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  html.perfil-cambio .perfil-aviso > div,
+  html.perfil-cambio .marcado,
+  html.perfil-cambio .cambia-perfil {
+    animation: perfil-entra 0.45s ease-out both;
+  }
+}
+/* Balance: el plan frente a la corrida, en una matriz */
+.balance {
+  display: grid;
+}
+.balance .fila {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.5fr) minmax(0, 1.25fr) minmax(0, 0.95fr) minmax(0, 0.85fr);
+  gap: 12px;
+  align-items: center;
+  padding-block: 10px;
+  border-top: 1px solid var(--linea);
+  font-size: var(--t-chico);
+}
+.balance .cabeza {
+  border-top: 0;
+  padding-block: 0 6px;
+  font-size: var(--t-dato);
+  color: var(--tinta-2);
+}
+.balance .cabeza > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.balance .cabeza svg {
+  width: 14px;
+  height: 14px;
+}
+.balance .parte b {
+  display: block;
+  font-weight: 500;
+}
+.balance .pide {
+  color: var(--tinta-2);
+}
+.balance .pide .solo-experto {
+  font: 400 var(--t-dato) / 1.5 var(--mono);
+  overflow-wrap: anywhere;
+}
+.balance .cel {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+  min-height: 24px;
+}
+.balance .cel > span {
+  white-space: nowrap;
+}
+.balance .cel svg {
+  width: 16px;
+  height: 16px;
+  flex: none;
+}
+.balance a.cel {
+  color: var(--tinta-1);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.balance .cel .ids {
+  font: 400 var(--t-dato) / 1.4 var(--mono);
+  color: var(--tinta-2);
+}
+.balance .nada {
+  color: var(--tinta-3);
+}
+.balance .et-m {
+  display: none;
+}
+/* Lo que falló, exactamente: un renglón por cosa, en tres tiempos */
+.fallos {
+  display: grid;
+}
+.fallos .fila {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) repeat(3, minmax(0, 1.3fr));
+  gap: 8px 20px;
+  align-items: start;
+  padding-block: 16px;
+  border-top: 1px solid var(--linea);
+  font-size: var(--t-chico);
+  line-height: 1.55;
+  scroll-margin-top: 24px;
+}
+.fallos .cabeza {
+  border-top: 0;
+  padding-block: 0 6px;
+  font-size: var(--t-dato);
+  color: var(--tinta-2);
+}
+.fallos .que {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+}
+.fallos .que > .veredicto,
+.fallos .que > .chip {
+  justify-self: start;
+}
+.fallos .que h4 {
+  margin: 0;
+  font-size: var(--t-texto);
+  font-weight: 500;
+  line-height: 1.35;
+}
+.fallos .que .id {
+  font: 500 var(--t-dato) / 1 var(--mono);
+  color: var(--tinta-2);
+  margin-right: 6px;
+}
+.fallos .celda .solo-experto {
+  font: 400 var(--t-dato) / 1.55 var(--mono);
+  overflow-wrap: anywhere;
+  font-variant-ligatures: none;
+}
+.fallos .et-m {
+  display: none;
+}
+.fallos .pie-f {
+  grid-column: 2 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 14px;
+  font-size: var(--t-dato);
+  color: var(--tinta-2);
+}
+.fallos .pie-f a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--tinta-1);
+}
+.fallos .pie-f .ico {
+  width: 13px;
+  height: 13px;
+}
+.fallos-grupo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: var(--e-6) 0 var(--e-2);
+  font-size: var(--t-texto);
+  font-weight: 500;
+}
+.fallos-grupo svg {
+  width: 16px;
+  height: 16px;
+}
+.fallos-grupo small {
+  font-size: var(--t-chico);
+  font-weight: 400;
+  color: var(--tinta-2);
+}
+/* Lo que se cumplió, uno por uno: listas compactas con su marca */
+.cumplido {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 var(--e-7);
+}
+.cumplido h4 {
+  margin-bottom: 4px;
+  font-size: var(--t-chico);
+  font-weight: 500;
+  color: var(--tinta-2);
+}
+.cumplido ul {
+  list-style: none;
+  padding: 0;
+}
+.cumplido li {
+  display: grid;
+  grid-template-columns: 16px 40px minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: baseline;
+  padding-block: 7px;
+  border-top: 1px solid var(--linea);
+  font-size: var(--t-chico);
+  line-height: 1.45;
+}
+.cumplido li > svg {
+  width: 14px;
+  height: 14px;
+  align-self: start;
+  margin-top: 3px;
+}
+.cumplido .id {
+  font: 500 var(--t-dato) / 1 var(--mono);
+  color: var(--tinta-2);
+}
+.cumplido .val {
+  font: 400 var(--t-dato) / 1.4 var(--mono);
+  color: var(--tinta-2);
+  text-align: right;
+  white-space: nowrap;
+}
+.cumplido .solo-experto {
+  display: block;
+  font: 400 var(--t-dato) / 1.5 var(--mono);
+  color: var(--tinta-2);
+  overflow-wrap: anywhere;
+}
+@media (max-width: 1000px) {
+  .fallos .fila {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .fallos .fila > .que {
+    grid-column: 1 / -1;
+  }
+  .fallos .pie-f {
+    grid-column: 1 / -1;
+  }
+  .fallos .cabeza {
+    display: none;
+  }
+  .fallos .et-m {
+    display: block;
+    margin-bottom: 2px;
+    font-size: var(--t-dato);
+    color: var(--tinta-2);
+  }
+}
+@media (max-width: 860px) {
+  .balance .cabeza {
+    display: none;
+  }
+  .balance .fila {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px 12px;
+    align-items: start;
+    padding-block: 12px;
+  }
+  .balance .fila > .parte,
+  .balance .fila > .pide {
+    grid-column: 1 / -1;
+  }
+  .balance .et-m {
+    display: block;
+    font-size: var(--t-dato);
+    color: var(--tinta-2);
+  }
+  .fallos .fila {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .cumplido {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .perfil-aviso > div {
+    grid-template-columns: 18px minmax(0, 1fr);
+  }
+  .perfil-aviso .boton {
+    grid-column: 2;
+    justify-self: start;
+  }
+  .fallos-grupo small {
+    flex-basis: 100%;
+    padding-left: 24px;
+  }
+}
+@media (max-width: 560px) {
+  .cumplido li {
+    grid-template-columns: 16px 36px minmax(0, 1fr);
+  }
+  .cumplido .val {
+    grid-column: 3;
+    text-align: left;
+    white-space: normal;
   }
 }

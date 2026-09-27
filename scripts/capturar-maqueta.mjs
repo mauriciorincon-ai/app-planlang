@@ -15,7 +15,8 @@
 // Las capturas van a un directorio FUERA del repo (--salida), nunca se versionan.
 //
 // Uso: node scripts/capturar-maqueta.mjs --salida <dir> [--paginas a,b] [--anchos 380,1280]
-//      [--temas oscuro,claro] [--idiomas es,en] [--simular] [--reducido] [--solo-medir]
+//      [--temas oscuro,claro] [--idiomas es,en] [--perfiles lider,experto] [--simular] [--reducido] [--solo-medir]
+//   --perfiles pulsa «Leer como» (button[data-perfil-set]) en las páginas que lo tienen; en las demás no hace nada.
 import { mkdirSync, readdirSync } from "node:fs";
 import { basename, dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -56,6 +57,7 @@ for (const p of paginas) {
 const anchos = arg("anchos", "380,1280").split(",").map(Number);
 const temas = arg("temas", "oscuro,claro").split(",");
 const idiomas = arg("idiomas", "es,en").split(",");
+const perfiles = arg("perfiles", "lider").split(",");
 const SIMULACIONES = ["deuteranopia", "protanopia", "tritanopia", "achromatopsia"];
 
 console.log(`capturar-maqueta: árbol ${arbol}`);
@@ -120,11 +122,14 @@ for (const ruta of paginas) {
     await pagina.evaluate(() => document.fonts.ready);
     const estados = await pagina.$$eval("button[data-estado]", (bs) => bs.map((b) => b.getAttribute("data-estado")));
     const lista = estados.length ? estados : ["unico"];
+    const conPerfil = (await pagina.$$("button[data-perfil-set]")).length > 0;
+    const listaPerfiles = conPerfil ? perfiles : ["lider"];
+    for (const perfil of listaPerfiles) {
     for (const tema of temas) {
       for (const idioma of idiomas) {
         for (const estado of lista) {
           await pagina.evaluate(
-            ({ tema, idioma, estado }) => {
+            ({ tema, idioma, estado, perfil }) => {
               // Por los botones de sala cuando existen (así se sincronizan los teléfonos de sala y
               // el estado pulsado de la barra); si no, por atributo.
               const bt = document.querySelector(`button[data-theme-set="${tema}"]`);
@@ -138,10 +143,15 @@ for (const ruta of paginas) {
               }
               const b = document.querySelector(`[data-estado="${estado}"]`);
               if (b) b.click();
+              const bp = document.querySelector(`button[data-perfil-set="${perfil}"]`);
+              if (bp && document.documentElement.getAttribute("data-perfil") !== perfil) bp.click();
               window.scrollTo(0, 0);
             },
-            { tema, idioma, estado },
+            { tema, idioma, estado, perfil },
           );
+          // El cambio de perfil entra con un fundido corto; se espera a que termine (con movimiento
+          // reducido no hay fundido y la medida exige 0 animaciones).
+          if (conPerfil && !bandera("reducido")) await pagina.waitForTimeout(650);
           await pagina.evaluate(async () => {
             document.body.getBoundingClientRect();
             await document.fonts.ready;
@@ -154,20 +164,22 @@ for (const ruta of paginas) {
             await marco.evaluate(() => document.fonts.ready).catch(() => {});
           }
           await pagina.waitForTimeout(marcosDeTelefono(pagina) ? 400 : 80);
-          const clave = `${nombre} · ${ancho}px · ${tema} · ${idioma} · ${estado}`;
+          const clave = `${nombre} · ${ancho}px · ${tema} · ${idioma} · ${estado}` + (conPerfil ? ` · ${perfil}` : "");
           await medir(pagina, clave);
           const vistas = bandera("simular") ? ["ninguna", ...SIMULACIONES] : ["ninguna"];
           for (const vista of vistas) {
             await cdp.send("Emulation.setEmulatedVisionDeficiency", { type: vista === "ninguna" ? "none" : vista });
             if (salida && !bandera("solo-medir")) {
               const sufijo = vista === "ninguna" ? "" : `-${vista}`;
-              await pagina.screenshot({ path: join(salida, `${nombre}-${ancho}-${tema}-${idioma}-${estado}${sufijo}.png`), fullPage: true });
+              const pf = conPerfil && perfil !== "lider" ? `-${perfil}` : "";
+              await pagina.screenshot({ path: join(salida, `${nombre}-${ancho}-${tema}-${idioma}-${estado}${pf}${sufijo}.png`), fullPage: true });
               n += 1;
             }
           }
           await cdp.send("Emulation.setEmulatedVisionDeficiency", { type: "none" });
         }
       }
+    }
     }
     await contexto.close();
   }

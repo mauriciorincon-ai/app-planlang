@@ -219,3 +219,48 @@ html[data-lang="en"] [lang="es"]:not(html) {
 html:not([data-estado]) [data-si^="vista:a"] {
   display: revert !important;
 }
+/* Matriz de mirada: qué revisar y qué deberías ver (regla del usuario, mirada 3) */
+.mq-matriz {
+  display: grid;
+  max-width: 1120px;
+  margin-bottom: 20px;
+}
+.mq-matriz .fila {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) minmax(0, 1.3fr) minmax(0, 1.6fr);
+  gap: 12px;
+  padding-block: 9px;
+  border-top: 1px solid var(--tinta-3);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.mq-matriz .cabeza {
+  border-top: 0;
+  padding-block: 0 6px;
+  font: 500 12px/1.4 var(--mono);
+  color: var(--tinta-2);
+}
+.mq-matriz .n {
+  font: 500 12px/1.5 var(--mono);
+  color: var(--tinta-2);
+}
+.mq-matriz .et-m {
+  display: none;
+}
+@media (max-width: 860px) {
+  .mq-matriz .cabeza {
+    display: none;
+  }
+  .mq-matriz .fila {
+    grid-template-columns: 24px minmax(0, 1fr);
+    gap: 2px 10px;
+  }
+  .mq-matriz .fila > :nth-child(n + 3) {
+    grid-column: 2;
+  }
+  .mq-matriz .et-m {
+    display: block;
+    font-size: 12px;
+    color: var(--tinta-2);
+  }
+}

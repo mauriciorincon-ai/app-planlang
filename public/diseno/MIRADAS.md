@@ -335,5 +335,108 @@ fallido (rotulado «maqueta»); la Entrada final (P1) usará el veredicto real. 
 del spike (3 de 8 nodos), mientras el agente del S1 ya tiene los 8: se propondrá al usuario si P3
 pasa al grafo real del S1 y guarda el spike como ejemplo del estado «exigido y ausente».
 
+**Lo que dijo el usuario (2026-09-27, con las dos páginas abiertas en el preview):**
+
+> «0. Antes que nadacada vez que me hagas mirar algo construye una matriz donde me digas que revisar
+> y que deberia mirar. 0.1. Brecha esta letra "El plan se cumplió: 9 de 9 criterios y ningún riesgo
+> ocurrió. Pero un supuesto quedó refutado, otro no se pudo probar y aparecieron 5 fallas que el plan
+> no preveía." está muy grande, segundo pues si se ve que algo falla peor no se ve que exactamente.
+> 0.2Playground en cambio esta esa muy bien al mover lor elementos va arrojando alertas. 1. No me
+> queda claro que s e cumplio y que fallo 2. Si esta claro muy bien trabajo 3. No veo que cambie nada
+> o noe s evidente la verdad 4. No hay que revisar»
+
+**Veredicto: MIRADA 3 NO APROBADA — ronda 2.** Por partes:
+
+- **Playground:** se entiende («Si esta claro muy bien trabajo»; «al mover los elementos va
+  arrojando alertas»). Su contenido queda; solo le toca el arreglo de perfiles.
+- **Brecha:** no se entiende qué se cumplió y qué falló. La frase del resumen tiene la letra muy
+  grande, y la página dice *que* algo falló sin decir *qué* exactamente.
+- **Perfiles líder y experto (las dos páginas):** el cambio no se ve o no es evidente.
+- **Regla nueva del usuario, desde esta ronda y para toda mirada:** cada entrega trae una **matriz de
+  qué revisar y qué debería ver** (pantalla · dónde · qué hacer · qué debe verse).
+- La respuesta 4 («No hay que revisar») se lee como «no: hay que revisar» — no aprueba.
+
+**Qué cambia en la ronda 2:** (1) la frase del resumen baja a la escala de lectura; (2) Brecha abre
+con un balance «qué se planeó · qué pasó» renglón por renglón, cada uno con su marca (cumplió ·
+alerta · falló), qué pasó exactamente, en qué casos y qué significa; (3) «Leer como» cambia lo
+primero que se ve, dice qué cambió y marca cada bloque propio del perfil, en Brecha y en Playground;
+(4) el mensaje de la mirada trae la matriz.
+
+## Mirada 3, ronda 2 — `04-brecha.html` + `05-playground.html` · 2026-09-27
+
+Responde a lo que el usuario dijo en la ronda 1: Brecha no decía qué se cumplió y qué falló, la frase
+del veredicto tenía la letra muy grande y el cambio de perfil no se notaba. El contenido del
+Playground, que se entendió, no cambia; solo su perfil. El plan de miradas no cambia.
+
+**Brecha — la ficha abre con el balance, en este orden:**
+
+1. **Veredicto y frase a escala de lectura** (15 px, antes 17). La frase nombra lo que falló: «Fallaron
+   dos cosas: repartir el trabajo entre varios agentes resultó más lento que un solo agente (S3), y 5
+   veces el modelo respondió fuera del formato pedido. Y quedó sin probar si su confianza es fiable
+   (S1).» Todas las entradillas de sección bajan también a 15 px.
+2. **«El plan frente a la corrida»**, una matriz: seis partes del plan (criterios, riesgos, supuestos,
+   lo no previsto, grafo exigido, prueba cruzada) × se cumplió · falló · sin probar, con la cuenta y los
+   identificadores; las cifras de «Falló» y «Sin probar» llevan a su renglón.
+3. **«Lo que falló»**, renglón por renglón (S3 y las respuestas fuera de formato; en el estado de
+   maqueta, también C5 y R5): qué se planeó · qué pasó · qué significa, con sus casos y la sección
+   donde se detalla.
+4. **«Lo que quedó sin probar»** (S1) y **«Se cumplió, con una nota»** (C7: A-008 tardó 31,2 s aunque la
+   mediana cumple; C3: medido sobre 3 casos, y en el playground con U2 = 1600 deja de cumplirse).
+5. **«Lo que se cumplió, uno por uno»**: los 9 criterios y los 8 riesgos por su nombre, cada uno con su
+   marca y su cifra, más S2, el grafo completo y la prueba cruzada.
+6. **«Cómo se obtuvo este informe»**: recibe → hace → entrega del verificador, y el índice. § 1 deja
+   de repetir el porqué y apunta al balance.
+
+**Perfil evidente, en las dos páginas:**
+
+- Un **aviso de perfil** bajo el título dice qué ve quien lee y trae el botón para cambiar («Ver como
+  experto» · «Volver a líder»); como experto, cuenta los bloques propios del perfil (30 en Brecha, 8
+  en Playground). El conmutador también está en la barra de sala.
+- **Lo que cambia se ve en la parte de arriba:** en Brecha la frase pasa a cifras exactas, la columna
+  «Qué pide el plan» a reglas, y las columnas de «Lo que falló» a regla de medición · medido ·
+  evidencia; bajo cada criterio y riesgo aparece su regla.
+- **Bloques del experto marcados**: fondo elevado, filete y el rótulo «Experto» (Inter, sin mayúsculas
+  espaciadas: el anti-patrón de la mono vale también aquí).
+- Al cambiar, lo que aparece entra con un fundido de 0,45 s (`opacity` y `transform`); con movimiento
+  reducido no hay fundido.
+- **Playground, líder:** un ejemplo llano en la ficha (U1 a 0,90 → A-008 a una persona, +12 min, sin
+  error nuevo) y, bajo las cifras, una frase que se reescribe con cada movimiento y nombra casos y
+  criterios («Eso es un error: A-010 necesitaba a una persona… Deja de cumplirse C3.»).
+- **Playground, experto:** ficha técnica; «La regla de decisión, con tus valores», escrita con las
+  aristas del contrato del plan en su orden y el valor movido subrayado; «Las 20 decisiones, con sus
+  señales», con ■ en los casos que cambian.
+
+**Encontrado al construir (no lo pidió el usuario):** los **12 minutos por revisión** del playground
+no salen del plan v1.2 ni de la planeadora: eran un supuesto de esta maqueta sin rótulo. Ahora
+llevan su chip «maqueta» y una nota que lo dice. Para el plan: la carga humana en minutos (VISION,
+funcionalidad del playground) necesita que el plan declare cuánto tarda una revisión. Se anota como
+propuesta para la planeadora; no se escribe allá.
+
+**Fuente de datos:** la rama del S1 se borró al mergearse; los generadores leen ahora de `main`
+(`git show main:…`). Los datos extraídos salen idénticos byte a byte.
+
+**Matriz de mirada (regla nueva del usuario):** cada página trae al pie «Qué revisar y qué deberías
+ver» (dónde · qué hacer · qué deberías ver); el mensaje de la mirada la repite.
+
+**Pasada de capturas del builder:** 280 encuadres (Brecha en 5 estados y Playground en 8, más Agente,
+kit, dirección e índice, × 2 temas × 2 idiomas × 380/1280 × perfil líder y experto donde existe) +
+260 con simulación de daltonismo (Brecha y Playground a 1280 × 2 perfiles × 5 vistas) + medida con
+movimiento reducido: 0 desbordes, 0 textos fuera del lienzo, fuentes cargadas, 0 animaciones. El
+arnés suma `--perfiles lider,experto`. Leídos como imagen: la ficha de Brecha en líder y experto,
+oscuro y claro, español e inglés, teléfono; el estado «no cumple»; las secciones 3 y 6 en experto;
+el Playground en líder con U2 = 1600 y en experto con la regla viva y la tabla de 20, en teléfono.
+Frases del líder comprobadas en los 6 escenarios × 2 idiomas, sin errores de guion.
+
+**Demo en rojo de la medida de movimiento reducido con el fundido nuevo:** quitar solo la guarda
+local no la pone en rojo, porque la regla global (`animation: none` bajo movimiento reducido) ya lo
+cubre; en una copia sin las dos guardas, la medida ve 9 animaciones; con la hoja real, 0.
+
+**Ajustes por lo visto en las capturas:** sellos estirados a todo el ancho; el ícono de la matriz era
+la marca de «cumplió» (ahora uno neutro); «8 de 8» se partía; los títulos de grupo se partían en
+columnas en teléfono; la cifra de cada criterio le quitaba ancho a la regla en teléfono; el chip
+«maqueta» quedaba dentro del enlace; la frase del líder repetía el error dos veces; «no observado»
+también; la tabla de 20 no tenía aire arriba ni el rótulo «Tipo»; el rótulo del experto iba en mono
+y mayúsculas espaciadas.
+
 **Lo que dijo el usuario:** _(pendiente)_
 

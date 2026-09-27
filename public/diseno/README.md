@@ -33,10 +33,14 @@
 - `03-agente.html` — **mirada 2, ronda 2**: P3, primero la ficha del agente (objetivo, recibe → hace → entrega, puede / nunca /
   participan, capacidad medida; ficha técnica para expertos) y después el grafo real del spike contra el contrato del plan, con
   detalle por nodo en cuatro perfiles (líder, experto, código, trazas abribles).
-- `04-brecha.html` — **mirada 3**: P4, el informe de brecha REAL de la corrida v1.2 del S1 en sus 9 secciones, con «Leer como»
-  líder o experto y el estado «maqueta: no cumple» para ver un criterio fallido.
-- `05-playground.html` — **mirada 3**: P5, los 4 umbrales del plan sobre las señales reales de 20 casos, con consecuencias en vivo,
-  casos que cambian, curva riesgo-cobertura y escenarios de sala. `assets/perfil.js` es el conmutador «Leer como».
+- `04-brecha.html` — **mirada 3, ronda 2**: P4, el informe de brecha REAL de la corrida v1.2 del S1. Abre con el balance (la matriz
+  «el plan frente a la corrida», lo que falló renglón por renglón, lo que quedó sin probar, lo que cumplió con nota y lo que se
+  cumplió uno por uno) y sigue con sus 9 secciones; «Leer como» líder o experto y el estado «maqueta: no cumple».
+- `05-playground.html` — **mirada 3, ronda 2**: P5, los 4 umbrales del plan sobre las señales reales de 20 casos, con consecuencias en
+  vivo, casos que cambian, curva riesgo-cobertura y escenarios de sala; el líder lee una frase llana que cambia con cada movimiento y el
+  experto, la regla de decisión con sus valores y las 20 decisiones. `assets/perfil.js` es el conmutador «Leer como»: dice qué ve
+  cada perfil, cuenta los bloques del experto y hace entrar lo nuevo con un fundido corto.
+- Al pie de cada página de la mirada 3, **«Qué revisar y qué deberías ver»**: la matriz de mirada que el usuario pidió en la ronda 1.
 - `01-entrada.html`, `02-plan.html`, `06-caso.html`, `07-fichas.html` _(mirada 4)_ — una página por pantalla, HTML autocontenido
   (cero CDNs, cero frameworks), 380 px y desktop, oscuro y claro, ES y EN.
 - `assets/` — `tokens.{json,css}` (**GENERADOS** por `pnpm tokens` desde `scripts/paleta/generar-tokens.mjs`),
@@ -82,7 +86,8 @@ en toda cifra (real · spike vs maqueta) — **cambiada en la mirada 3**: Brecha
 | 2026-09-27 | `direccion.html` (mirada 1, ronda 3) | «Excelente ahora si muchisimo mejor. 1. No, todo excelente muy buen trabajo 2. Me voy con el A 3. Que es regla? 4. lo abrí y apruebo» — **mirada 1 aprobada** | mirada 2: `design-system.md` v0.1 + `kit.html` + `03-agente.html` (lienzo A; regla = hexágono por defecto, explicado) |
 | 2026-09-27 | `design-system.md` v0.1 + `kit.html` + `03-agente.html` (mirada 2) | «0. si aprobado el kit del sistema 1. Si hablamos de esta [URL del preview omitida: regla de cero enlaces] la verda es que si es simpre pero no se enutnedo por que no dice el objetivo que hace que ingresa que actividades desarrolala y que entrega y capacidad cosas generales 2. Sime siven pero esperaria mucha mayor informacion segun el perfil 3. pues esta bien solo por los comentarios que te di» — **kit y design system aprobados**; P3 a ronda 2 | ronda 2 de `03-agente.html`: ficha del agente (objetivo, recibe, hace, entrega, capacidad) y vistas por perfil mucho más completas; la mirada 3 espera |
 | 2026-09-27 | `03-agente.html` (mirada 2, ronda 2) | «Claro muchisimo mejor 1. Si se entiende perfecto muy buen trabajo 2. Igualmente el perfil perfecto tambien aprobado 3. lo abrí y apruebo» — **mirada 2 aprobada** | mirada 3: `04-brecha.html` + `05-playground.html`, cada una con su ficha general y detalle por perfil |
-| 2026-09-27 | `04-brecha.html` + `05-playground.html` (mirada 3) | _(pendiente)_ | nada todavía |
+| 2026-09-27 | `04-brecha.html` + `05-playground.html` (mirada 3) | «0. Antes que nadacada vez que me hagas mirar algo construye una matriz donde me digas que revisar y que deberia mirar. 0.1. Brecha esta letra "El plan se cumplió: 9 de 9 criterios y ningún riesgo ocurrió. Pero un supuesto quedó refutado, otro no se pudo probar y aparecieron 5 fallas que el plan no preveía." está muy grande, segundo pues si se ve que algo falla peor no se ve que exactamente. 0.2Playground en cambio esta esa muy bien al mover lor elementos va arrojando alertas. 1. No me queda claro que s e cumplio y que fallo 2. Si esta claro muy bien trabajo 3. No veo que cambie nada o noe s evidente la verdad 4. No hay que revisar» — **no aprobada**: el Playground se entiende; Brecha no dice qué se cumplió y qué falló; el cambio de perfil no se ve; regla nueva: matriz de qué revisar en cada mirada | ronda 2: balance «qué se planeó · qué pasó» al frente de Brecha, resumen a escala de lectura, perfiles con cambio evidente en las dos páginas |
+| 2026-09-27 | `04-brecha.html` + `05-playground.html` (mirada 3, ronda 2) | _(pendiente)_ | nada todavía |
 
 ## Gates de esta etapa y su demo en rojo (regla 15 del kit)
 
@@ -91,6 +96,7 @@ en toda cifra (real · spike vs maqueta) — **cambiada en la mirada 3**: Brecha
 | `tests/unit/diseno-tokens.test.ts` | deriva generador ↔ `tokens.{json,css}` · contraste ≥ 3:1 de trazos y ≥ 4,5:1 de tintas · tintas vetadas como texto · distancia entre cromáticos bajo 7 vistas | (a) naranja `tipo-4` forzado a L 0,86 en claro sin restricción: **2 fallos**, «tipo-4 sobre sup-1: expected 1.4885 to be ≥ 3» en ambos cromos; (b) un hex editado a mano en `tokens.css`: «tokens.css es lo que el generador produce» en rojo | 30/30 tras restaurar y regenerar                        |
 | `scripts/capturar-maqueta.mjs`     | desborde horizontal a 380 px · texto fuera del lienzo · fuentes cargadas · animaciones con movimiento reducido                                                | primera corrida sobre `direccion.html`: **12 fallos** «desplazamiento horizontal de 840px» a 380 px (el lienzo ensanchaba la rejilla: `min-width: auto`)                                                                                      | 0 desbordes tras `min-width: 0` en los hijos de rejilla |
 | `capturar-maqueta` · texto dentro de su nodo (ronda 2) | que el nombre y la etiqueta de cada nodo del lienzo quepan en su caja con 4 px de aire, en las tres letras | 2026-09-27: nombre forzado a «aprobar_sin_revision_humana», **3 fallos** «nodo … (33 / 29 / 32 px de más)» en Inter, Plex y Geist; con Inter solo lo ve esta medida (el texto aún cabía en el lienzo) | 0 fallos al revertir |
+| `capturar-maqueta` · perfiles y movimiento reducido (mirada 3, ronda 2) | con `--perfiles lider,experto`, mide y captura cada perfil; bajo movimiento reducido, el fundido del cambio de perfil no debe correr | 2026-09-27: quitar solo la guarda local **no** da rojo (la regla global `animation: none` ya lo cubre: dos cinturones); en una copia sin las dos guardas la medida ve **9 animaciones** | 0 animaciones con la hoja real |
 
 ## Cobertura (se llena durante la etapa)
 

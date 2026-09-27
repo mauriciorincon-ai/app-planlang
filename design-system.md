@@ -1,6 +1,6 @@
 ---
-version: 0.3.0
-estado: kit aprobado en la mirada 2 (2026-09-27); 0.2 suma los componentes de P3 y 0.3 los de Brecha y Playground (mirada 3) — sube a 1.0.0 al aprobar G-Diseño
+version: 0.3.1
+estado: kit aprobado en la mirada 2 (2026-09-27); 0.2 suma los componentes de P3, 0.3 los de Brecha y Playground (mirada 3) y 0.3.1 el balance y el perfil evidente (mirada 3, ronda 2) — sube a 1.0.0 al aprobar G-Diseño
 fecha: 2026-09-27
 fuente_visual: docs/diseno/ (kit.html es este documento en vivo)
 tokens: scripts/paleta/generar-tokens.mjs → docs/diseno/assets/tokens.{json,css} (generados; gate diseno-tokens)
@@ -103,6 +103,10 @@ distancia: ahí cargan el glifo y la etiqueta.
 | Subtítulo         | 15                  | 1,4        | 600                     | `--t-sub`     |
 | Texto             | 15                  | 1,6        | 400                     | `--t-texto`   |
 | Guía (entradilla) | 17 · 16 en teléfono | 1,55       | 400, `tinta-2`          | `--t-guia`    |
+
+La guía de 17 px es solo la entradilla de la portada. **Toda lectura dentro de una sección —la frase
+del veredicto, la entradilla de cada sección, los renglones del balance— va en Texto (15 px).** En la
+mirada 3 la frase del veredicto a 17 px se leyó «muy grande» (0.3.1).
 | Secundario        | 13                  | 1,5        | 400, `tinta-2`          | `--t-chico`   |
 | Dato              | 12                  | 1,5        | 400 mono                | `--t-dato`    |
 | Cifra             | 28 · 24 en teléfono | 1          | 600, tabular            | `--t-cifra`   |
@@ -211,6 +215,13 @@ propios (shadcn/ui personalizado donde aplique, jamás el estilo por defecto).
 | **Casos ejemplares** (0.3)    | cuatro bloques (exitoso · escalado · fallido · adversario); el que no existe queda vacío y lo dice                        | contenido · vacío                                              |
 | **Aviso de estado de maqueta** (0.3) | borde discontinuo: qué cambia y que sus números son inventados                                                    | —                                                              |
 | **Casos que cambian** (0.3)   | playground: antes → ahora por forma (■ a una persona · ○ solo · ◌ no observado), el porqué y la consecuencia            | vacío · con cambios · error introducido · no observado         |
+| **Aviso de perfil** (0.3.1)   | bajo el título: qué ve quien lee, el botón para cambiar y, como experto, cuántos bloques son solo suyos                   | líder · experto · teléfono                                     |
+| **Bloque del experto** (0.3.1) | lo que solo ve el experto: fondo elevado, filete y rótulo «Experto» en Inter; la variante `sutil` (reglas dentro de filas) no lleva rótulo; lo nuevo entra con un fundido de 0,45 s | experto · movimiento reducido (sin fundido)                     |
+| **Balance del plan** (0.3.1)  | matriz: cada parte del plan × se cumplió · falló · sin probar, con marca, cuenta e identificadores; lo fallido enlaza a su renglón | real · no cumple (maqueta) · teléfono (cada celda con su etiqueta) |
+| **Lo que falló** (0.3.1)      | un renglón por cosa: sello, id y título · qué se planeó · qué pasó · qué significa (experto: regla · medido · evidencia) · casos y sección | falló · ocurrió · sin probar · cumple con nota · teléfono      |
+| **Lo cumplido, uno por uno** (0.3.1) | dos listas compactas (criterios · riesgos) con marca, id, nombre y cifra; el experto ve la regla bajo cada uno    | líder · experto · teléfono (la cifra baja a su línea)          |
+| **Frase viva** (0.3.1)        | playground, líder: una frase llana que se reescribe con cada movimiento y nombra casos, errores, minutos y criterios       | en el plan · con cambios · error · no observado                |
+| **Regla viva** (0.3.1)        | playground, experto: la regla de cada nodo escrita con las aristas del contrato del plan, en orden, con el valor movido subrayado | en el plan · movido                                        |
 
 ## 6. Anti-patrones (prohibidos, además de los del skill `diseno-ui`)
 
@@ -231,6 +242,10 @@ propios (shadcn/ui personalizado donde aplique, jamás el estilo por defecto).
   de etapa).
 - La mono va sin ligaduras en código y datos (`!=` no se dibuja `≠`); en teléfono, la letra de las
   gráficas crece en unidades del SVG. Ambas reglas ya rigen en la hoja de estilos.
+- Los componentes de la 0.3.1 (en `04-brecha.html` y `05-playground.html`) entran al kit con los de la
+  0.2 y la 0.3.
+- Toda cifra que la maqueta ponga sin fuente lleva su chip «maqueta» (los 12 minutos por revisión del
+  playground no estaban rotulados hasta la ronda 2; el plan debe declarar ese dato).
 
 - Miradas 3 y 4: pantallas Brecha, Playground, Entrada final, Plan, Caso y Fichas ensamblan estos
   componentes; lo que cambie en ellas vuelve aquí.
