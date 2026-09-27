@@ -698,3 +698,11 @@ que había fallado en la ronda 1 es la evidencia de que lo abrió). Queda sellad
   real no existe (9 de 9 criterios cumplidos): la lectura va con el estado **«maqueta: no cumple»**
   en Entrada y en Brecha, donde C5 falla.
 - **Sin mergear:** el PR de `diseno/fundacion` → `main` espera el permiso explícito del usuario.
+
+**Lo que dijo el usuario después (2026-09-27), sobre el gate ⭐ de lectura y la fusión:**
+
+> «Omite la prueba d electura no la vamos a hacer, quien lo dice? lo digo yo y es mi orden. 2. si fusiona»
+
+**Registro:** el gate ⭐ de lectura de la etapa queda **omitido por decisión explícita del usuario**. No
+se corrió, no pasó y no se da por pasado: la etapa cierra sin él, y así lo lee quien audite. El
+usuario autoriza fusionar `diseno/fundacion` → `main` con la CI verde.

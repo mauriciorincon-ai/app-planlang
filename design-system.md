@@ -281,10 +281,11 @@ contradice en silencio; el S2 reproduce la maqueta, no la copia. Entró en la 1.
   revisión del playground son el `costo_humano_por_caso_min` que el plan v1.2 declara en cada umbral.
 - Glifo de «regla»: hexágono (gramática v1.0.0); el escudo quedó como alternativa explicada al
   usuario, no elegida.
+- El gate ⭐ de lectura de la etapa (una persona no técnica explica, tras Entrada y Brecha en «maqueta:
+  no cumple», qué se planeó y qué falló) se omitió por decisión explícita del usuario; consta en el
+  registro de G-Diseño.
 
 Queda abierto después de la 1.0.0:
 
 - Tabla de métricas de Inter para el diagramador (G15), propuesta como enmienda al contrato en el
   summary del S2 (el piloto big-d la fijó para Space Grotesk).
-- Gate ⭐ de lectura de la etapa (una persona no técnica explica, tras Entrada y Brecha en «maqueta: no
-  cumple», qué se planeó y qué falló): no reportado al aprobar; su resultado va al registro de G-Diseño.
