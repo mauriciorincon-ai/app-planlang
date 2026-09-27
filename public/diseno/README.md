@@ -9,12 +9,15 @@
 ## Cómo abrir la maqueta
 
 - **En local:** doble clic en `docs/diseno/index.html` (sin red, sin build).
-- **En el preview de Vercel del PR** (protegido: pide tu sesión): ruta `/diseno/index.html`.
-  La URL vive en la planeadora y en el chat, jamás aquí.
-- **Dónde están los archivos de verdad:** en `public/diseno/` (Next los sirve tal cual, sin paso
-  de copia ni dependencia del comando de build de Vercel); `docs/diseno/` es un enlace simbólico a
-  esa carpeta para respetar la ruta que el kit y las órdenes citan. Nació así tras la mirada 1: el
-  preview no servía `/diseno/…` porque Vercel no ejecutó el script que copiaba la maqueta.
+- **En el preview de Vercel del PR** (protegido: pide tu sesión): ruta `/diseno` (recorrido) y
+  `/diseno/direccion` (mirada 1). **Sin `.html`:** el builder de Vercel para `next export` sirve
+  cada HTML del `out/` por su nombre limpio; `vercel.json` lleva `cleanUrls: true` para que la ruta
+  con `.html` (la que usan los enlaces internos de la maqueta, necesarios en local) redirija a la
+  limpia en vez de dar 404. La URL vive en la planeadora y en el chat, jamás aquí.
+- **Dónde están los archivos de verdad:** en `public/diseno/` (Next los copia a `out/` en la
+  exportación, sin paso de copia propio); `docs/diseno/` es un enlace simbólico a esa carpeta para
+  respetar la ruta que el kit y las órdenes citan. Nació así tras la mirada 1, cuando el preview
+  daba 404 en `/diseno/…`: la causa real no era el paso de copia sino el nombre limpio de Vercel.
 - Cada página trae su **barra de sala**: estado · tema (oscuro/claro) · idioma (ES/EN). Lo que hay
   que mirar está en la nota bajo la barra. Todo lo que ves es utilería de sala, no producto.
 
