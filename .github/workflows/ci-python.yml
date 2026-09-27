@@ -15,8 +15,8 @@ jobs:
       run:
         working-directory: agents
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
           cache: pip
@@ -30,7 +30,7 @@ jobs:
       # a error ("distribution marked as editable") y el job cae en el commit inicial (planlang, 2026-09-26).
       # Las vulnerabilidades encontradas siguen devolviendo exit 1.
       - run: pip-audit --skip-editable
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: pytest-results
