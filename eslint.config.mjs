@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // planlang S1 (K5, regla 2 del CLAUDE.md): directorios generados o ajenos al lint de TS.
+    "coverage/**",
+    "agents/**",
+    "runs/**",
   ]),
 ]);
 

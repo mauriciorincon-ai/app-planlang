@@ -1,0 +1,18 @@
+# planlang S1 (K7): artefactos CANÓNICOS y golden files — los escriben scripts, jamás se reformatean.
+# Un JSON canónico (RFC 8785) o un informe golden reformateado rompe la huella y el byte a byte.
+runs/
+plans/
+data/
+tests/golden/
+tests/contrato/
+tests/fixtures/
+docs/kit-de-prueba/
+packages/*/carnadas/
+packages/*/datos/
+packages/*/CONTRATO.lock
+core/plan/plan.schema.json
+agents/
+pnpm-lock.yaml
+coverage/
+out/
+.next/
