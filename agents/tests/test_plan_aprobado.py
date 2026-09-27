@@ -20,6 +20,13 @@ def test_plan_v1_tiene_huella_verificable_desde_python() -> None:
     assert len(plan["contrato_de_grafo"]["senales_obligatorias_en_traza"]) == 15
 
 
+def test_plan_v1_1_verifica_y_declara_la_senal_de_exentos() -> None:
+    plan = leer_verificando(RAIZ / "plans" / "demo-a" / "v1.1.json")
+    assert plan["version"] == "1.1.0" and plan["estado_aprobacion"] == "aprobado"
+    senales = plan["contrato_de_grafo"]["senales_obligatorias_en_traza"]
+    assert "servicio_exento" in senales and len(senales) == 16
+
+
 def test_un_plan_alterado_no_pasa(tmp_path: Path) -> None:
     texto = PLAN_V1.read_text(encoding="utf-8").replace('"version": "1.0.0"', '"version": "1.0.1"')
     (tmp_path / "alterado.json").write_text(texto, encoding="utf-8")

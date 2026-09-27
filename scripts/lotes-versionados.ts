@@ -2,7 +2,7 @@
  * Los lotes de casos que viven versionados en `data/casos/demo-a/` (fase 2 del S1). El test de
  * frescura los regenera y exige los mismos bytes; `pnpm casos:generar --versionados` los reescribe.
  */
-export const PLAN_DEMO_A = "plans/demo-a/v1.json";
+export const PLAN_DEMO_A = "plans/demo-a/v1.1.json";
 export const PLAN_BENEFICIOS_DEMO_A = "data/plan-beneficios/demo-a.json";
 export const DIRECTORIO_CASOS_DEMO_A = "data/casos/demo-a";
 

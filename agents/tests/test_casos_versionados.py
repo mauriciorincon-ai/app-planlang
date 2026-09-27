@@ -28,7 +28,7 @@ def test_la_huella_del_lote_verifica_desde_python(ruta: Path) -> None:
     lote = leer_verificando(ruta)
     assert lote["formato"] == "planlang-casos/v1"
     assert len(lote["casos"]) == lote["n"]
-    plan = leer_verificando(RAIZ / "plans" / "demo-a" / "v1.json")
+    plan = leer_verificando(RAIZ / "plans" / "demo-a" / "v1.1.json")
     assert lote["plan"]["huella"] == plan["huella"]
 
 
