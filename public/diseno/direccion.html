@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title data-es="planlang · Sala de diseño · Mirada 1, ronda 2" data-en="planlang · Design room · Look 1, round 2">planlang · Sala de diseño · Mirada 1, ronda 2</title>
+<title data-es="planlang · Sala de diseño · Mirada 1, ronda 3" data-en="planlang · Design room · Look 1, round 3">planlang · Sala de diseño · Mirada 1, ronda 3</title>
 <link rel="stylesheet" href="assets/fuentes.css">
 <link rel="stylesheet" href="assets/tokens.css">
 <link rel="stylesheet" href="assets/planlang.css">
@@ -13,7 +13,7 @@
 <script src="assets/lienzo.js" defer></script>
 </head>
 <body>
-<!-- Glifos de la gramática `agentes-ia` y marcas dibujadas (la fuente no trae ✓ ✕ ★). -->
+<!-- Glifos de la gramática `agentes-ia`, marcas dibujadas (la fuente no trae ✓ ✕ ★) e íconos de línea. -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
     <symbol id="g-estrella" viewBox="-9 -9 18 18"><path d="M0,-8.2 L2.1,-2.8 L7.8,-2.5 L3.3,1.1 L4.8,6.6 L0,3.5 L-4.8,6.6 L-3.3,1.1 L-7.8,-2.5 L-2.1,-2.8 Z"/></symbol>
@@ -30,21 +30,44 @@
     <symbol id="m-sim" viewBox="-8 -8 16 16"><rect x="-6.5" y="-6.5" width="13" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="3 2"/><path d="M-3,0 H3 M0,-3 V3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
     <symbol id="m-real" viewBox="-8 -8 16 16"><circle r="5.5" fill="currentColor"/></symbol>
     <symbol id="m-maqueta" viewBox="-8 -8 16 16"><circle r="5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-dasharray="2.5 2"/></symbol>
+    <symbol id="g-escudo" viewBox="-9 -9 18 18"><path d="M0,-8.2 L7,-5.4 V0.6 C7,4.6 4.2,7.2 0,8.4 C-4.2,7.2 -7,4.6 -7,0.6 V-5.4 Z"/></symbol>
+    <!-- Íconos: Lucide v1.48.0 (ISC, licencia en assets/iconos/LICENSE-lucide.txt), incrustados: nada se pide a un CDN. -->
+    <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+    <symbol id="i-clipboard-list" viewBox="0 0 24 24"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></symbol>
+    <symbol id="i-clipboard-pen-line" viewBox="0 0 24 24"><rect width="8" height="4" x="8" y="2" rx="1"/><path d="M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-.5"/><path d="M16 4h2a2 2 0 0 1 1.73 1"/><path d="M8 18h1"/><path d="M21.378 12.626a1 1 0 0 0-3.004-3.004l-4.01 4.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z"/></symbol>
+    <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m16.24 7.76-1.804 5.411a2 2 0 0 1-1.265 1.265L7.76 16.24l1.804-5.411a2 2 0 0 1 1.265-1.265z"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-file-check" viewBox="0 0 24 24"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="m9 15 2 2 4-4"/></symbol>
+    <symbol id="i-flask-conical" viewBox="0 0 24 24"><path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2"/><path d="M6.453 15h11.094"/><path d="M8.5 2h7"/></symbol>
+    <symbol id="i-gauge" viewBox="0 0 24 24"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></symbol>
+    <symbol id="i-git-branch" viewBox="0 0 24 24"><path d="M15 6a9 9 0 0 0-9 9V3"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/></symbol>
+    <symbol id="i-house" viewBox="0 0 24 24"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></symbol>
+    <symbol id="i-landmark" viewBox="0 0 24 24"><path d="M10 18v-7"/><path d="M11.119 2.205a2 2 0 0 1 1.762 0l7.84 3.846A.5.5 0 0 1 20.5 7h-17a.5.5 0 0 1-.22-.949z"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="M3 22h18"/><path d="M6 18v-7"/></symbol>
+    <symbol id="i-languages" viewBox="0 0 24 24"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></symbol>
+    <symbol id="i-list-checks" viewBox="0 0 24 24"><path d="M13 5h8"/><path d="M13 12h8"/><path d="M13 19h8"/><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/></symbol>
+    <symbol id="i-message-circle-question" viewBox="0 0 24 24"><path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></symbol>
+    <symbol id="i-ruler" viewBox="0 0 24 24"><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z"/><path d="m14.5 12.5 2-2"/><path d="m11.5 9.5 2-2"/><path d="m8.5 6.5 2-2"/><path d="m17.5 15.5 2-2"/></symbol>
+    <symbol id="i-scale" viewBox="0 0 24 24"><path d="M12 3v18"/><path d="m19 8 3 8a5 5 0 0 1-6 0zV7"/><path d="M3 7h1a17 17 0 0 0 8-2 17 17 0 0 0 8 2h1"/><path d="m5 8 3 8a5 5 0 0 1-6 0zV7"/><path d="M7 21h10"/></symbol>
+    <symbol id="i-shield-check" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-sliders-horizontal" viewBox="0 0 24 24"><path d="M10 5H3"/><path d="M12 19H3"/><path d="M14 3v4"/><path d="M16 17v4"/><path d="M21 12h-9"/><path d="M21 19h-5"/><path d="M21 5h-7"/><path d="M8 10v4"/><path d="M8 12H3"/></symbol>
+    <symbol id="i-smartphone" viewBox="0 0 24 24"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></symbol>
+    <symbol id="i-stethoscope" viewBox="0 0 24 24"><path d="M11 2v2"/><path d="M5 2v2"/><path d="M5 3H4a2 2 0 0 0-2 2v4a6 6 0 0 0 12 0V5a2 2 0 0 0-2-2h-1"/><path d="M8 15a6 6 0 0 0 12 0v-3"/><circle cx="20" cy="10" r="2"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></symbol>
+    <symbol id="i-workflow" viewBox="0 0 24 24"><rect width="8" height="8" x="3" y="3" rx="2"/><path d="M7 11v4a2 2 0 0 0 2 2h4"/><rect width="8" height="8" x="13" y="13" rx="2"/></symbol>
   </defs>
 </svg>
 
 <!-- ============================ Sala (no es producto) -->
 <div class="mq-bar" role="region" aria-label="Sala de diseño">
-  <span class="mq-t"><span lang="es">Sala de diseño · Mirada 1 · ronda 2</span><span lang="en">Design room · Look 1 · round 2</span></span>
-  <div class="mq-g" role="group" aria-label="Letra / Typeface"><span><span lang="es">letra:</span><span lang="en">typeface:</span></span><button type="button" data-estado="inter">Inter</button><button type="button" data-estado="plex">Plex</button><button type="button" data-estado="geist">Geist</button></div>
+  <span class="mq-t"><span lang="es">Sala de diseño · Mirada 1 · ronda 3</span><span lang="en">Design room · Look 1 · round 3</span></span>
   <div class="mq-g" role="group" aria-label="Tema / Theme"><span><span lang="es">tema:</span><span lang="en">theme:</span></span><button type="button" data-theme-set="oscuro"><span lang="es">oscuro</span><span lang="en">dark</span></button><button type="button" data-theme-set="claro"><span lang="es">claro</span><span lang="en">light</span></button></div>
   <div class="mq-g" role="group" aria-label="Idioma / Language"><span><span lang="es">idioma:</span><span lang="en">language:</span></span><button type="button" data-lang-set="es">ES</button><button type="button" data-lang-set="en">EN</button></div>
   <a href="index.html"><span lang="es">recorrido</span><span lang="en">tour</span></a>
 </div>
 <div class="mq-nota">
-  <p data-para="inter"><span lang="es"><b>Ronda 2, tras tu rechazo:</b> una sola identidad, tamaños contenidos, todo alineado a una rejilla y filas en lugar de tarjetas sueltas. Lo único que eliges arriba es la letra. Ahora: <b>Inter + JetBrains Mono</b>, neutra y muy legible en tamaños chicos.</span><span lang="en"><b>Round 2, after your rejection:</b> one identity, restrained sizes, everything on one grid, rows instead of loose cards. The only thing you choose above is the typeface. Now: <b>Inter + JetBrains Mono</b>, neutral and very legible at small sizes.</span></p>
-  <p data-para="plex" hidden><span lang="es"><b>Ronda 2, tras tu rechazo:</b> una sola identidad, tamaños contenidos, todo alineado a una rejilla y filas en lugar de tarjetas sueltas. Lo único que eliges arriba es la letra. Ahora: <b>IBM Plex Sans + Plex Mono</b>, más técnica, con carácter de ingeniería; una sola familia para texto y datos.</span><span lang="en"><b>Round 2, after your rejection:</b> one identity, restrained sizes, everything on one grid, rows instead of loose cards. The only thing you choose above is the typeface. Now: <b>IBM Plex Sans + Plex Mono</b>, more technical, with an engineering character; one family for text and data.</span></p>
-  <p data-para="geist" hidden><span lang="es"><b>Ronda 2, tras tu rechazo:</b> una sola identidad, tamaños contenidos, todo alineado a una rejilla y filas en lugar de tarjetas sueltas. Lo único que eliges arriba es la letra. Ahora: <b>Geist + Geist Mono</b>, geométrica y compacta, muy limpia en números.</span><span lang="en"><b>Round 2, after your rejection:</b> one identity, restrained sizes, everything on one grid, rows instead of loose cards. The only thing you choose above is the typeface. Now: <b>Geist + Geist Mono</b>, geometric and compact, very clean in figures.</span></p>
+  <p><span lang="es"><b>Ronda 3:</b> la letra es Inter, la que elegiste. Entraron íconos de línea y una franja gráfica «Cómo funciona» con tres miniaturas. Bajo el grafo hay dos teléfonos con esta misma página a 390 px, y el hexágono y el escudo de «regla» lado a lado.</span><span lang="en"><b>Round 3:</b> the typeface is Inter, your choice. Line icons came in, plus a “How it works” band with three thumbnails. Below the graph there are two phones showing this same page at 390 px, and the hexagon and the shield for “rule” side by side.</span></p>
 </div>
 
 <div class="mq-marco"><div class="cont"><span lang="es">Entrada (P1) · así la ve el visitante</span><span lang="en">Entry (P1) · as the visitor sees it</span></div></div>
@@ -52,21 +75,21 @@
 <!-- ============================ P1 · Entrada (producto) -->
 <div class="producto">
   <div class="rotulo"><div class="cont">
-    <span class="sim"><svg class="i" aria-hidden="true"><use href="#m-sim"/></svg><span lang="es">Simulación · no operativo</span><span lang="en">Simulation · not operational</span></span>
+    <span class="sim"><svg class="ico" aria-hidden="true"><use href="#i-flask-conical"/></svg><span lang="es">Simulación · no operativo</span><span lang="en">Simulation · not operational</span></span>
     <span><span lang="es">Datos 100 % sintéticos · las decisiones humanas de este demo se simularon en lote</span><span lang="en">100% synthetic data · this demo's human decisions were simulated in batch</span></span>
   </div></div>
   <header class="barra"><div class="cont">
     <a class="marca" href="#"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="5" cy="10" r="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 10 H12" stroke="currentColor" stroke-width="1.6" stroke-dasharray="1.6 1.6"/><rect x="12" y="6" width="7" height="8" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>planlang</a>
     <nav class="pestanas" aria-label="Secciones / Sections">
-      <a href="#" aria-current="page"><span lang="es">Entrada</span><span lang="en">Home</span></a>
-      <a href="#">Plan</a>
-      <a href="#"><span lang="es">Agente</span><span lang="en">Agent</span></a>
-      <a href="#"><span lang="es">Brecha</span><span lang="en">Gap</span></a>
-      <a href="#">Playground</a>
+      <a href="#" aria-current="page"><svg class="ico" aria-hidden="true"><use href="#i-house"/></svg><span lang="es">Entrada</span><span lang="en">Home</span></a>
+      <a href="#"><svg class="ico" aria-hidden="true"><use href="#i-clipboard-list"/></svg>Plan</a>
+      <a href="#"><svg class="ico" aria-hidden="true"><use href="#i-workflow"/></svg><span lang="es">Agente</span><span lang="en">Agent</span></a>
+      <a href="#"><svg class="ico" aria-hidden="true"><use href="#i-gauge"/></svg><span lang="es">Brecha</span><span lang="en">Gap</span></a>
+      <a href="#"><svg class="ico" aria-hidden="true"><use href="#i-sliders-horizontal"/></svg>Playground</a>
     </nav>
     <div class="ajustes">
-      <div class="seg" role="group" aria-label="Idioma / Language"><button type="button" data-lang-set="es">ES</button><button type="button" data-lang-set="en">EN</button></div>
-      <div class="seg" role="group" aria-label="Tema / Theme"><button type="button" data-theme-set="oscuro"><span lang="es">Oscuro</span><span lang="en">Dark</span></button><button type="button" data-theme-set="claro"><span lang="es">Claro</span><span lang="en">Light</span></button></div>
+      <div class="seg" role="group" aria-label="Idioma / Language"><button type="button" data-lang-set="es"><svg class="ico" aria-hidden="true"><use href="#i-languages"/></svg>ES</button><button type="button" data-lang-set="en">EN</button></div>
+      <div class="seg" role="group" aria-label="Tema / Theme"><button type="button" data-theme-set="oscuro"><svg class="ico" aria-hidden="true"><use href="#i-moon"/></svg><span lang="es">Oscuro</span><span lang="en">Dark</span></button><button type="button" data-theme-set="claro"><svg class="ico" aria-hidden="true"><use href="#i-sun"/></svg><span lang="es">Claro</span><span lang="en">Light</span></button></div>
     </div>
   </div></header>
 
@@ -78,35 +101,104 @@
           <h1 id="p1-titulo"><span lang="es">Planeé, construí y medí la brecha.</span><span lang="en">I planned, I built, and I measured the gap.</span></h1>
           <p class="guia"><span lang="es">planlang escribe el plan de un agente como un contrato que el código puede verificar, construye el agente según ese contrato, lo corre sobre casos con respuesta conocida y publica la brecha entre lo planeado y lo ocurrido, con sus fallas a la vista.</span><span lang="en">planlang writes an agent's plan as a contract that code can verify, builds the agent to that contract, runs it on cases with a known answer, and publishes the gap between what was planned and what happened, failures in plain sight.</span></p>
           <div class="acciones">
-            <a class="boton prim" href="#"><span lang="es">Ver la brecha del demo A</span><span lang="en">See demo A's gap</span><svg aria-hidden="true"><use href="#m-flecha"/></svg></a>
+            <a class="boton prim" href="#"><span lang="es">Ver la brecha del demo A</span><span lang="en">See demo A's gap</span><svg class="ico" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
             <a class="boton" href="#"><span lang="es">Recorrer el plan</span><span lang="en">Walk through the plan</span></a>
           </div>
         </div>
         <aside class="gancho" aria-labelledby="gancho-t">
           <p class="gancho-t" id="gancho-t"><span lang="es">Qué hacen hoy los equipos que construyen agentes</span><span lang="en">What teams building agents do today</span></p>
-          <div class="dato-fila"><b>89 %</b><span><span lang="es">observan sus agentes en producción</span><span lang="en">observe their agents in production</span></span><span class="barra-dato" aria-hidden="true"><i style="width:89%"></i></span></div>
-          <div class="dato-fila"><b>52 %</b><span><span lang="es">los evalúan</span><span lang="en">evaluate them</span></span><span class="barra-dato" aria-hidden="true"><i style="width:52%"></i></span></div>
-          <div class="dato-fila nadie"><b>—</b><span><span lang="es">planearon qué evaluar</span><span lang="en">planned what to evaluate</span><small><span lang="es">La encuesta no lo pregunta. planlang parte de ahí.</span><span lang="en">The survey doesn't ask. planlang starts there.</span></small></span><span class="barra-dato" aria-hidden="true"></span></div>
+          <div class="dato-fila"><b>89 %</b><span class="et-ico"><svg class="ico" aria-hidden="true"><use href="#i-eye"/></svg><span><span lang="es">observan sus agentes en producción</span><span lang="en">observe their agents in production</span></span></span><span class="barra-dato" aria-hidden="true"><i style="width:89%"></i></span></div>
+          <div class="dato-fila"><b>52 %</b><span class="et-ico"><svg class="ico" aria-hidden="true"><use href="#i-list-checks"/></svg><span><span lang="es">los evalúan</span><span lang="en">evaluate them</span></span></span><span class="barra-dato" aria-hidden="true"><i style="width:52%"></i></span></div>
+          <div class="dato-fila nadie"><b>—</b><span><span class="et-ico"><svg class="ico" aria-hidden="true"><use href="#i-compass"/></svg><span><span lang="es">planearon qué evaluar</span><span lang="en">planned what to evaluate</span></span></span><small><span lang="es">La encuesta no lo pregunta. planlang parte de ahí.</span><span lang="en">The survey doesn't ask. planlang starts there.</span></small></span><span class="barra-dato" aria-hidden="true"></span></div>
           <p class="fuente"><span lang="es">LangChain, State of Agent Engineering · 1.340 respuestas · nov–dic 2025</span><span lang="en">LangChain, State of Agent Engineering · 1,340 responses · Nov–Dec 2025</span> <span class="chip"><svg aria-hidden="true"><use href="#m-real"/></svg><span lang="es">fuente</span><span lang="en">source</span></span></p>
         </aside>
+      </section>
+
+      <section class="seccion" aria-labelledby="s-ciclo">
+        <div class="seccion-cab"><h2 id="s-ciclo"><span lang="es">Cómo funciona</span><span lang="en">How it works</span></h2><p class="nota"><span lang="es">El mismo contrato, de punta a punta.</span><span lang="en">One contract, end to end.</span></p></div>
+        <ol class="pasos">
+          <li class="paso">
+            <div class="paso-cab"><span class="baldosa"><svg class="ico" aria-hidden="true"><use href="#i-clipboard-pen-line"/></svg></span><h3><span class="n">1</span><span lang="es">Planeé</span><span lang="en">I planned</span></h3><span class="conector" aria-hidden="true"><svg class="ico"><use href="#i-arrow-right"/></svg></span></div>
+            <p><span lang="es">El plan se escribe como contrato: cada criterio con su regla de medición, cada umbral con su señal. Un validador lo rechaza si está incompleto.</span><span lang="en">The plan is written as a contract: every criterion with its measurement rule, every threshold with its signal. A validator rejects it if it is incomplete.</span></p>
+            <div class="mini">
+              <ul class="mini-plan">
+                <li><span class="cod">D</span><span><span lang="es">Decisiones</span><span lang="en">Decisions</span></span><span class="barra-dato" aria-hidden="true"><i style="width:67%"></i></span><b>6</b></li>
+                <li><span class="cod">R</span><span><span lang="es">Riesgos</span><span lang="en">Risks</span></span><span class="barra-dato" aria-hidden="true"><i style="width:89%"></i></span><b>8</b></li>
+                <li><span class="cod">S</span><span><span lang="es">Supuestos</span><span lang="en">Assumptions</span></span><span class="barra-dato" aria-hidden="true"><i style="width:33%"></i></span><b>3</b></li>
+                <li><span class="cod">C</span><span><span lang="es">Criterios</span><span lang="en">Criteria</span></span><span class="barra-dato" aria-hidden="true"><i style="width:100%"></i></span><b>9</b></li>
+                <li><span class="cod">U</span><span><span lang="es">Umbrales</span><span lang="en">Thresholds</span></span><span class="barra-dato" aria-hidden="true"><i style="width:44%"></i></span><b>4</b></li>
+              </ul>
+              <div class="mini-pie"><span><span lang="es">plan del demo A</span><span lang="en">demo A plan</span></span><span class="chip"><svg aria-hidden="true"><use href="#m-real"/></svg>real</span></div>
+            </div>
+          </li>
+          <li class="paso">
+            <div class="paso-cab"><span class="baldosa"><svg class="ico" aria-hidden="true"><use href="#i-workflow"/></svg></span><h3><span class="n">2</span><span lang="es">Construí</span><span lang="en">I built</span></h3><span class="conector" aria-hidden="true"><svg class="ico"><use href="#i-arrow-right"/></svg></span></div>
+            <p><span lang="es">El agente en LangGraph se construye según ese contrato y corre sobre casos con respuesta conocida y adversarios sembrados.</span><span lang="en">The LangGraph agent is built to that contract and runs on cases with a known answer and seeded adversaries.</span></p>
+            <div class="mini">
+              <svg class="mini-grafo" viewBox="0 0 312 104" role="img" aria-labelledby="mini-g-t">
+                <title id="mini-g-t">Grafo del demo A en miniatura: solicitud, extractor, enrutador, pausa humana o aprobar, fin / Demo A graph in miniature</title>
+                <defs><marker id="punta-mini" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="punta"/></marker></defs>
+                <g class="mini-lineas">
+                  <path d="M34,48 H81" marker-end="url(#punta-mini)"/>
+                  <path d="M102,48 H145" marker-end="url(#punta-mini)"/>
+                  <path class="cond" d="M166,48 C190,48 196,22 216,22" marker-end="url(#punta-mini)"/>
+                  <path class="cond" d="M166,48 C190,48 196,74 216,74" marker-end="url(#punta-mini)"/>
+                  <path class="rean" d="M240,22 C262,22 266,48 281,48" marker-end="url(#punta-mini)"/>
+                  <path d="M240,74 C262,74 266,48 281,48" marker-end="url(#punta-mini)"/>
+                </g>
+                <circle class="mini-term" cx="28" cy="48" r="6"/>
+                <circle class="mini-term" cx="290" cy="48" r="6"/><circle class="mini-fin" cx="290" cy="48" r="2.8"/>
+                <use href="#g-estrella" x="84" y="40" width="16" height="16" style="fill:var(--tipo-1)"/>
+                <use href="#g-rombo" x="148" y="40" width="16" height="16" style="fill:var(--tipo-5)"/>
+                <use href="#g-cuadrado" x="220" y="14" width="16" height="16" style="fill:var(--tipo-4)"/>
+                <use href="#g-hexagono" x="220" y="66" width="16" height="16" style="fill:var(--tipo-3)"/>
+                <g class="mini-et">
+                  <text x="28" y="70" text-anchor="middle"><tspan lang="es">solicitud</tspan><tspan lang="en">request</tspan></text>
+                  <text x="92" y="70" text-anchor="middle">extractor</text>
+                  <text x="156" y="70" text-anchor="middle">enrutador</text>
+                  <text x="228" y="8" text-anchor="middle">pausa_humana</text>
+                  <text x="228" y="98" text-anchor="middle">aprobar</text>
+                  <text x="290" y="70" text-anchor="middle"><tspan lang="es">fin</tspan><tspan lang="en">end</tspan></text>
+                </g>
+              </svg>
+              <div class="mini-pie"><span><span lang="es">grafo del spike · 2026-09-26</span><span lang="en">spike graph · 2026-09-26</span></span><span class="chip"><svg aria-hidden="true"><use href="#m-real"/></svg>real</span></div>
+            </div>
+          </li>
+          <li class="paso">
+            <div class="paso-cab"><span class="baldosa"><svg class="ico" aria-hidden="true"><use href="#i-ruler"/></svg></span><h3><span class="n">3</span><span lang="es">Medí la brecha</span><span lang="en">I measured the gap</span></h3></div>
+            <p><span lang="es">Un verificador sin IA compara plan y trazas y publica la brecha, con lo que falló a la vista.</span><span lang="en">A verifier with no AI compares plan and traces and publishes the gap, with what failed in plain sight.</span></p>
+            <div class="mini">
+              <div class="cuadros" role="img" aria-label="9 criterios: 8 cumplen, 1 no cumple (C5) / 9 criteria: 8 met, 1 not met (C5)">
+                <span class="cuadro"><svg aria-hidden="true"><use href="#m-cumple"/></svg></span><span class="cuadro"><svg aria-hidden="true"><use href="#m-cumple"/></svg></span><span class="cuadro"><svg aria-hidden="true"><use href="#m-cumple"/></svg></span><span class="cuadro"><svg aria-hidden="true"><use href="#m-cumple"/></svg></span><span class="cuadro" data-v="no-cumple"><svg aria-hidden="true"><use href="#m-no-cumple"/></svg></span><span class="cuadro"><svg aria-hidden="true"><use href="#m-cumple"/></svg></span><span class="cuadro"><svg aria-hidden="true"><use href="#m-cumple"/></svg></span><span class="cuadro"><svg aria-hidden="true"><use href="#m-cumple"/></svg></span><span class="cuadro"><svg aria-hidden="true"><use href="#m-cumple"/></svg></span>
+              </div>
+              <p class="mini-leyenda"><span lang="es"><b>8</b> cumplen · <b>1</b> no cumple: C5</span><span lang="en"><b>8</b> met · <b>1</b> not met: C5</span></p>
+              <div class="medida">
+                <div class="medida-et"><span><b>C5</b> <span lang="es">exactitud</span><span lang="en">accuracy</span> pass³</span><span><span lang="es">medido</span><span lang="en">measured</span> <b><span lang="es">0,85</span><span lang="en">0.85</span></b> · <span lang="es">objetivo</span><span lang="en">target</span> <b><span lang="es">0,90</span><span lang="en">0.90</span></b></span></div>
+                <div class="pista" aria-hidden="true"><span class="medido" style="width:70%"></span><span class="hueco" style="left:70%;width:10%"></span><span class="meta" style="left:80%"></span></div>
+                <div class="medida-ejes" aria-hidden="true"><span><span lang="es">0,50</span><span lang="en">0.50</span></span><span><span lang="es">brecha −0,05</span><span lang="en">gap −0.05</span></span><span><span lang="es">1,00</span><span lang="en">1.00</span></span></div>
+              </div>
+              <div class="mini-pie"><span><span lang="es">lote de 20 casos</span><span lang="en">batch of 20 cases</span></span><span class="chip"><svg aria-hidden="true"><use href="#m-maqueta"/></svg><span lang="es">maqueta</span><span lang="en">mockup</span></span></div>
+            </div>
+          </li>
+        </ol>
       </section>
 
       <section class="seccion" aria-labelledby="s-tres">
         <div class="seccion-cab"><h2 id="s-tres"><span lang="es">Lo que ninguna herramienta muestra</span><span lang="en">What no tool shows</span></h2><p class="nota"><span lang="es">Las tres se ven en el demo A, sobre corridas reales.</span><span lang="en">All three are visible in demo A, on real runs.</span></p></div>
         <div class="tres">
           <article>
-            <span class="n"><svg aria-hidden="true"><use href="#g-estrella"/></svg>1</span>
+            <div class="cab-bloque"><span class="baldosa"><svg class="ico" aria-hidden="true"><use href="#i-file-check"/></svg></span><span class="n"><svg aria-hidden="true"><use href="#g-estrella"/></svg>1</span></div>
             <h3><span lang="es">El informe de brecha, con sus fallas</span><span lang="en">The gap report, failures included</span></h3>
             <p><span lang="es">El plan dice qué debía pasar; las trazas, qué pasó. Un verificador que no usa inteligencia artificial lista, criterio por criterio, qué se cumplió y qué no. Nada se esconde.</span><span lang="en">The plan says what should happen; the traces, what did. A verifier that uses no AI lists, criterion by criterion, what was met and what was not. Nothing is hidden.</span></p>
             <div class="fila-chips"><span class="veredicto chico" data-v="no-cumple"><svg aria-hidden="true"><use href="#m-no-cumple"/></svg><span lang="es">1 criterio fallido</span><span lang="en">1 failed criterion</span></span><span class="chip"><svg aria-hidden="true"><use href="#m-maqueta"/></svg><span lang="es">maqueta</span><span lang="en">mockup</span></span></div>
           </article>
           <article>
-            <span class="n"><svg aria-hidden="true"><use href="#g-estrella"/></svg>2</span>
+            <div class="cab-bloque"><span class="baldosa"><svg class="ico" aria-hidden="true"><use href="#i-sliders-horizontal"/></svg></span><span class="n"><svg aria-hidden="true"><use href="#g-estrella"/></svg>2</span></div>
             <h3><span lang="es">Mover un umbral y ver qué cambia</span><span lang="en">Move a threshold and see what changes</span></h3>
             <p><span lang="es">Sube la confianza mínima o enciende el modo Texas y mira, sobre las corridas reales, cuántos casos cambian de camino y cuántos minutos de revisión humana cuesta.</span><span lang="en">Raise the minimum confidence or switch on Texas mode and see, on the real runs, how many cases change path and how many minutes of human review it costs.</span></p>
           </article>
           <article>
-            <span class="n"><svg aria-hidden="true"><use href="#g-estrella"/></svg>3</span>
+            <div class="cab-bloque"><span class="baldosa"><svg class="ico" aria-hidden="true"><use href="#i-git-branch"/></svg></span><span class="n"><svg aria-hidden="true"><use href="#g-estrella"/></svg>3</span></div>
             <h3><span lang="es">El plan es el código de la arista</span><span lang="en">The plan is the code of the edge</span></h3>
             <p><span lang="es">Cada decisión del agente se declara en el plan como <span class="mono">señal · operador · valor</span>, y una prueba en dos lenguajes confirma que el grafo hace exactamente eso.</span><span lang="en">Every agent decision is declared in the plan as <span class="mono">signal · operator · value</span>, and a two-language test confirms the graph does exactly that.</span></p>
           </article>
@@ -118,13 +210,13 @@
         <div class="tabla" role="table" aria-labelledby="s-demos">
           <div class="fila cabeza" role="row"><span role="columnheader">Demo</span><span role="columnheader"><span lang="es">Veredicto del plan</span><span lang="en">Plan verdict</span></span><span role="columnheader"><span lang="es">Corrida</span><span lang="en">Run</span></span><span role="columnheader"><span lang="es">Abrir</span><span lang="en">Open</span></span></div>
           <div class="fila" role="row">
-            <div class="celda" role="cell"><h3><span lang="es">A · Autorizaciones médicas</span><span lang="en">A · Medical prior authorizations</span></h3><p><span lang="es">Un enrutador, un extractor, un verificador de cobertura por reglas y un redactor deciden aprobar, negar con causal o escalar a un auditor humano. Ninguna negación sale sin una persona.</span><span lang="en">A router, an extractor, a rule-based coverage checker and a writer decide to approve, deny with a stated ground, or escalate to a human auditor. No denial goes out without a person.</span></p></div>
+            <div class="celda" role="cell"><div class="demo-nombre"><span class="baldosa"><svg class="ico" aria-hidden="true"><use href="#i-stethoscope"/></svg></span><div><h3><span lang="es">A · Autorizaciones médicas</span><span lang="en">A · Medical prior authorizations</span></h3><p><span lang="es">Un enrutador, un extractor, un verificador de cobertura por reglas y un redactor deciden aprobar, negar con causal o escalar a un auditor humano. Ninguna negación sale sin una persona.</span><span lang="en">A router, an extractor, a rule-based coverage checker and a writer decide to approve, deny with a stated ground, or escalate to a human auditor. No denial goes out without a person.</span></p></div></div></div>
             <div class="celda" role="cell"><span class="et"><span lang="es">Veredicto del plan</span><span lang="en">Plan verdict</span></span><span class="veredicto" data-v="no-cumple"><svg aria-hidden="true"><use href="#m-no-cumple"/></svg><span lang="es">No cumple</span><span lang="en">Does not meet</span></span><span class="detalle"><span lang="es">1 de 9 criterios falló · 1 riesgo ocurrió · 1 supuesto refutado</span><span lang="en">1 of 9 criteria failed · 1 risk occurred · 1 assumption refuted</span></span><span class="chip"><svg aria-hidden="true"><use href="#m-maqueta"/></svg><span lang="es">maqueta</span><span lang="en">mockup</span></span></div>
             <div class="celda" role="cell"><span class="et"><span lang="es">Corrida</span><span lang="en">Run</span></span><span class="dato"><span lang="es">plan v1 · 20 casos · 2026-09-26</span><span lang="en">plan v1 · 20 cases · 2026-09-26</span></span><span class="chip"><svg aria-hidden="true"><use href="#m-real"/></svg><span lang="es">5 casos reales del spike</span><span lang="en">5 real spike cases</span></span></div>
-            <div class="celda" role="cell"><span class="et"><span lang="es">Abrir</span><span lang="en">Open</span></span><a class="boton chico prim" href="#"><span lang="es">Brecha</span><span lang="en">Gap</span><svg aria-hidden="true"><use href="#m-flecha"/></svg></a><span class="enlaces"><a href="#">Plan</a><a href="#"><span lang="es">Agente</span><span lang="en">Agent</span></a><a href="#">Playground</a></span></div>
+            <div class="celda" role="cell"><span class="et"><span lang="es">Abrir</span><span lang="en">Open</span></span><a class="boton chico prim" href="#"><span lang="es">Brecha</span><span lang="en">Gap</span><svg class="ico" aria-hidden="true"><use href="#i-arrow-right"/></svg></a><span class="enlaces"><a href="#">Plan</a><a href="#"><span lang="es">Agente</span><span lang="en">Agent</span></a><a href="#">Playground</a></span></div>
           </div>
           <div class="fila beta" role="row">
-            <div class="celda" role="cell"><h3><span lang="es">B · Vinculación con debida diligencia</span><span lang="en">B · Customer onboarding with due diligence</span></h3><p><span lang="es">Extractor de documentos, verificación contra listas de control por reglas y modelo en cascada, investigador de contexto para homónimos.</span><span lang="en">Document extractor, watchlist screening by rules and a cascaded model, a context investigator for namesakes.</span></p></div>
+            <div class="celda" role="cell"><div class="demo-nombre"><span class="baldosa"><svg class="ico" aria-hidden="true"><use href="#i-landmark"/></svg></span><div><h3><span lang="es">B · Vinculación con debida diligencia</span><span lang="en">B · Customer onboarding with due diligence</span></h3><p><span lang="es">Extractor de documentos, verificación contra listas de control por reglas y modelo en cascada, investigador de contexto para homónimos.</span><span lang="en">Document extractor, watchlist screening by rules and a cascaded model, a context investigator for namesakes.</span></p></div></div></div>
             <div class="celda" role="cell"><span class="et"><span lang="es">Veredicto del plan</span><span lang="en">Plan verdict</span></span><span class="veredicto" data-v="beta"><svg aria-hidden="true"><use href="#m-beta"/></svg><span lang="es">En construcción</span><span lang="en">Under construction</span></span></div>
             <div class="celda" role="cell"><span class="et"><span lang="es">Corrida</span><span lang="en">Run</span></span><span class="detalle"><span lang="es">Llega en el sprint 3.</span><span lang="en">Arrives in sprint 3.</span></span></div>
             <div class="celda" role="cell"><span class="et"><span lang="es">Abrir</span><span lang="en">Open</span></span><span class="detalle">—</span></div>
@@ -133,7 +225,7 @@
       </section>
 
       <section class="seccion pregunta" aria-labelledby="s-preg">
-        <p class="et" id="s-preg"><span lang="es">La pregunta de entrevista de 2026</span><span lang="en">The 2026 interview question</span></p>
+        <p class="et" id="s-preg"><span class="baldosa"><svg class="ico" aria-hidden="true"><use href="#i-message-circle-question"/></svg></span><span lang="es">La pregunta de entrevista de 2026</span><span lang="en">The 2026 interview question</span></p>
         <div class="cuerpo">
           <q><span lang="es">¿Cómo sabes que tu evaluación es confiable?</span><span lang="en">How do you know your evaluation is trustworthy?</span></q>
           <p><span lang="es">Con un verificador determinista sobre casos con verdad conocida y adversarios sembrados: ningún modelo de lenguaje decide si el agente acertó. Y con la brecha publicada aunque no favorezca.</span><span lang="en">With a deterministic verifier over cases with known truth and seeded adversaries: no language model decides whether the agent got it right. And with the gap published even when it is unfavorable.</span></p>
@@ -143,8 +235,8 @@
   </main>
 
   <footer class="pie"><div class="cont">
-    <p><b><span lang="es">Simulación · no operativo.</span><span lang="en">Simulation · not operational.</span></b> <span lang="es">Todo caso, afiliado, médico y plan de beneficios es sintético. Las decisiones humanas de este demo se simularon en lote siguiendo la verdad conocida; en producción las tomaría un auditor médico con el caso completo.</span><span lang="en">Every case, member, physician and benefit plan is synthetic. This demo's human decisions were simulated in batch following the known truth; in production a medical auditor would make them with the full case.</span></p>
-    <p><span lang="es">El modelo de los agentes corrió con la suscripción de Claude Code del autor. Ningún visitante lanza llamadas a modelos: esta página es estática. LangChain, LangGraph, LangSmith y Anthropic son marcas de sus titulares; aquí solo se nombran.</span><span lang="en">The agents' model ran on the author's Claude Code subscription. No visitor triggers model calls: this page is static. LangChain, LangGraph, LangSmith and Anthropic are trademarks of their owners; they are only named here.</span></p>
+    <p><svg class="ico" aria-hidden="true"><use href="#i-shield-check"/></svg><span><b><span lang="es">Simulación · no operativo.</span><span lang="en">Simulation · not operational.</span></b> <span lang="es">Todo caso, afiliado, médico y plan de beneficios es sintético. Las decisiones humanas de este demo se simularon en lote siguiendo la verdad conocida; en producción las tomaría un auditor médico con el caso completo.</span><span lang="en">Every case, member, physician and benefit plan is synthetic. This demo's human decisions were simulated in batch following the known truth; in production a medical auditor would make them with the full case.</span></span></p>
+    <p><svg class="ico" aria-hidden="true"><use href="#i-info"/></svg><span><span lang="es">El modelo de los agentes corrió con la suscripción de Claude Code del autor. Ningún visitante lanza llamadas a modelos: esta página es estática. LangChain, LangGraph, LangSmith y Anthropic son marcas de sus titulares; aquí solo se nombran.</span><span lang="en">The agents' model ran on the author's Claude Code subscription. No visitor triggers model calls: this page is static. LangChain, LangGraph, LangSmith and Anthropic are trademarks of their owners; they are only named here.</span></span></p>
   </div></footer>
 </div>
 
@@ -152,7 +244,7 @@
 <div class="mq-marco"><div class="cont"><span lang="es">Piezas que fijan el sistema · no son una pantalla, son las reglas que todas comparten</span><span lang="en">Pieces that fix the system · not a screen, the rules every screen shares</span></div></div>
 
 <div class="cont">
-  <section class="seccion" style="border-top:0" aria-labelledby="s-nodo">
+  <section class="seccion mq-solo-sala" style="border-top:0" aria-labelledby="s-nodo">
     <div class="seccion-cab"><h2 id="s-nodo"><span lang="es">El nodo del grafo</span><span lang="en">The graph node</span></h2><p class="nota"><span lang="es">Tipo = color + glifo + etiqueta corta. Tres estados por tipo.</span><span lang="en">Type = colour + glyph + short label. Three states per type.</span></p></div>
     <div class="espec" role="table" aria-labelledby="s-nodo">
       <div class="fila cabeza" role="row"><span role="columnheader"><span lang="es">Tipo</span><span lang="en">Type</span></span><span role="columnheader">Normal</span><span role="columnheader"><span lang="es">Seleccionado</span><span lang="en">Selected</span></span><span role="columnheader"><span lang="es">Exigido por el plan, ausente del grafo</span><span lang="en">Required by the plan, missing from the graph</span></span></div>
@@ -296,7 +388,42 @@
     </div>
   </section>
 
-  <section class="seccion" aria-labelledby="s-ver">
+  <section class="seccion mq-solo-sala" aria-labelledby="s-tel">
+    <div class="seccion-cab"><h2 id="s-tel"><span lang="es">El grafo en el teléfono</span><span lang="en">The graph on a phone</span></h2><p class="nota"><span lang="es">Esta misma página a 390 px. Desliza dentro de cada teléfono.</span><span lang="en">This same page at 390 px. Scroll inside each phone.</span></p></div>
+    <p class="mq-solo-movil"><svg class="ico" aria-hidden="true"><use href="#i-smartphone"/></svg><span><span lang="es">Estás en un teléfono: esta página ya es la vista de teléfono. Arriba, en «Fragmento del grafo real del spike», prueba «Lienzo» y «Lista por capa».</span><span lang="en">You are on a phone: this page already is the phone view. Above, in “Fragment of the spike's real graph”, try “Canvas” and “List by layer”.</span></span></p>
+    <div class="telefonos">
+      <figure class="telefono">
+        <div class="telefono-marco"><iframe data-src="direccion.html?marco=telefono&amp;vista=lienzo#s-grafo" title="Teléfono A: el grafo como lienzo / Phone A: the graph as a canvas" loading="eager"></iframe></div>
+        <figcaption><b><span lang="es">A · Lienzo</span><span lang="en">A · Canvas</span></b><span lang="es">El grafo entero en su forma; se desliza de lado con el índice de capas.</span><span lang="en">The whole graph in its shape; it slides sideways with the layer index.</span></figcaption>
+      </figure>
+      <figure class="telefono">
+        <div class="telefono-marco"><iframe data-src="direccion.html?marco=telefono&amp;vista=lista#s-grafo" title="Teléfono B: el grafo como lista por capa / Phone B: the graph as a list by layer" loading="eager"></iframe></div>
+        <figcaption><b><span lang="es">B · Lista por capa</span><span lang="en">B · List by layer</span></b><span lang="es">Las seis capas una bajo otra; se lee sin deslizar, pero se pierde la forma.</span><span lang="en">The six layers one under another; it reads without sliding, but the shape is lost.</span></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="seccion mq-solo-sala" aria-labelledby="s-glifo">
+    <div class="seccion-cab"><h2 id="s-glifo"><span lang="es">El glifo de «regla»</span><span lang="en">The “rule” glyph</span></h2><p class="nota"><span lang="es">Mismo color y etiqueta; cambia solo la forma.</span><span lang="en">Same colour and label; only the shape changes.</span></p></div>
+    <div class="glifos">
+      <div class="glifo-opcion">
+        <div class="cab"><svg class="grande" aria-hidden="true"><use href="#g-hexagono"/></svg><h3><span lang="es">Hexágono</span><span lang="en">Hexagon</span><small><span lang="es">como está hoy en la gramática agentes-ia v1.0.0</span><span lang="en">as it is today in the agentes-ia grammar v1.0.0</span></small></h3></div>
+        <div class="nodos">
+          <div class="nodo" data-tipo="regla"><svg class="glifo" aria-hidden="true"><use href="#g-hexagono"/></svg><span class="cod"><span lang="es">REG</span><span lang="en">RULE</span></span><span class="nombre">aprobar</span></div>
+          <div class="nodo" data-tipo="regla" data-madurez="exigido"><svg class="glifo" aria-hidden="true"><use href="#g-hexagono"/></svg><span class="cod"><span lang="es">REG</span><span lang="en">RULE</span></span><span class="nombre">verificador_cobertura</span><span class="aus"><svg aria-hidden="true"><use href="#m-exigido"/></svg><span lang="es">exigido</span><span lang="en">required</span></span></div>
+        </div>
+      </div>
+      <div class="glifo-opcion">
+        <div class="cab"><svg class="grande" aria-hidden="true"><use href="#g-escudo"/></svg><h3><span lang="es">Escudo</span><span lang="en">Shield</span><small><span lang="es">lo que propone big-d para la gramática: la regla protege</span><span lang="en">what big-d proposes for the grammar: the rule protects</span></small></h3></div>
+        <div class="nodos">
+          <div class="nodo" data-tipo="regla"><svg class="glifo" aria-hidden="true"><use href="#g-escudo"/></svg><span class="cod"><span lang="es">REG</span><span lang="en">RULE</span></span><span class="nombre">aprobar</span></div>
+          <div class="nodo" data-tipo="regla" data-madurez="exigido"><svg class="glifo" aria-hidden="true"><use href="#g-escudo"/></svg><span class="cod"><span lang="es">REG</span><span lang="en">RULE</span></span><span class="nombre">verificador_cobertura</span><span class="aus"><svg aria-hidden="true"><use href="#m-exigido"/></svg><span lang="es">exigido</span><span lang="en">required</span></span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion mq-solo-sala" aria-labelledby="s-ver">
     <div class="seccion-cab"><h2 id="s-ver"><span lang="es">Los tres veredictos</span><span lang="en">The three verdicts</span></h2><p class="nota"><span lang="es">Símbolo dibujado + texto + color. Se leen igual en escala de grises.</span><span lang="en">Drawn symbol + text + colour. They read the same in greyscale.</span></p></div>
     <div class="tres-v">
       <div><span class="veredicto" data-v="cumple"><svg aria-hidden="true"><use href="#m-cumple"/></svg><span lang="es">Cumple</span><span lang="en">Meets</span></span><p><span lang="es">Todos los criterios pasan su regla de medición.</span><span lang="en">Every criterion passes its measurement rule.</span></p></div>
@@ -305,8 +432,8 @@
     </div>
   </section>
 
-  <section class="seccion" aria-labelledby="s-escala">
-    <div class="seccion-cab"><h2 id="s-escala"><span lang="es">La escala tipográfica</span><span lang="en">The type scale</span></h2><p class="nota"><span lang="es">Siete tamaños y ninguno más. Cambia la letra arriba para compararla.</span><span lang="en">Seven sizes and no others. Change the typeface above to compare.</span></p></div>
+  <section class="seccion mq-solo-sala" aria-labelledby="s-escala">
+    <div class="seccion-cab"><h2 id="s-escala"><span lang="es">La escala tipográfica</span><span lang="en">The type scale</span></h2><p class="nota"><span lang="es">Siete tamaños y ninguno más, en Inter y JetBrains Mono.</span><span lang="en">Seven sizes and no others, in Inter and JetBrains Mono.</span></p></div>
     <div class="escala">
       <div class="fila"><div class="rol"><span lang="es">Título de página</span><span lang="en">Page title</span><small><span lang="es">36 · 28 en teléfono · 600</span><span lang="en">36 · 28 on phone · 600</span></small></div><p class="m-titulo"><span lang="es">Planeé, construí y medí la brecha.</span><span lang="en">I planned, I built, and I measured the gap.</span></p></div>
       <div class="fila"><div class="rol"><span lang="es">Sección</span><span lang="en">Section</span><small>20 · 600</small></div><p class="m-seccion"><span lang="es">Lo que ninguna herramienta muestra</span><span lang="en">What no tool shows</span></p></div>
@@ -323,9 +450,10 @@
   <div class="cont">
     <p class="mq-t"><span lang="es">Cómo responder, con la página abierta</span><span lang="en">How to answer, with the page open</span></p>
     <ol>
-      <li><span lang="es">¿El orden y los tamaños ya están bien, o algo sigue grande o suelto? Dime qué y dónde.</span><span lang="en">Are the order and the sizes right now, or is something still too big or loose? Tell me what and where.</span></li>
-      <li><span lang="es">¿Qué letra: Inter, Plex o Geist? Se cambia arriba, en «letra».</span><span lang="en">Which typeface: Inter, Plex or Geist? Switch it above, under “typeface”.</span></li>
-      <li><span lang="es">En el teléfono, ¿el grafo como lienzo que se desliza o como lista por capa? ¿Y «regla» con hexágono o con escudo?</span><span lang="en">On the phone, the graph as a sliding canvas or as a list by layer? And “rule” with a hexagon or a shield?</span></li>
+      <li><span lang="es">¿Los íconos y la franja «Cómo funciona» van en la línea que pedías? ¿Falta o sobra algo?</span><span lang="en">Do the icons and the “How it works” band go the way you asked? Anything missing or too much?</span></li>
+      <li><span lang="es">En el teléfono, ¿el grafo como lienzo (A) o como lista por capa (B)? Los dos teléfonos están bajo el grafo.</span><span lang="en">On the phone, the graph as a canvas (A) or as a list by layer (B)? Both phones are below the graph.</span></li>
+      <li><span lang="es">«Regla»: ¿hexágono o escudo?</span><span lang="en">“Rule”: hexagon or shield?</span></li>
+      <li><span lang="es">Si con esto la dirección queda, escribe «lo abrí y apruebo» y paso a la mirada 2: el sistema de diseño completo y la pantalla del agente.</span><span lang="en">If the direction is settled with this, write “I opened it and approve” and I move to look 2: the full design system and the agent screen.</span></li>
     </ol>
   </div>
 </section>

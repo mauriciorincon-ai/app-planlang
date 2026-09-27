@@ -63,6 +63,33 @@
   var marcos = document.querySelectorAll(".lienzo-marco");
   for (var i = 0; i < marcos.length; i++) iniciar(marcos[i]);
 
+  function vista(b) {
+    var grupo = b.closest("[data-vistas]");
+    var botones = grupo.querySelectorAll(".vista-alterna button[data-vista]");
+    for (var k = 0; k < botones.length; k++)
+      botones[k].setAttribute("aria-pressed", botones[k] === b ? "true" : "false");
+    var paneles = grupo.querySelectorAll("[data-panel]");
+    for (var m = 0; m < paneles.length; m++)
+      paneles[m].hidden = paneles[m].getAttribute("data-panel") !== b.getAttribute("data-vista");
+  }
+  // ?vista=lista abre la página con la lista por capa (lo usa el teléfono de sala).
+  var pedida = new URLSearchParams(location.search).get("vista");
+  if (pedida) {
+    var inicial = document.querySelector('.vista-alterna button[data-vista="' + pedida + '"]');
+    if (inicial) vista(inicial);
+    if (location.hash) {
+      var ancla = document.querySelector(location.hash);
+      if (ancla) {
+        ancla.scrollIntoView();
+        // Repetir cuando la letra termina de cargar: el texto de arriba cambia de alto.
+        if (document.fonts)
+          document.fonts.ready.then(function () {
+            ancla.scrollIntoView();
+          });
+      }
+    }
+  }
+
   document.addEventListener("click", function (e) {
     var b = e.target.closest(".vista-alterna button[data-vista]");
     if (!b) return;

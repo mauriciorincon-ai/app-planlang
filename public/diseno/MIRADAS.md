@@ -70,6 +70,45 @@ teléfono; el índice de capas partía en dos líneas a 380 px.
 **Preguntas abiertas para el usuario:** ¿orden y tamaños ya bien? · ¿qué letra? · lienzo o lista en
 teléfono · hexágono o escudo para «regla».
 
+**Lo que dijo el usuario (2026-09-27, con la página abierta en el preview):**
+
+> «Si ya vamos por buen camino 1. Se ve mas proporcionado 2. Inter 3. No veo ningun telefono.
+> TRaata de tener elementos visuales graficos atractivos iconos y cosas asi»
+
+**Veredicto:** la dirección va por buen camino; la proporción queda aprobada; la letra es **Inter**
+(con JetBrains Mono para datos). La pregunta 3 no se pudo contestar: la página no mostraba ningún
+teléfono (la pregunta suponía abrirla en uno). Pide además **elementos visuales gráficos atractivos:
+íconos y cosas así**.
+
+**Qué cambió:** ronda 3 de la mirada 1 (entrada siguiente).
+
+## Mirada 1 · ronda 3 — `direccion.html` · 2026-09-27
+
+**Respuesta a la ronda 2, punto por punto:**
+
+- **Letra:** Inter queda como la letra de la vitrina y del diagrama; JetBrains Mono solo para datos.
+  Plex y Geist salen del repo (conmutador «letra» retirado).
+- **«No veo ningún teléfono»:** la pregunta suponía abrir la página en un teléfono. Ahora, bajo el
+  grafo, hay **dos teléfonos** (iframes de 390 px con esta misma página, sin la sala): A con el grafo
+  como lienzo y B como lista por capa. En un teléfono de verdad, esa sección dice que lo que se ve
+  ya es la vista de teléfono.
+- **«Elementos visuales gráficos atractivos, íconos»:** íconos de línea (Lucide v1.48.0, ISC,
+  incrustados, sin CDN) en el rótulo, la navegación, los botones, el gancho, los tres puntos, los
+  demos, la pregunta y el pie; baldosas de 36 px al inicio de cada bloque. Franja nueva **«Cómo
+  funciona»** con tres miniaturas: el plan (conteos reales del plan del demo A), el grafo del spike
+  en miniatura con sus glifos a color, y la brecha (9 criterios como cuadros ✓/✕ y la barra de C5 con
+  el hueco rayado entre 0,85 medido y 0,90 objetivo). Los íconos son monocromos: el color sigue
+  reservado al tipo de nodo y al veredicto.
+- **«Regla»:** hexágono y escudo lado a lado, con el mismo nodo en los dos estados.
+
+**Pasada de capturas del builder:** 16 encuadres (2 páginas × 2 temas × 2 idiomas × 380/1280) con
+los teléfonos cargados y sincronizados de tema e idioma + corrida con movimiento reducido: 0
+desbordes, 0 textos fuera del lienzo o de su nodo, fuentes cargadas, 0 animaciones. Ajustes por lo
+visto: los teléfonos salían vacíos en la captura (el arnés no esperaba a los iframes: con `file://`
+su documento no es accesible; ahora espera por la API de marcos); el arnés cambiaba tema e idioma
+por atributo y los teléfonos no se enteraban (ahora pulsa los botones); el teléfono A quedaba
+desplazado (re-ancla tras cargar la letra); la tarjeta «Medí» tenía un hueco (leyenda 8 · 1).
+
 **Lo que dijo el usuario:** _(pendiente)_
 
 **Qué cambió:** _(pendiente)_

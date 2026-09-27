@@ -66,6 +66,8 @@ const navegador = await chromium.launch();
 const fallas = [];
 let n = 0;
 
+const marcosDeTelefono = (pagina) => pagina.frames().some((m) => m.url().includes("marco=telefono"));
+
 async function medir(pagina, clave) {
   const r = await pagina.evaluate(() => {
     const el = document.documentElement;
@@ -123,9 +125,17 @@ for (const ruta of paginas) {
         for (const estado of lista) {
           await pagina.evaluate(
             ({ tema, idioma, estado }) => {
-              document.documentElement.setAttribute("data-theme", tema);
-              document.documentElement.setAttribute("data-lang", idioma);
-              document.documentElement.lang = idioma;
+              // Por los botones de sala cuando existen (así se sincronizan los teléfonos de sala y
+              // el estado pulsado de la barra); si no, por atributo.
+              const bt = document.querySelector(`button[data-theme-set="${tema}"]`);
+              if (bt) bt.click();
+              else document.documentElement.setAttribute("data-theme", tema);
+              const bl = document.querySelector(`button[data-lang-set="${idioma}"]`);
+              if (bl) bl.click();
+              else {
+                document.documentElement.setAttribute("data-lang", idioma);
+                document.documentElement.lang = idioma;
+              }
               const b = document.querySelector(`[data-estado="${estado}"]`);
               if (b) b.click();
               window.scrollTo(0, 0);
@@ -136,7 +146,14 @@ for (const ruta of paginas) {
             document.body.getBoundingClientRect();
             await document.fonts.ready;
           });
-          await pagina.waitForTimeout(80);
+          // Teléfonos de sala (iframes): con file:// su documento no es accesible desde la página
+          // madre, así que se espera cada marco por la API de Playwright (carga + fuentes).
+          for (const marco of pagina.frames()) {
+            if (marco === pagina.mainFrame() || !marco.url().includes("marco=telefono")) continue;
+            await marco.waitForLoadState("load").catch(() => {});
+            await marco.evaluate(() => document.fonts.ready).catch(() => {});
+          }
+          await pagina.waitForTimeout(marcosDeTelefono(pagina) ? 400 : 80);
           const clave = `${nombre} · ${ancho}px · ${tema} · ${idioma} · ${estado}`;
           await medir(pagina, clave);
           const vistas = bandera("simular") ? ["ninguna", ...SIMULACIONES] : ["ninguna"];

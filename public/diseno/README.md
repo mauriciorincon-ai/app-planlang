@@ -24,16 +24,17 @@
 ## Qué vive aquí
 
 - `index.html` — el recorrido de sala: todas las pantallas en orden de flujo.
-- `direccion.html` — **mirada 1, ronda 2**: una identidad sobria sobre la Entrada (P1), el nodo del
-  grafo (tipo × estado), un fragmento del grafo real del spike, los tres veredictos y la escala
-  tipográfica, con tres letras a elegir sobre el mismo diseño. La ronda 1 (dos direcciones, A
-  «Instrumento» y B «Acta») fue rechazada y vive en la historia de git.
+- `direccion.html` — **mirada 1, ronda 3**: una identidad sobria en Inter sobre la Entrada (P1) con
+  íconos y la franja «Cómo funciona», el nodo del grafo (tipo × estado), un fragmento del grafo real
+  del spike, dos teléfonos con la página a 390 px (lienzo y lista), hexágono y escudo lado a lado, los
+  tres veredictos y la escala tipográfica. Las rondas 1 y 2 viven en la historia de git.
 - `kit.html` _(mirada 2)_ — el design system en vivo: componentes canon y sus 5 estados.
 - `01-entrada.html … 07-fichas.html` _(miradas 2–4)_ — una página por pantalla, HTML autocontenido
   (cero CDNs, cero frameworks), 380 px y desktop, oscuro y claro, ES y EN.
 - `assets/` — `tokens.{json,css}` (**GENERADOS** por `pnpm tokens` desde `scripts/paleta/generar-tokens.mjs`),
-  `planlang.css` (identidad), `diagrama.css` (gramática visual del visor), `fuentes/` (woff2 + OFL de
-  Inter, IBM Plex, Geist y JetBrains Mono; la elegida se queda y las otras salen en la mirada 2),
+  `planlang.css` (identidad), `diagrama.css` (gramática visual del visor), `fuentes/` (Inter y
+  JetBrains Mono, woff2 + OFL), `iconos/` (licencia ISC de Lucide; los íconos van incrustados en cada
+  página),
   `maqueta.{css,js}` y `lienzo.js` (utilería de sala).
 - `MIRADAS.md` — cada mirada: lo que el usuario dijo, textual, y lo que cambió.
 - La maqueta es **referencia, no producto**: el S2 la reproduce; el gate de FIDELIDAD del primer
@@ -44,8 +45,8 @@
 
 Las doce están en el plan aprobado de la etapa (2026-09-26) y se resumen aquí para que la mirada las
 valide a la vista: (1) ~~fuente del diagrama = la del reusable (Space Grotesk + JetBrains Mono)~~
-**cambiada en la ronda 2 de la mirada 1**: el usuario rechazó la tipografía; el diagrama usa la letra que se
-elija para la página y, si no es Space Grotesk, el summary propone al diagramador su tabla de métricas (G15); (2) glifos de `agentes-ia` tal cual, como paths; (3) en teléfono el lienzo se desliza
+**cambiada en la mirada 1**: el usuario rechazó Space Grotesk y eligió **Inter** (ronda 2); el diagrama usa
+Inter y el summary propone al diagramador su tabla de métricas (G15); (2) glifos de `agentes-ia` tal cual, como paths; (3) en teléfono el lienzo se desliza
 de lado y la lista por capa es vista alterna y versión en texto; (4) rótulo «Simulación · no operativo»
 con «datos 100 % sintéticos» y divulgación de oráculo en el pie; (5) curva riesgo-cobertura con X =
 cobertura, Y = riesgo, punto del plan; (6) inclusividad visible en cada umbral; (7) chip de procedencia
@@ -68,7 +69,8 @@ en toda cifra (real · spike vs maqueta); (8) visor sobre el grafo del spike con
 | Fecha      | Artefacto                   | Veredicto del usuario (textual) | Qué se construyó encima |
 | ---------- | --------------------------- | ------------------------------- | ----------------------- |
 | 2026-09-27 | `direccion.html` (mirada 1) | «No me gusta esta horrible realmente muy malo tipografia elementos de magnitud desproporcionada (muy grandes) tarjetas como tirada por ahi sin ningun sentido muy mal» | nada: se rehace la mirada 1 (ronda 2) |
-| 2026-09-27 | `direccion.html` (mirada 1, ronda 2) | _(pendiente)_ | nada todavía |
+| 2026-09-27 | `direccion.html` (mirada 1, ronda 2) | «Si ya vamos por buen camino 1. Se ve mas proporcionado 2. Inter 3. No veo ningun telefono. TRaata de tener elementos visuales graficos atractivos iconos y cosas asi» | ronda 3: Inter fija, íconos y gráficos, teléfonos dentro de la página, hexágono y escudo lado a lado |
+| 2026-09-27 | `direccion.html` (mirada 1, ronda 3) | _(pendiente)_ | nada todavía |
 
 ## Gates de esta etapa y su demo en rojo (regla 15 del kit)
 
@@ -82,7 +84,7 @@ en toda cifra (real · spike vs maqueta); (8) visor sobre el grafo del spike con
 
 | Página de la maqueta | Funcionalidad de la VISION                                          | Estados que muestra                                                                                                                              |
 | -------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `direccion.html`     | Página de entrada (P1) · el nodo de «El grafo real desde el código» | ronda 2: letra Inter · Plex · Geist · oscuro y claro · ES y EN · 380 px y desktop · nodo normal / seleccionado / exigido-ausente · lienzo y lista por capa |
+| `direccion.html`     | Página de entrada (P1) · el nodo de «El grafo real desde el código» | ronda 3: Inter · íconos · «Cómo funciona» · oscuro y claro · ES y EN · 380 px y desktop · dos teléfonos (lienzo y lista) · nodo normal / seleccionado / exigido-ausente · hexágono y escudo |
 
 ## Registro de G-Diseño (se llena al cerrar la etapa)
 

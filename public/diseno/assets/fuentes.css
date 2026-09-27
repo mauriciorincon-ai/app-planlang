@@ -1,16 +1,10 @@
-/* Fuentes de planlang · Mirada 1, ronda 2. Todas SIL OFL 1.1 — licencias junto a los archivos en
-   fuentes/. Servidas desde el mismo sitio, jamás desde un CDN (la maqueta es autocontenida).
-   `block`: nunca se pinta con la fuente de respaldo, para que las capturas midan lo que se sirve.
-   La ronda 1 (Space Grotesk, Newsreader) quedó rechazada por el usuario el 2026-09-27; sus archivos
-   viven en la historia de git. La ronda 2 pone TRES familias sobre el mismo diseño para elegir:
-   - Inter (variable 400–700) + JetBrains Mono (variable 100–800)
-   - IBM Plex Sans (variable 400–600) + IBM Plex Mono (400, 500)
-   - Geist (variable 400–700) + Geist Mono (variable 400–600)
-   Subconjunto latino en todas. La elegida se queda; las otras dos salen en la mirada 2. */
+/* Fuentes de planlang. Todas SIL OFL 1.1 — licencias junto a los archivos en fuentes/. Servidas
+   desde el mismo sitio, jamás desde un CDN (la maqueta es autocontenida). `block`: nunca se pinta
+   con la fuente de respaldo, para que las capturas midan lo que se sirve.
+   - Inter (variable 400–700): toda la interfaz y el diagrama. Elegida por el usuario en la mirada 1
+     (ronda 2, 2026-09-27) entre Inter, IBM Plex y Geist sobre el mismo diseño.
+   - JetBrains Mono (variable 100–800): solo datos — huellas, señales, fechas, etiqueta corta del nodo.
+   Rechazadas y fuera del repo (viven en la historia de git): Space Grotesk y Newsreader (ronda 1),
+   IBM Plex y Geist (ronda 2). Subconjunto latino. */
 @font-face { font-family: "Inter"; src: url("fuentes/inter.woff2") format("woff2"); font-weight: 400 700; font-style: normal; font-display: block; }
 @font-face { font-family: "JetBrains Mono"; src: url("fuentes/jetbrains-mono.woff2") format("woff2"); font-weight: 100 800; font-style: normal; font-display: block; }
-@font-face { font-family: "IBM Plex Sans"; src: url("fuentes/plex-sans.woff2") format("woff2"); font-weight: 400 600; font-style: normal; font-display: block; }
-@font-face { font-family: "IBM Plex Mono"; src: url("fuentes/plex-mono-400.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: block; }
-@font-face { font-family: "IBM Plex Mono"; src: url("fuentes/plex-mono-500.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: block; }
-@font-face { font-family: "Geist"; src: url("fuentes/geist.woff2") format("woff2"); font-weight: 400 700; font-style: normal; font-display: block; }
-@font-face { font-family: "Geist Mono"; src: url("fuentes/geist-mono.woff2") format("woff2"); font-weight: 400 600; font-style: normal; font-display: block; }

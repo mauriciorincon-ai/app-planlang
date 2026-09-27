@@ -87,6 +87,120 @@
   gap: 6px;
   max-width: 80ch;
 }
+/* Teléfonos de sala: la MISMA página cargada a 390 px dentro de un marco. Solo en pantallas anchas;
+   en un teléfono de verdad se dice que lo que se ve ya es la vista de teléfono. */
+.telefonos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 48px;
+  justify-content: center;
+}
+.telefono {
+  margin: 0;
+  display: grid;
+  gap: 12px;
+  justify-items: center;
+}
+.telefono-marco {
+  padding: 10px;
+  border-radius: 46px;
+  background: var(--sup-2);
+  border: 1px solid var(--tinta-3);
+}
+[data-theme="claro"] .telefono-marco {
+  background: var(--tinta-1);
+  border-color: var(--tinta-1);
+}
+.telefono iframe {
+  display: block;
+  width: 390px;
+  height: 760px;
+  border: 0;
+  border-radius: 36px;
+  background: var(--fondo);
+}
+.telefono figcaption {
+  display: grid;
+  gap: 2px;
+  justify-items: center;
+  text-align: center;
+  font-size: 13px;
+  color: var(--tinta-2);
+  max-width: 390px;
+}
+.telefono figcaption b {
+  color: var(--tinta-1);
+  font-weight: 600;
+  font-size: 14px;
+}
+.mq-solo-movil {
+  display: none;
+  font-size: 14px;
+  color: var(--tinta-2);
+}
+@media (max-width: 899px) {
+  .telefonos {
+    display: none;
+  }
+  .mq-solo-movil {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+}
+/* Comparación de glifo para «regla» */
+.glifos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--e-5);
+}
+.glifo-opcion {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+  padding: 16px;
+  border: 1px solid var(--linea);
+  border-radius: 8px;
+  background: var(--sup-1);
+}
+.glifo-opcion .cab {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.glifo-opcion .grande {
+  width: 32px;
+  height: 32px;
+  fill: var(--tipo-3);
+  flex: none;
+}
+.glifo-opcion h3 small {
+  display: block;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--tinta-2);
+}
+.glifo-opcion .nodos {
+  display: grid;
+  gap: 8px;
+}
+@media (max-width: 720px) {
+  .glifos {
+    grid-template-columns: 1fr;
+  }
+}
+/* Dentro del teléfono de sala: solo el producto y el grafo; nada de sala. */
+html[data-marco="telefono"] .mq-bar,
+html[data-marco="telefono"] .mq-nota,
+html[data-marco="telefono"] .mq-marco,
+html[data-marco="telefono"] .mq-cierre,
+html[data-marco="telefono"] .mq-solo-sala {
+  display: none !important;
+}
+html[data-marco="telefono"] ::-webkit-scrollbar {
+  display: none;
+}
+
 /* Idioma: cada texto existe dos veces; se muestra el del idioma activo. */
 html[data-lang="es"] [lang="en"]:not(html) {
   display: none !important;

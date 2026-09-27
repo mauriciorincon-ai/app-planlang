@@ -32,15 +32,6 @@
   --t-dato: 12px;
   --t-cifra: 28px;
 }
-/* Las tres letras de la ronda 2 (la sala las conmuta con html[data-estado]). */
-html[data-estado="plex"] {
-  --letra: "IBM Plex Sans", system-ui, sans-serif;
-  --mono: "IBM Plex Mono", ui-monospace, monospace;
-}
-html[data-estado="geist"] {
-  --letra: "Geist", system-ui, sans-serif;
-  --mono: "Geist Mono", ui-monospace, monospace;
-}
 @media (max-width: 720px) {
   :root {
     --t-titulo: 28px;
@@ -97,6 +88,43 @@ button:focus-visible {
   height: 14px;
   flex: none;
 }
+/* Íconos de línea (Lucide, incrustados). Monocromos: heredan la tinta del texto que acompañan. El
+   color de la interfaz sigue reservado para el tipo de nodo y el veredicto. */
+.ico {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+/* Baldosa: el ícono dentro de un cuadro de 36 px. Marca el inicio de un bloque, nunca decora. */
+.baldosa {
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  flex: none;
+  border: 1px solid var(--linea);
+  border-radius: 8px;
+  background: var(--sup-2);
+  color: var(--tinta-1);
+}
+.baldosa .ico {
+  width: 18px;
+  height: 18px;
+}
+.baldosa.chica {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+}
+.baldosa.chica .ico {
+  width: 15px;
+  height: 15px;
+}
 
 /* ---------- Rótulo persistente y barra de navegación ---------- */
 .rotulo {
@@ -118,9 +146,9 @@ button:focus-visible {
   color: var(--tinta-1);
   font-weight: 500;
 }
-.rotulo .sim .i {
-  width: 12px;
-  height: 12px;
+.rotulo .sim .ico {
+  width: 14px;
+  height: 14px;
 }
 .barra {
   border-bottom: 1px solid var(--linea);
@@ -152,6 +180,7 @@ button:focus-visible {
 .pestanas a {
   display: flex;
   align-items: center;
+  gap: 7px;
   padding: 0 10px;
   font-size: 14px;
   color: var(--tinta-2);
@@ -166,6 +195,19 @@ button:focus-visible {
   color: var(--tinta-1);
   font-weight: 500;
   border-bottom-color: var(--tinta-1);
+}
+.pestanas .ico {
+  width: 15px;
+  height: 15px;
+}
+.seg button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.seg .ico {
+  width: 13px;
+  height: 13px;
 }
 .ajustes {
   margin-left: auto;
@@ -283,6 +325,19 @@ h1 {
   font-size: 14px;
   line-height: 1.4;
 }
+.dato-fila .et-ico {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.dato-fila .et-ico .ico {
+  width: 15px;
+  height: 15px;
+  color: var(--tinta-2);
+}
+.dato-fila small {
+  padding-left: 22px;
+}
 .dato-fila small {
   display: block;
   font-size: var(--t-dato);
@@ -368,6 +423,12 @@ h3 {
   display: grid;
   gap: var(--e-2);
   align-content: start;
+}
+.tres .cab-bloque {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 4px;
 }
 .tres .n {
   display: inline-flex;
@@ -469,6 +530,210 @@ h3 {
   }
 }
 
+.demo-nombre {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.demo-nombre > div {
+  min-width: 0;
+}
+
+/* ---------- Cómo funciona: tres pasos con su miniatura ---------- */
+.pasos {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--e-5);
+}
+.paso {
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  gap: var(--e-3);
+  min-width: 0;
+}
+.paso-cab {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.paso-cab h3 {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: var(--t-sub);
+}
+.paso-cab h3 .n {
+  font: 500 var(--t-dato) / 1 var(--mono);
+  color: var(--tinta-2);
+}
+.conector {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  color: var(--tinta-3);
+  min-width: 24px;
+}
+.conector::before {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--linea);
+}
+.conector .ico {
+  width: 14px;
+  height: 14px;
+  margin-left: -2px;
+}
+.paso > p {
+  font-size: 14px;
+  color: var(--tinta-2);
+}
+.mini {
+  border: 1px solid var(--linea);
+  border-radius: 8px;
+  background: var(--sup-1);
+  padding: 14px 16px;
+  display: grid;
+  gap: 10px;
+  align-content: start;
+  min-width: 0;
+}
+.mini-pie {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  font-size: var(--t-dato);
+  color: var(--tinta-2);
+}
+.mini-plan {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 7px;
+}
+.mini-plan li {
+  display: grid;
+  grid-template-columns: 18px 88px minmax(0, 1fr) 18px;
+  gap: 8px;
+  align-items: center;
+  font-size: var(--t-chico);
+}
+.mini-plan .cod {
+  font: 500 11px/1 var(--mono);
+  color: var(--tinta-2);
+}
+.mini-plan .barra-dato {
+  grid-column: auto;
+}
+.mini-plan b {
+  font: 600 var(--t-chico) / 1 var(--letra);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.mini svg.mini-grafo {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.cuadros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.cuadro {
+  --v: var(--cumple);
+  --vt: var(--cumple-tinte);
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--v);
+  border-radius: 4px;
+  background: var(--vt);
+  font: 500 9px/1 var(--mono);
+  color: var(--tinta-1);
+  position: relative;
+}
+.cuadro svg {
+  width: 12px;
+  height: 12px;
+  color: var(--v);
+}
+.cuadro[data-v="no-cumple"] {
+  --v: var(--no-cumple);
+  --vt: var(--no-cumple-tinte);
+}
+.mini-leyenda {
+  font-size: var(--t-chico);
+  color: var(--tinta-2);
+}
+.mini-leyenda b {
+  color: var(--tinta-1);
+  font-weight: 600;
+}
+.medida {
+  display: grid;
+  gap: 6px;
+}
+.medida-et {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: var(--t-dato);
+  color: var(--tinta-2);
+}
+.medida-et b {
+  color: var(--tinta-1);
+  font-weight: 500;
+}
+.pista {
+  position: relative;
+  height: 10px;
+  border-radius: 3px;
+  background: var(--linea);
+}
+.pista .medido {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: 3px 0 0 3px;
+  background: var(--tinta-2);
+}
+.pista .hueco {
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  border: 1.5px solid var(--no-cumple);
+  border-radius: 2px;
+  background: repeating-linear-gradient(135deg, var(--no-cumple-tinte) 0 3px, transparent 3px 6px);
+}
+.pista .meta {
+  position: absolute;
+  top: -5px;
+  bottom: -5px;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--tinta-1);
+}
+.medida-ejes {
+  display: flex;
+  justify-content: space-between;
+  font: 400 11px/1 var(--mono);
+  color: var(--tinta-2);
+}
+@media (max-width: 860px) {
+  .pasos {
+    grid-template-columns: 1fr;
+    gap: var(--e-6);
+  }
+  .conector {
+    display: none;
+  }
+}
+
 /* ---------- Pregunta y pie ---------- */
 .pregunta {
   display: grid;
@@ -477,9 +742,12 @@ h3 {
 }
 .pregunta .et {
   grid-column: 1 / span 4;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  align-self: start;
   font-size: var(--t-chico);
   color: var(--tinta-2);
-  padding-top: 4px;
 }
 .pregunta .cuerpo {
   grid-column: 5 / span 8;
@@ -524,6 +792,15 @@ h3 {
   color: var(--tinta-1);
   font-weight: 500;
 }
+.pie p {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr);
+  gap: 10px;
+}
+.pie .ico {
+  margin-top: 2px;
+  color: var(--tinta-2);
+}
 @media (max-width: 720px) {
   .pie .cont {
     grid-template-columns: 1fr;
@@ -562,6 +839,10 @@ h3 {
 .boton svg {
   width: 12px;
   height: 12px;
+}
+.boton .ico {
+  width: 15px;
+  height: 15px;
 }
 .chip {
   display: inline-flex;
