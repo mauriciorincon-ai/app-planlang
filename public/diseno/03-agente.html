@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="es" data-theme="oscuro" data-lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title data-es="planlang · Sala de diseño · P3 Agente" data-en="planlang · Design room · P3 Agent">planlang · Sala de diseño · P3 Agente</title>
+<link rel="stylesheet" href="assets/fuentes.css">
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/planlang.css">
+<link rel="stylesheet" href="assets/diagrama.css">
+<link rel="stylesheet" href="assets/maqueta.css">
+<script src="assets/maqueta.js" defer></script>
+<script src="assets/lienzo.js" defer></script>
+<style>
+  /* Sin JS: se ve el primer estado (enrutador). */
+  html:not([data-estado]) [data-si="vista:enrutador"] { display: revert !important; }
+  .contrato { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--e-5); }
+  .contrato > div { display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 4px 14px; align-content: start; padding-top: 14px; border-top: 1px solid var(--linea); }
+  .contrato .baldosa { grid-row: span 3; }
+  .contrato b { font: 600 var(--t-cifra) / 1 var(--letra); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+  .contrato .que { font-size: 14px; }
+  .contrato small { font-size: var(--t-chico); color: var(--tinta-2); }
+  .contrato small code { font: 400 12px var(--mono); color: var(--tinta-1); }
+  .panel { display: grid; gap: var(--e-4); }
+  .panel-cab { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+  .panel-cab .glifo-g { width: 20px; height: 20px; fill: var(--c); }
+  .panel-cab h3 { font-size: var(--t-seccion); letter-spacing: -0.01em; }
+  .panel-cab .tipo-t { font: 500 12px var(--mono); color: var(--tinta-2); }
+  .pestanas-panel { justify-self: start; }
+  .contenido-tab { margin-top: 4px; }
+  .contenido-tab { max-width: 72ch; }
+  .contenido-tab p + p { margin-top: 10px; }
+  .lider { font-size: 17px; line-height: 1.55; }
+  .experto { display: grid; gap: 10px; padding-left: 18px; margin: 0; font-size: 14px; color: var(--tinta-1); }
+  .experto code, .contenido-tab code { font: 400 0.88em var(--mono); padding: 1px 4px; border-radius: 3px; background: var(--sup-2); }
+  .codigo { margin: 0; padding: 14px 16px; border: 1px solid var(--linea); border-radius: var(--radio); background: var(--sup-1); overflow-x: auto; font: 400 12.5px/1.65 var(--mono); color: var(--tinta-1); counter-reset: l var(--desde, 0); }
+  .codigo .l { display: block; }
+  .codigo .l::before { counter-increment: l; content: counter(l); display: inline-block; width: 3ch; margin-right: 14px; text-align: right; color: var(--tinta-2); }
+  .codigo .c { color: var(--tinta-2); }
+  .trazas .fila { display: grid; grid-template-columns: 64px 92px minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr); gap: 14px; align-items: center; padding-block: 10px; border-top: 1px solid var(--linea); font-size: 13px; }
+  .trazas .cabeza { border-top: 0; padding-block: 0 6px; font-size: 12px; color: var(--tinta-2); }
+  .trazas .caso { font: 500 12px var(--mono); }
+  .senal { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 10px; align-items: center; }
+  .senal b { font: 600 13px var(--letra); font-variant-numeric: tabular-nums; }
+  .senal .pista { height: 6px; }
+  .ruta { display: inline-flex; align-items: center; gap: 6px; font: 400 12px var(--mono); }
+  .ruta svg { width: 12px; height: 12px; flex: none; }
+  .costo { font: 400 12px/1.4 var(--mono); color: var(--tinta-2); }
+  .dl-arista { margin: 0; display: grid; grid-template-columns: max-content minmax(0, 1fr); max-width: 560px; }
+  .dl-arista dt, .dl-arista dd { margin: 0; padding-block: 7px; border-top: 1px solid var(--linea); font-size: 13px; }
+  .dl-arista dt { color: var(--tinta-2); padding-right: 24px; }
+  .dl-arista dd { font: 400 12.5px/1.5 var(--mono); }
+  .distribucion { border: 1px solid var(--linea); border-radius: var(--radio); background: var(--sup-1); padding: 12px 16px; }
+  .distribucion svg { display: block; width: 100%; height: auto; }
+  .distribucion .eje { stroke: var(--linea); stroke-width: 1; fill: none; }
+  .distribucion .umbral-l { stroke: var(--tinta-1); stroke-width: 1.5; stroke-dasharray: 5 4; }
+  .distribucion text { font: 400 10.5px var(--mono); fill: var(--tinta-2); }
+  .distribucion text.fuerte { fill: var(--tinta-1); font-weight: 500; }
+  .distribucion text.zona { font-family: var(--letra); font-size: 11.5px; }
+  .ausentes .fila { display: grid; grid-template-columns: minmax(0, 220px) minmax(0, 1fr) minmax(0, 150px); gap: 16px; align-items: start; padding-block: 12px; border-top: 1px solid var(--linea); }
+  .ausentes .cabeza { border-top: 0; padding-block: 0 6px; font-size: 12px; color: var(--tinta-2); }
+  .ausentes p { font-size: 14px; }
+  .ausentes .liga { font: 400 12px/1.6 var(--mono); color: var(--tinta-2); }
+  .arista-rejilla { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 24px; }
+  @media (max-width: 860px) {
+    .arista-rejilla { grid-template-columns: 1fr; }
+    .contrato { grid-template-columns: 1fr; gap: var(--e-3); }
+    .trazas .fila { grid-template-columns: 56px minmax(0, 1fr); }
+    .trazas .fila > :nth-child(n + 3) { grid-column: 2; }
+    .trazas .cabeza { display: none; }
+    .ausentes .fila { grid-template-columns: 1fr; gap: 8px; }
+    .ausentes .cabeza { display: none; }
+  }
+</style>
+</head>
+<body>
+<script src="assets/sprite.js"></script>
+
+<div class="mq-bar" role="region" aria-label="Sala de diseño">
+  <span class="mq-t"><span lang="es">Sala de diseño · Mirada 2 · P3 Agente</span><span lang="en">Design room · Look 2 · P3 Agent</span></span>
+  <div class="mq-g" role="group" aria-label="Selección / Selection"><span><span lang="es">selección:</span><span lang="en">selection:</span></span><button type="button" data-estado="enrutador">enrutador</button><button type="button" data-estado="extractor">extractor</button><button type="button" data-estado="pausa_humana">pausa_humana</button><button type="button" data-estado="arista"><span lang="es">arista U1</span><span lang="en">edge U1</span></button><button type="button" data-estado="ausente"><span lang="es">ausentes</span><span lang="en">missing</span></button></div>
+  <div class="mq-g" role="group" aria-label="Tema / Theme"><span><span lang="es">tema:</span><span lang="en">theme:</span></span><button type="button" data-theme-set="oscuro"><span lang="es">oscuro</span><span lang="en">dark</span></button><button type="button" data-theme-set="claro"><span lang="es">claro</span><span lang="en">light</span></button></div>
+  <div class="mq-g" role="group" aria-label="Idioma / Language"><span><span lang="es">idioma:</span><span lang="en">language:</span></span><button type="button" data-lang-set="es">ES</button><button type="button" data-lang-set="en">EN</button></div>
+  <a href="index.html"><span lang="es">recorrido</span><span lang="en">tour</span></a>
+</div>
+<div class="mq-nota"><p><span lang="es"><b>Qué mirar:</b> toca un nodo o la arista punteada del lienzo (o usa «selección» arriba). Abajo cambia el detalle: texto de líder, de experto, el código real del spike y sus trazas. Lo punteado es lo que el plan exige y el grafo aún no tiene.</span><span lang="en"><b>What to look at:</b> tap a node or the dashed edge on the canvas (or use “selection” above). The detail below changes: leader text, expert text, the spike's real code and its traces. Dashed is what the plan requires and the graph does not have yet.</span></p></div>
+
+<div class="producto">
+  <div class="rotulo"><div class="cont">
+    <span class="sim"><svg class="ico" aria-hidden="true"><use href="#i-flask-conical"/></svg><span lang="es">Simulación · no operativo</span><span lang="en">Simulation · not operational</span></span>
+    <span><span lang="es">Datos 100 % sintéticos · las decisiones humanas de este demo se simularon en lote</span><span lang="en">100% synthetic data · this demo's human decisions were simulated in batch</span></span>
+  </div></div>
+  <header class="barra"><div class="cont">
+    <a class="marca" href="direccion.html"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="5" cy="10" r="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 10 H12" stroke="currentColor" stroke-width="1.6" stroke-dasharray="1.6 1.6"/><rect x="12" y="6" width="7" height="8" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>planlang</a>
+    <nav class="pestanas" aria-label="Secciones / Sections">
+      <a href="direccion.html"><svg class="ico" aria-hidden="true"><use href="#i-house"/></svg><span lang="es">Entrada</span><span lang="en">Home</span></a>
+      <a href="#"><svg class="ico" aria-hidden="true"><use href="#i-clipboard-list"/></svg>Plan</a>
+      <a href="#" aria-current="page"><svg class="ico" aria-hidden="true"><use href="#i-workflow"/></svg><span lang="es">Agente</span><span lang="en">Agent</span></a>
+      <a href="#"><svg class="ico" aria-hidden="true"><use href="#i-gauge"/></svg><span lang="es">Brecha</span><span lang="en">Gap</span></a>
+      <a href="#"><svg class="ico" aria-hidden="true"><use href="#i-sliders-horizontal"/></svg>Playground</a>
+    </nav>
+    <div class="ajustes">
+      <div class="seg" role="group" aria-label="Idioma / Language"><button type="button" data-lang-set="es"><svg class="ico" aria-hidden="true"><use href="#i-languages"/></svg>ES</button><button type="button" data-lang-set="en">EN</button></div>
+      <div class="seg" role="group" aria-label="Tema / Theme"><button type="button" data-theme-set="oscuro"><svg class="ico" aria-hidden="true"><use href="#i-moon"/></svg><span lang="es">Oscuro</span><span lang="en">Dark</span></button><button type="button" data-theme-set="claro"><svg class="ico" aria-hidden="true"><use href="#i-sun"/></svg><span lang="es">Claro</span><span lang="en">Light</span></button></div>
+    </div>
+  </div></header>
+
+  <main class="cont">
+    <section class="portada" style="padding-bottom:32px" aria-labelledby="p3-t">
+      <div class="texto">
+        <p class="antetitulo"><span lang="es">Demo A · autorizaciones médicas · corrida del spike, 2026-09-26</span><span lang="en">Demo A · medical prior authorizations · spike run, 2026-09-26</span></p>
+        <h1 id="p3-t"><span lang="es">El agente, tal como corrió</span><span lang="en">The agent, as it ran</span></h1>
+        <p class="guia"><span lang="es">El grafo sale del código que corrió y se compara con el contrato del plan. Lo que el plan exige y el agente aún no tiene se ve punteado, no se esconde.</span><span lang="en">The graph comes from the code that ran and is compared with the plan's contract. What the plan requires and the agent does not have yet shows dashed; it is not hidden.</span></p>
+      </div>
+    </section>
+
+    <div class="contrato" role="list" aria-label="Contrato frente a grafo / Contract against graph">
+      <div role="listitem"><span class="baldosa"><svg class="ico" aria-hidden="true"><use href="#i-workflow"/></svg></span><b><span lang="es">3 de 8</span><span lang="en">3 of 8</span></b><span class="que"><span lang="es">nodos del contrato están en el grafo</span><span lang="en">contract nodes are in the graph</span></span><small><span lang="es">Faltan</span><span lang="en">Missing:</span> <code>decision</code>, <code>aclaracion</code>, <code>verificador_cobertura</code>, <code>redactor</code>, <code>guardia_salida</code></small></div>
+      <div role="listitem"><span class="baldosa"><svg class="ico" aria-hidden="true"><use href="#i-route"/></svg></span><b><span lang="es">1 de 8</span><span lang="en">1 of 8</span></b><span class="que"><span lang="es">aristas condicionales del contrato</span><span lang="en">contract conditional edges</span></span><small><span lang="es">La de U1, pero en</span><span lang="en">U1's, but on</span> <code>enrutador</code> <span lang="es">y no en</span><span lang="en">rather than</span> <code>decision</code></small></div>
+      <div role="listitem"><span class="baldosa"><svg class="ico" aria-hidden="true"><use href="#i-circle-alert"/></svg></span><b>1</b><span class="que"><span lang="es">nodo fuera del contrato</span><span lang="en">node outside the contract</span></span><small><code>aprobar</code> <span lang="es">aprueba sin pasar por</span><span lang="en">approves without going through</span> <code>decision</code> <span lang="es">ni</span><span lang="en">or</span> <code>guardia_salida</code></small></div>
+    </div>
+    <p class="fuente" style="margin-top:12px"><span lang="es">Contrato de grafo del plan del demo A frente al grafo exportado del spike (6 nodos, 6 aristas, 2 condicionales)</span><span lang="en">Demo A plan's graph contract against the spike's exported graph (6 nodes, 6 edges, 2 conditional)</span> <span class="chip"><svg aria-hidden="true"><use href="#m-real"/></svg>real</span></p>
+
+    <!-- ============================ Grafo -->
+    <section class="seccion" data-vistas aria-labelledby="s-grafo" style="margin-top:32px">
+      <div class="seccion-cab">
+        <h2 id="s-grafo"><span lang="es">El grafo</span><span lang="en">The graph</span></h2>
+        <div class="seg vista-alterna" role="group" aria-label="Vista / View"><button type="button" data-vista="lienzo" aria-pressed="true"><span lang="es">Lienzo</span><span lang="en">Canvas</span></button><button type="button" data-vista="lista" aria-pressed="false"><span lang="es">Lista por capa</span><span lang="en">List by layer</span></button></div>
+      </div>
+      <p class="nota" style="margin:-12px 0 16px"><span lang="es">Dibujado a mano como referencia; en el sprint 2 lo genera el código con el diagramador. Toca un nodo o la arista punteada.</span><span lang="en">Hand-drawn as a reference; in sprint 2 code generates it with the diagrammer. Tap a node or the dashed edge.</span></p>
+
+      <div data-panel="lienzo">
+        <div class="lienzo-marco">
+          <div class="lienzo-scroll" tabindex="0" role="region" aria-label="Diagrama del agente; se desliza de lado / Agent diagram; scrolls sideways">
+            <svg data-lienzo id="grafo-agente" viewBox="-10 -14 1040 444" xmlns="http://www.w3.org/2000/svg" role="graphics-document document" aria-labelledby="g-t">
+              <title id="g-t">Grafo del demo A (spike) contra su contrato: presentes extractor, enrutador, pausa_humana y aprobar; exigidos y ausentes decision, aclaracion, verificador_cobertura, redactor y guardia_salida</title>
+              <defs><marker id="punta" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="punta"/></marker></defs>
+              <g class="d-guia"><path d="M166,54 V430 M338,54 V430 M510,54 V430 M682,54 V430 M854,54 V430"/></g>
+
+              <g class="d-banda-cab" data-columna="10"><text class="d-banda-num" x="0" y="0">01</text><text class="d-banda-nombre" x="0" y="20"><tspan lang="es">Entrada</tspan><tspan lang="en">Input</tspan></text><text class="d-banda-preg" x="0" y="37"><tspan lang="es">¿Qué recibe?</tspan><tspan lang="en">What comes in?</tspan></text></g>
+              <g class="d-banda-cab" data-columna="182"><text class="d-banda-num" x="172" y="0">02</text><text class="d-banda-nombre" x="172" y="20"><tspan lang="es">Orquestación</tspan><tspan lang="en">Orchestration</tspan></text><text class="d-banda-preg" x="172" y="37"><tspan lang="es">¿Quién elige el paso?</tspan><tspan lang="en">Who picks the next step?</tspan></text></g>
+              <g class="d-banda-cab" data-columna="354"><text class="d-banda-num" x="344" y="0">03</text><text class="d-banda-nombre" x="344" y="20"><tspan lang="es">Agentes</tspan><tspan lang="en">Agents</tspan></text><text class="d-banda-preg" x="344" y="37"><tspan lang="es">¿Quién razona?</tspan><tspan lang="en">Who reasons?</tspan></text></g>
+              <g class="d-banda-cab" data-columna="526"><text class="d-banda-num" x="516" y="0">04</text><text class="d-banda-nombre" x="516" y="20"><tspan lang="es">Reglas y guardias</tspan><tspan lang="en">Rules and guards</tspan></text><text class="d-banda-preg" x="516" y="37"><tspan lang="es">¿Qué verifica el código?</tspan><tspan lang="en">What does code check?</tspan></text></g>
+              <g class="d-banda-cab" data-columna="698"><text class="d-banda-num" x="688" y="0">05</text><text class="d-banda-nombre" x="688" y="20"><tspan lang="es">Pausa humana</tspan><tspan lang="en">Human pause</tspan></text><text class="d-banda-preg" x="688" y="37"><tspan lang="es">¿Cuándo espera a alguien?</tspan><tspan lang="en">When does it wait?</tspan></text></g>
+              <g class="d-banda-cab" data-columna="870"><text class="d-banda-num" x="860" y="0">06</text><text class="d-banda-nombre" x="860" y="20"><tspan lang="es">Salida</tspan><tspan lang="en">Output</tspan></text><text class="d-banda-preg" x="860" y="37"><tspan lang="es">¿Qué entrega?</tspan><tspan lang="en">What goes out?</tspan></text></g>
+
+              <g class="d-flujo" data-modo="secuencia"><path d="M49,92 H341" marker-end="url(#punta)"/></g>
+              <g class="d-flujo" data-modo="secuencia"><path d="M424,120 V130 H252 V161" marker-end="url(#punta)"/></g>
+              <g class="d-flujo" data-modo="condicional" data-nodo-id="arista" tabindex="0" role="button" aria-label="Arista condicional U1: senal_confianza menor que 0,75 / Conditional edge U1">
+                <path d="M332,178 H348 V142 H900 V123" marker-end="url(#punta)"/><rect class="marcador" x="356" y="138" width="8" height="8"/><rect class="et-fondo" x="370" y="147" width="220" height="13"/><text x="372" y="157">senal_confianza ≥ <tspan lang="es">0,75</tspan><tspan lang="en">0.75</tspan> → aprobar</text>
+                <path d="M332,206 H685" marker-end="url(#punta)"/><rect class="marcador" x="356" y="202" width="8" height="8"/><rect class="et-fondo" x="370" y="213" width="244" height="13"/><text x="372" y="223">senal_confianza &lt; <tspan lang="es">0,75</tspan><tspan lang="en">0.75</tspan> → pausa_humana</text>
+              </g>
+              <g class="d-flujo" data-modo="secuencia"><path d="M940,120 V180" marker-end="url(#punta)"/></g>
+              <g class="d-flujo" data-modo="reanudacion"><path d="M848,192 H928" marker-end="url(#punta)"/><text class="suave" x="888" y="184" text-anchor="middle"><tspan lang="es">reanuda</tspan><tspan lang="en">resumes</tspan></text></g>
+
+              <g class="d-terminal"><circle cx="40" cy="92" r="9"/><text x="40" y="118" text-anchor="middle"><tspan lang="es">solicitud</tspan><tspan lang="en">request</tspan></text></g>
+              <g class="d-terminal fin"><circle cx="940" cy="192" r="9"/><circle cx="940" cy="192" r="4.5" style="fill:var(--tinta-2);stroke:none"/><text x="940" y="220" text-anchor="middle"><tspan lang="es">fin</tspan><tspan lang="en">end</tspan></text></g>
+
+              <!-- presentes -->
+              <g class="d-nodo" data-tipo="modelo" data-nodo-id="extractor" tabindex="0" role="button" aria-label="extractor: modelo de lenguaje / language model">
+                <rect class="caja" x="344" y="64" width="160" height="56" rx="6"/><rect class="filete" x="345" y="72" width="3" height="40" rx="1.5"/>
+                <g class="glifo" transform="translate(362,82)"><use href="#g-estrella" x="-6" y="-6" width="12" height="12"/></g>
+                <text class="cod" x="374" y="86"><tspan lang="es">MOD</tspan><tspan lang="en">MODEL</tspan></text><text class="nombre" x="356" y="106">extractor</text>
+              </g>
+              <g class="d-nodo" data-tipo="enrutador" data-nodo-id="enrutador" data-sel="true" tabindex="0" role="button" aria-label="enrutador / router">
+                <rect class="caja" x="172" y="164" width="160" height="56" rx="6"/><rect class="filete" x="173" y="172" width="3" height="40" rx="1.5"/>
+                <g class="glifo" transform="translate(190,182)"><use href="#g-rombo" x="-6" y="-6" width="12" height="12"/></g>
+                <text class="cod" x="202" y="186"><tspan lang="es">ENR · 2 ramas</tspan><tspan lang="en">ROUTE · 2 branches</tspan></text><text class="nombre" x="184" y="206">enrutador</text>
+              </g>
+              <g class="d-nodo" data-tipo="pausa_humana" data-nodo-id="pausa_humana" tabindex="0" role="button" aria-label="pausa_humana: auditor médico / medical auditor">
+                <rect class="caja" x="688" y="164" width="160" height="56" rx="6"/><rect class="filete" x="689" y="172" width="3" height="40" rx="1.5"/>
+                <g class="glifo" transform="translate(706,182)"><use href="#g-cuadrado" x="-6" y="-6" width="12" height="12"/></g>
+                <text class="cod" x="718" y="186"><tspan lang="es">HUM · auditor</tspan><tspan lang="en">HUMAN · auditor</tspan></text><text class="nombre" x="700" y="206">pausa_humana</text>
+              </g>
+              <g class="d-nodo" data-tipo="regla" aria-label="aprobar: regla, fuera del contrato / rule, outside the contract" role="img">
+                <rect class="caja" x="860" y="64" width="160" height="56" rx="6"/><rect class="filete" x="861" y="72" width="3" height="40" rx="1.5"/>
+                <g class="glifo" transform="translate(878,82)"><use href="#g-hexagono" x="-6" y="-6" width="12" height="12"/></g>
+                <text class="cod" x="890" y="86"><tspan lang="es">REG</tspan><tspan lang="en">RULE</tspan></text>
+                <g class="extra"><rect x="938" y="73" width="74" height="16" rx="3"/><path d="M945,81 H951 M948,78 V84"/><text x="955" y="85"><tspan lang="es">sin contrato</tspan><tspan lang="en">unplanned</tspan></text></g>
+                <text class="nombre" x="872" y="106">aprobar</text>
+              </g>
+
+              <!-- exigidos por el plan, ausentes del grafo -->
+              <g class="d-nodo" data-tipo="regla" data-madurez="exigido" data-nodo-id="ausente" tabindex="0" role="button" aria-label="verificador_cobertura: exigido, ausente / required, missing">
+                <rect class="caja" x="516" y="64" width="160" height="56" rx="6"/>
+                <g class="glifo" transform="translate(534,82)"><use href="#g-hexagono" x="-6" y="-6" width="12" height="12"/></g>
+                <text class="cod" x="546" y="86"><tspan lang="es">REG</tspan><tspan lang="en">RULE</tspan></text>
+                <g class="aus"><rect x="606" y="73" width="62" height="16" rx="3"/><path d="M613,77.5 V82.5 M613,85 V85.3"/><text x="619" y="85"><tspan lang="es">exigido</tspan><tspan lang="en">required</tspan></text></g>
+                <text class="nombre" x="528" y="106">verificador_cobertura</text>
+              </g>
+              <g class="d-nodo" data-tipo="enrutador" data-madurez="exigido" data-nodo-id="ausente" tabindex="0" role="button" aria-label="decision: exigido, ausente / required, missing">
+                <rect class="caja" x="172" y="264" width="160" height="56" rx="6"/>
+                <g class="glifo" transform="translate(190,282)"><use href="#g-rombo" x="-6" y="-6" width="12" height="12"/></g>
+                <text class="cod" x="202" y="286"><tspan lang="es">ENR</tspan><tspan lang="en">ROUTE</tspan></text>
+                <g class="aus"><rect x="262" y="273" width="62" height="16" rx="3"/><path d="M269,277.5 V282.5 M269,285 V285.3"/><text x="275" y="285"><tspan lang="es">exigido</tspan><tspan lang="en">required</tspan></text></g>
+                <text class="nombre" x="184" y="306">decision</text>
+              </g>
+              <g class="d-nodo" data-tipo="modelo" data-madurez="exigido" data-nodo-id="ausente" tabindex="0" role="button" aria-label="aclaracion: exigido, ausente / required, missing">
+                <rect class="caja" x="344" y="264" width="160" height="56" rx="6"/>
+                <g class="glifo" transform="translate(362,282)"><use href="#g-estrella" x="-6" y="-6" width="12" height="12"/></g>
+                <text class="cod" x="374" y="286"><tspan lang="es">MOD</tspan><tspan lang="en">MODEL</tspan></text>
+                <g class="aus"><rect x="434" y="273" width="62" height="16" rx="3"/><path d="M441,277.5 V282.5 M441,285 V285.3"/><text x="447" y="285"><tspan lang="es">exigido</tspan><tspan lang="en">required</tspan></text></g>
+                <text class="nombre" x="356" y="306">aclaracion</text>
+              </g>
+              <g class="d-nodo" data-tipo="regla" data-madurez="exigido" data-nodo-id="ausente" tabindex="0" role="button" aria-label="guardia_salida: exigido, ausente / required, missing">
+                <rect class="caja" x="516" y="264" width="160" height="56" rx="6"/>
+                <g class="glifo" transform="translate(534,282)"><use href="#g-hexagono" x="-6" y="-6" width="12" height="12"/></g>
+                <text class="cod" x="546" y="286"><tspan lang="es">REG</tspan><tspan lang="en">RULE</tspan></text>
+                <g class="aus"><rect x="606" y="273" width="62" height="16" rx="3"/><path d="M613,277.5 V282.5 M613,285 V285.3"/><text x="619" y="285"><tspan lang="es">exigido</tspan><tspan lang="en">required</tspan></text></g>
+                <text class="nombre" x="528" y="306">guardia_salida</text>
+              </g>
+              <g class="d-nodo" data-tipo="modelo" data-madurez="exigido" data-nodo-id="ausente" tabindex="0" role="button" aria-label="redactor: exigido, ausente / required, missing">
+                <rect class="caja" x="344" y="364" width="160" height="56" rx="6"/>
+                <g class="glifo" transform="translate(362,382)"><use href="#g-estrella" x="-6" y="-6" width="12" height="12"/></g>
+                <text class="cod" x="374" y="386"><tspan lang="es">MOD</tspan><tspan lang="en">MODEL</tspan></text>
+                <g class="aus"><rect x="434" y="373" width="62" height="16" rx="3"/><path d="M441,377.5 V382.5 M441,385 V385.3"/><text x="447" y="385"><tspan lang="es">exigido</tspan><tspan lang="en">required</tspan></text></g>
+                <text class="nombre" x="356" y="406">redactor</text>
+              </g>
+            </svg>
+          </div>
+          <div class="lienzo-indice" aria-label="Ir a la capa / Go to layer">
+            <span><span lang="es">Desliza · capa</span><span lang="en">Slide · layer</span></span>
+            <button type="button" data-ir="10">01</button><button type="button" data-ir="182">02</button><button type="button" data-ir="354">03</button><button type="button" data-ir="526">04</button><button type="button" data-ir="698">05</button><button type="button" data-ir="870">06</button>
+          </div>
+        </div>
+        <div class="leyenda">
+          <span class="item"><svg viewBox="0 0 30 12" aria-hidden="true"><path d="M1,6 H29" stroke="currentColor" stroke-width="1.5"/></svg><span lang="es">secuencia</span><span lang="en">sequence</span></span>
+          <span class="item"><svg viewBox="0 0 30 12" aria-hidden="true"><path d="M1,6 H29" stroke="currentColor" stroke-width="1.5" stroke-dasharray="6 4"/><rect x="11" y="2" width="8" height="8" fill="var(--fondo)" stroke="currentColor" stroke-width="1.5"/></svg><span lang="es">condicional · señal · operador · valor</span><span lang="en">conditional · signal · operator · value</span></span>
+          <span class="item"><svg viewBox="0 0 30 12" aria-hidden="true"><path d="M1,6 H29" stroke="currentColor" stroke-width="2.2" stroke-dasharray="0.1 4.5" stroke-linecap="round"/></svg><span lang="es">reanudación · responde una persona</span><span lang="en">resume · a person answers</span></span>
+          <span class="item"><svg class="cuad" viewBox="-7 -7 14 14" aria-hidden="true"><rect x="-6" y="-6" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.3" stroke-dasharray="3 2"/></svg><span lang="es">exigido por el plan, aún no en el grafo</span><span lang="en">required by the plan, not yet in the graph</span></span>
+        </div>
+      </div>
+
+      <div data-panel="lista" hidden>
+        <ol class="lista-capas">
+          <li><div class="capa-cab"><span class="n">01</span><b><span lang="es">Entrada</span><span lang="en">Input</span></b><span><span lang="es">¿Qué recibe?</span><span lang="en">What comes in?</span></span></div><div><p class="vacia"><span lang="es">solicitud (terminal)</span><span lang="en">request (terminal)</span></p><p class="flujo-txt"><span lang="es">solicitud → extractor · secuencia</span><span lang="en">request → extractor · sequence</span></p></div></li>
+          <li><div class="capa-cab"><span class="n">02</span><b><span lang="es">Orquestación</span><span lang="en">Orchestration</span></b><span><span lang="es">¿Quién elige el paso?</span><span lang="en">Who picks the next step?</span></span></div><ol><li><div class="nodo" data-tipo="enrutador"><svg class="glifo" aria-hidden="true"><use href="#g-rombo"/></svg><span class="cod"><span lang="es">ENR · 2 ramas</span><span lang="en">ROUTE · 2 branches</span></span><span class="nombre">enrutador</span></div><p class="flujo-txt">senal_confianza &lt; <span lang="es">0,75</span><span lang="en">0.75</span> → pausa_humana · <span lang="es">si no</span><span lang="en">else</span> → aprobar</p></li><li><div class="nodo" data-tipo="enrutador" data-madurez="exigido"><svg class="glifo" aria-hidden="true"><use href="#g-rombo"/></svg><span class="cod"><span lang="es">ENR</span><span lang="en">ROUTE</span></span><span class="nombre">decision</span><span class="aus"><svg aria-hidden="true"><use href="#m-exigido"/></svg><span lang="es">exigido</span><span lang="en">required</span></span></div></li></ol></li>
+          <li><div class="capa-cab"><span class="n">03</span><b><span lang="es">Agentes</span><span lang="en">Agents</span></b><span><span lang="es">¿Quién razona?</span><span lang="en">Who reasons?</span></span></div><ol><li><div class="nodo" data-tipo="modelo"><svg class="glifo" aria-hidden="true"><use href="#g-estrella"/></svg><span class="cod"><span lang="es">MOD</span><span lang="en">MODEL</span></span><span class="nombre">extractor</span></div><p class="flujo-txt"><span lang="es">extractor → enrutador · secuencia</span><span lang="en">extractor → router · sequence</span></p></li><li><div class="nodo" data-tipo="modelo" data-madurez="exigido"><svg class="glifo" aria-hidden="true"><use href="#g-estrella"/></svg><span class="cod"><span lang="es">MOD</span><span lang="en">MODEL</span></span><span class="nombre">aclaracion</span><span class="aus"><svg aria-hidden="true"><use href="#m-exigido"/></svg><span lang="es">exigido</span><span lang="en">required</span></span></div></li><li><div class="nodo" data-tipo="modelo" data-madurez="exigido"><svg class="glifo" aria-hidden="true"><use href="#g-estrella"/></svg><span class="cod"><span lang="es">MOD</span><span lang="en">MODEL</span></span><span class="nombre">redactor</span><span class="aus"><svg aria-hidden="true"><use href="#m-exigido"/></svg><span lang="es">exigido</span><span lang="en">required</span></span></div></li></ol></li>
+          <li><div class="capa-cab"><span class="n">04</span><b><span lang="es">Reglas y guardias</span><span lang="en">Rules and guards</span></b><span><span lang="es">¿Qué verifica el código?</span><span lang="en">What does code check?</span></span></div><ol><li><div class="nodo" data-tipo="regla" data-madurez="exigido"><svg class="glifo" aria-hidden="true"><use href="#g-hexagono"/></svg><span class="cod"><span lang="es">REG</span><span lang="en">RULE</span></span><span class="nombre">verificador_cobertura</span><span class="aus"><svg aria-hidden="true"><use href="#m-exigido"/></svg><span lang="es">exigido</span><span lang="en">required</span></span></div></li><li><div class="nodo" data-tipo="regla" data-madurez="exigido"><svg class="glifo" aria-hidden="true"><use href="#g-hexagono"/></svg><span class="cod"><span lang="es">REG</span><span lang="en">RULE</span></span><span class="nombre">guardia_salida</span><span class="aus"><svg aria-hidden="true"><use href="#m-exigido"/></svg><span lang="es">exigido</span><span lang="en">required</span></span></div></li></ol></li>
+          <li><div class="capa-cab"><span class="n">05</span><b><span lang="es">Pausa humana</span><span lang="en">Human pause</span></b><span><span lang="es">¿Cuándo espera a alguien?</span><span lang="en">When does it wait?</span></span></div><div><div class="nodo" data-tipo="pausa_humana"><svg class="glifo" aria-hidden="true"><use href="#g-cuadrado"/></svg><span class="cod"><span lang="es">HUM · auditor</span><span lang="en">HUMAN · auditor</span></span><span class="nombre">pausa_humana</span></div><p class="flujo-txt"><span lang="es">pausa_humana → fin · reanudación (responde el auditor médico)</span><span lang="en">pausa_humana → end · resume (the medical auditor answers)</span></p></div></li>
+          <li><div class="capa-cab"><span class="n">06</span><b><span lang="es">Salida</span><span lang="en">Output</span></b><span><span lang="es">¿Qué entrega?</span><span lang="en">What goes out?</span></span></div><div><div class="nodo" data-tipo="regla"><svg class="glifo" aria-hidden="true"><use href="#g-hexagono"/></svg><span class="cod"><span lang="es">REG · sin contrato</span><span lang="en">RULE · unplanned</span></span><span class="nombre">aprobar</span></div><p class="flujo-txt"><span lang="es">aprobar → fin · secuencia</span><span lang="en">aprobar → end · sequence</span></p></div></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============================ Detalle de la selección -->
+    <section class="seccion" aria-labelledby="s-det" style="padding-bottom:56px">
+      <h2 id="s-det" class="sr" style="position:absolute;left:-9999px"><span lang="es">Detalle de la selección</span><span lang="en">Selection detail</span></h2>
+
+      <!-- enrutador -->
+      <div class="panel" data-si="vista:enrutador" data-vistas>
+        <div class="panel-cab" style="--c:var(--tipo-5)"><svg class="glifo-g" aria-hidden="true"><use href="#g-rombo"/></svg><h3>enrutador</h3><span class="tipo-t"><span lang="es">ENR · enrutador · 2 ramas</span><span lang="en">ROUTE · router · 2 branches</span></span><span class="chip"><svg aria-hidden="true"><use href="#m-real"/></svg><span lang="es">real · spike</span><span lang="en">real · spike</span></span></div>
+        <div class="seg vista-alterna pestanas-panel" role="group" aria-label="Detalle / Detail"><button type="button" data-vista="lider" aria-pressed="true"><svg class="ico" aria-hidden="true"><use href="#i-user-round"/></svg><span lang="es">Líder</span><span lang="en">Leader</span></button><button type="button" data-vista="experto" aria-pressed="false"><svg class="ico" aria-hidden="true"><use href="#i-microscope"/></svg><span lang="es">Experto</span><span lang="en">Expert</span></button><button type="button" data-vista="codigo" aria-pressed="false"><svg class="ico" aria-hidden="true"><use href="#i-code"/></svg><span lang="es">Código</span><span lang="en">Code</span></button><button type="button" data-vista="trazas" aria-pressed="false"><svg class="ico" aria-hidden="true"><use href="#i-list-checks"/></svg><span lang="es">3 trazas</span><span lang="en">3 traces</span></button></div>
+        <div class="contenido-tab" data-panel="lider"><p class="lider"><span lang="es">Decide si el caso sigue solo o lo revisa una persona. Mira qué tan segura quedó la lectura de la solicitud: si la confianza queda por debajo de 0,75, lo manda al auditor médico.</span><span lang="en">It decides whether the case goes on alone or a person reviews it. It looks at how sure the reading of the request was: if confidence falls below 0.75, it sends the case to the medical auditor.</span></p></div>
+        <div class="contenido-tab" data-panel="experto" hidden><ul class="experto">
+          <li><span lang="es">Nodo escritor (principio 4): deja <code>ruta</code> y <code>umbral_aplicado</code> en el estado antes de enrutar; la función de la arista solo lee <code>ruta</code>. Por eso la decisión queda en la traza.</span><span lang="en">Writer node (principle 4): it sets <code>ruta</code> and <code>umbral_aplicado</code> in the state before routing; the edge function only reads <code>ruta</code>. That is why the decision is in the trace.</span></li>
+          <li><span lang="es">Regla U1 (decisión D3): <code>senal_confianza · menor_que · 0,75</code>, no inclusiva. Un 0,75 exacto va a <code>aprobar</code>.</span><span lang="en">Rule U1 (decision D3): <code>senal_confianza · menor_que · 0.75</code>, not inclusive. An exact 0.75 goes to <code>aprobar</code>.</span></li>
+          <li><span lang="es">Brecha de contrato: el plan pone esta arista en <code>decision</code> y le pide a <code>enrutador</code> otra (<code>tipo_atencion == urgencia → redactor</code>). El spike no tiene ninguna de las dos.</span><span lang="en">Contract gap: the plan puts this edge on <code>decision</code> and asks <code>enrutador</code> for another one (<code>tipo_atencion == urgencia → redactor</code>). The spike has neither.</span></li>
+        </ul></div>
+        <div class="contenido-tab" data-panel="codigo" hidden>
+<pre class="codigo" style="--desde:195" aria-label="spike.py, líneas 196 a 203"><span class="l">def nodo_enrutador(state: Estado) -&gt; dict:</span><span class="l"><span class="c">    # Principio 4: la señal y el umbral quedan en el estado (y en la traza)</span></span><span class="l">    ruta = "pausa_humana" if state["senal_confianza"] &lt; UMBRAL_CONFIANZA else "aprobar"</span><span class="l">    return {"ruta": ruta, "umbral_aplicado": UMBRAL_CONFIANZA}</span><span class="l"></span><span class="l"></span><span class="l">def decidir(state: Estado) -&gt; Literal["pausa_humana", "aprobar"]:</span><span class="l">    return state["ruta"]</span></pre>
+          <p class="fuente">spike.py · <span lang="es">líneas 196–203 · corrida del 2026-09-26</span><span lang="en">lines 196–203 · run of 2026-09-26</span> <span class="chip"><svg aria-hidden="true"><use href="#m-real"/></svg>real</span></p>
+        </div>
+        <div class="contenido-tab trazas" data-panel="trazas" hidden style="max-width:none">
+          <div class="fila cabeza"><span><span lang="es">Caso</span><span lang="en">Case</span></span><span><span lang="es">Tipo</span><span lang="en">Type</span></span><span><span lang="es">Señal frente a U1</span><span lang="en">Signal against U1</span></span><span><span lang="es">Ruta</span><span lang="en">Route</span></span><span><span lang="es">Verdad · tiempo · costo</span><span lang="en">Truth · time · cost</span></span></div>
+          <div class="fila"><span class="caso">A-001</span><span class="chip">normal</span><div class="senal"><b><span lang="es">0,90</span><span lang="en">0.90</span></b><div class="pista" aria-hidden="true"><span class="medido" style="width:90%"></span><span class="meta" style="left:75%"></span></div></div><span class="ruta"><svg aria-hidden="true" style="fill:var(--tipo-3)"><use href="#g-hexagono"/></svg>aprobar</span><span class="costo">✓ · 3,78 s · 0,0096 USD</span></div>
+          <div class="fila"><span class="caso">A-004</span><span class="chip"><span lang="es">borde</span><span lang="en">edge case</span></span><div class="senal"><b><span lang="es">0,30</span><span lang="en">0.30</span></b><div class="pista" aria-hidden="true"><span class="medido" style="width:30%"></span><span class="meta" style="left:75%"></span></div></div><span class="ruta"><svg aria-hidden="true" style="fill:var(--tipo-4)"><use href="#g-cuadrado"/></svg>pausa_humana</span><span class="costo">✓ · 4,74 s · 0,0097 USD</span></div>
+          <div class="fila"><span class="caso">A-005</span><span class="chip"><span lang="es">adversario</span><span lang="en">adversarial</span></span><div class="senal"><b><span lang="es">0,85</span><span lang="en">0.85</span></b><div class="pista" aria-hidden="true"><span class="medido" style="width:85%"></span><span class="meta" style="left:75%"></span></div></div><span class="ruta"><svg aria-hidden="true" style="fill:var(--tipo-3)"><use href="#g-hexagono"/></svg>aprobar</span><span class="costo">✓ · 5,83 s · 0,0113 USD</span></div>
+          <p class="fuente" style="margin-top:10px"><span lang="es">✓ = la ruta coincide con la verdad conocida del caso. La marca vertical de cada barra es U1 = 0,75.</span><span lang="en">✓ = the route matches the case's known truth. The vertical mark on each bar is U1 = 0.75.</span> <span class="chip"><svg aria-hidden="true"><use href="#m-real"/></svg>real</span></p>
+        </div>
+      </div>
+
+      <!-- extractor -->
+      <div class="panel" data-si="vista:extractor" data-vistas>
+        <div class="panel-cab" style="--c:var(--tipo-1)"><svg class="glifo-g" aria-hidden="true"><use href="#g-estrella"/></svg><h3>extractor</h3><span class="tipo-t"><span lang="es">MOD · modelo de lenguaje · sonnet</span><span lang="en">MODEL · language model · sonnet</span></span><span class="chip"><svg aria-hidden="true"><use href="#m-real"/></svg><span lang="es">real · spike</span><span lang="en">real · spike</span></span></div>
+        <div class="seg vista-alterna pestanas-panel" role="group" aria-label="Detalle / Detail"><button type="button" data-vista="lider" aria-pressed="true"><svg class="ico" aria-hidden="true"><use href="#i-user-round"/></svg><span lang="es">Líder</span><span lang="en">Leader</span></button><button type="button" data-vista="experto" aria-pressed="false"><svg class="ico" aria-hidden="true"><use href="#i-microscope"/></svg><span lang="es">Experto</span><span lang="en">Expert</span></button><button type="button" data-vista="codigo" aria-pressed="false"><svg class="ico" aria-hidden="true"><use href="#i-code"/></svg><span lang="es">Código</span><span lang="en">Code</span></button><button type="button" data-vista="trazas" aria-pressed="false"><svg class="ico" aria-hidden="true"><use href="#i-list-checks"/></svg><span lang="es">3 trazas</span><span lang="en">3 traces</span></button></div>
+        <div class="contenido-tab" data-panel="lider"><p class="lider"><span lang="es">Lee la solicitud escrita y saca los datos que importan: paciente, procedimiento, diagnóstico, urgencia y costo. Además dice qué tan segura quedó de su lectura; esa confianza decide el camino.</span><span lang="en">It reads the written request and pulls out what matters: patient, procedure, diagnosis, urgency and cost. It also says how sure it is of its reading; that confidence decides the path.</span></p></div>
+        <div class="contenido-tab" data-panel="experto" hidden><ul class="experto">
+          <li><span lang="es">Nodo modelo: <code>ChatClaudeCode</code> con <code>sonnet</code> y salida estructurada por esquema JSON; escribe <code>extraccion</code> y <code>senal_confianza</code> en el estado.</span><span lang="en">Model node: <code>ChatClaudeCode</code> with <code>sonnet</code> and schema-bound structured output; it writes <code>extraccion</code> and <code>senal_confianza</code> to the state.</span></li>
+          <li><span lang="es">Riesgo R5: la confianza es verbalizada y puede estar mal calibrada. El supuesto S1 la mide sobre el lote de 20 (ECE ≤ 0,10 y AUROC ≥ 0,75).</span><span lang="en">Risk R5: confidence is verbalized and may be miscalibrated. Assumption S1 measures it on the batch of 20 (ECE ≤ 0.10 and AUROC ≥ 0.75).</span></li>
+          <li><span lang="es">Brecha de contrato: el plan pide enrutar a <code>aclaracion</code> si <code>campos_faltantes_count &gt; 0</code>. El spike no lo hace: A-002 traía 5 campos faltantes y siguió de largo.</span><span lang="en">Contract gap: the plan asks to route to <code>aclaracion</code> when <code>campos_faltantes_count &gt; 0</code>. The spike does not: A-002 had 5 missing fields and went straight on.</span></li>
+        </ul></div>
+        <div class="contenido-tab" data-panel="codigo" hidden>
+<pre class="codigo" style="--desde:186" aria-label="spike.py, líneas 187 a 193"><span class="l">def nodo_extractor(state: Estado) -&gt; dict:</span><span class="l">    llm = ChatClaudeCode(model=MODEL, json_schema=ESQUEMA_EXTRACCION)</span><span class="l">    ai = llm.invoke([SystemMessage(SISTEMA_EXTRACTOR), HumanMessage(f"Solicitud:\n{state['texto']}")])</span><span class="l">    ext = ai.additional_kwargs.get("structured_output")</span><span class="l">    if not ext:</span><span class="l">        ext = json.loads(ai.content)</span><span class="l">    return {"extraccion": ext, "senal_confianza": float(ext["confianza"]), "meta_llm": ai.response_metadata}</span></pre>
+          <p class="fuente">spike.py · <span lang="es">líneas 187–193</span><span lang="en">lines 187–193</span> <span class="chip"><svg aria-hidden="true"><use href="#m-real"/></svg>real</span></p>
+        </div>
+        <div class="contenido-tab trazas" data-panel="trazas" hidden style="max-width:none">
+          <div class="fila cabeza"><span><span lang="es">Caso</span><span lang="en">Case</span></span><span><span lang="es">Tipo</span><span lang="en">Type</span></span><span><span lang="es">Confianza que dijo</span><span lang="en">Confidence it stated</span></span><span><span lang="es">Campos faltantes</span><span lang="en">Missing fields</span></span><span><span lang="es">Tiempo · tokens · costo</span><span lang="en">Time · tokens · cost</span></span></div>
+          <div class="fila"><span class="caso">A-001</span><span class="chip">normal</span><div class="senal"><b><span lang="es">0,90</span><span lang="en">0.90</span></b><div class="pista" aria-hidden="true"><span class="medido" style="width:90%"></span><span class="meta" style="left:75%"></span></div></div><span class="costo">0</span><span class="costo"><span lang="es">3,77 s · 214 de salida · 0,0096 USD</span><span lang="en">3.77 s · 214 out · 0.0096 USD</span></span></div>
+          <div class="fila"><span class="caso">A-002</span><span class="chip">normal</span><div class="senal"><b><span lang="es">0,75</span><span lang="en">0.75</span></b><div class="pista" aria-hidden="true"><span class="medido" style="width:75%"></span><span class="meta" style="left:75%"></span></div></div><span class="costo">5</span><span class="costo"><span lang="es">4,49 s · 250 de salida · 0,0099 USD</span><span lang="en">4.49 s · 250 out · 0.0099 USD</span></span></div>
+          <div class="fila"><span class="caso">A-003</span><span class="chip"><span lang="es">faltante</span><span lang="en">missing data</span></span><div class="senal"><b><span lang="es">0,05</span><span lang="en">0.05</span></b><div class="pista" aria-hidden="true"><span class="medido" style="width:5%"></span><span class="meta" style="left:75%"></span></div></div><span class="costo">6</span><span class="costo"><span lang="es">7,76 s · 269 de salida · 0,0099 USD</span><span lang="en">7.76 s · 269 out · 0.0099 USD</span></span></div>
+          <p class="fuente" style="margin-top:10px"><span lang="es">Cada llamada reusó unos 1.600 tokens de contexto en caché. A-002: 0,75 con 5 campos faltantes, la sobreconfianza que mide S1.</span><span lang="en">Each call reused about 1,600 cached context tokens. A-002: 0.75 with 5 missing fields, the overconfidence S1 measures.</span> <span class="chip"><svg aria-hidden="true"><use href="#m-real"/></svg>real</span></p>
+        </div>
+      </div>
+
+      <!-- pausa_humana -->
+      <div class="panel" data-si="vista:pausa_humana" data-vistas>
+        <div class="panel-cab" style="--c:var(--tipo-4)"><svg class="glifo-g" aria-hidden="true"><use href="#g-cuadrado"/></svg><h3>pausa_humana</h3><span class="tipo-t"><span lang="es">HUM · espera al auditor médico</span><span lang="en">HUMAN · waits for the medical auditor</span></span><span class="chip"><svg aria-hidden="true"><use href="#m-real"/></svg><span lang="es">real · spike</span><span lang="en">real · spike</span></span></div>
+        <div class="seg vista-alterna pestanas-panel" role="group" aria-label="Detalle / Detail"><button type="button" data-vista="lider" aria-pressed="true"><svg class="ico" aria-hidden="true"><use href="#i-user-round"/></svg><span lang="es">Líder</span><span lang="en">Leader</span></button><button type="button" data-vista="experto" aria-pressed="false"><svg class="ico" aria-hidden="true"><use href="#i-microscope"/></svg><span lang="es">Experto</span><span lang="en">Expert</span></button><button type="button" data-vista="codigo" aria-pressed="false"><svg class="ico" aria-hidden="true"><use href="#i-code"/></svg><span lang="es">Código</span><span lang="en">Code</span></button><button type="button" data-vista="trazas" aria-pressed="false"><svg class="ico" aria-hidden="true"><use href="#i-list-checks"/></svg><span lang="es">2 trazas</span><span lang="en">2 traces</span></button></div>
+        <div class="contenido-tab" data-panel="lider"><p class="lider"><span lang="es">Aquí el agente se detiene y espera a una persona, el auditor médico. Le muestra por qué se detuvo, la señal y el umbral. Ninguna negación sale sin este paso.</span><span lang="en">Here the agent stops and waits for a person, the medical auditor. It shows why it stopped, the signal and the threshold. No denial goes out without this step.</span></p></div>
+        <div class="contenido-tab" data-panel="experto" hidden><ul class="experto">
+          <li><span lang="es"><code>interrupt</code> con <code>{motivo, senal, umbral, extraccion}</code>; se reanuda con <code>Command(resume=…)</code> sobre <code>InMemorySaver</code>.</span><span lang="en"><code>interrupt</code> with <code>{motivo, senal, umbral, extraccion}</code>; it resumes with <code>Command(resume=…)</code> over <code>InMemorySaver</code>.</span></li>
+          <li><span lang="es">Brecha de contrato (C9): el revisor debe ver además <code>texto_original</code>, <code>evidencia</code> y <code>contraevidencia</code>. El spike no los envía.</span><span lang="en">Contract gap (C9): the reviewer must also see <code>texto_original</code>, <code>evidencia</code> and <code>contraevidencia</code>. The spike does not send them.</span></li>
+          <li><span lang="es">El revisor de este demo es simulado y sigue la verdad conocida (DA-04); la vitrina lo divulga en cada pantalla.</span><span lang="en">This demo's reviewer is simulated and follows the known truth (DA-04); the showcase discloses it on every screen.</span></li>
+        </ul></div>
+        <div class="contenido-tab" data-panel="codigo" hidden>
+<pre class="codigo" style="--desde:205" aria-label="spike.py, líneas 206 a 213"><span class="l">def nodo_pausa_humana(state: Estado) -&gt; dict:</span><span class="l">    respuesta = interrupt({</span><span class="l">        "motivo": "confianza_baja",</span><span class="l">        "senal": state["senal_confianza"],</span><span class="l">        "umbral": state["umbral_aplicado"],</span><span class="l">        "extraccion": state["extraccion"],</span><span class="l">    })</span><span class="l">    return {"decision_humana": respuesta, "salida": f"revisado_por_humano:{respuesta}"}</span></pre>
+          <p class="fuente">spike.py · <span lang="es">líneas 206–213</span><span lang="en">lines 206–213</span> <span class="chip"><svg aria-hidden="true"><use href="#m-real"/></svg>real</span></p>
+        </div>
+        <div class="contenido-tab trazas" data-panel="trazas" hidden style="max-width:none">
+          <div class="fila cabeza"><span><span lang="es">Caso</span><span lang="en">Case</span></span><span><span lang="es">Tipo</span><span lang="en">Type</span></span><span><span lang="es">Motivo y señal</span><span lang="en">Reason and signal</span></span><span><span lang="es">Respuesta del revisor</span><span lang="en">Reviewer answer</span></span><span><span lang="es">Verdad · tiempo</span><span lang="en">Truth · time</span></span></div>
+          <div class="fila"><span class="caso">A-003</span><span class="chip"><span lang="es">faltante</span><span lang="en">missing data</span></span><span class="costo">confianza_baja · <span lang="es">0,05 &lt; 0,75</span><span lang="en">0.05 &lt; 0.75</span></span><span class="costo">pedir_aclaracion</span><span class="costo">✓ · 7,77 s</span></div>
+          <div class="fila"><span class="caso">A-004</span><span class="chip"><span lang="es">borde</span><span lang="en">edge case</span></span><span class="costo">confianza_baja · <span lang="es">0,30 &lt; 0,75</span><span lang="en">0.30 &lt; 0.75</span></span><span class="costo">pedir_aclaracion</span><span class="costo">✓ · 4,74 s</span></div>
+          <p class="fuente" style="margin-top:10px"><span lang="es">2 de los 5 casos pasaron por aquí; los dos debían escalar según su verdad conocida.</span><span lang="en">2 of the 5 cases went through here; both had to escalate according to their known truth.</span> <span class="chip"><svg aria-hidden="true"><use href="#m-real"/></svg>real</span></p>
+        </div>
+      </div>
+
+      <!-- arista U1 -->
+      <div class="panel" data-si="vista:arista">
+        <div class="panel-cab"><svg viewBox="0 0 30 12" aria-hidden="true" style="width:30px;height:12px;color:var(--tinta-1)"><path d="M1,6 H29" stroke="currentColor" stroke-width="1.8" stroke-dasharray="6 4"/><rect x="11" y="2" width="8" height="8" fill="var(--fondo)" stroke="currentColor" stroke-width="1.5"/></svg><h3><span lang="es">Arista condicional U1</span><span lang="en">Conditional edge U1</span></h3><span class="chip"><svg aria-hidden="true"><use href="#m-real"/></svg><span lang="es">real · spike</span><span lang="en">real · spike</span></span></div>
+        <div class="arista-rejilla">
+          <dl class="dl-arista">
+            <dt><span lang="es">Señal</span><span lang="en">Signal</span></dt><dd>senal_confianza</dd>
+            <dt><span lang="es">Operador</span><span lang="en">Operator</span></dt><dd>menor_que</dd>
+            <dt><span lang="es">Valor</span><span lang="en">Value</span></dt><dd>U1 = <span lang="es">0,75</span><span lang="en">0.75</span></dd>
+            <dt><span lang="es">Inclusivo</span><span lang="en">Inclusive</span></dt><dd><span lang="es">no · 0,75 va a aprobar</span><span lang="en">no · 0.75 goes to aprobar</span></dd>
+            <dt><span lang="es">Si se cumple</span><span lang="en">If true</span></dt><dd>pausa_humana</dd>
+            <dt><span lang="es">Si no</span><span lang="en">Otherwise</span></dt><dd>aprobar</dd>
+            <dt><span lang="es">Decisión del plan</span><span lang="en">Plan decision</span></dt><dd>D3</dd>
+            <dt><span lang="es">Dónde vive</span><span lang="en">Where it lives</span></dt><dd><span lang="es">enrutador · el contrato la pone en decision</span><span lang="en">enrutador · the contract puts it on decision</span></dd>
+          </dl>
+          <div style="display:grid;gap:12px;align-content:start">
+            <p class="nota" style="color:var(--tinta-1);font-weight:500"><span lang="es">La señal en los 5 casos del spike</span><span lang="en">The signal across the spike's 5 cases</span></p>
+            <div class="distribucion">
+              <svg viewBox="0 0 600 150" role="img" aria-labelledby="dist-t">
+                <title id="dist-t">A-003 0,05 y A-004 0,30 van a pausa_humana; A-002 0,75, A-005 0,85 y A-001 0,90 van a aprobar / Signal distribution</title>
+                <text class="zona" x="30" y="16"><tspan lang="es">← pausa_humana</tspan><tspan lang="en">← pausa_humana</tspan></text>
+                <text class="zona" x="570" y="16" text-anchor="end"><tspan lang="es">aprobar →</tspan><tspan lang="en">aprobar →</tspan></text>
+                <path class="eje" d="M30,86 H570"/>
+                <path class="eje" d="M30,82 V90 M165,82 V90 M300,82 V90 M435,82 V90 M570,82 V90"/>
+                <text x="30" y="106" text-anchor="middle">0</text><text x="165" y="106" text-anchor="middle"><tspan lang="es">0,25</tspan><tspan lang="en">0.25</tspan></text><text x="300" y="106" text-anchor="middle"><tspan lang="es">0,50</tspan><tspan lang="en">0.50</tspan></text><text x="570" y="106" text-anchor="middle">1</text>
+                <path class="umbral-l" d="M435,26 V120"/><text class="fuerte" x="435" y="136" text-anchor="middle"><tspan lang="es">U1 = 0,75</tspan><tspan lang="en">U1 = 0.75</tspan></text>
+                <use href="#g-cuadrado" x="49" y="77" width="18" height="18" style="fill:var(--tipo-4)"/><text class="fuerte" x="58" y="68" text-anchor="middle">A-003</text>
+                <use href="#g-cuadrado" x="183" y="77" width="18" height="18" style="fill:var(--tipo-4)"/><text class="fuerte" x="192" y="68" text-anchor="middle">A-004</text>
+                <use href="#g-hexagono" x="426" y="77" width="18" height="18" style="fill:var(--tipo-3);stroke:var(--sup-1);stroke-width:1.5"/><text class="fuerte" x="410" y="52" text-anchor="end">A-002</text><path d="M412,49 L430,76" style="stroke:var(--tinta-2);stroke-width:1;fill:none"/>
+                <use href="#g-hexagono" x="480" y="77" width="18" height="18" style="fill:var(--tipo-3)"/><text class="fuerte" x="489" y="68" text-anchor="middle">A-005</text>
+                <use href="#g-hexagono" x="507" y="77" width="18" height="18" style="fill:var(--tipo-3)"/><text class="fuerte" x="530" y="52" text-anchor="start">A-001</text><path d="M528,49 L518,76" style="stroke:var(--tinta-2);stroke-width:1;fill:none"/>
+              </svg>
+            </div>
+            <div class="aviso"><svg class="ico" aria-hidden="true" style="color:var(--alerta)"><use href="#i-circle-alert"/></svg><span><b><span lang="es">A-002 cayó justo en 0,75 y fue a aprobar.</span><span lang="en">A-002 landed exactly on 0.75 and went to aprobar.</span></b><span lang="es">«Menor que» no incluye el 0,75. Le faltaban 5 campos: es la sobreconfianza que vigilan el riesgo R5 y el supuesto S1.</span><span lang="en">“Less than” does not include 0.75. It was missing 5 fields: the overconfidence that risk R5 and assumption S1 watch.</span></span></div>
+            <p class="nota"><span lang="es">El playground recalcula estas ramas con la misma regla; la prueba cruzada RF-09.2 exige que coincidan con las que tomó el agente.</span><span lang="en">The playground recomputes these branches with the same rule; the RF-09.2 cross-test requires them to match the ones the agent took.</span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ausentes -->
+      <div class="panel" data-si="vista:ausente">
+        <div class="panel-cab"><svg viewBox="-8 -8 16 16" aria-hidden="true" style="width:18px;height:18px"><rect x="-7" y="-7" width="14" height="14" rx="2" fill="none" stroke="var(--tinta-2)" stroke-width="1.3" stroke-dasharray="3 2"/></svg><h3><span lang="es">Lo que el plan exige y el grafo no tiene</span><span lang="en">What the plan requires and the graph lacks</span></h3><span class="chip"><svg aria-hidden="true"><use href="#m-real"/></svg><span lang="es">real · contrato</span><span lang="en">real · contract</span></span></div>
+        <p class="guia" style="margin:0"><span lang="es">Cinco nodos del contrato no existen en el spike. No se esconden: cada uno dice qué haría y qué parte del plan depende de él.</span><span lang="en">Five contract nodes do not exist in the spike. They are not hidden: each says what it would do and which part of the plan depends on it.</span></p>
+        <div class="ausentes">
+          <div class="fila cabeza"><span><span lang="es">Nodo</span><span lang="en">Node</span></span><span><span lang="es">Qué haría</span><span lang="en">What it would do</span></span><span><span lang="es">Depende de él</span><span lang="en">Depends on it</span></span></div>
+          <div class="fila"><div class="nodo" data-tipo="enrutador" data-madurez="exigido"><svg class="glifo" aria-hidden="true"><use href="#g-rombo"/></svg><span class="cod"><span lang="es">ENR</span><span lang="en">ROUTE</span></span><span class="nombre">decision</span></div><p><span lang="es">Reúne las señales y decide: aprobar, negar con causal o escalar. Aquí viven U1, U2 y el modo Texas.</span><span lang="en">It gathers the signals and decides: approve, deny with a ground, or escalate. U1, U2 and Texas mode live here.</span></p><span class="liga">C1 · C3 · D3</span></div>
+          <div class="fila"><div class="nodo" data-tipo="modelo" data-madurez="exigido"><svg class="glifo" aria-hidden="true"><use href="#g-estrella"/></svg><span class="cod"><span lang="es">MOD</span><span lang="en">MODEL</span></span><span class="nombre">aclaracion</span></div><p><span lang="es">Pide los datos que faltan antes de decidir, hasta U3 = 2 veces; después escala a una persona.</span><span lang="en">It asks for the missing data before deciding, up to U3 = 2 times; then it escalates to a person.</span></p><span class="liga">R4 · S2 · D5</span></div>
+          <div class="fila"><div class="nodo" data-tipo="regla" data-madurez="exigido"><svg class="glifo" aria-hidden="true"><use href="#g-hexagono"/></svg><span class="cod"><span lang="es">REG</span><span lang="en">RULE</span></span><span class="nombre">verificador_cobertura</span></div><p><span lang="es">Comprueba con reglas fijas si el plan de beneficios cubre el procedimiento. Una urgencia no pasa por aquí.</span><span lang="en">It checks with fixed rules whether the benefit plan covers the procedure. An emergency skips it.</span></p><span class="liga">C4 · R6</span></div>
+          <div class="fila"><div class="nodo" data-tipo="modelo" data-madurez="exigido"><svg class="glifo" aria-hidden="true"><use href="#g-estrella"/></svg><span class="cod"><span lang="es">MOD</span><span lang="en">MODEL</span></span><span class="nombre">redactor</span></div><p><span lang="es">Escribe la respuesta al afiliado con aviso de IA y, si hay negación, su documento en ES y EN.</span><span lang="en">It writes the member's answer with an AI notice and, on a denial, its document in ES and EN.</span></p><span class="liga">C8 · R2</span></div>
+          <div class="fila"><div class="nodo" data-tipo="regla" data-madurez="exigido"><svg class="glifo" aria-hidden="true"><use href="#g-hexagono"/></svg><span class="cod"><span lang="es">REG</span><span lang="en">RULE</span></span><span class="nombre">guardia_salida</span></div><p><span lang="es">Filtro fijo de salida: ningún dato sensible y ninguna instrucción inyectada llegan al afiliado.</span><span lang="en">Fixed output filter: no sensitive data and no injected instruction reach the member.</span></p><span class="liga">C2 · C6 · R3</span></div>
+        </div>
+        <div class="aviso"><svg class="ico" aria-hidden="true"><use href="#i-hourglass"/></svg><span><b><span lang="es">Llegan con el agente del demo A en el sprint 1, «El contrato y la corrida».</span><span lang="en">They arrive with demo A's agent in sprint 1, “The contract and the run”.</span></b><span lang="es">Hasta entonces, la vitrina los muestra así: exigidos y ausentes.</span><span lang="en">Until then, the showcase shows them like this: required and missing.</span></span></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="pie"><div class="cont">
+    <p><svg class="ico" aria-hidden="true"><use href="#i-shield-check"/></svg><span><b><span lang="es">Simulación · no operativo.</span><span lang="en">Simulation · not operational.</span></b> <span lang="es">Todo caso, afiliado, médico y plan de beneficios es sintético. Las decisiones humanas de este demo se simularon en lote siguiendo la verdad conocida.</span><span lang="en">Every case, member, physician and benefit plan is synthetic. This demo's human decisions were simulated in batch following the known truth.</span></span></p>
+    <p><svg class="ico" aria-hidden="true"><use href="#i-info"/></svg><span><span lang="es">El código y las trazas son los del spike del 2026-09-26 (5 casos, modelo sonnet por la suscripción de Claude Code del autor). Ningún visitante lanza llamadas a modelos.</span><span lang="en">The code and traces are those of the 2026-09-26 spike (5 cases, sonnet model through the author's Claude Code subscription). No visitor triggers model calls.</span></span></p>
+  </div></footer>
+</div>
+
+<section class="mq-cierre" aria-label="Cómo responder / How to answer">
+  <div class="cont">
+    <p class="mq-t"><span lang="es">Cómo responder, con las dos páginas abiertas (kit y agente)</span><span lang="en">How to answer, with both pages open (kit and agent)</span></p>
+    <ol>
+      <li><span lang="es">¿Se entiende, sin saber de LangGraph, qué hizo el agente y qué le falta?</span><span lang="en">Without knowing LangGraph, can you tell what the agent did and what it lacks?</span></li>
+      <li><span lang="es">¿Las cuatro vistas del detalle (líder, experto, código, trazas) te sirven, o cambiarías alguna?</span><span lang="en">Do the four detail views (leader, expert, code, traces) work for you, or would you change one?</span></li>
+      <li><span lang="es">Si el sistema y esta pantalla quedan, escribe «lo abrí y apruebo» y paso a la mirada 3: Brecha y Playground.</span><span lang="en">If the system and this screen hold, write “I opened it and approve” and I move to look 3: Gap and Playground.</span></li>
+    </ol>
+  </div>
+</section>
+
+<script>
+  // Sala: la selección del lienzo sigue al estado (y tocar un nodo cambia el estado).
+  (function () {
+    var html = document.documentElement;
+    function marcar() {
+      var e = html.getAttribute("data-estado") || "enrutador";
+      document.querySelectorAll("#grafo-agente [data-nodo-id]").forEach(function (n) {
+        if (n.getAttribute("data-nodo-id") === e) n.setAttribute("data-sel", "true");
+        else n.removeAttribute("data-sel");
+      });
+    }
+    new MutationObserver(marcar).observe(html, { attributes: true, attributeFilter: ["data-estado"] });
+    function ir(n) {
+      var b = document.querySelector('button[data-estado="' + n.getAttribute("data-nodo-id") + '"]');
+      if (b) b.click();
+    }
+    var svg = document.getElementById("grafo-agente");
+    svg.addEventListener("click", function (ev) {
+      var n = ev.target.closest("[data-nodo-id]");
+      if (n) ir(n);
+    });
+    svg.addEventListener("keydown", function (ev) {
+      if (ev.key !== "Enter" && ev.key !== " ") return;
+      var n = ev.target.closest("[data-nodo-id]");
+      if (n) { ev.preventDefault(); ir(n); }
+    });
+    marcar();
+  })();
+</script>
+</body>
+</html>

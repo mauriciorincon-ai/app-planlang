@@ -28,14 +28,16 @@
   íconos y la franja «Cómo funciona», el nodo del grafo (tipo × estado), un fragmento del grafo real
   del spike, dos teléfonos con la página a 390 px (lienzo y lista), hexágono y escudo lado a lado, los
   tres veredictos y la escala tipográfica. Las rondas 1 y 2 viven en la historia de git.
-- `kit.html` _(mirada 2)_ — el design system en vivo: componentes canon y sus 5 estados.
-- `01-entrada.html … 07-fichas.html` _(miradas 2–4)_ — una página por pantalla, HTML autocontenido
+- `kit.html` — **mirada 2**: el design system en vivo (tokens leídos del CSS generado, componentes canon
+  con sus estados). El documento fuente es `design-system.md`, en la raíz del repo.
+- `03-agente.html` — **mirada 2**: P3, el grafo real del spike contra el contrato del plan, con detalle por nodo.
+- `01-entrada.html … 07-fichas.html` _(miradas 3–4, salvo P3)_ — una página por pantalla, HTML autocontenido
   (cero CDNs, cero frameworks), 380 px y desktop, oscuro y claro, ES y EN.
 - `assets/` — `tokens.{json,css}` (**GENERADOS** por `pnpm tokens` desde `scripts/paleta/generar-tokens.mjs`),
   `planlang.css` (identidad), `diagrama.css` (gramática visual del visor), `fuentes/` (Inter y
   JetBrains Mono, woff2 + OFL), `iconos/` (licencia ISC de Lucide; los íconos van incrustados en cada
   página),
-  `maqueta.{css,js}` y `lienzo.js` (utilería de sala).
+  `sprite.js` (glifos, marcas e íconos compartidos), `maqueta.{css,js}` y `lienzo.js` (utilería de sala).
 - `MIRADAS.md` — cada mirada: lo que el usuario dijo, textual, y lo que cambió.
 - La maqueta es **referencia, no producto**: el S2 la reproduce; el gate de FIDELIDAD del primer
   sprint con UI compara contra ella. El grafo del visor es el único diagrama dibujado a mano de la
@@ -70,7 +72,8 @@ en toda cifra (real · spike vs maqueta); (8) visor sobre el grafo del spike con
 | ---------- | --------------------------- | ------------------------------- | ----------------------- |
 | 2026-09-27 | `direccion.html` (mirada 1) | «No me gusta esta horrible realmente muy malo tipografia elementos de magnitud desproporcionada (muy grandes) tarjetas como tirada por ahi sin ningun sentido muy mal» | nada: se rehace la mirada 1 (ronda 2) |
 | 2026-09-27 | `direccion.html` (mirada 1, ronda 2) | «Si ya vamos por buen camino 1. Se ve mas proporcionado 2. Inter 3. No veo ningun telefono. TRaata de tener elementos visuales graficos atractivos iconos y cosas asi» | ronda 3: Inter fija, íconos y gráficos, teléfonos dentro de la página, hexágono y escudo lado a lado |
-| 2026-09-27 | `direccion.html` (mirada 1, ronda 3) | _(pendiente)_ | nada todavía |
+| 2026-09-27 | `direccion.html` (mirada 1, ronda 3) | «Excelente ahora si muchisimo mejor. 1. No, todo excelente muy buen trabajo 2. Me voy con el A 3. Que es regla? 4. lo abrí y apruebo» — **mirada 1 aprobada** | mirada 2: `design-system.md` v0.1 + `kit.html` + `03-agente.html` (lienzo A; regla = hexágono por defecto, explicado) |
+| 2026-09-27 | `design-system.md` v0.1 + `kit.html` + `03-agente.html` (mirada 2) | _(pendiente)_ | nada todavía |
 
 ## Gates de esta etapa y su demo en rojo (regla 15 del kit)
 
@@ -85,6 +88,8 @@ en toda cifra (real · spike vs maqueta); (8) visor sobre el grafo del spike con
 | Página de la maqueta | Funcionalidad de la VISION                                          | Estados que muestra                                                                                                                              |
 | -------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `direccion.html`     | Página de entrada (P1) · el nodo de «El grafo real desde el código» | ronda 3: Inter · íconos · «Cómo funciona» · oscuro y claro · ES y EN · 380 px y desktop · dos teléfonos (lienzo y lista) · nodo normal / seleccionado / exigido-ausente · hexágono y escudo |
+| `kit.html`           | el sistema de diseño (transversal) | tokens en vivo por tema · 5 tipos × 5 estados de nodo · 3 modos de arista · criterio, riesgo, consecuencias, curva y ficha en contenido / éxito / vacío / cargando / error · deslizador en reposo / movido / foco / deshabilitado / booleano |
+| `03-agente.html`     | El grafo real desde el código (P3) | selección enrutador / extractor / pausa_humana / arista U1 / ausentes · líder · experto · código · trazas · lienzo A y lista por capa · oscuro y claro · ES y EN · 380 px y desktop |
 
 ## Registro de G-Diseño (se llena al cerrar la etapa)
 

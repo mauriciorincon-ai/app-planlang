@@ -1132,6 +1132,519 @@ h3 {
   }
 }
 
+/* ---------- Movimiento de controles (150 ms; nada con movimiento reducido) ---------- */
+:root {
+  --curva: cubic-bezier(0.2, 0, 0, 1);
+}
+.boton,
+.seg button,
+.pestanas a,
+.enlaces a,
+.nodo {
+  transition:
+    background-color 150ms var(--curva),
+    border-color 150ms var(--curva),
+    color 150ms var(--curva);
+}
+.boton.prim:hover,
+.boton.prim.es-hover {
+  background: var(--tinta-2);
+  border-color: var(--tinta-2);
+}
+/* Estados FORZADOS: solo la sala (kit.html) los usa para mostrar un estado sin tocar la pantalla. */
+.boton.es-hover {
+  border-color: var(--tinta-2);
+}
+.es-foco,
+.nodo.es-foco {
+  outline: 2px solid var(--tinta-1);
+  outline-offset: 2px;
+}
+.boton.es-activo {
+  transform: translateY(1px);
+  background: var(--sup-2);
+}
+.boton.prim.es-activo {
+  background: var(--tinta-2);
+}
+.boton[aria-disabled="true"] {
+  border-style: dashed;
+  color: var(--tinta-2);
+  background: transparent;
+  cursor: not-allowed;
+}
+.nodo.es-hover {
+  background: var(--sup-2);
+  border-color: var(--tinta-3);
+}
+
+/* ---------- Estado cargando: esqueleto con la forma final, sin girador ---------- */
+.esqueleto {
+  display: block;
+  height: 10px;
+  border-radius: 3px;
+  background: var(--sup-2);
+}
+.esqueleto.alto {
+  height: 26px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .esqueleto {
+    animation: latido 1.4s ease-in-out infinite;
+  }
+}
+@keyframes latido {
+  50% {
+    opacity: 0.45;
+  }
+}
+/* Mensaje de estado (vacío / error): ícono + qué pasó + qué hacer */
+.aviso {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  font-size: var(--t-chico);
+  color: var(--tinta-2);
+}
+.aviso b {
+  display: block;
+  color: var(--tinta-1);
+  font-weight: 500;
+}
+.aviso .ico {
+  margin-top: 2px;
+}
+.aviso.error {
+  color: var(--tinta-1);
+}
+.aviso.error .ico {
+  color: var(--no-cumple);
+}
+
+/* ---------- Chip «no observado» y chip de estado de riesgo ---------- */
+.chip.no-obs {
+  border-style: dashed;
+}
+.chip .ico {
+  width: 11px;
+  height: 11px;
+}
+.chip.ocurrio {
+  border-color: var(--alerta);
+  background: var(--alerta-tinte);
+  color: var(--tinta-1);
+}
+.chip.ocurrio svg {
+  color: var(--alerta);
+}
+
+/* ---------- Fila de criterio y fila de riesgo ---------- */
+.crit .fila,
+.riesgo .fila {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 2.4fr) minmax(0, 2fr) minmax(0, 1.2fr);
+  gap: var(--e-4);
+  align-items: start;
+  padding-block: 14px;
+  border-top: 1px solid var(--linea);
+}
+.crit .cabeza,
+.riesgo .cabeza {
+  padding-block: 0 var(--e-2);
+  border-top: 0;
+  font-size: var(--t-dato);
+  color: var(--tinta-2);
+}
+.fila .id {
+  font: 500 var(--t-dato) / 1.6 var(--mono);
+  color: var(--tinta-2);
+}
+.fila .enun {
+  font-size: 14px;
+  line-height: 1.45;
+}
+.fila .regla {
+  display: block;
+  margin-top: 4px;
+  font: 400 var(--t-dato) / 1.5 var(--mono);
+  color: var(--tinta-2);
+  overflow-wrap: anywhere;
+}
+.fila .celda-v {
+  display: grid;
+  gap: 6px;
+  justify-items: start;
+}
+.ap {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--t-chico);
+  font-weight: 500;
+}
+.ap .barras {
+  display: inline-flex;
+  gap: 2px;
+  align-items: flex-end;
+}
+.ap .barras i {
+  width: 4px;
+  border-radius: 1px;
+  background: var(--tinta-1);
+}
+.ap .barras i:nth-child(1) {
+  height: 6px;
+}
+.ap .barras i:nth-child(2) {
+  height: 9px;
+}
+.ap .barras i:nth-child(3) {
+  height: 12px;
+}
+.ap .barras i.off {
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--tinta-3);
+}
+.rpn {
+  font: 400 var(--t-dato) / 1.4 var(--mono);
+  color: var(--tinta-2);
+}
+@media (max-width: 860px) {
+  .crit .fila,
+  .riesgo .fila {
+    grid-template-columns: 36px minmax(0, 1fr);
+    gap: var(--e-2) var(--e-3);
+  }
+  .crit .fila > :nth-child(n + 3),
+  .riesgo .fila > :nth-child(n + 3) {
+    grid-column: 2;
+  }
+  .crit .cabeza,
+  .riesgo .cabeza {
+    display: none;
+  }
+}
+
+/* ---------- Deslizador de umbral ---------- */
+.umbral {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  border: 1px solid var(--linea);
+  border-radius: var(--radio);
+  background: var(--sup-1);
+  min-width: 0;
+}
+.umbral-cab {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px 12px;
+}
+.umbral-cab label,
+.umbral-cab .nombre {
+  font-size: 14px;
+  font-weight: 600;
+}
+.umbral-cab .id {
+  font: 500 var(--t-dato) / 1 var(--mono);
+  color: var(--tinta-2);
+  margin-right: 6px;
+}
+.umbral .regla {
+  font: 400 var(--t-dato) / 1.5 var(--mono);
+  color: var(--tinta-2);
+}
+.umbral .valor {
+  font: 600 var(--t-cifra) / 1 var(--letra);
+  font-size: 22px;
+  font-variant-numeric: tabular-nums;
+}
+.pista-umbral {
+  position: relative;
+  padding-block: 6px 30px;
+}
+.pista-umbral input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 20px;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+}
+.pista-umbral input[type="range"]::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--linea);
+}
+.pista-umbral input[type="range"]::-moz-range-track {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--linea);
+}
+.pista-umbral input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  margin-top: -7px;
+  border-radius: 50%;
+  background: var(--tinta-1);
+  border: 3px solid var(--sup-1);
+  box-shadow: 0 0 0 1px var(--tinta-1);
+}
+.pista-umbral input[type="range"]::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--tinta-1);
+  border: 3px solid var(--sup-1);
+  box-shadow: 0 0 0 1px var(--tinta-1);
+}
+.pista-umbral input[type="range"]:focus-visible {
+  outline: none;
+}
+.pista-umbral input[type="range"]:focus-visible::-webkit-slider-thumb {
+  box-shadow:
+    0 0 0 1px var(--tinta-1),
+    0 0 0 3px var(--sup-1),
+    0 0 0 5px var(--tinta-1);
+}
+.pista-umbral.es-foco {
+  outline: none;
+}
+.pista-umbral.es-foco input[type="range"]::-webkit-slider-thumb {
+  box-shadow:
+    0 0 0 1px var(--tinta-1),
+    0 0 0 3px var(--sup-1),
+    0 0 0 5px var(--tinta-1);
+}
+.pista-umbral input[type="range"]:disabled {
+  cursor: not-allowed;
+}
+.pista-umbral input[type="range"]:disabled::-webkit-slider-thumb {
+  background: var(--sup-1);
+  box-shadow: 0 0 0 1px var(--tinta-3);
+}
+/* La marca del plan va DEBAJO del riel: nunca la tapa la perilla. */
+.marca-plan {
+  position: absolute;
+  top: 28px;
+  display: grid;
+  justify-items: center;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+.marca-plan::before {
+  content: "";
+  width: 2px;
+  height: 6px;
+  background: var(--tinta-2);
+}
+.marca-plan span {
+  margin-top: 2px;
+  font: 400 11px/1 var(--mono);
+  color: var(--tinta-2);
+  white-space: nowrap;
+}
+.extremos {
+  display: flex;
+  justify-content: space-between;
+  font: 400 11px/1 var(--mono);
+  color: var(--tinta-2);
+}
+.umbral.deshabilitado {
+  border-style: dashed;
+}
+/* Interruptor (umbral booleano: modo Texas) */
+.interruptor {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font: 500 14px/1 var(--letra);
+  color: var(--tinta-1);
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+.interruptor .riel {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  border-radius: 10px;
+  border: 1px solid var(--tinta-3);
+  background: var(--sup-2);
+  transition: background-color 150ms var(--curva);
+}
+.interruptor .riel::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--tinta-2);
+  transition: transform 150ms var(--curva);
+}
+.interruptor[aria-checked="true"] .riel {
+  background: var(--tinta-1);
+  border-color: var(--tinta-1);
+}
+.interruptor[aria-checked="true"] .riel::after {
+  transform: translateX(16px);
+  background: var(--fondo);
+}
+.interruptor .estado-txt {
+  font: 500 var(--t-dato) / 1 var(--mono);
+  color: var(--tinta-2);
+}
+
+/* ---------- Panel de consecuencias ---------- */
+.consecuencias {
+  display: grid;
+  gap: var(--e-4);
+  padding: 16px;
+  border: 1px solid var(--linea);
+  border-radius: var(--radio);
+  background: var(--sup-1);
+  min-width: 0;
+}
+.cifras {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--e-4);
+}
+.cifra-c {
+  display: grid;
+  gap: 4px;
+  align-content: start;
+}
+.cifra-c b {
+  font: 600 22px/1 var(--letra);
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+.cifra-c span {
+  font-size: var(--t-dato);
+  color: var(--tinta-2);
+  line-height: 1.35;
+}
+.pie-c {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--linea);
+  font-size: var(--t-chico);
+  color: var(--tinta-2);
+}
+@media (max-width: 720px) {
+  .cifras {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ---------- Curva riesgo-cobertura ---------- */
+.curva {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  border: 1px solid var(--linea);
+  border-radius: var(--radio);
+  background: var(--sup-1);
+  min-width: 0;
+}
+/* Solo el gráfico ocupa el ancho; los íconos de chips y avisos conservan su tamaño. */
+.curva > svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.curva .eje path,
+.curva .eje line {
+  stroke: var(--linea);
+  stroke-width: 1;
+  fill: none;
+}
+.curva .eje text,
+.curva .punto-et {
+  font: 400 10.5px var(--mono);
+  fill: var(--tinta-2);
+}
+.curva .eje-t {
+  font: 400 11px var(--letra);
+  fill: var(--tinta-2);
+}
+.curva .traza {
+  fill: none;
+  stroke: var(--tinta-1);
+  stroke-width: 1.75;
+}
+.curva .area {
+  fill: var(--sup-2);
+}
+.curva .p-plan {
+  fill: var(--sup-1);
+  stroke: var(--tinta-1);
+  stroke-width: 2;
+}
+.curva .p-actual {
+  fill: var(--tinta-1);
+}
+.curva .punto-et.fuerte {
+  fill: var(--tinta-1);
+  font-weight: 500;
+}
+
+/* ---------- Ficha de reproducibilidad ---------- */
+.ficha {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--linea);
+  border-radius: var(--radio);
+  background: var(--sup-1);
+  min-width: 0;
+}
+.ficha dl {
+  margin: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 150px) minmax(0, 1fr);
+}
+.ficha dt,
+.ficha dd {
+  margin: 0;
+  padding-block: 7px;
+  border-top: 1px solid var(--linea);
+  font-size: var(--t-chico);
+}
+.ficha dt {
+  color: var(--tinta-2);
+  padding-right: 12px;
+}
+.ficha dd {
+  font: 400 var(--t-dato) / 1.5 var(--mono);
+  overflow-wrap: anywhere;
+}
+.ficha-cab {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.ficha-cab h3 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

@@ -258,9 +258,9 @@
 
       <div class="fila" role="row">
         <div class="tipo" role="rowheader" style="--c:var(--tipo-2)"><svg aria-hidden="true"><use href="#g-triangulo"/></svg><span><span lang="es">Herramienta</span><span lang="en">Tool</span><small><span lang="es">consulta un sistema externo</span><span lang="en">calls an external system</span></small></span></div>
-        <div class="celda" role="cell"><span class="et">Normal</span><div class="nodo" data-tipo="herramienta"><svg class="glifo" aria-hidden="true"><use href="#g-triangulo"/></svg><span class="cod"><span lang="es">HER</span><span lang="en">TOOL</span></span><span class="nombre">consulta_plan</span></div></div>
-        <div class="celda" role="cell"><span class="et"><span lang="es">Seleccionado</span><span lang="en">Selected</span></span><div class="nodo" data-tipo="herramienta" data-sel="true"><svg class="glifo" aria-hidden="true"><use href="#g-triangulo"/></svg><span class="cod"><span lang="es">HER</span><span lang="en">TOOL</span></span><span class="nombre">consulta_plan</span></div></div>
-        <div class="celda" role="cell"><span class="et"><span lang="es">Exigido, ausente</span><span lang="en">Required, missing</span></span><div class="nodo" data-tipo="herramienta" data-madurez="exigido"><svg class="glifo" aria-hidden="true"><use href="#g-triangulo"/></svg><span class="cod"><span lang="es">HER</span><span lang="en">TOOL</span></span><span class="nombre">consulta_plan</span><span class="aus"><svg aria-hidden="true"><use href="#m-exigido"/></svg><span lang="es">exigido</span><span lang="en">required</span></span></div></div>
+        <div class="celda" role="cell"><span class="et">Normal</span><div class="nodo" data-tipo="herramienta"><svg class="glifo" aria-hidden="true"><use href="#g-triangulo"/></svg><span class="cod"><span lang="es">HER</span><span lang="en">TOOL</span></span><span class="nombre">consulta_plan*</span></div></div>
+        <div class="celda" role="cell"><span class="et"><span lang="es">Seleccionado</span><span lang="en">Selected</span></span><div class="nodo" data-tipo="herramienta" data-sel="true"><svg class="glifo" aria-hidden="true"><use href="#g-triangulo"/></svg><span class="cod"><span lang="es">HER</span><span lang="en">TOOL</span></span><span class="nombre">consulta_plan*</span></div></div>
+        <div class="celda" role="cell"><span class="et"><span lang="es">Exigido, ausente</span><span lang="en">Required, missing</span></span><div class="nodo" data-tipo="herramienta" data-madurez="exigido"><svg class="glifo" aria-hidden="true"><use href="#g-triangulo"/></svg><span class="cod"><span lang="es">HER</span><span lang="en">TOOL</span></span><span class="nombre">consulta_plan*</span><span class="aus"><svg aria-hidden="true"><use href="#m-exigido"/></svg><span lang="es">exigido</span><span lang="en">required</span></span></div></div>
       </div>
 
       <div class="fila" role="row">
@@ -274,7 +274,7 @@
         <div class="tipo" role="rowheader" style="--c:var(--tipo-4)"><svg aria-hidden="true"><use href="#g-cuadrado"/></svg><span><span lang="es">Pausa humana</span><span lang="en">Human pause</span><small><span lang="es">espera a una persona</span><span lang="en">waits for a person</span></small></span></div>
         <div class="celda" role="cell"><span class="et">Normal</span><div class="nodo" data-tipo="pausa_humana"><svg class="glifo" aria-hidden="true"><use href="#g-cuadrado"/></svg><span class="cod"><span lang="es">HUM</span><span lang="en">HUMAN</span></span><span class="nombre">pausa_humana</span></div></div>
         <div class="celda" role="cell"><span class="et"><span lang="es">Seleccionado</span><span lang="en">Selected</span></span><div class="nodo" data-tipo="pausa_humana" data-sel="true"><svg class="glifo" aria-hidden="true"><use href="#g-cuadrado"/></svg><span class="cod"><span lang="es">HUM</span><span lang="en">HUMAN</span></span><span class="nombre">pausa_humana</span></div></div>
-        <div class="celda" role="cell"><span class="et"><span lang="es">Exigido, ausente</span><span lang="en">Required, missing</span></span><div class="nodo" data-tipo="pausa_humana" data-madurez="exigido"><svg class="glifo" aria-hidden="true"><use href="#g-cuadrado"/></svg><span class="cod"><span lang="es">HUM</span><span lang="en">HUMAN</span></span><span class="nombre">aclaracion</span><span class="aus"><svg aria-hidden="true"><use href="#m-exigido"/></svg><span lang="es">exigido</span><span lang="en">required</span></span></div></div>
+        <div class="celda" role="cell"><span class="et"><span lang="es">Exigido, ausente</span><span lang="en">Required, missing</span></span><div class="nodo" data-tipo="pausa_humana" data-madurez="exigido"><svg class="glifo" aria-hidden="true"><use href="#g-cuadrado"/></svg><span class="cod"><span lang="es">HUM</span><span lang="en">HUMAN</span></span><span class="nombre">revision*</span><span class="aus"><svg aria-hidden="true"><use href="#m-exigido"/></svg><span lang="es">exigido</span><span lang="en">required</span></span></div></div>
       </div>
 
       <div class="fila" role="row">
@@ -284,6 +284,8 @@
         <div class="celda" role="cell"><span class="et"><span lang="es">Exigido, ausente</span><span lang="en">Required, missing</span></span><div class="nodo" data-tipo="enrutador" data-madurez="exigido"><svg class="glifo" aria-hidden="true"><use href="#g-rombo"/></svg><span class="cod"><span lang="es">ENR</span><span lang="en">ROUTE</span></span><span class="nombre">decision</span><span class="aus"><svg aria-hidden="true"><use href="#m-exigido"/></svg><span lang="es">exigido</span><span lang="en">required</span></span></div></div>
       </div>
     </div>
+  
+    <p class="nota" style="margin-top:10px"><span lang="es">* Nombre de ejemplo: el contrato del demo A no declara herramientas ni una segunda pausa humana. Los demás nombres son del plan real.</span><span lang="en">* Example name: demo A's contract declares no tools and no second human pause. The other names come from the real plan.</span></p>
   </section>
 
   <section class="seccion" data-vistas aria-labelledby="s-grafo">

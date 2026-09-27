@@ -109,6 +109,61 @@ su documento no es accesible; ahora espera por la API de marcos); el arnés camb
 por atributo y los teléfonos no se enteraban (ahora pulsa los botones); el teléfono A quedaba
 desplazado (re-ancla tras cargar la letra); la tarjeta «Medí» tenía un hueco (leyenda 8 · 1).
 
+**Lo que dijo el usuario (2026-09-27, con la página abierta en el preview):**
+
+> «Excelente ahora si muchisimo mejor. 1. No, todo excelente muy buen trabajo 2. Me voy con el A
+> 3. Que es regla? 4. lo abrí y apruebo»
+
+**Veredicto: MIRADA 1 APROBADA** («lo abrí y apruebo», con comentario del archivo abierto).
+Decisiones selladas:
+
+- **Dirección:** la de la ronda 3: sobria, Inter + JetBrains Mono, escala de siete tamaños, rejilla
+  de 12 columnas, filas antes que tarjetas, íconos de línea monocromos, miniaturas gráficas.
+- **Grafo en teléfono:** **A · lienzo** que se desliza de lado con índice de capas; la lista por capa
+  queda como vista alterna y versión en texto (G10).
+- **Glifo de «regla»:** el usuario preguntó qué es «regla» (el tipo de nodo que hace código fijo, sin
+  modelo: `aprobar`, `verificador_cobertura`). Se le explicó y se queda el **hexágono** de la
+  gramática `agentes-ia` v1.0.0 por defecto, sin enmienda al contrato; si prefiere el escudo, se
+  cambia el símbolo. Queda como asunción declarada, no como elección suya.
+
+**Qué cambió:** nada en `direccion.html`. Siguiente: mirada 2 (`design-system.md` v0.1 + `kit.html`
++ `03-agente.html`), según el plan de miradas aprobado.
+
+## Mirada 2 — `design-system.md` v0.1 + `kit.html` + `03-agente.html` · 2026-09-27
+
+**Entregado:**
+
+- `design-system.md` v0.1 (raíz del repo): personalidad (sobrio · exacto · franco), principios,
+  tokens con sus valores por tema y contrastes, tipografía (Inter elegida por el usuario, mono solo
+  para datos, siete tamaños), espacio y rejilla, radios, bordes (discontinuo = falta o no es real),
+  sin sombras, iconografía (Lucide, monocroma), movimiento (150/200/250 ms, reducido = instantáneo),
+  idioma, los dos juegos de estados y 18 componentes canon con su uso; anti-patrones.
+- `kit.html`: el sistema en vivo. Color leído del CSS generado (hex y contraste se recalculan al
+  cambiar de tema), escala tipográfica, espacio y forma, los 36 íconos, movimiento con demo, y cada
+  componente con sus estados: botones, chips, veredictos, nodo 5 tipos × 5 estados, arista 3 modos,
+  fila de criterio, fila de riesgo, deslizador de umbral, panel de consecuencias, curva
+  riesgo-cobertura y ficha de reproducibilidad (contenido · éxito · vacío · cargando · error).
+  Datos reales donde existen: latencia mediana del spike (4,74 s, C7 cumple), `costo_estimado` no
+  registrado (U2 deshabilitado «no observado»), ficha del spike sin huella de lote.
+- `03-agente.html` (P3): el grafo del spike contra el contrato del plan — 3 de 8 nodos, 1 de 8
+  aristas condicionales (U1, en `enrutador` y no en `decision`), `aprobar` fuera del contrato; los 5
+  nodos exigidos y ausentes punteados; lienzo A (se desliza en teléfono) y lista por capa; detalle
+  por selección con texto de líder, de experto, el código real del spike (`spike.py`, líneas
+  citadas) y sus trazas; la arista U1 con la distribución de la señal en los 5 casos y el hallazgo
+  A-002 (0,75 exacto, 5 campos faltantes, fue a aprobar porque «menor que» no es inclusivo).
+
+**Pasada de capturas del builder:** 48 encuadres (kit y agente × 2 temas × 2 idiomas × 380/1280;
+el agente en sus 5 selecciones) + corrida con movimiento reducido en las 4 páginas: 0 desbordes,
+0 textos fuera del lienzo o de su nodo, fuentes cargadas, 0 animaciones. Ajustes por lo visto: las
+pestañas del detalle se estiraban a todo el ancho; las cabeceras de las tablas de criterio y riesgo
+no quedaban sobre sus columnas; la marca «plan» del deslizador chocaba con la perilla (ahora va
+debajo del riel); en la curva, la regla de ancho completo agrandaba los íconos de chips y avisos;
+una etiqueta de la curva se cortaba en el borde.
+
+**Corrección a `direccion.html` (aprobada):** el espécimen del nodo ponía `aclaracion` como pausa
+humana; el contrato la declara `modelo`. Ahora usa un nombre de ejemplo con nota, igual que el kit
+(el contrato no declara herramientas ni una segunda pausa humana).
+
 **Lo que dijo el usuario:** _(pendiente)_
 
 **Qué cambió:** _(pendiente)_
