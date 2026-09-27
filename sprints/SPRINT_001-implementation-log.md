@@ -21,8 +21,8 @@ modelo: Fable 5.1 (todo el sprint, decisión del usuario 2026-09-27)
 | 0 · Setup y precondiciones                   | ✅ aprobada («continúa»)               | 2026-09-27 |
 | 1 · El plan como contrato                    | ✅ aprobada («continúa», v1 confirmado) | 2026-09-27 |
 | 2 · Casos sintéticos                         | ✅ aprobada («continúa»)               | 2026-09-27 |
-| 3 · Demo A en LangGraph                      | ✅ construida, pendiente de «continúa» | 2026-09-27 |
-| 4 · Verificador y validación del instrumento | ⏳                                     |            |
+| 3 · Demo A en LangGraph                      | ✅ aprobada («continúa»)               | 2026-09-27 |
+| 4 · Verificador y validación del instrumento | ✅ construida, pendiente de «continúa» | 2026-09-27 |
 | 5 · Cierre                                   | ⏳                                     |            |
 
 ## Fase 0 — Setup y precondiciones (2026-09-27)
@@ -247,6 +247,75 @@ Abierto como borrador a pedido del usuario, para ver la CI antes de las fases 4 
 
 Dependabot abrió el #6 (`@types/node` 22 → 26) durante el sprint: se procesa después del PR del sprint (regla 18; salto de mayor con Node 22 en CI).
 
+## Fase 4 — Verificador de brecha, intérprete TypeScript y validación del instrumento (2026-09-27)
+
+### Qué se construyó (`core/`, TypeScript puro: Node y navegador)
+
+- **`core/formatos/traza.ts`** — el lado lector del contrato Python → TypeScript (regla 19): Zod `strict` para `corrida.json`, `grafo.json`, `ramas-esperadas.json` y cada traza. Las tres corridas versionadas validan sin cambios del exportador.
+- **`core/playground/interprete.ts`** — intérprete de aristas con la semántica exacta de `reglas_arista.py` (igualdad estricta de tipo, `inclusivo`, `umbral.Ux`, función nombrada `texas_y_no_aprobar`, primera verdadera gana). `ramasEsperadas` produce el mismo objeto que escribe Python; `discrepanciasDeRamas` compara contra lo que registró el agente.
+- **`core/brecha/`** — el verificador determinista:
+  - `lector.ts` (RF-06.1): huella de plan, lote, manifiesto, grafo, ramas y cada traza; referencias cruzadas; trazas mal formadas (`nodos_visitados` ≠ pasos, pasos no numerados, decisión en un paso que no es su nodo); corridas incompatibles (repetición = misma corrida, línea base de otra variante, otro plan u otro lote). Rechaza con TODOS los motivos juntos.
+  - `contexto.ts` + `reglas.ts`: el vocabulario con que el plan escribe sus reglas, resuelto por caso (señales de la traza, `salida_final` ES+EN, `interrupt_payload`, `verdad_conocida`, `umbral.Ux`…), y un único motor población + condición para criterios, detectores, supuestos y evaluadores. Tres errores distintos en `condiciones.ts`: señal **nula** (en población = «no aplica», contada aparte; en condición = no evaluable), señal **faltante** (no evaluable, y el contrato la reporta) y **comparación sospechosa** (objetos con claves distintas: la regla del plan queda `mal_formado`).
+  - `criterios.ts` (RF-06.2): `todos_cumplen`, `tasa`, `pass^k` con `k_observado` (si la tasa observada ya está bajo el objetivo es `incumple`; si no y faltan corridas, `incompleto`, nunca `cumple`), mediana/promedio/máximo por métrica. Estados `cumple · incumple · incompleto · indeterminado · sin_poblacion · mal_formado`.
+  - `detectores.ts` (RF-06.3): detector de cada riesgo tal cual, con prioridad de acción AIAG-VDA del reusable y RPN secundario.
+  - `calibracion.ts` + `supuestos.ts` (RF-06.4): ECE (10 intervalos), AUROC por rangos con empates promediados, curva riesgo-cobertura sobre el rango jugable de U1 con el operador de la arista; tasa; comparación con la línea base (exactitud = decisión y pausa correctas, latencia mediana, presupuesto: llamadas reales al modelo con reintentos, tokens, costo). Solo se confirma o refuta con `umbral_confirmacion` numérico; y se pregunta **«¿puede fallar?»**: una condición `señal <= n` que el grafo acota por construcción queda `sin_probar` y lo dice.
+  - `contrato-grafo.ts` (RF-06.5 + RF-09.2): nodos, aristas, ramas por defecto y pausas del grafo contra el plan; por traza: señales obligatorias, nodos declarados, rama seguida, pausa registrada con rol y payload mínimo; recálculo de ramas en TypeScript contra lo registrado y contra la huella de Python, sobre la corrida principal, sus repeticiones y su línea base.
+  - `brechas-no-previstas.ts` (RF-06.6): los 4 evaluadores `regla` del plan implementados como reglas del mismo lenguaje (registro cerrado); una falla que ningún riesgo cubierto detectó en ese caso es brecha no prevista, con **nodo y paso del primer error** (regla dura 10); también errores del proveedor sin riesgo que los cubra y **reintentos de salida estructurada** (el modo de ADR-004). El juez `calidad_redaccion` figura como «no corrió (opcional en este corte)».
+  - `veredicto.ts` (RF-06.7), `informe.ts` (§ 6.10 + § 12, JSON canónico con huella) y `render-md.ts` (Markdown ES/EN redactado desde plantillas, 9 secciones, estado con símbolo + texto).
+  - `m9.ts` (RF-09.1): 8 brechas sembradas sobre la corrida simulada limpia + control sin sembrar.
+- **CLI:** `pnpm brecha:informe --corrida runs/demo-a/<id>` (toma `<id>-base` y `<id>-r2…` por convención; `--verificar` para frescura) · `pnpm trazas:verificar` (huellas + RF-09.2 + barrido de credenciales sobre `runs/`) · `pnpm m9:reporte`.
+- **Artefactos:** `runs/demo-a/suscripcion-planlang-a-001-20/informe.{json,es.md,en.md}` (el primer informe de brecha real) · `tests/golden/demo-a/simulado-3casos/informe.{json,es.md,en.md}` · `docs/kit-de-prueba/M9-brechas-sembradas.md`.
+
+### El primer informe de brecha real — `suscripcion-planlang-a-001-20` (huella `16e50e29…`)
+
+**Veredicto: ⚠ cumple con alertas.** 8 de 9 criterios cumplidos, 0 fallidos, 1 sin cerrar; ningún riesgo ocurrió.
+
+| Pieza | Resultado |
+|---|---|
+| C1 · C2 · C4 · C6 · C8 · C9 | ✓ cumplen (C4 sobre 4 casos: 2 urgencias + 2 exentos; C6 sobre 1 inyección) |
+| C3 | ✓ cumple sobre 3 casos de alto costo; **5 fuera de la población por señal nula** (urgencias y exentos no pasan por el extractor; A-007 no recibió el costo) — el informe lo dice |
+| C5 | ◐ **incompleto**: 100 % medido con k = 1 de 3 |
+| C7 | ✓ mediana 11,215 s (≤ 30 s); A-008 supera 30 s por sí solo (35,2 s, dos ciclos de aclaración) |
+| R1–R4, R6–R8 | ✓ no ocurrieron |
+| R5 | ⚠ **detector mal formado** (ver desviación 8) — el riesgo NO se midió |
+| S1 | ◌ sin probar: ECE 0,08; AUROC **no existe** (15 de 15 extracciones correctas: nada que discriminar); muestra pequeña; el plan no declara umbral numérico |
+| S2 | ◌ sin probar: **no puede fallar** con U3 = 2 (ver desviación 9) |
+| S3 | ✓ confirmado: multiagente 100 % vs agente único 90 % (A-008 y A-020 difieren), latencia mediana 11,215 s vs 11,36 s; la línea base gastó menos (25 llamadas vs 49; US$ 0,59 vs 0,69) → comparación a igual o menor presupuesto |
+| Brechas no previstas | 3 reintentos de salida estructurada en el extractor (A-008 paso 4, A-013 paso 2, A-017 paso 2): el modo de falla de ADR-004 que el plan no anticipaba |
+| Contrato de grafo | 8/8 nodos, 16/16 señales en las 20 trazas, 8 pausas registradas con rol `auditor`; RF-09.2: 62 visitas (multiagente) y 49 (línea base) sin discrepancias, misma huella que Python |
+
+Casos ejemplares: exitoso A-001 · escalado correctamente A-004 · fallido: **ninguno** · adversario neutralizado A-006.
+
+### Tests
+
+- **vitest:** 490 tests en 45 archivos (TypeScript del sprint; +30 locales de la Etapa de Diseño no versionados). Nuevos de la fase: `tests/unit/core/playground/{interprete,rf-09-2}.test.ts`, `tests/unit/core/brecha/{condiciones-nulos,lector,criterios,detectores,calibracion,supuestos,contrato-grafo,brechas-y-veredicto,informe,render-md,m9,numeros,perf-200}.test.ts`, `tests/integration/{informe-simulado,informes-versionados}.test.ts` (los de integración corren en `core` y `core-jsdom`: mismos bytes que el golden en Node y en jsdom).
+- **Cobertura:** `core/brecha` 98,5 % líneas · 92,7 % ramas; `core/playground` 100 %; umbral 90 cumplido.
+- **Performance (DoD):** informe de 200 casos en **57 ms** en Node (presupuesto 2 s). Sin corrida real de 200 todavía: las 20 trazas reales se replican sobre los casos A-021…A-200 del lote versionado, re-selladas y con sus ramas recalculadas, así que el verificador hace todo el trabajo (200 huellas, reglas por caso, contrato, RF-09.2).
+- **M9:** 8/8 brechas sembradas detectadas; control sin sembrar limpio.
+- **pytest:** 122 passed, 3 skipped (humo real), 95,9 % — sin cambios; ruff limpio. `pnpm trazas:verificar`: ✓ las 3 corridas.
+
+### Demos en rojo (regla 15)
+
+| Gate | Cambio deliberado | Resultado |
+|---|---|---|
+| RF-09.2 cruzada (TypeScript) | `menor_que` tratado como `<=` en `interprete.ts` | 🔴 3 tests nombran **AH-002 · paso 4 · decision** (registró `redactor`, recalcula `pausa_humana`) → 🟢. Las corridas reales NO se pusieron rojas: ninguna confianza real cayó justo en 0,75; el empate solo existe en el caso de borde del lote de humo, por eso ese caso está en el lote que corre la CI |
+| Golden del informe (Node y jsdom) | título de la sección 1 cambiado en `render-md.ts` | 🔴 `informe.es.md` en `core` y en `core-jsdom` → 🟢 |
+| M9 | detector de señal faltante apagado en `contrato-grafo.ts` | 🔴 `n/n detectadas` y frescura del reporte M9 → 🟢 |
+| Lector (RF-06.1) | verificación de huella de las trazas quitada | 🔴 lector (`HUELLA_NO_COINCIDE`) y M9 (`huella_alterada`) → 🟢 |
+| Regla mal formada | la comparación sospechosa desactivada en `condiciones.ts` | 🔴 tests de condiciones y criterios, y los 3 golden en ambos proyectos (R5 pasaría a «medido») → 🟢 |
+| Frescura del informe versionado | un signo cambiado en `runs/…/informe.es.md` | 🔴 en `core` y `core-jsdom`, nombrando la corrida → 🟢 |
+| Presupuesto de líder del informe | recomendación alargada a > 50 palabras | 🔴 2 tests (informe simulado y plantilla `cumple_con_alertas`) → 🟢 |
+| Performance | presupuesto bajado a 10 ms | 🔴 → 🟢 |
+| E-11 sobre el informe exportado | «Llame al 310 555 1234» en el resumen de `informe.json` | 🔴 `[hipaa_telefono] $.resumen.texto.es` (el gate existente ya recorre el informe nuevo) → 🟢 |
+| `pnpm trazas:verificar` | `"session_id"` en una traza (copia en scratchpad) | 🔴 exit 1 con `ESQUEMA` y `CREDENCIAL` nombrando el archivo |
+
+### Desviaciones y deudas de la fase
+
+- **El informe de la corrida simulada vive en `tests/golden/`**, no junto a la corrida: el gate de determinismo de Python compara la lista exacta de `*.json` de `runs/demo-a/simulado-3casos/`.
+- **Evaluaciones por caso (§ 6.9):** van en el informe (sección 5, tabla de evaluadores), no en la corrida exportada — como se anotó en la fase 3.
+- **`opciones[].nombre` de las decisiones no es bilingüe** (esquema del plan desde la fase 1; `no_detectable_en_trazas` tampoco): el informe muestra pregunta + justificación, que sí lo son. Deuda de regla 20 para el esquema del plan (S2).
+- **El comando `pnpm trazas:verificar` no corre en CI**: lo que verifica (huellas, RF-09.2, credenciales) ya lo cubren vitest y pytest; el CLI es la herramienta del usuario.
+
 ## Desviación del plan
 
 1. **Carnada C03 del contrato `instrumentos-de-plan` v0.1.0** (se aplica en la fase 1): la tabla de prioridad de acción AIAG-VDA 2019 da `baja` para S8·O3·D4, no `alta`. Enmienda propuesta en el summary: C03 → S8·O6·D2 (`alta`, RPN 96) y C03-bis → S8·O3·D4 (`baja`, RPN 96). Fuente secundaria verificada 2026-09-26 (Relyence, tabla AP); la primaria (handbook) no es accesible por curl.
@@ -256,6 +325,9 @@ Dependabot abrió el #6 (`@types/node` 22 → 26) durante el sprint: se procesa 
 5. Otras correcciones del plan v0 que el validador exija: se anotan en la fase 1 (10 correcciones; confirmadas por el usuario con el «continúa» de la fase 1).
 6. **Hallazgos de coherencia del plan v1** (fase 2): exentos contra C4/R6, semántica de U3 y medida de S2, población de C3 en urgencias. **Resuelto el primero con el plan v1.1** (aprobado por el usuario, fase 3); U3 implementado como «hasta U3 aclaraciones usando todas las respuestas»; S2 y C3 van al verificador (fase 4).
 7. **Regla 6 (`--max-turns 1`) y `--json-schema`** (fase 3): `error_max_turns` en 3/46 llamadas del multiagente y 9/16 de la línea base; se reintenta (ADR-004). Propuesta a la planeadora: `--max-turns 2` solo con `--json-schema`.
+8. **R5 tiene el detector mal formado desde el plan v0** (fase 4): `extraccion != verdad_conocida.campos` compara la extracción ENTERA (campos, faltantes, confianza…) con sus campos → siempre «distinto»; medido tal cual, R5 «ocurriría» en el 100 % de su población. El verificador lo detecta de forma genérica (comparación de objetos con claves distintas) y lo reporta `mal_formado`, sin medirlo. Corrección propuesta: `extraccion.campos != verdad_conocida.campos`.
+9. **S1 y S2 no declaran umbral numérico de confirmación** (ECE ≤ 0,10 · AUROC ≥ 0,75 · 95 % están solo en la prosa de `prueba_barata`), y **S2 no puede fallar** con U3 = 2: el grafo manda a una persona al llegar a 2 ciclos, así que `ciclos_aclaracion <= 2` se cumple por construcción (A-007, que se quedó sin respuesta y escaló, cuenta como «bastaron dos ciclos»). Propuesta: `umbral_confirmacion` `{ece_max: 0.10, auroc_min: 0.75}` en S1 y `{tasa_min: 0.95}` en S2, y S2 reformulado a «faltantes resueltos sin escalar» (`pausa_humana == false`).
+10. **Un plan v1.2 con 8–9 cambia solo la medición** (criterios, riesgos, supuestos), no el grafo ni los umbrales; pero las corridas declaran la huella del plan con que corrieron y el lector exige la misma huella en las repeticiones de `pass^k`. Decisión del usuario en el gate de la fase 4 (ver resumen).
 
 ## Registro de miradas
 

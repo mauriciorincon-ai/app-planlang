@@ -19,6 +19,13 @@
  * Semántica:
  *   - Un identificador que no existe en el contexto es un ERROR de evaluación (`ErrorEvaluacion`),
  *     no `false`: así una señal faltante se reporta como brecha (M9), no como cumplimiento.
+ *   - Una señal que existe pero vale `null` (el nodo que la escribe no corrió en ese caso: p. ej. la
+ *     confianza del extractor en una urgencia) lanza `ErrorNulo` al ordenarla, negarla o buscar en ella.
+ *     El verificador lo distingue: en una POBLACIÓN significa «no aplica»; en una CONDICIÓN, «no evaluable».
+ *     Una ruta que atraviesa un `null` (`extraccion.costo_estimado` sin extracción) vale `null`.
+ *   - Comparar con `==`/`!=` dos objetos con claves distintas, o un objeto con un escalar, lanza
+ *     `ErrorComparacionSospechosa`: esa comparación es siempre desigual y casi siempre un error del plan
+ *     (comparar la extracción entera con sus campos). El verificador marca la regla como mal formada.
  *   - `==`/`!=` comparan en profundidad (por JCS) cuando algún lado es objeto o lista.
  *   - `a CONTIENE b`: a cadena y b cadena → subcadena; a cadena y b lista → alguna subcadena;
  *     a lista y b escalar → pertenencia; a lista y b lista → TODOS los elementos de b están en a.
@@ -75,6 +82,35 @@ export class ErrorEvaluacion extends Error {
   constructor(mensaje: string) {
     super(mensaje);
     this.name = "ErrorEvaluacion";
+  }
+}
+
+/** Un identificador que no existe en el contexto: una señal que falta en la traza. */
+export class ErrorIdentificador extends ErrorEvaluacion {
+  constructor(public readonly ruta: string) {
+    super(`identificador desconocido: ${ruta}`);
+    this.name = "ErrorIdentificador";
+  }
+}
+
+/** Una señal presente pero nula donde se necesitaba un valor (ver la cabecera). */
+export class ErrorNulo extends ErrorEvaluacion {
+  constructor(mensaje: string) {
+    super(mensaje);
+    this.name = "ErrorNulo";
+  }
+}
+
+/** `==`/`!=` entre estructuras que no pueden ser iguales (ver la cabecera). */
+export class ErrorComparacionSospechosa extends ErrorEvaluacion {
+  constructor(
+    public readonly clavesIzq: string,
+    public readonly clavesDer: string,
+  ) {
+    super(
+      `se comparan estructuras distintas: {${clavesIzq}} vs {${clavesDer}}`,
+    );
+    this.name = "ErrorComparacionSospechosa";
   }
 }
 
@@ -367,11 +403,8 @@ export function contextoDesdeObjeto(
     resolver: (ruta) => {
       let actual: JsonValor | undefined = obj;
       for (const parte of ruta.split(".")) {
-        if (
-          actual === null ||
-          typeof actual !== "object" ||
-          Array.isArray(actual)
-        )
+        if (actual === null) return null;
+        if (typeof actual !== "object" || Array.isArray(actual))
           return undefined;
         actual = (actual as Record<string, JsonValor>)[parte];
         if (actual === undefined) return undefined;
@@ -382,24 +415,43 @@ export function contextoDesdeObjeto(
   };
 }
 
+function esObjeto(v: JsonValor): v is { [clave: string]: JsonValor } {
+  return v !== null && typeof v === "object" && !Array.isArray(v);
+}
+
+function clavesDe(v: { [clave: string]: JsonValor }): string {
+  return Object.keys(v).sort().join(", ");
+}
+
 function iguales(a: JsonValor, b: JsonValor): boolean {
+  if (a === null || b === null) return a === b;
+  if (esObjeto(a) || esObjeto(b)) {
+    const izq = esObjeto(a) ? clavesDe(a) : "";
+    const der = esObjeto(b) ? clavesDe(b) : "";
+    if (!esObjeto(a) || !esObjeto(b) || izq !== der)
+      throw new ErrorComparacionSospechosa(izq, der);
+  }
   if (typeof a === "object" || typeof b === "object") return jcs(a) === jcs(b);
   return a === b;
 }
 
 function booleano(v: JsonValor, op: string): boolean {
+  if (v === null) throw new ErrorNulo(`${op} sobre una señal nula`);
   if (typeof v !== "boolean")
     throw new ErrorEvaluacion(`${op} exige booleanos; se recibió ${typeof v}`);
   return v;
 }
 
 function numero(v: JsonValor, op: string): number {
+  if (v === null) throw new ErrorNulo(`${op} sobre una señal nula`);
   if (typeof v !== "number")
     throw new ErrorEvaluacion(`${op} exige números; se recibió ${typeof v}`);
   return v;
 }
 
 function contiene(a: JsonValor, b: JsonValor): boolean {
+  if (a === null || b === null)
+    throw new ErrorNulo("CONTIENE sobre una señal nula");
   if (typeof a === "string") {
     if (typeof b === "string") return a.includes(b);
     if (Array.isArray(b))
@@ -423,8 +475,7 @@ export function evaluar(nodo: Nodo, ctx: Contexto): JsonValor {
       return nodo.elementos.map((e) => evaluar(e, ctx));
     case "id": {
       const v = ctx.resolver(nodo.ruta);
-      if (v === undefined)
-        throw new ErrorEvaluacion(`identificador desconocido: ${nodo.ruta}`);
+      if (v === undefined) throw new ErrorIdentificador(nodo.ruta);
       return v;
     }
     case "llamada": {
@@ -465,6 +516,7 @@ export function evaluar(nodo: Nodo, ctx: Contexto): JsonValor {
         case ">=":
           return numero(a, ">=") >= numero(b, ">=");
         case "IN":
+          if (b === null) throw new ErrorNulo("IN sobre una lista nula");
           if (!Array.isArray(b))
             throw new ErrorEvaluacion("IN exige una lista a la derecha");
           return b.some((x) => iguales(a, x));
