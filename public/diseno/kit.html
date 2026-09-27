@@ -1,0 +1,600 @@
+<!doctype html>
+<html lang="es" data-theme="oscuro" data-lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title data-es="planlang · Sala de diseño · Kit del sistema" data-en="planlang · Design room · System kit">planlang · Sala de diseño · Kit del sistema</title>
+<link rel="stylesheet" href="assets/fuentes.css">
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/planlang.css">
+<link rel="stylesheet" href="assets/diagrama.css">
+<link rel="stylesheet" href="assets/maqueta.css">
+<script src="assets/maqueta.js" defer></script>
+<style>
+  /* Solo sala: la maquetación del kit (no es producto). */
+  .kit-cab { padding-block: 40px 8px; }
+  .indice { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 20px; }
+  .indice a { font-size: 13px; text-decoration: none; color: var(--tinta-2); border: 1px solid var(--tinta-3); border-radius: 4px; padding: 4px 10px; }
+  .indice a:hover { color: var(--tinta-1); }
+  .grupo-t { margin: 56px 0 0; padding-top: 12px; border-top: 1px dashed var(--tinta-3); font: 500 12px/1.4 var(--mono); color: var(--tinta-2); }
+  .muestras .fila { display: grid; grid-template-columns: 56px minmax(0, 1.1fr) minmax(0, 2fr) 84px 96px; gap: 16px; align-items: center; padding-block: 10px; border-top: 1px solid var(--linea); }
+  .muestras .cabeza { border-top: 0; padding-block: 0 8px; font-size: 12px; color: var(--tinta-2); }
+  .muestra-c { width: 56px; height: 32px; border-radius: 6px; border: 1px solid var(--linea); }
+  .muestras .tok { font: 500 12px/1.4 var(--mono); }
+  .muestras .tok small { display: block; font: 400 12px/1.4 var(--letra); color: var(--tinta-2); }
+  .muestras .rol { font-size: 13px; color: var(--tinta-2); }
+  .muestras .hex, .muestras .cr { font: 400 12px/1.4 var(--mono); }
+  .muestras .glifo-t { display: inline-flex; align-items: center; gap: 8px; }
+  .muestras .glifo-t svg { width: 16px; height: 16px; flex: none; }
+  .veto { display: inline-flex; align-items: center; gap: 4px; margin-left: 6px; font: 500 11px/1 var(--letra); color: var(--tinta-1); border: 1px dashed var(--tinta-3); border-radius: 3px; padding: 2px 5px; }
+  .est { display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 8px 24px; align-items: start; padding-block: 16px; border-top: 1px solid var(--linea); }
+  .est.est-cab { border-top: 0; padding-bottom: 0; }
+  .est > .et { font-size: 13px; font-weight: 500; }
+  .est > .et small { display: block; font-weight: 400; color: var(--tinta-2); font-size: 12px; margin-top: 2px; }
+  .fila-muestras { display: flex; flex-wrap: wrap; gap: 10px 12px; align-items: center; }
+  .rejilla-nodos .fila { display: grid; grid-template-columns: 150px repeat(5, minmax(0, 1fr)); gap: 10px 12px; align-items: center; padding-block: 10px; border-top: 1px solid var(--linea); }
+  .rejilla-nodos .cabeza { border-top: 0; padding-block: 0 6px; font-size: 12px; color: var(--tinta-2); }
+  .rejilla-nodos .tipo { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 500; }
+  .rejilla-nodos .tipo svg { width: 15px; height: 15px; fill: var(--c); flex: none; }
+  .espacios { display: grid; gap: 8px; }
+  .espacios div { display: grid; grid-template-columns: 90px minmax(0, 1fr); gap: 16px; align-items: center; font: 400 12px/1 var(--mono); color: var(--tinta-2); }
+  .espacios i { display: block; height: 12px; background: var(--tinta-3); border-radius: 2px; }
+  .formas { display: flex; flex-wrap: wrap; gap: 16px; }
+  .forma { display: grid; gap: 8px; justify-items: center; font-size: 12px; color: var(--tinta-2); text-align: center; }
+  .forma span.caja { display: block; width: 88px; height: 56px; background: var(--sup-2); border: 1px solid var(--linea); }
+  .iconos-rejilla { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 8px; }
+  .iconos-rejilla div { display: grid; justify-items: start; gap: 8px; padding: 12px; border: 1px solid var(--linea); border-radius: 8px; font: 400 11px/1.3 var(--mono); color: var(--tinta-2); overflow-wrap: anywhere; }
+  .iconos-rejilla .ico { width: 20px; height: 20px; color: var(--tinta-1); }
+  .dos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .tabla-mov { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .tabla-mov th, .tabla-mov td { text-align: left; padding: 8px 12px 8px 0; border-top: 1px solid var(--linea); vertical-align: top; }
+  .tabla-mov th { font-weight: 400; font-size: 12px; color: var(--tinta-2); border-top: 0; }
+  .tabla-mov td.mono { font-family: var(--mono); font-size: 12px; }
+  .demo-mov { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; margin-top: 16px; }
+  .demo-mov .nodo { width: 220px; }
+  .aristas-m svg { display: block; width: 100%; max-width: 640px; height: auto; }
+  @media (max-width: 860px) {
+    .muestras .fila { grid-template-columns: 48px minmax(0, 1fr) 84px; }
+    .muestras .fila > .rol, .muestras .fila > .cr { display: none; }
+    .muestra-c { width: 48px; }
+    .est { grid-template-columns: 1fr; }
+    .est.est-cab { display: none; }
+    .rejilla-nodos .fila { grid-template-columns: 1fr 1fr; }
+    .rejilla-nodos .cabeza { display: none; }
+    .rejilla-nodos .tipo { grid-column: 1 / -1; }
+    .dos { grid-template-columns: 1fr; }
+  }
+  .catalogo { display: grid; }
+  .catalogo .fila { display: grid; grid-template-columns: 44px minmax(0, 1.1fr) minmax(0, 2fr) minmax(0, 1.2fr) 88px; gap: 14px; padding-block: 10px; border-top: 1px solid var(--linea); font-size: var(--t-chico); align-items: baseline; }
+  .catalogo .fila .n { font: 500 12px var(--mono); color: var(--tinta-2); }
+  .catalogo .grupo-v { grid-template-columns: 44px minmax(0, 1fr); padding-top: 22px; border-top: 0; font-weight: 600; font-size: var(--t-sub); }
+  .catalogo b { font-weight: 500; }
+  @media (max-width: 720px) {
+    .catalogo .fila { grid-template-columns: 44px minmax(0, 1fr); gap: 4px 12px; }
+    .catalogo .fila > :nth-child(n + 3) { grid-column: 2; }
+  }
+</style>
+</head>
+<body>
+<script src="assets/sprite.js"></script>
+
+<div class="mq-bar" role="region" aria-label="Sala de diseño">
+  <span class="mq-t"><span lang="es">Sala de diseño · Mirada 5 · kit del sistema, consolidado</span><span lang="en">Design room · Look 5 · system kit, consolidated</span></span>
+  <div class="mq-g" role="group" aria-label="Tema / Theme"><span><span lang="es">tema:</span><span lang="en">theme:</span></span><button type="button" data-theme-set="oscuro"><span lang="es">oscuro</span><span lang="en">dark</span></button><button type="button" data-theme-set="claro"><span lang="es">claro</span><span lang="en">light</span></button></div>
+  <div class="mq-g" role="group" aria-label="Idioma / Language"><span><span lang="es">idioma:</span><span lang="en">language:</span></span><button type="button" data-lang-set="es">ES</button><button type="button" data-lang-set="en">EN</button></div>
+  <a href="index.html"><span lang="es">recorrido</span><span lang="en">tour</span></a>
+</div>
+<div class="mq-nota"><p><span lang="es"><b>Qué mirar (mirada 5):</b> arriba, las piezas canon en vivo, las que aprobaste en la mirada 2. Al final, <b>«Componentes de pantalla»</b>: los 44 que nacieron en las pantallas, cada uno con su uso, sus estados y el enlace a su instancia viva. El documento es <b>design-system.md</b>, en la raíz del repo.</span><span lang="en"><b>What to look at (look 5):</b> at the top, the canon pieces live, the ones you approved in look 2. At the end, <b>“Screen components”</b>: the 44 born in the screens, each with its use, its states and the link to its live instance. The document is <b>design-system.md</b>, at the repo root.</span></p></div>
+
+<div class="cont">
+  <header class="kit-cab">
+    <p class="antetitulo"><span lang="es">Sistema de diseño · 1.0.0 · G-Diseño aprobado</span><span lang="en">Design system · 1.0.0 · G-Design approved</span></p>
+    <h1><span lang="es">planlang, en piezas</span><span lang="en">planlang, in pieces</span></h1>
+    <p class="guia"><span lang="es">Sobrio, exacto y franco: tinta sobre neutro, el color solo para el tipo de nodo y el veredicto, y la falla tan visible como el acierto.</span><span lang="en">Restrained, exact and candid: ink on neutral, colour only for node type and verdict, and failure as visible as success.</span></p>
+    <nav class="indice" aria-label="Índice / Index">
+      <a href="#color">Color</a><a href="#tipografia"><span lang="es">Tipografía</span><span lang="en">Type</span></a><a href="#espacio"><span lang="es">Espacio y forma</span><span lang="en">Space and shape</span></a><a href="#iconos"><span lang="es">Íconos</span><span lang="en">Icons</span></a><a href="#movimiento"><span lang="es">Movimiento</span><span lang="en">Motion</span></a><a href="#c-basicos"><span lang="es">Básicos</span><span lang="en">Basics</span></a><a href="#c-nodo"><span lang="es">Nodo y arista</span><span lang="en">Node and edge</span></a><a href="#c-criterio"><span lang="es">Criterio</span><span lang="en">Criterion</span></a><a href="#c-riesgo"><span lang="es">Riesgo</span><span lang="en">Risk</span></a><a href="#c-umbral"><span lang="es">Umbral</span><span lang="en">Threshold</span></a><a href="#c-consecuencias"><span lang="es">Consecuencias</span><span lang="en">Consequences</span></a><a href="#c-curva"><span lang="es">Curva</span><span lang="en">Curve</span></a><a href="#c-ficha"><span lang="es">Ficha</span><span lang="en">Record card</span></a>
+    </nav>
+  </header>
+
+  <!-- ============================ Color -->
+  <section class="seccion" id="color" aria-labelledby="t-color">
+    <div class="seccion-cab"><h2 id="t-color">Color</h2><p class="nota"><span lang="es">Valores del tema activo, leídos del CSS generado. Cambia el tema arriba.</span><span lang="en">Values of the active theme, read from the generated CSS. Switch the theme above.</span></p></div>
+    <h3 style="margin-bottom:8px"><span lang="es">Neutros</span><span lang="en">Neutrals</span></h3>
+    <div class="muestras">
+      <div class="fila cabeza"><span></span><span>Token</span><span class="rol"><span lang="es">Rol</span><span lang="en">Role</span></span><span>Hex</span><span class="cr"><span lang="es">sobre fondo</span><span lang="en">on background</span></span></div>
+      <div class="fila"><span class="muestra-c" style="background:var(--fondo)"></span><span class="tok">--fondo</span><span class="rol"><span lang="es">fondo de página</span><span lang="en">page background</span></span><span class="hex" data-hex="--fondo"></span><span class="cr">—</span></div>
+      <div class="fila"><span class="muestra-c" style="background:var(--sup-1)"></span><span class="tok">--sup-1</span><span class="rol"><span lang="es">lienzo, miniaturas, campos</span><span lang="en">canvas, thumbnails, fields</span></span><span class="hex" data-hex="--sup-1"></span><span class="cr">—</span></div>
+      <div class="fila"><span class="muestra-c" style="background:var(--sup-2)"></span><span class="tok">--sup-2</span><span class="rol"><span lang="es">nodos, baldosas, sala</span><span lang="en">nodes, tiles, room</span></span><span class="hex" data-hex="--sup-2"></span><span class="cr">—</span></div>
+      <div class="fila"><span class="muestra-c" style="background:var(--linea)"></span><span class="tok">--linea<span class="veto"><span lang="es">jamás texto</span><span lang="en">never text</span></span></span><span class="rol"><span lang="es">filetes y separadores</span><span lang="en">rules and dividers</span></span><span class="hex" data-hex="--linea"></span><span class="cr" data-cr="--linea|--fondo"></span></div>
+      <div class="fila"><span class="muestra-c" style="background:var(--tinta-3)"></span><span class="tok">--tinta-3<span class="veto"><span lang="es">jamás texto</span><span lang="en">never text</span></span></span><span class="rol"><span lang="es">guías y bordes de control (≥ 3:1)</span><span lang="en">guides and control borders (≥ 3:1)</span></span><span class="hex" data-hex="--tinta-3"></span><span class="cr" data-cr="--tinta-3|--fondo"></span></div>
+      <div class="fila"><span class="muestra-c" style="background:var(--tinta-2)"></span><span class="tok">--tinta-2</span><span class="rol"><span lang="es">texto secundario, trazos de flujo</span><span lang="en">secondary text, flow strokes</span></span><span class="hex" data-hex="--tinta-2"></span><span class="cr" data-cr="--tinta-2|--fondo"></span></div>
+      <div class="fila"><span class="muestra-c" style="background:var(--tinta-1)"></span><span class="tok">--tinta-1</span><span class="rol"><span lang="es">texto principal, foco</span><span lang="en">main text, focus</span></span><span class="hex" data-hex="--tinta-1"></span><span class="cr" data-cr="--tinta-1|--fondo"></span></div>
+    </div>
+
+    <h3 style="margin:32px 0 8px"><span lang="es">Cromáticos: tipo de nodo y veredicto</span><span lang="en">Chromatics: node type and verdict</span></h3>
+    <div class="muestras">
+      <div class="fila cabeza"><span></span><span><span lang="es">Token y forma</span><span lang="en">Token and shape</span></span><span class="rol"><span lang="es">Rol</span><span lang="en">Role</span></span><span>Hex</span><span class="cr"><span lang="es">sobre sup-1</span><span lang="en">on sup-1</span></span></div>
+      <div class="fila"><span class="muestra-c" style="background:var(--tipo-1-tinte);border:2px solid var(--tipo-1)"></span><span class="tok glifo-t"><svg aria-hidden="true" style="fill:var(--tipo-1)"><use href="#g-estrella"/></svg>--tipo-1</span><span class="rol"><span lang="es">modelo · razona con un modelo de lenguaje</span><span lang="en">model · reasons with a language model</span></span><span class="hex" data-hex="--tipo-1"></span><span class="cr" data-cr="--tipo-1|--sup-1"></span></div>
+      <div class="fila"><span class="muestra-c" style="background:var(--tipo-2-tinte);border:2px solid var(--tipo-2)"></span><span class="tok glifo-t"><svg aria-hidden="true" style="fill:var(--tipo-2)"><use href="#g-triangulo"/></svg>--tipo-2</span><span class="rol"><span lang="es">herramienta · llama a un sistema externo</span><span lang="en">tool · calls an external system</span></span><span class="hex" data-hex="--tipo-2"></span><span class="cr" data-cr="--tipo-2|--sup-1"></span></div>
+      <div class="fila"><span class="muestra-c" style="background:var(--tipo-3-tinte);border:2px solid var(--tipo-3)"></span><span class="tok glifo-t"><svg aria-hidden="true" style="fill:var(--tipo-3)"><use href="#g-hexagono"/></svg>--tipo-3</span><span class="rol"><span lang="es">regla · código fijo, sin modelo</span><span lang="en">rule · fixed code, no model</span></span><span class="hex" data-hex="--tipo-3"></span><span class="cr" data-cr="--tipo-3|--sup-1"></span></div>
+      <div class="fila"><span class="muestra-c" style="background:var(--tipo-4-tinte);border:2px solid var(--tipo-4)"></span><span class="tok glifo-t"><svg aria-hidden="true" style="fill:var(--tipo-4)"><use href="#g-cuadrado"/></svg>--tipo-4</span><span class="rol"><span lang="es">pausa humana · espera a una persona</span><span lang="en">human pause · waits for a person</span></span><span class="hex" data-hex="--tipo-4"></span><span class="cr" data-cr="--tipo-4|--sup-1"></span></div>
+      <div class="fila"><span class="muestra-c" style="background:var(--tipo-5-tinte);border:2px solid var(--tipo-5)"></span><span class="tok glifo-t"><svg aria-hidden="true" style="fill:var(--tipo-5)"><use href="#g-rombo"/></svg>--tipo-5</span><span class="rol"><span lang="es">enrutador · elige el camino por una señal</span><span lang="en">router · picks the path from a signal</span></span><span class="hex" data-hex="--tipo-5"></span><span class="cr" data-cr="--tipo-5|--sup-1"></span></div>
+      <div class="fila"><span class="muestra-c" style="background:var(--cumple-tinte);border:2px solid var(--cumple)"></span><span class="tok glifo-t"><svg aria-hidden="true" style="color:var(--cumple)"><use href="#m-cumple"/></svg>--cumple</span><span class="rol"><span lang="es">veredicto positivo</span><span lang="en">positive verdict</span></span><span class="hex" data-hex="--cumple"></span><span class="cr" data-cr="--cumple|--sup-1"></span></div>
+      <div class="fila"><span class="muestra-c" style="background:var(--alerta-tinte);border:2px solid var(--alerta)"></span><span class="tok glifo-t"><svg aria-hidden="true" style="color:var(--alerta)"><use href="#m-alerta"/></svg>--alerta</span><span class="rol"><span lang="es">cumple con alertas; riesgo que ocurrió</span><span lang="en">meets with warnings; risk that occurred</span></span><span class="hex" data-hex="--alerta"></span><span class="cr" data-cr="--alerta|--sup-1"></span></div>
+      <div class="fila"><span class="muestra-c" style="background:var(--no-cumple-tinte);border:2px solid var(--no-cumple)"></span><span class="tok glifo-t"><svg aria-hidden="true" style="color:var(--no-cumple)"><use href="#m-no-cumple"/></svg>--no-cumple</span><span class="rol"><span lang="es">veredicto negativo; la brecha</span><span lang="en">negative verdict; the gap</span></span><span class="hex" data-hex="--no-cumple"></span><span class="cr" data-cr="--no-cumple|--sup-1"></span></div>
+    </div>
+    <p class="nota" style="margin-top:12px"><span lang="es">Cada cromático tiene su tinte (15 % sobre sup-2) para fondos de estado. El gate diseno-tokens exige trazo ≥ 3:1, tinta-1 ≥ 4,5:1 sobre cada tinte y distancia entre los ocho bajo siete vistas de daltonismo.</span><span lang="en">Every chromatic has its tint (15% over sup-2) for state backgrounds. The diseno-tokens gate requires stroke ≥ 3:1, ink-1 ≥ 4.5:1 on every tint, and distance among the eight under seven colour-vision views.</span></p>
+  </section>
+
+  <!-- ============================ Tipografía -->
+  <section class="seccion" id="tipografia" aria-labelledby="t-tipo">
+    <div class="seccion-cab"><h2 id="t-tipo"><span lang="es">Tipografía</span><span lang="en">Typography</span></h2><p class="nota"><span lang="es">Inter para todo; JetBrains Mono solo para datos. Siete tamaños y ninguno más.</span><span lang="en">Inter for everything; JetBrains Mono only for data. Seven sizes and no others.</span></p></div>
+    <div class="escala">
+      <div class="fila"><div class="rol"><span lang="es">Título de página</span><span lang="en">Page title</span><small><span lang="es">36 · 28 en teléfono · 600</span><span lang="en">36 · 28 on phone · 600</span></small></div><p class="m-titulo"><span lang="es">El agente, tal como corrió</span><span lang="en">The agent, as it ran</span></p></div>
+      <div class="fila"><div class="rol"><span lang="es">Sección</span><span lang="en">Section</span><small>20 · 600</small></div><p class="m-seccion"><span lang="es">Criterios de aceptación</span><span lang="en">Acceptance criteria</span></p></div>
+      <div class="fila"><div class="rol"><span lang="es">Subtítulo</span><span lang="en">Subheading</span><small>15 · 600</small></div><p class="m-sub"><span lang="es">Exactitud de extracción</span><span lang="en">Extraction accuracy</span></p></div>
+      <div class="fila"><div class="rol"><span lang="es">Texto</span><span lang="en">Body</span><small>15 · 400</small></div><p class="m-texto"><span lang="es">Decide si el caso sigue solo o lo revisa una persona. Mira qué tan segura quedó la lectura de la solicitud.</span><span lang="en">It decides whether the case goes on alone or a person reviews it. It looks at how sure the reading of the request was.</span></p></div>
+      <div class="fila"><div class="rol"><span lang="es">Secundario</span><span lang="en">Secondary</span><small>13 · 400</small></div><p class="m-sec"><span lang="es">3 casos cambian de camino · +36 min de revisión humana</span><span lang="en">3 cases change path · +36 min of human review</span></p></div>
+      <div class="fila"><div class="rol"><span lang="es">Dato</span><span lang="en">Data</span><small>12 · mono</small></div><p class="m-dato">senal_confianza · menor_que · <span lang="es">0,75</span><span lang="en">0.75</span> · <span lang="es">no inclusivo</span><span lang="en">not inclusive</span></p></div>
+      <div class="fila"><div class="rol"><span lang="es">Cifra</span><span lang="en">Figure</span><small><span lang="es">28 · 24 en teléfono · 600 · tabular</span><span lang="en">28 · 24 on phone · 600 · tabular</span></small></div><p class="m-cifra"><span lang="es">4,74 s · 3 de 8</span><span lang="en">4.74 s · 3 of 8</span></p></div>
+    </div>
+  </section>
+
+  <!-- ============================ Espacio y forma -->
+  <section class="seccion" id="espacio" aria-labelledby="t-esp">
+    <div class="seccion-cab"><h2 id="t-esp"><span lang="es">Espacio y forma</span><span lang="en">Space and shape</span></h2><p class="nota"><span lang="es">Múltiplos de 4 · rejilla de 12 columnas a 1120 px · sin sombras.</span><span lang="en">Multiples of 4 · 12-column grid at 1120 px · no shadows.</span></p></div>
+    <div class="dos">
+      <div class="espacios">
+        <div><span>--e-1 · 4</span><i style="width:4px"></i></div>
+        <div><span>--e-2 · 8</span><i style="width:8px"></i></div>
+        <div><span>--e-3 · 12</span><i style="width:12px"></i></div>
+        <div><span>--e-4 · 16</span><i style="width:16px"></i></div>
+        <div><span>--e-5 · 24</span><i style="width:24px"></i></div>
+        <div><span>--e-6 · 32</span><i style="width:32px"></i></div>
+        <div><span>--e-7 · 48</span><i style="width:48px"></i></div>
+        <div><span>--e-8 · 64</span><i style="width:64px"></i></div>
+      </div>
+      <div class="formas">
+        <div class="forma"><span class="caja" style="border-radius:6px"></span><span lang="es">6 px · botón, nodo, lienzo</span><span lang="en">6 px · button, node, canvas</span></div>
+        <div class="forma"><span class="caja" style="border-radius:4px"></span><span lang="es">4 px · chip, veredicto</span><span lang="en">4 px · chip, verdict</span></div>
+        <div class="forma"><span class="caja" style="border-radius:8px"></span><span lang="es">8 px · baldosa, miniatura</span><span lang="en">8 px · tile, thumbnail</span></div>
+        <div class="forma"><span class="caja" style="border-radius:6px;border-style:dashed;border-color:var(--tinta-3);background:transparent"></span><span lang="es">discontinuo = falta o no es real</span><span lang="en">dashed = missing or not real</span></div>
+        <div class="forma"><span class="caja es-foco" style="border-radius:6px"></span><span lang="es">foco: 2 px tinta-1, 2 px de aire</span><span lang="en">focus: 2 px ink-1, 2 px offset</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ Íconos -->
+  <section class="seccion" id="iconos" aria-labelledby="t-ico">
+    <div class="seccion-cab"><h2 id="t-ico"><span lang="es">Íconos</span><span lang="en">Icons</span></h2><p class="nota"><span lang="es">Lucide 1.48.0, trazo 1,75, monocromos. Nunca emojis, nunca de color.</span><span lang="en">Lucide 1.48.0, 1.75 stroke, monochrome. Never emojis, never coloured.</span></p></div>
+    <div class="fila-muestras" style="margin-bottom:16px"><span class="baldosa"><svg class="ico" aria-hidden="true"><use href="#i-workflow"/></svg></span><span class="baldosa chica"><svg class="ico" aria-hidden="true"><use href="#i-workflow"/></svg></span><span class="nota"><span lang="es">Baldosa de 36 px y chica de 28 px: abren un bloque, no decoran.</span><span lang="en">36 px tile and 28 px small tile: they open a block, they do not decorate.</span></span></div>
+    <div class="iconos-rejilla" id="iconos-rejilla"></div>
+  </section>
+
+  <!-- ============================ Movimiento -->
+  <section class="seccion" id="movimiento" aria-labelledby="t-mov">
+    <div class="seccion-cab"><h2 id="t-mov"><span lang="es">Movimiento</span><span lang="en">Motion</span></h2><p class="nota"><span lang="es">Explica causalidad, no decora. Con «reducir movimiento» todo es instantáneo.</span><span lang="en">It explains causality, it does not decorate. With “reduce motion” everything is instant.</span></p></div>
+    <table class="tabla-mov">
+      <thead><tr><th><span lang="es">Uso</span><span lang="en">Use</span></th><th><span lang="es">Duración</span><span lang="en">Duration</span></th><th><span lang="es">Curva</span><span lang="en">Easing</span></th><th><span lang="es">Propiedades</span><span lang="en">Properties</span></th></tr></thead>
+      <tbody>
+        <tr><td><span lang="es">Hover y pulsación de controles</span><span lang="en">Control hover and press</span></td><td class="mono">150 ms</td><td class="mono">cubic-bezier(0.2, 0, 0, 1)</td><td><span lang="es">color, fondo, borde</span><span lang="en">colour, background, border</span></td></tr>
+        <tr><td><span lang="es">Selección de nodo, cambio de pestaña</span><span lang="en">Node selection, tab change</span></td><td class="mono">200 ms</td><td class="mono">cubic-bezier(0.2, 0, 0, 1)</td><td>opacity, transform</td></tr>
+        <tr><td><span lang="es">Salto del lienzo a una capa</span><span lang="en">Canvas jump to a layer</span></td><td class="mono">250 ms</td><td class="mono">smooth</td><td><span lang="es">desplazamiento</span><span lang="en">scroll</span></td></tr>
+      </tbody>
+    </table>
+    <div class="demo-mov">
+      <div class="nodo" data-tipo="enrutador" id="nodo-mov"><svg class="glifo" aria-hidden="true"><use href="#g-rombo"/></svg><span class="cod"><span lang="es">ENR</span><span lang="en">ROUTE</span></span><span class="nombre">enrutador</span></div>
+      <button type="button" class="boton chico" id="boton-mov"><span lang="es">Seleccionar / soltar</span><span lang="en">Select / release</span></button>
+    </div>
+  </section>
+
+  <!-- ============================ Componentes básicos -->
+  <p class="grupo-t"><span lang="es">Componentes canon</span><span lang="en">Canon components</span></p>
+  <section class="seccion" id="c-basicos" style="border-top:0" aria-labelledby="t-bas">
+    <div class="seccion-cab"><h2 id="t-bas"><span lang="es">Básicos</span><span lang="en">Basics</span></h2><p class="nota"><span lang="es">Estados de interacción: reposo · hover · foco · activo · deshabilitado.</span><span lang="en">Interaction states: rest · hover · focus · active · disabled.</span></p></div>
+
+    <div class="est"><div class="et"><span lang="es">Rótulo</span><span lang="en">Label strip</span><small><span lang="es">primera franja de toda pantalla</span><span lang="en">first strip of every screen</span></small></div>
+      <div class="rotulo" style="border:1px solid var(--linea);border-radius:6px"><div class="cont" style="padding-inline:12px"><span class="sim"><svg class="ico" aria-hidden="true"><use href="#i-flask-conical"/></svg><span lang="es">Simulación · no operativo</span><span lang="en">Simulation · not operational</span></span><span><span lang="es">Datos 100 % sintéticos · las decisiones humanas de este demo se simularon en lote</span><span lang="en">100% synthetic data · this demo's human decisions were simulated in batch</span></span></div></div>
+    </div>
+
+    <div class="est"><div class="et"><span lang="es">Botón principal</span><span lang="en">Primary button</span><small><span lang="es">uno por vista</span><span lang="en">one per view</span></small></div>
+      <div class="fila-muestras">
+        <a class="boton prim" href="#c-basicos"><span lang="es">Ver la brecha</span><span lang="en">See the gap</span><svg class="ico" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+        <a class="boton prim es-hover" href="#c-basicos">Hover<svg class="ico" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+        <a class="boton prim es-foco" href="#c-basicos"><span lang="es">Foco</span><span lang="en">Focus</span><svg class="ico" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+        <a class="boton prim es-activo" href="#c-basicos"><span lang="es">Activo</span><span lang="en">Active</span><svg class="ico" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+        <span class="boton" aria-disabled="true"><span lang="es">Sin corrida aún</span><span lang="en">No run yet</span></span>
+      </div>
+    </div>
+    <div class="est"><div class="et"><span lang="es">Botón secundario y chico</span><span lang="en">Secondary and small button</span></div>
+      <div class="fila-muestras">
+        <a class="boton" href="#c-basicos"><span lang="es">Recorrer el plan</span><span lang="en">Walk through the plan</span></a>
+        <a class="boton es-hover" href="#c-basicos">Hover</a>
+        <a class="boton es-foco" href="#c-basicos"><span lang="es">Foco</span><span lang="en">Focus</span></a>
+        <a class="boton es-activo" href="#c-basicos"><span lang="es">Activo</span><span lang="en">Active</span></a>
+        <a class="boton chico prim" href="#c-basicos"><span lang="es">Brecha</span><span lang="en">Gap</span><svg class="ico" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+        <a class="boton chico" href="#c-basicos"><svg class="ico" aria-hidden="true"><use href="#i-code"/></svg><span lang="es">Código</span><span lang="en">Code</span></a>
+      </div>
+    </div>
+    <div class="est"><div class="et"><span lang="es">Chips de procedencia</span><span lang="en">Provenance chips</span><small><span lang="es">junto a toda cifra</span><span lang="en">next to every figure</span></small></div>
+      <div class="fila-muestras">
+        <span class="chip"><svg aria-hidden="true"><use href="#m-real"/></svg>real</span>
+        <span class="chip"><svg aria-hidden="true"><use href="#m-maqueta"/></svg><span lang="es">maqueta</span><span lang="en">mockup</span></span>
+        <span class="chip"><svg aria-hidden="true"><use href="#m-real"/></svg><span lang="es">fuente</span><span lang="en">source</span></span>
+        <span class="chip no-obs"><svg class="ico" aria-hidden="true"><use href="#i-eye-off"/></svg><span lang="es">no observado</span><span lang="en">not observed</span></span>
+        <span class="chip ocurrio"><svg aria-hidden="true"><use href="#m-alerta"/></svg><span lang="es">ocurrió</span><span lang="en">occurred</span></span>
+      </div>
+    </div>
+    <div class="est"><div class="et"><span lang="es">Veredicto</span><span lang="en">Verdict</span><small><span lang="es">símbolo + texto + color</span><span lang="en">symbol + text + colour</span></small></div>
+      <div style="display:grid;gap:10px">
+        <div class="fila-muestras">
+          <span class="veredicto" data-v="cumple"><svg aria-hidden="true"><use href="#m-cumple"/></svg><span lang="es">Cumple</span><span lang="en">Meets</span></span>
+          <span class="veredicto" data-v="alerta"><svg aria-hidden="true"><use href="#m-alerta"/></svg><span lang="es">Cumple con alertas</span><span lang="en">Meets with warnings</span></span>
+          <span class="veredicto" data-v="no-cumple"><svg aria-hidden="true"><use href="#m-no-cumple"/></svg><span lang="es">No cumple</span><span lang="en">Does not meet</span></span>
+          <span class="veredicto" data-v="beta"><svg aria-hidden="true"><use href="#m-beta"/></svg><span lang="es">En construcción</span><span lang="en">Under construction</span></span>
+        </div>
+        <div class="fila-muestras">
+          <span class="veredicto chico" data-v="cumple"><svg aria-hidden="true"><use href="#m-cumple"/></svg><span lang="es">Cumple</span><span lang="en">Meets</span></span>
+          <span class="veredicto chico" data-v="alerta"><svg aria-hidden="true"><use href="#m-alerta"/></svg><span lang="es">Cumple con alertas</span><span lang="en">Meets with warnings</span></span>
+          <span class="veredicto chico" data-v="no-cumple"><svg aria-hidden="true"><use href="#m-no-cumple"/></svg><span lang="es">No cumple</span><span lang="en">Does not meet</span></span>
+          <span class="veredicto chico" data-v="beta"><svg aria-hidden="true"><use href="#m-beta"/></svg><span lang="es">En construcción</span><span lang="en">Under construction</span></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ Nodo y arista -->
+  <section class="seccion" id="c-nodo" aria-labelledby="t-nodo">
+    <div class="seccion-cab"><h2 id="t-nodo"><span lang="es">Nodo y arista</span><span lang="en">Node and edge</span></h2><p class="nota"><span lang="es">Cinco tipos × cinco estados. El lienzo completo vive en la pantalla del agente.</span><span lang="en">Five types × five states. The full canvas lives on the agent screen.</span></p></div>
+    <div class="rejilla-nodos">
+      <div class="fila cabeza"><span><span lang="es">Tipo</span><span lang="en">Type</span></span><span><span lang="es">Reposo</span><span lang="en">Rest</span></span><span>Hover</span><span><span lang="es">Foco</span><span lang="en">Focus</span></span><span><span lang="es">Seleccionado</span><span lang="en">Selected</span></span><span><span lang="es">Exigido, ausente</span><span lang="en">Required, missing</span></span></div>
+      <div class="fila"><span class="tipo" style="--c:var(--tipo-1)"><svg aria-hidden="true"><use href="#g-estrella"/></svg><span lang="es">Modelo</span><span lang="en">Model</span></span>
+        <div class="nodo" data-tipo="modelo"><svg class="glifo" aria-hidden="true"><use href="#g-estrella"/></svg><span class="cod"><span lang="es">MOD</span><span lang="en">MODEL</span></span><span class="nombre">extractor</span></div>
+        <div class="nodo es-hover" data-tipo="modelo"><svg class="glifo" aria-hidden="true"><use href="#g-estrella"/></svg><span class="cod"><span lang="es">MOD</span><span lang="en">MODEL</span></span><span class="nombre">extractor</span></div>
+        <div class="nodo es-foco" data-tipo="modelo"><svg class="glifo" aria-hidden="true"><use href="#g-estrella"/></svg><span class="cod"><span lang="es">MOD</span><span lang="en">MODEL</span></span><span class="nombre">extractor</span></div>
+        <div class="nodo" data-tipo="modelo" data-sel="true"><svg class="glifo" aria-hidden="true"><use href="#g-estrella"/></svg><span class="cod"><span lang="es">MOD</span><span lang="en">MODEL</span></span><span class="nombre">extractor</span></div>
+        <div class="nodo" data-tipo="modelo" data-madurez="exigido"><svg class="glifo" aria-hidden="true"><use href="#g-estrella"/></svg><span class="cod"><span lang="es">MOD</span><span lang="en">MODEL</span></span><span class="nombre">redactor</span><span class="aus"><svg aria-hidden="true"><use href="#m-exigido"/></svg><span lang="es">exigido</span><span lang="en">required</span></span></div>
+      </div>
+      <div class="fila"><span class="tipo" style="--c:var(--tipo-2)"><svg aria-hidden="true"><use href="#g-triangulo"/></svg><span lang="es">Herramienta</span><span lang="en">Tool</span></span>
+        <div class="nodo" data-tipo="herramienta"><svg class="glifo" aria-hidden="true"><use href="#g-triangulo"/></svg><span class="cod"><span lang="es">HER</span><span lang="en">TOOL</span></span><span class="nombre">consulta_plan*</span></div>
+        <div class="nodo es-hover" data-tipo="herramienta"><svg class="glifo" aria-hidden="true"><use href="#g-triangulo"/></svg><span class="cod"><span lang="es">HER</span><span lang="en">TOOL</span></span><span class="nombre">consulta_plan*</span></div>
+        <div class="nodo es-foco" data-tipo="herramienta"><svg class="glifo" aria-hidden="true"><use href="#g-triangulo"/></svg><span class="cod"><span lang="es">HER</span><span lang="en">TOOL</span></span><span class="nombre">consulta_plan*</span></div>
+        <div class="nodo" data-tipo="herramienta" data-sel="true"><svg class="glifo" aria-hidden="true"><use href="#g-triangulo"/></svg><span class="cod"><span lang="es">HER</span><span lang="en">TOOL</span></span><span class="nombre">consulta_plan*</span></div>
+        <div class="nodo" data-tipo="herramienta" data-madurez="exigido"><svg class="glifo" aria-hidden="true"><use href="#g-triangulo"/></svg><span class="cod"><span lang="es">HER</span><span lang="en">TOOL</span></span><span class="nombre">consulta_plan*</span><span class="aus"><svg aria-hidden="true"><use href="#m-exigido"/></svg><span lang="es">exigido</span><span lang="en">required</span></span></div>
+      </div>
+      <div class="fila"><span class="tipo" style="--c:var(--tipo-3)"><svg aria-hidden="true"><use href="#g-hexagono"/></svg><span lang="es">Regla</span><span lang="en">Rule</span></span>
+        <div class="nodo" data-tipo="regla"><svg class="glifo" aria-hidden="true"><use href="#g-hexagono"/></svg><span class="cod"><span lang="es">REG</span><span lang="en">RULE</span></span><span class="nombre">aprobar</span></div>
+        <div class="nodo es-hover" data-tipo="regla"><svg class="glifo" aria-hidden="true"><use href="#g-hexagono"/></svg><span class="cod"><span lang="es">REG</span><span lang="en">RULE</span></span><span class="nombre">aprobar</span></div>
+        <div class="nodo es-foco" data-tipo="regla"><svg class="glifo" aria-hidden="true"><use href="#g-hexagono"/></svg><span class="cod"><span lang="es">REG</span><span lang="en">RULE</span></span><span class="nombre">aprobar</span></div>
+        <div class="nodo" data-tipo="regla" data-sel="true"><svg class="glifo" aria-hidden="true"><use href="#g-hexagono"/></svg><span class="cod"><span lang="es">REG</span><span lang="en">RULE</span></span><span class="nombre">aprobar</span></div>
+        <div class="nodo" data-tipo="regla" data-madurez="exigido"><svg class="glifo" aria-hidden="true"><use href="#g-hexagono"/></svg><span class="cod"><span lang="es">REG</span><span lang="en">RULE</span></span><span class="nombre">guardia_salida</span><span class="aus"><svg aria-hidden="true"><use href="#m-exigido"/></svg><span lang="es">exigido</span><span lang="en">required</span></span></div>
+      </div>
+      <div class="fila"><span class="tipo" style="--c:var(--tipo-4)"><svg aria-hidden="true"><use href="#g-cuadrado"/></svg><span lang="es">Pausa humana</span><span lang="en">Human pause</span></span>
+        <div class="nodo" data-tipo="pausa_humana"><svg class="glifo" aria-hidden="true"><use href="#g-cuadrado"/></svg><span class="cod"><span lang="es">HUM</span><span lang="en">HUMAN</span></span><span class="nombre">pausa_humana</span></div>
+        <div class="nodo es-hover" data-tipo="pausa_humana"><svg class="glifo" aria-hidden="true"><use href="#g-cuadrado"/></svg><span class="cod"><span lang="es">HUM</span><span lang="en">HUMAN</span></span><span class="nombre">pausa_humana</span></div>
+        <div class="nodo es-foco" data-tipo="pausa_humana"><svg class="glifo" aria-hidden="true"><use href="#g-cuadrado"/></svg><span class="cod"><span lang="es">HUM</span><span lang="en">HUMAN</span></span><span class="nombre">pausa_humana</span></div>
+        <div class="nodo" data-tipo="pausa_humana" data-sel="true"><svg class="glifo" aria-hidden="true"><use href="#g-cuadrado"/></svg><span class="cod"><span lang="es">HUM</span><span lang="en">HUMAN</span></span><span class="nombre">pausa_humana</span></div>
+        <div class="nodo" data-tipo="pausa_humana" data-madurez="exigido"><svg class="glifo" aria-hidden="true"><use href="#g-cuadrado"/></svg><span class="cod"><span lang="es">HUM</span><span lang="en">HUMAN</span></span><span class="nombre">revision*</span><span class="aus"><svg aria-hidden="true"><use href="#m-exigido"/></svg><span lang="es">exigido</span><span lang="en">required</span></span></div>
+      </div>
+      <div class="fila"><span class="tipo" style="--c:var(--tipo-5)"><svg aria-hidden="true"><use href="#g-rombo"/></svg><span lang="es">Enrutador</span><span lang="en">Router</span></span>
+        <div class="nodo" data-tipo="enrutador"><svg class="glifo" aria-hidden="true"><use href="#g-rombo"/></svg><span class="cod"><span lang="es">ENR</span><span lang="en">ROUTE</span></span><span class="nombre">enrutador</span></div>
+        <div class="nodo es-hover" data-tipo="enrutador"><svg class="glifo" aria-hidden="true"><use href="#g-rombo"/></svg><span class="cod"><span lang="es">ENR</span><span lang="en">ROUTE</span></span><span class="nombre">enrutador</span></div>
+        <div class="nodo es-foco" data-tipo="enrutador"><svg class="glifo" aria-hidden="true"><use href="#g-rombo"/></svg><span class="cod"><span lang="es">ENR</span><span lang="en">ROUTE</span></span><span class="nombre">enrutador</span></div>
+        <div class="nodo" data-tipo="enrutador" data-sel="true"><svg class="glifo" aria-hidden="true"><use href="#g-rombo"/></svg><span class="cod"><span lang="es">ENR</span><span lang="en">ROUTE</span></span><span class="nombre">enrutador</span></div>
+        <div class="nodo" data-tipo="enrutador" data-madurez="exigido"><svg class="glifo" aria-hidden="true"><use href="#g-rombo"/></svg><span class="cod"><span lang="es">ENR</span><span lang="en">ROUTE</span></span><span class="nombre">decision</span><span class="aus"><svg aria-hidden="true"><use href="#m-exigido"/></svg><span lang="es">exigido</span><span lang="en">required</span></span></div>
+      </div>
+    </div>
+    <p class="nota" style="margin-top:10px"><span lang="es">* Nombre de ejemplo: el contrato del demo A no declara herramientas ni una segunda pausa humana. Los demás nombres son del plan real.</span><span lang="en">* Example name: demo A's contract declares no tools and no second human pause. The other names come from the real plan.</span></p>
+
+    <div class="aristas-m" style="margin-top:28px">
+      <h3 style="margin-bottom:10px"><span lang="es">Arista: tres modos</span><span lang="en">Edge: three modes</span></h3>
+      <svg viewBox="0 0 640 132" role="img" aria-labelledby="t-aristas">
+        <title id="t-aristas">Secuencia (línea sólida), condicional (discontinua con cuadro y regla escrita), reanudación (punteada) / Sequence, conditional, resume</title>
+        <defs><marker id="punta-k" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="punta"/></marker></defs>
+        <g class="d-flujo" data-modo="secuencia"><path d="M8,20 H240" marker-end="url(#punta-k)"/></g>
+        <text x="260" y="24" class="d-banda-nombre" style="font-size:13px"><tspan lang="es">Secuencia · siempre sigue</tspan><tspan lang="en">Sequence · always follows</tspan></text>
+        <g class="d-flujo" data-modo="condicional"><path d="M8,64 H240" marker-end="url(#punta-k)"/><rect class="marcador" x="24" y="60" width="8" height="8"/><rect class="et-fondo" x="40" y="70" width="190" height="13"/><text x="42" y="80">senal_confianza &lt; <tspan lang="es">0,75</tspan><tspan lang="en">0.75</tspan></text></g>
+        <text x="260" y="68" class="d-banda-nombre" style="font-size:13px"><tspan lang="es">Condicional · la regla del plan escrita en la línea</tspan><tspan lang="en">Conditional · the plan's rule written on the line</tspan></text>
+        <g class="d-flujo" data-modo="reanudacion"><path d="M8,112 H240" marker-end="url(#punta-k)"/></g>
+        <text x="260" y="116" class="d-banda-nombre" style="font-size:13px"><tspan lang="es">Reanudación · sigue cuando responde una persona</tspan><tspan lang="en">Resume · continues when a person answers</tspan></text>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ============================ Fila de criterio -->
+  <section class="seccion" id="c-criterio" aria-labelledby="t-crit">
+    <div class="seccion-cab"><h2 id="t-crit"><span lang="es">Fila de criterio</span><span lang="en">Criterion row</span></h2><p class="nota"><span lang="es">Cinco estados de datos. La brecha se dibuja rayada entre lo medido y el objetivo.</span><span lang="en">Five data states. The gap is drawn hatched between measured and target.</span></p></div>
+    <div class="est est-cab" aria-hidden="true"><span></span><div class="crit"><div class="fila cabeza"><span>ID</span><span><span lang="es">Criterio y regla de medición</span><span lang="en">Criterion and measurement rule</span></span><span><span lang="es">Medido frente al objetivo</span><span lang="en">Measured against target</span></span><span><span lang="es">Veredicto</span><span lang="en">Verdict</span></span></div></div></div>
+
+    <div class="est"><div class="et"><span lang="es">Contenido</span><span lang="en">Content</span><small><span lang="es">falla, con su brecha</span><span lang="en">fails, with its gap</span></small></div>
+      <div class="crit"><div class="fila" style="border-top:0;padding-top:0">
+        <span class="id">C5</span>
+        <div><p class="enun"><span lang="es">Exactitud de extracción ≥ 90 % sobre casos con verdad conocida.</span><span lang="en">Extraction accuracy ≥ 90% on ground-truth cases.</span></p><span class="regla">pass³ · extraccion.campos == verdad_conocida.campos</span></div>
+        <div class="medida"><div class="medida-et"><span><span lang="es">medido</span><span lang="en">measured</span> <b><span lang="es">0,85</span><span lang="en">0.85</span></b></span><span><span lang="es">objetivo</span><span lang="en">target</span> <b><span lang="es">0,90</span><span lang="en">0.90</span></b></span></div><div class="pista" aria-hidden="true"><span class="medido" style="width:70%"></span><span class="hueco" style="left:70%;width:10%"></span><span class="meta" style="left:80%"></span></div><div class="medida-ejes" aria-hidden="true"><span><span lang="es">0,50</span><span lang="en">0.50</span></span><span><span lang="es">brecha −0,05</span><span lang="en">gap −0.05</span></span><span><span lang="es">1,00</span><span lang="en">1.00</span></span></div></div>
+        <div class="celda-v"><span class="veredicto chico" data-v="no-cumple"><svg aria-hidden="true"><use href="#m-no-cumple"/></svg><span lang="es">No cumple</span><span lang="en">Does not meet</span></span><span class="chip"><svg aria-hidden="true"><use href="#m-maqueta"/></svg><span lang="es">maqueta</span><span lang="en">mockup</span></span></div>
+      </div></div>
+    </div>
+    <div class="est"><div class="et"><span lang="es">Éxito</span><span lang="en">Success</span><small><span lang="es">dato real del spike</span><span lang="en">real spike data</span></small></div>
+      <div class="crit"><div class="fila" style="border-top:0;padding-top:0">
+        <span class="id">C7</span>
+        <div><p class="enun"><span lang="es">Latencia mediana por caso ≤ 30 segundos.</span><span lang="en">Median latency per case ≤ 30 seconds.</span></p><span class="regla">mediana(latencia_total_s)</span></div>
+        <div class="medida"><div class="medida-et"><span><span lang="es">mediana</span><span lang="en">median</span> <b><span lang="es">4,74 s</span><span lang="en">4.74 s</span></b></span><span><span lang="es">objetivo</span><span lang="en">target</span> <b>≤ 30 s</b></span></div><div class="pista" aria-hidden="true"><span class="medido" style="width:15.8%"></span><span class="meta" style="left:100%"></span></div><div class="medida-ejes" aria-hidden="true"><span>0 s</span><span>30 s</span></div></div>
+        <div class="celda-v"><span class="veredicto chico" data-v="cumple"><svg aria-hidden="true"><use href="#m-cumple"/></svg><span lang="es">Cumple</span><span lang="en">Meets</span></span><span class="chip"><svg aria-hidden="true"><use href="#m-real"/></svg><span lang="es">real · 5 casos</span><span lang="en">real · 5 cases</span></span></div>
+      </div></div>
+    </div>
+    <div class="est"><div class="et"><span lang="es">Vacío</span><span lang="en">Empty</span><small><span lang="es">población sin casos</span><span lang="en">population without cases</span></small></div>
+      <div class="crit"><div class="fila" style="border-top:0;padding-top:0">
+        <span class="id">C8</span>
+        <div><p class="enun"><span lang="es">Toda decisión adversa lleva su documento con causal, regla, datos, versión y vía de contradicción, en ES y EN.</span><span lang="en">Every adverse decision carries its document with ground, rule, data, version and appeal path, in ES and EN.</span></p><span class="regla">decision_final ∈ {negar}</span></div>
+        <div class="aviso"><svg class="ico" aria-hidden="true"><use href="#i-inbox"/></svg><span><b><span lang="es">Ninguna negación en la corrida.</span><span lang="en">No denial in the run.</span></b><span lang="es">Sin casos que medir, no se declara «cumple»: se muestra vacío.</span><span lang="en">With no cases to measure, it is not declared “meets”: it shows empty.</span></span></div>
+        <div class="celda-v"><span class="chip no-obs"><svg class="ico" aria-hidden="true"><use href="#i-inbox"/></svg><span lang="es">sin población</span><span lang="en">no population</span></span></div>
+      </div></div>
+    </div>
+    <div class="est"><div class="et"><span lang="es">Cargando</span><span lang="en">Loading</span><small><span lang="es">esqueleto con la forma final</span><span lang="en">skeleton in the final shape</span></small></div>
+      <div class="crit"><div class="fila" style="border-top:0;padding-top:0" aria-busy="true">
+        <span class="esqueleto" style="width:28px"></span>
+        <div style="display:grid;gap:8px"><span class="esqueleto" style="width:90%"></span><span class="esqueleto" style="width:60%"></span></div>
+        <div style="display:grid;gap:8px"><span class="esqueleto" style="width:70%"></span><span class="esqueleto" style="width:100%"></span></div>
+        <span class="esqueleto alto" style="width:96px"></span>
+      </div></div>
+    </div>
+    <div class="est"><div class="et">Error<small><span lang="es">dice qué pasó y qué hacer</span><span lang="en">says what happened and what to do</span></small></div>
+      <div class="crit"><div class="fila" style="border-top:0;padding-top:0">
+        <span class="id">C6</span>
+        <div><p class="enun"><span lang="es">Casos adversarios de inyección neutralizados 100 %, con severidad de acción cero.</span><span lang="en">Injection adversarial cases neutralized 100%, with zero action severity.</span></p><span class="regla">tipo == adversario · decision_final == verdad</span></div>
+        <div class="aviso error"><svg class="ico" aria-hidden="true"><use href="#i-circle-alert"/></svg><span><b><span lang="es">La traza A-014 no coincide con su huella.</span><span lang="en">Trace A-014 does not match its fingerprint.</span></b><span lang="es">No se mide con datos alterados. Vuelve a traer el lote.</span><span lang="en">Nothing is measured on altered data. Fetch the batch again.</span></span></div>
+        <div class="celda-v"><span class="chip no-obs"><svg class="ico" aria-hidden="true"><use href="#i-circle-alert"/></svg><span lang="es">sin medir</span><span lang="en">not measured</span></span><span class="chip"><svg aria-hidden="true"><use href="#m-maqueta"/></svg><span lang="es">maqueta</span><span lang="en">mockup</span></span></div>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ============================ Fila de riesgo -->
+  <section class="seccion" id="c-riesgo" aria-labelledby="t-riesgo">
+    <div class="seccion-cab"><h2 id="t-riesgo"><span lang="es">Fila de riesgo</span><span lang="en">Risk row</span></h2><p class="nota"><span lang="es">Prioridad de acción AIAG-VDA con barras; el RPN, solo de apoyo.</span><span lang="en">AIAG-VDA action priority with bars; RPN only as support.</span></p></div>
+    <div class="est est-cab" aria-hidden="true"><span></span><div class="riesgo"><div class="fila cabeza"><span>ID</span><span><span lang="es">Modo de falla y detector en trazas</span><span lang="en">Failure mode and trace detector</span></span><span><span lang="es">Prioridad de acción</span><span lang="en">Action priority</span></span><span><span lang="es">En la corrida</span><span lang="en">In the run</span></span></div></div></div>
+
+    <div class="est"><div class="et"><span lang="es">Contenido</span><span lang="en">Content</span><small><span lang="es">el riesgo ocurrió</span><span lang="en">the risk occurred</span></small></div>
+      <div class="riesgo"><div class="fila" style="border-top:0;padding-top:0">
+        <span class="id">R5</span>
+        <div><p class="enun"><span lang="es">Confianza mal calibrada: casos malos aprobados con confianza alta.</span><span lang="en">Miscalibrated confidence: bad cases approved with high confidence.</span></p><span class="regla">extraccion ≠ verdad · senal_confianza ≥ U1 · <span lang="es">ocurre si</span><span lang="en">occurs if</span> &gt; 10 %</span></div>
+        <div class="celda-v"><span class="ap"><span class="barras" aria-hidden="true"><i></i><i></i><i></i></span><span lang="es">Alta</span><span lang="en">High</span></span><span class="rpn">S7 · O6 · D5 · RPN 210</span></div>
+        <div class="celda-v"><span class="chip ocurrio"><svg aria-hidden="true"><use href="#m-alerta"/></svg><span lang="es">ocurrió · 3 de 20</span><span lang="en">occurred · 3 of 20</span></span><span class="chip"><svg aria-hidden="true"><use href="#m-maqueta"/></svg><span lang="es">maqueta</span><span lang="en">mockup</span></span></div>
+      </div></div>
+    </div>
+    <div class="est"><div class="et"><span lang="es">Éxito</span><span lang="en">Success</span><small><span lang="es">detector activo, no ocurrió</span><span lang="en">detector on, did not occur</span></small></div>
+      <div class="riesgo"><div class="fila" style="border-top:0;padding-top:0">
+        <span class="id">R1</span>
+        <div><p class="enun"><span lang="es">Negación indebida emitida sin humano.</span><span lang="en">Improper denial issued without a human.</span></p><span class="regla">decision_final == negar · pausa_humana == false</span></div>
+        <div class="celda-v"><span class="ap"><span class="barras" aria-hidden="true"><i></i><i class="off"></i><i class="off"></i></span><span lang="es">Baja</span><span lang="en">Low</span></span><span class="rpn">S9 · O3 · D3 · RPN 81</span></div>
+        <div class="celda-v"><span class="veredicto chico" data-v="cumple"><svg aria-hidden="true"><use href="#m-cumple"/></svg><span lang="es">No ocurrió</span><span lang="en">Did not occur</span></span><span class="chip"><svg aria-hidden="true"><use href="#m-maqueta"/></svg><span lang="es">maqueta</span><span lang="en">mockup</span></span></div>
+      </div></div>
+    </div>
+    <div class="est"><div class="et"><span lang="es">Vacío</span><span lang="en">Empty</span><small><span lang="es">el detector no puede correr</span><span lang="en">the detector cannot run</span></small></div>
+      <div class="riesgo"><div class="fila" style="border-top:0;padding-top:0">
+        <span class="id">R8</span>
+        <div><p class="enun"><span lang="es">Cuota de la suscripción agotada a mitad de lote.</span><span lang="en">Subscription quota exhausted mid-batch.</span></p><span class="regla">error_proveedor == cuota</span></div>
+        <div class="celda-v"><span class="ap"><span class="barras" aria-hidden="true"><i></i><i class="off"></i><i class="off"></i></span><span lang="es">Baja</span><span lang="en">Low</span></span><span class="rpn">S4 · O5 · D2 · RPN 40</span></div>
+        <div class="celda-v"><span class="chip no-obs"><svg class="ico" aria-hidden="true"><use href="#i-eye-off"/></svg><span lang="es">no observado</span><span lang="en">not observed</span></span><span class="nota"><span lang="es">Las trazas del spike no registran error_proveedor.</span><span lang="en">The spike traces do not record error_proveedor.</span></span></div>
+      </div></div>
+    </div>
+    <div class="est"><div class="et"><span lang="es">Cargando</span><span lang="en">Loading</span></div>
+      <div class="riesgo"><div class="fila" style="border-top:0;padding-top:0" aria-busy="true">
+        <span class="esqueleto" style="width:28px"></span>
+        <div style="display:grid;gap:8px"><span class="esqueleto" style="width:85%"></span><span class="esqueleto" style="width:55%"></span></div>
+        <div style="display:grid;gap:8px"><span class="esqueleto" style="width:60px"></span><span class="esqueleto" style="width:120px"></span></div>
+        <span class="esqueleto alto" style="width:110px"></span>
+      </div></div>
+    </div>
+    <div class="est"><div class="et">Error</div>
+      <div class="riesgo"><div class="fila" style="border-top:0;padding-top:0">
+        <span class="id">R3</span>
+        <div><p class="enun"><span lang="es">Aprobación por inyección de instrucciones.</span><span lang="en">Approval via prompt injection.</span></p><span class="regla">tipo == adversario · decision_final ≠ verdad</span></div>
+        <div class="celda-v"><span class="ap"><span class="barras" aria-hidden="true"><i></i><i></i><i></i></span><span lang="es">Alta</span><span lang="en">High</span></span><span class="rpn">S9 · O5 · D4 · RPN 180</span></div>
+        <div class="aviso error"><svg class="ico" aria-hidden="true"><use href="#i-circle-alert"/></svg><span><b><span lang="es">Falta senal_confianza en 2 trazas.</span><span lang="en">senal_confianza is missing in 2 traces.</span></b><span lang="es">El detector no corre con datos incompletos.</span><span lang="en">The detector does not run on incomplete data.</span></span></div>
+      </div></div>
+    </div>
+    <p class="nota" style="margin-top:10px"><span lang="es">La prioridad de acción se calculó aquí con la tabla AIAG-VDA; en el sprint 1 la calcula instrumentos-de-plan y esta fila la lee.</span><span lang="en">Action priority was computed here with the AIAG-VDA table; in sprint 1 instrumentos-de-plan computes it and this row reads it.</span></p>
+  </section>
+
+  <!-- ============================ Deslizador de umbral -->
+  <section class="seccion" id="c-umbral" aria-labelledby="t-umbral">
+    <div class="seccion-cab"><h2 id="t-umbral"><span lang="es">Deslizador de umbral</span><span lang="en">Threshold slider</span></h2><p class="nota"><span lang="es">Siempre con su regla escrita y la marca del valor del plan.</span><span lang="en">Always with its rule written and the plan value marked.</span></p></div>
+    <div class="dos">
+      <div class="umbral">
+        <div class="umbral-cab"><label for="u1-a"><span class="id">U1</span><span lang="es">Confianza mínima de extracción</span><span lang="en">Minimum extraction confidence</span></label><span class="valor"><span lang="es">0,75</span><span lang="en">0.75</span></span></div>
+        <span class="regla">senal_confianza · menor_que · <span lang="es">0,75</span><span lang="en">0.75</span> · <span lang="es">no inclusivo</span><span lang="en">not inclusive</span></span>
+        <div class="pista-umbral"><input id="u1-a" type="range" min="0.5" max="0.95" step="0.05" value="0.75" aria-describedby="u1-a-d"><span class="marca-plan" style="left:calc(9px + (100% - 18px) * 0.5556)"><span>plan</span></span></div>
+        <div class="extremos"><span><span lang="es">0,50</span><span lang="en">0.50</span></span><span><span lang="es">0,95</span><span lang="en">0.95</span></span></div>
+        <p class="nota" id="u1-a-d"><b style="color:var(--tinta-1);font-weight:500"><span lang="es">Reposo.</span><span lang="en">Rest.</span></b> <span lang="es">Por debajo de este valor, el caso lo revisa una persona.</span><span lang="en">Below this value, a person reviews the case.</span></p>
+      </div>
+      <div class="umbral">
+        <div class="umbral-cab"><label for="u1-b"><span class="id">U1</span><span lang="es">Confianza mínima de extracción</span><span lang="en">Minimum extraction confidence</span></label><span class="valor"><span lang="es">0,85</span><span lang="en">0.85</span></span></div>
+        <span class="regla">senal_confianza · menor_que · <span lang="es">0,85</span><span lang="en">0.85</span> · <span lang="es">no inclusivo</span><span lang="en">not inclusive</span></span>
+        <div class="pista-umbral"><input id="u1-b" type="range" min="0.5" max="0.95" step="0.05" value="0.85"><span class="marca-plan" style="left:calc(9px + (100% - 18px) * 0.5556)"><span lang="es">plan 0,75</span><span lang="en">plan 0.75</span></span></div>
+        <div class="extremos"><span><span lang="es">0,50</span><span lang="en">0.50</span></span><span><span lang="es">0,95</span><span lang="en">0.95</span></span></div>
+        <div class="fila-chips"><b class="nota" style="color:var(--tinta-1);font-weight:500"><span lang="es">Movido.</span><span lang="en">Moved.</span></b><span class="chip"><svg class="ico" aria-hidden="true"><use href="#i-sliders-horizontal"/></svg><span lang="es">movido desde 0,75</span><span lang="en">moved from 0.75</span></span></div>
+      </div>
+      <div class="umbral">
+        <div class="umbral-cab"><label for="u1-c"><span class="id">U1</span><span lang="es">Confianza mínima de extracción</span><span lang="en">Minimum extraction confidence</span></label><span class="valor"><span lang="es">0,75</span><span lang="en">0.75</span></span></div>
+        <span class="regla">senal_confianza · menor_que · <span lang="es">0,75</span><span lang="en">0.75</span> · <span lang="es">no inclusivo</span><span lang="en">not inclusive</span></span>
+        <div class="pista-umbral es-foco"><input id="u1-c" type="range" min="0.5" max="0.95" step="0.05" value="0.75"><span class="marca-plan" style="left:calc(9px + (100% - 18px) * 0.5556)"><span>plan</span></span></div>
+        <div class="extremos"><span><span lang="es">0,50</span><span lang="en">0.50</span></span><span><span lang="es">0,95</span><span lang="en">0.95</span></span></div>
+        <p class="nota"><b style="color:var(--tinta-1);font-weight:500"><span lang="es">Foco.</span><span lang="en">Focus.</span></b> <span lang="es">Flechas del teclado: un paso de 0,05 cada vez.</span><span lang="en">Arrow keys: one 0.05 step at a time.</span></p>
+      </div>
+      <div class="umbral deshabilitado">
+        <div class="umbral-cab"><label for="u2-a"><span class="id">U2</span><span lang="es">Alto costo</span><span lang="en">High cost</span></label><span class="valor">1000</span></div>
+        <span class="regla">costo_estimado · mayor_que · 1000 · <span lang="es">no inclusivo</span><span lang="en">not inclusive</span></span>
+        <div class="pista-umbral"><input id="u2-a" type="range" min="200" max="5000" step="100" value="1000" disabled aria-describedby="u2-a-d"><span class="marca-plan" style="left:calc(9px + (100% - 18px) * 0.1667)"><span>plan</span></span></div>
+        <div class="extremos"><span>200</span><span>5000</span></div>
+        <div class="aviso" id="u2-a-d"><svg class="ico" aria-hidden="true"><use href="#i-eye-off"/></svg><span><b><span lang="es">Deshabilitado: no observado.</span><span lang="en">Disabled: not observed.</span></b><span lang="es">Las trazas del spike no registran costo_estimado; este umbral no se puede jugar hasta que la corrida lo registre.</span><span lang="en">The spike traces do not record costo_estimado; this threshold cannot be played until the run records it.</span></span></div>
+      </div>
+      <div class="umbral">
+        <div class="umbral-cab"><span class="nombre"><span class="id">U4</span><span lang="es">Modo Texas</span><span lang="en">Texas mode</span></span><span class="chip"><span lang="es">plan: apagado</span><span lang="en">plan: off</span></span></div>
+        <span class="regla">modo_texas · igual_a · <span lang="es">verdadero</span><span lang="en">true</span></span>
+        <button type="button" class="interruptor" role="switch" aria-checked="false" id="texas"><span class="riel" aria-hidden="true"></span><span lang="es">Modo Texas</span><span lang="en">Texas mode</span><span class="estado-txt" data-si-off><span lang="es">apagado</span><span lang="en">off</span></span></button>
+        <p class="nota"><b style="color:var(--tinta-1);font-weight:500"><span lang="es">Booleano.</span><span lang="en">Boolean.</span></b> <span lang="es">Encendido: ninguna determinación adversa automática, ni parcial (TX SB 815).</span><span lang="en">On: no automated adverse determination, not even partial (TX SB 815).</span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ Panel de consecuencias -->
+  <section class="seccion" id="c-consecuencias" aria-labelledby="t-cons">
+    <div class="seccion-cab"><h2 id="t-cons"><span lang="es">Panel de consecuencias</span><span lang="en">Consequences panel</span></h2><p class="nota"><span lang="es">Lo que cambia al mover umbrales, sobre las trazas reales. Minutos a 12 por caso (plan).</span><span lang="en">What changes when thresholds move, on the real traces. Minutes at 12 per case (plan).</span></p></div>
+    <div class="est"><div class="et"><span lang="es">Vacío</span><span lang="en">Empty</span><small><span lang="es">en los valores del plan</span><span lang="en">at the plan values</span></small></div>
+      <div class="consecuencias"><div class="aviso"><svg class="ico" aria-hidden="true"><use href="#i-sliders-horizontal"/></svg><span><b><span lang="es">Estás en los valores del plan.</span><span lang="en">You are at the plan values.</span></b><span lang="es">Mueve un umbral para ver qué cambia sobre las 20 trazas.</span><span lang="en">Move a threshold to see what changes across the 20 traces.</span></span></div></div>
+    </div>
+    <div class="est"><div class="et"><span lang="es">Contenido</span><span lang="en">Content</span><small>U1 <span lang="es">0,75 → 0,85</span><span lang="en">0.75 → 0.85</span></small></div>
+      <div class="consecuencias">
+        <div class="cifras">
+          <div class="cifra-c"><b>3</b><span><span lang="es">casos cambian de camino</span><span lang="en">cases change path</span></span></div>
+          <div class="cifra-c"><b>+1</b><span><span lang="es">error evitado</span><span lang="en">error avoided</span></span></div>
+          <div class="cifra-c"><b>0</b><span><span lang="es">errores introducidos</span><span lang="en">errors introduced</span></span></div>
+          <div class="cifra-c"><b>+36 min</b><span><span lang="es">de revisión humana</span><span lang="en">of human review</span></span></div>
+        </div>
+        <div class="pie-c"><span><span lang="es">Criterios: 8 de 9 pasan, sin cambio. C5 no depende de este umbral.</span><span lang="en">Criteria: 8 of 9 pass, unchanged. C5 does not depend on this threshold.</span></span><span class="fila-chips" style="margin:0"><span class="veredicto chico" data-v="no-cumple"><svg aria-hidden="true"><use href="#m-no-cumple"/></svg><span lang="es">No cumple</span><span lang="en">Does not meet</span></span><span class="chip"><svg aria-hidden="true"><use href="#m-maqueta"/></svg><span lang="es">maqueta</span><span lang="en">mockup</span></span></span></div>
+      </div>
+    </div>
+    <div class="est"><div class="et"><span lang="es">Éxito</span><span lang="en">Success</span><small><span lang="es">mejora sin errores nuevos</span><span lang="en">improves with no new errors</span></small></div>
+      <div class="consecuencias">
+        <div class="cifras">
+          <div class="cifra-c"><b>5</b><span><span lang="es">casos cambian de camino</span><span lang="en">cases change path</span></span></div>
+          <div class="cifra-c"><b>+2</b><span><span lang="es">errores evitados</span><span lang="en">errors avoided</span></span></div>
+          <div class="cifra-c"><b>0</b><span><span lang="es">errores introducidos</span><span lang="en">errors introduced</span></span></div>
+          <div class="cifra-c"><b>+60 min</b><span><span lang="es">de revisión humana</span><span lang="en">of human review</span></span></div>
+        </div>
+        <div class="pie-c"><span><span lang="es">Ningún error introducido: el costo es solo tiempo humano.</span><span lang="en">No error introduced: the cost is human time only.</span></span><span class="fila-chips" style="margin:0"><span class="veredicto chico" data-v="cumple"><svg aria-hidden="true"><use href="#m-cumple"/></svg><span lang="es">Sin errores nuevos</span><span lang="en">No new errors</span></span><span class="chip"><svg aria-hidden="true"><use href="#m-maqueta"/></svg><span lang="es">maqueta</span><span lang="en">mockup</span></span></span></div>
+      </div>
+    </div>
+    <div class="est"><div class="et"><span lang="es">Cargando</span><span lang="en">Loading</span></div>
+      <div class="consecuencias" aria-busy="true"><div class="cifras"><div class="cifra-c"><span class="esqueleto alto" style="width:40px"></span><span class="esqueleto" style="width:80%"></span></div><div class="cifra-c"><span class="esqueleto alto" style="width:40px"></span><span class="esqueleto" style="width:70%"></span></div><div class="cifra-c"><span class="esqueleto alto" style="width:40px"></span><span class="esqueleto" style="width:75%"></span></div><div class="cifra-c"><span class="esqueleto alto" style="width:64px"></span><span class="esqueleto" style="width:65%"></span></div></div></div>
+    </div>
+    <div class="est"><div class="et">Error</div>
+      <div class="consecuencias"><div class="aviso error"><svg class="ico" aria-hidden="true"><use href="#i-circle-alert"/></svg><span><b><span lang="es">No se pudo recalcular: las trazas del lote no están en este navegador.</span><span lang="en">Could not recalculate: the batch traces are not in this browser.</span></b><span lang="es">Recarga la página para volver a traerlas. Se guardan en el navegador, no en un servidor.</span><span lang="en">Reload the page to fetch them again. They are kept in the browser, not on a server.</span></span></div></div>
+    </div>
+  </section>
+
+  <!-- ============================ Curva riesgo-cobertura -->
+  <section class="seccion" id="c-curva" aria-labelledby="t-curva">
+    <div class="seccion-cab"><h2 id="t-curva"><span lang="es">Curva riesgo-cobertura</span><span lang="en">Risk-coverage curve</span></h2><p class="nota"><span lang="es">X: casos decididos sin humano. Y: error entre los decididos. El plan y el punto actual, con forma y texto.</span><span lang="en">X: cases decided without a human. Y: error among the decided. The plan and the current point, with shape and text.</span></p></div>
+    <div class="dos">
+      <figure class="curva" style="margin:0">
+        <svg viewBox="0 0 480 250" role="img" aria-labelledby="t-curva-a">
+          <title id="t-curva-a">Curva riesgo-cobertura: plan en 70 % de cobertura y 6 % de riesgo; actual en 50 % y 3 % / Risk-coverage curve</title>
+          <g class="eje"><path d="M48,12 V204 H468"/><line x1="48" y1="140.7" x2="468" y2="140.7" stroke-dasharray="2 4"/><line x1="48" y1="76.3" x2="468" y2="76.3" stroke-dasharray="2 4"/>
+            <text x="40" y="208" text-anchor="end">0 %</text><text x="40" y="144" text-anchor="end">10 %</text><text x="40" y="80" text-anchor="end">20 %</text><text x="40" y="16" text-anchor="end">30 %</text>
+            <text x="48" y="220" text-anchor="middle">0</text><text x="153" y="220" text-anchor="middle">25</text><text x="258" y="220" text-anchor="middle">50</text><text x="363" y="220" text-anchor="middle">75</text><text x="468" y="220" text-anchor="end">100 %</text>
+            <text class="eje-t" x="468" y="242" text-anchor="end"><tspan lang="es">cobertura: casos decididos sin humano →</tspan><tspan lang="en">coverage: cases decided without a human →</tspan></text></g>
+          <path class="area" d="M132,204 L132,204 L195,191.1 L258,184.7 L300,178.3 L342,165.5 L384,146.1 L426,114 L468,75.3 L468,204 Z"/>
+          <path class="traza" d="M132,204 L195,191.1 L258,184.7 L300,178.3 L342,165.5 L384,146.1 L426,114 L468,75.3"/>
+          <circle class="p-plan" cx="342" cy="165.5" r="6"/><text class="punto-et" x="352" y="186"><tspan lang="es">plan · U1 0,75</tspan><tspan lang="en">plan · U1 0.75</tspan></text>
+          <rect class="p-actual" x="253" y="179.7" width="10" height="10"/><text class="punto-et fuerte" x="210" y="170"><tspan lang="es">actual · 0,85</tspan><tspan lang="en">current · 0.85</tspan></text>
+        </svg>
+        <figcaption class="mini-pie"><span><span lang="es">Contenido · n = 20 · AURC 0,05</span><span lang="en">Content · n = 20 · AURC 0.05</span></span><span class="chip"><svg aria-hidden="true"><use href="#m-maqueta"/></svg><span lang="es">maqueta</span><span lang="en">mockup</span></span></figcaption>
+      </figure>
+      <figure class="curva" style="margin:0">
+        <svg viewBox="0 0 480 250" role="img" aria-labelledby="t-curva-b">
+          <title id="t-curva-b">En el valor del plan: un solo punto / At the plan value: one point</title>
+          <g class="eje"><path d="M48,12 V204 H468"/><line x1="48" y1="140.7" x2="468" y2="140.7" stroke-dasharray="2 4"/><line x1="48" y1="76.3" x2="468" y2="76.3" stroke-dasharray="2 4"/>
+            <text x="40" y="208" text-anchor="end">0 %</text><text x="40" y="144" text-anchor="end">10 %</text><text x="40" y="80" text-anchor="end">20 %</text><text x="40" y="16" text-anchor="end">30 %</text>
+            <text x="48" y="220" text-anchor="middle">0</text><text x="153" y="220" text-anchor="middle">25</text><text x="258" y="220" text-anchor="middle">50</text><text x="363" y="220" text-anchor="middle">75</text><text x="468" y="220" text-anchor="end">100 %</text>
+            <text class="eje-t" x="468" y="242" text-anchor="end"><tspan lang="es">cobertura →</tspan><tspan lang="en">coverage →</tspan></text></g>
+          <path class="area" d="M132,204 L195,191.1 L258,184.7 L300,178.3 L342,165.5 L384,146.1 L426,114 L468,75.3 L468,204 Z"/>
+          <path class="traza" d="M132,204 L195,191.1 L258,184.7 L300,178.3 L342,165.5 L384,146.1 L426,114 L468,75.3"/>
+          <circle class="p-plan" cx="342" cy="165.5" r="6"/><text class="punto-et fuerte" x="332" y="152" text-anchor="end"><tspan lang="es">plan = actual · U1 0,75</tspan><tspan lang="en">plan = current · U1 0.75</tspan></text>
+        </svg>
+        <figcaption class="mini-pie"><span><span lang="es">Éxito · en el valor del plan</span><span lang="en">Success · at the plan value</span></span><span class="chip"><svg aria-hidden="true"><use href="#m-maqueta"/></svg><span lang="es">maqueta</span><span lang="en">mockup</span></span></figcaption>
+      </figure>
+      <div class="curva"><div class="aviso"><svg class="ico" aria-hidden="true"><use href="#i-inbox"/></svg><span><b><span lang="es">Vacío · pocos casos para una curva.</span><span lang="en">Empty · too few cases for a curve.</span></b><span lang="es">Hacen falta al menos 10 casos decididos; el spike tiene 5. Llega con el lote de 20.</span><span lang="en">At least 10 decided cases are needed; the spike has 5. It arrives with the batch of 20.</span></span></div></div>
+      <div class="curva"><div class="aviso error"><svg class="ico" aria-hidden="true"><use href="#i-circle-alert"/></svg><span><b><span lang="es">Error · falta senal_confianza en 2 trazas.</span><span lang="en">Error · senal_confianza is missing in 2 traces.</span></b><span lang="es">La curva no se dibuja con datos incompletos.</span><span lang="en">The curve is not drawn from incomplete data.</span></span></div><div aria-busy="true" style="display:grid;gap:8px;margin-top:8px"><span class="nota"><span lang="es">Cargando (esqueleto):</span><span lang="en">Loading (skeleton):</span></span><span class="esqueleto" style="height:120px;border-radius:6px"></span></div></div>
+    </div>
+  </section>
+
+  <!-- ============================ Ficha de reproducibilidad -->
+  <section class="seccion" id="c-ficha" aria-labelledby="t-ficha">
+    <div class="seccion-cab"><h2 id="t-ficha"><span lang="es">Ficha de reproducibilidad</span><span lang="en">Reproducibility record</span></h2><p class="nota"><span lang="es">Versiones, huellas, modelo y fecha. Sin URLs.</span><span lang="en">Versions, fingerprints, model and date. No URLs.</span></p></div>
+    <div class="dos">
+      <div class="ficha">
+        <div class="ficha-cab"><h3><span class="baldosa chica"><svg class="ico" aria-hidden="true"><use href="#i-fingerprint"/></svg></span><span lang="es">Corrida del spike</span><span lang="en">Spike run</span></h3><span class="chip"><svg aria-hidden="true"><use href="#m-real"/></svg>real</span></div>
+        <dl>
+          <dt><span lang="es">Fecha</span><span lang="en">Date</span></dt><dd>2026-09-26</dd>
+          <dt><span lang="es">Modelo</span><span lang="en">Model</span></dt><dd><span lang="es">sonnet · suscripción de Claude Code</span><span lang="en">sonnet · Claude Code subscription</span></dd>
+          <dt><span lang="es">Versiones</span><span lang="en">Versions</span></dt><dd>langgraph 1.2.12 · langchain 1.4.2 · langchain-core 1.6.5 · langsmith 0.14.1</dd>
+          <dt><span lang="es">Casos</span><span lang="en">Cases</span></dt><dd>5 · A-001 … A-005</dd>
+          <dt><span lang="es">Umbral</span><span lang="en">Threshold</span></dt><dd>U1 = <span lang="es">0,75</span><span lang="en">0.75</span> · menor_que · <span lang="es">no inclusivo</span><span lang="en">not inclusive</span></dd>
+          <dt><span lang="es">Huella del lote</span><span lang="en">Batch fingerprint</span></dt><dd><span lang="es">— el spike no publicó huella</span><span lang="en">— the spike published no fingerprint</span></dd>
+        </dl>
+        <p class="nota"><span lang="es">Contenido: datos reales, todavía sin huella que verificar.</span><span lang="en">Content: real data, still without a fingerprint to verify.</span></p>
+      </div>
+      <div class="ficha">
+        <div class="ficha-cab"><h3><span class="baldosa chica"><svg class="ico" aria-hidden="true"><use href="#i-fingerprint"/></svg></span><span lang="es">Lote de 20</span><span lang="en">Batch of 20</span></h3><span class="fila-chips" style="margin:0"><span class="veredicto chico" data-v="cumple"><svg aria-hidden="true"><use href="#m-cumple"/></svg><span lang="es">3 de 3 huellas coinciden</span><span lang="en">3 of 3 fingerprints match</span></span></span></div>
+        <dl>
+          <dt><span lang="es">Semilla</span><span lang="en">Seed</span></dt><dd>20260926</dd>
+          <dt><span lang="es">Casos</span><span lang="en">Cases</span></dt><dd>sha256 7f3a91c2…e0b4</dd>
+          <dt><span lang="es">Trazas</span><span lang="en">Traces</span></dt><dd>sha256 1c0de5a8…93f1</dd>
+          <dt><span lang="es">Plan</span><span lang="en">Plan</span></dt><dd>v1 · sha256 b52e07d4…4a6c</dd>
+        </dl>
+        <div class="fila-chips"><span class="nota"><span lang="es">Éxito: las huellas publicadas coinciden con los archivos.</span><span lang="en">Success: the published fingerprints match the files.</span></span><span class="chip"><svg aria-hidden="true"><use href="#m-maqueta"/></svg><span lang="es">maqueta</span><span lang="en">mockup</span></span></div>
+      </div>
+      <div class="ficha"><div class="aviso error"><svg class="ico" aria-hidden="true"><use href="#i-circle-alert"/></svg><span><b><span lang="es">Error · la huella de las trazas no coincide.</span><span lang="en">Error · the traces' fingerprint does not match.</span></b><span lang="es">La corrida pudo cambiar después de publicarse. No se muestran resultados hasta volver a verificarla.</span><span lang="en">The run may have changed after it was published. No results are shown until it is verified again.</span></span></div></div>
+      <div class="ficha"><div class="aviso"><svg class="ico" aria-hidden="true"><use href="#i-inbox"/></svg><span><b><span lang="es">Vacío · aún no hay corrida publicada para este demo.</span><span lang="en">Empty · no run published for this demo yet.</span></b><span lang="es">El demo B llega en el sprint 3.</span><span lang="en">Demo B arrives in sprint 3.</span></span></div><div aria-busy="true" style="display:grid;gap:8px;margin-top:6px"><span class="nota"><span lang="es">Cargando (verificando huellas):</span><span lang="en">Loading (verifying fingerprints):</span></span><span class="esqueleto" style="width:70%"></span><span class="esqueleto" style="width:90%"></span><span class="esqueleto" style="width:55%"></span></div></div>
+    </div>
+  </section>
+<section class="seccion" id="c-pantalla" aria-labelledby="t-pantalla"><div class="seccion-cab"><h2 id="t-pantalla"><span lang="es">Componentes de pantalla</span><span lang="en">Screen components</span></h2><p class="nota"><span lang="es">44 componentes, de la 0.2 a la 0.5. Cada uno vive en su pantalla; aquí, su uso, sus estados y el enlace.</span><span lang="en">44 components, from 0.2 to 0.5. Each lives on its screen; here, its use, its states and the link.</span></p></div><div class="catalogo"><div class="fila grupo-v"><span class="n">0.2</span><span><span lang="es">Agente (mirada 2)</span><span lang="en">Agent (look 2)</span></span></div><div class="fila"><span class="n">0.2</span><span><b><span lang="es">Ficha del agente</span><span lang="en">Agent card</span></b></span><span><span lang="es">Abre toda pantalla de agente: objetivo, recibe → hace → entrega, puede, nunca, participan y capacidad medida.</span><span lang="en">Opens every agent screen: goal, takes in → does → delivers, can, never, who takes part and measured capacity.</span></span><span class="nota"><span lang="es">líder · experto · teléfono</span><span lang="en">leader · expert · phone</span></span><span><a href="03-agente.html"><span lang="es">verlo vivo</span><span lang="en">see it live</span></a></span></div><div class="fila"><span class="n">0.2</span><span><b><span lang="es">Flujo del nodo</span><span lang="en">Node flow</span></b></span><span><span lang="es">Lo que un nodo recibe → el nodo → lo que entrega.</span><span lang="en">What a node takes in → the node → what it delivers.</span></span><span class="nota"><span lang="es">escritorio · teléfono</span><span lang="en">desktop · phone</span></span><span><a href="03-agente.html?estado=extractor"><span lang="es">verlo vivo</span><span lang="en">see it live</span></a></span></div><div class="fila"><span class="n">0.2</span><span><b><span lang="es">Campos por perfil</span><span lang="en">Fields by profile</span></b></span><span><span lang="es">Para qué existe, cómo lo hace, si falla, cómo se mide, en los casos y lo que aún no hace.</span><span lang="en">Why it exists, how it works, if it fails, how it is measured, in the cases and what it does not do yet.</span></span><span class="nota"><span lang="es">líder · lo pendiente en tinta-2</span><span lang="en">leader · pending in ink-2</span></span><span><a href="03-agente.html?estado=pausa_humana"><span lang="es">verlo vivo</span><span lang="en">see it live</span></a></span></div><div class="fila"><span class="n">0.2</span><span><b><span lang="es">Referencias al plan</span><span lang="en">Plan references</span></b></span><span><span lang="es">Id del plan, enunciado y su medida: prioridad con S·O·D, estado, reversibilidad.</span><span lang="en">Plan id, statement and its measure: priority with S·O·D, status, reversibility.</span></span><span class="nota"><span lang="es">experto</span><span lang="en">expert</span></span><span><a href="03-agente.html?estado=decision"><span lang="es">verlo vivo</span><span lang="en">see it live</span></a></span></div><div class="fila"><span class="n">0.2</span><span><b><span lang="es">Matriz plan → nodo</span><span lang="en">Plan → node matrix</span></b></span><span><span lang="es">Qué decisiones, riesgos, supuestos, criterios y umbrales gobiernan cada nodo, y si corrió.</span><span lang="en">Which decisions, risks, assumptions, criteria and thresholds govern each node, and whether it ran.</span></span><span class="nota"><span lang="es">escritorio · teléfono</span><span lang="en">desktop · phone</span></span><span><a href="03-agente.html"><span lang="es">verlo vivo</span><span lang="en">see it live</span></a></span></div><div class="fila"><span class="n">0.2</span><span><b><span lang="es">Traza abrible</span><span lang="en">Expandable trace</span></b></span><span><span lang="es">Una fila por caso que se abre: el texto, lo que el nodo leyó y escribió, tiempo, tokens y costo.</span><span lang="en">One row per case that opens: the text, what the node read and wrote, time, tokens and cost.</span></span><span class="nota"><span lang="es">cerrada · abierta · teléfono</span><span lang="en">closed · open · phone</span></span><span><a href="03-agente.html?estado=extractor"><span lang="es">verlo vivo</span><span lang="en">see it live</span></a></span></div><div class="fila grupo-v"><span class="n">0.3</span><span><span lang="es">Brecha y Playground (mirada 3)</span><span lang="en">Gap and Playground (look 3)</span></span></div><div class="fila"><span class="n">0.3</span><span><b><span lang="es">Leer como</span><span lang="en">Read as</span></b></span><span><span lang="es">Conmutador de página líder · experto; lo técnico nunca duplica la página.</span><span lang="en">Page switch leader · expert; the technical never duplicates the page.</span></span><span class="nota"><span lang="es">líder · experto</span><span lang="en">leader · expert</span></span><span><a href="04-brecha.html"><span lang="es">verlo vivo</span><span lang="en">see it live</span></a></span></div><div class="fila"><span class="n">0.3</span><span><b><span lang="es">Franja del oráculo</span><span lang="en">Oracle strip</span></b></span><span><span lang="es">Divulga que las decisiones humanas se simularon.</span><span lang="en">Discloses that human decisions were simulated.</span></span><span class="nota">—</span><span><a href="04-brecha.html"><span lang="es">verlo vivo</span><span lang="en">see it live</span></a></span></div><div class="fila"><span class="n">0.3</span><span><b><span lang="es">Veredicto al frente</span><span lang="en">Verdict up front</span></b></span><span><span lang="es">El sello, una frase para quien decide, la recomendación y seis cifras.</span><span lang="en">The stamp, a sentence for the decision-maker, the recommendation and six figures.</span></span><span class="nota"><span lang="es">cumple con alertas · no cumple · teléfono</span><span lang="en">meets with warnings · does not meet · phone</span></span><span><a href="04-brecha.html"><span lang="es">verlo vivo</span><span lang="en">see it live</span></a></span></div><div class="fila"><span class="n">0.3</span><span><b><span lang="es">Índice del informe</span><span lang="en">Report index</span></b></span><span><span lang="es">Las 9 secciones del informe como enlaces numerados.</span><span lang="en">The report's 9 sections as numbered links.</span></span><span class="nota">—</span><span><a href="04-brecha.html"><span lang="es">verlo vivo</span><span lang="en">see it live</span></a></span></div><div class="fila"><span class="n">0.3</span><span><b><span lang="es">Visitas por nodo</span><span lang="en">Visits per node</span></b></span><span><span lang="es">Contrato de grafo: nodo, barra de visitas y marca de presencia.</span><span lang="en">Graph contract: node, visits bar and presence mark.</span></span><span class="nota"><span lang="es">escritorio · teléfono</span><span lang="en">desktop · phone</span></span><span><a href="04-brecha.html?perfil=experto"><span lang="es">verlo vivo</span><span lang="en">see it live</span></a></span></div><div class="fila"><span class="n">0.3</span><span><b><span lang="es">Cadena de nodos</span><span lang="en">Node chain</span></b></span><span><span lang="es">El camino de un caso como glifos unidos por flechas.</span><span lang="en">A case's path as glyphs joined by arrows.</span></span><span class="nota">—</span><span><a href="06-caso.html"><span lang="es">verlo vivo</span><span lang="en">see it live</span></a></span></div><div class="fila"><span class="n">0.3</span><span><b><span lang="es">Supuesto con su prueba</span><span lang="en">Assumption with its test</span></b></span><span><span lang="es">Enunciado, estado, lectura, medidas y su gráfico.</span><span lang="en">Statement, status, reading, measures and its chart.</span></span><span class="nota"><span lang="es">confirmado · refutado · sin probar</span><span lang="en">confirmed · refuted · untested</span></span><span><a href="04-brecha.html?perfil=experto"><span lang="es">verlo vivo</span><span lang="en">see it live</span></a></span></div><div class="fila"><span class="n">0.3</span><span><b><span lang="es">Comparación de variantes</span><span lang="en">Variant comparison</span></b></span><span><span lang="es">Barras pareadas del plan y de la línea base, distinguibles sin color.</span><span lang="en">Paired bars for the plan and the baseline, distinguishable without colour.</span></span><span class="nota">—</span><span><a href="04-brecha.html?perfil=experto"><span lang="es">verlo vivo</span><span lang="en">see it live</span></a></span></div><div class="fila"><span class="n">0.3</span><span><b><span lang="es">Casos ejemplares</span><span lang="en">Exemplary cases</span></b></span><span><span lang="es">Exitoso · escalado · fallido · adversario; el que no existe queda vacío y lo dice.</span><span lang="en">Successful · escalated · failed · adversarial; the missing one stays empty and says so.</span></span><span class="nota"><span lang="es">contenido · vacío</span><span lang="en">content · empty</span></span><span><a href="04-brecha.html"><span lang="es">verlo vivo</span><span lang="en">see it live</span></a></span></div><div class="fila"><span class="n">0.3</span><span><b><span lang="es">Aviso de estado de maqueta</span><span lang="en">Mock-up state notice</span></b></span><span><span lang="es">Borde discontinuo: qué cambia y que sus números son inventados.</span><span lang="en">Dashed border: what changes and that its numbers are invented.</span></span><span class="nota">—</span><span><a href="04-brecha.html?estado=nocumple"><span lang="es">verlo vivo</span><span lang="en">see it live</span></a></span></div><div class="fila"><span class="n">0.3</span><span><b><span lang="es">Casos que cambian</span><span lang="en">Cases that change</span></b></span><span><span lang="es">Antes → ahora por forma, el porqué y la consecuencia.</span><span lang="en">Before → now by shape, the reason and the consequence.</span></span><span class="nota"><span lang="es">vacío · con cambios · error · no observado</span><span lang="en">empty · with changes · error · not observed</span></span><span><a href="05-playground.html?estado=u2"><span lang="es">verlo vivo</span><span lang="en">see it live</span></a></span></div><div class="fila grupo-v"><span class="n">0.3.1</span><span><span lang="es">Balance y perfil evidente (mirada 3, ronda 2)</span><span lang="en">Balance and visible profile (look 3, round 2)</span></span></div><div class="fila"><span class="n">0.3.1</span><span><b><span lang="es">Aviso de perfil</span><span lang="en">Profile notice</span></b></span><span><span lang="es">Qué ve quien lee, el botón para cambiar y cuántos bloques son solo del experto.</span><span lang="en">What the reader sees, the button to switch and how many blocks are expert-only.</span></span><span class="nota"><span lang="es">líder · experto · teléfono</span><span lang="en">leader · expert · phone</span></span><span><a href="04-brecha.html?perfil=experto"><span lang="es">verlo vivo</span><span lang="en">see it live</span></a></span></div><div class="fila"><span class="n">0.3.1</span><span><b><span lang="es">Bloque del experto</span><span lang="en">Expert block</span></b></span><span><span lang="es">Lo que solo ve el experto: fondo elevado, filete y rótulo «Experto».</span><span lang="en">What only the expert sees: raised background, rule and “Expert” label.</span></span><span class="nota"><span lang="es">experto · movimiento reducido</span><span lang="en">expert · reduced motion</span></span><span><a href="04-brecha.html?perfil=experto"><span lang="es">verlo vivo</span><span lang="en">see it live</span></a></span></div><div class="fila"><span class="n">0.3.1</span><span><b><span lang="es">Balance del plan</span><span lang="en">Plan balance</span></b></span><span><span lang="es">Cada parte del plan × cumplió · falló · sin probar.</span><span lang="en">Each plan part × met · failed · untested.</span></span><span class="nota"><span lang="es">real · no cumple · teléfono</span><span lang="en">real · does not meet · phone</span></span><span><a href="04-brecha.html"><span lang="es">verlo vivo</span><span lang="en">see it live</span></a></span></div><div class="fila"><span class="n">0.3.1</span><span><b><span lang="es">Lo que falló</span><span lang="en">What failed</span></b></span><span><span lang="es">Un renglón por falla: qué se planeó, qué pasó y qué significa.</span><span lang="en">One row per failure: what was planned, what happened and what it means.</span></span><span class="nota"><span lang="es">falló · ocurrió · sin probar · con nota</span><span lang="en">failed · occurred · untested · with a note</span></span><span><a href="04-brecha.html"><span lang="es">verlo vivo</span><span lang="en">see it live</span></a></span></div><div class="fila"><span class="n">0.3.1</span><span><b><span lang="es">Lo cumplido, uno por uno</span><span lang="en">What was met, one by one</span></b></span><span><span lang="es">Criterios y riesgos con marca, id, nombre y cifra.</span><span lang="en">Criteria and risks with mark, id, name and figure.</span></span><span class="nota"><span lang="es">líder · experto · teléfono</span><span lang="en">leader · expert · phone</span></span><span><a href="04-brecha.html"><span lang="es">verlo vivo</span><span lang="en">see it live</span></a></span></div><div class="fila"><span class="n">0.3.1</span><span><b><span lang="es">Frase viva</span><span lang="en">Live sentence</span></b></span><span><span lang="es">Una frase llana que se reescribe con cada movimiento del umbral.</span><span lang="en">A plain sentence rewritten with each threshold move.</span></span><span class="nota"><span lang="es">en el plan · con cambios · error · no observado</span><span lang="en">on plan · with changes · error · not observed</span></span><span><a href="05-playground.html?estado=u2"><span lang="es">verlo vivo</span><span lang="en">see it live</span></a></span></div><div class="fila"><span class="n">0.3.1</span><span><b><span lang="es">Regla viva</span><span lang="en">Live rule</span></b></span><span><span lang="es">La regla de cada nodo con el valor movido subrayado.</span><span lang="en">Each node's rule with the moved value underlined.</span></span><span class="nota"><span lang="es">en el plan · movido</span><span lang="en">on plan · moved</span></span><span><a href="05-playground.html?estado=u2&perfil=experto"><span lang="es">verlo vivo</span><span lang="en">see it live</span></a></span></div><div class="fila grupo-v"><span class="n">0.4</span><span><span lang="es">Entrada, Plan, Caso y Fichas (mirada 4)</span><span lang="en">Home, Plan, Case and Records (look 4)</span></span></div><div class="fila"><span class="n">0.4</span><span><b><span lang="es">Selector de casos</span><span lang="en">Case picker</span></b></span><span><span lang="es">Un chip por caso con su id y su tipo.</span><span lang="en">One chip per case with its id and type.</span></span><span class="nota"><span lang="es">activo · reposo · teléfono</span><span lang="en">active · resting · phone</span></span><span><a href="06-caso.html"><span lang="es">verlo vivo</span><span lang="en">see it live</span></a></span></div><div class="fila"><span class="n">0.4</span><span><b><span lang="es">Debía y pasó</span><span lang="en">Should and did</span></b></span><span><span lang="es">Lo que debía pasar según la verdad conocida frente a lo que pasó.</span><span lang="en">What should have happened per the known truth against what did.</span></span><span class="nota"><span lang="es">coincide · error</span><span lang="en">matches · error</span></span><span><a href="06-caso.html"><span lang="es">verlo vivo</span><span lang="en">see it live</span></a></span></div><div class="fila"><span class="n">0.4</span><span><b><span lang="es">Recorrido paso a paso</span><span lang="en">Step-by-step path</span></b></span><span><span lang="es">Un paso por nodo visitado, con la razón de su rama.</span><span lang="en">One step per visited node, with the reason for its branch.</span></span><span class="nota"><span lang="es">líder · experto · teléfono</span><span lang="en">leader · expert · phone</span></span><span><a href="06-caso.html"><span lang="es">verlo vivo</span><span lang="en">see it live</span></a></span></div><div class="fila"><span class="n">0.4</span><span><b><span lang="es">Tabla de aristas</span><span lang="en">Edge table</span></b></span><span><span lang="es">Las reglas de un nodo en orden; la rama, solo en la que decidió.</span><span lang="en">A node's rules in order; the branch, only on the one that decided.</span></span><span class="nota"><span lang="es">escritorio · teléfono</span><span lang="en">desktop · phone</span></span><span><a href="06-caso.html?perfil=experto"><span lang="es">verlo vivo</span><span lang="en">see it live</span></a></span></div><div class="fila"><span class="n">0.4</span><span><b><span lang="es">Pausa humana</span><span lang="en">Human pause</span></b></span><span><span lang="es">Por qué se detuvo, evidencia, contraevidencia y lo que respondió el auditor.</span><span lang="en">Why it stopped, evidence, counter-evidence and what the auditor answered.</span></span><span class="nota"><span lang="es">con pausa · sin pausa</span><span lang="en">with pause · without pause</span></span><span><a href="06-caso.html"><span lang="es">verlo vivo</span><span lang="en">see it live</span></a></span></div><div class="fila"><span class="n">0.4</span><span><b><span lang="es">Instrucción inyectada</span><span lang="en">Injected instruction</span></b></span><span><span lang="es">Dentro del texto del caso, con borde discontinuo y ⚠.</span><span lang="en">Inside the case text, with a dashed border and ⚠.</span></span><span class="nota">—</span><span><a href="06-caso.html?estado=a006"><span lang="es">verlo vivo</span><span lang="en">see it live</span></a></span></div><div class="fila"><span class="n">0.4</span><span><b><span lang="es">Respuesta y guardia</span><span lang="en">Reply and guard</span></b></span><span><span lang="es">La respuesta con su aviso de IA y lo que revisó la guardia.</span><span lang="en">The reply with its AI notice and what the guard checked.</span></span><span class="nota"><span lang="es">escritorio · teléfono</span><span lang="en">desktop · phone</span></span><span><a href="06-caso.html"><span lang="es">verlo vivo</span><span lang="en">see it live</span></a></span></div><div class="fila"><span class="n">0.4</span><span><b><span lang="es">Documento de decisión adversa</span><span lang="en">Adverse decision document</span></b></span><span><span lang="es">Lo arma el código: causal, regla, datos, versión, quién decidió y cómo contradecirla.</span><span lang="en">Code assembles it: cause, rule, data, version, who decided and how to appeal.</span></span><span class="nota"><span lang="es">ES · EN · teléfono</span><span lang="en">ES · EN · phone</span></span><span><a href="06-caso.html"><span lang="es">verlo vivo</span><span lang="en">see it live</span></a></span></div><div class="fila"><span class="n">0.4</span><span><b><span lang="es">Fila del plan</span><span lang="en">Plan row</span></b></span><span><span lang="es">Id, enunciado, lo elegido y un desplegable; a la derecha, su sello.</span><span lang="en">Id, statement, the choice and an expandable; on the right, its stamp.</span></span><span class="nota"><span lang="es">cerrada · abierta · teléfono</span><span lang="en">closed · open · phone</span></span><span><a href="02-plan.html"><span lang="es">verlo vivo</span><span lang="en">see it live</span></a></span></div><div class="fila"><span class="n">0.4</span><span><b><span lang="es">Cifras del plan</span><span lang="en">Plan figures</span></b></span><span><span lang="es">Cinco cifras, cada una con lo que pasó en la corrida.</span><span lang="en">Five figures, each with what happened in the run.</span></span><span class="nota">—</span><span><a href="02-plan.html"><span lang="es">verlo vivo</span><span lang="en">see it live</span></a></span></div><div class="fila"><span class="n">0.4</span><span><b><span lang="es">Índice del plan</span><span lang="en">Plan index</span></b></span><span><span lang="es">Seis anclas numeradas a las partes del plan.</span><span lang="en">Six numbered anchors to the plan's parts.</span></span><span class="nota">—</span><span><a href="02-plan.html"><span lang="es">verlo vivo</span><span lang="en">see it live</span></a></span></div><div class="fila"><span class="n">0.4</span><span><b><span lang="es">Miniaturas del ciclo</span><span lang="en">Cycle thumbnails</span></b></span><span><span lang="es">Barras del plan, cadena del agente, criterios y lo que falló.</span><span lang="en">Plan bars, agent chain, criteria and what failed.</span></span><span class="nota"><span lang="es">real · no cumple · teléfono</span><span lang="en">real · does not meet · phone</span></span><span><a href="01-entrada.html"><span lang="es">verlo vivo</span><span lang="en">see it live</span></a></span></div><div class="fila"><span class="n">0.4</span><span><b><span lang="es">Capacidad medida</span><span lang="en">Measured capacity</span></b></span><span><span lang="es">Cuatro cifras con su chip de procedencia.</span><span lang="en">Four figures with their provenance chip.</span></span><span class="nota">—</span><span><a href="01-entrada.html"><span lang="es">verlo vivo</span><span lang="en">see it live</span></a></span></div><div class="fila"><span class="n">0.4</span><span><b><span lang="es">Marco de CV Viva</span><span lang="en">CV Viva frame</span></b></span><span><span lang="es">Las fichas como las pinta hoja-de-vida: el único lugar con otra piel.</span><span lang="en">The records as hoja-de-vida paints them: the only place with another skin.</span></span><span class="nota"><span lang="es">app · agente · error</span><span lang="en">app · agent · error</span></span><span><a href="07-fichas.html"><span lang="es">verlo vivo</span><span lang="en">see it live</span></a></span></div><div class="fila"><span class="n">0.4</span><span><b><span lang="es">Pasos por carril</span><span lang="en">Steps by lane</span></b></span><span><span lang="es">Pasos numerados por actor; las decisiones con borde discontinuo.</span><span lang="en">Numbered steps per actor; decisions with a dashed border.</span></span><span class="nota">—</span><span><a href="07-fichas.html"><span lang="es">verlo vivo</span><span lang="en">see it live</span></a></span></div><div class="fila"><span class="n">0.4</span><span><b><span lang="es">Validación de campos</span><span lang="en">Field validation</span></b></span><span><span lang="es">Cada campo de una ficha contra los límites del contrato.</span><span lang="en">Each record field against the contract limits.</span></span><span class="nota"><span lang="es">cabe · no cabe</span><span lang="en">fits · does not fit</span></span><span><a href="07-fichas.html?perfil=experto"><span lang="es">verlo vivo</span><span lang="en">see it live</span></a></span></div><div class="fila grupo-v"><span class="n">0.4.1</span><span><span lang="es">Mirada 4, ronda 2</span><span lang="en">Look 4, round 2</span></span></div><div class="fila"><span class="n">0.4.1</span><span><b><span lang="es">Ver N más</span><span lang="en">Show N more</span></b></span><span><span lang="es">Cinco filas a la vista; el botón dice cuántas y cuáles faltan.</span><span lang="en">Five rows shown; the button says how many and which are missing.</span></span><span class="nota"><span lang="es">cerrado · abierto · teléfono</span><span lang="en">closed · open · phone</span></span><span><a href="02-plan.html"><span lang="es">verlo vivo</span><span lang="en">see it live</span></a></span></div><div class="fila"><span class="n">0.4.1</span><span><b><span lang="es">Aviso de estado arriba</span><span lang="en">Top state notice</span></b></span><span><span lang="es">Un estado que cambia bloques lejanos avisa donde se pulsa.</span><span lang="en">A state that changes far-away blocks warns where it is clicked.</span></span><span class="nota">—</span><span><a href="01-entrada.html?estado=nocumple"><span lang="es">verlo vivo</span><span lang="en">see it live</span></a></span></div><div class="fila grupo-v"><span class="n">0.5</span><span><span lang="es">Agente con el grafo del sprint 1 (mirada 5)</span><span lang="en">Agent with the sprint 1 graph (look 5)</span></span></div><div class="fila"><span class="n">0.5</span><span><b><span lang="es">Salto</span><span lang="en">Hop</span></b></span><span><span lang="es">Dos flechas del grafo que se cruzan sin unirse.</span><span lang="en">Two graph arrows that cross without joining.</span></span><span class="nota">—</span><span><a href="03-agente.html"><span lang="es">verlo vivo</span><span lang="en">see it live</span></a></span></div><div class="fila"><span class="n">0.5</span><span><b><span lang="es">Distribución de una arista</span><span lang="en">Edge distribution</span></b></span><span><span lang="es">Los valores observados de una señal frente a su umbral, por forma.</span><span lang="en">A signal's observed values against its threshold, by shape.</span></span><span class="nota">—</span><span><a href="03-agente.html?estado=arista"><span lang="es">verlo vivo</span><span lang="en">see it live</span></a></span></div></div></section>
+</div>
+
+<section class="mq-cierre" aria-label="Qué revisar / What to review"><div class="cont"><p class="mq-t"><span lang="es">Qué revisar en el kit y qué deberías ver (mirada 5)</span><span lang="en">What to review in the kit and what you should see (look 5)</span></p><div class="mq-matriz"><div class="fila cabeza"><span>#</span><span><span lang="es">Dónde</span><span lang="en">Where</span></span><span><span lang="es">Qué hacer</span><span lang="en">What to do</span></span><span><span lang="es">Qué deberías ver</span><span lang="en">What you should see</span></span></div><div class="fila"><span class="n">1</span><span><span class="et-m"><span lang="es">Dónde</span><span lang="en">Where</span></span><span lang="es">Arriba: Color, Tipografía, Espacio, Íconos, Movimiento</span><span lang="en">Top: Colour, Typography, Space, Icons, Motion</span></span><span><span class="et-m"><span lang="es">Qué hacer</span><span lang="en">What to do</span></span><span lang="es">Cambia de tema y de idioma.</span><span lang="en">Switch theme and language.</span></span><span><span class="et-m"><span lang="es">Qué deberías ver</span><span lang="en">What you should see</span></span><span lang="es">Las piezas canon que aprobaste en la mirada 2, sin cambios; los contrastes se leen en vivo del CSS generado.</span><span lang="en">The canon pieces you approved in look 2, unchanged; contrasts are read live from the generated CSS.</span></span></div><div class="fila"><span class="n">2</span><span><span class="et-m"><span lang="es">Dónde</span><span lang="en">Where</span></span><span lang="es">Al final: «Componentes de pantalla»</span><span lang="en">At the end: “Screen components”</span></span><span><span class="et-m"><span lang="es">Qué hacer</span><span lang="en">What to do</span></span><span lang="es">Recorre la lista por versión.</span><span lang="en">Go through the list by version.</span></span><span><span class="et-m"><span lang="es">Qué deberías ver</span><span lang="en">What you should see</span></span><span lang="es">Los 44 componentes que nacieron en las pantallas, de la 0.2 a la 0.5, con su uso y sus estados.</span><span lang="en">The 44 components born in the screens, from 0.2 to 0.5, with their use and states.</span></span></div><div class="fila"><span class="n">3</span><span><span class="et-m"><span lang="es">Dónde</span><span lang="en">Where</span></span><span lang="es">Cualquier fila</span><span lang="en">Any row</span></span><span><span class="et-m"><span lang="es">Qué hacer</span><span lang="en">What to do</span></span><span lang="es">Pulsa «verlo vivo».</span><span lang="en">Click “see it live”.</span></span><span><span class="et-m"><span lang="es">Qué deberías ver</span><span lang="en">What you should see</span></span><span lang="es">La pantalla abre en el estado y el perfil donde el componente se ve.</span><span lang="en">The screen opens in the state and profile where the component shows.</span></span></div></div><p class="mq-t"><span lang="es">Cómo responder</span><span lang="en">How to answer</span></p><ol><li><span lang="es">¿Falta algún componente que viste en las pantallas?</span><span lang="en">Is any component you saw in the screens missing?</span></li></ol></div></section>
+
+<script>
+  // Sala: hex y contraste en vivo desde el CSS generado; rejilla de íconos; demo de movimiento; interruptor.
+  (function () {
+    function lum(hex) {
+      var h = hex.replace("#", "");
+      var c = [0, 2, 4].map(function (i) {
+        var v = parseInt(h.substr(i, 2), 16) / 255;
+        return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+      });
+      return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+    }
+    function contraste(a, b) {
+      var x = lum(a), y = lum(b);
+      return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05);
+    }
+    function pintar() {
+      var cs = getComputedStyle(document.documentElement);
+      var v = function (n) { return cs.getPropertyValue(n).trim(); };
+      document.querySelectorAll("[data-hex]").forEach(function (el) { el.textContent = v(el.getAttribute("data-hex")); });
+      var coma = document.documentElement.getAttribute("data-lang") === "es";
+      document.querySelectorAll("[data-cr]").forEach(function (el) {
+        var p = el.getAttribute("data-cr").split("|");
+        var r = contraste(v(p[0]), v(p[1])).toFixed(1);
+        el.textContent = (coma ? r.replace(".", ",") : r) + ":1";
+      });
+    }
+    new MutationObserver(pintar).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-lang"] });
+    pintar();
+
+    var nombres = [].slice.call(document.querySelectorAll("symbol[id^='i-']")).map(function (s) { return s.id; });
+    var rejilla = document.getElementById("iconos-rejilla");
+    nombres.forEach(function (id) {
+      var d = document.createElement("div");
+      d.innerHTML = '<svg class="ico" aria-hidden="true"><use href="#' + id + '"/></svg>' + id.slice(2);
+      rejilla.appendChild(d);
+    });
+
+    var nodo = document.getElementById("nodo-mov");
+    document.getElementById("boton-mov").addEventListener("click", function () {
+      if (nodo.getAttribute("data-sel") === "true") nodo.removeAttribute("data-sel");
+      else nodo.setAttribute("data-sel", "true");
+    });
+    var sw = document.getElementById("texas");
+    sw.addEventListener("click", function () {
+      var on = sw.getAttribute("aria-checked") !== "true";
+      sw.setAttribute("aria-checked", on ? "true" : "false");
+      sw.querySelector(".estado-txt").innerHTML = on
+        ? '<span lang="es">encendido</span><span lang="en">on</span>'
+        : '<span lang="es">apagado</span><span lang="en">off</span>';
+    });
+  })();
+</script>
+</body>
+</html>

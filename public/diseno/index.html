@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="es" data-theme="oscuro" data-lang="es">
+<head>
+<meta charset="utf-8">
+<script>
+  // Vercel (cleanUrls) sirve este índice en /diseno, sin barra final: sin esta base, «03-agente.html» y
+  // «assets/…» se resolverían contra la raíz del sitio y darían 404. En local (file://) no hace nada.
+  (function () {
+    var p = location.pathname;
+    if (/^https?:$/.test(location.protocol) && !/(\/|\/index(\.html)?)$/.test(p)) {
+      var b = document.createElement("base"); b.href = p + "/"; document.head.appendChild(b);
+    }
+  })();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title data-es="planlang · Sala de diseño · Recorrido" data-en="planlang · Design room · Tour">planlang · Sala de diseño · Recorrido</title>
+<link rel="stylesheet" href="assets/fuentes.css">
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/planlang.css">
+<link rel="stylesheet" href="assets/maqueta.css">
+<script src="assets/maqueta.js" defer></script>
+<style>
+  .recorrido { list-style: none; padding: 0; margin-top: 24px; }
+  .recorrido li { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; gap: 12px; align-items: baseline; padding-block: 12px; border-top: 1px solid var(--linea); }
+  .recorrido .n { font: 500 12px/1 var(--mono); color: var(--tinta-2); }
+  .recorrido a { font-weight: 500; }
+  .recorrido .estado { font-size: 12px; color: var(--tinta-2); }
+  .recorrido li.pendiente a { color: var(--tinta-2); text-decoration: none; pointer-events: none; }
+  @media (max-width: 720px) { .recorrido li { grid-template-columns: 36px minmax(0, 1fr); } .recorrido .estado { grid-column: 2; } }
+</style>
+</head>
+<body>
+<div class="mq-bar" role="region" aria-label="Sala de diseño">
+  <span class="mq-t"><span lang="es">Sala de diseño · planlang · Etapa de Diseño (F2a)</span><span lang="en">Design room · planlang · Design stage (F2a)</span></span>
+  <div class="mq-g" role="group" aria-label="Tema"><span><span lang="es">tema:</span><span lang="en">theme:</span></span><button type="button" data-theme-set="oscuro"><span lang="es">oscuro</span><span lang="en">dark</span></button><button type="button" data-theme-set="claro"><span lang="es">claro</span><span lang="en">light</span></button></div>
+  <div class="mq-g" role="group" aria-label="Idioma / Language"><span>idioma:</span><button type="button" data-lang-set="es">ES</button><button type="button" data-lang-set="en">EN</button></div>
+</div>
+<main class="cont" style="padding-block:40px 64px">
+  <p class="antetitulo"><span lang="es">Recorrido de sala</span><span lang="en">Room tour</span></p>
+  <h1><span lang="es">Maqueta de la vitrina</span><span lang="en">Showcase mockup</span></h1>
+  <p class="guia"><span lang="es">Siete pantallas en español e inglés, oscuro y claro, teléfono y escritorio. Nada de esto es producto: es la referencia que el S2 reproduce. Rótulo en toda pantalla: «Simulación · no operativo».</span><span lang="en">Seven screens in Spanish and English, dark and light, phone and desktop. None of this is product: it is the reference S2 reproduces. Label on every screen: “Simulation · not operational”.</span></p>
+  <ol class="recorrido">
+    <li><span class="n">M1</span><a href="direccion.html"><span lang="es">Dirección · la identidad aprobada; la Entrada final es P1</span><span lang="en">Direction · the approved identity; the final Home is P1</span></a><span class="estado"><span lang="es">mirada 1 · aprobada</span><span lang="en">look 1 · approved</span></span></li>
+    <li><span class="n">M2</span><a href="kit.html"><span lang="es">Kit · el design system en vivo, con los 44 componentes de pantalla</span><span lang="en">Kit · the design system, live, with the 44 screen components</span></a><span class="estado"><span lang="es">mirada 5 · G-Diseño aprobado</span><span lang="en">look 5 · G-Design approved</span></span></li>
+    <li><span class="n">P3</span><a href="03-agente.html"><span lang="es">Agente · qué es, qué recibe, hace y entrega, y el grafo real del sprint 1 nodo por nodo</span><span lang="en">Agent · what it is, takes in, does and delivers, and sprint 1’s real graph node by node</span></a><span class="estado"><span lang="es">mirada 5 · G-Diseño aprobado</span><span lang="en">look 5 · G-Design approved</span></span></li>
+    <li><span class="n">P4</span><a href="04-brecha.html"><span lang="es">Brecha · qué se cumplió y qué falló, y el informe real en sus 9 secciones</span><span lang="en">Gap · what was met and what failed, and the real report in its 9 sections</span></a><span class="estado"><span lang="es">mirada 3 · aprobada</span><span lang="en">look 3 · approved</span></span></li>
+    <li><span class="n">P5</span><a href="05-playground.html"><span lang="es">Playground · mover los umbrales sobre las trazas reales</span><span lang="en">Playground · move the thresholds over the real traces</span></a><span class="estado"><span lang="es">mirada 3 · aprobada</span><span lang="en">look 3 · approved</span></span></li>
+    <li><span class="n">P1</span><a href="01-entrada.html"><span lang="es">Entrada · la tesis en una pantalla, con la corrida real</span><span lang="en">Home · the thesis on one screen, with the real run</span></a><span class="estado"><span lang="es">mirada 4 · aprobada</span><span lang="en">look 4 · approved</span></span></li>
+    <li><span class="n">P2</span><a href="02-plan.html"><span lang="es">Plan · decisiones, riesgos, supuestos, criterios, umbrales y contrato del grafo</span><span lang="en">Plan · decisions, risks, assumptions, criteria, thresholds and graph contract</span></a><span class="estado"><span lang="es">mirada 4 · aprobada</span><span lang="en">look 4 · approved</span></span></li>
+    <li><span class="n">P6</span><a href="06-caso.html"><span lang="es">Caso · una traza real de punta a punta, con su documento de decisión adversa</span><span lang="en">Case · one real trace end to end, with its adverse decision document</span></a><span class="estado"><span lang="es">mirada 4 · aprobada</span><span lang="en">look 4 · approved</span></span></li>
+    <li><span class="n">P7</span><a href="07-fichas.html"><span lang="es">Fichas · reproducibilidad, app y agente A como las pinta hoja-de-vida</span><span lang="en">Records · reproducibility, app and agent A as hoja-de-vida paints them</span></a><span class="estado"><span lang="es">mirada 4 · aprobada</span><span lang="en">look 4 · approved</span></span></li>
+  </ol>
+</main>
+</body>
+</html>

@@ -16,6 +16,10 @@ const eslintConfig = defineConfig([
     "coverage/**",
     "agents/**",
     "runs/**",
+    // Maqueta de la Etapa de Diseño (public/diseno, con docs/diseno como enlace): HTML autocontenido con scripts clásicos que abren por file://.
+    // La sirve Next tal cual desde public/; no hay paso de copia.
+    "docs/diseno/**",
+    "public/diseno/**",
   ]),
 ]);
 

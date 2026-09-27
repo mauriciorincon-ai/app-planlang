@@ -1,0 +1,13 @@
+/* Fuentes de planlang. Todas SIL OFL 1.1 — licencias junto a los archivos en fuentes/. Servidas
+   desde el mismo sitio, jamás desde un CDN (la maqueta es autocontenida). `block`: nunca se pinta
+   con la fuente de respaldo, para que las capturas midan lo que se sirve.
+   - Inter (variable 400–700): toda la interfaz y el diagrama. Elegida por el usuario en la mirada 1
+     (ronda 2, 2026-09-27) entre Inter, IBM Plex y Geist sobre el mismo diseño.
+   - JetBrains Mono (variable 100–800): solo datos — huellas, señales, fechas, etiqueta corta del nodo.
+   Rechazadas y fuera del repo (viven en la historia de git): Space Grotesk y Newsreader (ronda 1),
+   IBM Plex y Geist (ronda 2). Subconjunto latino. */
+@font-face { font-family: "Inter"; src: url("fuentes/inter.woff2") format("woff2"); font-weight: 400 700; font-style: normal; font-display: block; }
+@font-face { font-family: "JetBrains Mono"; src: url("fuentes/jetbrains-mono.woff2") format("woff2"); font-weight: 100 800; font-style: normal; font-display: block; }
+/* Fraunces (500, OFL): solo dentro del marco que muestra las fichas en la piel de CV Viva (P7), porque
+   así las pinta hoja-de-vida. No es una letra de planlang. */
+@font-face { font-family: "Fraunces"; src: url("fuentes/fraunces-500.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: block; }

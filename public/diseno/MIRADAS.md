@@ -1,0 +1,708 @@
+# Miradas — Etapa de Diseño de planlang
+
+> Una entrada por mirada: qué se entregó, qué dijo el usuario (textual, sin resumir) y qué cambió
+> en respuesta. Se responde con cambios, no con explicaciones. La entrada se escribe ANTES de
+> construir el artefacto siguiente.
+
+## Mirada 1 — `direccion.html` · 2026-09-26
+
+**Entregado:** dos direcciones de identidad sobre la Entrada (P1), el nodo del grafo en 5 tipos ×
+3 estados, un fragmento del grafo real del spike (lienzo horizontal y lista por capa), los tres
+veredictos y la tipografía. Oscuro y claro, ES y EN, 380 px y desktop.
+
+- **A · Instrumento:** Space Grotesk en todo + JetBrains Mono, cromo frío, rejilla medida, veredicto
+  como sello, nodo con filete lateral del tipo.
+- **B · Acta:** Newsreader para titulares y prosa de líder, Space Grotesk en UI y diagrama, cromo
+  cálido, cláusulas numeradas al margen, veredicto como anotación en tinta, nodo con sello circular.
+
+**Pasada de capturas del builder (antes de entregar):** 16 encuadres (2 direcciones × 2 temas × 2
+idiomas × 380/1280) leídos como imagen + 64 con simulación de daltonismo (deutan, protan, tritan,
+acromatopsia) + corrida con movimiento reducido. Ajustes hechos por lo visto: la cifra «casi nadie» se
+pintaba a 14 px (una regla de etiqueta alcanzaba el span de idioma); el «★» de texto no existe en la
+fuente (se dibuja); la pregunta de la banda 04 invadía el canal; el índice de capas del lienzo se
+oculta solo cuando el lienzo cabe.
+
+**Lo que dijo el usuario (2026-09-27, con la página abierta en el preview):**
+
+> «No me gusta esta horrible realmente muy malo tipografia elementos de magnitud desproporcionada
+> (muy grandes) tarjetas como tirada por ahi sin ningun sentido muy mal»
+
+**Veredicto:** rechazo de las dos direcciones. Tres causas nombradas: (1) la tipografía; (2) la escala:
+elementos desproporcionados, demasiado grandes; (3) la composición: tarjetas sueltas sin orden ni
+sentido. No eligió entre lienzo y lista ni entre hexágono y escudo: esas dos preguntas siguen abiertas.
+
+**Qué cambió:** se rehace la mirada 1 como ronda 2 (ver entrada siguiente). Tras un rechazo se cambia
+de verdad, no se matiza.
+
+## Mirada 1 · ronda 2 — `direccion.html` · 2026-09-27
+
+**Respuesta al rechazo, causa por causa (se cambió de verdad, no se matizó):**
+
+- **Tipografía.** Salen Space Grotesk y Newsreader. Entran tres familias sobre el MISMO diseño, para
+  que la letra se juzgue sola: Inter + JetBrains Mono, IBM Plex Sans + Plex Mono, Geist + Geist Mono
+  (conmutador «letra» en la barra de sala). El mono ya no rotula secciones en mayúscula: queda solo
+  para datos (huellas, señales, fechas, etiqueta corta del nodo).
+- **Magnitud.** Escala cerrada de siete tamaños, declarada en la propia página: título 36 (28 en
+  teléfono), sección 20, subtítulo 15, texto 15, secundario 13, dato 12, cifra 28. La ronda 1 tenía
+  un titular de ~64 px, cifras de ~60 px y píldoras de veredicto de 40 px; ahora el veredicto es un
+  chip de 26 px y las cifras del gancho llevan una barra proporcional en lugar de tamaño.
+- **Tarjetas sueltas.** Una rejilla de 12 columnas y 1120 px; filas con filete en lugar de tarjetas.
+  Los demos son una tabla (demo · veredicto · corrida · abrir); el espécimen del nodo es una tabla
+  tipo × estado que llena el ancho con cajas iguales; las etiquetas «exigido» ya no montan sobre las
+  esquinas.
+- **Cromo.** Salen el frío (A) y el cálido (B); entra un neutro casi sin tinte, superficies más
+  oscuras y filetes más discretos. La paleta de tipos y veredictos no cambia: la búsqueda
+  determinista cae en los mismos valores (gate `diseno-tokens` 24/24).
+- **Grafo.** Redibujado a 1040 px: cabe entero en escritorio y en teléfono se desliza con índice de
+  capas. Nodos de 160 × 56; las dos aristas condicionales ya no se cruzan; la reanudación
+  (pausa_humana → fin) usa su línea punteada.
+- **Honestidad del gancho.** «Casi nadie planeó qué evaluar» no es una cifra de la encuesta; la fila
+  lo dice («La encuesta no lo pregunta. planlang parte de ahí») y no inventa un número.
+
+**Pasada de capturas del builder (antes de entregar):** 24 encuadres (3 letras × 2 temas × 2
+idiomas × 380/1280) + 30 con simulación de daltonismo + corrida con movimiento reducido: 0
+desbordes, 0 textos fuera del lienzo o de su nodo, fuentes activas cargadas, 0 animaciones.
+Ajustes hechos por lo visto: los números de banda se salían 2 px por arriba del lienzo; los nodos
+del espécimen medían lo que su texto (cajas desiguales) y el nombre caía a la derecha;
+«verificador_cobertura» se partía en dos; la cabecera de la tabla de nodos aparecía apilada en
+teléfono; el índice de capas partía en dos líneas a 380 px.
+
+**Preguntas abiertas para el usuario:** ¿orden y tamaños ya bien? · ¿qué letra? · lienzo o lista en
+teléfono · hexágono o escudo para «regla».
+
+**Lo que dijo el usuario (2026-09-27, con la página abierta en el preview):**
+
+> «Si ya vamos por buen camino 1. Se ve mas proporcionado 2. Inter 3. No veo ningun telefono.
+> TRaata de tener elementos visuales graficos atractivos iconos y cosas asi»
+
+**Veredicto:** la dirección va por buen camino; la proporción queda aprobada; la letra es **Inter**
+(con JetBrains Mono para datos). La pregunta 3 no se pudo contestar: la página no mostraba ningún
+teléfono (la pregunta suponía abrirla en uno). Pide además **elementos visuales gráficos atractivos:
+íconos y cosas así**.
+
+**Qué cambió:** ronda 3 de la mirada 1 (entrada siguiente).
+
+## Mirada 1 · ronda 3 — `direccion.html` · 2026-09-27
+
+**Respuesta a la ronda 2, punto por punto:**
+
+- **Letra:** Inter queda como la letra de la vitrina y del diagrama; JetBrains Mono solo para datos.
+  Plex y Geist salen del repo (conmutador «letra» retirado).
+- **«No veo ningún teléfono»:** la pregunta suponía abrir la página en un teléfono. Ahora, bajo el
+  grafo, hay **dos teléfonos** (iframes de 390 px con esta misma página, sin la sala): A con el grafo
+  como lienzo y B como lista por capa. En un teléfono de verdad, esa sección dice que lo que se ve
+  ya es la vista de teléfono.
+- **«Elementos visuales gráficos atractivos, íconos»:** íconos de línea (Lucide v1.48.0, ISC,
+  incrustados, sin CDN) en el rótulo, la navegación, los botones, el gancho, los tres puntos, los
+  demos, la pregunta y el pie; baldosas de 36 px al inicio de cada bloque. Franja nueva **«Cómo
+  funciona»** con tres miniaturas: el plan (conteos reales del plan del demo A), el grafo del spike
+  en miniatura con sus glifos a color, y la brecha (9 criterios como cuadros ✓/✕ y la barra de C5 con
+  el hueco rayado entre 0,85 medido y 0,90 objetivo). Los íconos son monocromos: el color sigue
+  reservado al tipo de nodo y al veredicto.
+- **«Regla»:** hexágono y escudo lado a lado, con el mismo nodo en los dos estados.
+
+**Pasada de capturas del builder:** 16 encuadres (2 páginas × 2 temas × 2 idiomas × 380/1280) con
+los teléfonos cargados y sincronizados de tema e idioma + corrida con movimiento reducido: 0
+desbordes, 0 textos fuera del lienzo o de su nodo, fuentes cargadas, 0 animaciones. Ajustes por lo
+visto: los teléfonos salían vacíos en la captura (el arnés no esperaba a los iframes: con `file://`
+su documento no es accesible; ahora espera por la API de marcos); el arnés cambiaba tema e idioma
+por atributo y los teléfonos no se enteraban (ahora pulsa los botones); el teléfono A quedaba
+desplazado (re-ancla tras cargar la letra); la tarjeta «Medí» tenía un hueco (leyenda 8 · 1).
+
+**Lo que dijo el usuario (2026-09-27, con la página abierta en el preview):**
+
+> «Excelente ahora si muchisimo mejor. 1. No, todo excelente muy buen trabajo 2. Me voy con el A
+> 3. Que es regla? 4. lo abrí y apruebo»
+
+**Veredicto: MIRADA 1 APROBADA** («lo abrí y apruebo», con comentario del archivo abierto).
+Decisiones selladas:
+
+- **Dirección:** la de la ronda 3: sobria, Inter + JetBrains Mono, escala de siete tamaños, rejilla
+  de 12 columnas, filas antes que tarjetas, íconos de línea monocromos, miniaturas gráficas.
+- **Grafo en teléfono:** **A · lienzo** que se desliza de lado con índice de capas; la lista por capa
+  queda como vista alterna y versión en texto (G10).
+- **Glifo de «regla»:** el usuario preguntó qué es «regla» (el tipo de nodo que hace código fijo, sin
+  modelo: `aprobar`, `verificador_cobertura`). Se le explicó y se queda el **hexágono** de la
+  gramática `agentes-ia` v1.0.0 por defecto, sin enmienda al contrato; si prefiere el escudo, se
+  cambia el símbolo. Queda como asunción declarada, no como elección suya.
+
+**Qué cambió:** nada en `direccion.html`. Siguiente: mirada 2 (`design-system.md` v0.1 + `kit.html`
++ `03-agente.html`), según el plan de miradas aprobado.
+
+## Mirada 2 — `design-system.md` v0.1 + `kit.html` + `03-agente.html` · 2026-09-27
+
+**Entregado:**
+
+- `design-system.md` v0.1 (raíz del repo): personalidad (sobrio · exacto · franco), principios,
+  tokens con sus valores por tema y contrastes, tipografía (Inter elegida por el usuario, mono solo
+  para datos, siete tamaños), espacio y rejilla, radios, bordes (discontinuo = falta o no es real),
+  sin sombras, iconografía (Lucide, monocroma), movimiento (150/200/250 ms, reducido = instantáneo),
+  idioma, los dos juegos de estados y 18 componentes canon con su uso; anti-patrones.
+- `kit.html`: el sistema en vivo. Color leído del CSS generado (hex y contraste se recalculan al
+  cambiar de tema), escala tipográfica, espacio y forma, los 36 íconos, movimiento con demo, y cada
+  componente con sus estados: botones, chips, veredictos, nodo 5 tipos × 5 estados, arista 3 modos,
+  fila de criterio, fila de riesgo, deslizador de umbral, panel de consecuencias, curva
+  riesgo-cobertura y ficha de reproducibilidad (contenido · éxito · vacío · cargando · error).
+  Datos reales donde existen: latencia mediana del spike (4,74 s, C7 cumple), `costo_estimado` no
+  registrado (U2 deshabilitado «no observado»), ficha del spike sin huella de lote.
+- `03-agente.html` (P3): el grafo del spike contra el contrato del plan — 3 de 8 nodos, 1 de 8
+  aristas condicionales (U1, en `enrutador` y no en `decision`), `aprobar` fuera del contrato; los 5
+  nodos exigidos y ausentes punteados; lienzo A (se desliza en teléfono) y lista por capa; detalle
+  por selección con texto de líder, de experto, el código real del spike (`spike.py`, líneas
+  citadas) y sus trazas; la arista U1 con la distribución de la señal en los 5 casos y el hallazgo
+  A-002 (0,75 exacto, 5 campos faltantes, fue a aprobar porque «menor que» no es inclusivo).
+
+**Pasada de capturas del builder:** 48 encuadres (kit y agente × 2 temas × 2 idiomas × 380/1280;
+el agente en sus 5 selecciones) + corrida con movimiento reducido en las 4 páginas: 0 desbordes,
+0 textos fuera del lienzo o de su nodo, fuentes cargadas, 0 animaciones. Ajustes por lo visto: las
+pestañas del detalle se estiraban a todo el ancho; las cabeceras de las tablas de criterio y riesgo
+no quedaban sobre sus columnas; la marca «plan» del deslizador chocaba con la perilla (ahora va
+debajo del riel); en la curva, la regla de ancho completo agrandaba los íconos de chips y avisos;
+una etiqueta de la curva se cortaba en el borde.
+
+**Corrección a `direccion.html` (aprobada):** el espécimen del nodo ponía `aclaracion` como pausa
+humana; el contrato la declara `modelo`. Ahora usa un nombre de ejemplo con nota, igual que el kit
+(el contrato no declara herramientas ni una segunda pausa humana).
+
+**Lo que dijo el usuario (2026-09-27, con la pantalla del agente abierta en el preview):**
+
+> «0. si aprobado el kit del sistema 1. Si hablamos de esta [URL del preview de `/diseno/03-agente`,
+> omitida aquí por la regla de cero enlaces] la verda es que si es simpre pero no se enutnedo por que
+> no dice el objetivo que hace que ingresa que actividades desarrolala y que entrega y capacidad cosas
+> generales 2. Sime siven pero esperaria mucha mayor informacion segun el perfil 3. pues esta bien solo
+> por los comentarios que te di»
+
+**Veredicto:**
+
+- **`kit.html` y `design-system.md` v0.1: APROBADOS** («si aprobado el kit del sistema»). La
+  aprobación nombra el artefacto; la evidencia de mirada de la sesión es el comentario del mismo
+  mensaje sobre la pantalla del agente, que cita su ruta en el preview. Sobre el kit no hubo
+  comentario propio, y así se registra.
+- **`03-agente.html`: NO aprobada todavía, pasa a ronda 2.** Lo que funciona: es simple, y las cuatro
+  vistas del detalle (líder, experto, código, trazas) sirven. Lo que falta, en palabras del usuario:
+  (1) **no se entiende el agente**, porque la pantalla no dice su objetivo, qué hace, qué recibe, qué
+  actividades desarrolla, qué entrega ni su capacidad: las generalidades; (2) cada vista necesita
+  **mucha más información según el perfil**. El punto 3 condiciona la aprobación a esos dos
+  comentarios, así que la pantalla corregida se vuelve a mirar antes de la mirada 3.
+
+**Qué cambia (ronda 2 de P3, entrada siguiente).** El plan de miradas no cambia: es una ronda dentro
+de la mirada 2, como las tres rondas de la mirada 1. La mirada 3 no se construye hasta que la
+ronda 2 de P3 quede aprobada.
+
+## Mirada 2 · ronda 2 — `03-agente.html` · 2026-09-27
+
+**Respuesta a los dos comentarios, uno por uno (se cambió de verdad, no se matizó):**
+
+- **«No dice el objetivo, qué hace, qué ingresa, qué actividades desarrolla, qué entrega, capacidad,
+  cosas generales».** La pantalla abre ahora con **«El agente en una mirada»**: el **objetivo** en una
+  frase de líder; **Recibe → Hace → Entrega** en tres columnas unidas por flechas (4 entradas, las
+  **7 actividades** del flujo del plan en orden con el nodo que hace cada una, 3 respuestas y la
+  traza), cada fila con su marca frente al spike (● corrió · ◐ en parte · ◌ exigido y aún no; hoy
+  1 actividad corrió, 1 en parte, 5 faltan); **Puede** (5 capacidades vistas en el spike, cada una
+  con su evidencia), **Nunca** (5 reglas del plan con su decisión, criterio o ley) y **Participan**
+  (médico, afiliado, auditor, plan de beneficios, el agente); y la **capacidad medida**: 4,74 s por
+  caso (mediana, el plan pide ≤ 30 s), ≈ 0,010 USD nominal por caso, ~1,6 mil tokens de contexto,
+  2 de 5 casos a una persona (≈ 24 min de auditor), 5 de 5 caminos iguales a la verdad y ≈ 65–70 min
+  para un lote de 200 (estimación del spike, con su chip). «Experto» cambia la ficha por la **ficha
+  técnica**: arquitectura, grafo, estado (11 claves y las 15 señales que el plan exige en la traza),
+  modelo y proveedor, persistencia, evaluación, versiones, la **matriz plan → nodo** (qué decisiones,
+  riesgos, supuestos, criterios y umbrales gobiernan cada uno de los 8 nodos del contrato, y si
+  corrió) y el código del estado.
+- **«Esperaría mucha mayor información según el perfil».** Cada nodo (extractor, enrutador,
+  pausa_humana y ahora también `aprobar`, que pasa a ser seleccionable) trae una línea de rol y:
+  **Líder**: recibe → nodo → entrega, y hasta siete campos (para qué existe, cómo lo hace, su punto clave,
+  si falla, cómo se mide, qué pasó en los 5 casos, lo que aún no hace), cada texto ≤ 50 palabras.
+  **Experto**: contrato y estado (lee, escribe, entra desde, sale hacia, lo que el plan le pide),
+  configuración o regla, lo que el plan le exige (decisiones, riesgos con prioridad de acción y
+  S·O·D, supuestos, criterios, umbrales), lo observado en el spike (latencias, tokens, costo) y las
+  brechas frente al contrato. **Código**: firma, qué lee y escribe, y dos o tres bloques copiados del
+  spike sin editar (el nodo, su esquema, su instrucción, el armado del grafo, la reanudación).
+  **Trazas**: los casos que pasaron por el nodo; cada uno se abre y muestra el texto de la solicitud
+  (con su glosa en inglés), lo que el nodo leyó o anotó, los tokens, el costo y la verdad conocida.
+  La tabla de ausentes suma **recibe → entrega** por nodo; la arista U1, su lectura de líder, el
+  rango jugable y el costo humano.
+- **Selección por defecto:** `extractor`, el primer nodo del flujo (antes, `enrutador`).
+- **Hallazgo nuevo, a la vista:** ningún modo de falla del plan cubre «aprobar sin verificar
+  cobertura»; el plan lo evita con el contrato de grafo, no con un riesgo (panel de `aprobar`,
+  chip «brecha no prevista»).
+- **Corrección de fidelidad:** el código del enrutador ahora se copia del spike tal cual (la
+  ronda 1 abreviaba un comentario y omitía `# type: ignore`); todo bloque se lee de `spike.py`.
+- **Sistema:** `design-system.md` sube a 0.2.0 con seis componentes (ficha del agente, flujo del
+  nodo, campos por perfil, referencias al plan, matriz plan → nodo, traza abrible), las tres marcas
+  de estado y 13 íconos nuevos de la misma versión de Lucide. El kit aprobado no se toca; los
+  componentes entran a él al consolidar G-Diseño.
+
+**Pasada de capturas del builder (antes de entregar):** 64 encuadres (agente en sus 6 selecciones,
+kit y dirección × 2 temas × 2 idiomas × 380/1280) + 60 con simulación de daltonismo (el agente a
+1280 en sus 6 selecciones × 2 temas × normal, deutan, protan, tritan y acromatopsia) + corrida con
+movimiento reducido en las tres páginas: 0 desbordes, 0 textos fuera del lienzo o de su nodo,
+fuentes cargadas, 0 animaciones. Leídos como imagen: ficha líder y experto, las cuatro vistas del
+extractor, trazas de la pausa en claro e inglés, ausentes, arista, y la ficha, los paneles y la
+matriz a 380 px. Ajustes por lo visto: el panel perdía su rejilla al mostrarse (la sala lo abre con
+`display: revert`); en la tabla de ausentes el texto de «recibe → entrega» se partía palabra por
+palabra (una regla alcanzaba los spans de idioma); el chip de estimación heredaba 14 px; los chips
+de tipo se estiraban en las trazas; en teléfono el número de faltantes quedaba sin rótulo y la
+marca de la matriz sin etiqueta.
+
+**Preguntas para el usuario:** ¿ahora se entiende qué es el agente? · ¿cada perfil trae lo que
+esperabas? · «lo abrí y apruebo» para pasar a la mirada 3.
+
+**Lo que dijo el usuario (2026-09-27, con la página abierta en el preview):**
+
+> «Claro muchisimo mejor 1. Si se entiende perfecto muy buen trabajo 2. Igualmente el perfil perfecto
+> tambien aprobado 3. lo abrí y apruebo»
+
+**Veredicto: MIRADA 2 APROBADA** («lo abrí y apruebo», con comentario de la página abierta). Queda
+sellado:
+
+- **Kit y `design-system.md`** (aprobados en la primera entrega de la mirada 2) con los seis
+  componentes de la 0.2.0.
+- **P3 Agente, ronda 2:** la ficha general va ANTES del diagrama (objetivo · recibe → hace → entrega ·
+  puede / nunca / participan · capacidad medida, y ficha técnica para expertos) y cada nodo trae los
+  cuatro perfiles con contenido denso. El usuario confirma que se entiende y que los perfiles están
+  completos.
+- **Regla para las pantallas que siguen:** toda pantalla abre con su ficha general («qué es, qué
+  recibe, qué produce») y trae su detalle por perfil. Se aplica desde la mirada 3.
+
+**Qué cambió:** nada en `03-agente.html`. Siguiente: mirada 3 (`04-brecha.html` +
+`05-playground.html`), según el plan de miradas aprobado.
+
+## Mirada 3 — `04-brecha.html` + `05-playground.html` · 2026-09-27
+
+**Cambio de fuente de datos, declarado (decisión 7 del plan de la etapa):** el plan preveía un lote de
+20 de *maqueta* (inventado) para Brecha y Playground, porque al arrancar la etapa no había corrida. El
+S1 ya la tiene: `runs/demo-a/suscripcion-planlang-a-001-20-v1.2` (plan v1.2, 20 casos sintéticos,
+3 repeticiones y una línea base de agente único) con su informe real del verificador 1.0.0 (huella
+`691e0e37…`). Las dos pantallas usan esos datos, leídos solo de la rama del S1 (`git show`, sin tocar
+su árbol). Mostrar números inventados cuando existen los reales contradice «jamás se simula lo que no
+corrió». El plan de miradas no cambia.
+
+**Lo que dice la corrida real:** **cumple con alertas**. 9 de 9 criterios; 0 de 8 riesgos; S2
+confirmado, **S3 refutado** (el multiagente acierta más, 100 % frente a 85 %, pero tarda más,
+11,8 s frente a 9,3 s), **S1 sin probar** (los 15 casos fueron aciertos: sin errores no existe
+AUROC); **5 brechas no previstas** (el modelo no entregó la salida estructurada al primer intento);
+0 diferencias al rehacer 233 decisiones en TypeScript.
+
+**El criterio fallido que pide la orden** («un criterio fallido visible»), para el gate de lectura
+de G-Diseño: la corrida real no tiene ninguno, así que la sala trae el estado **«maqueta: no
+cumple»**. Cambian el veredicto, el resumen, C5 (85 % frente a 90 %, con la brecha rayada) y R5
+(ocurrió en 2 de 14), con números inventados y rotulados; lo demás sigue siendo la corrida real.
+Lo que falló *de verdad* (S3 refutado y las 5 brechas no previstas) queda al frente en el resumen.
+
+**Entregado:**
+
+- **`04-brecha.html` (P4):** ficha «El informe en una mirada» (veredicto, frase para quien decide,
+  recomendación del verificador, seis cifras; el verificador recibe → hace 8 pasos sin modelo →
+  entrega; índice de las 9 secciones). Las 9 secciones de § 12 en su orden: resumen con el porqué
+  del veredicto; plan en breve (problema, 7 pasos, decisiones de una vía); 9 criterios con regla,
+  medido frente al objetivo y casos que incumplen; 8 riesgos con prioridad de acción, S·O·D y
+  detector, más el contrato de grafo (visitas por nodo) y la prueba cruzada Python ↔ TypeScript;
+  brechas no previstas y evaluadores; supuestos con la curva riesgo-cobertura de S1 y la
+  comparación multiagente frente a agente único de S3; 4 casos ejemplares con su cadena de nodos
+  (el fallido, vacío: «no se inventa uno»); umbrales jugables con lo observado; ficha de
+  reproducibilidad con todas las huellas. «Leer como» líder o experto (el experto ve reglas,
+  condiciones de los detectores, medidas y evaluadores). Estados: corrida real · maqueta no cumple ·
+  cargando · error (huella alterada) · vacío.
+- **`05-playground.html` (P5):** ficha «El playground en una mirada»; los 4 deslizadores del plan
+  (U1–U3 y el interruptor del modo Texas) con regla, marca del plan y «movido desde»; panel de
+  consecuencias en vivo sobre las **señales reales** de los 20 casos (casos que cambian, errores
+  introducidos y evitados, minutos de auditor, criterios que dependen de los umbrales); lista de
+  casos que cambian con antes → ahora por forma, el porqué y su consecuencia; curva riesgo-cobertura
+  con tabla por umbral; límites del informe. La sala trae escenarios listos: U1 = 0,90 (A-008 a una
+  persona, +12 min), **U2 = 1600 (A-010 saldría sin persona: error introducido real y C3 no
+  cumple)**, U3 = 0 (+24 min), U3 = 3 (A-007 «no observado»), modo Texas (0 cambios), cargando,
+  error. Comprobación: con los valores del plan, el recálculo de la sala reproduce el camino de los
+  20 casos.
+- **Sistema:** `design-system.md` 0.3.0 (perfil de lectura, franja de divulgación del oráculo,
+  veredicto al frente, índice del informe, visitas por nodo, cadena de nodos, supuesto con su
+  prueba, comparación de dos variantes, casos ejemplares, aviso de estado de maqueta, lista de
+  casos que cambian); la mono sin ligaduras (el código se ve tal cual); la letra de las gráficas
+  crece en teléfono. `03-agente.html` solo gana los enlaces a Brecha y Playground en su barra.
+
+**Pasada de capturas del builder:** 168 encuadres (Brecha en 5 estados, Playground en 8, Agente,
+kit y dirección × 2 temas × 2 idiomas × 380/1280) + 130 con simulación de daltonismo (Brecha y
+Playground a 1280 en todos sus estados × 2 temas × 5 vistas) + corrida con movimiento reducido en
+las 5 páginas: 0 desbordes, 0 textos fuera del lienzo, fuentes cargadas, 0 animaciones. Leídos como
+imagen: Brecha completa en oscuro, «no cumple» en claro e inglés con perfil experto, teléfono; los
+cinco escenarios del playground, claro e inglés con experto, teléfono y escala de grises. Ajustes
+por lo visto: la cifra de supuestos se partía; las etiquetas de la curva de S1 se enciman (en
+teléfono se ocultan); «2 de 2» heredaba 12 px; R5 decía «0 %» junto a «ocurrió» en el estado de
+maqueta; la mono dibujaba `!=` como `≠`; el glifo de «a una persona» salía diminuto; los chips de
+consecuencia se salían del panel; la tabla de la curva se apilaba en teléfono.
+
+**Pendiente, anotado para la mirada 4:** la franja «Cómo funciona» de `direccion.html` muestra C5
+fallido (rotulado «maqueta»); la Entrada final (P1) usará el veredicto real. Y P3 muestra el grafo
+del spike (3 de 8 nodos), mientras el agente del S1 ya tiene los 8: se propondrá al usuario si P3
+pasa al grafo real del S1 y guarda el spike como ejemplo del estado «exigido y ausente».
+
+**Lo que dijo el usuario (2026-09-27, con las dos páginas abiertas en el preview):**
+
+> «0. Antes que nadacada vez que me hagas mirar algo construye una matriz donde me digas que revisar
+> y que deberia mirar. 0.1. Brecha esta letra "El plan se cumplió: 9 de 9 criterios y ningún riesgo
+> ocurrió. Pero un supuesto quedó refutado, otro no se pudo probar y aparecieron 5 fallas que el plan
+> no preveía." está muy grande, segundo pues si se ve que algo falla peor no se ve que exactamente.
+> 0.2Playground en cambio esta esa muy bien al mover lor elementos va arrojando alertas. 1. No me
+> queda claro que s e cumplio y que fallo 2. Si esta claro muy bien trabajo 3. No veo que cambie nada
+> o noe s evidente la verdad 4. No hay que revisar»
+
+**Veredicto: MIRADA 3 NO APROBADA — ronda 2.** Por partes:
+
+- **Playground:** se entiende («Si esta claro muy bien trabajo»; «al mover los elementos va
+  arrojando alertas»). Su contenido queda; solo le toca el arreglo de perfiles.
+- **Brecha:** no se entiende qué se cumplió y qué falló. La frase del resumen tiene la letra muy
+  grande, y la página dice *que* algo falló sin decir *qué* exactamente.
+- **Perfiles líder y experto (las dos páginas):** el cambio no se ve o no es evidente.
+- **Regla nueva del usuario, desde esta ronda y para toda mirada:** cada entrega trae una **matriz de
+  qué revisar y qué debería ver** (pantalla · dónde · qué hacer · qué debe verse).
+- La respuesta 4 («No hay que revisar») se lee como «no: hay que revisar» — no aprueba.
+
+**Qué cambia en la ronda 2:** (1) la frase del resumen baja a la escala de lectura; (2) Brecha abre
+con un balance «qué se planeó · qué pasó» renglón por renglón, cada uno con su marca (cumplió ·
+alerta · falló), qué pasó exactamente, en qué casos y qué significa; (3) «Leer como» cambia lo
+primero que se ve, dice qué cambió y marca cada bloque propio del perfil, en Brecha y en Playground;
+(4) el mensaje de la mirada trae la matriz.
+
+## Mirada 3, ronda 2 — `04-brecha.html` + `05-playground.html` · 2026-09-27
+
+Responde a lo que el usuario dijo en la ronda 1: Brecha no decía qué se cumplió y qué falló, la frase
+del veredicto tenía la letra muy grande y el cambio de perfil no se notaba. El contenido del
+Playground, que se entendió, no cambia; solo su perfil. El plan de miradas no cambia.
+
+**Brecha — la ficha abre con el balance, en este orden:**
+
+1. **Veredicto y frase a escala de lectura** (15 px, antes 17). La frase nombra lo que falló: «Fallaron
+   dos cosas: repartir el trabajo entre varios agentes resultó más lento que un solo agente (S3), y 5
+   veces el modelo respondió fuera del formato pedido. Y quedó sin probar si su confianza es fiable
+   (S1).» Todas las entradillas de sección bajan también a 15 px.
+2. **«El plan frente a la corrida»**, una matriz: seis partes del plan (criterios, riesgos, supuestos,
+   lo no previsto, grafo exigido, prueba cruzada) × se cumplió · falló · sin probar, con la cuenta y los
+   identificadores; las cifras de «Falló» y «Sin probar» llevan a su renglón.
+3. **«Lo que falló»**, renglón por renglón (S3 y las respuestas fuera de formato; en el estado de
+   maqueta, también C5 y R5): qué se planeó · qué pasó · qué significa, con sus casos y la sección
+   donde se detalla.
+4. **«Lo que quedó sin probar»** (S1) y **«Se cumplió, con una nota»** (C7: A-008 tardó 31,2 s aunque la
+   mediana cumple; C3: medido sobre 3 casos, y en el playground con U2 = 1600 deja de cumplirse).
+5. **«Lo que se cumplió, uno por uno»**: los 9 criterios y los 8 riesgos por su nombre, cada uno con su
+   marca y su cifra, más S2, el grafo completo y la prueba cruzada.
+6. **«Cómo se obtuvo este informe»**: recibe → hace → entrega del verificador, y el índice. § 1 deja
+   de repetir el porqué y apunta al balance.
+
+**Perfil evidente, en las dos páginas:**
+
+- Un **aviso de perfil** bajo el título dice qué ve quien lee y trae el botón para cambiar («Ver como
+  experto» · «Volver a líder»); como experto, cuenta los bloques propios del perfil (30 en Brecha, 8
+  en Playground). El conmutador también está en la barra de sala.
+- **Lo que cambia se ve en la parte de arriba:** en Brecha la frase pasa a cifras exactas, la columna
+  «Qué pide el plan» a reglas, y las columnas de «Lo que falló» a regla de medición · medido ·
+  evidencia; bajo cada criterio y riesgo aparece su regla.
+- **Bloques del experto marcados**: fondo elevado, filete y el rótulo «Experto» (Inter, sin mayúsculas
+  espaciadas: el anti-patrón de la mono vale también aquí).
+- Al cambiar, lo que aparece entra con un fundido de 0,45 s (`opacity` y `transform`); con movimiento
+  reducido no hay fundido.
+- **Playground, líder:** un ejemplo llano en la ficha (U1 a 0,90 → A-008 a una persona, +12 min, sin
+  error nuevo) y, bajo las cifras, una frase que se reescribe con cada movimiento y nombra casos y
+  criterios («Eso es un error: A-010 necesitaba a una persona… Deja de cumplirse C3.»).
+- **Playground, experto:** ficha técnica; «La regla de decisión, con tus valores», escrita con las
+  aristas del contrato del plan en su orden y el valor movido subrayado; «Las 20 decisiones, con sus
+  señales», con ■ en los casos que cambian.
+
+**Encontrado al construir (no lo pidió el usuario):** los **12 minutos por revisión** del playground
+no salen del plan v1.2 ni de la planeadora: eran un supuesto de esta maqueta sin rótulo. Ahora
+llevan su chip «maqueta» y una nota que lo dice. Para el plan: la carga humana en minutos (VISION,
+funcionalidad del playground) necesita que el plan declare cuánto tarda una revisión. Se anota como
+propuesta para la planeadora; no se escribe allá.
+
+**Fuente de datos:** la rama del S1 se borró al mergearse; los generadores leen ahora de `main`
+(`git show main:…`). Los datos extraídos salen idénticos byte a byte.
+
+**Matriz de mirada (regla nueva del usuario):** cada página trae al pie «Qué revisar y qué deberías
+ver» (dónde · qué hacer · qué deberías ver); el mensaje de la mirada la repite.
+
+**Pasada de capturas del builder:** 280 encuadres (Brecha en 5 estados y Playground en 8, más Agente,
+kit, dirección e índice, × 2 temas × 2 idiomas × 380/1280 × perfil líder y experto donde existe) +
+260 con simulación de daltonismo (Brecha y Playground a 1280 × 2 perfiles × 5 vistas) + medida con
+movimiento reducido: 0 desbordes, 0 textos fuera del lienzo, fuentes cargadas, 0 animaciones. El
+arnés suma `--perfiles lider,experto`. Leídos como imagen: la ficha de Brecha en líder y experto,
+oscuro y claro, español e inglés, teléfono; el estado «no cumple»; las secciones 3 y 6 en experto;
+el Playground en líder con U2 = 1600 y en experto con la regla viva y la tabla de 20, en teléfono.
+Frases del líder comprobadas en los 6 escenarios × 2 idiomas, sin errores de guion.
+
+**Demo en rojo de la medida de movimiento reducido con el fundido nuevo:** quitar solo la guarda
+local no la pone en rojo, porque la regla global (`animation: none` bajo movimiento reducido) ya lo
+cubre; en una copia sin las dos guardas, la medida ve 9 animaciones; con la hoja real, 0.
+
+**Ajustes por lo visto en las capturas:** sellos estirados a todo el ancho; el ícono de la matriz era
+la marca de «cumplió» (ahora uno neutro); «8 de 8» se partía; los títulos de grupo se partían en
+columnas en teléfono; la cifra de cada criterio le quitaba ancho a la regla en teléfono; el chip
+«maqueta» quedaba dentro del enlace; la frase del líder repetía el error dos veces; «no observado»
+también; la tabla de 20 no tenía aire arriba ni el rótulo «Tipo»; el rótulo del experto iba en mono
+y mayúsculas espaciadas.
+
+**Lo que dijo el usuario (2026-09-27, con las dos páginas abiertas en el preview):**
+
+> «Brecha se entiende muchomejor y play gorund muy bien 1. si se entiende 2. La letra se ve mejor 3.
+> ahora si hay una diferenci clara tanto visual como en contenido porque son dos audiencias distintas»
+
+**Veredicto: MIRADA 3 APROBADA.** No escribió «lo abrí y apruebo», pero sus comentarios delatan las
+páginas abiertas —la letra «se ve mejor», la diferencia de perfil es «clara tanto visual como en
+contenido»— y responde que sí a las tres preguntas sin pedir cambios: es la otra vía que la regla del
+gate de mirada admite. Queda sellado:
+
+- **Brecha:** el balance al frente (matriz del plan frente a la corrida, lo que falló renglón por
+  renglón, lo que quedó sin probar, lo que cumplió con nota, lo cumplido uno por uno) y las 9
+  secciones del informe real. Se entiende qué se cumplió y qué falló.
+- **Playground:** los 4 umbrales sobre las señales reales, con la frase llana del líder y la regla viva
+  y las 20 decisiones del experto.
+- **Perfiles:** líder y experto son dos audiencias con contenido y aspecto distintos; el aviso, el
+  cambio en lo primero que se ve y los bloques marcados son el patrón para las pantallas que siguen.
+- La letra de lectura a 15 px y la matriz de mirada quedan como reglas de la etapa.
+
+**Qué cambió:** nada en las dos páginas. Siguiente: mirada 4 (`01-entrada.html`, `02-plan.html`,
+`06-caso.html`, `07-fichas.html` e `index.html`), según el plan de miradas aprobado.
+
+**Corrección posterior (2026-09-27, al preparar la mirada 4):** en la ronda 2 escribí que los 12
+minutos por revisión «no salen del plan v1.2 ni de la planeadora» y los rotulé como supuesto de la
+maqueta. Era falso: cada umbral del plan declara `costo_humano_por_caso_min = 12`; la búsqueda que
+hice no dio con ese nombre de campo. El Playground vuelve a decir la verdad: la nota bajo las cifras
+lo atribuye al plan con su chip «real · plan v1.2», y la ficha técnica nombra el campo. No hay
+propuesta que llevar a la planeadora por este tema. Se le dice al usuario en el mensaje de la mirada 4.
+
+
+## Mirada 4 — Entrada, Plan, Caso y Fichas (2026-09-27)
+
+**Qué se entregó:** las cuatro pantallas que faltaban y el recorrido de sala al día, todas con datos
+**reales** del S1 (plan v1.2, corrida `suscripcion-planlang-a-001-20-v1.2` y sus repeticiones, informe
+del verificador, entorno), leídos de `main` con `git show`. Cada una abre con su ficha general
+(objetivo · recibe → hace → entrega · capacidad) antes del detalle, trae «Leer como» líder o experto
+con el aviso y los bloques marcados de la mirada 3, y cierra con su matriz «Qué revisar y qué deberías
+ver».
+
+- `01-entrada.html` (P1 final): nace de `direccion.html` aprobada en la mirada 1 y cambia lo inventado
+  por la corrida real: el demo A «cumple con alertas», «Construí» muestra las 8 piezas del agente del
+  sprint 1, «Medí la brecha» nombra lo que falló (S3 refutado, 5 respuestas fuera de formato) y lo que
+  quedó sin probar (S1); capacidad medida con su procedencia; el estado de sala «maqueta: no cumple»
+  sirve al gate de lectura de G-Diseño.
+- `02-plan.html` (P2): el plan v1.2 en seis partes (6 decisiones, 8 riesgos por prioridad de acción,
+  3 supuestos con lo que dio su prueba, 9 criterios, 4 umbrales y el contrato del grafo), cada renglón
+  con su detalle desplegable; el experto suma la ficha técnica del plan, las 9 aristas en orden y las
+  16 señales; estados cargando y error (plan inválido, rotulado «maqueta»).
+- `06-caso.html` (P6): cuatro trazas reales —A-004 (negación con persona), A-006 (adversario con
+  inyección), A-008 (dos aclaraciones), A-001 (aprobado solo)— de punta a punta: debía y pasó, recibe →
+  hace → entrega con el relato llano, el recorrido paso a paso con la razón de cada rama, la pausa
+  humana, la respuesta y la guardia, y el documento de decisión adversa en ES y EN; estado de error.
+  Brecha y Playground enlazan aquí los casos que tienen traza en la maqueta.
+- `07-fichas.html` (P7): la ficha de reproducibilidad en la piel de planlang y las fichas de la app y
+  del agente A dentro de un marco con la piel de CV Viva (papel, Fraunces 500 copiada con su OFL a
+  `assets/fuentes/`); el experto ve cada campo contra los límites del contrato v1.3.1; estado de error
+  (una cifra sin fuente que hoja-de-vida rechaza).
+- `index.html`: las cuatro pantallas enlazadas; la navegación común suma «Fichas» y «Entrada» lleva a
+  `01-entrada.html`.
+
+**Cambios que tocan páginas ya aprobadas (declarados):** el objetivo de la ficha general baja a 15 px
+también en Agente y Playground (regla de lectura de la 0.3.1); la navegación suma «Fichas» en las tres;
+Brecha y Playground enlazan sus casos con traza; la pestaña activa de Agente tenía un enlace vacío
+(`href="#"`) y ahora apunta a su página; la cifra y el «%» van unidos por espacio duro en todas; el
+texto oculto de la marca de estado (lo que oye un lector de pantalla) decía «corrió en el spike» en
+Brecha, Playground y las nuevas, que leen la corrida del S1: ahora dice «hecho» / «pendiente» (Agente,
+que sí muestra el spike, lo conserva). Nada de eso cambia lo que se aprobó a la vista.
+
+**Corrección de los 12 minutos:** ver la corrección posterior de la mirada 3; el Plan lo dice en la
+entradilla de los umbrales («cada caso que pasa a una persona cuesta 12 minutos de auditor»).
+
+**Observaciones para la planeadora y el S2 (anotadas aquí, no escritas allá):**
+
+1. **Campos del plan solo en español:** `opcion_elegida`, `opciones[].nombre` y `mitigaciones` del plan
+   v1.2 no son mapas `{es, en}` (regla 20). La maqueta redacta el inglés; el esquema del plan debería
+   exigir el mapa.
+2. **Las aclaraciones del modelo solo en español:** las preguntas al médico y sus respuestas simuladas
+   (A-008) nacen en un idioma. El caso es texto de dominio en español; el S2 decide si se muestran tal
+   cual con una nota o si el generador sintético las redacta en los dos idiomas.
+3. **La VISION dice 23 funcionalidades (14 + 9) y enumera 25 (16 + 9).** La ficha de la app cuenta las
+   25 enumeradas por grupo (5 · 7 · 6 · 1 · 2 · 4); la cifra declarada debe corregirse en la planeadora.
+4. **El contrato ficha técnica v1.3.1 recibe la ficha en un idioma:** planlang entrega un archivo por
+   idioma y la maqueta mide cada campo en los dos contra el mismo límite.
+5. **El documento de decisión adversa lleva el aviso de la respuesta:** su pie dice «esta respuesta la
+   redactó una inteligencia artificial», pero el documento lo arma el código (lo dice la misma
+   pantalla). Es el texto real de la traza del S1 y la maqueta lo muestra tal cual; el S2 debe darle al
+   documento su propio aviso (generado por código a partir de una decisión que revisó una persona).
+6. **El motivo del `interrupt` es texto de máquina:** «Arista 4 de decision: propuesta (negar) igual a
+   negar (negar)». La maqueta escribe para el líder una frase llana por señal y deja el motivo crudo al
+   experto; el S2 debe generar la frase llana desde el plan, con código.
+
+**Propuesta para Agente (no aplicada; necesita tu aprobación):** P3 dibuja hoy el grafo del spike (3
+de las 8 piezas del contrato y un nodo fuera de él) y dice que las que faltan «llegan con el agente del
+demo A en el sprint 1». El S1 ya llegó y su grafo real tiene las 8. Propongo que P3 muestre el grafo del
+S1 y conserve el del spike como ejemplo de «exigido y ausente».
+
+**Pasada de capturas del builder:** 192 encuadres de las cuatro pantallas nuevas (todos sus estados ×
+2 temas × 2 idiomas × 380/1280 × líder y experto) + 120 con simulación de daltonismo y escala de grises
+(380 px, ES) + 192 de nuevo tras los ajustes + medida de las 10 páginas con los dos perfiles, normal y
+con movimiento reducido: 0 desbordes, 0 textos fuera del lienzo, fuentes cargadas (Fraunces en Fichas),
+0 animaciones con movimiento reducido. Enlaces internos: ninguno roto; errores de página: ninguno; las
+frases del Playground, sin errores. Leídos como imagen: Entrada, Plan (líder y experto, con los
+desplegables abiertos), Caso A-004 y A-006 (líder y experto), Fichas, cada una a 1280 y a 380 px, en
+oscuro y claro, en español e inglés, en acromatopsia y deuteranopía. Los teléfonos de sala salen vacíos
+en la captura de página completa (Chromium no pinta un iframe fuera de la ventana): se comprobaron
+desplazando la ventana hasta ellos, y cargan.
+
+**Ajustes por lo visto en las capturas:** «1 bloques de esta página son…» (el conteo del experto ahora
+concuerda en número); «89 %» se partía al final de la línea; las notas S·O·D de los riesgos no decían
+qué es cada letra (la entradilla ahora lo dice); el recuadro del contrato del grafo desaparecía para el
+experto y dejaba media sección vacía; «Por qué se detuvo» mostraba al líder el motivo crudo del
+payload; el relato del caso era solo del líder y dejaba vacía la tarjeta «Hace» del experto; la tabla de
+aristas escribía la rama también en la última regla aunque no decidiera; en el teléfono los
+identificadores se partían a media palabra («campos_faltantes_co / unt») y «SYN-P-038» en su guion; la
+ficha decía «1 sprints»; la marca de estado oculta decía «corrió en el spike» fuera de Agente.
+
+**Lo que dijo el usuario (2026-09-27, con las páginas abiertas en el preview):**
+
+> «3. no vi esa transicion revisala. Excelente las visuales de Plan muy bien trabajo, pero me gustaria
+> que Decisiones Riesgos, Supuestos etc mostrara los 5 promeros y un boton de mostrar mas para no
+> alargar tanto la visual. No encontre los casos el restante esta muy bien dime donde estan lso casos
+> para verlos»
+
+**Veredicto: MIRADA 4 NO APROBADA TODAVÍA — ronda 2.** Los comentarios delatan las páginas abiertas
+(la fila 3 de la matriz, las secciones del Plan). Queda así:
+
+- **Entrada:** la fila 3 de la matriz («maqueta: no cumple») no mostró ninguna transición visible: se
+  revisa.
+- **Plan:** las visuales, aprobadas («Excelente las visuales de Plan muy bien trabajo»); cada parte
+  (decisiones, riesgos, supuestos…) debe mostrar las 5 primeras y un botón «mostrar más».
+- **Caso:** no lo encontró. La página no estaba en la navegación: solo se llegaba desde la Entrada, la
+  Brecha o el recorrido.
+- **Lo demás** (Fichas, la navegación entre páginas, los perfiles): «el restante está muy bien».
+- La pregunta 4 (Agente con el grafo del S1) quedó sin respuesta: Agente no se toca hasta que la
+  conteste.
+
+## Mirada 4, ronda 2 (2026-09-27)
+
+**Lo que cambió, punto por punto de lo que dijo el usuario:**
+
+- **«no vi esa transicion revisala» (Entrada, «maqueta: no cumple»):** la transición funcionaba, pero
+  todo lo que cambiaba estaba lejos: desde los 1.109 px en escritorio y los 2.470 px en teléfono.
+  Al pulsar el botón, lo que había en pantalla seguía igual. Ahora el estado abre, arriba de todo y a la
+  vista en los dos anchos, un **aviso de maqueta** (borde discontinuo) que dice qué simula y enlaza a los
+  tres lugares que cambian: «Medí la brecha», «Capacidad medida» y «Los demos». Regla para el sistema:
+  un estado que cambia bloques lejanos avisa donde se pulsa.
+- **Plan, «los 5 primeros y un botón de mostrar más»:** cada parte muestra sus 5 primeras filas; el
+  resto queda tras un botón que dice cuántas y cuáles faltan («Ver 1 más: D6», «Ver 3 más: R7, R4,
+  R8», «Ver 4 más: C6, C7, C8, C9») y las abre ahí mismo; «Ver menos» las cierra y deja el botón a la
+  vista. Supuestos (3) y umbrales (4) no lo necesitan. El conteo del experto sigue contando lo plegado
+  (26 bloques). El orden de los riesgos (por prioridad de acción) decide cuáles quedan a la vista.
+- **«No encontre los casos»:** la página no estaba en la navegación. Ahora hay una pestaña **«Casos»**
+  entre Playground y Fichas, en las siete páginas (en Agente también, sin tocar nada más de ella).
+
+**Pasada de capturas:** 160 encuadres de Entrada, Plan y Caso (estados × 2 temas × 2 idiomas × 380/1280
+× 2 perfiles) + medida de las 10 páginas con los dos perfiles, normal y con movimiento reducido: 0
+desbordes, 0 textos fuera del lienzo, fuentes cargadas, 0 animaciones. Leídos como imagen: la Entrada al
+pulsar «maqueta: no cumple» a 1280 y 390 px, los riesgos con el botón cerrado (1280) y abierto (390,
+experto), y la barra con «Casos» activa (inglés, claro). Enlaces: ninguno roto; errores: ninguno.
+
+**Lo que dijo el usuario (2026-09-27):**
+
+> «Si apruebo que Agente muestre el grafo real del sprint 1, con sus 8 piezas, el reto lo abri y lo
+> apruebo continua»
+
+**Veredicto: MIRADA 4 APROBADA** («lo abri y lo apruebo»). Queda sellado:
+
+- **Entrada, Plan, Caso y Fichas**, con la ronda 2: el aviso de estado arriba, «Ver N más» en el
+  Plan y la pestaña «Casos».
+- **Propuesta para Agente, aprobada:** P3 pasa a mostrar el grafo real del sprint 1 (las 8 piezas del
+  contrato) y conserva el del spike como ejemplo de «exigido y ausente».
+
+**Qué sigue:** la mirada 5 = G-Diseño, según el plan de miradas aprobado («todo, desplegado, en teléfono
+y desktop, oscuro y claro, ES y EN»). Entran en ella Agente con el grafo del S1 y el kit con los
+componentes de la 0.2 a la 0.4.1 consolidados, con `design-system.md` como candidato a 1.0.0.
+
+## Mirada 5 = G-Diseño (2026-09-27)
+
+**Qué se entregó (según el plan de miradas aprobado: «todo, desplegado, en teléfono y desktop, oscuro y
+claro, ES y EN»):**
+
+- **Agente con el grafo real del sprint 1** (la propuesta aprobada en la mirada 4). La misma pantalla y
+  el mismo diseño de la mirada 2, con otros datos: la ficha del agente con la corrida v1.2 (las 7
+  actividades corrieron; capacidad medida: 11,8 s de mediana por caso, 0,034 USD nominales, 8 de 20 a
+  una persona, 20 de 20 caminos iguales a la verdad conocida); «Lo que corrió, frente a su plan»: 8 de
+  8 nodos, 9 de 9 reglas, 233 · 0; un lienzo nuevo con las 8 piezas en sus bandas, las 9 reglas de
+  arista rotuladas y un solo cruce, dibujado con **salto**; un panel por nodo con sus cuatro perfiles
+  (líder, experto, código real del S1 con sus líneas, trazas de los casos que pasaron por él, 5 a la
+  vista y «Ver N más»); la arista U1 con la distribución de los 15 casos que llegaron a `decision`; y,
+  al final, el grafo del spike como el ejemplo vivo de lo «exigido y ausente».
+- **Kit consolidado:** «Componentes de pantalla», el catálogo de los 44 componentes de la 0.2 a la
+  0.5, con su uso, sus estados y el enlace a su instancia viva. Las piezas canon no cambiaron.
+- **`design-system.md` 0.5.0, candidato a 1.0.0:** el salto, la distribución de una arista, la rama
+  «si no» en la arista condicional y el pendiente al día. Sube a 1.0.0 con «apruebo G-Diseño».
+
+**Hallazgos al construir:** el bloque de código de Agente mostraba ligaduras (`->` como flecha, `==`
+como un signo doble) desde la mirada 2: su propia regla `font:` reiniciaba la de la hoja común; se
+corrigió. La contradicción entre la orden y el texto está en A-016, no en A-018 como escribí en un
+borrador; la confianza del extractor va de 0,70 a 0,98 (no de 0,55 a 0,95): ambas cifras se
+comprobaron contra las trazas antes de publicar.
+
+**Pasada de capturas:** medida de las 10 páginas con los dos perfiles, normal y con movimiento
+reducido; Agente en sus 9 selecciones × 2 temas × 2 idiomas × 380/1280; el lienzo leído como imagen
+en oscuro-ES y claro-EN a doble resolución; los paneles de `decision` (cuatro perfiles, 1280) y
+`extractor` (líder, experto, trazas, 380); la arista U1 en los dos anchos; el kit a 1280 y 380.
+
+**El gate de G-Diseño:** «apruebo G-Diseño» + el gate ⭐ de lectura: una persona no técnica lee la
+Entrada y la Brecha y explica qué se planeó y qué falló.
+
+**Lo que dijo el usuario (2026-09-27, con el recorrido abierto en el preview):**
+
+> «Esto no sirve [URL del preview omitida: regla de cero enlaces] aparece una pantalla incial con links
+> y cuando abri agen otra vez 404»
+
+**Veredicto: G-DISEÑO NO APROBADO TODAVÍA — ronda 2.** El recorrido del preview no se podía caminar:
+el índice abría sin estilos y cada enlace daba 404. La causa: Vercel (`cleanUrls`) sirve el índice en
+`/diseno`, sin barra final, y ahí los enlaces relativos del índice (`03-agente.html`, `assets/…`) se
+resuelven contra la raíz del sitio (`/03-agente`, `/assets/…`), que no existe. Las páginas internas
+no fallaban: se sirven en `/diseno/<página>` y resuelven bien. Pero su enlace «Recorrido» vuelve a
+`/diseno`, así que también llevaba a la página rota. Ninguna pasada lo había visto porque todas
+abrían los archivos en local (`file://`) o entraban directo a una página interna, nunca por el
+índice servido como lo sirve Vercel.
+
+## Mirada 5, ronda 2 = G-Diseño (2026-09-27)
+
+**Lo que cambió:** el índice, al servirse en una ruta sin barra final, fija su base en `/diseno/`
+antes de cargar hojas y enlaces (una línea de script al comienzo del `<head>`; en local, con doble
+clic, no hace nada). Ninguna otra página cambió.
+
+**Cómo se probó (rojo → verde):** un servidor local con las mismas reglas de Vercel (`cleanUrls`) y
+un recorrido automático que entra por `/diseno`, comprueba que el índice cargó sus 4 hojas de estilo,
+abre cada una de las 9 páginas desde el índice y vuelve al índice desde cada una.
+- **Antes de la corrección:** 0 hojas cargadas y las 9 páginas en 404 (`/03-agente`, `/kit`…), como
+  lo vio el usuario.
+- **Después:** 4 hojas y las 9 páginas abiertas, entrando por `/diseno`, por `/diseno/` y por
+  `/diseno/index`.
+- Queda un rastro sin efecto: al entrar por `/diseno`, el navegador pide por adelantado
+  `/assets/*.css`, antes de que corra el script, y esas peticiones dan 404. La página no las usa:
+  carga sus hojas desde `/diseno/assets/`.
+- La revisión de enlaces y errores de las 10 páginas sigue limpia.
+
+**Lo que dijo el usuario (2026-09-27, con el recorrido abierto en el preview):**
+
+> «Ya funcioona bien [URL del preview omitida: regla de cero enlaces]. apruebo G-Diseño»
+
+**Veredicto: G-DISEÑO APROBADO** («apruebo G-Diseño», textual; «ya funciona bien» sobre el recorrido
+que había fallado en la ronda 1 es la evidencia de que lo abrió). Queda sellado:
+
+- **`design-system.md` 1.0.0** y la maqueta de las 7 pantallas, el kit y el recorrido, con todo lo
+  sellado en las miradas 1 a 4 y el Agente sobre el grafo del sprint 1.
+- **Gate ⭐ de lectura: no reportado.** La orden lo pide junto con la aprobación: «una persona no
+  técnica explica, tras P1 y P4, qué se planeó y qué falló (usar el criterio fallido visible de la
+  maqueta)». El mensaje de aprobación no trae lo que dijo esa persona: queda **pendiente** y se le
+  pregunta al usuario si lo corrió, si lo corre ahora o si decide dejarlo para después. Es decisión
+  suya y se registra así.
+- **Corrección del constructor sobre ese gate:** al pedirlo, el mensaje de la mirada 5 decía «deja la
+  pantalla como abre» (la corrida real). La orden pide el criterio fallido visible, que en la corrida
+  real no existe (9 de 9 criterios cumplidos): la lectura va con el estado **«maqueta: no cumple»**
+  en Entrada y en Brecha, donde C5 falla.
+- **Sin mergear:** el PR de `diseno/fundacion` → `main` espera el permiso explícito del usuario.
+
+**Lo que dijo el usuario después (2026-09-27), sobre el gate ⭐ de lectura y la fusión:**
+
+> «Omite la prueba d electura no la vamos a hacer, quien lo dice? lo digo yo y es mi orden. 2. si fusiona»
+
+**Registro:** el gate ⭐ de lectura de la etapa queda **omitido por decisión explícita del usuario**. No
+se corrió, no pasó y no se da por pasado: la etapa cierra sin él, y así lo lee quien audite. El
+usuario autoriza fusionar `diseno/fundacion` → `main` con la CI verde.

@@ -1,0 +1,357 @@
+/* Gramática visual del visor (`agentes-ia` v1.0.0) — Mirada 1, ronda 2.
+   Un solo SVG para los dos temas (G13): todo color sale de los tokens. Tipo de nodo = color + glifo
+   + etiqueta corta (regla 13). Modo de flujo = estilo de línea + marcador, nunca solo color.
+   El lienzo mide 1040 px: cabe entero en el ancho de escritorio (1120 − márgenes) y en teléfono se
+   desliza de lado con índice de capas (decisión del usuario en big-d: horizontal, nunca transpuesto).
+   Los nombres de nodo van en la letra de la página (no en mono) para que quepan en 156 px; la
+   etiqueta corta y las señales van en mono. */
+
+.lienzo-marco {
+  position: relative;
+  min-width: 0;
+}
+.lienzo-scroll {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-behavior: smooth;
+  border: 1px solid var(--linea);
+  border-radius: var(--radio);
+  background: var(--sup-1);
+}
+.lienzo-scroll:focus-visible {
+  outline: 2px solid var(--tinta-1);
+  outline-offset: 2px;
+}
+.lienzo-scroll svg {
+  display: block;
+  width: 1040px;
+  height: auto;
+}
+.lienzo-indice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  margin-top: var(--e-2);
+  font-size: var(--t-dato);
+  color: var(--tinta-2);
+}
+.lienzo-marco[data-cabe="true"] .lienzo-indice {
+  display: none;
+}
+.lienzo-indice button {
+  min-width: 30px;
+  height: 28px;
+  border: 1px solid var(--tinta-3);
+  border-radius: var(--radio-chip);
+  background: transparent;
+  color: var(--tinta-2);
+  font: 500 var(--t-dato) / 1 var(--mono);
+  cursor: pointer;
+}
+.lienzo-indice button[aria-current="true"] {
+  border-color: var(--tinta-1);
+  color: var(--tinta-1);
+}
+
+/* Cabeceras de banda y guías */
+.d-guia path {
+  fill: none;
+  stroke: var(--linea);
+  stroke-width: 1;
+  stroke-dasharray: 2 4;
+}
+.d-banda-num {
+  font: 500 10.5px var(--mono);
+  fill: var(--tinta-2);
+}
+.d-banda-nombre {
+  font: 600 13px var(--letra);
+  fill: var(--tinta-1);
+}
+.d-banda-preg {
+  font: 400 11.5px var(--letra);
+  fill: var(--tinta-2);
+}
+
+/* Nodos */
+.d-nodo {
+  --c: var(--tinta-2);
+  --t: var(--sup-2);
+  outline: none;
+}
+.d-nodo[data-tipo="modelo"] {
+  --c: var(--tipo-1);
+  --t: var(--tipo-1-tinte);
+}
+.d-nodo[data-tipo="herramienta"] {
+  --c: var(--tipo-2);
+  --t: var(--tipo-2-tinte);
+}
+.d-nodo[data-tipo="regla"] {
+  --c: var(--tipo-3);
+  --t: var(--tipo-3-tinte);
+}
+.d-nodo[data-tipo="pausa_humana"] {
+  --c: var(--tipo-4);
+  --t: var(--tipo-4-tinte);
+}
+.d-nodo[data-tipo="enrutador"] {
+  --c: var(--tipo-5);
+  --t: var(--tipo-5-tinte);
+}
+.d-nodo .caja {
+  fill: var(--sup-2);
+  stroke: var(--linea);
+  stroke-width: 1;
+}
+.d-nodo .filete,
+.d-nodo .glifo {
+  fill: var(--c);
+}
+.d-nodo .cod {
+  font: 500 10.5px var(--mono);
+  letter-spacing: 0.02em;
+  fill: var(--tinta-2);
+}
+.d-nodo .nombre {
+  font: 500 12.5px var(--letra);
+  fill: var(--tinta-1);
+}
+.d-nodo[data-sel="true"] .caja {
+  fill: var(--t);
+  stroke: var(--c);
+  stroke-width: 2;
+}
+.d-nodo[data-madurez="exigido"] .caja {
+  fill: none;
+  stroke: var(--tinta-3);
+  stroke-dasharray: 4 3;
+}
+.d-nodo[data-madurez="exigido"] .filete {
+  display: none;
+}
+.d-nodo[data-madurez="exigido"] .glifo {
+  fill: none;
+  stroke: var(--c);
+  stroke-width: 1.5;
+}
+.d-nodo[data-madurez="exigido"] .nombre {
+  fill: var(--tinta-2);
+}
+.d-nodo .aus rect {
+  fill: none;
+  stroke: var(--tinta-3);
+}
+.d-nodo .aus path {
+  fill: none;
+  stroke: var(--tinta-1);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+.d-nodo .aus text {
+  font: 500 10px var(--letra);
+  fill: var(--tinta-1);
+}
+.d-nodo:focus-visible .caja {
+  stroke: var(--tinta-1);
+  stroke-width: 2;
+  stroke-dasharray: none;
+}
+
+/* Flujos: secuencia (sólida) · condicional (discontinua + cuadro) · reanudación (punteada) */
+.d-flujo path {
+  fill: none;
+  stroke: var(--tinta-2);
+  stroke-width: 1.5;
+}
+.d-flujo[data-modo="condicional"] path {
+  stroke-dasharray: 6 4;
+}
+.d-flujo[data-modo="reanudacion"] path {
+  stroke-width: 2.2;
+  stroke-dasharray: 0.1 4.5;
+  stroke-linecap: round;
+}
+.d-flujo .marcador {
+  fill: var(--sup-1);
+  stroke: var(--tinta-2);
+  stroke-width: 1.5;
+}
+.d-flujo .et-fondo {
+  fill: var(--sup-1);
+}
+.d-flujo text {
+  font: 400 10.5px var(--mono);
+  fill: var(--tinta-1);
+}
+.d-flujo text.suave {
+  font-family: var(--letra);
+  fill: var(--tinta-2);
+}
+.punta {
+  fill: var(--tinta-2);
+}
+.d-terminal circle {
+  fill: var(--sup-1);
+  stroke: var(--tinta-2);
+  stroke-width: 1.5;
+}
+.d-terminal.fin circle.anillo {
+  fill: none;
+  stroke-width: 1;
+}
+.d-terminal text {
+  font: 400 11.5px var(--letra);
+  fill: var(--tinta-2);
+}
+
+/* Leyenda generada */
+.leyenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+  margin-top: var(--e-3);
+  font-size: var(--t-dato);
+  color: var(--tinta-2);
+}
+.leyenda .item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.leyenda svg {
+  width: 30px;
+  height: 12px;
+  color: var(--tinta-2);
+}
+.leyenda svg.cuad {
+  width: 12px;
+}
+
+/* Lista por capa (vista alterna y versión en texto, G10) */
+.lista-capas {
+  list-style: none;
+  padding: 0;
+}
+.lista-capas > li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: var(--e-2) var(--e-5);
+  padding-block: var(--e-3);
+  border-top: 1px solid var(--linea);
+}
+.lista-capas .capa-cab {
+  display: grid;
+  gap: 2px;
+  align-content: start;
+}
+.lista-capas .capa-cab .n {
+  font: 500 10.5px/1.4 var(--mono);
+  color: var(--tinta-2);
+}
+.lista-capas .capa-cab b {
+  font-size: 14px;
+  font-weight: 600;
+}
+.lista-capas .capa-cab span:last-child {
+  font-size: var(--t-chico);
+  color: var(--tinta-2);
+}
+.lista-capas ol {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: var(--e-2);
+}
+.lista-capas .flujo-txt {
+  font: 400 var(--t-dato) / 1.5 var(--mono);
+  color: var(--tinta-2);
+  margin-top: 4px;
+}
+.lista-capas .vacia {
+  font-size: var(--t-chico);
+  color: var(--tinta-2);
+}
+@media (max-width: 720px) {
+  .lista-capas > li {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Conmutador lienzo · lista */
+[data-panel] {
+  min-width: 0;
+}
+[data-panel][hidden] {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lienzo-scroll {
+    scroll-behavior: auto;
+  }
+}
+
+/* Miniatura del grafo («Cómo funciona», paso 2): la misma gramática, sin cajas. */
+.mini-lineas path {
+  fill: none;
+  stroke: var(--tinta-2);
+  stroke-width: 1.3;
+}
+.mini-lineas path.cond {
+  stroke-dasharray: 4 3;
+}
+.mini-lineas path.rean {
+  stroke-width: 2;
+  stroke-dasharray: 0.1 3.5;
+  stroke-linecap: round;
+}
+.mini-term {
+  fill: var(--sup-1);
+  stroke: var(--tinta-2);
+  stroke-width: 1.3;
+}
+.mini-fin {
+  fill: var(--tinta-2);
+}
+.mini-et text {
+  font: 400 10.5px var(--letra);
+  fill: var(--tinta-2);
+}
+
+/* Arista condicional seleccionable (pantalla del agente) */
+.d-flujo[data-nodo-id] {
+  cursor: pointer;
+  outline: none;
+}
+.d-flujo[data-sel="true"] path {
+  stroke: var(--tinta-1);
+  stroke-width: 2.25;
+}
+.d-flujo[data-sel="true"] text {
+  font-weight: 600;
+}
+.d-flujo[data-nodo-id]:focus-visible path {
+  stroke: var(--tinta-1);
+  stroke-width: 2.5;
+}
+.d-nodo[data-nodo-id] {
+  cursor: pointer;
+}
+/* Nodo fuera del contrato («no previsto») */
+.d-nodo .extra rect {
+  fill: none;
+  stroke: var(--tinta-3);
+  stroke-dasharray: 2 2;
+}
+.d-nodo .extra text {
+  font: 500 10px var(--letra);
+  fill: var(--tinta-1);
+}
+.d-nodo .extra path {
+  fill: none;
+  stroke: var(--tinta-1);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+}

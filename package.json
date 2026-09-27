@@ -18,7 +18,9 @@
     "trazas:verificar": "tsx scripts/trazas-verificar.ts",
     "m9:reporte": "tsx scripts/m9-reporte.ts",
     "lote:demo": "agents/.venv/bin/python -m app_agents.lotes --demo a --pausa-s 2",
-    "lote:base": "agents/.venv/bin/python -m app_agents.lotes --demo a --pausa-s 2 --variante agente_unico"
+    "lote:base": "agents/.venv/bin/python -m app_agents.lotes --demo a --pausa-s 2 --variante agente_unico",
+    "capturas:maqueta": "node scripts/capturar-maqueta.mjs",
+    "tokens": "node scripts/paleta/generar-tokens.mjs"
   },
   "dependencies": {
     "@sentry/nextjs": "^11.0.0",
