@@ -1,4 +1,4 @@
-# CI del perfil --python del kit-app (v1.30.0) — se estampa SOLO con `--python`, junto a ci.yml.
+# CI del perfil --python del kit-app (v1.30.0; v1.30.1 pip-audit sin --strict) — se estampa SOLO con `--python`, junto a ci.yml.
 # Job `python`: cuarto check requerido de la ruleset (quality · e2e · lighthouse|build-escritorio · python).
 # Regla del método (v1.12.0): TODO gate nuevo nace con su DEMO en rojo — un cambio deliberado que lo
 # hace fallar, registrado en la bitácora del sprint. Regla del kit (v1.26.0): sube su evidencia al fallar.
@@ -26,7 +26,10 @@ jobs:
       - run: ruff check .
       - run: ruff format --check .
       - run: pytest --junitxml=../test-results/pytest.xml   # cobertura y umbral: [tool.pytest.ini_options] del pyproject
-      - run: pip-audit --strict --skip-editable
+      # Sin --strict (kit v1.30.1): con --strict, pip-audit escala el salto del paquete editable (`pip install -e`)
+      # a error ("distribution marked as editable") y el job cae en el commit inicial (planlang, 2026-09-26).
+      # Las vulnerabilidades encontradas siguen devolviendo exit 1.
+      - run: pip-audit --skip-editable
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
