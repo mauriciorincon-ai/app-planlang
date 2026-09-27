@@ -42,3 +42,6 @@ html[data-lang="en"] [lang="es"]:not(html) { display: none !important; }
 /* Estados: [data-si="vista:a|b"] se muestra solo si el estado activo está en la lista. */
 [data-si] { display: none !important; }
 [data-si].mq-visible { display: revert !important; }
+
+/* Sin JS (o antes de que corra): se muestra el primer estado, para que la página nunca quede en blanco. */
+html:not([data-estado]) [data-si^="vista:a"] { display: revert !important; }

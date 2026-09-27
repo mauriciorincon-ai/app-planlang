@@ -1,0 +1,6 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "_comment": "Vercel con el preset de Next corre `next build` directo y se salta el script `build` de package.json; la maqueta de la Etapa de Diseño (docs/diseno → public/diseno) solo existe si corre scripts/copiar-maqueta.mjs antes. Fijamos el comando para que el preview sirva /diseno/… (big-d lo sufrió en su mirada 1).",
+  "buildCommand": "pnpm build",
+  "framework": "nextjs"
+}
