@@ -1,6 +1,6 @@
 ---
-version: 0.4.0
-estado: kit aprobado en la mirada 2 (2026-09-27); 0.2 suma los componentes de P3, 0.3 los de Brecha y Playground (mirada 3) 0.3.1 el balance y el perfil evidente (mirada 3, ronda 2) y 0.4.0 los de Entrada, Plan, Caso y Fichas (mirada 4) — sube a 1.0.0 al aprobar G-Diseño
+version: 0.4.1
+estado: kit aprobado en la mirada 2 (2026-09-27); 0.2 suma los componentes de P3, 0.3 los de Brecha y Playground (mirada 3) 0.3.1 el balance y el perfil evidente (mirada 3, ronda 2) 0.4.0 los de Entrada, Plan, Caso y Fichas (mirada 4) y 0.4.1 «Ver N más», el aviso de estado arriba y la pestaña Casos (mirada 4, ronda 2) — sube a 1.0.0 al aprobar G-Diseño
 fecha: 2026-09-27
 fuente_visual: docs/diseno/ (kit.html es este documento en vivo)
 tokens: scripts/paleta/generar-tokens.mjs → docs/diseno/assets/tokens.{json,css} (generados; gate diseno-tokens)
@@ -189,7 +189,7 @@ propios (shadcn/ui personalizado donde aplique, jamás el estilo por defecto).
 | Componente                    | Uso                                                                                                                     | Estados que muestra el kit                                     |
 | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
 | **Rótulo**                    | primera franja de toda pantalla: «Simulación · no operativo» + divulgación de datos sintéticos                          | escritorio · teléfono                                          |
-| **Barra de navegación**       | marca, pestañas con ícono, idioma y tema                                                                                | pestaña activa · hover · foco                                  |
+| **Barra de navegación**       | marca, pestañas con ícono (Entrada · Plan · Agente · Brecha · Playground · Casos · Fichas; 0.4.1), idioma y tema          | pestaña activa · hover · foco                                  |
 | **Botón**                     | principal (tinta-1 lleno, uno por vista), secundario (borde), chico                                                     | reposo · hover · foco · activo · deshabilitado                 |
 | **Chip de procedencia**       | «real», «maqueta», «fuente», junto a toda cifra                                                                         | tres variantes                                                 |
 | **Chip «no observado»**       | una señal del plan que las trazas no registran; desactiva su umbral                                                     | solo · dentro de un deslizador                                 |
@@ -245,6 +245,8 @@ propios (shadcn/ui personalizado donde aplique, jamás el estilo por defecto).
 | **Capacidad medida** (0.4)    | cuatro cifras con su chip de procedencia (real con su fuente · declarado)                                               | —                                                              |
 | **Marco de CV Viva** (0.4)    | las fichas de la app y del agente como las pinta hoja-de-vida: papel, Fraunces en titulares, Inter en texto; la cabecera del marco nombra el archivo y el contrato. Es el único lugar con otra piel | ficha de la app · ficha del agente · error (ficha inválida)    |
 | **Pasos por carril** (0.4)    | proceso de la ficha del agente: pasos numerados por actor (médico, agente, auditor, afiliado), las decisiones con borde discontinuo; en hoja-de-vida los dibuja su motor BPMN | —                                                              |
+| **Ver N más** (0.4.1)         | una lista larga muestra sus 5 primeras filas; el botón dice cuántas y cuáles faltan («Ver 3 más: R7, R4, R8»), las abre en su sitio y «Ver menos» las cierra sin perder el botón de vista; lo plegado cuenta igual para el aviso de perfil | cerrado · abierto · teléfono                                   |
+| **Aviso de estado arriba** (0.4.1) | un estado de maqueta que cambia bloques lejanos pone su aviso donde se pulsa, arriba de todo, con enlaces a lo que cambia | —                                                              |
 | **Validación de campos** (0.4) | experto: cada campo de una ficha contra los límites del contrato v1.3.1 con «Cabe» o «No cabe»                         | cabe · no cabe (error)                                         |
 
 ## 6. Anti-patrones (prohibidos, además de los del skill `diseno-ui`)

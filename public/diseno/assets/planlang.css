@@ -3709,3 +3709,29 @@ details.porque-d > div {
     grid-column: 1 / -1;
   }
 }
+/* Mirada 4, ronda 2: el aviso de un estado de maqueta que cambia bloques lejanos va arriba de todo,
+   donde se ve al pulsar, con enlaces a lo que cambia. */
+.aviso-arriba {
+  margin-top: var(--e-5);
+}
+.aviso-maqueta a {
+  color: var(--tinta-1);
+}
+/* Mirada 4, ronda 2: «Ver N más» en cada parte del plan (5 filas a la vista; el resto, a un clic). */
+.mas-resto[hidden] {
+  display: none;
+}
+.mas-boton {
+  margin-top: var(--e-3);
+}
+.mas-boton .ico {
+  width: 14px;
+  height: 14px;
+}
+.mas-boton[aria-expanded="true"] .ico {
+  transform: rotate(180deg);
+}
+.mas-boton[aria-expanded="true"] .mas-ver,
+.mas-boton[aria-expanded="false"] .mas-cerrar {
+  display: none;
+}

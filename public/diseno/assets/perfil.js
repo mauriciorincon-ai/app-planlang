@@ -6,8 +6,12 @@
   var html = document.documentElement;
   var reloj = null;
   function cuenta() {
+    // Lo que está tras «Ver N más» cuenta igual: se abre un instante (sin pintar) para medirlo.
+    var cerrados = document.querySelectorAll(".mas-resto[hidden]");
+    for (var j = 0; j < cerrados.length; j++) cerrados[j].hidden = false;
     var todos = document.querySelectorAll(".marcado"), n = 0;
     for (var k = 0; k < todos.length; k++) if (todos[k].getClientRects().length) n++;
+    for (var j2 = 0; j2 < cerrados.length; j2++) cerrados[j2].hidden = true;
     var ls = document.querySelectorAll("[data-cuenta-experto]");
     // Concordancia con el número: «1 bloque … es», «3 bloques … son»; sin bloques, se dice.
     var es = n === 0 ? "Esta vista no tiene bloques solo para este perfil."

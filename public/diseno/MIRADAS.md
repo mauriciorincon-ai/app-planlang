@@ -554,4 +554,48 @@ aristas escribía la rama también en la última regla aunque no decidiera; en e
 identificadores se partían a media palabra («campos_faltantes_co / unt») y «SYN-P-038» en su guion; la
 ficha decía «1 sprints»; la marca de estado oculta decía «corrió en el spike» fuera de Agente.
 
+**Lo que dijo el usuario (2026-09-27, con las páginas abiertas en el preview):**
+
+> «3. no vi esa transicion revisala. Excelente las visuales de Plan muy bien trabajo, pero me gustaria
+> que Decisiones Riesgos, Supuestos etc mostrara los 5 promeros y un boton de mostrar mas para no
+> alargar tanto la visual. No encontre los casos el restante esta muy bien dime donde estan lso casos
+> para verlos»
+
+**Veredicto: MIRADA 4 NO APROBADA TODAVÍA — ronda 2.** Los comentarios delatan las páginas abiertas
+(la fila 3 de la matriz, las secciones del Plan). Queda así:
+
+- **Entrada:** la fila 3 de la matriz («maqueta: no cumple») no mostró ninguna transición visible: se
+  revisa.
+- **Plan:** las visuales, aprobadas («Excelente las visuales de Plan muy bien trabajo»); cada parte
+  (decisiones, riesgos, supuestos…) debe mostrar las 5 primeras y un botón «mostrar más».
+- **Caso:** no lo encontró. La página no estaba en la navegación: solo se llegaba desde la Entrada, la
+  Brecha o el recorrido.
+- **Lo demás** (Fichas, la navegación entre páginas, los perfiles): «el restante está muy bien».
+- La pregunta 4 (Agente con el grafo del S1) quedó sin respuesta: Agente no se toca hasta que la
+  conteste.
+
+## Mirada 4, ronda 2 (2026-09-27)
+
+**Lo que cambió, punto por punto de lo que dijo el usuario:**
+
+- **«no vi esa transicion revisala» (Entrada, «maqueta: no cumple»):** la transición funcionaba, pero
+  todo lo que cambiaba estaba lejos: desde los 1.109 px en escritorio y los 2.470 px en teléfono.
+  Al pulsar el botón, lo que había en pantalla seguía igual. Ahora el estado abre, arriba de todo y a la
+  vista en los dos anchos, un **aviso de maqueta** (borde discontinuo) que dice qué simula y enlaza a los
+  tres lugares que cambian: «Medí la brecha», «Capacidad medida» y «Los demos». Regla para el sistema:
+  un estado que cambia bloques lejanos avisa donde se pulsa.
+- **Plan, «los 5 primeros y un botón de mostrar más»:** cada parte muestra sus 5 primeras filas; el
+  resto queda tras un botón que dice cuántas y cuáles faltan («Ver 1 más: D6», «Ver 3 más: R7, R4,
+  R8», «Ver 4 más: C6, C7, C8, C9») y las abre ahí mismo; «Ver menos» las cierra y deja el botón a la
+  vista. Supuestos (3) y umbrales (4) no lo necesitan. El conteo del experto sigue contando lo plegado
+  (26 bloques). El orden de los riesgos (por prioridad de acción) decide cuáles quedan a la vista.
+- **«No encontre los casos»:** la página no estaba en la navegación. Ahora hay una pestaña **«Casos»**
+  entre Playground y Fichas, en las siete páginas (en Agente también, sin tocar nada más de ella).
+
+**Pasada de capturas:** 160 encuadres de Entrada, Plan y Caso (estados × 2 temas × 2 idiomas × 380/1280
+× 2 perfiles) + medida de las 10 páginas con los dos perfiles, normal y con movimiento reducido: 0
+desbordes, 0 textos fuera del lienzo, fuentes cargadas, 0 animaciones. Leídos como imagen: la Entrada al
+pulsar «maqueta: no cumple» a 1280 y 390 px, los riesgos con el botón cerrado (1280) y abierto (390,
+experto), y la barra con «Casos» activa (inglés, claro). Enlaces: ninguno roto; errores: ninguno.
+
 **Lo que dijo el usuario:** _(pendiente)_.
