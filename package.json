@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "node scripts/copiar-maqueta.mjs && next build",
+    "build": "next build",
     "start": "serve out -l 3000",
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",

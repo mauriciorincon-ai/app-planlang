@@ -31,5 +31,3 @@ agents/.coverage
 agents/htmlcov/
 agents/*.egg-info/
 
-# Maqueta de la Etapa de Diseño copiada al export (DERIVADO de docs/diseno/, se regenera en cada build)
-public/diseno/
