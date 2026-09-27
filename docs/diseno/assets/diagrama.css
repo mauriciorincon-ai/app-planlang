@@ -1,0 +1,95 @@
+/* Diagrama del visor (gramática agentes-ia) — estilos del SVG trazado a mano de la maqueta.
+   Un solo SVG para los dos temas: todo color por variable (G13). Tipo = color + glifo + etiqueta;
+   modo de flujo = estilo de línea + marcador (G7). El lienzo se desliza de lado, jamás se encoge. */
+
+.lienzo-marco { position: relative; border: 1px solid var(--linea); border-radius: var(--radio-caja); background: var(--sup-1); }
+.lienzo-scroll { overflow-x: auto; overflow-y: hidden; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; padding: var(--e-3); }
+.lienzo-scroll:focus-visible { outline-offset: -2px; }
+.lienzo-scroll svg { width: 1178px; height: auto; min-width: 1178px; }
+.lienzo-marco::before, .lienzo-marco::after { content: ""; position: absolute; top: 0; bottom: 0; width: 28px; pointer-events: none; opacity: 0; transition: opacity var(--dur) ease; }
+.lienzo-marco::before { left: 0; background: linear-gradient(90deg, var(--fondo), transparent); }
+.lienzo-marco::after { right: 0; background: linear-gradient(270deg, var(--fondo), transparent); }
+.lienzo-marco[data-mas-izq="true"]::before, .lienzo-marco[data-mas-der="true"]::after { opacity: 1; }
+.lienzo-indice { display: flex; gap: var(--e-2); flex-wrap: wrap; align-items: center; padding: var(--e-2) var(--e-3); border-top: 1px solid var(--linea); font: 500 12px/1.4 var(--mono); color: var(--tinta-2); }
+.lienzo-indice button { background: transparent; border: 1px solid var(--linea); border-radius: 999px; padding: 2px 9px; color: var(--tinta-1); cursor: pointer; font: inherit; min-height: 28px; }
+.lienzo-indice button[aria-current="true"] { border-color: var(--tinta-1); font-weight: 700; }
+.lienzo-pista { font-size: 12px; color: var(--tinta-2); }
+.lienzo-marco[data-cabe="true"] .lienzo-indice { display: none; }
+
+.vista-alterna { display: inline-flex; gap: 2px; padding: 2px; border: 1px solid var(--linea); border-radius: 999px; }
+.vista-alterna button { border: 0; background: transparent; border-radius: 999px; padding: 4px 12px; min-height: 30px; font: 600 13px/1 var(--letra); color: var(--tinta-2); cursor: pointer; }
+.vista-alterna button[aria-pressed="true"] { background: var(--tinta-1); color: var(--fondo); }
+
+/* Bandas */
+.d-banda-cab text { fill: var(--tinta-1); }
+.d-banda-num { font: 600 12px var(--mono); fill: var(--tinta-3) !important; letter-spacing: 0.1em; }
+.d-banda-nombre { font: 700 17px var(--letra); }
+.d-banda-preg { font: 400 13px var(--letra); fill: var(--tinta-2) !important; }
+.d-guia { stroke: var(--linea); stroke-dasharray: 2 6; stroke-width: 1; }
+
+/* Nodos */
+.d-nodo rect.caja { fill: var(--sup-2); stroke: var(--linea); stroke-width: 1; }
+.d-nodo .filete { fill: var(--color-tipo); }
+.d-nodo .glifo { fill: var(--color-tipo); }
+.d-nodo .sello { fill: none; stroke: var(--color-tipo); stroke-width: 1.5; }
+.d-nodo .cod { font: 700 11px var(--mono); fill: var(--color-tipo); letter-spacing: 0.08em; }
+.d-nodo .nombre { font: 700 14px var(--letra); fill: var(--tinta-1); }
+.d-nodo .tipo-nombre { font: 400 12px var(--letra); fill: var(--tinta-2); }
+.d-nodo[data-tipo="modelo"] { --color-tipo: var(--tipo-1); }
+.d-nodo[data-tipo="herramienta"] { --color-tipo: var(--tipo-2); }
+.d-nodo[data-tipo="regla"] { --color-tipo: var(--tipo-3); }
+.d-nodo[data-tipo="pausa_humana"] { --color-tipo: var(--tipo-4); }
+.d-nodo[data-tipo="enrutador"] { --color-tipo: var(--tipo-5); }
+.d-nodo[data-sel="true"] rect.caja { stroke: var(--tinta-1); stroke-width: 2; }
+.d-nodo[data-madurez="exigido"] rect.caja { fill: none; stroke-dasharray: 5 4; }
+.d-nodo[data-madurez="exigido"] .filete { fill: none; stroke: var(--color-tipo); stroke-dasharray: 5 4; }
+.d-nodo[data-madurez="exigido"] .nombre, .d-nodo[data-madurez="exigido"] .tipo-nombre { fill: var(--tinta-2); }
+.d-nodo .ausente rect { fill: var(--tinta-1); }
+.d-nodo .ausente text { font: 700 11px var(--mono); fill: var(--fondo); }
+.d-nodo .ausente path { stroke: var(--fondo); stroke-width: 1.8; fill: none; stroke-linecap: round; }
+.d-nodo:focus { outline: none; }
+.d-nodo:focus rect.caja { stroke: var(--tinta-1); stroke-width: 2; }
+/* Dirección B: sello en la esquina, sin filete */
+[data-dir="b"] .d-nodo .filete { display: none; }
+[data-dir="b"] .d-nodo .sello { display: inline; }
+[data-dir="a"] .d-nodo .sello { display: none; }
+[data-dir="b"] .d-nodo .nombre { font-family: var(--letra); }
+.d-nodo .glifo-b { display: none; }
+[data-dir="b"] .d-nodo .glifo-a { display: none; }
+[data-dir="b"] .d-nodo .glifo-b { display: inline; }
+
+/* Terminales (inicio / fin) */
+.d-terminal circle { fill: var(--sup-2); stroke: var(--tinta-2); stroke-width: 1.5; }
+.d-terminal.fin circle { stroke-width: 3; }
+.d-terminal text { font: 500 12px var(--mono); fill: var(--tinta-2); }
+
+/* Flujos: modo = estilo de línea + marcador */
+.d-flujo path { fill: none; stroke: var(--tinta-2); stroke-width: 2; }
+.d-flujo[data-modo="condicional"] path { stroke-dasharray: 8 5; }
+.d-flujo[data-modo="reanudacion"] path { stroke-dasharray: 0.1 5.5; stroke-linecap: round; stroke-width: 2.6; }
+.punta, .d-flujo .punta { fill: var(--tinta-2); stroke: none; }
+.d-flujo .marcador { fill: var(--sup-1); stroke: var(--tinta-2); stroke-width: 1.4; }
+.d-flujo .etiqueta { font: 600 11px var(--mono); fill: var(--tinta-1); }
+.d-flujo .etiqueta-fondo { fill: var(--sup-1); }
+.d-flujo[data-sel="true"] path { stroke: var(--tinta-1); stroke-width: 3; }
+
+/* Versión en lista (G10): nodos por capa */
+.lista-capas { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--e-3); }
+.lista-capas > li { display: grid; gap: var(--e-2); padding: var(--e-3) var(--e-4); border: 1px solid var(--linea); border-radius: var(--radio-caja); background: var(--sup-1); }
+.lista-capas .capa-cab { display: flex; gap: var(--e-2); align-items: baseline; flex-wrap: wrap; }
+.lista-capas .capa-cab .n { font: 600 12px/1 var(--mono); color: var(--tinta-3); letter-spacing: 0.1em; }
+.lista-capas .capa-cab b { font-size: 15px; }
+.lista-capas .capa-cab span { font-size: 13px; color: var(--tinta-2); }
+.lista-capas ol { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--e-2); }
+.lista-capas .nodo { max-width: none; min-height: 0; }
+.lista-capas .vacia { font-size: 13px; color: var(--tinta-3); font-style: italic; }
+.lista-capas .flujo-txt { font: 500 12px/1.5 var(--mono); color: var(--tinta-2); }
+
+/* Colores forzados: quedan glifo, trazo, marcador y texto */
+@media (forced-colors: active) {
+  .d-nodo rect.caja { fill: Canvas; stroke: CanvasText; }
+  .d-flujo path { stroke: CanvasText; }
+}
+
+/* Un lienzo dentro de una rejilla jamás ensancha la página: los hijos de rejilla no heredan min-width:auto. */
+.sala-piezas > *, .muestra, .dos-col > *, .lienzo-marco, [data-panel] { min-width: 0; }

@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Maqueta de la Etapa de Diseño: HTML autocontenido con scripts clásicos que abren por file://.
+    // public/diseno/ es su copia generada en el build (scripts/copiar-maqueta.mjs).
+    "docs/diseno/**",
+    "public/diseno/**",
   ]),
 ]);
 

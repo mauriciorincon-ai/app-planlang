@@ -1,0 +1,13 @@
+/* Fuentes de planlang. Todas SIL OFL 1.1 — licencias junto a los archivos en fuentes/. Servidas
+   desde el mismo sitio, jamás desde un CDN (la maqueta es autocontenida). `block`: nunca se pinta
+   con la fuente de respaldo, para que las capturas midan lo que se va a servir.
+   - Space Grotesk: interfaz y DIAGRAMA (la fuente con tabla de métricas del diagramador, G15;
+     la fijó big-d, piloto del reusable). Variable wght 300–700, subconjunto latino.
+   - JetBrains Mono: huellas, semillas, fechas, versiones, códigos de tipo, señales. wght 100–800.
+   - Newsreader: serif de lectura de la dirección B «Acta» (titulares y prosa de líder).
+     Instancias 400, 600 e itálica 400, subconjunto latino. */
+@font-face { font-family: "Space Grotesk"; src: url("fuentes/space-grotesk.woff2") format("woff2"); font-weight: 300 700; font-style: normal; font-display: block; }
+@font-face { font-family: "JetBrains Mono"; src: url("fuentes/jetbrains-mono.woff2") format("woff2"); font-weight: 100 800; font-style: normal; font-display: block; }
+@font-face { font-family: "Newsreader"; src: url("fuentes/newsreader-400.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: block; }
+@font-face { font-family: "Newsreader"; src: url("fuentes/newsreader-600.woff2") format("woff2"); font-weight: 600; font-style: normal; font-display: block; }
+@font-face { font-family: "Newsreader"; src: url("fuentes/newsreader-italic-400.woff2") format("woff2"); font-weight: 400; font-style: italic; font-display: block; }
