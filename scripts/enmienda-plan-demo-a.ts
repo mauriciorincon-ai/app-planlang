@@ -8,10 +8,9 @@ export function enmendar(v1: Plan): Record<string, unknown> {
   const contrato = v1.contrato_de_grafo;
   const aristas = contrato.aristas_condicionales.map((a) => {
     if (a.desde !== "enrutador") return a;
-    const { si_falso: _descartado, ...resto } = a as typeof a & {
-      si_falso?: string;
-    };
-    return resto;
+    const copia: Record<string, unknown> = { ...a };
+    delete copia.si_falso;
+    return copia as typeof a;
   });
   aristas.splice(1, 0, {
     desde: "enrutador",

@@ -69,13 +69,18 @@ CLAVES_CLI_CONSERVADAS: tuple[str, ...] = (
 
 
 class ErrorProveedor(RuntimeError):
-    """Falla del proveedor, clasificada con el vocabulario que la traza registra (`error_proveedor`)."""
+    """Falla del proveedor, clasificada con el vocabulario que la traza registra (`error_proveedor`).
 
-    def __init__(self, tipo: str, detalle: str = "") -> None:
+    `costo_usd`: costo nominal que el intento fallido igual consumió (lo reporta el CLI), para que los
+    reintentos no desaparezcan del costo de la corrida.
+    """
+
+    def __init__(self, tipo: str, detalle: str = "", costo_usd: float = 0.0) -> None:
         if tipo not in TIPOS_ERROR_PROVEEDOR:
             raise ValueError(f"tipo de error desconocido: {tipo}")
         self.tipo = tipo
         self.detalle = detalle
+        self.costo_usd = costo_usd
         super().__init__(f"{tipo}: {detalle}" if detalle else tipo)
 
 
@@ -119,10 +124,36 @@ def cwd_limpio() -> str:
     return tempfile.mkdtemp(prefix="planlang-claude-")
 
 
-def _clasificar_fallo(rc: int, stderr: str) -> ErrorProveedor:
-    texto = stderr.lower()
-    if any(p in texto for p in ("usage limit", "rate limit", "limit reached", "too many requests", "429")):
+def _es_limite(texto: str) -> bool:
+    t = texto.lower()
+    return any(p in t for p in ("usage limit", "rate limit", "limit reached", "too many requests", "429"))
+
+
+def _clasificar_is_error(data: dict[str, Any], con_esquema: bool) -> ErrorProveedor:
+    """El CLI reporta el fallo en su JSON (`is_error` + `subtype`), a veces con rc = 1 y stderr vacío.
+
+    Con `--json-schema` y `--max-turns 1`, el modelo a veces necesita un segundo turno para entregar la
+    salida estructurada y el CLI corta con `error_max_turns` (hallazgo de la corrida real del S1): es una
+    salida estructurada que no llegó, así que cuenta como `esquema_invalido` y se reintenta (§ 9.1).
+    """
+    subtipo = str(data.get("subtype") or "")
+    costo = float(data.get("total_cost_usd") or 0.0)
+    if "structured_output" in subtipo or (con_esquema and "max_turns" in subtipo):
+        return ErrorProveedor("esquema_invalido", subtipo, costo)
+    if "budget" in subtipo or "limit" in subtipo:
+        return ErrorProveedor("limite_de_uso", subtipo, costo)
+    return ErrorProveedor("otro", subtipo or "is_error", costo)
+
+
+def _clasificar_fallo(rc: int, stderr: str, stdout: str = "", con_esquema: bool = False) -> ErrorProveedor:
+    if _es_limite(stderr):
         return ErrorProveedor("limite_de_uso", stderr[-400:])
+    try:
+        data = json.loads(stdout) if stdout.strip() else None
+    except json.JSONDecodeError:
+        data = None
+    if isinstance(data, dict) and data.get("is_error"):
+        return _clasificar_is_error(data, con_esquema)
     return ErrorProveedor("otro", f"rc={rc}: {stderr[-400:]}")
 
 
@@ -183,19 +214,15 @@ class ChatClaudeCode(BaseChatModel):
         except subprocess.TimeoutExpired as e:
             raise ErrorProveedor("timeout", f"{self.timeout_s}s") from e
         latencia_ms = int((time.monotonic() - t0) * 1000)
+        con_esquema = self.json_schema is not None
         if proc.returncode != 0:
-            raise _clasificar_fallo(proc.returncode, proc.stderr or "")
+            raise _clasificar_fallo(proc.returncode, proc.stderr or "", proc.stdout or "", con_esquema)
         try:
             data = json.loads(proc.stdout)
         except json.JSONDecodeError as e:
             raise ErrorProveedor("otro", "el CLI no devolvió JSON") from e
         if data.get("is_error"):
-            subtipo = str(data.get("subtype") or "")
-            if "structured_output" in subtipo:
-                raise ErrorProveedor("esquema_invalido", subtipo)
-            if "budget" in subtipo or "limit" in subtipo:
-                raise ErrorProveedor("limite_de_uso", subtipo)
-            raise ErrorProveedor("otro", subtipo or "is_error")
+            raise _clasificar_is_error(data, con_esquema)
 
         texto = data.get("result") or ""
         usage = _usage_limpio(data.get("usage") or {})
@@ -251,17 +278,29 @@ def _extraer_estructurado(msg: AIMessage) -> Any:
 def _invocar_estructurado(
     llm: BaseChatModel, entrada: Any, modelo: type[BaseModel] | None, include_raw: bool
 ) -> Any:
+    """Hasta 1 + REINTENTOS_ESQUEMA intentos. El mensaje devuelto declara cuántos reintentos hubo y el
+    costo nominal de los intentos fallidos: la traza no esconde la inestabilidad del proveedor."""
     ultimo: Exception | None = None
-    for _ in range(REINTENTOS_ESQUEMA + 1):
-        msg = llm.invoke(entrada)
+    costo_fallidos = 0.0
+    for intento in range(REINTENTOS_ESQUEMA + 1):
+        try:
+            msg = llm.invoke(entrada)
+        except ErrorProveedor as e:
+            if e.tipo != "esquema_invalido":
+                raise
+            ultimo, costo_fallidos = e, costo_fallidos + e.costo_usd
+            continue
         try:
             crudo = _extraer_estructurado(msg)
             parsed = modelo.model_validate(crudo) if modelo is not None else crudo
         except (ValidationError, json.JSONDecodeError, TypeError) as e:
             ultimo = e
+            costo_fallidos += float((msg.response_metadata or {}).get("total_cost_usd") or 0.0)
             continue
+        msg.response_metadata["reintentos_esquema"] = intento
+        msg.response_metadata["costo_reintentos_usd"] = round(costo_fallidos, 6)
         return {"raw": msg, "parsed": parsed, "parsing_error": None} if include_raw else parsed
-    raise ErrorProveedor("esquema_invalido", str(ultimo)[:300])
+    raise ErrorProveedor("esquema_invalido", str(ultimo)[:300], costo_fallidos)
 
 
 # --------------------------------------------------------------------------------------------------

@@ -1,0 +1,110 @@
+{
+  "corrida_id": "simulado-3casos",
+  "formato": "planlang-ramas/v1",
+  "fuente": "python · app_agents.reglas_arista",
+  "huella": "f2e577faee34ae0c0223b6af18312cc64d8a71a4915a50d9977f6114668b2ead",
+  "umbrales_aplicados": {
+    "U1": 0.75,
+    "U2": 1000,
+    "U3": 2,
+    "U4": false
+  },
+  "visitas": [
+    {
+      "caso_id": "AH-001",
+      "desde": "enrutador",
+      "paso": 1,
+      "rama_tomada": "extractor",
+      "resultados": [
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "AH-001",
+      "desde": "extractor",
+      "paso": 2,
+      "rama_tomada": "verificador_cobertura",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "AH-001",
+      "desde": "decision",
+      "paso": 4,
+      "rama_tomada": "redactor",
+      "resultados": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "AH-002",
+      "desde": "enrutador",
+      "paso": 1,
+      "rama_tomada": "extractor",
+      "resultados": [
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "AH-002",
+      "desde": "extractor",
+      "paso": 2,
+      "rama_tomada": "verificador_cobertura",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "AH-002",
+      "desde": "decision",
+      "paso": 4,
+      "rama_tomada": "redactor",
+      "resultados": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "AH-003",
+      "desde": "enrutador",
+      "paso": 1,
+      "rama_tomada": "extractor",
+      "resultados": [
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "AH-003",
+      "desde": "extractor",
+      "paso": 2,
+      "rama_tomada": "verificador_cobertura",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "AH-003",
+      "desde": "decision",
+      "paso": 4,
+      "rama_tomada": "pausa_humana",
+      "resultados": [
+        false,
+        false,
+        false,
+        true,
+        false
+      ]
+    }
+  ]
+}

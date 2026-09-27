@@ -101,6 +101,15 @@ describe("reglas por campo", () => {
     expect(h.some((x) => x.includes("$.prestador.nit"))).toBe(false);
   });
 
+  it("salta las fechas de metadato de la corrida, pero no una fecha dentro de un texto", () => {
+    const h = validarIdentificadores({
+      fecha: "2026-09-27",
+      sesiones: [{ fecha: "2026-09-27" }],
+      salida_final: { es: "Su cita es el 2026-10-02." },
+    }).map((x) => `${x.regla}@${x.ruta}`);
+    expect(h).toEqual(["hipaa_fecha@$.salida_final.es"]);
+  });
+
   it("ignora la clave huella, recorre listas y no toca números que no son edad", () => {
     expect(
       validarIdentificadores({

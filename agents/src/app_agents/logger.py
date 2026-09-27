@@ -51,10 +51,22 @@ class _FormateadorJson(logging.Formatter):
         return json.dumps(base, ensure_ascii=False, sort_keys=True)
 
 
+class _StderrVigente(logging.StreamHandler):  # type: ignore[type-arg]
+    """Escribe en el `sys.stderr` VIGENTE en cada emisión (no en el que había al crear el logger)."""
+
+    @property  # type: ignore[override]
+    def stream(self):  # noqa: ANN201 - la API de logging no tipa `stream`
+        return sys.stderr
+
+    @stream.setter
+    def stream(self, _valor) -> None:  # noqa: ANN001
+        pass
+
+
 def obtener_logger(nivel: int = logging.INFO) -> logging.Logger:
     log = logging.getLogger(NOMBRE)
     if not log.handlers:
-        h = logging.StreamHandler(sys.stderr)
+        h = _StderrVigente()
         h.setFormatter(_FormateadorJson())
         log.addHandler(h)
         log.propagate = False

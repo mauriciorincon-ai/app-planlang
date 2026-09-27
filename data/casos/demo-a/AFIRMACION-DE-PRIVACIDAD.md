@@ -16,6 +16,6 @@ No case in this set describes a real person. Every record is generated from a de
 
 | Lote · Batch | Casos · Cases | Huella · Fingerprint (SHA-256) |
 |---|---|---|
-| planlang-a-001-20 | 20 | `0cae776412c96b947c9d3acde0efd4eb076f66c63d4e72b3add15e675a0c2a4f` |
-| planlang-a-001-200 | 200 | `c7c6e5404b2490b6ff0f45eafc749db727c10602b5ebeb5c56622a0a75b4d11e` |
-| planlang-a-humo-3 | 3 | `e187af881d36bd4947eb70ce826928dc04689f816a9b23343deaf1a77552f7e2` |
+| planlang-a-001-20 | 20 | `886e36e5dff396ab9cd74a03615782d320c5287afe8702e8a6dcff5a2eee359c` |
+| planlang-a-001-200 | 200 | `1573f66f34f868827e18f7eb3678e0d01727016fd3112c7bf90f85bb96a40df4` |
+| planlang-a-humo-3 | 3 | `b63d36da8176fab642b5d6a6bd66ff73b6d722c7a960621da5cdb07704ce011a` |

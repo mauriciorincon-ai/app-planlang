@@ -55,6 +55,7 @@
       ],
       "semilla": "planlang-a-001",
       "simulacion": {
+        "campos_ausentes_en_texto": [],
         "campos_extraidos": {
           "costo_estimado": 240,
           "diagnostico": "SYN-D-17",
@@ -135,6 +136,7 @@
       ],
       "semilla": "planlang-a-001",
       "simulacion": {
+        "campos_ausentes_en_texto": [],
         "campos_extraidos": {
           "costo_estimado": 900,
           "diagnostico": "SYN-D-20",
@@ -215,6 +217,7 @@
       ],
       "semilla": "planlang-a-001",
       "simulacion": {
+        "campos_ausentes_en_texto": [],
         "campos_extraidos": {
           "costo_estimado": 1000,
           "diagnostico": "SYN-D-02",
@@ -295,6 +298,7 @@
       ],
       "semilla": "planlang-a-001",
       "simulacion": {
+        "campos_ausentes_en_texto": [],
         "campos_extraidos": {
           "costo_estimado": 650,
           "diagnostico": "SYN-D-34",
@@ -377,6 +381,7 @@
       ],
       "semilla": "planlang-a-001",
       "simulacion": {
+        "campos_ausentes_en_texto": [],
         "campos_extraidos": {
           "costo_estimado": 2100,
           "diagnostico": "SYN-D-37",
@@ -467,6 +472,7 @@
       ],
       "semilla": "planlang-a-001",
       "simulacion": {
+        "campos_ausentes_en_texto": [],
         "campos_extraidos": {
           "costo_estimado": 650,
           "diagnostico": "SYN-D-34",
@@ -582,6 +588,9 @@
       ],
       "semilla": "planlang-a-001",
       "simulacion": {
+        "campos_ausentes_en_texto": [
+          "costo_estimado"
+        ],
         "campos_extraidos": {
           "costo_estimado": 380,
           "diagnostico": "SYN-D-12",
@@ -685,6 +694,10 @@
       ],
       "semilla": "planlang-a-001",
       "simulacion": {
+        "campos_ausentes_en_texto": [
+          "diagnostico",
+          "costo_estimado"
+        ],
         "campos_extraidos": {
           "costo_estimado": 850,
           "diagnostico": "SYN-D-07",
@@ -765,6 +778,7 @@
       ],
       "semilla": "planlang-a-001",
       "simulacion": {
+        "campos_ausentes_en_texto": [],
         "campos_extraidos": {
           "costo_estimado": 180,
           "diagnostico": "SYN-D-16",
@@ -845,6 +859,7 @@
       ],
       "semilla": "planlang-a-001",
       "simulacion": {
+        "campos_ausentes_en_texto": [],
         "campos_extraidos": {
           "costo_estimado": 1500,
           "diagnostico": "SYN-D-06",
@@ -927,6 +942,7 @@
       ],
       "semilla": "planlang-a-001",
       "simulacion": {
+        "campos_ausentes_en_texto": [],
         "campos_extraidos": {
           "costo_estimado": 60,
           "diagnostico": "SYN-D-22",
@@ -1007,6 +1023,7 @@
       ],
       "semilla": "planlang-a-001",
       "simulacion": {
+        "campos_ausentes_en_texto": [],
         "campos_extraidos": {
           "costo_estimado": 3500,
           "diagnostico": "SYN-D-39",
@@ -1090,6 +1107,7 @@
       ],
       "semilla": "planlang-a-001",
       "simulacion": {
+        "campos_ausentes_en_texto": [],
         "campos_extraidos": {
           "costo_estimado": 300,
           "diagnostico": "SYN-D-09",
@@ -1170,6 +1188,7 @@
       ],
       "semilla": "planlang-a-001",
       "simulacion": {
+        "campos_ausentes_en_texto": [],
         "campos_extraidos": {
           "costo_estimado": 60,
           "diagnostico": "SYN-D-22",
@@ -1260,6 +1279,7 @@
       ],
       "semilla": "planlang-a-001",
       "simulacion": {
+        "campos_ausentes_en_texto": [],
         "campos_extraidos": {
           "costo_estimado": 480,
           "diagnostico": "SYN-D-35",
@@ -1340,6 +1360,7 @@
       ],
       "semilla": "planlang-a-001",
       "simulacion": {
+        "campos_ausentes_en_texto": [],
         "campos_extraidos": {
           "costo_estimado": 750,
           "diagnostico": "SYN-D-17",
@@ -1422,6 +1443,7 @@
       ],
       "semilla": "planlang-a-001",
       "simulacion": {
+        "campos_ausentes_en_texto": [],
         "campos_extraidos": {
           "costo_estimado": 3500,
           "diagnostico": "SYN-D-39",
@@ -1505,6 +1527,7 @@
       ],
       "semilla": "planlang-a-001",
       "simulacion": {
+        "campos_ausentes_en_texto": [],
         "campos_extraidos": {
           "costo_estimado": 90,
           "diagnostico": "SYN-D-33",
@@ -1587,6 +1610,7 @@
       ],
       "semilla": "planlang-a-001",
       "simulacion": {
+        "campos_ausentes_en_texto": [],
         "campos_extraidos": {
           "costo_estimado": 1890,
           "diagnostico": "SYN-D-37",
@@ -1678,6 +1702,9 @@
       ],
       "semilla": "planlang-a-001",
       "simulacion": {
+        "campos_ausentes_en_texto": [
+          "costo_estimado"
+        ],
         "campos_extraidos": {
           "costo_estimado": 260,
           "diagnostico": "SYN-D-08",
@@ -1734,7 +1761,7 @@
   },
   "demo_id": "demo-a",
   "formato": "planlang-casos/v1",
-  "huella": "0cae776412c96b947c9d3acde0efd4eb076f66c63d4e72b3add15e675a0c2a4f",
+  "huella": "886e36e5dff396ab9cd74a03615782d320c5287afe8702e8a6dcff5a2eee359c",
   "id": "planlang-a-001-20",
   "idioma_de_corrida": "es",
   "n": 20,

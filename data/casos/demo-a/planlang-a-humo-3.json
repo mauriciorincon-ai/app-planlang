@@ -55,6 +55,7 @@
       ],
       "semilla": "planlang-a-humo",
       "simulacion": {
+        "campos_ausentes_en_texto": [],
         "campos_extraidos": {
           "costo_estimado": 380,
           "diagnostico": "SYN-D-12",
@@ -135,6 +136,7 @@
       ],
       "semilla": "planlang-a-humo",
       "simulacion": {
+        "campos_ausentes_en_texto": [],
         "campos_extraidos": {
           "costo_estimado": 1000,
           "diagnostico": "SYN-D-01",
@@ -225,6 +227,7 @@
       ],
       "semilla": "planlang-a-humo",
       "simulacion": {
+        "campos_ausentes_en_texto": [],
         "campos_extraidos": {
           "costo_estimado": 80,
           "diagnostico": "SYN-D-33",
@@ -272,7 +275,7 @@
   },
   "demo_id": "demo-a",
   "formato": "planlang-casos/v1",
-  "huella": "e187af881d36bd4947eb70ce826928dc04689f816a9b23343deaf1a77552f7e2",
+  "huella": "b63d36da8176fab642b5d6a6bd66ff73b6d722c7a960621da5cdb07704ce011a",
   "id": "planlang-a-humo-3",
   "idioma_de_corrida": "es",
   "n": 3,

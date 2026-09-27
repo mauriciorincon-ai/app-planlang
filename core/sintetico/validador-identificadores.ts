@@ -222,6 +222,18 @@ function nombreEnLista(padre: string | undefined, nombre: string): boolean {
   return nombre.split(/\s+/).every((p) => VOCABULARIO_PERSONAS.has(p));
 }
 
+/**
+ * Claves de METADATO que se saltan: la huella y las fechas de la ejecución o de verificación de una
+ * norma. HIPAA protege fechas de una PERSONA; una fecha dentro de un texto del caso sigue disparando.
+ */
+const CLAVES_METADATO = new Set([
+  "huella",
+  "fecha",
+  "aprobado_el",
+  "verificada",
+  "vigencia",
+]);
+
 /** Recorre un valor JSON completo (lote, plan de beneficios, traza) y devuelve todos los hallazgos. */
 export function validarIdentificadores(
   valor: unknown,
@@ -229,7 +241,7 @@ export function validarIdentificadores(
   clave?: string,
   padre?: string,
 ): HallazgoIdentificador[] {
-  if (clave === "huella") return [];
+  if (clave !== undefined && CLAVES_METADATO.has(clave)) return [];
   if (typeof valor === "string") {
     const salida: HallazgoIdentificador[] = [];
     if (

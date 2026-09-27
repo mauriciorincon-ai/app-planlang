@@ -187,6 +187,62 @@ def test_clasificacion_de_fallos_del_proveedor(doble: Doble, tipo: str) -> None:
     assert e.value.tipo == tipo
 
 
+class DobleSecuencia(Doble):
+    """Devuelve una respuesta distinta por llamada: [(rc, stdout), ...]."""
+
+    def __init__(self, respuestas: list[tuple[int, str]]) -> None:
+        super().__init__()
+        self.respuestas = list(respuestas)
+
+    def __call__(self, cmd: list[str], **kw: Any) -> subprocess.CompletedProcess[str]:
+        self.llamadas.append({"cmd": cmd, **kw})
+        rc, out = self.respuestas.pop(0)
+        return subprocess.CompletedProcess(cmd, rc, out, "")
+
+
+MAX_TURNS = json.dumps(dict(RESPUESTA_CLI, is_error=True, subtype="error_max_turns", total_cost_usd=0.02))
+
+
+def test_rc_1_con_error_max_turns_en_stdout_se_clasifica_por_su_json() -> None:
+    # Hallazgo de la corrida real: rc = 1, stderr vacío y la causa SOLO en el JSON de stdout.
+    with pytest.raises(ErrorProveedor) as sin_esquema:
+        ChatClaudeCode(ejecutar=Doble(rc=1, stdout=MAX_TURNS)).invoke("x")
+    assert sin_esquema.value.tipo == "otro"
+    con_esquema = ChatClaudeCode(ejecutar=Doble(rc=1, stdout=MAX_TURNS), json_schema={"type": "object"})
+    with pytest.raises(ErrorProveedor) as e:
+        con_esquema.invoke("x")
+    assert e.value.tipo == "esquema_invalido" and e.value.costo_usd == 0.02
+    limite = Doble(rc=1, stdout=MAX_TURNS, stderr="usage limit reached")
+    with pytest.raises(ErrorProveedor) as lim:
+        ChatClaudeCode(ejecutar=limite).invoke("x")
+    assert lim.value.tipo == "limite_de_uso"
+
+
+def test_error_max_turns_se_reintenta_y_la_traza_lo_declara() -> None:
+    doble = DobleSecuencia([(1, MAX_TURNS), (0, json.dumps(RESPUESTA_CLI))])
+    r = ChatClaudeCode(ejecutar=doble).with_structured_output(Salida, include_raw=True).invoke("x")
+    assert r["parsed"] == Salida(ok=True, n=7) and len(doble.llamadas) == 2
+    assert r["raw"].response_metadata["reintentos_esquema"] == 1
+    assert r["raw"].response_metadata["costo_reintentos_usd"] == 0.02
+
+
+def test_tres_error_max_turns_seguidos_son_esquema_invalido_con_su_costo() -> None:
+    doble = DobleSecuencia([(1, MAX_TURNS)] * 3)
+    with pytest.raises(ErrorProveedor) as e:
+        ChatClaudeCode(ejecutar=doble).with_structured_output(Salida).invoke("x")
+    assert e.value.tipo == "esquema_invalido" and len(doble.llamadas) == 3
+    assert e.value.costo_usd == pytest.approx(0.06)
+
+
+def test_otros_errores_no_se_reintentan() -> None:
+    doble = DobleSecuencia(
+        [(1, json.dumps(dict(RESPUESTA_CLI, is_error=True, subtype="error_during_execution")))]
+    )
+    with pytest.raises(ErrorProveedor) as e:
+        ChatClaudeCode(ejecutar=doble).with_structured_output(Salida).invoke("x")
+    assert e.value.tipo == "otro" and len(doble.llamadas) == 1
+
+
 def test_error_proveedor_solo_admite_el_vocabulario_de_la_traza() -> None:
     with pytest.raises(ValueError):
         ErrorProveedor("inventado")

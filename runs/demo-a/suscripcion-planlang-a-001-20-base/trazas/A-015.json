@@ -1,0 +1,308 @@
+{
+  "aclaraciones": [],
+  "caso_id": "A-015",
+  "cobertura": {
+    "alto_costo": false,
+    "causal": null,
+    "codigo_extraido": "SYN-P-028",
+    "codigo_orden": "SYN-P-028",
+    "contradiccion": false,
+    "estado_servicio": "requiere_autorizacion",
+    "propuesta": "aprobar",
+    "reglas_disparadas": [
+      "RB-07"
+    ]
+  },
+  "corrida_id": "suscripcion-planlang-a-001-20-base",
+  "decisiones_de_arista": [
+    {
+      "desde": "enrutador",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 1,
+      "rama_tomada": "agente_unico",
+      "resultado": false,
+      "senal": "tipo_atencion",
+      "tipo": "tripleta",
+      "umbral_aplicado": "urgencia",
+      "valor_declarado": "urgencia",
+      "valor_observado": "ambulatoria"
+    },
+    {
+      "desde": "enrutador",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 2,
+      "paso": 1,
+      "rama_tomada": "agente_unico",
+      "resultado": false,
+      "senal": "servicio_exento",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    },
+    {
+      "desde": "agente_unico",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "mayor_que",
+      "orden_arista": 1,
+      "paso": 2,
+      "rama_tomada": "verificador_cobertura",
+      "resultado": false,
+      "senal": "campos_faltantes_count",
+      "tipo": "tripleta",
+      "umbral_aplicado": 0,
+      "valor_declarado": 0,
+      "valor_observado": 0
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "menor_que",
+      "orden_arista": 1,
+      "paso": 4,
+      "rama_tomada": "cierre",
+      "resultado": false,
+      "senal": "senal_confianza",
+      "tipo": "tripleta",
+      "umbral_aplicado": 0.75,
+      "valor_declarado": "umbral.U1",
+      "valor_observado": 0.93
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "mayor_que",
+      "orden_arista": 2,
+      "paso": 4,
+      "rama_tomada": "cierre",
+      "resultado": false,
+      "senal": "costo_estimado",
+      "tipo": "tripleta",
+      "umbral_aplicado": 1000,
+      "valor_declarado": "umbral.U2",
+      "valor_observado": 480
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 3,
+      "paso": 4,
+      "rama_tomada": "cierre",
+      "resultado": false,
+      "senal": "contradiccion_orden_texto",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 4,
+      "paso": 4,
+      "rama_tomada": "cierre",
+      "resultado": false,
+      "senal": "propuesta",
+      "tipo": "tripleta",
+      "umbral_aplicado": "negar",
+      "valor_declarado": "negar",
+      "valor_observado": "aprobar"
+    },
+    {
+      "desde": "decision",
+      "entradas": {
+        "modo_texas": false,
+        "propuesta": "aprobar"
+      },
+      "funcion": "texas_y_no_aprobar",
+      "inclusivo": null,
+      "operador": null,
+      "orden_arista": 5,
+      "paso": 4,
+      "rama_tomada": "cierre",
+      "resultado": false,
+      "senal": null,
+      "tipo": "funcion",
+      "umbral_aplicado": null,
+      "valor_declarado": null,
+      "valor_observado": null
+    }
+  ],
+  "documento_adverso": null,
+  "error_de_esquema_en_traspaso": false,
+  "error_proveedor": null,
+  "extraccion": {
+    "campos": {
+      "costo_estimado": 480,
+      "diagnostico": "SYN-D-35",
+      "procedimiento": "SYN-P-028",
+      "urgencia": false
+    },
+    "campos_faltantes": [],
+    "confianza": 0.93,
+    "costo_estimado": 480,
+    "urgencia": false
+  },
+  "formato": "planlang-trace/v1",
+  "guardia_salida": {
+    "acciones_ejecutadas": [
+      "responder_afiliado"
+    ],
+    "acciones_intentadas": [
+      "responder_afiliado"
+    ],
+    "carga_detectada_en_entrada": false,
+    "hallazgos": [],
+    "severidad_accion": 0
+  },
+  "huella": "97968f2554d75b74597deff0a09d5d86315071e10ad2a5df414401a866b80470",
+  "nodos_visitados": [
+    "enrutador",
+    "agente_unico",
+    "verificador_cobertura",
+    "decision",
+    "cierre",
+    "guardia_salida"
+  ],
+  "pasos": [
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 2,
+      "nodo": "enrutador",
+      "orden": 1,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "enrutador",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0.066707,
+      "duracion_ms": 24776,
+      "error_proveedor": null,
+      "inicio_ms": 2,
+      "nodo": "agente_unico",
+      "orden": 2,
+      "reintentos_esquema": 2,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 4869,
+        "salida": 842
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 24781,
+      "nodo": "verificador_cobertura",
+      "orden": 3,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "regla",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 24781,
+      "nodo": "decision",
+      "orden": 4,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "enrutador",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 24783,
+      "nodo": "cierre",
+      "orden": 5,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "regla",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 1,
+      "error_proveedor": null,
+      "inicio_ms": 24783,
+      "nodo": "guardia_salida",
+      "orden": 6,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "regla",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    }
+  ],
+  "pausas_humanas": [],
+  "resultado": "completo",
+  "salida_final": {
+    "aviso_ia": {
+      "en": "Notice: this reply was drafted by an artificial intelligence in a simulation with synthetic data. No denial is issued without review by a person.",
+      "es": "Aviso: esta respuesta la redactó una inteligencia artificial en una simulación con datos sintéticos. Ninguna negación se emite sin la revisión de una persona."
+    },
+    "en": "Dear Member,\n\nRegarding your authorization request for a bone scan (gammagrafía ósea), associated with a diagnosis of bone lesion under evaluation, we inform you that the procedure has been APPROVED in accordance with your benefits plan. The estimated cost reported by the attending physician is 480 synthetic units, subject to the coverage terms and conditions currently in effect under your policy. You may proceed to schedule the procedure as indicated by your treating physician. Should you have any questions, please reach out through our official service channels. Sincerely,\nAuthorizations Team",
+    "es": "Estimado(a) afiliado(a):\n\nEn relación con su solicitud de autorización para Gammagrafía ósea, asociada al diagnóstico de lesión ósea en estudio, le informamos que el procedimiento ha sido APROBADO conforme a las condiciones de su plan de beneficios. El costo estimado informado por el médico tratante es de 480 unidades sintéticas, sujeto a las coberturas y condiciones vigentes de su póliza. Puede continuar con la programación del procedimiento según las indicaciones de su médico tratante. Ante cualquier duda, quedamos atentos a través de nuestros canales oficiales de atención. Cordialmente,\nEquipo de Autorizaciones"
+  },
+  "senales": {
+    "campos_faltantes_count": 0,
+    "ciclos_aclaracion": 0,
+    "contradiccion_orden_texto": false,
+    "costo_estimado": 480,
+    "decision_final": "aprobar",
+    "error_proveedor": null,
+    "latencia_total_s": 24.777,
+    "modo_texas": false,
+    "nodos_visitados": [
+      "enrutador",
+      "agente_unico",
+      "verificador_cobertura",
+      "decision",
+      "cierre",
+      "guardia_salida"
+    ],
+    "pausa_humana": false,
+    "propuesta": "aprobar",
+    "senal_confianza": 0.93,
+    "servicio_exento": false,
+    "severidad_accion": 0,
+    "tipo_atencion": "ambulatoria",
+    "tokens": 5711
+  },
+  "variante": "agente_unico"
+}

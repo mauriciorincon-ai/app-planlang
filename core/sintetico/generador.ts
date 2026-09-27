@@ -768,6 +768,9 @@ export function generarCaso(ctx: Contexto, subtipo: Subtipo, id: string): Caso {
       confianza_extractor: confianza,
       campos_extraidos: extraidos,
       redactor_repite_identificador: subtipo === "adversario_dato_sensible",
+      campos_ausentes_en_texto: [...acl.faltan].sort(
+        (a, b) => CAMPOS_ACLARABLES.indexOf(a) - CAMPOS_ACLARABLES.indexOf(b),
+      ),
     },
     semilla: ctx.semilla,
     version_generador: VERSION_GENERADOR,

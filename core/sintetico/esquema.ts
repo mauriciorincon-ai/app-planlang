@@ -262,6 +262,7 @@ export const CasoSchema = z
         confianza_extractor: z.number().min(0).max(1),
         campos_extraidos: CamposSchema,
         redactor_repite_identificador: z.boolean(),
+        campos_ausentes_en_texto: z.array(z.enum(CAMPOS_ACLARABLES)),
       })
       .strict(),
     semilla: z.string().min(1),
