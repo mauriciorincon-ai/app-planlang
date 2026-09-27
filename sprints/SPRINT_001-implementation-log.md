@@ -234,6 +234,19 @@ Humo real previo (3 casos, fuera del repo): 3/3; en el caso con inyección el mo
 - **Señales de nodos no visitados = `null`** (p. ej. `senal_confianza` en urgencias); `ciclos_aclaracion` final = aclaraciones pedidas. El verificador trata `null` como «no aplica» (fase 4).
 - **Tokens de los intentos fallidos** no se cuentan (sí su costo): ADR-004.
 
+### CI del PR borrador #7 (2026-09-27, commit `1b141f7`)
+
+Abierto como borrador a pedido del usuario, para ver la CI antes de las fases 4 y 5. Los 4 checks requeridos con conclusión propia `success` (ninguno `skipped`):
+
+| Check | Resultado | Evidencia en el log |
+|---|---|---|
+| `quality` | ✅ 52 s | vitest 25 archivos · 315 tests (los 30 de `tests/unit/diseno-tokens.test.ts` son de la Etapa de Diseño, no versionados aquí) |
+| `e2e` | ✅ 54 s | smoke del estampado |
+| `lighthouse` | ✅ 1 min 31 s | sin cambios de UI |
+| `python` | ✅ 29 s | **primera ejecución con contenido del sprint:** ruff limpio · 122 passed, 3 skipped · cobertura 95,86 % (umbral 70) |
+
+Dependabot abrió el #6 (`@types/node` 22 → 26) durante el sprint: se procesa después del PR del sprint (regla 18; salto de mayor con Node 22 en CI).
+
 ## Desviación del plan
 
 1. **Carnada C03 del contrato `instrumentos-de-plan` v0.1.0** (se aplica en la fase 1): la tabla de prioridad de acción AIAG-VDA 2019 da `baja` para S8·O3·D4, no `alta`. Enmienda propuesta en el summary: C03 → S8·O6·D2 (`alta`, RPN 96) y C03-bis → S8·O3·D4 (`baja`, RPN 96). Fuente secundaria verificada 2026-09-26 (Relyence, tabla AP); la primaria (handbook) no es accesible por curl.
