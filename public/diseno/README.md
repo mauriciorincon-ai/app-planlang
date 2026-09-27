@@ -29,11 +29,12 @@
   íconos y la franja «Cómo funciona», el nodo del grafo (tipo × estado), un fragmento del grafo real
   del spike, dos teléfonos con la página a 390 px (lienzo y lista), hexágono y escudo lado a lado, los
   tres veredictos y la escala tipográfica. Las rondas 1 y 2 viven en la historia de git.
-- `kit.html` — **mirada 2, aprobado**: el design system en vivo (tokens leídos del CSS generado, componentes canon
-  con sus estados). El documento fuente es `design-system.md`, en la raíz del repo.
-- `03-agente.html` — **mirada 2, ronda 2**: P3, primero la ficha del agente (objetivo, recibe → hace → entrega, puede / nunca /
-  participan, capacidad medida; ficha técnica para expertos) y después el grafo real del spike contra el contrato del plan, con
-  detalle por nodo en cuatro perfiles (líder, experto, código, trazas abribles).
+- `kit.html` — **mirada 2, aprobado; consolidado en la mirada 5**: el design system en vivo (tokens leídos del CSS generado, componentes
+  canon con sus estados) y, al final, «Componentes de pantalla»: los 44 componentes de la 0.2 a la 0.5 con su enlace vivo. El
+  documento fuente es `design-system.md`, en la raíz del repo.
+- `03-agente.html` — **mirada 5**: P3 con el grafo real del sprint 1 (aprobado en la mirada 4): ficha del agente con la corrida v1.2,
+  lienzo de las 8 piezas y sus 9 reglas, un panel por nodo con los perfiles líder, experto, código real y trazas de los 20 casos, la
+  arista U1 y, al final, el grafo del spike como ejemplo de «exigido y ausente». La versión de la mirada 2 vive en la historia de git.
 - `04-brecha.html` — **mirada 3, aprobada**: P4, el informe de brecha REAL de la corrida v1.2 del S1. Abre con el balance (la matriz
   «el plan frente a la corrida», lo que falló renglón por renglón, lo que quedó sin probar, lo que cumplió con nota y lo que se
   cumplió uno por uno) y sigue con sus 9 secciones; «Leer como» líder o experto y el estado «maqueta: no cumple».
@@ -98,6 +99,8 @@ en toda cifra (real · spike vs maqueta) — **cambiada en la mirada 3**: Brecha
 | 2026-09-27 | `04-brecha.html` + `05-playground.html` (mirada 3) | «0. Antes que nadacada vez que me hagas mirar algo construye una matriz donde me digas que revisar y que deberia mirar. 0.1. Brecha esta letra "El plan se cumplió: 9 de 9 criterios y ningún riesgo ocurrió. Pero un supuesto quedó refutado, otro no se pudo probar y aparecieron 5 fallas que el plan no preveía." está muy grande, segundo pues si se ve que algo falla peor no se ve que exactamente. 0.2Playground en cambio esta esa muy bien al mover lor elementos va arrojando alertas. 1. No me queda claro que s e cumplio y que fallo 2. Si esta claro muy bien trabajo 3. No veo que cambie nada o noe s evidente la verdad 4. No hay que revisar» — **no aprobada**: el Playground se entiende; Brecha no dice qué se cumplió y qué falló; el cambio de perfil no se ve; regla nueva: matriz de qué revisar en cada mirada | ronda 2: balance «qué se planeó · qué pasó» al frente de Brecha, resumen a escala de lectura, perfiles con cambio evidente en las dos páginas |
 | 2026-09-27 | `04-brecha.html` + `05-playground.html` (mirada 3, ronda 2) | «Brecha se entiende muchomejor y play gorund muy bien 1. si se entiende 2. La letra se ve mejor 3. ahora si hay una diferenci clara tanto visual como en contenido porque son dos audiencias distintas» — **mirada 3 aprobada** (comentarios que delatan las páginas abiertas; sí a las tres preguntas, sin cambios) | mirada 4: `01-entrada.html`, `02-plan.html`, `06-caso.html`, `07-fichas.html` e `index.html` |
 | 2026-09-27 | `01-entrada.html` + `02-plan.html` + `06-caso.html` + `07-fichas.html` + `index.html` (mirada 4) | «3. no vi esa transicion revisala. Excelente las visuales de Plan muy bien trabajo, pero me gustaria que Decisiones Riesgos, Supuestos etc mostrara los 5 promeros y un boton de mostrar mas para no alargar tanto la visual. No encontre los casos el restante esta muy bien dime donde estan lso casos para verlos» — **no aprobada todavía**: Plan aprobado a la vista; faltan la transición «no cumple» de la Entrada, «mostrar más» en el Plan y encontrar los casos | ronda 2: transición visible en la Entrada, 5 primeras + «mostrar más» en cada parte del Plan, pestaña «Casos» en la navegación |
+| 2026-09-27 | `01-entrada.html` + `02-plan.html` + `06-caso.html` (mirada 4, ronda 2) | «Si apruebo que Agente muestre el grafo real del sprint 1, con sus 8 piezas, el reto lo abri y lo apruebo continua» — **mirada 4 aprobada**; P3 al grafo real del S1, aprobado | mirada 5 = G-Diseño: `03-agente.html` con el grafo del S1 (el del spike como «exigido y ausente»), kit consolidado, `design-system.md` candidato a 1.0.0 |
+| 2026-09-27 | todo, desplegado: `03-agente.html` con el grafo del S1, `kit.html` consolidado, `design-system.md` 0.5.0 (mirada 5 = G-Diseño) | _(pendiente)_ | — |
 
 ## Gates de esta etapa y su demo en rojo (regla 15 del kit)
 
@@ -120,7 +123,7 @@ en toda cifra (real · spike vs maqueta) — **cambiada en la mirada 3**: Brecha
 | `02-plan.html`       | El plan como contrato ejecutable (P2) | plan v1.2 · cargando · error (plan inválido) · desplegables cerrados y abiertos · líder y experto · oscuro y claro · ES y EN · 380 px y desktop |
 | `06-caso.html`       | Una traza de punta a punta · documento de decisión adversa (P6) | A-004 negación con persona · A-006 adversario · A-008 dos aclaraciones · A-001 aprobado solo · error · líder y experto · oscuro y claro · ES y EN · 380 px y desktop |
 | `07-fichas.html`     | Ficha de reproducibilidad · fichas de la app y del agente A (P7) | las tres fichas · error (ficha inválida) · líder y experto (validación v1.3.1) · oscuro y claro · ES y EN · 380 px y desktop |
-| `03-agente.html`     | El grafo real desde el código (P3) | ronda 2: ficha del agente líder / experto · selección extractor / enrutador / pausa_humana / aprobar / arista U1 / ausentes · líder · experto · código · trazas cerradas y abiertas · lienzo A y lista por capa · oscuro y claro · ES y EN · 380 px y desktop |
+| `03-agente.html`     | El grafo real desde el código (P3) | mirada 5: grafo del S1 · 8 selecciones de nodo + arista U1 · líder / experto / código / trazas · ficha líder / experto · spike como «exigido y ausente» · oscuro y claro · ES y EN · 380 px y desktop. Antes, ronda 2: ficha del agente líder / experto · selección extractor / enrutador / pausa_humana / aprobar / arista U1 / ausentes · líder · experto · código · trazas cerradas y abiertas · lienzo A y lista por capa · oscuro y claro · ES y EN · 380 px y desktop |
 
 ## Registro de G-Diseño (se llena al cerrar la etapa)
 

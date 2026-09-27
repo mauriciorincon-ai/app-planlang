@@ -598,4 +598,53 @@ desbordes, 0 textos fuera del lienzo, fuentes cargadas, 0 animaciones. Leídos c
 pulsar «maqueta: no cumple» a 1280 y 390 px, los riesgos con el botón cerrado (1280) y abierto (390,
 experto), y la barra con «Casos» activa (inglés, claro). Enlaces: ninguno roto; errores: ninguno.
 
+**Lo que dijo el usuario (2026-09-27):**
+
+> «Si apruebo que Agente muestre el grafo real del sprint 1, con sus 8 piezas, el reto lo abri y lo
+> apruebo continua»
+
+**Veredicto: MIRADA 4 APROBADA** («lo abri y lo apruebo»). Queda sellado:
+
+- **Entrada, Plan, Caso y Fichas**, con la ronda 2: el aviso de estado arriba, «Ver N más» en el
+  Plan y la pestaña «Casos».
+- **Propuesta para Agente, aprobada:** P3 pasa a mostrar el grafo real del sprint 1 (las 8 piezas del
+  contrato) y conserva el del spike como ejemplo de «exigido y ausente».
+
+**Qué sigue:** la mirada 5 = G-Diseño, según el plan de miradas aprobado («todo, desplegado, en teléfono
+y desktop, oscuro y claro, ES y EN»). Entran en ella Agente con el grafo del S1 y el kit con los
+componentes de la 0.2 a la 0.4.1 consolidados, con `design-system.md` como candidato a 1.0.0.
+
+## Mirada 5 = G-Diseño (2026-09-27)
+
+**Qué se entregó (según el plan de miradas aprobado: «todo, desplegado, en teléfono y desktop, oscuro y
+claro, ES y EN»):**
+
+- **Agente con el grafo real del sprint 1** (la propuesta aprobada en la mirada 4). La misma pantalla y
+  el mismo diseño de la mirada 2, con otros datos: la ficha del agente con la corrida v1.2 (las 7
+  actividades corrieron; capacidad medida: 11,8 s de mediana por caso, 0,034 USD nominales, 8 de 20 a
+  una persona, 20 de 20 caminos iguales a la verdad conocida); «Lo que corrió, frente a su plan»: 8 de
+  8 nodos, 9 de 9 reglas, 233 · 0; un lienzo nuevo con las 8 piezas en sus bandas, las 9 reglas de
+  arista rotuladas y un solo cruce, dibujado con **salto**; un panel por nodo con sus cuatro perfiles
+  (líder, experto, código real del S1 con sus líneas, trazas de los casos que pasaron por él, 5 a la
+  vista y «Ver N más»); la arista U1 con la distribución de los 15 casos que llegaron a `decision`; y,
+  al final, el grafo del spike como el ejemplo vivo de lo «exigido y ausente».
+- **Kit consolidado:** «Componentes de pantalla», el catálogo de los 44 componentes de la 0.2 a la
+  0.5, con su uso, sus estados y el enlace a su instancia viva. Las piezas canon no cambiaron.
+- **`design-system.md` 0.5.0, candidato a 1.0.0:** el salto, la distribución de una arista, la rama
+  «si no» en la arista condicional y el pendiente al día. Sube a 1.0.0 con «apruebo G-Diseño».
+
+**Hallazgos al construir:** el bloque de código de Agente mostraba ligaduras (`->` como flecha, `==`
+como un signo doble) desde la mirada 2: su propia regla `font:` reiniciaba la de la hoja común; se
+corrigió. La contradicción entre la orden y el texto está en A-016, no en A-018 como escribí en un
+borrador; la confianza del extractor va de 0,70 a 0,98 (no de 0,55 a 0,95): ambas cifras se
+comprobaron contra las trazas antes de publicar.
+
+**Pasada de capturas:** medida de las 10 páginas con los dos perfiles, normal y con movimiento
+reducido; Agente en sus 9 selecciones × 2 temas × 2 idiomas × 380/1280; el lienzo leído como imagen
+en oscuro-ES y claro-EN a doble resolución; los paneles de `decision` (cuatro perfiles, 1280) y
+`extractor` (líder, experto, trazas, 380); la arista U1 en los dos anchos; el kit a 1280 y 380.
+
+**El gate de G-Diseño:** «apruebo G-Diseño» + el gate ⭐ de lectura: una persona no técnica lee la
+Entrada y la Brecha y explica qué se planeó y qué falló.
+
 **Lo que dijo el usuario:** _(pendiente)_.

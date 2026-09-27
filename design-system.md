@@ -1,6 +1,6 @@
 ---
-version: 0.4.1
-estado: kit aprobado en la mirada 2 (2026-09-27); 0.2 suma los componentes de P3, 0.3 los de Brecha y Playground (mirada 3) 0.3.1 el balance y el perfil evidente (mirada 3, ronda 2) 0.4.0 los de Entrada, Plan, Caso y Fichas (mirada 4) y 0.4.1 «Ver N más», el aviso de estado arriba y la pestaña Casos (mirada 4, ronda 2) — sube a 1.0.0 al aprobar G-Diseño
+version: 0.5.0
+estado: kit aprobado en la mirada 2 (2026-09-27); 0.2 suma los componentes de P3, 0.3 los de Brecha y Playground (mirada 3) 0.3.1 el balance y el perfil evidente (mirada 3, ronda 2) 0.4.0 los de Entrada, Plan, Caso y Fichas (mirada 4) 0.4.1 «Ver N más», el aviso de estado arriba y la pestaña Casos (mirada 4, ronda 2) y 0.5.0 el salto, la distribución de una arista y el kit consolidado (mirada 5) — candidato a 1.0.0: sube al aprobar G-Diseño
 fecha: 2026-09-27
 fuente_visual: docs/diseno/ (kit.html es este documento en vivo)
 tokens: scripts/paleta/generar-tokens.mjs → docs/diseno/assets/tokens.{json,css} (generados; gate diseno-tokens)
@@ -195,7 +195,7 @@ propios (shadcn/ui personalizado donde aplique, jamás el estilo por defecto).
 | **Chip «no observado»**       | una señal del plan que las trazas no registran; desactiva su umbral                                                     | solo · dentro de un deslizador                                 |
 | **Veredicto**                 | cumple · cumple con alertas · no cumple · en construcción; normal y chico                                               | cuatro variantes × dos tamaños                                 |
 | **Nodo del grafo**            | 5 tipos de `agentes-ia`                                                                                                 | reposo · hover · foco · seleccionado · exigido-ausente         |
-| **Arista**                    | secuencia (sólida) · condicional (discontinua + cuadro, con `señal · operador · valor`) · reanudación (punteada)        | tres modos                                                     |
+| **Arista**                    | secuencia (sólida) · condicional (discontinua + cuadro, con `señal · operador · valor`; «si no» rotula la rama por defecto) · reanudación (punteada); dos flechas que se cruzan lo hacen con **salto** (0.5) | tres modos · salto                                             |
 | **Lienzo**                    | el grafo: 1040 px, se desliza de lado en teléfono con índice de capas; lista por capa como alterna                      | ver `03-agente.html`                                           |
 | **Fila de criterio**          | criterio del plan: regla de medición, medido vs objetivo con la brecha rayada, veredicto                                | contenido · éxito · vacío · cargando · error                   |
 | **Fila de riesgo**            | modo de falla con prioridad de acción AIAG-VDA (RPN solo secundario), detector en trazas, si ocurrió                    | contenido · éxito · vacío · cargando · error                   |
@@ -247,6 +247,7 @@ propios (shadcn/ui personalizado donde aplique, jamás el estilo por defecto).
 | **Pasos por carril** (0.4)    | proceso de la ficha del agente: pasos numerados por actor (médico, agente, auditor, afiliado), las decisiones con borde discontinuo; en hoja-de-vida los dibuja su motor BPMN | —                                                              |
 | **Ver N más** (0.4.1)         | una lista larga muestra sus 5 primeras filas; el botón dice cuántas y cuáles faltan («Ver 3 más: R7, R4, R8»), las abre en su sitio y «Ver menos» las cierra sin perder el botón de vista; lo plegado cuenta igual para el aviso de perfil | cerrado · abierto · teléfono                                   |
 | **Aviso de estado arriba** (0.4.1) | un estado de maqueta que cambia bloques lejanos pone su aviso donde se pulsa, arriba de todo, con enlaces a lo que cambia | —                                                              |
+| **Distribución de una arista** (0.5) | los valores observados de una señal frente a su umbral: ■ los que la regla manda a una persona, ○ los que siguen; el umbral, línea discontinua con su valor | escritorio · teléfono (la letra crece en unidades del SVG)      |
 | **Validación de campos** (0.4) | experto: cada campo de una ficha contra los límites del contrato v1.3.1 con «Cabe» o «No cabe»                         | cabe · no cabe (error)                                         |
 
 ## 6. Anti-patrones (prohibidos, además de los del skill `diseno-ui`)
@@ -263,21 +264,19 @@ propios (shadcn/ui personalizado donde aplique, jamás el estilo por defecto).
 
 ## 7. Pendiente para 1.0.0 (G-Diseño)
 
-- Los componentes de la 0.2 (en `03-agente.html`) y de la 0.3 (en `04-brecha.html` y
-  `05-playground.html`) entran al kit al consolidar G-Diseño (el kit ya aprobado no se toca a mitad
-  de etapa).
-- La mono va sin ligaduras en código y datos (`!=` no se dibuja `≠`); en teléfono, la letra de las
-  gráficas crece en unidades del SVG. Ambas reglas ya rigen en la hoja de estilos.
-- Los componentes de la 0.3.1 (en `04-brecha.html` y `05-playground.html`) entran al kit con los de la
-  0.2 y la 0.3.
+- **Consolidado en la mirada 5:** `kit.html` suma «Componentes de pantalla», el catálogo de los 44
+  componentes de la 0.2 a la 0.5, cada uno con su uso, sus estados y el enlace a su instancia viva
+  (pantalla, estado y perfil). Las piezas canon de la mirada 2 no cambiaron.
+- **Agente con el grafo real del sprint 1 (mirada 5, aprobado por el usuario en la mirada 4):** las 8
+  piezas del contrato en sus bandas, las 9 reglas de arista, un solo cruce con salto; el grafo del spike
+  queda como el ejemplo vivo del estado «exigido y ausente».
+- La mono va sin ligaduras en código y datos (`!=` no se dibuja `≠`, `->` no es `→`); en teléfono, la
+  letra de las gráficas crece en unidades del SVG. En la mirada 5 se encontró que el bloque de código
+  de Agente las volvía a encender (su regla `font:` las reiniciaba): corregido.
 - Toda cifra lleva su procedencia: chip «real» con su fuente o chip «maqueta». Los 12 minutos por
   revisión del playground son el `costo_humano_por_caso_min` que el plan v1.2 declara en cada umbral.
-
-- Los componentes de la 0.4.0 (en `01-entrada.html`, `02-plan.html`, `06-caso.html` y
-  `07-fichas.html`) entran al kit con los demás al consolidar G-Diseño.
-- Miradas 3 y 4: pantallas Brecha, Playground, Entrada final, Plan, Caso y Fichas ensamblan estos
-  componentes; lo que cambie en ellas vuelve aquí.
 - Tabla de métricas de Inter para el diagramador (G15), propuesta como enmienda al contrato en el
   summary (el piloto big-d la fijó para Space Grotesk).
 - Glifo de «regla»: hexágono por defecto (gramática v1.0.0); el escudo queda como alternativa
   explicada al usuario.
+- **Al aprobar G-Diseño:** `version: 1.0.0`, la fecha y el veredicto en `docs/diseno/README.md`.

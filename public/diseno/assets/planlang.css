@@ -3735,3 +3735,13 @@ details.porque-d > div {
 .mas-boton[aria-expanded="false"] .mas-cerrar {
   display: none;
 }
+/* Mirada 5: en teléfono la distribución de una arista se encoge a la mitad; su letra crece en unidades
+   del SVG para seguir legible (la misma regla de las gráficas de Brecha y Playground). */
+@media (max-width: 560px) {
+  .distribucion svg text {
+    font-size: 17px;
+  }
+  .distribucion svg text.zona {
+    font-size: 18px;
+  }
+}
