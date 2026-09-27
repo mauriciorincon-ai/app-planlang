@@ -71,7 +71,9 @@ pantallas llega en el sprint 2.
 - **Cómo se usa:**
   1. Revisa en tu cuenta de Claude cuánta cuota te queda.
   2. `pnpm lote:demo --corrida <nombre-nuevo> --fecha <AAAA-MM-DD>`: corre los 20 casos con tu
-     suscripción de Claude Code. Tarda unos 5 minutos.
+     suscripción de Claude Code, con 2 segundos entre caso y caso. Tarda unos 5 minutos. Con la
+     suscripción, el comando se niega a correr más casos por sesión de los que fija el plan (20) o a
+     correr sin pausa.
   3. `pnpm lote:base --corrida <nombre-nuevo>-base --fecha <AAAA-MM-DD>`: la misma prueba con un solo
      agente, para comparar.
   4. Si se corta por límite de uso, vuelve a correr el mismo comando más tarde: retoma donde quedó, sin
@@ -106,8 +108,10 @@ pantallas llega en el sprint 2.
 
 ### Preguntas frecuentes
 
-- **¿Por qué el informe dice «cumple con alertas» si nada falló?** Porque algo quedó sin medir del
-  todo: por ejemplo, un criterio que exige tres corridas y tiene menos.
+- **¿Por qué el informe dice «cumple con alertas» si se cumplieron todos los criterios?** Porque el
+  veredicto no mira solo los criterios: también los supuestos, los riesgos y las fallas que el plan no
+  previó. En el informe vigente, el supuesto S3 quedó refutado, el supuesto S1 no se pudo probar y
+  aparecieron fallas no previstas. Lo que no se pudo medir también es una alerta, nunca un silencio.
 - **¿Puedo cambiar un umbral y ver qué habría pasado?** Desde el sprint 2, en el playground de la
   vitrina. El informe ya lista qué umbrales se podrán mover y qué casos quedaron justo en el límite.
 
@@ -170,7 +174,9 @@ screens arrives in sprint 2.
 - **How to use it:**
   1. Check how much quota you have left in your Claude account.
   2. `pnpm lote:demo --corrida <new-name> --fecha <YYYY-MM-DD>`: runs the 20 cases with your Claude
-     Code subscription. It takes about 5 minutes.
+     Code subscription, leaving 2 seconds between cases. It takes about 5 minutes. With the
+     subscription, the command refuses to run more cases per session than the plan allows (20) or to
+     run them back to back.
   3. `pnpm lote:base --corrida <new-name>-base --fecha <YYYY-MM-DD>`: the same test with a single agent,
      to compare.
   4. If it stops at a usage limit, run the same command later: it resumes where it stopped, without
@@ -205,8 +211,10 @@ screens arrives in sprint 2.
 
 ### Frequently asked questions
 
-- **Why does the report say “met with alerts” if nothing failed?** Because something was not fully
-  measured: for instance, a criterion that requires three runs and has fewer.
+- **Why does the report say “met with alerts” when every criterion was met?** Because the verdict
+  looks beyond the criteria: at the assumptions, the risks and the failures the plan did not foresee. In
+  the current report, assumption S3 was refuted, assumption S1 could not be tested and unforeseen
+  failures showed up. Whatever could not be measured is an alert too, never a silence.
 - **Can I change a threshold and see what would have happened?** From sprint 2, in the showcase
   playground. The report already lists which thresholds can be moved and which cases sat right at the
   limit.

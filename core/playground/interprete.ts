@@ -219,22 +219,32 @@ export function agruparVisitas(
   );
 }
 
-/** Recalcula cada visita de nodo escritor desde lo observado y con los umbrales dados. */
+/**
+ * Recalcula cada visita de nodo escritor desde lo observado y con los umbrales dados. `ligaduras`
+ * (`señal → id de umbral`) nombra las señales que SON un umbral (un interruptor como el modo Texas): al
+ * recalcular, su valor registrado se reemplaza por el del umbral aplicado. Sin ligaduras (RF-09.2) el
+ * recálculo usa exactamente lo registrado.
+ */
 export function recalcular(
   decisiones: readonly DecisionDeArista[],
   aristas: readonly AristaCondicional[],
   ramasPorDefecto: Readonly<Record<string, string>>,
   umbrales: Umbrales,
+  ligaduras: Readonly<Record<string, string>> = {},
 ): VisitaRecalculada[] {
   return agruparVisitas(decisiones).map(({ paso, desde, registros }) => {
     const defecto = ramasPorDefecto[desde];
     if (defecto === undefined)
       throw new ErrorArista(`nodo escritor sin rama por defecto: ${desde}`);
     const propias = aristas.filter((a) => a.desde === desde);
+    const senales = senalesDeVisita(registros);
+    for (const [s, id] of Object.entries(ligaduras))
+      if (Object.hasOwn(senales, s) && Object.hasOwn(umbrales, id))
+        senales[s] = umbrales[id] as JsonValor;
     const { rama, registros: nuevos } = decidir(
       propias,
       defecto,
-      senalesDeVisita(registros),
+      senales,
       umbrales,
     );
     return {

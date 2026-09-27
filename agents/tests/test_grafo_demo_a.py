@@ -141,3 +141,21 @@ def test_el_grafo_exige_los_nodos_del_plan() -> None:
     with pytest.raises(PlanInvalido):
         construir_grafo(plan_roto, PB, checkpointer=InMemorySaver())
     assert len(NODOS) == 8
+
+
+def test_ninguna_negacion_sin_pausa_aunque_el_plan_omita_la_arista() -> None:
+    # M-7: la regla dura 4 es arquitectura. Aun con un estado que llega al redactor (o al cierre de la
+    # línea base) con «negar» y sin pausa, el nodo corta el caso en vez de emitir la negación.
+    from types import SimpleNamespace
+
+    from app_agents.agente_unico import NodosLineaBase
+    from app_agents.reloj import RelojFijo
+
+    runtime = SimpleNamespace(context=SimpleNamespace(reloj=RelojFijo()))
+    estado = {"caso_id": "X", "decision_final": "negar", "pausa_humana": False}
+    with pytest.raises(ErrorArista, match="regla dura 4"):
+        nodos_mod.NodosDemoA(PLAN, PB).redactor(estado, runtime)  # type: ignore[arg-type]
+    with pytest.raises(ErrorArista, match="regla dura 4"):
+        NodosLineaBase(PLAN, PB).cierre(estado, runtime)  # type: ignore[arg-type]
+    nodos_mod.exigir_pausa_en_negacion("negar", {"pausa_humana": True})  # type: ignore[typeddict-item]
+    nodos_mod.exigir_pausa_en_negacion("aprobar", {})  # type: ignore[typeddict-item]

@@ -279,6 +279,85 @@ describe("lector — corridas incompatibles", () => {
       expect.arrayContaining(["HUELLA_NO_COINCIDE", "REFERENCIA_ROTA"]),
     );
   });
+  it("pass^k exige corridas distintas, del mismo grafo y sobre los mismos casos (M-3)", async () => {
+    const e = entradaSimulada();
+    const rep = async (f: (m: O) => void) => {
+      const c = copia(e.corrida);
+      const m = { ...(c.corrida as O), corrida_id: "simulado-3casos-r2" };
+      f(m);
+      return { ...c, ruta: "runs/demo-a/r2", corrida: await sellar(m) };
+    };
+    const buena = await rep(() => {});
+    const detalles = async (reps: EntradaVerificador["corrida"][]) =>
+      (await motivos({ ...e, repeticiones: reps }))
+        .filter((m) => m.codigo === "CORRIDA_INCOMPATIBLE")
+        .map((m) => m.detalle.es);
+    expect(await detalles([buena, buena])).toEqual([
+      "una repetición no puede ser la misma corrida ni repetirse",
+    ]);
+    const otroGrafo = await rep((m) => {
+      m["version_grafo"] = "0".repeat(64);
+    });
+    expect(await detalles([otroGrafo])).toContain(
+      "la repetición corrió otra versión del grafo",
+    );
+  });
+  it("otro plan de beneficios, otro demo, otros umbrales en las ramas o errores mal declarados (M-2)", async () => {
+    const e = entradaSimulada();
+    const conManifiesto = async (f: (m: O) => void) => {
+      const c = copia(e.corrida);
+      const m = c.corrida as O;
+      f(m);
+      return motivos({ ...e, corrida: { ...c, corrida: await sellar(m) } });
+    };
+    const es = (ms: MotivoLectura[]) => ms.map((m) => m.detalle.es);
+    expect(
+      es(
+        await conManifiesto((m) => {
+          (m["plan_beneficios"] as O)["huella"] = "2".repeat(64);
+        }),
+      ),
+    ).toContain(
+      "la corrida usó otro plan de beneficios que el del lote de casos",
+    );
+    expect(
+      es(
+        await conManifiesto((m) => {
+          m["demo_id"] = "demo-b";
+        }),
+      ),
+    ).toEqual(
+      expect.arrayContaining([
+        "el grafo es de otro demo",
+        "la corrida es de otro demo que el lote de casos",
+      ]),
+    );
+    expect(
+      es(
+        await conManifiesto((m) => {
+          (m["plan"] as O)["version"] = "9.9.9";
+        }),
+      ),
+    ).toContain("el manifiesto nombra otro plan (id o versión)");
+    expect(
+      es(
+        await conManifiesto((m) => {
+          (m["umbrales_aplicados"] as O)["U1"] = 0.8;
+        }),
+      ),
+    ).toContain(
+      "las ramas esperadas se calcularon con otros umbrales que los del manifiesto",
+    );
+    expect(
+      es(
+        await conManifiesto((m) => {
+          m["casos_con_error"] = ["AH-001"];
+        }),
+      ),
+    ).toContain(
+      "los casos con error del manifiesto no son las trazas que terminaron en error",
+    );
+  });
   it("leerCorridaVerificada también rechaza", async () => {
     const e = entradaSimulada();
     await expect(

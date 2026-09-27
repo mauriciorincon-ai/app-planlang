@@ -18,8 +18,8 @@ un validador en CI lo comprueba.
 | `packages/`                  | Implementaciones de los dos reusables de la casa (instrumentos de plan · diagramador), con su contrato fijado                                                                                                        |
 | `plans/` · `data/` · `runs/` | El plan aprobado con huella, las plantillas de dominio, los casos sintéticos y las corridas exportadas                                                                                                               |
 | `src/`                       | La vitrina estática bilingüe (Next.js exportado). Llega en el S2, tras la Etapa de Diseño                                                                                                                            |
-| `docs/`                      | Manual de uso, guía de prueba, kit de prueba, brochure y blueprint                                                                                                                                                   |
-| `decisions/`                 | ADRs: código primero · proveedor y cumplimiento · pines de Python                                                                                                                                                    |
+| `docs/`                      | Manual de uso, guía de prueba y kit de prueba (el brochure y el blueprint nacen al cierre del ciclo)                                                                                                                 |
+| `decisions/`                 | ADRs: código primero · proveedor y cumplimiento · pines de Python · salida estructurada · enmiendas de medición · línea base                                                                                         |
 | `sprints/`                   | Bitácora y summary de cada sprint                                                                                                                                                                                    |
 
 ## Cómo se usa (S1, sin pantalla)

@@ -50,6 +50,37 @@ const PRIORIDAD: Record<string, Tb> = {
   baja: tb("baja", "low"),
 };
 
+/** Enumeraciones del dominio del verificador, redactadas en los dos idiomas (regla 20). */
+const TIPO_NODO: Record<string, Tb> = {
+  enrutador: tb("enrutador", "router"),
+  modelo: tb("modelo", "model"),
+  regla: tb("regla", "rule"),
+  pausa_humana: tb("pausa humana", "human pause"),
+};
+const TIPO_EVALUADOR: Record<string, Tb> = {
+  regla: tb("regla", "rule"),
+  juez_modelo: tb("juez con modelo", "model judge"),
+  humano: tb("persona", "person"),
+};
+const VARIANTE: Record<string, Tb> = {
+  multiagente: tb("multiagente", "multi-agent"),
+  agente_unico: tb("agente único", "single agent"),
+};
+const METRICA: Record<string, Tb> = {
+  auroc: tb("AUROC", "AUROC"),
+  ece: tb("ECE", "ECE"),
+  exactitud: tb("exactitud", "accuracy"),
+  exactitud_base: tb("exactitud de la línea base", "baseline accuracy"),
+  latencia_mediana: tb("latencia mediana", "median latency"),
+  latencia_mediana_base: tb(
+    "latencia mediana de la línea base",
+    "baseline median latency",
+  ),
+  tasa: tb("tasa", "rate"),
+};
+const nombre = (mapa: Record<string, Tb>, x: string, i: Idioma): string =>
+  mapa[x]?.[i] ?? x;
+
 const SIMBOLO_OPERADOR: Record<string, [string, string]> = {
   igual_a: ["=", "="],
   distinto_de: ["≠", "≠"],
@@ -302,7 +333,7 @@ function seccionRiesgos(inf: Informe, i: Idioma): string {
         : ["Node", "Type", "In the graph", "Visits"],
       ct.nodos.map((n) => [
         n.id,
-        n.tipo,
+        nombre(TIPO_NODO, n.tipo, i),
         n.en_grafo ? "✓" : "✗",
         String(n.visitas),
       ]),
@@ -334,7 +365,7 @@ function seccionRiesgos(inf: Informe, i: Idioma): string {
           ],
       ct.rf_09_2.map((r) => [
         r.corrida_id,
-        r.variante,
+        nombre(VARIANTE, r.variante, i),
         String(r.visitas),
         String(r.discrepancias),
         r.coincide ? "✓" : "✗",
@@ -357,6 +388,7 @@ function seccionBrechas(inf: Informe, i: Idioma): string {
     ),
     no_ejecutado: tb("✗ no corrió", "✗ did not run"),
     sin_implementacion: tb("✗ sin implementación", "✗ not implemented"),
+    mal_formado: tb("⚠ no pudo medir", "⚠ could not measure"),
   };
   return [
     i === "es" ? "## 5. Brechas no previstas" : "## 5. Unforeseen gaps",
@@ -369,7 +401,7 @@ function seccionBrechas(inf: Informe, i: Idioma): string {
       ? [i === "es" ? "Ninguna." : "None."]
       : b.brechas.map(
           (x) =>
-            `- ${x.caso_id ? `**${x.caso_id}**` : "—"}${x.nodo ? ` · ${i === "es" ? "nodo" : "node"} \`${x.nodo}\`, ${i === "es" ? "paso" : "step"} ${x.paso ?? "—"}` : ""}: ${x.detalle[i]}`,
+            `- ${x.caso_id ? `**${x.caso_id}**` : "—"}${x.corrida_id !== inf.corrida_id ? ` · ${i === "es" ? "repetición" : "repetition"} \`${x.corrida_id}\`` : ""}${x.nodo ? ` · ${i === "es" ? "nodo" : "node"} \`${x.nodo}\`, ${i === "es" ? "paso" : "step"} ${x.paso ?? "—"}` : ""}: ${x.detalle[i]}`,
         )),
     "",
     `**${i === "es" ? "Evaluadores" : "Evaluators"}**`,
@@ -394,7 +426,7 @@ function seccionBrechas(inf: Informe, i: Idioma): string {
           ],
       b.evaluadores.map((e) => [
         e.id,
-        e.tipo,
+        nombre(TIPO_EVALUADOR, e.tipo, i),
         ESTADO_EVAL[e.estado]?.[i] ?? e.estado,
         String(e.casos_evaluados),
         casos(e.fallas),
@@ -414,7 +446,7 @@ function seccionSupuesto(s: ResultadoSupuesto, i: Idioma): string {
     .sort()
     .map((k) => {
       const v = s.metricas[k];
-      return `${k} = ${v === null || v === undefined ? (i === "es" ? "no existe" : "does not exist") : numCorto(v, i, 4)}`;
+      return `${nombre(METRICA, k, i)} = ${v === null || v === undefined ? (i === "es" ? "no existe" : "does not exist") : numCorto(v, i, 4)}`;
     });
   if (metricas.length > 0)
     lineas.push(
@@ -599,7 +631,7 @@ function seccionFicha(inf: Informe, i: Idioma): string {
     ],
     [
       i === "es" ? "Corrida" : "Run",
-      `${f.corrida.id} · ${f.corrida.fecha} · ${f.corrida.proveedor}/${f.corrida.modelo} · ${f.corrida.variante}`,
+      `${f.corrida.id} · ${f.corrida.fecha} · ${f.corrida.proveedor}/${f.corrida.modelo} · ${nombre(VARIANTE, f.corrida.variante, i)}`,
       `\`${f.corrida.huella}\``,
     ],
     [

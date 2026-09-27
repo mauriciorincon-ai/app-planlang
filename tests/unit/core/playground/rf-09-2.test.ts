@@ -1,6 +1,7 @@
 /**
  * RF-09.2 — prueba cruzada Python ↔ TypeScript de las aristas (regla dura 2, gate de contrato de la
- * regla 19): sobre TODA corrida versionada, con los umbrales aplicados, el intérprete TypeScript
+ * regla 19): sobre TODA corrida versionada, con los umbrales DEL PLAN (no los que la corrida declara haber
+ * aplicado: si difirieran, el gate tendría que fallar — AU-5 de la auditoría), el intérprete TypeScript
  * (1) reproduce la rama y los resultados que el agente registró en cada visita de un nodo escritor y
  * (2) produce la misma huella que `ramas-esperadas.json`, escrito por el intérprete Python.
  * Demo en rojo (bitácora S1, fase 4): `menor_que` tratado como `<=` en interprete.ts → rojo nombrando
@@ -8,6 +9,8 @@
  */
 import { describe, expect, it } from "vitest";
 import { leerCorridaVerificada } from "../../../../core/brecha/lector";
+import { cargarPlan } from "../../../../core/plan/cargar";
+import { umbralesAplicados } from "../../../../core/plan/contrato-constructor";
 import {
   discrepanciasDeRamas,
   ramasEsperadas,
@@ -29,12 +32,15 @@ async function leer(ruta: string) {
   };
   const plan = JSON.parse(readFileSync(m.plan.archivo, "utf8")) as unknown;
   const casos = JSON.parse(readFileSync(m.casos.archivo, "utf8")) as unknown;
-  return leerCorridaVerificada(
+  const leida = await leerCorridaVerificada(
     a,
     plan,
     casos,
     planDelLote(m.plan.archivo, plan, casos),
   );
+  const carga = await cargarPlan(plan);
+  if (!carga.ok) throw new Error(`plan inválido: ${m.plan.archivo}`);
+  return { ...leida, delPlan: umbralesAplicados(carga.plan) as Umbrales };
 }
 
 const corridas = corridasVersionadas();
@@ -49,11 +55,7 @@ describe("RF-09.2 sobre las corridas versionadas", () => {
     "%s: el recálculo TypeScript reproduce cada rama que tomó el agente",
     async (ruta) => {
       const c = await leer(ruta);
-      const disc = discrepanciasDeRamas(
-        c.trazas,
-        c.grafo,
-        c.manifiesto.umbrales_aplicados as Umbrales,
-      );
+      const disc = discrepanciasDeRamas(c.trazas, c.grafo, c.delPlan);
       expect(disc, JSON.stringify(disc.slice(0, 3))).toEqual([]);
     },
   );
@@ -66,7 +68,7 @@ describe("RF-09.2 sobre las corridas versionadas", () => {
         c.manifiesto.corrida_id,
         c.trazas,
         c.grafo,
-        c.manifiesto.umbrales_aplicados as Umbrales,
+        c.delPlan,
         c.ramas.fuente,
       );
       expect(ts.visitas).toEqual(c.ramas.visitas);
@@ -82,11 +84,7 @@ describe("RF-09.2 sobre las corridas versionadas", () => {
       (x) => x.desde === "decision",
     ))
       d.rama_tomada = "pausa_humana";
-    const disc = discrepanciasDeRamas(
-      trazas,
-      c.grafo,
-      c.manifiesto.umbrales_aplicados as Umbrales,
-    );
+    const disc = discrepanciasDeRamas(trazas, c.grafo, c.delPlan);
     expect(disc).toEqual([
       expect.objectContaining({
         caso_id: "AH-002",
@@ -101,7 +99,7 @@ describe("RF-09.2 sobre las corridas versionadas", () => {
   it("con otro umbral el recálculo SÍ cambia la rama del empate (el playground mueve algo real)", async () => {
     const c = await leer(SIMULADO);
     const disc = discrepanciasDeRamas(c.trazas, c.grafo, {
-      ...(c.manifiesto.umbrales_aplicados as Umbrales),
+      ...c.delPlan,
       U1: 0.8,
     });
     expect(disc.map((d) => d.caso_id)).toContain("AH-002");

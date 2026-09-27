@@ -14,7 +14,7 @@ Lo que necesitas para probar el sprint 1 sin preparar nada: todo vive en el repo
 | Informe del plan v1.2 | `runs/demo-a/suscripcion-planlang-a-001-20-v1.2/informe.es.md` · `.en.md` | El informe de brecha vigente: corrida multiagente, su línea base de agente único (`…-v1.2-base`) y dos repeticiones (`…-v1.2-r2`, `…-v1.2-r3`) |
 | Informe del plan v1.1 | `runs/demo-a/suscripcion-planlang-a-001-20/informe.es.md` · `.en.md` | El primer informe real, conservado como historia: con él se encontraron los defectos de medición que corrigió la v1.2 |
 | Informe de la corrida simulada | `tests/golden/demo-a/simulado-3casos/` | El que la CI regenera y compara byte a byte en cada cambio |
-| Brechas sembradas (M9) | `M9-brechas-sembradas.md` (esta carpeta) | 8 fallas plantadas a propósito y quién las detecta |
+| Brechas sembradas (M9) | `M9-brechas-sembradas.md` (esta carpeta) | 10 fallas plantadas a propósito y quién las detecta |
 | Planes con errores | `tests/fixtures/planes-sembrados/` | 12 planes que el validador debe rechazar, cada uno con su motivo en `manifiesto.json` |
 | Carnadas de identificadores | `tests/fixtures/identificadores/carnadas.json` | Una cédula real, un NIT con dígito válido y un SSN: el validador debe ponerlos en rojo |
 
@@ -33,7 +33,7 @@ What you need to test sprint 1 without preparing anything: it all lives in the r
 | Plan v1.2 report | `runs/demo-a/suscripcion-planlang-a-001-20-v1.2/informe.en.md` · `.es.md` | The current gap report: multi-agent run, its single-agent baseline (`…-v1.2-base`) and two repetitions (`…-v1.2-r2`, `…-v1.2-r3`) |
 | Plan v1.1 report | `runs/demo-a/suscripcion-planlang-a-001-20/informe.en.md` · `.es.md` | The first real report, kept as history: it found the measurement defects that v1.2 fixed |
 | Simulated run report | `tests/golden/demo-a/simulado-3casos/` | The one CI regenerates and compares byte for byte on every change |
-| Seeded gaps (M9) | `M9-brechas-sembradas.md` (this folder) | 8 failures planted on purpose and who detects them |
+| Seeded gaps (M9) | `M9-brechas-sembradas.md` (this folder) | 10 failures planted on purpose and who detects them |
 | Plans with errors | `tests/fixtures/planes-sembrados/` | 12 plans the validator must reject, each with its reason in `manifiesto.json` |
 | Identifier baits | `tests/fixtures/identificadores/carnadas.json` | A real-format national ID, a tax ID with a valid check digit and an SSN: the validator must flag them |
 

@@ -153,3 +153,33 @@ def test_la_cli(tmp_path: Path, capsys) -> None:
     assert (tmp_path / "simulado-planlang-a-humo-3" / "corrida.json").exists()
     with pytest.raises(ValueError):
         _lote(tmp_path, variante="otra")
+
+
+def test_el_tamano_de_sesion_y_el_modelo_salen_del_plan(tmp_path: Path) -> None:
+    # AU-10: un plan que declara sesiones de 2 corre 2 casos sin que nadie pase --n.
+    v12 = leer_verificando(lotes.RAIZ_REPO / lotes.PLAN_POR_DEFECTO)
+    chico = dict(v12, lotes=dict(v12["lotes"], corridas_espaciadas_de=2, modelo_alias="haiku"))
+    planes = tmp_path / "planes"
+    escribir_con_huella(planes / "chico.json", chico)
+    escribir_con_huella(planes / "v1.1.json", leer_verificando(lotes.RAIZ_REPO / "plans/demo-a/v1.1.json"))
+    r = _lote(tmp_path / "s", plan_ruta=planes / "chico.json")
+    assert r.ejecutados == ["A-001", "A-002"] and r.pendientes == 18
+    # Con la suscripción, el plan fija el techo y exige espaciar: se rechaza ANTES de invocar el binario.
+    with pytest.raises(ValueError, match="a lo sumo 2 casos"):
+        _lote(tmp_path / "t", plan_ruta=planes / "chico.json", proveedor="suscripcion", n=3, pausa_s=2)
+    with pytest.raises(ValueError, match="espaciados"):
+        _lote(tmp_path / "u", plan_ruta=planes / "chico.json", proveedor="suscripcion", pausa_s=0)
+
+
+def test_la_cli_exige_espaciar_con_la_suscripcion(tmp_path: Path) -> None:
+    with pytest.raises(SystemExit):
+        lotes.main(["--proveedor", "suscripcion", "--casos", LOTE20, "--salida", str(tmp_path)])
+
+
+def test_un_lote_de_otro_plan_de_beneficios_se_rechaza(tmp_path: Path) -> None:
+    # M-2: la verdad conocida del lote se derivó con su plan de beneficios; con otro, no vale.
+    pb = leer_verificando(lotes.RAIZ_REPO / lotes.BENEFICIOS_POR_DEFECTO)
+    otro = tmp_path / "pb.json"
+    escribir_con_huella(otro, dict(pb, version="9.9.9"))
+    with pytest.raises(lotes.CorridaIncompatible, match="plan de beneficios"):
+        _lote(tmp_path / "z", n=1, beneficios_ruta=otro)

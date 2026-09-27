@@ -51,6 +51,10 @@ VARIABLES_PROHIBIDAS_EN_HIJO: tuple[str, ...] = (
     "CLAUDECODE",
     "CLAUDE_CODE_CHILD_SESSION",
 )
+# Y por prefijo (auditoría S1, M-11): `ANTHROPIC_BASE_URL` mandaría el token a un proxy,
+# `CLAUDE_CODE_USE_BEDROCK`/`_VERTEX` cambiarían el proveedor en silencio mientras el manifiesto dice
+# «suscripcion», `LANGSMITH_ENDPOINT`/`_PROJECT` y compañía no tienen nada que hacer en el hijo.
+PREFIJOS_PROHIBIDOS_EN_HIJO: tuple[str, ...] = ("ANTHROPIC_", "LANGSMITH_", "LANGCHAIN_", "CLAUDE_CODE_")
 
 TIPOS_ERROR_PROVEEDOR: tuple[str, ...] = ("limite_de_uso", "timeout", "esquema_invalido", "otro")
 REINTENTOS_ESQUEMA = 2  # § 9.1 de la especificación: una salida inválida se reintenta máximo dos veces
@@ -116,7 +120,11 @@ def argv_claude(
 def entorno_hijo(base: dict[str, str] | None = None) -> dict[str, str]:
     """Copia del entorno sin ninguna variable prohibida (7-S: el token jamás entra a `env`)."""
     origen = os.environ if base is None else base
-    return {k: v for k, v in origen.items() if k not in VARIABLES_PROHIBIDAS_EN_HIJO}
+    return {
+        k: v
+        for k, v in origen.items()
+        if k not in VARIABLES_PROHIBIDAS_EN_HIJO and not k.startswith(PREFIJOS_PROHIBIDOS_EN_HIJO)
+    }
 
 
 def cwd_limpio() -> str:
@@ -126,7 +134,18 @@ def cwd_limpio() -> str:
 
 def _es_limite(texto: str) -> bool:
     t = texto.lower()
-    return any(p in t for p in ("usage limit", "rate limit", "limit reached", "too many requests", "429"))
+    return any(
+        p in t
+        for p in (
+            "usage limit",
+            "rate limit",
+            "rate_limit",
+            "limit reached",
+            "hit your limit",
+            "too many requests",
+            "429",
+        )
+    )
 
 
 def _clasificar_is_error(data: dict[str, Any], con_esquema: bool) -> ErrorProveedor:
@@ -138,6 +157,11 @@ def _clasificar_is_error(data: dict[str, Any], con_esquema: bool) -> ErrorProvee
     """
     subtipo = str(data.get("subtype") or "")
     costo = float(data.get("total_cost_usd") or 0.0)
+    # El límite de uso puede llegar SOLO en el JSON (rc = 1, stderr vacío): en `result` o como
+    # `api_error_status: 429` (auditoría S1, AU-8). Se detiene la sesión en vez de seguir gastando cuota.
+    texto = str(data.get("result") or "")
+    if str(data.get("api_error_status")) == "429" or _es_limite(texto):
+        return ErrorProveedor("limite_de_uso", f"{subtipo or 'is_error'}: {texto[:200]}", costo)
     if "structured_output" in subtipo or (con_esquema and "max_turns" in subtipo):
         return ErrorProveedor("esquema_invalido", subtipo, costo)
     if "budget" in subtipo or "limit" in subtipo:

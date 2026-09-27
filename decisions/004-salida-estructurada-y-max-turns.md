@@ -32,6 +32,10 @@ y 9 de 16 en la línea base (un esquema con extracción, propuesta y dos cartas)
 - Resultado tras el arreglo, mismo lote: multiagente 20/20 sin errores (3 reintentos); línea base 20/20
   sin errores (9 reintentos). Las corridas hechas con el adaptador defectuoso se descartaron; sus
   cifras y su causa quedan en la bitácora del S1.
+- **Con el plan v1.2 el reintento no bastó siempre** (adenda 2026-09-27, auditoría S1): la línea base
+  agotó los 2 reintentos en A-012 (`esquema_invalido`, el caso quedó sin decisión) y la repetición r2
+  usó los dos en A-006. El reintento mitiga el modo de falla, no lo elimina; el informe v1.2 lo reporta
+  (§ 5 brechas no previstas, § 6 S3).
 - **Propuesta a la planeadora (summary):** evaluar `--max-turns 2` solo cuando va `--json-schema`,
   medido contra el costo de los reintentos. Hasta entonces, el reintento es el mecanismo.
 - Tests: `test_adaptador_flags.py` (rc = 1 con `error_max_turns` en stdout, reintento declarado, tres

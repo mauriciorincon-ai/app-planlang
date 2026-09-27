@@ -199,7 +199,7 @@
         la escribas en un archivo del repo. Sin cuenta: salta este paso y la parada 3 queda como deuda declarada.<br>
         <strong>2 · Mira tu cuota antes.</strong> En la app de Claude: Configuración → Uso. Anota el porcentaje usado.
         Luego corre <code>pnpm lote:demo --corrida gate-s1 --fecha AAAA-MM-DD --salida /tmp/planlang-gate</code> (con la fecha
-        de hoy). Esperado: <strong>20 casos, 0 con error, unos 5 minutos</strong>; cada caso imprime una línea con
+        de hoy; el comando ya deja 2 s entre casos y, con la suscripción, no acepta más de 20 ni correr sin pausa). Esperado: <strong>20 casos, 0 con error, unos 5 minutos</strong>; cada caso imprime una línea con
         <code>latencia_ms</code>. Vuelve a mirar la cuota: la diferencia es lo que cuesta un lote de 20 (dato para decidir
         el lote de 200).
         <span class="origen origen-nuevo">Nuevo · S1</span>
@@ -231,9 +231,14 @@
       <tr><th>Qué mirar</th><th>Valor / comportamiento correcto</th></tr>
       <tr><td>Encabezado</td><td class="valor">«Simulación · no operativo», la corrida, la fecha y el plan 1.2.0</td></tr>
       <tr><td>Sección 1</td><td class="valor">veredicto con símbolo y texto, un resumen de ≤ 50 palabras y una recomendación accionable</td></tr>
-      <tr><td>Sección 1</td><td class="valor">«cumple con alertas»: 9 de 9 criterios cumplidos (C5 medido con 3 de 3 corridas), ningún riesgo ocurrido</td></tr>
-      <tr><td>Sección 6 · supuestos</td><td class="valor">S3 <strong>refutado</strong> por latencia (el multiagente acierta más pero tarda más), dicho sin maquillar;
-        S1 sin probar con su razón (sin errores de extracción no hay nada que discriminar); S2 confirmado con la nota de muestra pequeña</td></tr>
+      <tr><td>Sección 1</td><td class="valor">«cumple con alertas»: 9 de 9 criterios cumplidos (C5 medido con 3 de 3 corridas), ningún riesgo
+        ocurrido, y tres alertas a la vista: S1 sin probar, S3 refutado y 5 fallas no previstas</td></tr>
+      <tr><td>Sección 5</td><td class="valor">5 fallas no previstas: 1 en la corrida y 4 en las repeticiones (cada una dice en cuál)</td></tr>
+      <tr><td>Sección 6 · supuestos</td><td class="valor">S3 <strong>refutado</strong> por latencia (el multiagente acierta más pero tarda más), con la regla que lo decidió,
+        el error de la línea base en A-012 y sus 5 respuestas inservibles, dicho sin maquillar; S1 sin probar con su razón (sin errores
+        de extracción no hay nada que discriminar); S2 confirmado con la nota de muestra pequeña</td></tr>
+      <tr><td>Sección 8</td><td class="valor">«U4 (Modo Texas): conmutarlo cambia 0 de las 62 decisiones»: con este plan, el modo Texas no mueve nada
+        (toda negación ya pasa por una persona) y el informe lo calcula en vez de prometerlo</td></tr>
       <tr><td>Sección 9</td><td class="valor">huellas del plan, los casos y la corrida; «generado con el plan 1.1.0» en los casos</td></tr>
     </table></div>
     <div class="kit"><p><strong>Kit de prueba:</strong> <code>docs/kit-de-prueba/README.md</code> explica qué informe es cuál (el
@@ -267,7 +272,7 @@
         reproducibles desde el plan, ninguna credencial).
         <span class="origen origen-nuevo">Nuevo · S1</span>
         <span class="minimo">⭐ mínimo</span></label></li>
-      <li data-origen="nuevo" data-minimo><input type="checkbox" id="d2"><label for="d2"><code>pnpm m9:reporte --verificar</code>. Esperado: <strong>«M9: 8/8 · control limpio»</strong>: las 8 fallas sembradas
+      <li data-origen="nuevo" data-minimo><input type="checkbox" id="d2"><label for="d2"><code>pnpm m9:reporte --verificar</code>. Esperado: <strong>«M9: 10/10 · control limpio»</strong>: las 10 fallas sembradas
         a propósito se detectan y la corrida limpia no dispara ninguna.
         <span class="origen origen-nuevo">Nuevo · S1</span>
         <span class="minimo">⭐ mínimo</span></label></li>
@@ -325,7 +330,7 @@
         <span class="origen origen-nuevo">Nuevo · S1</span></label></li>
       <li data-origen="nuevo"><input type="checkbox" id="h2"><label for="h2">Prueba cruzada Python ↔ TypeScript: cada decisión de cada corrida versionada se reproduce desde el plan, con la misma huella. <span class="suave">Lo verifica la CI · <code>tests/unit/core/playground/rf-09-2.test.ts</code></span>
         <span class="origen origen-nuevo">Nuevo · S1</span></label></li>
-      <li data-origen="nuevo"><input type="checkbox" id="h3"><label for="h3">M9: 8 de 8 fallas sembradas detectadas y corrida limpia sin falsas alarmas. <span class="suave">Lo verifica la CI · <code>tests/unit/core/brecha/m9.test.ts</code></span>
+      <li data-origen="nuevo"><input type="checkbox" id="h3"><label for="h3">M9: 10 de 10 fallas sembradas detectadas y corrida limpia sin falsas alarmas. <span class="suave">Lo verifica la CI · <code>tests/unit/core/brecha/m9.test.ts</code></span>
         <span class="origen origen-nuevo">Nuevo · S1</span></label></li>
       <li data-origen="nuevo"><input type="checkbox" id="h4"><label for="h4">Los informes guardados junto a las corridas están al día. <span class="suave">Lo verifica la CI · <code>tests/integration/informes-versionados.test.ts</code></span>
         <span class="origen origen-nuevo">Nuevo · S1</span></label></li>

@@ -19,7 +19,7 @@ from app_agents.demo_a import prompts
 from app_agents.demo_a.documento_adverso import documento_adverso
 from app_agents.demo_a.esquemas import crear_modelo_extraccion_y_carta
 from app_agents.demo_a.estado import ContextoCaso, Estado
-from app_agents.demo_a.nodos import NodosDemoA, _json, enmascarar
+from app_agents.demo_a.nodos import NodosDemoA, _json, enmascarar, exigir_pausa_en_negacion
 from app_agents.demo_a.plan_beneficios import PlanBeneficios
 from app_agents.plan import ContratoDeGrafo, PlanCargado
 
@@ -135,6 +135,7 @@ class NodosLineaBase(NodosDemoA):
         reloj = runtime.context.reloj
         inicio = reloj.ahora_ms()
         decision = estado.get("decision_final") or estado.get("propuesta") or "aprobar"
+        exigir_pausa_en_negacion(decision, estado)
         borrador = estado.get("borrador") or {}
         if borrador.get("propuesta_modelo") == decision:
             carta = {

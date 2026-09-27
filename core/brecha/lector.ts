@@ -7,7 +7,7 @@
  */
 import type { TextoBilingue } from "../formatos/bilingue";
 import { verificarHuella } from "../formatos/huella";
-import type { JsonValor } from "../formatos/jcs";
+import { jcs, type JsonValor } from "../formatos/jcs";
 import {
   CorridaSchema,
   GrafoSchema,
@@ -235,6 +235,24 @@ async function leerCorrida(
         "the graph belongs to another variant",
       ),
     );
+  if (grafo.demo_id !== manifiesto.demo_id)
+    motivos.push(
+      m(
+        "REFERENCIA_ROTA",
+        archivo("grafo.json"),
+        "el grafo es de otro demo",
+        "the graph belongs to another demo",
+      ),
+    );
+  if (jcs(ramas.umbrales_aplicados) !== jcs(manifiesto.umbrales_aplicados))
+    motivos.push(
+      m(
+        "REFERENCIA_ROTA",
+        archivo("ramas-esperadas.json"),
+        "las ramas esperadas se calcularon con otros umbrales que los del manifiesto",
+        "the expected branches were computed with other thresholds than the manifest's",
+      ),
+    );
 
   const ids = manifiesto.trazas.map((t) => t.caso_id);
   if (
@@ -307,18 +325,66 @@ async function leerCorrida(
   const trazas = manifiesto.casos_ejecutados
     .map((c) => porCaso.get(c))
     .filter((t): t is Traza => t !== undefined);
+  const conError = trazas
+    .filter((t) => t.resultado === "error")
+    .map((t) => t.caso_id)
+    .sort()
+    .join(",");
+  if (
+    trazas.length === manifiesto.casos_ejecutados.length &&
+    conError !== [...manifiesto.casos_con_error].sort().join(",")
+  )
+    motivos.push(
+      m(
+        "REFERENCIA_ROTA",
+        archivo("corrida.json"),
+        "los casos con error del manifiesto no son las trazas que terminaron en error",
+        "the manifest's cases with errors are not the traces that ended in error",
+      ),
+    );
   return { ruta: a.ruta, manifiesto, grafo, ramas, trazas };
 }
 
 function compatible(
   c: CorridaLeida,
-  plan: { huella: string },
+  plan: { huella: string; id: string; version: string },
   lote: Lote,
   casos: ReadonlyMap<string, Caso>,
   variante: "multiagente" | "agente_unico",
   motivos: MotivoLectura[],
 ): void {
   const archivo = `${c.ruta}/corrida.json`;
+  // La verdad conocida del lote se deriva también del plan de beneficios: otro plan de beneficios, otra verdad.
+  if (c.manifiesto.plan_beneficios.huella !== lote.plan_beneficios.huella)
+    motivos.push(
+      m(
+        "HUELLA_NO_COINCIDE",
+        archivo,
+        "la corrida usó otro plan de beneficios que el del lote de casos",
+        "the run used another benefits plan than the case batch's",
+      ),
+    );
+  if (
+    c.manifiesto.plan.id !== plan.id ||
+    c.manifiesto.plan.version !== plan.version
+  )
+    motivos.push(
+      m(
+        "REFERENCIA_ROTA",
+        archivo,
+        "el manifiesto nombra otro plan (id o versión)",
+        "the manifest names another plan (id or version)",
+      ),
+    );
+  if (c.manifiesto.demo_id !== lote.demo_id)
+    motivos.push(
+      m(
+        "REFERENCIA_ROTA",
+        archivo,
+        "la corrida es de otro demo que el lote de casos",
+        "the run belongs to another demo than the case batch",
+      ),
+    );
   if (c.manifiesto.plan.huella !== plan.huella)
     motivos.push(
       m(
@@ -427,17 +493,45 @@ export async function leerEntrada(
   if (carga.ok && lote && corrida) {
     await loteCompatible(e.plan, carga.huella, lote, e.planDelLote, motivos);
     const casos = new Map(lote.casos.map((c) => [c.id, c]));
-    const plan = { huella: carga.huella };
+    const plan = {
+      huella: carga.huella,
+      id: carga.plan.id,
+      version: carga.plan.version,
+    };
     compatible(corrida, plan, lote, casos, "multiagente", motivos);
+    const casosDe = (c: CorridaLeida) =>
+      [...c.manifiesto.casos_ejecutados].sort().join(",");
+    const vistas = new Set<string>([corrida.manifiesto.corrida_id]);
     for (const r of repeticiones) {
       compatible(r, plan, lote, casos, "multiagente", motivos);
-      if (r.manifiesto.corrida_id === corrida.manifiesto.corrida_id)
+      const archivo = `${r.ruta}/corrida.json`;
+      // pass^k cuenta k corridas DISTINTAS del mismo grafo sobre los mismos casos (M-3).
+      if (vistas.has(r.manifiesto.corrida_id))
         motivos.push(
           m(
             "CORRIDA_INCOMPATIBLE",
-            `${r.ruta}/corrida.json`,
-            "una repetición no puede ser la misma corrida",
-            "a repetition cannot be the same run",
+            archivo,
+            "una repetición no puede ser la misma corrida ni repetirse",
+            "a repetition cannot be the same run nor appear twice",
+          ),
+        );
+      vistas.add(r.manifiesto.corrida_id);
+      if (r.manifiesto.version_grafo !== corrida.manifiesto.version_grafo)
+        motivos.push(
+          m(
+            "CORRIDA_INCOMPATIBLE",
+            archivo,
+            "la repetición corrió otra versión del grafo",
+            "the repetition ran another graph version",
+          ),
+        );
+      if (casosDe(r) !== casosDe(corrida))
+        motivos.push(
+          m(
+            "CORRIDA_INCOMPATIBLE",
+            archivo,
+            "la repetición ejecutó otros casos",
+            "the repetition ran other cases",
           ),
         );
     }
@@ -482,7 +576,7 @@ export async function leerCorridaVerificada(
     const casos = new Map(lote.casos.map((c) => [c.id, c]));
     compatible(
       corrida,
-      { huella: carga.huella },
+      { huella: carga.huella, id: carga.plan.id, version: carga.plan.version },
       lote,
       casos,
       corrida.manifiesto.variante,

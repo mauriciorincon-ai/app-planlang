@@ -70,7 +70,7 @@ modelo: Fable 5.1 (todo el sprint, decisión del usuario 2026-09-27)
 | Flags exactos del adaptador                                            | quitar `"--strict-mcp-config"` de `argv_claude`                               | 🔴 `test_argv_es_exactamente_el_de_la_regla_6` (AssertionError en la lista) → 🟢 al revertir                       |
 | `env` limpio del subproceso                                            | quitar `ANTHROPIC_API_KEY` de `VARIABLES_PROHIBIDAS_EN_HIJO`                  | 🔴 `test_invoke_usa_cwd_temporal_vacio_fuera_del_repo_y_env_limpio` → 🟢 al revertir                               |
 | Cobertura (`--coverage`, 90 en `core/plan`)                            | `core/plan/sin-test.ts` sin test                                              | 🔴 `ERROR: Coverage for lines (0%) does not meet "core/plan/**/*.ts" threshold (90%)` (+ global 70) → 🟢 al borrar |
-| Job `python` de CI (gate heredado, primera dependencia de este sprint) | PR desechable `demo-rojo/s1-python` con `test_demo_rojo.py` (`assert 1 == 2`) | ver tabla de CI abajo (se completa al llegar el resultado)                                                         |
+| Job `python` de CI (gate heredado, primera dependencia de este sprint) | PR desechable `demo-rojo/s1-python` con `test_demo_rojo.py` (`assert 1 == 2`) | 🔴 `python` en `failure` nombrando `test_demo_rojo.py` (PR #4 `[DESECHABLE]`, cerrado sin mergear el 2026-09-27; los otros checks verdes) → 🟢 en el PR #7 — registro completado en la auditoría final (B-1)                                                         |
 | gitleaks (hook de commit, heredado)                                    | sin cambio deliberado: K12 lo disparó de verdad                               | 🔴 commit bloqueado → 🟢 tras renombrar                                                                            |
 
 ### Gates locales al cerrar la fase
@@ -288,7 +288,7 @@ Casos ejemplares: exitoso A-001 · escalado correctamente A-004 · fallido: **ni
 
 ### Tests
 
-- **vitest:** 490 tests en 45 archivos (TypeScript del sprint; +30 locales de la Etapa de Diseño no versionados). Nuevos de la fase: `tests/unit/core/playground/{interprete,rf-09-2}.test.ts`, `tests/unit/core/brecha/{condiciones-nulos,lector,criterios,detectores,calibracion,supuestos,contrato-grafo,brechas-y-veredicto,informe,render-md,m9,numeros,perf-200}.test.ts`, `tests/integration/{informe-simulado,informes-versionados}.test.ts` (los de integración corren en `core` y `core-jsdom`: mismos bytes que el golden en Node y en jsdom).
+- **vitest:** 490 tests locales (incluyen los de la Etapa de Diseño, que no se versionan; la cifra de referencia es la de la CI: 461 en 44 archivos sobre `0db4cd0`). Nuevos de la fase: `tests/unit/core/playground/{interprete,rf-09-2}.test.ts`, `tests/unit/core/brecha/{condiciones-nulos,lector,criterios,detectores,calibracion,supuestos,contrato-grafo,brechas-y-veredicto,informe,render-md,m9,numeros,perf-200}.test.ts`, `tests/integration/{informe-simulado,informes-versionados}.test.ts` (los de integración corren en `core` y `core-jsdom`: mismos bytes que el golden en Node y en jsdom).
 - **Cobertura:** `core/brecha` 98,5 % líneas · 92,7 % ramas; `core/playground` 100 %; umbral 90 cumplido.
 - **Performance (DoD):** informe de 200 casos en **57 ms** en Node (presupuesto 2 s). Sin corrida real de 200 todavía: las 20 trazas reales se replican sobre los casos A-021…A-200 del lote versionado, re-selladas y con sus ramas recalculadas, así que el verificador hace todo el trabajo (200 huellas, reglas por caso, contrato, RF-09.2).
 - **M9:** 8/8 brechas sembradas detectadas; control sin sembrar limpio.
@@ -315,7 +315,7 @@ Casos ejemplares: exitoso A-001 · escalado correctamente A-004 · fallido: **ni
 - **El informe de la corrida simulada vive en `tests/golden/`**, no junto a la corrida: el gate de determinismo de Python compara la lista exacta de `*.json` de `runs/demo-a/simulado-3casos/`.
 - **Evaluaciones por caso (§ 6.9):** van en el informe (sección 5, tabla de evaluadores), no en la corrida exportada — como se anotó en la fase 3.
 - **`opciones[].nombre` de las decisiones no es bilingüe** (esquema del plan desde la fase 1; `no_detectable_en_trazas` tampoco): el informe muestra pregunta + justificación, que sí lo son. Deuda de regla 20 para el esquema del plan (S2).
-- **El comando `pnpm trazas:verificar` no corre en CI**: lo que verifica (huellas, RF-09.2, credenciales) ya lo cubren vitest y pytest; el CLI es la herramienta del usuario.
+- ~~El comando `pnpm trazas:verificar` no corre en CI: lo que verifica ya lo cubren vitest y pytest.~~ **Falso para las credenciales de las corridas reales** (pytest solo barre simuladas recién generadas; vitest no busca patrones de credencial) — corregido en la auditoría final (M-5): el comando corre en el job `quality`, barre también los `.md` y busca rutas locales.
 
 ## Fase 5 — Cierre (2026-09-27)
 
@@ -364,13 +364,13 @@ S3 refutado es un resultado legítimo del plan: la tesis «multiagente no rinde 
 ### Documentación
 
 - `docs/MANUAL-DE-USO.md` (ES/EN): validar/enmendar un plan · generar casos · correr un lote · leer el informe · verificar las trazas · limitaciones.
-- `docs/GUIA-DE-PRUEBA.html` nace (plantilla del kit, namespace `guia-planlang:s1:`): 21 pruebas, 5 ⭐, **3 ⭐⭐ (gate corto, ~20 min)** = parada 1 correr un lote real · parada 2 leer el informe v1.2 ES/EN · parada 3 LangSmith (si está aprovisionado); 16 automatizadas listadas con `Nuevo · S1`.
+- `docs/GUIA-DE-PRUEBA.html` nace (plantilla del kit, namespace `guia-planlang:s1:`): 21 pruebas, 5 ⭐, **3 ⭐⭐ (gate corto, ~15 min)** = parada 1 correr un lote real · parada 2 leer el informe v1.2 ES/EN · parada 3 LangSmith (si está aprovisionado); 16 automatizadas listadas con `Nuevo · S1`.
 - `docs/kit-de-prueba/README.md` (ES/EN): mapa del kit (lotes, planes, corridas, informes, M9).
 - `README.md`: bloque de comandos corregido. `CHANGELOG.md:211`: el literal del dominio de Pages pasa a clase de carácter (K13); el barrido de cero enlaces queda limpio.
 
 ### Tests
 
-- **vitest:** 600 tests en 46 archivos, verde. Nuevos/ajustados de la fase: `tests/unit/core/plan/enmienda-v1-2.test.ts`, lector «lote generado con otro plan», informe v1.2 (C5 k = 3, R5 medido, S1/S2/S3), notas de supuestos, formato del disparador.
+- **vitest:** 576 tests versionados en verde (600 locales con los 24 de la Etapa de Diseño, que no se versionan). Nuevos/ajustados de la fase: `tests/unit/core/plan/enmienda-v1-2.test.ts`, lector «lote generado con otro plan», informe v1.2 (C5 k = 3, R5 medido, S1/S2/S3), notas de supuestos, formato del disparador.
 - **Cobertura:** `core/brecha` 98,7 % sentencias · 93,4 % ramas; `core/playground` 100 %; `core/plan` 99,2 · 96,2; `core/formatos` 98,0 · 100; `core/sintetico` 98,4 · 95,8.
 - **pytest:** 129 passed, 3 skipped (humo real), cobertura 96,1 %; `ruff check` y `ruff format --check` limpios.
 - `pnpm typecheck` limpio · `pnpm lint` 0 errores (2 avisos en `public/diseno/assets/maqueta.js`, archivo local de la Etapa de Diseño, no versionado en esta rama).
@@ -385,10 +385,67 @@ S3 refutado es un resultado legítimo del plan: la tesis «multiagente no rinde 
 | Compatibilidad de lotes, Python (ADR-005) | `misma_verdad` devuelve siempre `True` | 🔴 `test_un_lote_de_otro_plan_solo_vale_si_da_la_misma_verdad` y `test_plan_v1_2_es_una_enmienda_de_solo_medicion` → 🟢 |
 | Nota del error de la línea base | nota suprimida en `supuestos.ts` | 🔴 4 tests: supuestos, informe v1.2 y frescura del informe versionado en `core` y `core-jsdom` → 🟢 |
 
+### Auditoría final (`/audita-sprint`, 2026-09-27)
+
+- **Fase 1 (solo lectura):** tres auditores independientes del constructor, en paralelo, con el diff `main...HEAD` (356 archivos) delante: alcance/frases/cardinalidades · núcleo TypeScript · Python/seguridad/CI/costura. El constructor consolidó y verificó a mano los hallazgos que cambian lo publicado. Reporte completo, con `archivo:línea` en cada hallazgo: `sprints/SPRINT_001-auditoria.md`. **Veredicto: requiere ajustes** — 0 Críticos · 10 Altos · 26 Medios · 27 Bajos.
+- **Aprobación del usuario (2026-09-27):** «apruebo, opción recomendada» → Fase 2 = los 10 Altos + los Medios baratos de honestidad y seguridad (M-1, M-2, M-3, M-4, M-5, M-6, M-7, M-10, M-11, M-17, M-19, M-20 parcial, M-21) + los Bajos de texto (B-1, B-13, B-14, B-15, B-17, B-19). El resto, deuda con sprint de pago (sección 6 del reporte).
+
+**Pagos de la Fase 2**
+
+| Id | Qué se hizo | Dónde |
+|---|---|---|
+| AU-1 | Una métrica que no cumple refuta aunque otra no se haya podido medir (el golden: S1 pasa a «✗ refutado», ECE 0,1067 > 0,10) | `core/brecha/supuestos.ts` (`decidirConUmbral`) |
+| AU-2 | Riesgos y brechas no previstas también en las repeticiones de pass^k; cada brecha dice su corrida (informe v1.2: 1 → 5 brechas) | `core/brecha/{informe,brechas-no-previstas,veredicto,render-md}.ts` |
+| AU-3 | Alertan un supuesto crítico sin probar, un riesgo sin población, las alertas del contrato y los riesgos de las repeticiones; la recomendación nombra el supuesto crítico | `core/brecha/{veredicto,informe}.ts` |
+| AU-4 | Ligaduras umbral → señal en el recálculo; la sección 8 CALCULA cuántas decisiones cambia conmutar cada umbral booleano («U4: 0 de 62») y si cada regla con nombre se puede recalcular; desviación 11 | `core/playground/interprete.ts` · `core/plan/contrato-constructor.ts` · `core/brecha/informe.ts` |
+| AU-5 | Hallazgo bloqueante `UMBRAL_DISTINTO_DEL_PLAN` (informe y `trazas:verificar`); RF-09.2 prueba con los umbrales DEL PLAN; siembra M9 nueva | `core/brecha/contrato-grafo.ts` · `scripts/trazas-verificar.ts` · `tests/unit/core/playground/rf-09-2.test.ts` · `core/brecha/m9.ts` |
+| AU-6 | Hallazgo bloqueante `DECISION_SIN_REGISTRO` (cada visita de un nodo que decide registra sus aristas 1..n); el verificador ya no revienta con un registro a medias; siembra M9 nueva | `core/brecha/contrato-grafo.ts` · `core/brecha/m9.ts` |
+| AU-7 | Un evaluador, un supuesto o una repetición cuya regla no puede medir se reporta mal formado, no «ejecutado, sin fallas» | `core/brecha/{brechas-no-previstas,supuestos,criterios,render-md}.ts` |
+| AU-8 | El límite de uso que llega SOLO en el JSON del CLI (`result` o `api_error_status: 429`) es `limite_de_uso` y detiene la sesión | `agents/src/app_agents/adaptador.py` |
+| AU-9 | ADR-001 §4 enmendado con el comportamiento real; el respaldo a `pausa_humana` pasa a deuda del S2; desviación 14 | `decisions/001-codigo-primero-demos.md` |
+| AU-10 | Tamaño de sesión y alias del modelo salen del plan (`lotes.*`); con la suscripción, `lotes.py` rechaza más casos que el plan o correr sin pausa; `lote:demo`/`lote:base` con `--pausa-s 2`; ADR-002 con las cifras medidas | `agents/src/app_agents/lotes.py` · `package.json` · `decisions/002-…md` |
+| M-1 | La guardia sustituye salidas vacías, JSON crudo o «placeholder» y lo registra (`salida_malformada`); el informe nombra las 5 respuestas inservibles de la línea base v1.2 en S3 | `agents/src/app_agents/demo_a/guardia.py` · `core/brecha/supuestos.ts` |
+| M-2 | Plan de beneficios cotejado en los dos lados (bypass de ADR-005 cerrado); el lector cruza además `plan.id/version`, `demo_id`, umbrales de las ramas y `casos_con_error` | `agents/src/app_agents/lotes.py` · `core/brecha/lector.ts` · `decisions/005-…md` (adenda) |
+| M-3 | pass^k exige repeticiones distintas, del mismo grafo y sobre los mismos casos; S3 dice si la base corrió otros casos | `core/brecha/lector.ts` · `core/brecha/supuestos.ts` |
+| M-4 | `.coverage` (con rutas locales) fuera del repo y en `.gitignore` | `.gitignore` |
+| M-5 | `pnpm trazas:verificar` corre en el job `quality`; barre `.md` y busca rutas locales y más patrones de credencial; corregida la afirmación falsa de la fase 4 | `.github/workflows/ci.yml` · `scripts/trazas-verificar.ts` |
+| M-6 | S3 dice la regla con que se decide («no peor», tolerancia cero); sin latencia, no decide | `core/brecha/supuestos.ts` |
+| M-7 | Regla dura 4 como arquitectura: una negación o un rechazo sin pausa humana corta el caso en el redactor y en el cierre de la línea base | `agents/src/app_agents/demo_a/nodos.py` · `agents/src/app_agents/agente_unico.py` |
+| M-10 | ADR-006: «a igual presupuesto» = presupuesto no mayor, dicho en voz alta, con dos propuestas | `decisions/006-linea-base-a-igual-presupuesto.md` |
+| M-11 | Entorno del hijo filtrado también por prefijo (`ANTHROPIC_`, `LANGSMITH_`, `LANGCHAIN_`, `CLAUDE_CODE_`); test con las listas fijadas literalmente; **humo real 3/3** tras el cambio | `agents/src/app_agents/adaptador.py` · `agents/tests/test_adaptador_flags.py` |
+| M-17 | ADR-001: ruta de test corregida; la línea base de extracción por patrones, declarada no medida (deuda S2) | `decisions/001-…md` |
+| M-19 | Desviaciones 12 y 13 | esta bitácora |
+| M-20 | `pausas_cumplidas` también exige pausa ante «rechazar» (lo demás de M-20, deuda S3) | `core/brecha/brechas-no-previstas.ts` |
+| M-21 | Solo el riesgo cuyo detector mira la falla la cubre | `core/brecha/brechas-no-previstas.ts` |
+| B-1 · B-13 · B-14 · B-15 · B-19 | Registro de la demo del job `python` (PR #4), cifras y frases caducas de la bitácora, README, FAQ del manual ES/EN, ADR-004 | bitácora · `README.md` · `docs/MANUAL-DE-USO.md` · `decisions/004-…md` |
+| B-17 | El informe en inglés ya no lleva enumeraciones en español (decisiones, tipo de ataque, métricas, tipos de nodo y evaluador, variante) | `core/brecha/{informe,render-md}.ts` |
+
+**Demos en rojo de la Fase 2 (regla 15; rojo → verde al revertir, en el mismo cambio)**
+
+| Gate | Cambio deliberado | Quién lo nombró |
+|---|---|---|
+| AU-1 refutación con métrica nula | código viejo de `decidirConUmbral` | `supuestos.test.ts` «una métrica sin valor no esconde otra que refuta» |
+| AU-2 brechas de las repeticiones | quitar las brechas de las repeticiones del informe | `informe.test.ts` (informe v1.2) |
+| AU-3 supuesto crítico sin probar | quitar la alerta | `brechas-y-veredicto.test.ts` + `informe.test.ts` |
+| AU-4 ligaduras | no reemplazar la señal ligada | `interprete.test.ts` (AU-4) |
+| AU-5 umbrales del plan | el chequeo nunca dispara | `contrato-grafo.test.ts` + M9 (`umbral_distinto_del_plan` ✗) + frescura del reporte M9 |
+| AU-6 decisión sin registro | el chequeo nunca dispara | `contrato-grafo.test.ts` + M9 (`decision_sin_registro` ✗) + frescura del reporte M9 |
+| AU-7 regla que no puede medir | el evaluador ignora `mal_formada` | `brechas-y-veredicto.test.ts` (AU-7) |
+| AU-8 límite en el JSON | quitar la detección | 3 casos de `test_clasificacion_de_fallos_del_proveedor` |
+| AU-10 tamaño de sesión del plan · pausa obligatoria | `n = 20` cableado · sin la validación de `--pausa-s` | `test_el_tamano_de_sesion_y_el_modelo_salen_del_plan` · `test_la_cli_exige_espaciar_con_la_suscripcion` |
+| M-1 guardia · M-1/M-3 verificador | la guardia no mira la forma · la limitación nunca se agrega | `test_una_salida_vacia_json_o_de_relleno_no_llega_al_afiliado` · `supuestos.test.ts` (S3) |
+| M-2 plan de beneficios | sin la comparación (TS y Python) | `lector.test.ts` (M-2) · `test_un_lote_de_otro_plan_de_beneficios_se_rechaza` |
+| M-3 repeticiones | sin la comparación de `version_grafo` | `lector.test.ts` (M-3) |
+| M-5 barrido ampliado | una ruta `/Users/…` en un `.md` de una corrida (copia en el scratchpad) | `pnpm trazas:verificar --raiz <copia>` exit 1 nombrando el archivo y el patrón → exit 0 al quitarla. El paso de CI corre el mismo comando; su primera ejecución en CI se ve en el PR |
+| M-7 negación sin pausa | sin la aserción | `test_ninguna_negacion_sin_pausa_aunque_el_plan_omita_la_arista` |
+| M-11 prefijos del entorno | sin el filtro por prefijo | `test_env_del_hijo_no_lleva_claves_ni_anidamiento` |
+| M-20 «rechazar» | la condición vieja | `brechas-y-veredicto.test.ts` (M-20) |
+| M-21 cobertura por riesgo | cualquier riesgo cubre | `brechas-y-veredicto.test.ts` «errores del proveedor y reintentos…» |
+
 ## Desviación del plan
 
 1. **Carnada C03 del contrato `instrumentos-de-plan` v0.1.0** (se aplica en la fase 1): la tabla de prioridad de acción AIAG-VDA 2019 da `baja` para S8·O3·D4, no `alta`. Enmienda propuesta en el summary: C03 → S8·O6·D2 (`alta`, RPN 96) y C03-bis → S8·O3·D4 (`baja`, RPN 96). Fuente secundaria verificada 2026-09-26 (Relyence, tabla AP); la primaria (handbook) no es accesible por curl.
-2. **`pass^3` de C5** con una sola corrida real en este sprint: el informe declara `k_observado = 1 de 3 · incompleto`; las corridas 2 y 3 se acumulan en background.
+2. **`pass^3` de C5** con una sola corrida real en este sprint: el informe declara `k_observado = 1 de 3 · incompleto`; las corridas 2 y 3 se acumulan en background. → **Resuelto en la fase 5:** plan v1.2 con r2/r3; C5 cumple con k = 3 de 3.
 3. **Arista «modo Texas»** del plan v0 no cabe en la tripleta: se declara como función nombrada `texas_y_no_aprobar(modo_texas, propuesta)` (regla 2).
 4. **Aristas del nodo `decision`** necesitan `orden` y `rama_por_defecto`; el plan v0 no lo declara.
 5. Otras correcciones del plan v0 que el validador exija: se anotan en la fase 1 (10 correcciones; confirmadas por el usuario con el «continúa» de la fase 1).
@@ -397,6 +454,10 @@ S3 refutado es un resultado legítimo del plan: la tesis «multiagente no rinde 
 8. **R5 tiene el detector mal formado desde el plan v0** (fase 4): `extraccion != verdad_conocida.campos` compara la extracción ENTERA (campos, faltantes, confianza…) con sus campos → siempre «distinto»; medido tal cual, R5 «ocurriría» en el 100 % de su población. El verificador lo detecta de forma genérica (comparación de objetos con claves distintas) y lo reporta `mal_formado`, sin medirlo. Corrección propuesta: `extraccion.campos != verdad_conocida.campos`.
 9. **S1 y S2 no declaran umbral numérico de confirmación** (ECE ≤ 0,10 · AUROC ≥ 0,75 · 95 % están solo en la prosa de `prueba_barata`), y **S2 no puede fallar** con U3 = 2: el grafo manda a una persona al llegar a 2 ciclos, así que `ciclos_aclaracion <= 2` se cumple por construcción (A-007, que se quedó sin respuesta y escaló, cuenta como «bastaron dos ciclos»). Propuesta: `umbral_confirmacion` `{ece_max: 0.10, auroc_min: 0.75}` en S1 y `{tasa_min: 0.95}` en S2, y S2 reformulado a «faltantes resueltos sin escalar» (`pausa_humana == false`).
 10. **Un plan v1.2 con 8–9 cambia solo la medición** (criterios, riesgos, supuestos), no el grafo ni los umbrales; pero las corridas declaran la huella del plan con que corrieron y el lector exige la misma huella en las repeticiones de `pass^k`. **Decisión del usuario (gate de la fase 4, 2026-09-27): «v1.2 y 3 corridas»** — plan v1.2 aprobado y las corridas rehechas (fase 5). Para no romper la historia v1.1 se decidió ADR-005 (un lote vale si el plan conserva umbrales y contrato de grafo). La línea base también se rehízo con la v1.2 (S3 exige el mismo plan): 4 corridas en vez de 3.
+11. **U4 (modo Texas) es inerte en el demo A v1.2** (auditoría final, AU-4): `propuesta` solo vale `aprobar` o `negar`, y la arista 4 de `decision` (`propuesta == negar → pausa_humana`) ya manda a una persona todo lo que la arista 5 (`texas_y_no_aprobar`) cubriría. Además el recálculo tomaba `modo_texas` de la traza y no del umbral. Arreglado lo segundo (ligaduras umbral → señal en el intérprete TS); lo primero es del plan: el informe ahora CALCULA «conmutarlo cambia 0 de las 62 decisiones». **Propuesta a la planeadora:** dar a `propuesta` un valor adverso parcial (p. ej. «aprobar con condiciones») o retirar U4 del plan A.
+12. **Avance hacia 200 (paso 34, outcome terciario): 0 de 180 casos restantes.** Las corridas de la fase 5 se destinaron a pass^3 del mismo lote de 20 (decisión del usuario, gate de la fase 4). La acumulación sin duplicar está probada (`agents/tests/test_lotes.py`); el avance pasa al S2. Outcome terciario: **parcial**.
+13. **Desviaciones menores sin declarar hasta la auditoría:** las siembras de M9 son código (`core/brecha/m9.ts`), no fixtures en `tests/fixtures/brechas-sembradas/`; las reglas deterministas del demo viven en `agents/src/app_agents/demo_a/nodos.py` (no hay `demo_a/reglas.py`).
+14. **El ADR-001 §4 prometía un respaldo que no existía** (enrutar a `pausa_humana` con motivo `proveedor_no_disponible`): enmendado con el comportamiento real (auditoría final, AU-9); el respaldo pasa a deuda del S2. Y la línea base no es «a igual presupuesto» sino «a presupuesto no mayor»: ADR-006 lo decide y propone a la planeadora ajustar S3 (M-10).
 
 ## Registro de miradas
 
@@ -409,4 +470,4 @@ No aplica en este sprint (sin artefacto visual). La guía de prueba nace en la f
 | 2026-09-27 | `.gitignore` no ignoraba el egg-info tras K2                | comentario en la misma línea que el patrón                                      | comentario en su propia línea |
 | 2026-09-27 | gitleaks bloqueó el commit de la fase 0                     | falso positivo `generic-api-key` sobre un id de modelo junto a la palabra «API» | constantes renombradas (K12)  |
 | 2026-09-27 | GitHub API `i/o timeout` intermitente al mergear Dependabot | red                                                                             | reintento                     |
-| 2026-09-27 | El barrido de cero enlaces encuentra `CHANGELOG.md:211` | el changelog del kit estampado cita el literal del dominio de Pages al narrar el patrón (regla 17: los documentos que narran el barrido escriben el patrón sin el literal) | se corrige en el `/deploy-check` de la fase 5 (K13, fricción del kit) |
+| 2026-09-27 | El barrido de cero enlaces encuentra `CHANGELOG.md:211` | el changelog del kit estampado cita el literal del dominio de Pages al narrar el patrón (regla 17: los documentos que narran el barrido escriben el patrón sin el literal) | corregido en la fase 5 (`CHANGELOG.md:211`, patrón con clase de carácter; K13, fricción del kit) |

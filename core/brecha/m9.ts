@@ -67,6 +67,20 @@ export async function mutarTraza(
   return { ...e, corrida: a };
 }
 
+/** Aplica `f` al manifiesto de la corrida y lo re-sella (un exportador honesto que registró otra cosa). */
+export async function mutarManifiesto(
+  e: EntradaVerificador,
+  f: (m: Objeto) => void,
+): Promise<EntradaVerificador> {
+  const a = copia(e.corrida);
+  const manifiesto = a.corrida as Objeto;
+  f(manifiesto);
+  return {
+    ...e,
+    corrida: { ...a, corrida: await conHuella(sinHuella(manifiesto)) },
+  };
+}
+
 const senales = (t: Objeto) => t["senales"] as Objeto;
 const enInforme = (s: Salida, f: (i: Informe) => boolean) =>
   "informe" in s && f(s.informe);
@@ -275,6 +289,55 @@ export const SIEMBRAS: readonly Siembra[] = [
         (i) =>
           criterioFalla(i, "C6", "AH-003") && riesgoOcurre(i, "R3", "AH-003"),
       ),
+  },
+  {
+    id: "umbral_distinto_del_plan",
+    caso_id: "AH-002",
+    que_se_siembra: {
+      es: "La corrida aplicó una confianza mínima (U1) de 0,8 en lugar del 0,75 del plan.",
+      en: "The run applied a minimum confidence (U1) of 0.8 instead of the plan's 0.75.",
+    },
+    quien_debe_detectarla: {
+      es: "Contrato de grafo: umbrales de la corrida contra los del plan.",
+      en: "Graph contract: the run's thresholds against the plan's.",
+    },
+    // Un exportador honesto que de verdad aplicó otro U1: manifiesto y ramas esperadas lo dicen igual.
+    aplicar: async (e) => {
+      const ramas = copia(e.corrida.ramas) as Objeto;
+      (ramas["umbrales_aplicados"] as Objeto)["U1"] = 0.8;
+      const selladas = await conHuella(sinHuella(ramas));
+      const conRamas = { ...e, corrida: { ...e.corrida, ramas: selladas } };
+      return mutarManifiesto(conRamas, (m) => {
+        (m["umbrales_aplicados"] as Objeto)["U1"] = 0.8;
+        (m["ramas_esperadas"] as Objeto)["huella"] = selladas.huella;
+      });
+    },
+    detectada: (s) =>
+      enInforme(s, (i) =>
+        i.contrato_de_grafo.hallazgos.some(
+          (h) => h.codigo === "UMBRAL_DISTINTO_DEL_PLAN",
+        ),
+      ),
+  },
+  {
+    id: "decision_sin_registro",
+    caso_id: "AH-002",
+    que_se_siembra: {
+      es: "El nodo «decision» elige su rama sin dejar el registro de sus aristas.",
+      en: "The «decision» node picks its branch without recording its edges.",
+    },
+    quien_debe_detectarla: {
+      es: "Contrato de grafo: cada visita de un nodo que decide registra todas sus aristas.",
+      en: "Graph contract: every visit of a deciding node records all its edges.",
+    },
+    aplicar: (e) =>
+      mutarTraza(e, "AH-002", (t) => {
+        t["decisiones_de_arista"] = (
+          t["decisiones_de_arista"] as Objeto[]
+        ).filter((d) => d["desde"] !== "decision");
+      }),
+    detectada: (s) =>
+      enInforme(s, (i) => hallazgo(i, "DECISION_SIN_REGISTRO", "AH-002")),
   },
 ];
 

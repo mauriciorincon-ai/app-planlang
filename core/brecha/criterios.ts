@@ -134,10 +134,22 @@ export function evaluarCriterios(
     if (n === 0) return salida;
 
     if (r.agregacion === "pass^k") {
-      const otras = repeticiones.map((vs) => {
-        const e = evaluarRegla(r.poblacion, r.condicion, vs);
-        return new Set(e.verdaderos);
-      });
+      const evs = repeticiones.map((vs) =>
+        evaluarRegla(r.poblacion, r.condicion, vs),
+      );
+      // Una repetición que no pudo medir no cuenta como «pasó» (AU-7): el criterio queda mal formado.
+      const rota = evs.findIndex((e) => e.mal_formada);
+      if (rota >= 0) {
+        const s = base(c, null);
+        s.estado = "mal_formado";
+        const motivo = evs[rota]!.mal_formada!;
+        s.nota = {
+          es: `Repetición ${rota + 2}: ${motivo.es}`,
+          en: `Repetition ${rota + 2}: ${motivo.en}`,
+        };
+        return s;
+      }
+      const otras = evs.map((e) => new Set(e.verdaderos));
       const pasan = ev.verdaderos.filter((id) => otras.every((s) => s.has(id)));
       const valor = pasan.length / n;
       const k = r.k ?? 1;

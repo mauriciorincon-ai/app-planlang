@@ -5,12 +5,17 @@
  *   rol y el payload mínimo;
  * - cada visita de un nodo escritor se recalcula con el intérprete TypeScript: debe dar la rama y los
  *   resultados que el agente registró, el siguiente paso debe ser esa rama, y el conjunto debe tener la
- *   misma huella que `ramas-esperadas.json` escrito por Python.
+ *   misma huella que `ramas-esperadas.json` escrito por Python;
+ * - cada corrida aplicó los umbrales del plan (si no, la prueba cruzada mide otro plan) y cada visita de un
+ *   nodo que decide dejó el registro de TODAS sus aristas (sin registro no hay prueba cruzada ni playground).
  */
 import type { TextoBilingue } from "../formatos/bilingue";
 import { jcs } from "../formatos/jcs";
 import type { Traza } from "../formatos/traza";
-import { ramaPorDefecto } from "../plan/contrato-constructor";
+import {
+  ramaPorDefecto,
+  umbralesAplicados,
+} from "../plan/contrato-constructor";
 import type { AristaCondicional, Plan } from "../plan/esquema";
 import {
   agruparVisitas,
@@ -32,6 +37,8 @@ export const CODIGOS_CONTRATO = [
   "ROL_DISTINTO",
   "DERIVA_ENTRE_INTERPRETES",
   "NODO_NO_EJERCITADO",
+  "UMBRAL_DISTINTO_DEL_PLAN",
+  "DECISION_SIN_REGISTRO",
 ] as const;
 export type CodigoContrato = (typeof CODIGOS_CONTRATO)[number];
 
@@ -83,12 +90,95 @@ export function ramasResueltas(plan: Plan): Record<string, string> {
   );
 }
 
+/** ¿Aplicó cada corrida los umbrales del plan? Si no, RF-09.2 y los criterios no miden el plan (AU-5). */
+export function umbralesDistintosDelPlan(
+  plan: Plan,
+  corridas: readonly CorridaLeida[],
+): HallazgoDeContrato[] {
+  const delPlan = jcs(umbralesAplicados(plan));
+  return corridas
+    .filter((c) => jcs(c.manifiesto.umbrales_aplicados) !== delPlan)
+    .map((c) => ({
+      codigo: "UMBRAL_DISTINTO_DEL_PLAN",
+      severidad: "bloqueante",
+      corrida_id: c.manifiesto.corrida_id,
+      caso_id: null,
+      detalle: {
+        es: "La corrida aplicó umbrales distintos de los del plan: la prueba cruzada y los criterios no miden el plan.",
+        en: "The run applied thresholds other than the plan's: the cross-check and the criteria do not measure the plan.",
+      },
+    }));
+}
+
+/**
+ * Cada paso de un nodo con aristas condicionales debe registrar exactamente sus aristas 1..n (AU-6). La única
+ * excepción es el último paso de una traza que terminó con error del proveedor: el nodo no llegó a decidir.
+ */
+function decisionesIncompletas(
+  t: Traza,
+  porNodo: ReadonlyMap<string, number>,
+  corridaId: string,
+): HallazgoDeContrato[] {
+  const salida: HallazgoDeContrato[] = [];
+  for (const p of t.pasos) {
+    const n = porNodo.get(p.nodo);
+    if (n === undefined) continue;
+    const regs = t.decisiones_de_arista.filter((d) => d.paso === p.orden);
+    const ultimoConError =
+      t.resultado === "error" &&
+      p.orden === t.pasos.length &&
+      p.error_proveedor !== null;
+    if (regs.length === 0 && ultimoConError) continue;
+    const tiene = regs
+      .map((d) => d.orden_arista)
+      .sort((a, b) => a - b)
+      .join(",");
+    const debe = Array.from({ length: n }, (_, i) => i + 1).join(",");
+    if (tiene !== debe)
+      salida.push({
+        codigo: "DECISION_SIN_REGISTRO",
+        severidad: "bloqueante",
+        corrida_id: corridaId,
+        caso_id: t.caso_id,
+        detalle: {
+          es: `Paso ${p.orden} (${p.nodo}): el nodo decide con ${n} arista(s) y la traza registra ${regs.length}; sin registro no hay prueba cruzada ni playground.`,
+          en: `Step ${p.orden} (${p.nodo}): the node decides with ${n} edge(s) and the trace records ${regs.length}; without a record there is no cross-check and no playground.`,
+        },
+      });
+  }
+  return salida;
+}
+
 /** RF-09.2 sobre una corrida: discrepancias contra lo registrado y huella contra Python. */
 export async function rf092(
   c: CorridaLeida,
 ): Promise<{ resultado: ResultadoRf092; hallazgos: HallazgoDeContrato[] }> {
   const umbrales = c.manifiesto.umbrales_aplicados as Umbrales;
   const id = c.manifiesto.corrida_id;
+  const porNodo = new Map<string, number>();
+  for (const a of c.grafo.aristas_condicionales)
+    porNodo.set(a.desde, (porNodo.get(a.desde) ?? 0) + 1);
+  const incompletas = c.trazas.flatMap((t) =>
+    decisionesIncompletas(t, porNodo, id),
+  );
+  const visitas = c.trazas.reduce(
+    (n, t) => n + agruparVisitas(t.decisiones_de_arista).length,
+    0,
+  );
+  if (incompletas.length > 0)
+    // Sin los registros completos no hay nada que recalcular: se reporta, no se revienta.
+    return {
+      resultado: {
+        corrida_id: id,
+        variante: c.manifiesto.variante,
+        visitas,
+        discrepancias: 0,
+        huella_typescript: "",
+        huella_python: c.ramas.huella,
+        coincide: false,
+      },
+      hallazgos: incompletas,
+    };
   const hallazgos: HallazgoDeContrato[] = [];
   const disc = discrepanciasDeRamas(c.trazas, c.grafo, umbrales);
   for (const d of disc)
@@ -120,10 +210,6 @@ export async function rf092(
         en: "The TypeScript and Python interpreters do not recompute the same branches on this run.",
       },
     });
-  const visitas = c.trazas.reduce(
-    (n, t) => n + agruparVisitas(t.decisiones_de_arista).length,
-    0,
-  );
   return {
     resultado: {
       corrida_id: id,
@@ -315,6 +401,7 @@ export async function verificarContrato(
     hallazgos.push(...ramasNoSeguidas(t, id), ...pausas(t, plan, id));
   }
 
+  hallazgos.push(...umbralesDistintosDelPlan(plan, [principal, ...otras]));
   const rf: ResultadoRf092[] = [];
   for (const corrida of [principal, ...otras]) {
     const r = await rf092(corrida);

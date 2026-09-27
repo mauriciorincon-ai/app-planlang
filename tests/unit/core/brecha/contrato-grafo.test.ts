@@ -126,6 +126,37 @@ describe("hallazgos por traza", () => {
       [],
     );
   });
+  it("un nodo que decide sin registro, o con el registro a medias, se nombra sin reventar (AU-6)", async () => {
+    const { plan, c } = await simulada();
+    const ah002 = c.trazas.find((t) => t.caso_id === "AH-002")!;
+    ah002.decisiones_de_arista = ah002.decisiones_de_arista.filter(
+      (d) => !(d.desde === "decision" && d.orden_arista === 2),
+    );
+    const ah001 = c.trazas.find((t) => t.caso_id === "AH-001")!;
+    ah001.decisiones_de_arista = ah001.decisiones_de_arista.filter(
+      (d) => d.desde !== "enrutador",
+    );
+    const r = await verificarContrato(plan, c, []);
+    const sinRegistro = r.hallazgos.filter(
+      (h) => h.codigo === "DECISION_SIN_REGISTRO",
+    );
+    expect(sinRegistro.map((h) => h.caso_id)).toEqual(["AH-001", "AH-002"]);
+    expect(sinRegistro[1]?.detalle.es).toMatch(
+      /^Paso 4 \(decision\): el nodo decide con 5 arista\(s\) y la traza registra 4/,
+    );
+    expect(r.rf_09_2[0]?.coincide).toBe(false);
+  });
+  it("una corrida que aplicó otros umbrales que el plan es un hallazgo bloqueante (AU-5)", async () => {
+    const { plan, c } = await simulada();
+    c.manifiesto = {
+      ...c.manifiesto,
+      umbrales_aplicados: { ...c.manifiesto.umbrales_aplicados, U1: 0.8 },
+    };
+    const r = await verificarContrato(plan, c, []);
+    expect(
+      r.hallazgos.find((h) => h.codigo === "UMBRAL_DISTINTO_DEL_PLAN"),
+    ).toMatchObject({ severidad: "bloqueante", corrida_id: "simulado-3casos" });
+  });
   it("deriva entre intérpretes: la huella de Python no coincide", async () => {
     const { plan, c } = await simulada();
     c.ramas = { ...c.ramas, huella: "0".repeat(64) };

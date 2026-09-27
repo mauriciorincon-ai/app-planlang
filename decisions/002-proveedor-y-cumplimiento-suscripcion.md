@@ -63,7 +63,10 @@ queda trazado en LangSmith. La investigación técnica (§ 5) leyó los término
 --setting-sources "" --tools "" --system-prompt <propio> --json-schema <esquema>`, **nunca `--bare`**,
    cwd = directorio temporal limpio (esta constitución no entra al prompt), `env` del hijo sin
    `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN`, `LANGSMITH_API_KEY`,
-   `LANGCHAIN_API_KEY`, `CLAUDECODE`. Test literal de la línea de comando y del `env`
+   `LANGCHAIN_API_KEY`, `CLAUDECODE` **y sin ninguna variable con prefijo `ANTHROPIC_`, `LANGSMITH_`,
+   `LANGCHAIN_` o `CLAUDE_CODE_`** (enmienda 2026-09-27, auditoría S1: `ANTHROPIC_BASE_URL` mandaría el
+   token a un proxy y `CLAUDE_CODE_USE_BEDROCK` cambiaría el proveedor en silencio; humo real 3/3 tras
+   el cambio). Test literal de la línea de comando y del `env`
    (`agents/tests/test_adaptador_flags.py`); humo real (`test_adaptador_humo_real.py`) con
    `PLANLANG_HUMO_REAL=1` antes de cada lote.
 2. **El token jamás sale del binario:** el adaptador no lee ni escribe credenciales; `session_id` y
@@ -71,9 +74,13 @@ queda trazado en LangSmith. La investigación técnica (§ 5) leyó los término
    `total_cost_usd`, `duration_ms`, `subtype`, `is_error`. Doble cinturón gitleaks (hook de git + hook
    de Claude Code) y test de ausencia de patrones de clave en `runs/`.
 3. **Lotes fuera de CI, de 20 casos, espaciados, acumulables sin duplicar** (RF-05.5): `pnpm lote:demo`
-   con `--pausa-s` entre casos; ante `limite_de_uso` el lote para y registra el límite en la ficha de
-   la corrida. La CI conoce solo el proveedor `simulado`. Uso «ordinario e individual» (cita 3): un
-   lote de 20 ≈ 80 llamadas de ~1,5 mil tokens de contexto en ~10 min.
+   y `pnpm lote:base` pasan `--pausa-s 2`; con la suscripción, `lotes.py` **rechaza** una sesión sin
+   pausa o de más casos que `lotes.corridas_espaciadas_de` del plan, y toma el alias del modelo de
+   `lotes.modelo_alias` (enmienda 2026-09-27, auditoría S1, AU-10). Ante `limite_de_uso` —en stderr o
+   solo en el JSON del CLI— el lote para y registra el límite en la ficha de la corrida. La CI conoce
+   solo el proveedor `simulado`. Uso «ordinario e individual» (cita 3), **medido el 2026-09-27**: un
+   lote de 20 ≈ 47–49 llamadas en el multiagente y ≈ 23 en el agente único, contexto del extractor
+   ≈ 4,7 mil tokens, ≈ 5 min con 2 s de pausa entre casos (bitácora S1, fase 5).
 4. **Interruptor a proveedor por clave** sin tocar el grafo: `PLANLANG_PROVEEDOR=anthropic`
    (`claude-haiku-4-5-20251001`, extra `langchain-anthropic`, **techo US$10 por ciclo**) o
    `PLANLANG_PROVEEDOR=groq` (`openai/gpt-oss-120b`). Se activa solo por decisión del usuario, y la

@@ -21,6 +21,19 @@ export function umbralesAplicados(
   return salida;
 }
 
+/**
+ * Umbrales booleanos cuya señal ES el interruptor (U4 → `modo_texas`): el agente la escribe con el valor del
+ * umbral, así que al mover el umbral en el playground la señal registrada debe seguirlo. Devuelve
+ * `señal → id de umbral` (los umbrales numéricos comparan contra una señal observada y no se ligan).
+ */
+export function ligadurasDeUmbrales(plan: Plan): Record<string, string> {
+  return Object.fromEntries(
+    plan.umbrales
+      .filter((u) => !("min" in u.rango_jugable))
+      .map((u) => [u.senal, u.id]),
+  );
+}
+
 /** Resuelve `umbral.Ux` con los umbrales aplicados; un literal se devuelve tal cual. */
 export function resolverValor(
   valor: number | boolean | string,

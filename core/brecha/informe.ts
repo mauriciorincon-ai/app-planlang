@@ -6,8 +6,13 @@
 import type { TextoBilingue } from "../formatos/bilingue";
 import { conHuella } from "../formatos/huella";
 import type { JsonValor } from "../formatos/jcs";
-import type { Plan } from "../plan/esquema";
-import type { Umbrales } from "../playground/interprete";
+import { ligadurasDeUmbrales } from "../plan/contrato-constructor";
+import { esAristaTripleta, type Plan } from "../plan/esquema";
+import {
+  ErrorArista,
+  recalcular,
+  type Umbrales,
+} from "../playground/interprete";
 import {
   brechasNoPrevistas,
   type BrechaNoPrevista,
@@ -193,6 +198,13 @@ function pendientes(
     )
       ids.push(r.id);
   for (const s of supuestos) if (s.estado === "refutado") ids.push(s.id);
+  for (const s of supuestos)
+    if (
+      s.estado === "sin_probar" &&
+      s.criticidad === "alta" &&
+      !ids.includes(s.id)
+    )
+      ids.push(s.id);
   return ids;
 }
 
@@ -204,13 +216,18 @@ export function resumenDelInforme(
   riesgos: readonly ResultadoRiesgo[],
   supuestos: readonly ResultadoSupuesto[],
   brechas: number,
+  riesgosDeRepeticiones: readonly ResultadoRiesgo[] = [],
 ): Informe["resumen"] {
   const cumplidos = criterios.filter((c) => c.estado === "cumple").length;
   const fallidos = criterios.filter((c) => c.estado === "incumple").length;
   const abiertos = criterios.length - cumplidos - fallidos;
-  const ocurridos = riesgos
-    .filter((r) => r.estado === "ocurrio")
-    .map((r) => r.id);
+  // Un riesgo que ocurrió en una repetición de pass^k también ocurrió (AU-2).
+  const ocurrieron = new Set(
+    [...riesgos, ...riesgosDeRepeticiones]
+      .filter((r) => r.estado === "ocurrio")
+      .map((r) => r.id),
+  );
+  const ocurridos = riesgos.map((r) => r.id).filter((id) => ocurrieron.has(id));
   const frase = FRASE_VEREDICTO[v.valor];
   const texto: TextoBilingue = {
     es: `${frase.es}. Se midieron ${n} casos sintéticos. Criterios: ${cumplidos} cumplidos, ${fallidos} fallidos y ${abiertos} sin cerrar, de ${criterios.length}. Riesgos ocurridos: ${lista(ocurridos, "ninguno")}. Las decisiones humanas se simularon.`,
@@ -253,6 +270,29 @@ export function resumenDelInforme(
   };
 }
 
+/** Los valores de dominio que el informe nombra, redactados en cada idioma (regla 20: nada crudo en el EN). */
+const DECISION: Readonly<Record<string, TextoBilingue>> = {
+  aprobar: { es: "aprobar", en: "approve" },
+  negar: { es: "negar", en: "deny" },
+  rechazar: { es: "rechazar", en: "reject" },
+  escalar: { es: "escalar", en: "escalate" },
+};
+const ATAQUE: Readonly<Record<string, TextoBilingue>> = {
+  inyeccion: { es: "inyección", en: "injection" },
+  dato_sensible: { es: "dato sensible", en: "sensitive data" },
+  homonimo: { es: "homónimo", en: "look-alike name" },
+};
+
+function nombreDecision(d: unknown, i: "es" | "en"): string {
+  if (d === null || d === undefined)
+    return i === "es" ? "sin decisión" : "no decision";
+  return DECISION[String(d)]?.[i] ?? String(d);
+}
+
+function nombreAtaque(a: string | null, i: "es" | "en"): string {
+  return a === null ? "" : (ATAQUE[a]?.[i] ?? a);
+}
+
 function ejemplares(
   vistas: readonly VistaDeCaso[],
   criterios: readonly ResultadoCriterio[],
@@ -288,9 +328,9 @@ function ejemplares(
         }
       : null;
   const decisionEs = (v: VistaDeCaso) =>
-    String(v.traza.senales["decision_final"] ?? "sin decisión");
+    nombreDecision(v.traza.senales["decision_final"], "es");
   const decisionEn = (v: VistaDeCaso) =>
-    String(v.traza.senales["decision_final"] ?? "no decision");
+    nombreDecision(v.traza.senales["decision_final"], "en");
   return {
     exitoso: ficha(
       vistas.find(
@@ -328,8 +368,8 @@ function ejemplares(
               en: `It failed: ${ids.join(", ")}.`,
             }
           : {
-              es: `Decidió «${decisionEs(v)}»; la verdad conocida era «${v.caso.verdad_conocida.decision}».`,
-              en: `It decided «${decisionEn(v)}»; the known truth was «${v.caso.verdad_conocida.decision}».`,
+              es: `Decidió «${decisionEs(v)}»; la verdad conocida era «${nombreDecision(v.caso.verdad_conocida.decision, "es")}».`,
+              en: `It decided «${decisionEn(v)}»; the known truth was «${nombreDecision(v.caso.verdad_conocida.decision, "en")}».`,
             };
       },
     ),
@@ -342,26 +382,82 @@ function ejemplares(
           !fallos.has(v.caso_id),
       ),
       (v) => ({
-        es: `Ataque de tipo «${v.caso.adversario_detalle ?? ""}»: la decisión fue la correcta y no se intentó ninguna acción fuera de la lista blanca.`,
-        en: `A «${v.caso.adversario_detalle ?? ""}» attack: the decision was the right one and no action outside the allow-list was attempted.`,
+        es: `Ataque de tipo «${nombreAtaque(v.caso.adversario_detalle, "es")}»: la decisión fue la correcta y no se intentó ninguna acción fuera de la lista blanca.`,
+        en: `An attack of type «${nombreAtaque(v.caso.adversario_detalle, "en")}»: the decision was the right one and no action outside the allow-list was attempted.`,
       }),
     ),
   };
 }
 
-const LIMITES_PLAYGROUND: TextoBilingue[] = [
-  {
-    es: "Mover un umbral recalcula, sobre las señales registradas, qué rama habría tomado cada nodo que decide. Lo que el agente habría hecho después (otra extracción, otra respuesta) no se simula: se marca «no observado».",
-    en: "Moving a threshold recomputes, on the recorded signals, which branch each deciding node would have taken. What the agent would have done afterwards (another extraction, another reply) is not simulated: it is marked “not observed”.",
-  },
-  {
-    es: "El modo Texas se recalcula porque sus dos entradas quedaron registradas; una regla cuyas entradas no estén en la traza no se puede mover.",
-    en: "Texas mode can be recomputed because both of its inputs were recorded; a rule whose inputs are not in the trace cannot be moved.",
-  },
-];
+const LIMITE_RECALCULO: TextoBilingue = {
+  es: "Mover un umbral recalcula, sobre las señales registradas, qué rama habría tomado cada nodo que decide. Lo que el agente habría hecho después (otra extracción, otra respuesta) no se simula: se marca «no observado».",
+  en: "Moving a threshold recomputes, on the recorded signals, which branch each deciding node would have taken. What the agent would have done afterwards (another extraction, another reply) is not simulated: it is marked “not observed”.",
+};
+
+/**
+ * Lo que el playground puede y no puede mover, CALCULADO sobre la corrida (AU-4): cuántas decisiones cambia
+ * conmutar cada umbral booleano, y si cada regla con nombre tiene sus entradas en todas las trazas.
+ */
+function limitesDelPlayground(
+  plan: Plan,
+  corrida: CorridaLeida,
+  umbrales: Umbrales,
+): TextoBilingue[] {
+  const salida: TextoBilingue[] = [LIMITE_RECALCULO];
+  const lig = ligadurasDeUmbrales(plan);
+  const ramas = (u: Umbrales) =>
+    corrida.trazas.flatMap((t) =>
+      recalcular(
+        t.decisiones_de_arista,
+        corrida.grafo.aristas_condicionales,
+        corrida.grafo.ramas_por_defecto,
+        u,
+        lig,
+      ).map((v) => v.rama_tomada),
+    );
+  for (const u of plan.umbrales) {
+    const valor = umbrales[u.id];
+    if (typeof valor !== "boolean") continue;
+    try {
+      const antes = ramas(umbrales);
+      const despues = ramas({ ...umbrales, [u.id]: !valor });
+      const n = antes.filter((r, i) => r !== despues[i]).length;
+      salida.push({
+        es: `${u.id} (${u.nombre.es}): conmutarlo cambia ${n} de las ${antes.length} decisiones registradas en esta corrida.`,
+        en: `${u.id} (${u.nombre.en}): switching it changes ${n} of the ${antes.length} decisions recorded in this run.`,
+      });
+    } catch (err) {
+      if (!(err instanceof ErrorArista)) throw err;
+      salida.push({
+        es: `${u.id} (${u.nombre.es}): no se puede recalcular porque hay decisiones sin registro completo (ver el contrato de grafo).`,
+        en: `${u.id} (${u.nombre.en}): it cannot be recomputed because some decisions lack a complete record (see the graph contract).`,
+      });
+    }
+  }
+  for (const a of plan.contrato_de_grafo.aristas_condicionales) {
+    if (esAristaTripleta(a)) continue;
+    const firma = `${a.funcion.nombre}(${a.funcion.entradas.join(", ")})`;
+    const completas = corrida.trazas.every((t) =>
+      a.funcion.entradas.every((k) => Object.hasOwn(t.senales, k)),
+    );
+    salida.push(
+      completas
+        ? {
+            es: `La regla ${firma} se puede recalcular: sus entradas están en todas las trazas.`,
+            en: `The ${firma} rule can be recomputed: its inputs are in every trace.`,
+          }
+        : {
+            es: `La regla ${firma} no se puede mover: falta alguna de sus entradas en las trazas («no observado»).`,
+            en: `The ${firma} rule cannot be moved: some of its inputs are missing from the traces (“not observed”).`,
+          },
+    );
+  }
+  return salida;
+}
 
 function playground(
   plan: Plan,
+  corrida: CorridaLeida,
   vistas: readonly VistaDeCaso[],
   umbrales: Umbrales,
 ): Informe["playground"] {
@@ -404,7 +500,7 @@ function playground(
             : [],
       };
     }),
-    limites: LIMITES_PLAYGROUND,
+    limites: limitesDelPlayground(plan, corrida, umbrales),
   };
 }
 
@@ -446,8 +542,31 @@ export async function generarInforme(
     ...e.repeticiones,
     ...(e.base ? [e.base] : []),
   ]);
-  const { brechas, evaluadores } = brechasNoPrevistas(plan, vistas, riesgos);
-  const v = veredicto(criterios, riesgos, supuestos, contrato, brechas);
+  const principal = brechasNoPrevistas(plan, vistas, riesgos, m.corrida_id);
+  // Las repeticiones que cierran pass^k también se miran: sus riesgos y sus brechas se reportan (AU-2).
+  const deRepeticiones = e.repeticiones.map((r) => {
+    const vs = vistasDe(r);
+    const rs = evaluarRiesgos(plan, vs);
+    return {
+      id: r.manifiesto.corrida_id,
+      riesgos: rs,
+      brechas: brechasNoPrevistas(plan, vs, rs, r.manifiesto.corrida_id)
+        .brechas,
+    };
+  });
+  const brechas = [
+    ...principal.brechas,
+    ...deRepeticiones.flatMap((x) => x.brechas),
+  ];
+  const evaluadores = principal.evaluadores;
+  const v = veredicto(
+    criterios,
+    riesgos,
+    supuestos,
+    contrato,
+    brechas,
+    deRepeticiones.map(({ id, riesgos: rs }) => ({ id, riesgos: rs })),
+  );
 
   const informe = {
     formato: FORMATO_INFORME,
@@ -465,6 +584,7 @@ export async function generarInforme(
       riesgos,
       supuestos,
       brechas.length,
+      deRepeticiones.flatMap((x) => x.riesgos),
     ),
     plan_en_breve: {
       id: plan.id,
@@ -487,7 +607,7 @@ export async function generarInforme(
     supuestos,
     contrato_de_grafo: contrato,
     casos_ejemplares: ejemplares(vistas, criterios, riesgos, evaluadores),
-    playground: playground(plan, vistas, umbrales),
+    playground: playground(plan, corrida, vistas, umbrales),
     ficha_reproducibilidad: {
       plan: {
         id: plan.id,

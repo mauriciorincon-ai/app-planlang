@@ -1,7 +1,8 @@
 /**
- * Supuestos medibles (RF-06.4, regla dura 9): se MIDEN y se marcan confirmados o refutados solo con un
- * umbral numérico declarado en el plan (`umbral_confirmacion`, claves `<métrica>_min` / `<métrica>_max`).
- * Sin umbral, o si la medida no puede fallar, el supuesto queda `sin_probar` con el motivo a la vista.
+ * Supuestos medibles (RF-06.4, regla dura 9): se MIDEN y se marcan confirmados o refutados con el umbral
+ * numérico declarado en el plan (`umbral_confirmacion`, claves `<métrica>_min` / `<métrica>_max`). Sin
+ * umbral, o si la medida no puede fallar, un supuesto de medida queda `sin_probar` con el motivo a la vista.
+ * La comparación con la línea base aplica una regla por defecto fija («no peor»: tolerancia cero) y lo dice.
  *
  * Tres familias, según lo que declare `medible_en_trazas`:
  * - calibración (`ece`, `auroc`, `curva_riesgo_cobertura`) sobre la señal de confianza;
@@ -75,7 +76,10 @@ const SIN_UMBRAL: TextoBilingue = {
   en: "The plan declares no numeric confirmation threshold: the measures are reported without a decision.",
 };
 
-/** Aplica `umbral_confirmacion` a las métricas medidas. */
+/**
+ * Aplica `umbral_confirmacion` a las métricas medidas. Una métrica que no cumple refuta aunque otra no se
+ * haya podido medir: la falta de un valor jamás esconde una refutación medida (regla dura 9).
+ */
 function decidirConUmbral(
   umbral: Record<string, number> | undefined,
   metricas: Record<string, number | null>,
@@ -83,37 +87,50 @@ function decidirConUmbral(
   if (!umbral || Object.keys(umbral).length === 0)
     return { estado: "sin_probar", motivo: SIN_UMBRAL };
   const fallidas: string[] = [];
+  const sinValor: string[] = [];
   for (const clave of Object.keys(umbral).sort()) {
     const lim = umbral[clave] as number;
     const m = /^(.*)_(min|max)$/.exec(clave);
     const metrica = m?.[1] ?? clave;
     const valor = metricas[metrica];
-    if (valor === null || valor === undefined)
-      return {
-        estado: "sin_probar",
-        motivo: {
-          es: `No hay valor medido para ${metrica}: el supuesto no se puede decidir.`,
-          en: `There is no measured value for ${metrica}: the assumption cannot be decided.`,
-        },
-      };
+    if (valor === null || valor === undefined) {
+      sinValor.push(metrica);
+      continue;
+    }
     const ok = m?.[2] === "max" ? valor <= lim : valor >= lim;
     if (!ok) fallidas.push(clave);
   }
-  return fallidas.length === 0
-    ? {
-        estado: "confirmado",
-        motivo: {
-          es: "Todas las medidas cumplen el umbral de confirmación del plan.",
-          en: "Every measure meets the plan's confirmation threshold.",
-        },
-      }
-    : {
-        estado: "refutado",
-        motivo: {
-          es: `No cumple el umbral de confirmación: ${fallidas.join(", ")}.`,
-          en: `It misses the confirmation threshold: ${fallidas.join(", ")}.`,
-        },
-      };
+  if (fallidas.length > 0) {
+    const extra: TextoBilingue =
+      sinValor.length > 0
+        ? {
+            es: ` Sin valor medido: ${sinValor.join(", ")}.`,
+            en: ` No measured value: ${sinValor.join(", ")}.`,
+          }
+        : { es: "", en: "" };
+    return {
+      estado: "refutado",
+      motivo: {
+        es: `No cumple el umbral de confirmación: ${fallidas.join(", ")}.${extra.es}`,
+        en: `It misses the confirmation threshold: ${fallidas.join(", ")}.${extra.en}`,
+      },
+    };
+  }
+  if (sinValor.length > 0)
+    return {
+      estado: "sin_probar",
+      motivo: {
+        es: `No hay valor medido para ${sinValor.join(", ")}: el supuesto no se puede decidir.`,
+        en: `There is no measured value for ${sinValor.join(", ")}: the assumption cannot be decided.`,
+      },
+    };
+  return {
+    estado: "confirmado",
+    motivo: {
+      es: "Todas las medidas cumplen el umbral de confirmación del plan.",
+      en: "Every measure meets the plan's confirmation threshold.",
+    },
+  };
 }
 
 /**
@@ -170,6 +187,27 @@ function muestraPequena(n: number): TextoBilingue[] {
     : [];
 }
 
+/** La regla del supuesto no pudo medir (comparación sospechosa, tipos incompatibles): no se decide. */
+function reglaRota(
+  motivo: TextoBilingue,
+): Omit<
+  ResultadoSupuesto,
+  "id" | "enunciado" | "criticidad" | "estado_en_plan"
+> {
+  return {
+    estado: "sin_probar",
+    motivo: {
+      es: `La regla del supuesto no pudo medir: ${motivo.es}.`,
+      en: `The assumption's rule could not measure: ${motivo.en}.`,
+    },
+    n: 0,
+    metricas: {},
+    curva: null,
+    comparacion: null,
+    limitaciones: [],
+  };
+}
+
 function calibracion(
   s: Supuesto,
   plan: Plan,
@@ -180,6 +218,7 @@ function calibracion(
 > {
   const medible = s.medible_en_trazas!;
   const ev = evaluarRegla(medible.poblacion, ETIQUETA_CORRECTO, vistas);
+  if (ev.mal_formada) return reglaRota(ev.mal_formada);
   const porId = new Map(vistas.map((v) => [v.caso_id, v]));
   const muestras: Muestra[] = [];
   for (const id of [...ev.verdaderos, ...ev.falsos].sort()) {
@@ -239,6 +278,7 @@ function tasa(
 > {
   const medible = s.medible_en_trazas!;
   const ev = evaluarRegla(medible.poblacion, medible.condicion, vistas);
+  if (ev.mal_formada) return reglaRota(ev.mal_formada);
   const n = ev.poblacion.length;
   const metricas: Record<string, number | null> = {
     tasa: n === 0 ? null : redondear(ev.verdaderos.length / n),
@@ -324,6 +364,28 @@ function exactitudYLatencia(vistas: readonly VistaDeCaso[]): {
   };
 }
 
+/**
+ * Una respuesta al afiliado inservible: vacía, JSON crudo o texto de relleno en algún idioma. Las trazas que
+ * terminaron con error del proveedor se cuentan aparte (no tienen respuesta que juzgar).
+ */
+export function respuestaInservible(t: Traza): boolean {
+  if (t.error_proveedor || !t.salida_final) return false;
+  return (["es", "en"] as const).some((l) => {
+    const texto = t.salida_final![l].trim();
+    return (
+      texto === "" ||
+      texto.startsWith("{") ||
+      texto.startsWith("[") ||
+      texto.toLowerCase().includes("placeholder")
+    );
+  });
+}
+
+const REGLA_POR_DEFECTO: TextoBilingue = {
+  es: " Regla por defecto del verificador (el plan no declara tolerancia): exactitud mayor o igual y latencia mediana menor o igual que las de la línea base.",
+  en: " Verifier default rule (the plan declares no tolerance): accuracy greater than or equal to, and median latency less than or equal to, the baseline's.",
+};
+
 function comparacion(
   s: Supuesto,
   vistas: readonly VistaDeCaso[],
@@ -370,11 +432,17 @@ function comparacion(
     casos_distintos,
   };
   const noPeorExactitud = multi.exactitud >= unico.exactitud;
-  const noPeorLatencia =
-    multi.latencia === null ||
-    unico.latencia === null ||
-    multi.latencia <= unico.latencia;
   const limitaciones: TextoBilingue[] = [];
+  const idsMulti = new Set(vistas.map((v) => v.caso_id));
+  const idsBase = new Set(base.vistas.map((v) => v.caso_id));
+  const soloUno = [...ids]
+    .filter((id) => idsMulti.has(id) !== idsBase.has(id))
+    .sort();
+  if (soloUno.length > 0)
+    limitaciones.push({
+      es: `La línea base y el multiagente no corrieron los mismos casos: ${soloUno.join(", ")}.`,
+      en: `The baseline and the multi-agent run did not run the same cases: ${soloUno.join(", ")}.`,
+    });
   if (!comp.presupuesto_respetado)
     limitaciones.push({
       es: "La línea base gastó más que el multiagente: la comparación no es a igual presupuesto.",
@@ -389,26 +457,59 @@ function comparacion(
       es: `La línea base terminó ${conError.length} caso(s) con error del proveedor, que cuentan como mal resueltos: ${conError.join(", ")}.`,
       en: `The baseline ended ${conError.length} case(s) with a provider error, counted as wrongly resolved: ${conError.join(", ")}.`,
     });
+  for (const [lado, vs] of [
+    [{ es: "La línea base", en: "The baseline" }, base.vistas],
+    [{ es: "El multiagente", en: "The multi-agent run" }, vistas],
+  ] as const) {
+    const malas = vs
+      .filter((v) => respuestaInservible(v.traza))
+      .map((v) => v.caso_id)
+      .sort();
+    if (malas.length > 0)
+      limitaciones.push({
+        es: `${lado.es} entregó ${malas.length} respuesta(s) al afiliado inservibles (vacías, JSON crudo o texto de relleno), que la comparación no penaliza: ${malas.join(", ")}.`,
+        en: `${lado.en} gave ${malas.length} unusable reply(ies) to the member (empty, raw JSON or filler text), which the comparison does not penalize: ${malas.join(", ")}.`,
+      });
+  }
   limitaciones.push(...muestraPequena(vistas.length));
+  const metricas = {
+    exactitud: multi.exactitud,
+    exactitud_base: unico.exactitud,
+    latencia_mediana: multi.latencia,
+    latencia_mediana_base: unico.latencia,
+  };
+  if (multi.latencia === null || unico.latencia === null)
+    return {
+      estado: "sin_probar",
+      motivo: {
+        es: "Falta la latencia mediana de una de las dos corridas: el supuesto no se puede decidir.",
+        en: "The median latency of one of the two runs is missing: the assumption cannot be decided.",
+      },
+      n: vistas.length,
+      metricas,
+      curva: null,
+      comparacion: comp,
+      limitaciones,
+    };
+  const noPeorLatencia = multi.latencia <= unico.latencia;
   const confirmado = noPeorExactitud && noPeorLatencia;
+  const motivo: TextoBilingue = confirmado
+    ? {
+        es: "El multiagente no rinde peor que el agente único: igual o mejor en exactitud y en latencia mediana.",
+        en: "The multi-agent run does no worse than the single agent: equal or better in accuracy and median latency.",
+      }
+    : {
+        es: `El multiagente rinde peor que el agente único en ${[!noPeorExactitud ? "exactitud" : null, !noPeorLatencia ? "latencia mediana" : null].filter(Boolean).join(" y ")}.`,
+        en: `The multi-agent run does worse than the single agent in ${[!noPeorExactitud ? "accuracy" : null, !noPeorLatencia ? "median latency" : null].filter(Boolean).join(" and ")}.`,
+      };
   return {
     estado: confirmado ? "confirmado" : "refutado",
-    motivo: confirmado
-      ? {
-          es: "El multiagente no rinde peor que el agente único: igual o mejor en exactitud y en latencia mediana.",
-          en: "The multi-agent run does no worse than the single agent: equal or better in accuracy and median latency.",
-        }
-      : {
-          es: `El multiagente rinde peor que el agente único en ${[!noPeorExactitud ? "exactitud" : null, !noPeorLatencia ? "latencia mediana" : null].filter(Boolean).join(" y ")}.`,
-          en: `The multi-agent run does worse than the single agent in ${[!noPeorExactitud ? "accuracy" : null, !noPeorLatencia ? "median latency" : null].filter(Boolean).join(" and ")}.`,
-        },
-    n: vistas.length,
-    metricas: {
-      exactitud: multi.exactitud,
-      exactitud_base: unico.exactitud,
-      latencia_mediana: multi.latencia,
-      latencia_mediana_base: unico.latencia,
+    motivo: {
+      es: `${motivo.es}${REGLA_POR_DEFECTO.es}`,
+      en: `${motivo.en}${REGLA_POR_DEFECTO.en}`,
     },
+    n: vistas.length,
+    metricas,
     curva: null,
     comparacion: comp,
     limitaciones,

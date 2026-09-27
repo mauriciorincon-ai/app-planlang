@@ -12,6 +12,7 @@ import type { TextoBilingue } from "../formatos/bilingue";
 import type { Traza } from "../formatos/traza";
 import type { Plan } from "../plan/esquema";
 import type { VistaDeCaso } from "./contexto";
+import { parsear, referencias } from "./condiciones";
 import type { ResultadoRiesgo } from "./detectores";
 import { evaluarRegla } from "./reglas";
 
@@ -46,7 +47,7 @@ export const EVALUADORES_DE_REGLA: Readonly<Record<string, ReglaDeEvaluador>> =
     pausas_cumplidas: {
       poblacion: "todos",
       condicion:
-        "(verdad_conocida.debe_escalar IMPLICA pausa_humana == true) AND (decision_final == 'negar' IMPLICA pausa_humana == true)",
+        "(verdad_conocida.debe_escalar IMPLICA pausa_humana == true) AND (decision_final IN ['negar', 'rechazar'] IMPLICA pausa_humana == true)",
       nodo: "decision",
       falla: {
         es: "Un caso que debía pasar por una persona no pasó.",
@@ -72,7 +73,8 @@ export interface ResultadoEvaluador {
     | "ejecutado"
     | "no_ejecutado_opcional"
     | "no_ejecutado"
-    | "sin_implementacion";
+    | "sin_implementacion"
+    | "mal_formado";
   riesgos_cubiertos: string[];
   casos_evaluados: number;
   fallas: string[];
@@ -86,6 +88,8 @@ export type CategoriaBrecha =
   | "evaluador_no_ejecutado";
 
 export interface BrechaNoPrevista {
+  /** La corrida donde apareció: la principal o una de sus repeticiones de pass^k. */
+  corrida_id: string;
   categoria: CategoriaBrecha;
   evaluador: string | null;
   caso_id: string | null;
@@ -100,10 +104,24 @@ function primerPasoDe(t: Traza, nodo: string, ultimo: boolean): number | null {
   return p ? p.orden : null;
 }
 
+/** Riesgos del plan cuyo detector mira la señal dada: solo esos cubren una falla de esa clase. */
+function riesgosQueMiran(plan: Plan, senal: string): Set<string> {
+  const ids = new Set<string>();
+  for (const r of plan.riesgos) {
+    const condicion = r.detector_en_trazas?.condicion;
+    if (!condicion) continue;
+    const { rutas } = referencias(parsear(condicion));
+    if (rutas.some((x) => x === senal || x.startsWith(`${senal}.`)))
+      ids.add(r.id);
+  }
+  return ids;
+}
+
 export function brechasNoPrevistas(
   plan: Plan,
   vistas: readonly VistaDeCaso[],
   riesgos: readonly ResultadoRiesgo[],
+  corridaId: string,
 ): { evaluadores: ResultadoEvaluador[]; brechas: BrechaNoPrevista[] } {
   const detectadosPor = new Map<string, Set<string>>();
   for (const r of riesgos) detectadosPor.set(r.id, new Set(r.casos));
@@ -131,6 +149,7 @@ export function brechasNoPrevistas(
       evaluadores.push({ ...base, estado });
       if (estado !== "no_ejecutado_opcional")
         brechas.push({
+          corrida_id: corridaId,
           categoria: "evaluador_no_ejecutado",
           evaluador: e.id,
           caso_id: null,
@@ -144,6 +163,23 @@ export function brechasNoPrevistas(
       continue;
     }
     const ev = evaluarRegla(regla.poblacion, regla.condicion, vistas);
+    if (ev.mal_formada) {
+      // Un evaluador que no pudo medir no se presenta como «ejecutado, sin fallas» (regla dura 9).
+      evaluadores.push({ ...base, estado: "mal_formado" });
+      brechas.push({
+        corrida_id: corridaId,
+        categoria: "evaluador_no_ejecutado",
+        evaluador: e.id,
+        caso_id: null,
+        nodo: null,
+        paso: null,
+        detalle: {
+          es: `El evaluador «${e.id}» no pudo medir: ${ev.mal_formada.es}.`,
+          en: `The «${e.id}» evaluator could not measure: ${ev.mal_formada.en}.`,
+        },
+      });
+      continue;
+    }
     const fallas = [...ev.falsos];
     evaluadores.push({
       ...base,
@@ -159,6 +195,7 @@ export function brechasNoPrevistas(
       if (cubierto) continue;
       const t = porCaso.get(caso) as Traza;
       brechas.push({
+        corrida_id: corridaId,
         categoria: "evaluador",
         evaluador: e.id,
         caso_id: caso,
@@ -169,13 +206,17 @@ export function brechasNoPrevistas(
     }
   }
 
-  const cubiertoPorRiesgo = (caso: string) =>
-    riesgos.some((r) => r.casos.includes(caso));
+  // Solo un riesgo cuyo detector mira la falla la cubre; un riesgo ajeno ocurrido en el caso no la borra.
+  const cubreProveedor = riesgosQueMiran(plan, "error_proveedor");
+  const cubreReintento = riesgosQueMiran(plan, "error_de_esquema_en_traspaso");
+  const cubierto = (ids: ReadonlySet<string>, caso: string) =>
+    [...ids].some((id) => detectadosPor.get(id)?.has(caso));
   for (const v of vistas) {
     const t = v.traza;
     const conError = t.pasos.find((p) => p.error_proveedor !== null);
-    if (conError && !cubiertoPorRiesgo(t.caso_id))
+    if (conError && !cubierto(cubreProveedor, t.caso_id))
       brechas.push({
+        corrida_id: corridaId,
         categoria: "error_proveedor",
         evaluador: null,
         caso_id: t.caso_id,
@@ -187,9 +228,10 @@ export function brechasNoPrevistas(
         },
       });
     const reintento = t.pasos.find((p) => p.reintentos_esquema > 0);
-    if (reintento && !cubiertoPorRiesgo(t.caso_id)) {
+    if (reintento && !cubierto(cubreReintento, t.caso_id)) {
       const total = t.pasos.reduce((n, p) => n + p.reintentos_esquema, 0);
       brechas.push({
+        corrida_id: corridaId,
         categoria: "reintento_de_esquema",
         evaluador: null,
         caso_id: t.caso_id,

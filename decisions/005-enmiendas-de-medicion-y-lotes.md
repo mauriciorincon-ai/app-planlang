@@ -44,3 +44,10 @@ verificar las corridas v1.1, que se conservan como historia (su manifiesto decla
 - **Lotes duplicados por versión del plan:** 700 KB más de casos idénticos salvo una referencia.
 - **Que el verificador mida con la v1.2 las corridas hechas con la v1.1:** cambiar la vara después de ver
   el resultado; el lector lo prohíbe (la corrida declara la huella del plan con que corrió).
+
+## Adenda (2026-09-27, auditoría S1, M-2)
+
+La verdad conocida del lote también se deriva del **plan de beneficios**, y hasta la auditoría nadie lo
+cotejaba. Desde el cierre del S1 los dos lados lo exigen: `lotes.py` rechaza con `CorridaIncompatible` un
+plan de beneficios distinto del que declara el lote (y al reanudar una corrida), y el lector del
+verificador rechaza con `HUELLA_NO_COINCIDE` una corrida cuyo plan de beneficios no es el del lote.

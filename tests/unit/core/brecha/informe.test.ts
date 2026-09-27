@@ -116,8 +116,29 @@ describe("repeticiones y línea base", () => {
       S3: "refutado",
     });
     expect(
-      i.supuestos.find((s) => s.id === "S3")?.limitaciones[0]?.es,
-    ).toMatch(/A-012 \(esquema_invalido\)/);
+      i.supuestos.find((s) => s.id === "S3")?.limitaciones.map((l) => l.es),
+    ).toEqual(
+      expect.arrayContaining([
+        expect.stringMatching(/A-012 \(esquema_invalido\)/),
+        expect.stringMatching(/inservibles.*A-003, A-007, A-009, A-015, A-018/),
+      ]),
+    );
+    // AU-2: las brechas de las repeticiones cuentan; AU-3: S1 crítico sin probar alerta; AU-4: U4 calculado.
+    expect(
+      i.brechas_no_previstas.brechas.map((b) => `${b.corrida_id}:${b.caso_id}`),
+    ).toEqual([
+      "suscripcion-planlang-a-001-20-v1.2:A-003",
+      "suscripcion-planlang-a-001-20-v1.2-r2:A-006",
+      "suscripcion-planlang-a-001-20-v1.2-r2:A-017",
+      "suscripcion-planlang-a-001-20-v1.2-r3:A-016",
+      "suscripcion-planlang-a-001-20-v1.2-r3:A-017",
+    ]);
+    expect(i.veredicto.alertas.map((a) => a.es)).toContain(
+      "S1: supuesto crítico sin probar.",
+    );
+    expect(i.playground.limites.map((l) => l.es)).toContain(
+      "U4 (Modo Texas): conmutarlo cambia 0 de las 62 decisiones registradas en esta corrida.",
+    );
   });
 });
 
@@ -139,7 +160,7 @@ describe("casos ejemplares", () => {
     const i = await generarInforme(e);
     expect(i.casos_ejemplares.fallido).toMatchObject({ caso_id: "A-004" });
     expect(i.casos_ejemplares.fallido?.por_que.en).toMatch(
-      /the known truth was «negar»/,
+      /the known truth was «deny»/,
     );
   });
 });

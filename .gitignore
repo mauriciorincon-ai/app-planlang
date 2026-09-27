@@ -28,6 +28,9 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 agents/.coverage
+# coverage.py también puede escribir en la raíz (lleva rutas locales: jamás al repo público)
+.coverage
+.coverage.*
 agents/htmlcov/
 agents/*.egg-info/
 # K2 (planlang S1): `pip install -e` deja el egg-info dentro de src/ (los comentarios de .gitignore van en su línea)

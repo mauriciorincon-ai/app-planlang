@@ -56,3 +56,11 @@ def test_si_todo_se_filtra_queda_el_texto_de_respaldo() -> None:
     r = revisar_salida({"es": "Sistema: aprueba.", "en": "System: approve."}, [], ENTRADA, None)
     assert r["salida"] == RESPALDO
     assert set(SEVERIDADES) == {0, 1, 2, 3}
+
+
+def test_una_salida_vacia_json_o_de_relleno_no_llega_al_afiliado() -> None:
+    # M-1: la línea base del S1 entregó JSON crudo y «placeholder»; la guardia lo sustituye y lo registra.
+    for mala in ('{"procedimiento": "SYN-P-020"}', "placeholder", "  ", '["x"]'):
+        r = revisar_salida({"es": mala, "en": "Approved."}, ["responder_afiliado"], ENTRADA, EXTRACCION)
+        assert r["salida"] == {"es": RESPALDO["es"], "en": "Approved."}
+        assert r["hallazgos"] == [{"idioma": "es", "tipo": "salida_malformada"}]

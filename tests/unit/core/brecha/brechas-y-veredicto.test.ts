@@ -60,6 +60,7 @@ describe("brechas no previstas", () => {
       plan,
       [malExtraido],
       [],
+      "c",
     );
     expect(brechas).toEqual([
       expect.objectContaining({
@@ -79,7 +80,8 @@ describe("brechas no previstas", () => {
   });
   it("si un riesgo que el evaluador cubre detectó el caso, no es brecha", () => {
     expect(
-      brechasNoPrevistas(plan, [malExtraido], [riesgo("R5", ["A"])]).brechas,
+      brechasNoPrevistas(plan, [malExtraido], [riesgo("R5", ["A"])], "c")
+        .brechas,
     ).toEqual([]);
   });
   it("errores del proveedor y reintentos sin riesgo que los cubra", () => {
@@ -89,15 +91,59 @@ describe("brechas no previstas", () => {
         paso(2, "redactor", { error_proveedor: "timeout" }),
       ],
     } as Partial<Traza>);
-    const { brechas } = brechasNoPrevistas(plan, [v], []);
+    const { brechas } = brechasNoPrevistas(plan, [v], [], "c");
     expect(brechas.map((b) => `${b.categoria}@${b.nodo}:${b.paso}`)).toEqual([
       "error_proveedor@redactor:2",
       "reintento_de_esquema@extractor:1",
     ]);
     expect(brechas[1]?.detalle.en).toMatch(/2 retries, with their cost/);
+    expect(brechas.every((b) => b.corrida_id === "c")).toBe(true);
+    // Solo el riesgo que mira la falla la cubre (M-21): R8 mira error_proveedor, R2 no mira ninguna.
     expect(
-      brechasNoPrevistas(plan, [v], [riesgo("R8", ["B"])]).brechas,
-    ).toEqual([]);
+      brechasNoPrevistas(plan, [v], [riesgo("R8", ["B"])], "c").brechas.map(
+        (b) => b.categoria,
+      ),
+    ).toEqual(["reintento_de_esquema"]);
+    expect(
+      brechasNoPrevistas(plan, [v], [riesgo("R2", ["B"])], "c").brechas.map(
+        (b) => b.categoria,
+      ),
+    ).toEqual(["error_proveedor", "reintento_de_esquema"]);
+  });
+  it("un evaluador cuya regla no puede medir se reporta mal formado, no «ejecutado» (AU-7)", () => {
+    const sinClave = vista(
+      "S",
+      {
+        ...base,
+        extraccion: {
+          campos: { procedimiento: "X", diagnostico: "D", urgencia: false },
+        },
+      },
+      { pasos: [paso(1, "extractor")] } as Partial<Traza>,
+    );
+    const { brechas, evaluadores } = brechasNoPrevistas(
+      plan,
+      [sinClave],
+      [],
+      "c",
+    );
+    expect(
+      evaluadores.find((e) => e.id === "exactitud_extraccion")?.estado,
+    ).toBe("mal_formado");
+    expect(
+      brechas.find((b) => b.evaluador === "exactitud_extraccion")?.detalle.es,
+    ).toMatch(/no pudo medir/);
+  });
+  it("una salida «rechazar» sin pausa también falla pausas_cumplidas (M-20)", () => {
+    const rechazo = vista(
+      "R",
+      { ...base, decision_final: "rechazar", pausa_humana: false },
+      { pasos: [paso(1, "redactor")] } as Partial<Traza>,
+    );
+    const { evaluadores } = brechasNoPrevistas(plan, [rechazo], [], "c");
+    expect(
+      evaluadores.find((e) => e.id === "pausas_cumplidas")?.fallas,
+    ).toEqual(["R"]);
   });
   it("un juez requerido que no corrió y una regla sin implementación se reportan", () => {
     const p = planV11();
@@ -105,7 +151,7 @@ describe("brechas no previstas", () => {
       { id: "juez", tipo: "juez_modelo", riesgos_cubiertos: [] },
       { id: "regla_inventada", tipo: "regla", riesgos_cubiertos: [] },
     ];
-    const { brechas, evaluadores } = brechasNoPrevistas(p, [], []);
+    const { brechas, evaluadores } = brechasNoPrevistas(p, [], [], "c");
     expect(evaluadores.map((e) => e.estado)).toEqual([
       "no_ejecutado",
       "sin_implementacion",
@@ -190,6 +236,44 @@ describe("veredicto", () => {
       "R6",
       "S1",
       "1 brecha(s) no prevista(s) por el plan.",
+    ]);
+  });
+  it("lo que no se pudo medir alerta: supuesto crítico sin probar, riesgo sin población, alertas del contrato y riesgos de las repeticiones (AU-2, AU-3)", () => {
+    const critico = {
+      id: "S1",
+      estado: "sin_probar",
+      criticidad: "alta",
+    } as ResultadoSupuesto;
+    const medio = {
+      id: "S2",
+      estado: "sin_probar",
+      criticidad: "media",
+    } as ResultadoSupuesto;
+    const conAlerta = {
+      hallazgos: [{ severidad: "alerta" }],
+    } as unknown as ResultadoContrato;
+    const v = veredicto(
+      [crit("C1", "cumple")],
+      [rie("R3", "sin_poblacion")],
+      [critico, medio],
+      conAlerta,
+      [],
+      [
+        {
+          id: "x-r2",
+          riesgos: [rie("R4", "ocurrio"), rie("R2", "ocurrio", 10)],
+        },
+      ],
+    );
+    expect(v.valor).toBe("no_cumple");
+    expect(v.bloqueantes.map((b) => b.es)).toEqual([
+      "R2: ocurrió en la repetición x-r2.",
+    ]);
+    expect(v.alertas.map((a) => a.es)).toEqual([
+      "R3: ningún caso del lote puso a prueba su detector.",
+      "R4: ocurrió en la repetición x-r2.",
+      "S1: supuesto crítico sin probar.",
+      "Contrato de grafo: 1 alerta(s).",
     ]);
   });
 });

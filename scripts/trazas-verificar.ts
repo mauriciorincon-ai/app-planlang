@@ -1,24 +1,32 @@
 /**
  * `pnpm trazas:verificar [--raiz runs]` — recorre toda corrida versionada (`runs/<demo>/<corrida>/`):
- * verifica huellas, esquema y referencias (RF-06.1), recalcula sus ramas en TypeScript contra lo que
- * registró el agente y contra la huella de Python (RF-09.2), y busca credenciales en los archivos.
+ * verifica huellas, esquema y referencias (RF-06.1), que aplicó los umbrales del plan, recalcula sus ramas
+ * en TypeScript contra lo que registró el agente y contra la huella de Python (RF-09.2), y busca
+ * credenciales y rutas locales en todos sus archivos (JSON y Markdown). Corre en CI (job `quality`).
  * Sale con código 1 si algo falla, nombrando la corrida y el motivo.
  */
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
-import { rf092 } from "../core/brecha/contrato-grafo";
+import { rf092, umbralesDistintosDelPlan } from "../core/brecha/contrato-grafo";
+import { cargarPlan } from "../core/plan/cargar";
 import { ErrorDeLectura, leerCorridaVerificada } from "../core/brecha/lector";
 import { argumentos } from "./_io";
 import { archivosDeCorrida, planDelLote } from "./_corridas";
 
-/** Lo que jamás puede aparecer en una traza exportada (regla dura 6 y 8). */
+/** Lo que jamás puede aparecer en una corrida exportada (reglas duras 6 y 8; repo público). */
 export const PROHIBIDO_EN_TRAZAS = [
   /sk-ant-/,
   /lsv2_/,
   /ANTHROPIC_API_KEY/,
+  /ANTHROPIC_AUTH_TOKEN/,
+  /CLAUDE_CODE_OAUTH_TOKEN/,
   /LANGSMITH_API_KEY/,
   /"session_id"/,
+  /"sessionId"/,
   /"uuid"/,
+  /Bearer\s+[A-Za-z0-9._-]{10,}/,
+  /\/Users\/[^/\s"]+/,
+  /\/home\/[^/\s"]+/,
 ];
 
 function corridas(raiz: string): string[] {
@@ -33,12 +41,13 @@ function corridas(raiz: string): string[] {
   return salida;
 }
 
-function jsonDe(dir: string): string[] {
+/** Los archivos de texto de una corrida: JSON (trazas, manifiesto) y Markdown (informes). */
+function textosDe(dir: string): string[] {
   const salida: string[] = [];
   for (const n of readdirSync(dir).sort()) {
     const p = join(dir, n);
-    if (statSync(p).isDirectory()) salida.push(...jsonDe(p));
-    else if (n.endsWith(".json")) salida.push(p);
+    if (statSync(p).isDirectory()) salida.push(...textosDe(p));
+    else if (n.endsWith(".json") || n.endsWith(".md")) salida.push(p);
   }
   return salida;
 }
@@ -66,14 +75,18 @@ async function main(): Promise<number> {
         planDelLote(m.plan.archivo, plan, casos),
       );
       const r = await rf092(leida);
-      for (const h of r.hallazgos)
+      const carga = await cargarPlan(plan);
+      const distintos = carga.ok
+        ? umbralesDistintosDelPlan(carga.plan, [leida])
+        : [];
+      for (const h of [...distintos, ...r.hallazgos])
         problemas.push(`${h.codigo} ${h.caso_id ?? ""}: ${h.detalle.es}`);
     } catch (e) {
       if (!(e instanceof ErrorDeLectura)) throw e;
       for (const x of e.motivos)
         problemas.push(`${x.codigo} ${x.archivo}: ${x.detalle.es}`);
     }
-    for (const f of jsonDe(ruta)) {
+    for (const f of textosDe(ruta)) {
       const texto = readFileSync(f, "utf8");
       for (const p of PROHIBIDO_EN_TRAZAS)
         if (p.test(texto)) problemas.push(`CREDENCIAL ${f}: coincide con ${p}`);

@@ -3,8 +3,10 @@
  * - `no_cumple`: falla un criterio absoluto, ocurre un riesgo de severidad ≥ 9 o el contrato de grafo
  *   tiene un hallazgo bloqueante (el agente no es el que el plan describe);
  * - `cumple_con_alertas`: falla o queda incompleto un criterio de tasa/latencia/costo, un absoluto queda
- *   sin medir o indeterminado, un supuesto se refuta, ocurre otro riesgo, hay brechas no previstas o
- *   una regla del plan está mal formada;
+ *   sin medir o indeterminado, un supuesto se refuta, un supuesto de criticidad alta queda sin probar,
+ *   ocurre otro riesgo (también en una repetición de pass^k), un riesgo queda sin población que lo
+ *   pruebe, el contrato de grafo tiene alertas, hay brechas no previstas o una regla del plan está mal
+ *   formada. Lo que no se pudo medir es una alerta, nunca un silencio (regla dura 9);
  * - `cumple`: nada de lo anterior.
  */
 import type { TextoBilingue } from "../formatos/bilingue";
@@ -30,6 +32,10 @@ export function veredicto(
   supuestos: readonly ResultadoSupuesto[],
   contrato: ResultadoContrato,
   brechas: readonly BrechaNoPrevista[],
+  repeticiones: readonly {
+    id: string;
+    riesgos: readonly ResultadoRiesgo[];
+  }[] = [],
 ): ResultadoVeredicto {
   const bloqueantes: TextoBilingue[] = [];
   const alertas: TextoBilingue[] = [];
@@ -87,12 +93,29 @@ export function veredicto(
         es: `${r.id}: hay casos que el detector no pudo evaluar.`,
         en: `${r.id}: some cases could not be evaluated by the detector.`,
       });
+    else if (r.estado === "sin_poblacion")
+      alertas.push({
+        es: `${r.id}: ningún caso del lote puso a prueba su detector.`,
+        en: `${r.id}: no case in the batch tested its detector.`,
+      });
   }
+  for (const rep of repeticiones)
+    for (const r of rep.riesgos)
+      if (r.estado === "ocurrio")
+        (r.severidad >= SEVERIDAD_BLOQUEANTE ? bloqueantes : alertas).push({
+          es: `${r.id}: ocurrió en la repetición ${rep.id}.`,
+          en: `${r.id}: occurred in repetition ${rep.id}.`,
+        });
   for (const s of supuestos)
     if (s.estado === "refutado")
       alertas.push({
         es: `${s.id}: supuesto refutado.`,
         en: `${s.id}: assumption refuted.`,
+      });
+    else if (s.estado === "sin_probar" && s.criticidad === "alta")
+      alertas.push({
+        es: `${s.id}: supuesto crítico sin probar.`,
+        en: `${s.id}: critical assumption left untested.`,
       });
   const bloqueContrato = contrato.hallazgos.filter(
     (h) => h.severidad === "bloqueante",
@@ -101,6 +124,14 @@ export function veredicto(
     bloqueantes.push({
       es: `Contrato de grafo: ${bloqueContrato.length} hallazgo(s) bloqueante(s).`,
       en: `Graph contract: ${bloqueContrato.length} blocking finding(s).`,
+    });
+  const alertaContrato = contrato.hallazgos.filter(
+    (h) => h.severidad === "alerta",
+  );
+  if (alertaContrato.length > 0)
+    alertas.push({
+      es: `Contrato de grafo: ${alertaContrato.length} alerta(s).`,
+      en: `Graph contract: ${alertaContrato.length} alert(s).`,
     });
   if (brechas.length > 0)
     alertas.push({

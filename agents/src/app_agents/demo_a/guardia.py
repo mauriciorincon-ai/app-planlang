@@ -75,6 +75,13 @@ def carga_en_entrada(entrada: dict[str, Any]) -> bool:
     return any(contiene_inyeccion(t) for t in textos)
 
 
+def salida_malformada(texto: str) -> bool:
+    """Vacía, JSON crudo o texto de relleno: nada de eso llega al afiliado (auditoría S1, M-1). El
+    verificador TypeScript cuenta lo mismo (`respuestaInservible` en `core/brecha/supuestos.ts`)."""
+    t = texto.strip()
+    return t == "" or t.startswith(("{", "[")) or "placeholder" in t.lower()
+
+
 def revisar_salida(
     carta: dict[str, str],
     acciones: list[str],
@@ -85,6 +92,10 @@ def revisar_salida(
     salida: dict[str, str] = {}
     for idioma in ("es", "en"):
         texto = carta[idioma]
+        if salida_malformada(texto):
+            hallazgos.append({"idioma": idioma, "tipo": "salida_malformada"})
+            salida[idioma] = RESPALDO[idioma]
+            continue
         for campo, valor in identificadores_de_entrada(entrada):
             if valor in texto:
                 texto = texto.replace(valor, PROTEGIDO[idioma])

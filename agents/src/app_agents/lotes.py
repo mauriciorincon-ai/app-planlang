@@ -59,7 +59,9 @@ CASOS_POR_DEFECTO = "data/casos/demo-a/planlang-a-001-20.json"
 BENEFICIOS_POR_DEFECTO = "data/plan-beneficios/demo-a.json"
 SALIDA_POR_DEFECTO = "runs/demo-a"
 VARIANTES = ("multiagente", "agente_unico")
-MODELO_POR_PROVEEDOR = {"suscripcion": "sonnet", "simulado": "simulado"}
+# El alias del modelo con la suscripción y el tamaño de sesión los declara el PLAN (`lotes.modelo_alias`,
+# `lotes.corridas_espaciadas_de`): aquí no se cablean (auditoría S1, AU-10).
+MODELO_POR_PROVEEDOR = {"simulado": "simulado"}
 
 
 class CorridaIncompatible(ValueError):
@@ -169,9 +171,22 @@ def ejecutar_lote(
     if variante not in VARIANTES:
         raise ValueError(f"variante desconocida: {variante}")
     plan = cargar_plan(_ruta(plan_ruta))
+    lotes_plan = plan.datos["lotes"]
+    tope = int(lotes_plan["corridas_espaciadas_de"])
+    if n is None:
+        n = tope
+    if proveedor == "suscripcion":
+        # Regla 6 / 21: con la suscripción, sesiones del tamaño que fija el plan y casos espaciados.
+        if n > tope:
+            raise ValueError(f"regla 6: con la suscripción, a lo sumo {tope} casos por sesión")
+        if pausa_s <= 0:
+            raise ValueError("regla 6: con la suscripción los casos van espaciados (pausa_s > 0)")
     pb = cargar_plan_beneficios(_ruta(beneficios_ruta))
     lote_ruta = _ruta(casos_ruta)
     lote = leer_verificando(lote_ruta)
+    if lote["plan_beneficios"]["huella"] != pb.huella:
+        # La verdad conocida del lote se derivó con SU plan de beneficios (auditoría S1, M-2).
+        raise CorridaIncompatible("el lote de casos se generó con otro plan de beneficios")
     if lote["plan"]["huella"] != plan.huella:
         # Un lote generado con otro plan vale solo si ese plan da la misma verdad (enmienda de medición).
         generador = plan_por_huella(_ruta(plan_ruta).parent, lote["plan"]["huella"])
@@ -179,7 +194,11 @@ def ejecutar_lote(
             raise CorridaIncompatible(
                 "el lote de casos se generó con otro plan que cambia umbrales o contrato de grafo (o no está)"
             )
-    modelo_nombre = modelo or MODELO_POR_PROVEEDOR.get(proveedor, proveedor)
+    modelo_nombre = modelo or (
+        str(lotes_plan["modelo_alias"])
+        if proveedor == "suscripcion"
+        else MODELO_POR_PROVEEDOR.get(proveedor, proveedor)
+    )
     umbrales = plan.umbrales()
     directorio = _ruta(salida) / corrida_id
 
@@ -196,8 +215,14 @@ def ejecutar_lote(
         for k, v in esperado.items():
             if previo[k] != v:
                 raise CorridaIncompatible(f"{corrida_id}: {k} = {previo[k]!r}, esta sesión trae {v!r}")
-        if previo["plan"]["huella"] != plan.huella or previo["casos"]["huella"] != lote["huella"]:
-            raise CorridaIncompatible(f"{corrida_id}: otro plan u otro lote de casos")
+        if (
+            previo["plan"]["huella"] != plan.huella
+            or previo["casos"]["huella"] != lote["huella"]
+            or previo["plan_beneficios"]["huella"] != pb.huella
+        ):
+            raise CorridaIncompatible(
+                f"{corrida_id}: otro plan, otro lote de casos u otro plan de beneficios"
+            )
 
     simulado = proveedor == "simulado"
     if simulado:
@@ -216,7 +241,11 @@ def ejecutar_lote(
     pendientes = [c for c in lote["casos"] if c["id"] not in trazas]
     a_correr = pendientes if n is None else pendientes[:n]
     resumen = ResumenSesion(corrida_id=corrida_id, directorio=directorio)
-    modelo_real = None if simulado else crear_modelo(proveedor, modelo=modelo)
+    modelo_real = (
+        None
+        if simulado
+        else crear_modelo(proveedor, modelo=modelo_nombre if proveedor == "suscripcion" else modelo)
+    )
     registrar(
         "sesion_inicia",
         corrida_id=corrida_id,
@@ -361,6 +390,8 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--pausa-s", type=float, default=0.0)
     p.add_argument("--reloj", default=None, choices=["real", "fijo"])
     a = p.parse_args(argv)
+    if a.proveedor == "suscripcion" and a.pausa_s <= 0:
+        p.error("con la suscripción los casos van espaciados: --pausa-s > 0 (regla 6)")
     lote_id = Path(a.casos).stem
     corrida = a.corrida or f"{a.proveedor}-{lote_id}" + ("-base" if a.variante == "agente_unico" else "")
     fecha = a.fecha or dt.date.today().isoformat()

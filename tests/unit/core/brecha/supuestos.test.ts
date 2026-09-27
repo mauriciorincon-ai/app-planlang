@@ -82,6 +82,39 @@ describe("calibración (S1)", () => {
     expect(r2?.estado).toBe("sin_probar");
     expect(r2?.limitaciones[0]?.es).toMatch(/todos aciertos/);
   });
+  it("una métrica sin valor no esconde otra que refuta (AU-1)", () => {
+    const [r] = evaluarSupuestos(
+      conSupuestos(s1({ auroc_min: 0.75, ece_max: 0.1 })),
+      [extraido(0.55, true, "1"), extraido(0.55, true, "2")],
+      U,
+      null,
+    );
+    expect(r?.metricas.auroc).toBeNull();
+    expect(r?.estado).toBe("refutado");
+    expect(r?.motivo.es).toBe(
+      "No cumple el umbral de confirmación: ece_max. Sin valor medido: auroc.",
+    );
+    expect(r?.motivo.en).toBe(
+      "It misses the confirmation threshold: ece_max. No measured value: auroc.",
+    );
+  });
+  it("si su regla no puede medir, el supuesto lo dice y no culpa a la falta de valor (AU-7)", () => {
+    const sinClave = vista("X", {
+      senal_confianza: 0.9,
+      extraccion: {
+        campos: { procedimiento: "X", diagnostico: "D", urgencia: false },
+      },
+      verdad_conocida: { presente: true, campos },
+    });
+    const [r] = evaluarSupuestos(
+      conSupuestos(s1({ auroc_min: 0.75, ece_max: 0.1 })),
+      [sinClave],
+      U,
+      null,
+    );
+    expect(r?.estado).toBe("sin_probar");
+    expect(r?.motivo.es).toMatch(/^La regla del supuesto no pudo medir: /);
+  });
   it("todos fallos y métricas no pedidas", () => {
     const [r] = evaluarSupuestos(
       conSupuestos(
@@ -297,6 +330,49 @@ describe("comparación con la línea base (S3)", () => {
     expect(s2?.limitaciones[0]?.en).toBe(
       "Small sample (1 cases): the measure guides, it does not prove.",
     );
+  });
+  it("dice su regla por defecto; sin latencia no decide; nombra casos distintos y respuestas inservibles", () => {
+    const aviso = { es: "a", en: "a" };
+    const conSalida = (id: string, es: string, en: string) =>
+      vista(
+        id,
+        {
+          decision_final: "aprobar",
+          pausa_humana: false,
+          latencia_total_s: 5,
+          verdad_conocida: { decision: "aprobar", debe_escalar: false },
+        },
+        {
+          pasos: [],
+          salida_final: { es, en, aviso_ia: aviso },
+        } as Partial<Traza>,
+      );
+    const base = [
+      conSalida("1", "Aprobada.", '{"procedimiento": "X"}'),
+      conSalida("3", "placeholder", "Approved."),
+    ];
+    const [r] = evaluarSupuestos(conSupuestos(s3), multi, U, {
+      corrida_id: "b",
+      vistas: base,
+    });
+    expect(r?.motivo.es).toMatch(/Regla por defecto del verificador/);
+    expect(r?.motivo.en).toMatch(/Verifier default rule/);
+    expect(r?.limitaciones.map((l) => l.es)).toEqual([
+      "La línea base y el multiagente no corrieron los mismos casos: 2, 3.",
+      "La línea base entregó 2 respuesta(s) al afiliado inservibles (vacías, JSON crudo o texto de relleno), que la comparación no penaliza: 1, 3.",
+      "Muestra pequeña (2 casos): la medida orienta, no prueba.",
+    ]);
+    const sinLatencia = [
+      vista("1", { decision_final: "aprobar", pausa_humana: false }, {
+        pasos: [],
+      } as Partial<Traza>),
+    ];
+    const [r2] = evaluarSupuestos(conSupuestos(s3), multi, U, {
+      corrida_id: "b",
+      vistas: sinLatencia,
+    });
+    expect(r2?.estado).toBe("sin_probar");
+    expect(r2?.motivo.es).toMatch(/Falta la latencia mediana/);
   });
   it("presupuestoDe no cuenta pasos de modelo que no gastaron nada", () => {
     expect(

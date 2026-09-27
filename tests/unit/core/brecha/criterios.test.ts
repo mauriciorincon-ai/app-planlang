@@ -169,6 +169,18 @@ describe("tasa y pass^k", () => {
       k: { requerido: 1, aplica_a: null },
     });
   });
+  it("una repetición que no pudo medir deja el criterio mal formado, no «pasó» (AU-7)", () => {
+    const igual = criterio(
+      "KE",
+      { poblacion: "todos", condicion: "a == b", agregacion: "pass^k", k: 2 },
+      { tipo: "tasa", valor_objetivo: 0.9 },
+    );
+    const bien = [vista("1", { a: { x: 1 }, b: { x: 1 } })];
+    const rota = [vista("1", { a: { x: 1 }, b: { y: 1 } })];
+    const [r] = evaluarCriterios(conCriterios(igual), bien, [rota]);
+    expect(r?.estado).toBe("mal_formado");
+    expect(r?.nota?.es).toMatch(/^Repetición 2: /);
+  });
 });
 
 describe("métricas agregadas", () => {

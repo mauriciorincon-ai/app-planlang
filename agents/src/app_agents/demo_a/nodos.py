@@ -66,6 +66,14 @@ def _json(valor: Any) -> Any:
     return valor.model_dump(mode="json") if hasattr(valor, "model_dump") else valor
 
 
+def exigir_pausa_en_negacion(decision: str, estado: Estado) -> None:
+    """Regla dura 4 como ARQUITECTURA, no como arista configurable: ninguna salida adversa llega al
+    afiliado sin haber pasado por la pausa humana, aunque un plan mal escrito omita la arista que la
+    enruta (auditoría S1, M-7). Se corta el caso: no hay salida que emitir."""
+    if decision in ("negar", "rechazar") and not estado.get("pausa_humana"):
+        raise ErrorArista(f"regla dura 4: «{decision}» sin pausa humana en el caso {estado.get('caso_id')}")
+
+
 class NodosDemoA:
     def __init__(
         self, plan: PlanCargado, pb: PlanBeneficios, contrato: ContratoDeGrafo | None = None
@@ -410,6 +418,7 @@ class NodosDemoA:
         ctx = runtime.context
         inicio = ctx.reloj.ahora_ms()
         decision = estado.get("decision_final") or estado.get("propuesta") or "aprobar"
+        exigir_pausa_en_negacion(decision, estado)
         extraccion = estado.get("extraccion")
         codigo = (extraccion or {}).get("campos", {}).get("procedimiento") or estado["entrada"][
             "orden_adjunta"

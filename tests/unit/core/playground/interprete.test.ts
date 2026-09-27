@@ -195,6 +195,44 @@ describe("recalcular desde lo registrado", () => {
     ).toBe("pausa_humana");
   });
 
+  it("un umbral ligado a su señal la reemplaza al recalcular; sin ligaduras se usa lo registrado (AU-4)", () => {
+    const regs = [
+      registro(4, "decision", 3, null, null, {
+        funcion: "texas_y_no_aprobar",
+        entradas: { modo_texas: false, propuesta: "negar" },
+      }),
+    ];
+    const sinArista4 = [texas];
+    const defecto = { decision: "redactor" };
+    const encendido = { U4: true };
+    expect(
+      recalcular(regs, sinArista4, defecto, encendido)[0]?.rama_tomada,
+    ).toBe("redactor");
+    expect(
+      recalcular(regs, sinArista4, defecto, encendido, {
+        modo_texas: "U4",
+      })[0]?.rama_tomada,
+    ).toBe("pausa_humana");
+    // Con la arista de «negar» delante, conmutar U4 no mueve nada: la negación ya iba a una persona.
+    const conArista4 = [
+      tripleta(1, "propuesta", "igual_a", "negar", "pausa_humana"),
+      texas,
+    ];
+    const regs4 = [registro(4, "decision", 1, "propuesta", "negar"), ...regs];
+    for (const u4 of [false, true])
+      expect(
+        recalcular(
+          regs4,
+          conArista4,
+          defecto,
+          { U4: u4 },
+          {
+            modo_texas: "U4",
+          },
+        )[0]?.rama_tomada,
+      ).toBe("pausa_humana");
+  });
+
   it("un nodo escritor sin rama por defecto es error", () => {
     const regs = [registro(4, "decision", 1, "senal_confianza", 0.75)];
     expect(() => recalcular(regs, [], {}, { U1: 0.75 })).toThrow(
