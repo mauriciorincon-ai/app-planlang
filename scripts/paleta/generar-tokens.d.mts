@@ -8,9 +8,9 @@ export interface Cromatico {
   rango: { oscuro: [number, number]; claro: [number, number] };
 }
 export interface TokensTema {
-  neutros: Record<"frio" | "calido", Record<string, string>>;
+  neutros: Record<"neutro", Record<string, string>>;
   cromaticos: Record<string, { id: string; familia: string; matiz: number; L: number; hex: string }>;
-  tintes: Record<"frio" | "calido", Record<string, string>>;
+  tintes: Record<"neutro", Record<string, string>>;
 }
 export interface Tokens {
   _generado: string;

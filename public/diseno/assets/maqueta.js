@@ -20,7 +20,7 @@
   var params = new URLSearchParams(location.search);
 
   function marcar(selector, attr, valor) {
-    var botones = document.querySelectorAll("[" + selector + "]");
+    var botones = document.querySelectorAll("button[" + selector + "]");
     for (var i = 0; i < botones.length; i++) {
       botones[i].setAttribute(
         "aria-pressed",
@@ -59,7 +59,9 @@
   }
 
   document.addEventListener("click", function (e) {
-    var b = e.target.closest("[data-theme-set],[data-lang-set],[data-estado]");
+    var b = e.target.closest(
+      "button[data-theme-set],button[data-lang-set],button[data-estado]",
+    );
     if (!b) return;
     if (b.hasAttribute("data-theme-set"))
       tema(b.getAttribute("data-theme-set"));
@@ -80,7 +82,7 @@
       html.getAttribute("data-lang") ||
       "es",
   );
-  var primero = document.querySelector("[data-estado]");
+  var primero = document.querySelector("button[data-estado]");
   var e0 =
     params.get("estado") || (primero && primero.getAttribute("data-estado"));
   if (e0) estado(e0);

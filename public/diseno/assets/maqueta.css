@@ -1,47 +1,107 @@
-/* Cromo de la SALA DE DISEÑO: se distingue a propósito del producto (borde discontinuo, mono).
-   Nada de esto es producto; la vitrina real no lleva esta barra. */
+/* Cromo de la SALA DE DISEÑO: se distingue a propósito del producto (fondo sup-2, borde discontinuo,
+   mono). Nada de esto es producto; la vitrina real no lleva esta barra ni los marcos de sala. */
 .mq-bar {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px 16px;
-  padding: 8px 16px;
+  gap: 6px 20px;
+  padding: 6px var(--margen);
   background: var(--sup-2);
-  border-bottom: 2px dashed var(--tinta-3);
-  font: 13px/1.4 "JetBrains Mono", ui-monospace, monospace;
+  border-bottom: 1px dashed var(--tinta-3);
+  font: 12px/1.4 var(--mono);
   color: var(--tinta-2);
 }
-.mq-bar .mq-t { color: var(--tinta-1); font-weight: 700; }
-.mq-bar a { color: var(--tinta-1); }
-.mq-g { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
-.mq-g > span { margin-right: 2px; }
+.mq-bar .mq-t {
+  color: var(--tinta-1);
+  font-weight: 500;
+}
+.mq-bar a {
+  color: var(--tinta-1);
+}
+.mq-g {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+.mq-g > span {
+  margin-right: 2px;
+}
 .mq-bar button {
   font: inherit;
-  color: var(--tinta-1);
+  color: var(--tinta-2);
   background: transparent;
-  border: 1px solid var(--tinta-2);
-  border-radius: 999px;
-  padding: 2px 10px;
-  min-height: 28px;
+  border: 1px solid var(--tinta-3);
+  border-radius: 4px;
+  padding: 0 8px;
+  height: 26px;
   cursor: pointer;
 }
-.mq-bar button[aria-pressed="true"] { background: var(--tinta-1); color: var(--sup-1); border-color: var(--tinta-1); }
-.mq-bar button:focus-visible { outline: 2px solid var(--tinta-1); outline-offset: 2px; }
+.mq-bar button[aria-pressed="true"] {
+  background: var(--tinta-1);
+  color: var(--fondo);
+  border-color: var(--tinta-1);
+}
+.mq-bar button:focus-visible {
+  outline: 2px solid var(--tinta-1);
+  outline-offset: 2px;
+}
 .mq-nota {
-  padding: 8px 16px 10px;
+  padding: 8px var(--margen) 10px;
   background: var(--sup-2);
   border-bottom: 1px solid var(--linea);
-  font: 14px/1.45 "Space Grotesk", sans-serif;
+  font: 13px/1.5 var(--letra);
   color: var(--tinta-1);
 }
-.mq-nota p { margin: 0; max-width: 72ch; }
-.mq-nota p[hidden] { display: none; }
+.mq-nota p {
+  margin: 0;
+  max-width: 90ch;
+}
+.mq-nota p[hidden] {
+  display: none;
+}
+/* Marco de sala: rotula qué es cada bloque de la página (pantalla o pieza suelta). */
+.mq-marco {
+  background: var(--sup-2);
+  border-block: 1px dashed var(--tinta-3);
+  font: 12px/1.4 var(--mono);
+  color: var(--tinta-2);
+}
+.mq-marco .cont {
+  padding-block: 6px;
+}
+.mq-cierre {
+  background: var(--sup-2);
+  border-top: 1px dashed var(--tinta-3);
+  padding-block: 28px 40px;
+  font-size: 14px;
+}
+.mq-cierre .mq-t {
+  font: 500 12px/1.4 var(--mono);
+  color: var(--tinta-2);
+  margin-bottom: 8px;
+}
+.mq-cierre ol {
+  padding-left: 1.2em;
+  display: grid;
+  gap: 6px;
+  max-width: 80ch;
+}
 /* Idioma: cada texto existe dos veces; se muestra el del idioma activo. */
-html[data-lang="es"] [lang="en"]:not(html) { display: none !important; }
-html[data-lang="en"] [lang="es"]:not(html) { display: none !important; }
+html[data-lang="es"] [lang="en"]:not(html) {
+  display: none !important;
+}
+html[data-lang="en"] [lang="es"]:not(html) {
+  display: none !important;
+}
 /* Estados: [data-si="vista:a|b"] se muestra solo si el estado activo está en la lista. */
-[data-si] { display: none !important; }
-[data-si].mq-visible { display: revert !important; }
-
+[data-si] {
+  display: none !important;
+}
+[data-si].mq-visible {
+  display: revert !important;
+}
 /* Sin JS (o antes de que corra): se muestra el primer estado, para que la página nunca quede en blanco. */
-html:not([data-estado]) [data-si^="vista:a"] { display: revert !important; }
+html:not([data-estado]) [data-si^="vista:a"] {
+  display: revert !important;
+}

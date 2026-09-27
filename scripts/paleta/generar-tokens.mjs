@@ -32,15 +32,16 @@ export const CROMATICOS = [
   { token: "no-cumple", id: "no_cumple", familia: "rojo", matiz: 22, croma: 0.17, rango: { oscuro: [0.64, 0.8], claro: [0.46, 0.6] } },
 ];
 
-/** Dos cromos de neutros para la mirada 1: frío (dirección A) y cálido (dirección B). */
+/** Cromo de los neutros. Mirada 1, ronda 2: el usuario rechazó el frío (A) y el cálido (B) de la
+ *  ronda 1; queda un neutro casi sin tinte, con superficies más oscuras y líneas más discretas. */
 export const CROMOS = {
-  frio: { matiz: 250, croma: { oscuro: 0.02, claro: 0.006 } },
-  calido: { matiz: 70, croma: { oscuro: 0.012, claro: 0.012 } },
+  neutro: { matiz: 260, croma: { oscuro: 0.006, claro: 0.003 } },
 };
+export const BASE = "neutro";
 
 export const NEUTROS = {
-  oscuro: { fondo: 0.16, "sup-1": 0.21, "sup-2": 0.26, linea: 0.4, "tinta-3": 0.55, "tinta-2": 0.8, "tinta-1": 0.95 },
-  claro: { fondo: 0.965, "sup-1": 0.985, "sup-2": 0.998, linea: 0.87, "tinta-3": 0.62, "tinta-2": 0.4, "tinta-1": 0.22 },
+  oscuro: { fondo: 0.155, "sup-1": 0.185, "sup-2": 0.22, linea: 0.3, "tinta-3": 0.57, "tinta-2": 0.79, "tinta-1": 0.95 },
+  claro: { fondo: 0.99, "sup-1": 1, "sup-2": 0.972, linea: 0.905, "tinta-3": 0.6, "tinta-2": 0.44, "tinta-1": 0.21 },
 };
 
 export const UMBRALES = { normal: 0.1, 0.6: 0.06, 1.0: 0.03 };
@@ -115,7 +116,7 @@ export function generar() {
   const temas = {};
   const medidas = {};
   for (const tema of ["oscuro", "claro"]) {
-    const sup = neutros(tema, "frio");
+    const sup = neutros(tema, BASE);
     const Ls = buscar(tema, sup);
     const cromaticos = {};
     CROMATICOS.forEach((c, i) => {
@@ -127,7 +128,7 @@ export function generar() {
       const n = neutros(tema, cromo);
       tintes[cromo] = Object.fromEntries(Object.entries(cromaticos).map(([t, v]) => [t, mezclaHex(n["sup-2"], v.hex, TINTE)]));
     }
-    temas[tema] = { neutros: { frio: sup, calido: neutros(tema, "calido") }, cromaticos, tintes };
+    temas[tema] = { neutros: Object.fromEntries(Object.keys(CROMOS).map((c) => [c, neutros(tema, c)])), cromaticos, tintes };
     const lista = Object.entries(cromaticos).map(([token, v]) => ({ token, hex: v.hex }));
     medidas[tema] = Object.fromEntries(
       VISTAS.map((vista) => {
@@ -144,7 +145,7 @@ export function aCss(tokens) {
     const t = tokens.temas[tema];
     const lineas = [];
     for (const [k, v] of Object.entries(t.neutros[cromo])) lineas.push(`  --${k}: ${v};`);
-    if (cromo === "frio") {
+    if (cromo === BASE) {
       for (const [k, v] of Object.entries(t.cromaticos)) lineas.push(`  --${k}: ${v.hex};`);
     }
     for (const [k, v] of Object.entries(t.tintes[cromo])) lineas.push(`  --${k}-tinte: ${v};`);
@@ -152,10 +153,8 @@ export function aCss(tokens) {
   };
   return [
     "/* GENERADO por scripts/paleta/generar-tokens.mjs — no editar a mano. `pnpm tokens` lo regenera. */",
-    `:root, [data-theme="oscuro"] {\n${bloque("oscuro", "frio")}\n  color-scheme: dark;\n}`,
-    `[data-theme="claro"] {\n${bloque("claro", "frio")}\n  color-scheme: light;\n}`,
-    `[data-cromo="calido"] {\n${bloque("oscuro", "calido")}\n}`,
-    `[data-theme="claro"] [data-cromo="calido"], [data-theme="claro"][data-cromo="calido"] {\n${bloque("claro", "calido")}\n}`,
+    `:root, [data-theme="oscuro"] {\n${bloque("oscuro", BASE)}\n  color-scheme: dark;\n}`,
+    `[data-theme="claro"] {\n${bloque("claro", BASE)}\n  color-scheme: light;\n}`,
     ":root {\n  --modelo: var(--tipo-1);\n  --herramienta: var(--tipo-2);\n  --regla: var(--tipo-3);\n  --pausa-humana: var(--tipo-4);\n  --enrutador: var(--tipo-5);\n}",
     "",
   ].join("\n");
@@ -173,7 +172,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     console.log(`\n${tema}`);
     for (const [k, v] of Object.entries(tokens.temas[tema].cromaticos)) console.log(`  ${k.padEnd(10)} ${v.familia.padEnd(8)} L ${v.L.toFixed(2)}  ${v.hex}`);
     for (const [vista, m] of Object.entries(tokens.medidas[tema])) console.log(`  ${vista.padEnd(11)} umbral ${m.umbral ?? "—"}  peor ${m.distancia} (${m.peor_par.join(" ~ ")})`);
-    const n = tokens.temas[tema].neutros.frio;
+    const n = tokens.temas[tema].neutros[BASE];
     console.log(`  tinta-1/fondo ${contraste(n["tinta-1"], n.fondo).toFixed(1)}  tinta-2/fondo ${contraste(n["tinta-2"], n.fondo).toFixed(1)}  tinta-3/fondo ${contraste(n["tinta-3"], n.fondo).toFixed(1)}  linea/fondo ${contraste(n.linea, n.fondo).toFixed(1)}`);
   }
   console.log(`\nescrito ${RUTA_JSON}\nescrito ${RUTA_CSS}`);

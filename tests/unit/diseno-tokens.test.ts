@@ -2,7 +2,7 @@
 // Cuatro cosas, en este orden:
 //   1. Sin deriva: tokens.json y tokens.css son exactamente lo que el generador produce hoy.
 //   2. Contraste: todo trazo cromático ≥ 3:1 sobre sup-1, sup-2 y su tinte; tinta-1 y tinta-2 ≥ 4,5:1
-//      sobre fondo, superficies y tintes, en los dos temas y en los dos cromos.
+//      sobre fondo, superficies y tintes, en los dos temas (cromo neutro desde la ronda 2 de la mirada 1).
 //   3. Tintas VETADAS como texto: `tinta-3` y `linea` NO alcanzan 4,5:1 (si llegaran, el veto sobraría),
 //      pero `tinta-3` sí pasa 3:1 (sirve para guías gráficas).
 //   4. Distancia entre los 8 cromáticos bajo las 7 vistas de daltonismo ≥ umbral declarado.
@@ -20,7 +20,7 @@ import {
 
 const tokens = generar();
 const TEMAS = ["oscuro", "claro"] as const;
-const CROMOS = ["frio", "calido"] as const;
+const CROMOS = ["neutro"] as const;
 
 describe("diseno-tokens · sin deriva entre generador y archivos", () => {
   it("tokens.json es lo que el generador produce", () => {

@@ -4,7 +4,9 @@
 // captura a tamaño real y MIDE lo que la orden y el contrato del diagramador exigen:
 //   - sin desplazamiento horizontal de página (scrollWidth ≤ clientWidth) en cada ancho (380 px);
 //   - cada <text> de un SVG marcado [data-lienzo] queda dentro de su viewBox (G11);
-//   - las fuentes declaradas cargaron (document.fonts.check) — sin respaldo del sistema;
+//   - cada <text> de un nodo (.d-nodo) queda dentro de su caja, con 4 px de aire (ronda 2 de la
+//     mirada 1: con tres letras a elegir, un nombre largo puede caber en una y no en otra);
+//   - las fuentes ACTIVAS (--letra y --mono del estado) cargaron — sin respaldo del sistema;
 //   - con --reducido, la página corre bajo `prefers-reduced-motion: reduce` y no hay animaciones
 //     (document.getAnimations() vacío) tras interactuar;
 //   - con --simular, repite cada captura en deuteranopía, protanopía, tritanopía y acromatopsia (CDP).
@@ -77,8 +79,22 @@ async function medir(pagina, clave) {
         }
       }
     }
-    for (const f of ["Space Grotesk", "JetBrains Mono"]) {
-      if (!document.fonts.check(`16px "${f}"`)) out.fuentes.push(f);
+    for (const g of document.querySelectorAll("svg[data-lienzo] .d-nodo")) {
+      const caja = g.querySelector(".caja");
+      if (!caja) continue;
+      const c = caja.getBBox();
+      for (const t of g.querySelectorAll("text")) {
+        if (t.getComputedTextLength() === 0) continue;
+        const b = t.getBBox();
+        if (b.x < c.x + 4 - 0.5 || b.x + b.width > c.x + c.width - 4 + 0.5) {
+          out.fuera.push(`nodo «${t.textContent.trim().slice(0, 30)}» (${Math.round(b.x + b.width - (c.x + c.width - 4))} px de más)`);
+        }
+      }
+    }
+    const raiz = getComputedStyle(document.documentElement);
+    for (const v of ["--letra", "--mono"]) {
+      const f = raiz.getPropertyValue(v).split(",")[0].trim().replace(/^["']|["']$/g, "");
+      if (f && !document.fonts.check(`16px "${f}"`)) out.fuentes.push(f);
     }
     return out;
   });
@@ -116,6 +132,10 @@ for (const ruta of paginas) {
             },
             { tema, idioma, estado },
           );
+          await pagina.evaluate(async () => {
+            document.body.getBoundingClientRect();
+            await document.fonts.ready;
+          });
           await pagina.waitForTimeout(80);
           const clave = `${nombre} · ${ancho}px · ${tema} · ${idioma} · ${estado}`;
           await medir(pagina, clave);

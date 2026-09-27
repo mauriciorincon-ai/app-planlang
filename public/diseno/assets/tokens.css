@@ -1,12 +1,12 @@
 /* GENERADO por scripts/paleta/generar-tokens.mjs — no editar a mano. `pnpm tokens` lo regenera. */
 :root, [data-theme="oscuro"] {
-  --fondo: #070e16;
-  --sup-1: #111921;
-  --sup-2: #1d252d;
-  --linea: #404952;
-  --tinta-3: #69737d;
-  --tinta-2: #b4bfca;
-  --tinta-1: #e5f0fc;
+  --fondo: #0b0c0f;
+  --sup-1: #111315;
+  --sup-2: #191b1d;
+  --linea: #2c2e31;
+  --tinta-3: #75777b;
+  --tinta-2: #b8bbbe;
+  --tinta-1: #eceff3;
   --tipo-1: #a87eeb;
   --tipo-2: #17d0d8;
   --tipo-3: #8ea1b4;
@@ -15,24 +15,24 @@
   --cumple: #57c173;
   --alerta: #eac33f;
   --no-cumple: #ffa09c;
-  --tipo-1-tinte: #303246;
-  --tipo-2-tinte: #243b44;
-  --tipo-3-tinte: #2c363f;
-  --tipo-4-tinte: #393232;
-  --tipo-5-tinte: #313d48;
-  --cumple-tinte: #263a38;
-  --alerta-tinte: #373a35;
-  --no-cumple-tinte: #3b363d;
+  --tipo-1-tinte: #2b2938;
+  --tipo-2-tinte: #213235;
+  --tipo-3-tinte: #282d31;
+  --tipo-4-tinte: #342823;
+  --tipo-5-tinte: #2e3339;
+  --cumple-tinte: #233129;
+  --alerta-tinte: #333126;
+  --no-cumple-tinte: #372d2e;
   color-scheme: dark;
 }
 [data-theme="claro"] {
-  --fondo: #f0f4f7;
-  --sup-1: #f7fafe;
-  --sup-2: #fefefe;
-  --linea: #d1d5d8;
-  --tinta-3: #83868a;
-  --tinta-2: #45484b;
-  --tinta-1: #191b1d;
+  --fondo: #fbfcfe;
+  --sup-1: #ffffff;
+  --sup-2: #f4f6f8;
+  --linea: #dee0e2;
+  --tinta-3: #7f8082;
+  --tinta-2: #515254;
+  --tinta-1: #17181a;
   --tipo-1: #794db6;
   --tipo-2: #02787d;
   --tipo-3: #2f3f4f;
@@ -41,49 +41,15 @@
   --cumple: #037434;
   --alerta: #907402;
   --no-cumple: #cb454a;
-  --tipo-1-tinte: #e9e3f5;
-  --tipo-2-tinte: #dde9ea;
-  --tipo-3-tinte: #dcdfe2;
-  --tipo-4-tinte: #f2e2da;
-  --tipo-5-tinte: #d9e4ef;
-  --cumple-tinte: #dce9de;
-  --alerta-tinte: #ede9dc;
-  --no-cumple-tinte: #fae3e2;
+  --tipo-1-tinte: #e0dcef;
+  --tipo-2-tinte: #d5e3e5;
+  --tipo-3-tinte: #d4d8dd;
+  --tipo-4-tinte: #e9dcd5;
+  --tipo-5-tinte: #d1ddea;
+  --cumple-tinte: #d4e2d9;
+  --alerta-tinte: #e4e2d7;
+  --no-cumple-tinte: #f2dcdd;
   color-scheme: light;
-}
-[data-cromo="calido"] {
-  --fondo: #110c08;
-  --sup-1: #1c1712;
-  --sup-2: #28231e;
-  --linea: #4c4741;
-  --tinta-3: #76706a;
-  --tinta-2: #c3bdb6;
-  --tinta-1: #f4ede6;
-  --tipo-1-tinte: #393039;
-  --tipo-2-tinte: #303a36;
-  --tipo-3-tinte: #363432;
-  --tipo-4-tinte: #412f23;
-  --tipo-5-tinte: #3c3b3b;
-  --cumple-tinte: #32382a;
-  --alerta-tinte: #413826;
-  --no-cumple-tinte: #44342f;
-}
-[data-theme="claro"] [data-cromo="calido"], [data-theme="claro"][data-cromo="calido"] {
-  --fondo: #f9f2eb;
-  --sup-1: #fff9f3;
-  --sup-2: #fefefe;
-  --linea: #d9d3cc;
-  --tinta-3: #8b857f;
-  --tinta-2: #4c4741;
-  --tinta-1: #1e1a15;
-  --tipo-1-tinte: #e9e3f5;
-  --tipo-2-tinte: #dde9ea;
-  --tipo-3-tinte: #dcdfe2;
-  --tipo-4-tinte: #f2e2da;
-  --tipo-5-tinte: #d9e4ef;
-  --cumple-tinte: #dce9de;
-  --alerta-tinte: #ede9dc;
-  --no-cumple-tinte: #fae3e2;
 }
 :root {
   --modelo: var(--tipo-1);
