@@ -26,6 +26,7 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm lint
       - run: pnpm test            # vitest run --coverage (umbral 70% en vitest.config)
+      - run: pnpm trazas:verificar # corridas versionadas: huellas, umbrales del plan, RF-09.2 y barrido de credenciales (S1)
       - run: pnpm build
       - run: pnpm audit --audit-level high
 

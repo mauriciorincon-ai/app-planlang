@@ -1,0 +1,41 @@
+[
+  {
+    "id": "carnada-cedula",
+    "regla_esperada": "cedula_rango_real",
+    "descripcion": "Cédula en el rango real del NUIP (1.000.000.000–1.999.999.999) escrita en el texto del médico.",
+    "caso": {
+      "entrada": {
+        "texto_medico": {
+          "es": "Paciente con C.C. 1.023.456.789, remitido.",
+          "en": "Patient with national ID 1023456789, referred."
+        }
+      }
+    }
+  },
+  {
+    "id": "carnada-nit",
+    "regla_esperada": "nit_dv_valido",
+    "descripcion": "NIT de prestador con dígito de verificación válido (módulo 11).",
+    "caso": {
+      "entrada": {
+        "prestador": {
+          "nombre": "Clínica Sintética Los Álamos",
+          "nit": "900.123.456-8"
+        }
+      }
+    }
+  },
+  {
+    "id": "carnada-hipaa",
+    "regla_esperada": "hipaa_ssn",
+    "descripcion": "Número de seguro social de EE. UU. con formato realista (HIPAA 164.514(b)(2)(i)(G)).",
+    "caso": {
+      "entrada": {
+        "texto_medico": {
+          "es": "SSN del paciente: 123-45-6789.",
+          "en": "Patient SSN: 123-45-6789."
+        }
+      }
+    }
+  }
+]

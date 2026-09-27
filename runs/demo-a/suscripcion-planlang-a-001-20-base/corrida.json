@@ -1,0 +1,234 @@
+{
+  "casos": {
+    "archivo": "data/casos/demo-a/planlang-a-001-20.json",
+    "huella": "886e36e5dff396ab9cd74a03615782d320c5287afe8702e8a6dcff5a2eee359c",
+    "id": "planlang-a-001-20",
+    "n_lote": 20,
+    "semilla": "planlang-a-001"
+  },
+  "casos_con_error": [],
+  "casos_ejecutados": [
+    "A-001",
+    "A-002",
+    "A-003",
+    "A-004",
+    "A-005",
+    "A-006",
+    "A-007",
+    "A-008",
+    "A-009",
+    "A-010",
+    "A-011",
+    "A-012",
+    "A-013",
+    "A-014",
+    "A-015",
+    "A-016",
+    "A-017",
+    "A-018",
+    "A-019",
+    "A-020"
+  ],
+  "corrida_id": "suscripcion-planlang-a-001-20-base",
+  "demo_id": "demo-a",
+  "fecha": "2026-09-27",
+  "ficha": {
+    "descripcion": {
+      "en": "Run over the synthetic batch planlang-a-001-20 with provider suscripcion (model sonnet). Human decisions were simulated in batch: the auditor follows the case's known truth.",
+      "es": "Corrida sobre el lote sintético planlang-a-001-20 con el proveedor suscripcion (modelo sonnet). Las decisiones humanas se simularon en lote: el auditor sigue la verdad conocida del caso."
+    },
+    "etiqueta": {
+      "en": "Simulation · not operational",
+      "es": "Simulación · no operativo"
+    },
+    "nombre": {
+      "en": "Demo A · medical prior authorisation · single-agent baseline",
+      "es": "Demo A · autorizaciones médicas · línea base de agente único"
+    }
+  },
+  "formato": "planlang-trace/v1",
+  "huella": "d59580df70e6e6370c3bb17a4b5543a613a93989e8354b7bfa30dcd80cc21cdb",
+  "modelo": "sonnet",
+  "plan": {
+    "archivo": "plans/demo-a/v1.1.json",
+    "huella": "2e3763849ee4fc56f7fd6ff0c7c1c3093adf002db1ff2aa552266e99bb4cf6f3",
+    "id": "plan-demo-a",
+    "version": "1.1.0"
+  },
+  "plan_beneficios": {
+    "archivo": "data/plan-beneficios/demo-a.json",
+    "huella": "8e07b276176e477400954879b1fd998f49b633c6e2d550408974284853c0eda4",
+    "id": "pb-demo-a",
+    "version": "1.0.0"
+  },
+  "proveedor": "suscripcion",
+  "ramas_esperadas": {
+    "archivo": "ramas-esperadas.json",
+    "huella": "d5797e897dd198c2b6c84d5562cf1a68c9e73e8b73518849d64bd2ff8a254618"
+  },
+  "revisor_simulado": {
+    "en": "In batches, the simulated reviewer follows the case's known truth (DA-04); the showcase discloses it.",
+    "es": "En lotes, el revisor simulado sigue la verdad conocida del caso (DA-04); la vitrina lo divulga."
+  },
+  "sesiones": [
+    {
+      "casos_ejecutados": [
+        "A-001",
+        "A-002",
+        "A-003",
+        "A-004",
+        "A-005",
+        "A-006",
+        "A-007",
+        "A-008",
+        "A-009",
+        "A-010",
+        "A-011",
+        "A-012",
+        "A-013",
+        "A-014",
+        "A-015",
+        "A-016",
+        "A-017",
+        "A-018",
+        "A-019",
+        "A-020"
+      ],
+      "detenida_por": null,
+      "fecha": "2026-09-27",
+      "limites_alcanzados": 0,
+      "numero": 1
+    }
+  ],
+  "tipo": "corrida",
+  "trazas": [
+    {
+      "archivo": "trazas/A-001.json",
+      "caso_id": "A-001",
+      "huella": "3cd3d590a969ad9d493df46102db0f3c659bd40c717f753d7373c9414f223f1b",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-002.json",
+      "caso_id": "A-002",
+      "huella": "781e3cb70f497ec3941dc68d83cf48f2a18dc2057208a324fe956af5415e97f4",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-003.json",
+      "caso_id": "A-003",
+      "huella": "85b744de745b005955182cdd2826469998d5544574e33b5ab9affc5bc020dc42",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-004.json",
+      "caso_id": "A-004",
+      "huella": "ab6eb1383104cca3821f29297c102bbacce7a13ea092a37568ed3de0eb72bf03",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-005.json",
+      "caso_id": "A-005",
+      "huella": "81d1747da54f0aec9aef9b8a40455f51a6a1e51ecae07e6ca2a3978e3770cd88",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-006.json",
+      "caso_id": "A-006",
+      "huella": "56536faec89aea7f7b6f1f8e56d559210fbcfa84c0f3125dd5222b58fa0765a7",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-007.json",
+      "caso_id": "A-007",
+      "huella": "f8c032740e4996f534f4edbd2d0571051387f33bf924386932c8e526a8a5e242",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-008.json",
+      "caso_id": "A-008",
+      "huella": "3035a0cd3eb303108e13016cf13fc7880051166cea2e253fea048b5a017bc93f",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-009.json",
+      "caso_id": "A-009",
+      "huella": "6a2e07ca719bd59c4fe295aab8a94896860595105366e1593cb8e8024be607c4",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-010.json",
+      "caso_id": "A-010",
+      "huella": "eef4f5f5621105fa5dc2086454cff3b72ee8d6b99f4a91ab0ee09b6356926d3f",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-011.json",
+      "caso_id": "A-011",
+      "huella": "f39e97b6f1a16b6fa78780b7188b99cdf441de9419ac26f0b0bdedd17e03a61e",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-012.json",
+      "caso_id": "A-012",
+      "huella": "f0bb3c6a95f2457568dd7c3637eef800960ef1ea325866895540e903012f72cc",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-013.json",
+      "caso_id": "A-013",
+      "huella": "9943ce3b15bce0e4b3a1bfe1f3c32a46d35ab13d719de73432936d82019ba0f9",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-014.json",
+      "caso_id": "A-014",
+      "huella": "29e20764bc2aaced42fa8bc1e60fe742c1502d47711a7df129c9575579e965c7",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-015.json",
+      "caso_id": "A-015",
+      "huella": "97968f2554d75b74597deff0a09d5d86315071e10ad2a5df414401a866b80470",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-016.json",
+      "caso_id": "A-016",
+      "huella": "4952c10485c0fdfa4691e7ea1ab200ada18e7913f48964e88406867d01531e2e",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-017.json",
+      "caso_id": "A-017",
+      "huella": "ba7882154f0b2b8918b945099220dd82b4331bd62de8bfcc5216c6c0d5d54c60",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-018.json",
+      "caso_id": "A-018",
+      "huella": "36df00024510923bfa2cd957166eda3759ffd33b1303fa479ef5679739562ac9",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-019.json",
+      "caso_id": "A-019",
+      "huella": "62d33fd92477681aa42cfa61dbaabfa599cc3d08717c65077c000ba9daed67ce",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-020.json",
+      "caso_id": "A-020",
+      "huella": "8052495c06804a525ac7a6b4081ecaabb4da8aff268c3fbc119fc3f6fcbf87cf",
+      "resultado": "completo"
+    }
+  ],
+  "umbrales_aplicados": {
+    "U1": 0.75,
+    "U2": 1000,
+    "U3": 2,
+    "U4": false
+  },
+  "variante": "agente_unico",
+  "version_grafo": "b73574d1eacc8d7c8d5fdc78ab7b91c4c394c146ac9b4713e49fd62787887fee"
+}

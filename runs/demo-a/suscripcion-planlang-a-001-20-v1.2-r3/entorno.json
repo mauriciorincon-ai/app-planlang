@@ -1,0 +1,12 @@
+{
+  "claude_cli": "2.1.282 (Claude Code)",
+  "paquetes": {
+    "langchain": "1.4.2",
+    "langchain-core": "1.6.5",
+    "langgraph": "1.2.12",
+    "langsmith": "0.14.1",
+    "pydantic": "2.13.5"
+  },
+  "python": "3.12.14",
+  "sistema": "Darwin"
+}

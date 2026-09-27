@@ -8,9 +8,17 @@
     "start": "serve out -l 3000",
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
-    "test": "vitest run --passWithNoTests",
+    "test": "vitest run --coverage",
     "test:e2e": "playwright test",
-    "prepare": "git config core.hooksPath githooks"
+    "prepare": "git config core.hooksPath githooks",
+    "test:watch": "vitest",
+    "plan:validar": "tsx scripts/plan-validar.ts",
+    "casos:generar": "tsx scripts/casos-generar.ts",
+    "brecha:informe": "tsx scripts/brecha-informe.ts",
+    "trazas:verificar": "tsx scripts/trazas-verificar.ts",
+    "m9:reporte": "tsx scripts/m9-reporte.ts",
+    "lote:demo": "agents/.venv/bin/python -m app_agents.lotes --demo a --pausa-s 2",
+    "lote:base": "agents/.venv/bin/python -m app_agents.lotes --demo a --pausa-s 2 --variante agente_unico"
   },
   "dependencies": {
     "@sentry/nextjs": "^11.0.0",
@@ -37,6 +45,7 @@
     "prettier": "^3.9.9",
     "serve": "14.2.6",
     "tailwindcss": "^4",
+    "tsx": "^4.23.15",
     "typescript": "^5",
     "vitest": "^5.0.2",
     "yaml": "^2.9.1"

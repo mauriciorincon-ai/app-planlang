@@ -1,0 +1,77 @@
+{
+  "base": "plans/demo-a/v0-migrado.json",
+  "semillas": [
+    {
+      "archivo": "01-criterio-sin-regla.json",
+      "codigo": "CRITERIO_SIN_REGLA",
+      "descripcion": "C1 pierde su condición de medición",
+      "elemento": "C1"
+    },
+    {
+      "archivo": "02-umbral-sin-senal.json",
+      "codigo": "UMBRAL_SIN_SENAL",
+      "descripcion": "U1 apunta a una señal que la traza no registra",
+      "elemento": "U1"
+    },
+    {
+      "archivo": "03-riesgo-sin-detector.json",
+      "codigo": "RIESGO_SIN_DETECTOR",
+      "descripcion": "R3 (inyección, severidad 9) queda sin detector ni marca «no detectable»",
+      "elemento": "R3"
+    },
+    {
+      "archivo": "04-sin-pausa-humana.json",
+      "codigo": "SIN_PAUSA_HUMANA",
+      "descripcion": "el contrato de grafo no declara ninguna pausa humana",
+      "elemento": "contrato_de_grafo.pausas_humanas"
+    },
+    {
+      "archivo": "05-prioridad-alta-sin-mitigacion.json",
+      "codigo": "PRIORIDAD_ALTA_SIN_MITIGACION",
+      "descripcion": "R2 (fuga de datos, prioridad alta) pierde sus mitigaciones",
+      "elemento": "R2"
+    },
+    {
+      "archivo": "06-ciclo-entre-decisiones.json",
+      "codigo": "CICLO",
+      "descripcion": "D2 pasa a depender de D3, que ya depende de D2",
+      "elemento": "D2 → D3 → D2"
+    },
+    {
+      "archivo": "07-condicion-no-interpretable.json",
+      "codigo": "CONDICION_NO_INTERPRETABLE",
+      "descripcion": "C2 lleva una condición con paréntesis sin cerrar",
+      "elemento": "C2.condicion"
+    },
+    {
+      "archivo": "08-referencia-rota.json",
+      "codigo": "REFERENCIA_ROTA",
+      "descripcion": "C3 referencia umbral.U9, que no existe",
+      "elemento": "C3.poblacion"
+    },
+    {
+      "archivo": "09-operador-inclusivo-incoherente.json",
+      "codigo": "OPERADOR_INCLUSIVO_INCOHERENTE",
+      "descripcion": "U3 usa mayor_o_igual_que con inclusivo: false",
+      "elemento": "U3"
+    },
+    {
+      "archivo": "10-nodo-escritor-sin-rama-por-defecto.json",
+      "codigo": "NODO_ESCRITOR_SIN_RAMA_POR_DEFECTO",
+      "descripcion": "el nodo decision pierde su rama por defecto",
+      "elemento": "decision"
+    },
+    {
+      "archivo": "11-esquema-clave-desconocida.json",
+      "codigo": "ESQUEMA",
+      "descripcion": "una clave desconocida en la raíz (el esquema es estricto)",
+      "elemento": "$"
+    },
+    {
+      "archivo": "12-supuesto-critico-sin-prueba.json",
+      "codigo": "SUPUESTO_CRITICO_SIN_PRUEBA",
+      "descripcion": "S1 (criticidad alta) queda con prueba barata vacía en inglés",
+      "elemento": "S1"
+    }
+  ]
+}

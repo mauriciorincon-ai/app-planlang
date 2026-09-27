@@ -28,5 +28,16 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 agents/.coverage
+# coverage.py también puede escribir en la raíz (lleva rutas locales: jamás al repo público)
+.coverage
+.coverage.*
 agents/htmlcov/
 agents/*.egg-info/
+# K2 (planlang S1): `pip install -e` deja el egg-info dentro de src/ (los comentarios de .gitignore van en su línea)
+agents/src/*.egg-info/
+
+# planlang S1 — derivados de las corridas de agentes: solo se versiona el JSON exportado (planlang-trace/v1)
+runs/**/checkpoints.sqlite
+runs/**/*.sqlite-journal
+runs/**/*.sqlite-wal
+runs/**/*.sqlite-shm

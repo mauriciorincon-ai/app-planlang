@@ -1,0 +1,1 @@
+{ "id": "C04", "descripcion": "Modo con prioridad alta y mitigaciones vacías: el plan no es aprobable y el informe nombra el modo", "modos": [ { "id": "R9", "severidad": 9, "ocurrencia": 5, "deteccion": 4, "mitigaciones": [] }, { "id": "R2", "severidad": 3, "ocurrencia": 2, "deteccion": 2, "mitigaciones": [] } ], "esperado": { "ok": false, "bloqueantes": ["R9"] } }

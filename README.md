@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# planlang
 
-## Getting Started
+> **Planeé, construí y medí la brecha.** El planeador de agentes de IA donde cada demo es la prueba de
+> su propio plan.
+>
+> _I planned, I built, I measured the gap. The AI-agent planner where every demo is the test of its own plan._
 
-First, run the development server:
+**Simulación · no operativo · datos sintéticos.** Nada de lo que hay aquí opera casos reales ni toca
+datos de personas: todo caso, afiliado, médico, plan de beneficios y lista es sintético con semilla, y
+un validador en CI lo comprueba.
+
+## Qué hay en este repositorio
+
+| Carpeta                      | Qué es                                                                                                                                                                                                               |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `core/`                      | Núcleo determinista en TypeScript (planeador, generador sintético, verificador de brecha, intérprete de aristas, formatos). Jamás invoca un modelo de lenguaje. Corre en Node y en el navegador con los mismos bytes |
+| `agents/`                    | Agentes en Python 3.12 con LangGraph 1.x: el demo A (autorizaciones médicas simuladas), el adaptador de modelo y el exportador de trazas `planlang-trace/v1`                                                         |
+| `packages/`                  | Implementaciones de los dos reusables de la casa (instrumentos de plan · diagramador), con su contrato fijado                                                                                                        |
+| `plans/` · `data/` · `runs/` | El plan aprobado con huella, las plantillas de dominio, los casos sintéticos y las corridas exportadas                                                                                                               |
+| `src/`                       | La vitrina estática bilingüe (Next.js exportado). Llega en el S2, tras la Etapa de Diseño                                                                                                                            |
+| `docs/`                      | Manual de uso, guía de prueba y kit de prueba (el brochure y el blueprint nacen al cierre del ciclo)                                                                                                                 |
+| `decisions/`                 | ADRs: código primero · proveedor y cumplimiento · pines de Python · salida estructurada · enmiendas de medición · línea base                                                                                         |
+| `sprints/`                   | Bitácora y summary de cada sprint                                                                                                                                                                                    |
+
+## Cómo se usa (S1, sin pantalla)
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install                                          # también re-aplica el hook de git (gitleaks)
+pnpm plan:validar --verificar plans/demo-a/v1.2.json  # el plan vigente del demo A, con su huella
+pnpm casos:generar --versionados                      # regenera los lotes sintéticos versionados (misma semilla, mismos bytes)
+pnpm lote:demo --corrida <id> --fecha <AAAA-MM-DD>    # lote de 20 con la suscripción de Claude Code (fuera de CI)
+pnpm brecha:informe --corrida runs/demo-a/<id>        # informe de brecha ES/EN, idéntico byte a byte
+pnpm trazas:verificar && pnpm m9:reporte --verificar  # corridas verificadas · brechas sembradas detectadas
+pnpm test && pnpm typecheck && pnpm lint
+cd agents && .venv/bin/pytest                         # el mismo comando del job `python` de la CI
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+El detalle para usuarios está en `docs/MANUAL-DE-USO.md`; las pruebas manuales, en
+`docs/GUIA-DE-PRUEBA.html`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Principios (constitución en `CLAUDE.md`)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+El núcleo es determinista y jamás llama a un modelo · el plan es el código de la arista · toda decisión
+del agente deja su señal · ninguna negación sin pausa humana · la guardia determinista es arquitectura ·
+cero datos reales · la brecha se publica con sus fallas · bilingüe español/inglés en todo.
