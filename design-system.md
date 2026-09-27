@@ -1,6 +1,6 @@
 ---
-version: 0.2.0
-estado: kit aprobado en la mirada 2 (2026-09-27); 0.2 suma los componentes de la ronda 2 de P3 — sube a 1.0.0 al aprobar G-Diseño
+version: 0.3.0
+estado: kit aprobado en la mirada 2 (2026-09-27); 0.2 suma los componentes de P3 y 0.3 los de Brecha y Playground (mirada 3) — sube a 1.0.0 al aprobar G-Diseño
 fecha: 2026-09-27
 fuente_visual: docs/diseno/ (kit.html es este documento en vivo)
 tokens: scripts/paleta/generar-tokens.mjs → docs/diseno/assets/tokens.{json,css} (generados; gate diseno-tokens)
@@ -19,7 +19,9 @@ magnitud desproporcionada, tarjetas tiradas sin sentido»; la ronda 2 fijó la e
 usuario eligió **Inter**; la ronda 3 sumó íconos y miniaturas gráficas y fue aprobada («lo abrí y
 apruebo»). En la mirada 2 el usuario aprobó el kit («si aprobado el kit del sistema») y pidió que la
 pantalla del agente dijera qué es el agente (objetivo, qué recibe, qué hace, qué entrega, capacidad) y
-trajera mucha más información por perfil: de ahí salen los componentes de la versión 0.2.
+trajera mucha más información por perfil: de ahí salen los componentes de la versión 0.2. La
+mirada 2 cerró con una regla para lo que sigue: toda pantalla abre con su ficha general («qué es, qué
+recibe, qué produce») y trae su detalle por perfil; la 0.3 la aplica al informe y al playground.
 
 ## 1. Personalidad
 
@@ -198,6 +200,17 @@ propios (shadcn/ui personalizado donde aplique, jamás el estilo por defecto).
 | **Referencias al plan** (0.2) | id del plan + enunciado + su medida (prioridad de acción con S·O·D, «sin probar», regla, «una vía»)                      | experto                                                        |
 | **Matriz plan → nodo** (0.2)  | qué decisiones, riesgos, supuestos, criterios y umbrales gobiernan cada nodo del contrato, y si corrió                   | escritorio · teléfono (cada celda con su etiqueta)             |
 | **Traza abrible** (0.2)       | una fila por caso que se abre (`<details>`): el texto del caso, lo que el nodo leyó y escribió, tokens, costo, verdad    | cerrada · abierta · teléfono                                   |
+| **Leer como** (0.3)           | conmutador de página líder · experto (`html[data-perfil]`); lo técnico lleva `.solo-experto`, nunca se duplica la página | líder · experto                                                |
+| **Franja del oráculo** (0.3)  | divulgación obligatoria en Brecha y Playground: las decisiones humanas se simularon (DA-04); filete del color de la pausa humana | —                                                              |
+| **Veredicto al frente** (0.3) | el sello, una frase para quien decide, la recomendación del verificador y seis cifras                                   | cumple con alertas · no cumple (maqueta) · teléfono            |
+| **Índice del informe** (0.3)  | las 9 secciones de § 12 como enlaces numerados; cada sección repite su número                                            | —                                                              |
+| **Visitas por nodo** (0.3)    | contrato de grafo: nodo con su glifo, barra de visitas y marca de presencia                                              | escritorio · teléfono                                          |
+| **Cadena de nodos** (0.3)     | el camino de un caso como glifos unidos por flechas                                                                      | —                                                              |
+| **Supuesto con su prueba** (0.3) | enunciado, estado (confirmado · refutado · sin probar), lectura de líder, medidas (experto), límites y su gráfico      | los tres estados                                               |
+| **Comparación de variantes** (0.3) | barras pareadas: la variante del plan llena, la línea base con trazo y rayado; se distinguen sin color               | —                                                              |
+| **Casos ejemplares** (0.3)    | cuatro bloques (exitoso · escalado · fallido · adversario); el que no existe queda vacío y lo dice                        | contenido · vacío                                              |
+| **Aviso de estado de maqueta** (0.3) | borde discontinuo: qué cambia y que sus números son inventados                                                    | —                                                              |
+| **Casos que cambian** (0.3)   | playground: antes → ahora por forma (■ a una persona · ○ solo · ◌ no observado), el porqué y la consecuencia            | vacío · con cambios · error introducido · no observado         |
 
 ## 6. Anti-patrones (prohibidos, además de los del skill `diseno-ui`)
 
@@ -213,8 +226,11 @@ propios (shadcn/ui personalizado donde aplique, jamás el estilo por defecto).
 
 ## 7. Pendiente para 1.0.0 (G-Diseño)
 
-- Los seis componentes de la 0.2 viven hoy en `03-agente.html`; entran al kit al consolidar
-  G-Diseño (el kit ya aprobado no se toca a mitad de etapa).
+- Los componentes de la 0.2 (en `03-agente.html`) y de la 0.3 (en `04-brecha.html` y
+  `05-playground.html`) entran al kit al consolidar G-Diseño (el kit ya aprobado no se toca a mitad
+  de etapa).
+- La mono va sin ligaduras en código y datos (`!=` no se dibuja `≠`); en teléfono, la letra de las
+  gráficas crece en unidades del SVG. Ambas reglas ya rigen en la hoja de estilos.
 
 - Miradas 3 y 4: pantallas Brecha, Playground, Entrada final, Plan, Caso y Fichas ensamblan estos
   componentes; lo que cambie en ellas vuelve aquí.

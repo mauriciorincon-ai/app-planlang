@@ -2313,3 +2313,484 @@ code.c,
     display: inline;
   }
 }
+
+/* ---------- Mirada 3: informe de brecha y playground ----------
+   Perfil de lectura (página entera): html[data-perfil] = lider | experto. */
+html:not([data-perfil="experto"]) .solo-experto,
+html[data-perfil="experto"] .solo-lider {
+  display: none !important;
+}
+.oraculo {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  padding: 12px 16px;
+  border: 1px solid var(--linea);
+  border-left: 3px solid var(--tipo-4);
+  border-radius: var(--radio);
+  background: var(--sup-1);
+  font-size: var(--t-chico);
+  color: var(--tinta-2);
+}
+.oraculo .ico {
+  width: 18px;
+  height: 18px;
+  color: var(--tinta-1);
+}
+.oraculo b {
+  color: var(--tinta-1);
+  font-weight: 500;
+}
+.aviso-maqueta {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  gap: 12px;
+  padding: 12px 16px;
+  border: 1px dashed var(--tinta-3);
+  border-radius: var(--radio);
+  font-size: var(--t-chico);
+  color: var(--tinta-2);
+}
+.aviso-maqueta svg {
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  color: var(--tinta-1);
+}
+.aviso-maqueta b {
+  color: var(--tinta-1);
+  font-weight: 500;
+}
+/* Veredicto al frente: el sello, la frase y la recomendación */
+.dictamen {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: var(--e-5) var(--e-7);
+  align-items: start;
+}
+.dictamen .veredicto {
+  height: 34px;
+  padding: 0 14px 0 10px;
+  font-size: var(--t-sub);
+}
+.dictamen .veredicto svg {
+  width: 16px;
+  height: 16px;
+}
+.dictamen .frase {
+  margin-top: var(--e-3);
+  font-size: var(--t-guia);
+  line-height: 1.5;
+}
+.recomendacion {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  gap: 10px;
+  margin-top: var(--e-4);
+  padding-top: var(--e-3);
+  border-top: 1px solid var(--linea);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.recomendacion .ico {
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+}
+.recomendacion small {
+  display: block;
+  margin-top: 2px;
+  font-size: var(--t-dato);
+  color: var(--tinta-2);
+}
+.cifras-g {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: var(--e-5);
+}
+.cifras-g .cap b .est {
+  width: 18px;
+  height: 18px;
+  margin: 0 2px 0 0;
+  vertical-align: -2px;
+}
+/* Índice del informe: las 9 secciones en su orden */
+.indice {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.indice a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 10px;
+  border: 1px solid var(--linea);
+  border-radius: var(--radio-chip);
+  background: var(--sup-1);
+  font-size: var(--t-chico);
+  text-decoration: none;
+  color: var(--tinta-1);
+}
+.indice a:hover {
+  border-color: var(--tinta-3);
+}
+.indice .n {
+  font: 500 var(--t-dato) / 1 var(--mono);
+  color: var(--tinta-2);
+}
+.sec-num {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.sec-num .n {
+  font: 500 var(--t-dato) / 1 var(--mono);
+  color: var(--tinta-2);
+}
+.lectura {
+  font-size: var(--t-guia);
+  line-height: 1.55;
+  color: var(--tinta-1);
+  max-width: 72ch;
+  margin-bottom: var(--e-5);
+}
+/* Por qué este veredicto */
+.porque {
+  list-style: none;
+  padding: 0;
+  display: grid;
+}
+.porque > li {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  gap: 12px;
+  padding-block: 12px;
+  border-top: 1px solid var(--linea);
+}
+.porque > li > svg {
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+}
+.porque b {
+  display: block;
+  font-weight: 500;
+}
+.porque span {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--tinta-2);
+}
+/* Tabla de filas genérica: cada celda lleva su rótulo en teléfono */
+.tabla-f {
+  display: grid;
+}
+.tabla-f .fila {
+  display: grid;
+  grid-template-columns: var(--cols);
+  gap: 12px;
+  align-items: center;
+  padding-block: 9px;
+  border-top: 1px solid var(--linea);
+  font-size: var(--t-chico);
+}
+.tabla-f .cabeza {
+  border-top: 0;
+  padding-block: 0 6px;
+  font-size: var(--t-dato);
+  color: var(--tinta-2);
+}
+.tabla-f .m {
+  font: 400 var(--t-dato) / 1.5 var(--mono);
+  overflow-wrap: anywhere;
+}
+.tabla-f .et-m {
+  display: none;
+}
+.tabla-f .vacio {
+  color: var(--tinta-2);
+}
+/* Visitas por nodo (contrato de grafo) */
+.visitas {
+  display: grid;
+  grid-template-columns: minmax(0, 190px) minmax(0, 1fr) 40px 22px;
+  gap: 8px 14px;
+  align-items: center;
+}
+.visitas .barra-dato {
+  grid-column: auto;
+  height: 6px;
+}
+.visitas .barra-dato i {
+  background: var(--tinta-1);
+}
+.visitas b {
+  font: 500 var(--t-dato) / 1 var(--mono);
+  text-align: right;
+}
+/* Cadena de nodos visitados */
+.cadena {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+}
+.cadena .cad-f {
+  width: 10px;
+  height: 10px;
+  color: var(--tinta-3);
+}
+/* Supuestos */
+.supuesto {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: var(--e-5) var(--e-7);
+  padding-block: var(--e-5);
+  border-top: 1px solid var(--linea);
+}
+.supuesto-cab {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+}
+.supuesto-cab .id {
+  font: 500 var(--t-dato) / 1 var(--mono);
+  color: var(--tinta-2);
+}
+.supuesto-cab h3 {
+  font-size: var(--t-sub);
+}
+.supuesto-cab .fila-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+.supuesto .notas {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+  font-size: var(--t-chico);
+  color: var(--tinta-2);
+}
+.supuesto .notas li {
+  display: grid;
+  grid-template-columns: 14px minmax(0, 1fr);
+  gap: 8px;
+}
+.supuesto .notas .ico {
+  width: 13px;
+  height: 13px;
+  margin-top: 3px;
+}
+/* Comparación de dos variantes (barras pareadas; forma, no color) */
+.comparacion {
+  display: grid;
+  gap: 14px;
+}
+.comp-fila {
+  display: grid;
+  grid-template-columns: minmax(0, 170px) minmax(0, 1fr);
+  gap: 6px 16px;
+  align-items: center;
+}
+.comp-fila > span {
+  font-size: var(--t-chico);
+  color: var(--tinta-2);
+}
+.comp-barras {
+  display: grid;
+  gap: 4px;
+}
+.comp-b {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) max-content;
+  gap: 10px;
+  align-items: center;
+  font: 400 var(--t-dato) / 1 var(--mono);
+}
+.comp-b i {
+  display: block;
+  height: 10px;
+  border-radius: 2px;
+}
+.comp-b.multi i {
+  background: var(--tinta-1);
+}
+.comp-b.unico i {
+  border: 1.5px solid var(--tinta-2);
+  background: repeating-linear-gradient(135deg, transparent 0 3px, var(--linea) 3px 5px);
+}
+.comp-ley {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  font-size: var(--t-dato);
+  color: var(--tinta-2);
+}
+.comp-ley span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.comp-ley i {
+  display: inline-block;
+  width: 18px;
+  height: 10px;
+  border-radius: 2px;
+}
+.comp-ley .multi {
+  background: var(--tinta-1);
+}
+.comp-ley .unico {
+  border: 1.5px solid var(--tinta-2);
+  background: repeating-linear-gradient(135deg, transparent 0 3px, var(--linea) 3px 5px);
+}
+/* Casos ejemplares */
+.ejemplares {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--e-4);
+}
+.ejemplar {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  padding: 14px 16px;
+  border: 1px solid var(--linea);
+  border-radius: 8px;
+  background: var(--sup-1);
+  min-width: 0;
+}
+.ejemplar.vacio {
+  background: transparent;
+  border-style: dashed;
+  border-color: var(--tinta-3);
+}
+.ejemplar .rol {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--t-chico);
+  color: var(--tinta-2);
+}
+.ejemplar .rol .ico {
+  width: 15px;
+  height: 15px;
+}
+.ejemplar h3 {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: var(--t-sub);
+}
+.ejemplar h3 .caso {
+  font: 500 13px var(--mono);
+}
+.ejemplar p {
+  font-size: 14px;
+  line-height: 1.5;
+}
+.ejemplar small {
+  font-size: var(--t-dato);
+  color: var(--tinta-2);
+}
+.enlace-off {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--t-dato);
+  color: var(--tinta-2);
+}
+.enlace-off .ico {
+  width: 13px;
+  height: 13px;
+}
+.reglita {
+  font: 400 var(--t-dato) / 1.5 var(--mono);
+  color: var(--tinta-2);
+  overflow-wrap: anywhere;
+}
+@media (max-width: 1000px) {
+  .dictamen,
+  .supuesto {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .ejemplares {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 860px) {
+  .cifras-g {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .tabla-f .cabeza {
+    display: none;
+  }
+  .tabla-f .fila {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 4px 12px;
+    align-items: start;
+    padding-block: 12px;
+  }
+  .tabla-f .fila > :first-child {
+    grid-column: 1 / -1;
+  }
+  .tabla-f .et-m {
+    display: block;
+    font: 400 var(--t-dato) / 1.4 var(--letra);
+    color: var(--tinta-2);
+  }
+  .visitas {
+    grid-template-columns: minmax(0, 150px) minmax(0, 1fr) 30px 18px;
+    gap: 8px 10px;
+  }
+  .comp-fila {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 560px) {
+  .cifras-g,
+  .ejemplares {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.cifra-c b span {
+  font: inherit;
+  color: inherit;
+}
+/* El código y los datos se muestran tal cual: sin ligaduras de la mono (!= no se dibuja ≠, -> no es →). */
+code,
+pre,
+.mono,
+.regla,
+.reglita,
+.rpn,
+.m,
+.caso,
+.costo,
+.ruta,
+.tipo-t,
+.fila .id,
+.dl-arista dd,
+.ficha dd,
+.nodo .cod {
+  font-variant-ligatures: none;
+}
+/* En teléfono la gráfica se encoge: su letra crece en unidades del SVG para seguir legible. */
+@media (max-width: 560px) {
+  .curva .eje text,
+  .curva .eje-t {
+    font-size: 14px;
+  }
+  .curva .punto-et {
+    font-size: 13px;
+  }
+}

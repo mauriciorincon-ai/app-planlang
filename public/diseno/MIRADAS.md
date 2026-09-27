@@ -247,5 +247,93 @@ marca de la matriz sin etiqueta.
 **Preguntas para el usuario:** ¿ahora se entiende qué es el agente? · ¿cada perfil trae lo que
 esperabas? · «lo abrí y apruebo» para pasar a la mirada 3.
 
+**Lo que dijo el usuario (2026-09-27, con la página abierta en el preview):**
+
+> «Claro muchisimo mejor 1. Si se entiende perfecto muy buen trabajo 2. Igualmente el perfil perfecto
+> tambien aprobado 3. lo abrí y apruebo»
+
+**Veredicto: MIRADA 2 APROBADA** («lo abrí y apruebo», con comentario de la página abierta). Queda
+sellado:
+
+- **Kit y `design-system.md`** (aprobados en la primera entrega de la mirada 2) con los seis
+  componentes de la 0.2.0.
+- **P3 Agente, ronda 2:** la ficha general va ANTES del diagrama (objetivo · recibe → hace → entrega ·
+  puede / nunca / participan · capacidad medida, y ficha técnica para expertos) y cada nodo trae los
+  cuatro perfiles con contenido denso. El usuario confirma que se entiende y que los perfiles están
+  completos.
+- **Regla para las pantallas que siguen:** toda pantalla abre con su ficha general («qué es, qué
+  recibe, qué produce») y trae su detalle por perfil. Se aplica desde la mirada 3.
+
+**Qué cambió:** nada en `03-agente.html`. Siguiente: mirada 3 (`04-brecha.html` +
+`05-playground.html`), según el plan de miradas aprobado.
+
+## Mirada 3 — `04-brecha.html` + `05-playground.html` · 2026-09-27
+
+**Cambio de fuente de datos, declarado (decisión 7 del plan de la etapa):** el plan preveía un lote de
+20 de *maqueta* (inventado) para Brecha y Playground, porque al arrancar la etapa no había corrida. El
+S1 ya la tiene: `runs/demo-a/suscripcion-planlang-a-001-20-v1.2` (plan v1.2, 20 casos sintéticos,
+3 repeticiones y una línea base de agente único) con su informe real del verificador 1.0.0 (huella
+`691e0e37…`). Las dos pantallas usan esos datos, leídos solo de la rama del S1 (`git show`, sin tocar
+su árbol). Mostrar números inventados cuando existen los reales contradice «jamás se simula lo que no
+corrió». El plan de miradas no cambia.
+
+**Lo que dice la corrida real:** **cumple con alertas**. 9 de 9 criterios; 0 de 8 riesgos; S2
+confirmado, **S3 refutado** (el multiagente acierta más, 100 % frente a 85 %, pero tarda más,
+11,8 s frente a 9,3 s), **S1 sin probar** (los 15 casos fueron aciertos: sin errores no existe
+AUROC); **5 brechas no previstas** (el modelo no entregó la salida estructurada al primer intento);
+0 diferencias al rehacer 233 decisiones en TypeScript.
+
+**El criterio fallido que pide la orden** («un criterio fallido visible»), para el gate de lectura
+de G-Diseño: la corrida real no tiene ninguno, así que la sala trae el estado **«maqueta: no
+cumple»**. Cambian el veredicto, el resumen, C5 (85 % frente a 90 %, con la brecha rayada) y R5
+(ocurrió en 2 de 14), con números inventados y rotulados; lo demás sigue siendo la corrida real.
+Lo que falló *de verdad* (S3 refutado y las 5 brechas no previstas) queda al frente en el resumen.
+
+**Entregado:**
+
+- **`04-brecha.html` (P4):** ficha «El informe en una mirada» (veredicto, frase para quien decide,
+  recomendación del verificador, seis cifras; el verificador recibe → hace 8 pasos sin modelo →
+  entrega; índice de las 9 secciones). Las 9 secciones de § 12 en su orden: resumen con el porqué
+  del veredicto; plan en breve (problema, 7 pasos, decisiones de una vía); 9 criterios con regla,
+  medido frente al objetivo y casos que incumplen; 8 riesgos con prioridad de acción, S·O·D y
+  detector, más el contrato de grafo (visitas por nodo) y la prueba cruzada Python ↔ TypeScript;
+  brechas no previstas y evaluadores; supuestos con la curva riesgo-cobertura de S1 y la
+  comparación multiagente frente a agente único de S3; 4 casos ejemplares con su cadena de nodos
+  (el fallido, vacío: «no se inventa uno»); umbrales jugables con lo observado; ficha de
+  reproducibilidad con todas las huellas. «Leer como» líder o experto (el experto ve reglas,
+  condiciones de los detectores, medidas y evaluadores). Estados: corrida real · maqueta no cumple ·
+  cargando · error (huella alterada) · vacío.
+- **`05-playground.html` (P5):** ficha «El playground en una mirada»; los 4 deslizadores del plan
+  (U1–U3 y el interruptor del modo Texas) con regla, marca del plan y «movido desde»; panel de
+  consecuencias en vivo sobre las **señales reales** de los 20 casos (casos que cambian, errores
+  introducidos y evitados, minutos de auditor, criterios que dependen de los umbrales); lista de
+  casos que cambian con antes → ahora por forma, el porqué y su consecuencia; curva riesgo-cobertura
+  con tabla por umbral; límites del informe. La sala trae escenarios listos: U1 = 0,90 (A-008 a una
+  persona, +12 min), **U2 = 1600 (A-010 saldría sin persona: error introducido real y C3 no
+  cumple)**, U3 = 0 (+24 min), U3 = 3 (A-007 «no observado»), modo Texas (0 cambios), cargando,
+  error. Comprobación: con los valores del plan, el recálculo de la sala reproduce el camino de los
+  20 casos.
+- **Sistema:** `design-system.md` 0.3.0 (perfil de lectura, franja de divulgación del oráculo,
+  veredicto al frente, índice del informe, visitas por nodo, cadena de nodos, supuesto con su
+  prueba, comparación de dos variantes, casos ejemplares, aviso de estado de maqueta, lista de
+  casos que cambian); la mono sin ligaduras (el código se ve tal cual); la letra de las gráficas
+  crece en teléfono. `03-agente.html` solo gana los enlaces a Brecha y Playground en su barra.
+
+**Pasada de capturas del builder:** 168 encuadres (Brecha en 5 estados, Playground en 8, Agente,
+kit y dirección × 2 temas × 2 idiomas × 380/1280) + 130 con simulación de daltonismo (Brecha y
+Playground a 1280 en todos sus estados × 2 temas × 5 vistas) + corrida con movimiento reducido en
+las 5 páginas: 0 desbordes, 0 textos fuera del lienzo, fuentes cargadas, 0 animaciones. Leídos como
+imagen: Brecha completa en oscuro, «no cumple» en claro e inglés con perfil experto, teléfono; los
+cinco escenarios del playground, claro e inglés con experto, teléfono y escala de grises. Ajustes
+por lo visto: la cifra de supuestos se partía; las etiquetas de la curva de S1 se enciman (en
+teléfono se ocultan); «2 de 2» heredaba 12 px; R5 decía «0 %» junto a «ocurrió» en el estado de
+maqueta; la mono dibujaba `!=` como `≠`; el glifo de «a una persona» salía diminuto; los chips de
+consecuencia se salían del panel; la tabla de la curva se apilaba en teléfono.
+
+**Pendiente, anotado para la mirada 4:** la franja «Cómo funciona» de `direccion.html` muestra C5
+fallido (rotulado «maqueta»); la Entrada final (P1) usará el veredicto real. Y P3 muestra el grafo
+del spike (3 de 8 nodos), mientras el agente del S1 ya tiene los 8: se propondrá al usuario si P3
+pasa al grafo real del S1 y guarda el spike como ejemplo del estado «exigido y ausente».
+
 **Lo que dijo el usuario:** _(pendiente)_
 

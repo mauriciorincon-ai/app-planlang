@@ -33,7 +33,11 @@
 - `03-agente.html` — **mirada 2, ronda 2**: P3, primero la ficha del agente (objetivo, recibe → hace → entrega, puede / nunca /
   participan, capacidad medida; ficha técnica para expertos) y después el grafo real del spike contra el contrato del plan, con
   detalle por nodo en cuatro perfiles (líder, experto, código, trazas abribles).
-- `01-entrada.html … 07-fichas.html` _(miradas 3–4, salvo P3)_ — una página por pantalla, HTML autocontenido
+- `04-brecha.html` — **mirada 3**: P4, el informe de brecha REAL de la corrida v1.2 del S1 en sus 9 secciones, con «Leer como»
+  líder o experto y el estado «maqueta: no cumple» para ver un criterio fallido.
+- `05-playground.html` — **mirada 3**: P5, los 4 umbrales del plan sobre las señales reales de 20 casos, con consecuencias en vivo,
+  casos que cambian, curva riesgo-cobertura y escenarios de sala. `assets/perfil.js` es el conmutador «Leer como».
+- `01-entrada.html`, `02-plan.html`, `06-caso.html`, `07-fichas.html` _(mirada 4)_ — una página por pantalla, HTML autocontenido
   (cero CDNs, cero frameworks), 380 px y desktop, oscuro y claro, ES y EN.
 - `assets/` — `tokens.{json,css}` (**GENERADOS** por `pnpm tokens` desde `scripts/paleta/generar-tokens.mjs`),
   `planlang.css` (identidad), `diagrama.css` (gramática visual del visor), `fuentes/` (Inter y
@@ -54,7 +58,8 @@ Inter y el summary propone al diagramador su tabla de métricas (G15); (2) glifo
 de lado y la lista por capa es vista alterna y versión en texto; (4) rótulo «Simulación · no operativo»
 con «datos 100 % sintéticos» y divulgación de oráculo en el pie; (5) curva riesgo-cobertura con X =
 cobertura, Y = riesgo, punto del plan; (6) inclusividad visible en cada umbral; (7) chip de procedencia
-en toda cifra (real · spike vs maqueta); (8) visor sobre el grafo del spike con los nodos exigidos y
+en toda cifra (real · spike vs maqueta) — **cambiada en la mirada 3**: Brecha y Playground usan la corrida real v1.2 del S1
+(existe desde el 2026-09-27); el criterio fallido queda como estado de maqueta rotulado; (8) visor sobre el grafo del spike con los nodos exigidos y
   ausentes marcados; (9) un matiz por tipo y por veredicto, claridad por búsqueda determinista bajo 7
   vistas; (10) fichas en la piel de CV Viva; (11) textos EN redactados aquí; (12) JS mínimo de sala.
 
@@ -76,7 +81,8 @@ en toda cifra (real · spike vs maqueta); (8) visor sobre el grafo del spike con
 | 2026-09-27 | `direccion.html` (mirada 1, ronda 2) | «Si ya vamos por buen camino 1. Se ve mas proporcionado 2. Inter 3. No veo ningun telefono. TRaata de tener elementos visuales graficos atractivos iconos y cosas asi» | ronda 3: Inter fija, íconos y gráficos, teléfonos dentro de la página, hexágono y escudo lado a lado |
 | 2026-09-27 | `direccion.html` (mirada 1, ronda 3) | «Excelente ahora si muchisimo mejor. 1. No, todo excelente muy buen trabajo 2. Me voy con el A 3. Que es regla? 4. lo abrí y apruebo» — **mirada 1 aprobada** | mirada 2: `design-system.md` v0.1 + `kit.html` + `03-agente.html` (lienzo A; regla = hexágono por defecto, explicado) |
 | 2026-09-27 | `design-system.md` v0.1 + `kit.html` + `03-agente.html` (mirada 2) | «0. si aprobado el kit del sistema 1. Si hablamos de esta [URL del preview omitida: regla de cero enlaces] la verda es que si es simpre pero no se enutnedo por que no dice el objetivo que hace que ingresa que actividades desarrolala y que entrega y capacidad cosas generales 2. Sime siven pero esperaria mucha mayor informacion segun el perfil 3. pues esta bien solo por los comentarios que te di» — **kit y design system aprobados**; P3 a ronda 2 | ronda 2 de `03-agente.html`: ficha del agente (objetivo, recibe, hace, entrega, capacidad) y vistas por perfil mucho más completas; la mirada 3 espera |
-| 2026-09-27 | `03-agente.html` (mirada 2, ronda 2) | _(pendiente)_ | nada todavía |
+| 2026-09-27 | `03-agente.html` (mirada 2, ronda 2) | «Claro muchisimo mejor 1. Si se entiende perfecto muy buen trabajo 2. Igualmente el perfil perfecto tambien aprobado 3. lo abrí y apruebo» — **mirada 2 aprobada** | mirada 3: `04-brecha.html` + `05-playground.html`, cada una con su ficha general y detalle por perfil |
+| 2026-09-27 | `04-brecha.html` + `05-playground.html` (mirada 3) | _(pendiente)_ | nada todavía |
 
 ## Gates de esta etapa y su demo en rojo (regla 15 del kit)
 
@@ -92,6 +98,8 @@ en toda cifra (real · spike vs maqueta); (8) visor sobre el grafo del spike con
 | -------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `direccion.html`     | Página de entrada (P1) · el nodo de «El grafo real desde el código» | ronda 3: Inter · íconos · «Cómo funciona» · oscuro y claro · ES y EN · 380 px y desktop · dos teléfonos (lienzo y lista) · nodo normal / seleccionado / exigido-ausente · hexágono y escudo |
 | `kit.html`           | el sistema de diseño (transversal) | tokens en vivo por tema · 5 tipos × 5 estados de nodo · 3 modos de arista · criterio, riesgo, consecuencias, curva y ficha en contenido / éxito / vacío / cargando / error · deslizador en reposo / movido / foco / deshabilitado / booleano |
+| `04-brecha.html`     | Verificador de brecha ★ (P4) | corrida real v1.2 · maqueta no cumple (C5 y R5) · cargando · error · vacío · líder y experto · las 9 secciones de § 12 · oscuro y claro · ES y EN · 380 px y desktop |
+| `05-playground.html` | Mover los umbrales del plan ★ (P5) | en el plan · U1 0,90 · U2 1600 (error introducido, C3 falla) · U3 0 · U3 3 (no observado) · modo Texas · cargando · error · líder y experto · curva y tabla · oscuro y claro · ES y EN · 380 px y desktop |
 | `03-agente.html`     | El grafo real desde el código (P3) | ronda 2: ficha del agente líder / experto · selección extractor / enrutador / pausa_humana / aprobar / arista U1 / ausentes · líder · experto · código · trazas cerradas y abiertas · lienzo A y lista por capa · oscuro y claro · ES y EN · 380 px y desktop |
 
 ## Registro de G-Diseño (se llena al cerrar la etapa)
