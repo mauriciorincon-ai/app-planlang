@@ -23,7 +23,7 @@ modelo: Fable 5.1 (todo el sprint, decisión del usuario 2026-09-27)
 | 2 · Casos sintéticos                         | ✅ aprobada («continúa»)               | 2026-09-27 |
 | 3 · Demo A en LangGraph                      | ✅ aprobada («continúa»)               | 2026-09-27 |
 | 4 · Verificador y validación del instrumento | ✅ aprobada («continúa», v1.2 elegida) | 2026-09-27 |
-| 5 · Cierre                                   | 🔄 en curso                            |            |
+| 5 · Cierre                                   | 🔄 auditoría ✓ · deploy-check ✓ · gate ⭐ pendiente |            |
 
 ## Fase 0 — Setup y precondiciones (2026-09-27)
 
@@ -441,6 +441,25 @@ S3 refutado es un resultado legítimo del plan: la tesis «multiagente no rinde 
 | M-11 prefijos del entorno | sin el filtro por prefijo | `test_env_del_hijo_no_lleva_claves_ni_anidamiento` |
 | M-20 «rechazar» | la condición vieja | `brechas-y-veredicto.test.ts` (M-20) |
 | M-21 cobertura por riesgo | cualquier riesgo cubre | `brechas-y-veredicto.test.ts` «errores del proveedor y reintentos…» |
+
+### `/deploy-check --python` (2026-09-27, sobre `daa8ac5`)
+
+| # | Casilla | Resultado (con EL comando del `ci.yml`) |
+|---|---|---|
+| 1 | Tests | `pnpm test` 588 versionados verdes con umbrales de cobertura (612 locales con los 24 de la Etapa de Diseño) · `pnpm test:e2e` 2/2 al primer intento, **0 flaky** (corrido con una config temporal que hereda la del repo y solo cambia el puerto a 3100: en :3000 hay un `serve out` de otra sesión que no es de este sprint y no se tocó) |
+| 2 | Tipos + Python | `pnpm typecheck` limpio · sin `@ts-ignore` · `ruff check .` y `ruff format --check .` limpios · `pytest` 137 (96,2 %) · `pip-audit --skip-editable` limpio (con `--strict` falla solo por el paquete editable: K4) |
+| 3 | Lint | `pnpm lint` 0 errores (2 avisos en `public/diseno/assets/maqueta.js`, archivo local de la Etapa de Diseño no versionado en esta rama) · motion/tokens de tinta: no aplica (sin UI) |
+| 4 | Build | `pnpm build` OK; `src/` sin cambios → bundle idéntico al de `main` |
+| 5 | Seguridad | `pnpm audit --audit-level high` limpio · overrides: ninguno (nada en `package.json` ni en `pnpm-workspace.yaml`) · sin secretos (gitleaks en cada commit) · **`.env.example` no documentaba las variables de los agentes → corregido** (`PLANLANG_PROVEEDOR`, `PLANLANG_HUMO_REAL`, `LANGSMITH_*`; no van a Vercel: los agentes corren en la terminal) |
+| 6 | Observabilidad | sin endpoints; logger JSON en `agents/` |
+| 7 | A11y y diseño | axe del scaffold verde en e2e; sin rutas nuevas; checklist de diseño: no aplica (sin UI) |
+| 8 | Performance | job `lighthouse` `success` sobre el scaffold; informe de 200 casos en 62 ms |
+| 9 | Documentación | barrido de cero enlaces limpio tras el último `git add` · **el campo homepage del repo apuntaba a la URL de producción de Vercel (la GitHub App de Vercel lo reescribe) → vaciado con `gh repo edit --homepage ""`; re-verificar tras el merge** · frases caducadas: barrido repetido en la auditoría (corrigió M9 8 → 10 en guía y kit) · README, manual, ADR 001–006 al día · CHANGELOG: es el del kit, la app no lleva el suyo |
+| 10 | Cierre | bitácora al día · summary escrito (condición de merge) · checklist `ia-embebida`: cliente único (`crear_modelo`), esquemas Pydantic ↔ `--json-schema`, trazas estructuradas con huella, guardias de entrada (enmascarado D1) y salida, system prompt propio, costo por paso, `ChatSimulado` en CI, proveedor real validado (6 corridas reales + humo 3/3 hoy); desviación declarada: reintentos automáticos de esquema ≤ 2 (especificación §9.1, ADR-004) |
+| 11 | Checks del PR | `quality`, `e2e`, `lighthouse`, `python`: `SUCCESS` con conclusión propia (`gh pr view 7 --json statusCheckRollup`); ninguno `skipped`. Primera vez en CI: el paso `pnpm trazas:verificar` (7/7) |
+| 12 | Disco en runtime | derivados: `runs/<corrida>/checkpoints.sqlite` (600, gitignored; `-wal`/`-shm` con la umask: B-7, deuda) · directorios `planlang-claude-*` vacíos en `$TMPDIR` (B-4, deuda) · `coverage/` y `.coverage` gitignored · las corridas exportadas son sintéticas y públicas por diseño · **modo real en vivo:** `pnpm lote:demo` (tocado en la Fase 2) corrió de verdad con 1 caso a una carpeta del scratchpad: 0 errores, modelo `sonnet` tomado del plan, 2 s de pausa, `checkpoints.sqlite` en 600 |
+
+**Decisión: MERGE OK tras el gate ⭐ del usuario** (el merge lo condiciona el gate corto obligatorio).
 
 ## Desviación del plan
 
