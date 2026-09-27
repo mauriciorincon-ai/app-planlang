@@ -40,7 +40,7 @@ def _correr(salida: Path, corrida: str = "sim") -> Path:
 def test_forma_de_la_traza_y_del_manifiesto(tmp_path: Path) -> None:
     d = _correr(tmp_path)
     manifiesto, grafo, trazas = leer_corrida(d)
-    assert manifiesto["formato"] == "planlang-trace/v1" and manifiesto["plan"]["version"] == "1.1.0"
+    assert manifiesto["formato"] == "planlang-trace/v1" and manifiesto["plan"]["version"] == "1.2.0"
     assert manifiesto["casos_ejecutados"] == ["AH-001", "AH-002", "AH-003"]
     assert manifiesto["version_grafo"] == grafo["huella"]
     assert manifiesto["ficha"]["etiqueta"]["es"] == "Simulación · no operativo"

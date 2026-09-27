@@ -28,7 +28,7 @@ def test_completo_y_bilingue() -> None:
     assert d["causal"]["norma"].endswith("literal d")
     assert d["regla_disparada"]["id"] == "RB-03"
     assert [x["campo"] for x in d["datos_usados"]] == ["procedimiento", "diagnostico", "costo_estimado"]
-    assert d["version"]["plan"]["version"] == "1.1.0"
+    assert d["version"]["plan"]["version"] == "1.2.0"
     for campo in ("via_de_contradiccion", "decidido_por", "aviso_ia"):
         assert d[campo]["es"] and d[campo]["en"]
     assert d["aviso_ia"] == AVISO_IA

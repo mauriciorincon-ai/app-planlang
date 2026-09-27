@@ -109,6 +109,8 @@ export interface Informe {
       semilla: string;
       n_lote: number;
       huella: string;
+      /** El plan con que se generó el lote (puede ser anterior al de la corrida si solo cambió la medición). */
+      plan_de_generacion: { version: string; huella: string };
     };
     corrida: {
       id: string;
@@ -499,6 +501,10 @@ export async function generarInforme(
         semilla: m.casos.semilla,
         n_lote: m.casos.n_lote,
         huella: m.casos.huella,
+        plan_de_generacion: {
+          version: e.lote.plan.version,
+          huella: e.lote.plan.huella,
+        },
       },
       corrida: {
         id: m.corrida_id,

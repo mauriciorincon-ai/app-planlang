@@ -30,13 +30,13 @@
     }
   },
   "formato": "planlang-trace/v1",
-  "huella": "c98ac18974e1710239bf333d7def53d6f4038033fcc5e9db8ae1537735431bf4",
+  "huella": "45fc7a2c2f9f42b9bc526dac8b2919c714d3b0bbf0680af6cf5cc5918f69df5f",
   "modelo": "simulado",
   "plan": {
-    "archivo": "plans/demo-a/v1.1.json",
-    "huella": "2e3763849ee4fc56f7fd6ff0c7c1c3093adf002db1ff2aa552266e99bb4cf6f3",
+    "archivo": "plans/demo-a/v1.2.json",
+    "huella": "9add6e5ad5515a03e9efb8c1c691e0c6b38d414622ae028dd5f7bb8b529592c2",
     "id": "plan-demo-a",
-    "version": "1.1.0"
+    "version": "1.2.0"
   },
   "plan_beneficios": {
     "archivo": "data/plan-beneficios/demo-a.json",
@@ -83,7 +83,7 @@
     {
       "archivo": "trazas/AH-003.json",
       "caso_id": "AH-003",
-      "huella": "b7f45e1fc7e1922c773134637cff4c35cdc2847479b39ea649156b51f80823ff",
+      "huella": "5de61fbc6a01f91980287522ce8a7cb0f3f95070dff917ce8e7f6307ec72237f",
       "resultado": "completo"
     }
   ],

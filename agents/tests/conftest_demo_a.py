@@ -16,7 +16,7 @@ from app_agents.lotes import ejecutar_caso
 from app_agents.plan import RAIZ_REPO, cargar_plan
 from app_agents.reloj import RelojFijo
 
-PLAN = cargar_plan(RAIZ_REPO / "plans" / "demo-a" / "v1.1.json")
+PLAN = cargar_plan(RAIZ_REPO / "plans" / "demo-a" / "v1.2.json")
 PB = cargar_plan_beneficios(RAIZ_REPO / "data" / "plan-beneficios" / "demo-a.json")
 LOTE_20 = leer_verificando(RAIZ_REPO / "data" / "casos" / "demo-a" / "planlang-a-001-20.json")
 LOTE_200 = leer_verificando(RAIZ_REPO / "data" / "casos" / "demo-a" / "planlang-a-001-200.json")

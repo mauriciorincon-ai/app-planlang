@@ -68,7 +68,7 @@ describe("lector — lo que sí acepta", () => {
       "AH-002",
       "AH-003",
     ]);
-    expect(e.plan.version).toBe("1.1.0");
+    expect(e.plan.version).toBe("1.2.0");
     expect(e.casos.size).toBe(3);
     expect(e.base).toBeNull();
     expect(e.repeticiones).toEqual([]);
@@ -290,6 +290,34 @@ describe("lector — corridas incompatibles", () => {
     ).rejects.toBeInstanceOf(ErrorDeLectura);
     await expect(
       leerCorridaVerificada(e.corrida, e.plan, { formato: "x" }),
+    ).rejects.toBeInstanceOf(ErrorDeLectura);
+  });
+});
+
+describe("lector — lote generado con otro plan", () => {
+  it("la corrida simulada (plan v1.2) usa el lote de la v1.1: se acepta porque da la misma verdad", async () => {
+    const e = entradaSimulada();
+    expect((e.casos as O)["plan"]).toMatchObject({ version: "1.1.0" });
+    expect((e.plan as O)["version"]).toBe("1.2.0");
+    await expect(leerEntrada(e)).resolves.toBeDefined();
+  });
+  it("sin el plan del lote, con otro plan en su lugar, o con otra verdad → rechazo", async () => {
+    const e = entradaSimulada();
+    expect(
+      (await motivos({ ...e, planDelLote: undefined }))[0]?.detalle.es,
+    ).toMatch(/no se entregó ese plan/);
+    expect((await motivos({ ...e, planDelLote: e.plan }))[0]).toMatchObject({
+      codigo: "HUELLA_NO_COINCIDE",
+      archivo: "casos",
+    });
+    const plan = copia(e.plan) as O;
+    (plan["umbrales"] as O[])[1]!["valor_en_plan"] = 900;
+    const ms = await motivos({ ...e, plan: await sellar(plan) });
+    expect(ms.map((m) => m.detalle.es).join()).toMatch(
+      /otros umbrales u otro contrato de grafo/,
+    );
+    await expect(
+      leerCorridaVerificada(e.corrida, e.plan, e.casos),
     ).rejects.toBeInstanceOf(ErrorDeLectura);
   });
 });

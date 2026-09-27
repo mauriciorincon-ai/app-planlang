@@ -13,7 +13,7 @@ import {
   ramasEsperadas,
   type Umbrales,
 } from "../../../../core/playground/interprete";
-import { archivosDeCorrida } from "../../../../scripts/_corridas";
+import { archivosDeCorrida, planDelLote } from "../../../../scripts/_corridas";
 import {
   copia,
   corridasVersionadas,
@@ -27,10 +27,13 @@ async function leer(ruta: string) {
     plan: { archivo: string };
     casos: { archivo: string };
   };
+  const plan = JSON.parse(readFileSync(m.plan.archivo, "utf8")) as unknown;
+  const casos = JSON.parse(readFileSync(m.casos.archivo, "utf8")) as unknown;
   return leerCorridaVerificada(
     a,
-    JSON.parse(readFileSync(m.plan.archivo, "utf8")),
-    JSON.parse(readFileSync(m.casos.archivo, "utf8")),
+    plan,
+    casos,
+    planDelLote(m.plan.archivo, plan, casos),
   );
 }
 

@@ -12,6 +12,7 @@ import type { ResultadoVeredicto } from "../../../../core/brecha/veredicto";
 import { presupuestoLiderBilingue } from "../../../../core/formatos/jerga";
 import {
   entradaReal,
+  entradaRealV12,
   entradaSimulada,
   repeticionDe,
 } from "../../../helpers/corridas";
@@ -38,7 +39,8 @@ describe("informe de la corrida simulada", () => {
       "C8",
       "C9",
     ]);
-    expect(i.riesgos.find((r) => r.id === "R5")?.estado).toBe("mal_formado");
+    // Plan v1.2: el detector de R5 ya es una regla bien formada y se mide.
+    expect(i.riesgos.find((r) => r.id === "R5")?.estado).toBe("no_ocurrio");
     expect(i.plan_en_breve.decisiones_una_via.map((d) => d.id)).toEqual([
       "D1",
       "D2",
@@ -94,6 +96,28 @@ describe("repeticiones y línea base", () => {
     expect(i.ficha_reproducibilidad.linea_base?.corrida_id).toBe(
       "suscripcion-planlang-a-001-20-base",
     );
+    // Historia v1.1: el detector de R5 estaba mal formado y el informe lo sigue diciendo.
+    expect(i.riesgos.find((r) => r.id === "R5")?.estado).toBe("mal_formado");
+  });
+  it("bajo el plan v1.2 el mismo lote cierra C5 con k = 3 y mide R5, S1 y S2", async () => {
+    const i = await generarInforme(entradaRealV12());
+    const c5 = i.criterios.find((c) => c.id === "C5");
+    expect(c5).toMatchObject({
+      estado: "cumple",
+      k: { requerido: 3, observado: 3 },
+    });
+    expect(i.riesgos.find((r) => r.id === "R5")?.estado).toBe("no_ocurrio");
+    const estados = Object.fromEntries(
+      i.supuestos.map((s) => [s.id, s.estado]),
+    );
+    expect(estados).toEqual({
+      S1: "sin_probar",
+      S2: "confirmado",
+      S3: "refutado",
+    });
+    expect(
+      i.supuestos.find((s) => s.id === "S3")?.limitaciones[0]?.es,
+    ).toMatch(/A-012 \(esquema_invalido\)/);
   });
 });
 

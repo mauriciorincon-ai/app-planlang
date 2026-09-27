@@ -9,7 +9,7 @@ import { join } from "node:path";
 import { rf092 } from "../core/brecha/contrato-grafo";
 import { ErrorDeLectura, leerCorridaVerificada } from "../core/brecha/lector";
 import { argumentos } from "./_io";
-import { archivosDeCorrida } from "./_corridas";
+import { archivosDeCorrida, planDelLote } from "./_corridas";
 
 /** Lo que jamás puede aparecer en una traza exportada (regla dura 6 y 8). */
 export const PROHIBIDO_EN_TRAZAS = [
@@ -55,10 +55,15 @@ async function main(): Promise<number> {
     };
     const problemas: string[] = [];
     try {
+      const plan = JSON.parse(readFileSync(m.plan.archivo, "utf8")) as unknown;
+      const casos = JSON.parse(
+        readFileSync(m.casos.archivo, "utf8"),
+      ) as unknown;
       const leida = await leerCorridaVerificada(
         archivos,
-        JSON.parse(readFileSync(m.plan.archivo, "utf8")),
-        JSON.parse(readFileSync(m.casos.archivo, "utf8")),
+        plan,
+        casos,
+        planDelLote(m.plan.archivo, plan, casos),
       );
       const r = await rf092(leida);
       for (const h of r.hallazgos)

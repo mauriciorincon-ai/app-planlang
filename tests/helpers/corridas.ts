@@ -7,11 +7,18 @@ import { entradaDesdeDisco } from "../../scripts/_corridas";
 export const SIMULADO = "runs/demo-a/simulado-3casos";
 export const REAL = "runs/demo-a/suscripcion-planlang-a-001-20";
 export const REAL_BASE = "runs/demo-a/suscripcion-planlang-a-001-20-base";
+/** El mismo lote bajo el plan v1.2 (ADR-005): corrida, línea base y dos repeticiones. */
+export const REAL_V12 = "runs/demo-a/suscripcion-planlang-a-001-20-v1.2";
 
 export const entradaSimulada = (): EntradaVerificador =>
   entradaDesdeDisco(SIMULADO);
 export const entradaReal = (): EntradaVerificador =>
   entradaDesdeDisco(REAL, { base: REAL_BASE });
+export const entradaRealV12 = (): EntradaVerificador =>
+  entradaDesdeDisco(REAL_V12, {
+    base: `${REAL_V12}-base`,
+    repeticiones: [`${REAL_V12}-r2`, `${REAL_V12}-r3`],
+  });
 export const leidaSimulada = () => leerEntrada(entradaSimulada());
 
 /** Toda corrida versionada bajo `runs/<demo>/<corrida>/`. */

@@ -202,9 +202,9 @@
     },
     "version": {
       "plan": {
-        "huella": "2e3763849ee4fc56f7fd6ff0c7c1c3093adf002db1ff2aa552266e99bb4cf6f3",
+        "huella": "9add6e5ad5515a03e9efb8c1c691e0c6b38d414622ae028dd5f7bb8b529592c2",
         "id": "plan-demo-a",
-        "version": "1.1.0"
+        "version": "1.2.0"
       },
       "plan_beneficios": {
         "huella": "8e07b276176e477400954879b1fd998f49b633c6e2d550408974284853c0eda4",
@@ -243,7 +243,7 @@
     "hallazgos": [],
     "severidad_accion": 0
   },
-  "huella": "b7f45e1fc7e1922c773134637cff4c35cdc2847479b39ea649156b51f80823ff",
+  "huella": "5de61fbc6a01f91980287522ce8a7cb0f3f95070dff917ce8e7f6307ec72237f",
   "nodos_visitados": [
     "enrutador",
     "extractor",

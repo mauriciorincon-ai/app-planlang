@@ -163,6 +163,8 @@ Measures (n = 3): tasa = 1.
 
 Measures (n = 20): exactitud = 1 · exactitud_base = 0.9 · latencia_mediana = 11.215 · latencia_mediana_base = 11.36.
 
+> Small sample (20 cases): the measure guides, it does not prove.
+
 |  | Multi-agent | Single agent (suscripcion-planlang-a-001-20-base) |
 | --- | --- | --- |
 | Cases resolved right (decision and pause) | 100% | 90% |
@@ -197,7 +199,7 @@ Cases where they differ: A-008, A-020. Baseline budget within the multi-agent on
 | Piece | What it is | SHA-256 fingerprint |
 | --- | --- | --- |
 | Plan | plan-demo-a 1.1.0 (`plans/demo-a/v1.1.json`) | `2e3763849ee4fc56f7fd6ff0c7c1c3093adf002db1ff2aa552266e99bb4cf6f3` |
-| Cases | planlang-a-001-20 · seed planlang-a-001 · n = 20 | `886e36e5dff396ab9cd74a03615782d320c5287afe8702e8a6dcff5a2eee359c` |
+| Cases | planlang-a-001-20 · seed planlang-a-001 · n = 20 · generated with plan 1.1.0 | `886e36e5dff396ab9cd74a03615782d320c5287afe8702e8a6dcff5a2eee359c` |
 | Run | suscripcion-planlang-a-001-20 · 2026-09-27 · suscripcion/sonnet · multiagente | `2a267cf54794cfdcbd73e1d05b5fda6c9b08e54e174c063a0f2711dc8dd1859c` |
 | Graph | exported graph version | `896708bdb11415ac928ba24776d3fa65d05bcc45f9d924a7f6c23ad5b4acff76` |
 | Baseline | suscripcion-planlang-a-001-20-base | `d59580df70e6e6370c3bb17a4b5543a613a93989e8354b7bfa30dcd80cc21cdb` |
@@ -208,4 +210,4 @@ Applied thresholds: U1 = 0.75 · U2 = 1000 · U3 = 2 · U4 = false · in the pla
 
 Human review: In batches, the simulated reviewer follows the case's known truth (DA-04); the showcase discloses it.
 
-Verifier 1.0.0 · planlang-informe/v1 · fingerprint of this report: `16e50e294d5bdd9ff4b15d6fe58c95f4b43d6fb47e07a4b053847066f71093e9`
+Verifier 1.0.0 · planlang-informe/v1 · fingerprint of this report: `824624a492bc46105dc15b127911b2a42d6d453404f46fdfefcf1a1b4e93b0ac`

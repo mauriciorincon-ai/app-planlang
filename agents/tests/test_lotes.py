@@ -10,7 +10,7 @@ import pytest
 
 from app_agents import lotes
 from app_agents.adaptador import ErrorProveedor
-from app_agents.canonico import leer_verificando
+from app_agents.canonico import escribir_con_huella, leer_verificando
 from app_agents.demo_a.simulacion import RespondedorSimulado
 from app_agents.exportador import leer_corrida, verificar_corrida
 
@@ -48,6 +48,22 @@ def test_no_mezcla_sesiones_incompatibles(tmp_path: Path) -> None:
         _lote(tmp_path, n=1, variante="agente_unico")
     with pytest.raises(lotes.CorridaIncompatible):
         _lote(tmp_path, n=1, casos_ruta=HUMO)
+
+
+def test_un_lote_de_otro_plan_solo_vale_si_da_la_misma_verdad(tmp_path: Path) -> None:
+    # El lote de 20 se generó con la v1.1; la v1.2 (por defecto) solo cambió la medición: se acepta.
+    assert _lote(tmp_path, n=1).ejecutados == ["A-001"]
+    # Un plan con otro umbral en un directorio donde no está la v1.1: se rechaza.
+    v12 = leer_verificando(lotes.RAIZ_REPO / lotes.PLAN_POR_DEFECTO)
+    otro = dict(v12, umbrales=[dict(u, valor_en_plan=900) if u["id"] == "U2" else u for u in v12["umbrales"]])
+    planes = tmp_path / "planes"
+    escribir_con_huella(planes / "otro.json", otro)
+    with pytest.raises(lotes.CorridaIncompatible, match="cambia umbrales"):
+        _lote(tmp_path / "x", n=1, plan_ruta=planes / "otro.json")
+    # Aunque la v1.1 esté a su lado: el umbral distinto cambia la verdad conocida.
+    escribir_con_huella(planes / "v1.1.json", leer_verificando(lotes.RAIZ_REPO / "plans/demo-a/v1.1.json"))
+    with pytest.raises(lotes.CorridaIncompatible):
+        _lote(tmp_path / "y", n=1, plan_ruta=planes / "otro.json")
 
 
 class _Falla(RespondedorSimulado):

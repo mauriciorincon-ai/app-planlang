@@ -25,13 +25,14 @@ un validador en CI lo comprueba.
 ## Cómo se usa (S1, sin pantalla)
 
 ```bash
-pnpm install                      # también re-aplica el hook de git (gitleaks)
-pnpm plan:validar                 # valida el plan del demo A y lo versiona con huella
-pnpm casos:generar --n 20         # casos sintéticos con verdad conocida y adversarios
-pnpm lote:demo                    # corre el lote de 20 con la suscripción de Claude Code (fuera de CI)
-pnpm brecha:informe --corrida <id>  # informe de brecha ES/EN, idéntico byte a byte
+pnpm install                                          # también re-aplica el hook de git (gitleaks)
+pnpm plan:validar --verificar plans/demo-a/v1.2.json  # el plan vigente del demo A, con su huella
+pnpm casos:generar --versionados                      # regenera los lotes sintéticos versionados (misma semilla, mismos bytes)
+pnpm lote:demo --corrida <id> --fecha <AAAA-MM-DD>    # lote de 20 con la suscripción de Claude Code (fuera de CI)
+pnpm brecha:informe --corrida runs/demo-a/<id>        # informe de brecha ES/EN, idéntico byte a byte
+pnpm trazas:verificar && pnpm m9:reporte --verificar  # corridas verificadas · brechas sembradas detectadas
 pnpm test && pnpm typecheck && pnpm lint
-cd agents && .venv/bin/pytest     # el mismo comando del job `python` de la CI
+cd agents && .venv/bin/pytest                         # el mismo comando del job `python` de la CI
 ```
 
 El detalle para usuarios está en `docs/MANUAL-DE-USO.md`; las pruebas manuales, en

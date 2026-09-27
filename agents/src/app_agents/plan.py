@@ -11,7 +11,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from app_agents.canonico import leer_verificando
+from app_agents.canonico import HuellaInvalida, jcs_texto, leer_verificando
 
 RAIZ_REPO = Path(__file__).resolve().parents[3]
 
@@ -110,3 +110,25 @@ def cargar_plan(ruta: str | Path) -> PlanCargado:
     except ValueError:
         archivo = ruta.name
     return PlanCargado(datos=datos, archivo=archivo)
+
+
+def misma_verdad(a: dict[str, Any], b: dict[str, Any]) -> bool:
+    """¿Da el plan `b` la misma verdad conocida que el plan `a`? Sí si conserva exactamente umbrales y
+    contrato de grafo: una enmienda de solo medición no invalida los lotes. Espejo de
+    `core/plan/compatibilidad.ts` (compara los objetos tal como están en disco)."""
+    claves = ("umbrales", "contrato_de_grafo")
+    if any(k not in a or k not in b for k in claves):
+        return False
+    return all(jcs_texto(a[k]) == jcs_texto(b[k]) for k in claves)
+
+
+def plan_por_huella(directorio: str | Path, huella: str) -> PlanCargado | None:
+    """El plan aprobado de `directorio` con esa huella (verificada), o `None`."""
+    for ruta in sorted(Path(directorio).glob("*.json")):
+        try:
+            plan = cargar_plan(ruta)
+        except (PlanInvalido, HuellaInvalida):
+            continue
+        if plan.huella == huella:
+            return plan
+    return None

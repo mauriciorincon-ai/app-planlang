@@ -158,6 +158,18 @@ export function acotadaPorElGrafo(
   return null;
 }
 
+/** Por debajo de 30 casos, toda medida del supuesto orienta pero no prueba. */
+function muestraPequena(n: number): TextoBilingue[] {
+  return n > 0 && n < 30
+    ? [
+        {
+          es: `Muestra pequeña (${n} casos): la medida orienta, no prueba.`,
+          en: `Small sample (${n} cases): the measure guides, it does not prove.`,
+        },
+      ]
+    : [];
+}
+
 function calibracion(
   s: Supuesto,
   plan: Plan,
@@ -204,11 +216,7 @@ function calibracion(
       es: `Los ${muestras.length} casos medidos fueron todos ${aciertos === 0 ? "fallos" : "aciertos"}: sin las dos clases, la confianza no tiene nada que discriminar y el área bajo la curva no existe.`,
       en: `The ${muestras.length} measured cases were all ${aciertos === 0 ? "failures" : "successes"}: without both classes, confidence has nothing to tell apart and the area under the curve does not exist.`,
     });
-  if (muestras.length > 0 && muestras.length < 30)
-    limitaciones.push({
-      es: `Muestra pequeña (${muestras.length} casos): la medida orienta, no prueba.`,
-      en: `Small sample (${muestras.length} cases): the measure guides, it does not prove.`,
-    });
+  limitaciones.push(...muestraPequena(muestras.length));
   const decision = decidirConUmbral(medible.umbral_confirmacion, metricas);
   return {
     ...decision,
@@ -273,7 +281,7 @@ function tasa(
     metricas,
     curva: null,
     comparacion: null,
-    limitaciones,
+    limitaciones: [...limitaciones, ...muestraPequena(n)],
   };
 }
 
@@ -372,6 +380,16 @@ function comparacion(
       es: "La línea base gastó más que el multiagente: la comparación no es a igual presupuesto.",
       en: "The baseline spent more than the multi-agent run: the comparison is not at equal budget.",
     });
+  const conError = base.vistas
+    .filter((v) => v.traza.error_proveedor)
+    .map((v) => `${v.caso_id} (${v.traza.error_proveedor})`)
+    .sort();
+  if (conError.length > 0)
+    limitaciones.push({
+      es: `La línea base terminó ${conError.length} caso(s) con error del proveedor, que cuentan como mal resueltos: ${conError.join(", ")}.`,
+      en: `The baseline ended ${conError.length} case(s) with a provider error, counted as wrongly resolved: ${conError.join(", ")}.`,
+    });
+  limitaciones.push(...muestraPequena(vistas.length));
   const confirmado = noPeorExactitud && noPeorLatencia;
   return {
     estado: confirmado ? "confirmado" : "refutado",

@@ -44,10 +44,17 @@ from app_agents.exportador import (
     traza_de_estado,
 )
 from app_agents.logger import registrar
-from app_agents.plan import RAIZ_REPO, ContratoDeGrafo, PlanCargado, cargar_plan
+from app_agents.plan import (
+    RAIZ_REPO,
+    ContratoDeGrafo,
+    PlanCargado,
+    cargar_plan,
+    misma_verdad,
+    plan_por_huella,
+)
 from app_agents.reloj import RelojFijo, RelojReal
 
-PLAN_POR_DEFECTO = "plans/demo-a/v1.1.json"
+PLAN_POR_DEFECTO = "plans/demo-a/v1.2.json"
 CASOS_POR_DEFECTO = "data/casos/demo-a/planlang-a-001-20.json"
 BENEFICIOS_POR_DEFECTO = "data/plan-beneficios/demo-a.json"
 SALIDA_POR_DEFECTO = "runs/demo-a"
@@ -166,7 +173,12 @@ def ejecutar_lote(
     lote_ruta = _ruta(casos_ruta)
     lote = leer_verificando(lote_ruta)
     if lote["plan"]["huella"] != plan.huella:
-        raise CorridaIncompatible("el lote de casos se generó con otro plan (huella distinta)")
+        # Un lote generado con otro plan vale solo si ese plan da la misma verdad (enmienda de medición).
+        generador = plan_por_huella(_ruta(plan_ruta).parent, lote["plan"]["huella"])
+        if generador is None or not misma_verdad(generador.datos, plan.datos):
+            raise CorridaIncompatible(
+                "el lote de casos se generó con otro plan que cambia umbrales o contrato de grafo (o no está)"
+            )
     modelo_nombre = modelo or MODELO_POR_PROVEEDOR.get(proveedor, proveedor)
     umbrales = plan.umbrales()
     directorio = _ruta(salida) / corrida_id

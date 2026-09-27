@@ -44,12 +44,22 @@ export interface ResultadoRiesgo {
   nota: TextoBilingue | null;
 }
 
-/** «> 0.10» → ¿el valor cumple el disparador? */
-export function disparador(ocurreSi: string, valor: number): boolean {
+export type OperadorDisparador = ">=" | "<=" | "==" | ">" | "<";
+
+/** «> 0.10» → { op: ">", n: 0.1 }. */
+export function partirDisparador(ocurreSi: string): {
+  op: OperadorDisparador;
+  n: number;
+} {
   const m = /^(>=|<=|==|>|<)\s*(-?[0-9]+(?:\.[0-9]+)?)$/.exec(ocurreSi.trim());
   if (!m) throw new RangeError(`ocurre_si no interpretable: ${ocurreSi}`);
-  const n = Number(m[2]);
-  switch (m[1]) {
+  return { op: m[1] as OperadorDisparador, n: Number(m[2]) };
+}
+
+/** «> 0.10» → ¿el valor cumple el disparador? */
+export function disparador(ocurreSi: string, valor: number): boolean {
+  const { op, n } = partirDisparador(ocurreSi);
+  switch (op) {
     case ">":
       return valor > n;
     case ">=":

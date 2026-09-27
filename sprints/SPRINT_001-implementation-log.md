@@ -22,8 +22,8 @@ modelo: Fable 5.1 (todo el sprint, decisión del usuario 2026-09-27)
 | 1 · El plan como contrato                    | ✅ aprobada («continúa», v1 confirmado) | 2026-09-27 |
 | 2 · Casos sintéticos                         | ✅ aprobada («continúa»)               | 2026-09-27 |
 | 3 · Demo A en LangGraph                      | ✅ aprobada («continúa»)               | 2026-09-27 |
-| 4 · Verificador y validación del instrumento | ✅ construida, pendiente de «continúa» | 2026-09-27 |
-| 5 · Cierre                                   | ⏳                                     |            |
+| 4 · Verificador y validación del instrumento | ✅ aprobada («continúa», v1.2 elegida) | 2026-09-27 |
+| 5 · Cierre                                   | 🔄 en curso                            |            |
 
 ## Fase 0 — Setup y precondiciones (2026-09-27)
 
@@ -293,6 +293,7 @@ Casos ejemplares: exitoso A-001 · escalado correctamente A-004 · fallido: **ni
 - **Performance (DoD):** informe de 200 casos en **57 ms** en Node (presupuesto 2 s). Sin corrida real de 200 todavía: las 20 trazas reales se replican sobre los casos A-021…A-200 del lote versionado, re-selladas y con sus ramas recalculadas, así que el verificador hace todo el trabajo (200 huellas, reglas por caso, contrato, RF-09.2).
 - **M9:** 8/8 brechas sembradas detectadas; control sin sembrar limpio.
 - **pytest:** 122 passed, 3 skipped (humo real), 95,9 % — sin cambios; ruff limpio. `pnpm trazas:verificar`: ✓ las 3 corridas.
+- **CI del PR #7 sobre `0db4cd0`:** `quality` (44 archivos, 461 tests), `e2e`, `lighthouse` y `python` en `success` con conclusión propia.
 
 ### Demos en rojo (regla 15)
 
@@ -316,6 +317,74 @@ Casos ejemplares: exitoso A-001 · escalado correctamente A-004 · fallido: **ni
 - **`opciones[].nombre` de las decisiones no es bilingüe** (esquema del plan desde la fase 1; `no_detectable_en_trazas` tampoco): el informe muestra pregunta + justificación, que sí lo son. Deuda de regla 20 para el esquema del plan (S2).
 - **El comando `pnpm trazas:verificar` no corre en CI**: lo que verifica (huellas, RF-09.2, credenciales) ya lo cubren vitest y pytest; el CLI es la herramienta del usuario.
 
+## Fase 5 — Cierre (2026-09-27)
+
+### Plan v1.2 y ADR-005 (decisión del usuario en el gate de la fase 4: «v1.2 y 3 corridas»)
+
+- **`plans/demo-a/v1.2.json`** (huella `9add6e5a…`), producido por `pnpm tsx scripts/enmendar-plan-demo-a.ts --a 1.2 --por … --el …` (`scripts/enmienda-plan-demo-a.ts · enmendarAV12`): cambia **solo la medición**. R5 → `extraccion.campos != verdad_conocida.campos` (desviación 8) · S1 → `umbral_confirmacion {auroc_min: 0.75, ece_max: 0.10}` · S2 → población «faltante con respuesta del médico», condición `campos_faltantes_count == 0`, `umbral_confirmacion {tasa_min: 0.95}` (ya puede fallar; desviación 9). Umbrales y contrato de grafo idénticos (JCS) a la v1.1.
+- **ADR-005 «enmiendas de medición y lotes»**: un lote generado con el plan A vale para el plan B si ambos conservan exactamente `umbrales` y `contrato_de_grafo`. Se implementó en los dos lenguajes: `core/plan/compatibilidad.ts · mismaVerdad` (lo exige `leerEntrada` y `leerCorridaVerificada`) y `app_agents.plan · misma_verdad / plan_por_huella` (lo exige `lotes.py` antes de correr). El informe lo declara en la ficha: «generado con el plan 1.1.0». La historia v1.1 (corrida, línea base, informe) sigue verificándose tal cual.
+- `lotes.py` corre por defecto con la v1.2; la corrida simulada `simulado-3casos` se regeneró con ella (y el golden, el informe v1.1 y el reporte M9).
+
+### Corridas v1.2 — el mismo lote de 20 (suscripción, alias `sonnet`, pausa 2 s, 90 s entre corridas, sin espejo LangSmith)
+
+| | `…-20-v1.2` | `…-v1.2-r2` | `…-v1.2-r3` | `…-v1.2-base` (agente único) |
+|---|---|---|---|---|
+| Decisión y pausa iguales a la verdad conocida | **20/20** | **20/20** | **20/20** | 17/20 (A-008, A-012, A-020) |
+| Extracción exacta (C5, casos con `presente`) | 15/15 | 15/15 | 15/15 | 12/15 |
+| Errores de proveedor | 0 | 0 | 0 | 1 (A-012 `esquema_invalido` tras 2 reintentos) |
+| Latencia mediana por caso | 11,83 s | 11,04 s | 10,18 s | 9,26 s |
+| Llamadas al modelo (con reintentos) · reintentos | 47 · 1 | 49 · 3 | 49 · 3 | 23 · 7 |
+| Tokens · costo nominal | 157.146 · US$ 0,67 | 156.926 · US$ 0,70 | 156.511 · US$ 0,69 | 87.368 · US$ 0,62 |
+| Sesión (inicio → fin) | 09:09 → 09:14 | 09:22 → 09:27 | 09:29 → 09:34 | 09:15 → 09:20 |
+
+Ningún límite de uso alcanzado. Costo nominal total de las 4 corridas ≈ US$ 2,68 (con la suscripción no se factura: es la cifra que reporta el binario).
+
+### El informe v1.2 — `suscripcion-planlang-a-001-20-v1.2` (huella `112c66a6…`)
+
+**Veredicto: ⚠ cumple con alertas.** 9 de 9 criterios cumplidos; ningún riesgo ocurrió.
+
+| Pieza | v1.1 (historia) | v1.2 |
+|---|---|---|
+| C5 · exactitud de extracción | ◐ incompleto (k = 1 de 3) | ✓ **cumple con k = 3 de 3** (100 % en las tres) |
+| R5 · confianza mal calibrada | ⚠ detector mal formado | ✓ medido, no ocurrió (0 % sobre 14 casos; ocurre si > 10 %) |
+| S1 · confianza calibrada | ◌ sin probar (sin umbral) | ◌ **sin probar**: ECE 0,081 (≤ 0,10 ✓) pero AUROC no existe (15/15 aciertos: nada que discriminar). El informe lo explica; hace falta un lote con errores de extracción para decidirlo |
+| S2 · dos ciclos bastan | ◌ sin probar (no podía fallar) | ✓ **confirmado** con n = 2 (A-007 y A-008) — con la nota «muestra pequeña» |
+| S3 · multiagente no peor que agente único | ✓ confirmado | ✗ **refutado por latencia**: 100 % vs 85 % en exactitud, pero 11,83 s vs 9,26 s de mediana. La línea base gastó menos (23 llamadas vs 47; US$ 0,62 vs 0,67). El informe declara el error de la base en A-012 |
+| Brechas no previstas | 3 reintentos del extractor | 1 (A-003: reintento de salida estructurada en el extractor) |
+| RF-09.2 | 2 corridas | **4 corridas** (62 · 62 · 62 · 47 visitas), 0 discrepancias, misma huella que Python |
+
+S3 refutado es un resultado legítimo del plan: la tesis «multiagente no rinde peor» cae en latencia (≈ 2,6 s más por caso, del costo de la segunda llamada al modelo) aunque gana en exactitud. Queda para el S2/S3 del producto decidir si el plan cambia el supuesto (p. ej., latencia con tolerancia) — **no se cambia a posteriori para que confirme**.
+
+### Ajustes al informe en esta fase (salieron al leer el informe v1.2)
+
+- El disparador de un riesgo se imprimía con el literal del plan (`ocurre si > 0.10` también en español) → `partirDisparador` + formato del idioma y de la unidad: `0 % (ocurre si > 10 %)` / `0% (occurs if > 10%)`.
+- La nota «muestra pequeña» solo existía para la calibración → ahora en todo supuesto medido con n < 30 (S2 con n = 2 decía «confirmado» sin advertencia).
+- El error del proveedor en la línea base (A-012) solo se veía como «caso que difiere» → limitación explícita en S3: cuenta como mal resuelto y se nombra.
+
+### Documentación
+
+- `docs/MANUAL-DE-USO.md` (ES/EN): validar/enmendar un plan · generar casos · correr un lote · leer el informe · verificar las trazas · limitaciones.
+- `docs/GUIA-DE-PRUEBA.html` nace (plantilla del kit, namespace `guia-planlang:s1:`): 21 pruebas, 5 ⭐, **3 ⭐⭐ (gate corto, ~20 min)** = parada 1 correr un lote real · parada 2 leer el informe v1.2 ES/EN · parada 3 LangSmith (si está aprovisionado); 16 automatizadas listadas con `Nuevo · S1`.
+- `docs/kit-de-prueba/README.md` (ES/EN): mapa del kit (lotes, planes, corridas, informes, M9).
+- `README.md`: bloque de comandos corregido. `CHANGELOG.md:211`: el literal del dominio de Pages pasa a clase de carácter (K13); el barrido de cero enlaces queda limpio.
+
+### Tests
+
+- **vitest:** 600 tests en 46 archivos, verde. Nuevos/ajustados de la fase: `tests/unit/core/plan/enmienda-v1-2.test.ts`, lector «lote generado con otro plan», informe v1.2 (C5 k = 3, R5 medido, S1/S2/S3), notas de supuestos, formato del disparador.
+- **Cobertura:** `core/brecha` 98,7 % sentencias · 93,4 % ramas; `core/playground` 100 %; `core/plan` 99,2 · 96,2; `core/formatos` 98,0 · 100; `core/sintetico` 98,4 · 95,8.
+- **pytest:** 129 passed, 3 skipped (humo real), cobertura 96,1 %; `ruff check` y `ruff format --check` limpios.
+- `pnpm typecheck` limpio · `pnpm lint` 0 errores (2 avisos en `public/diseno/assets/maqueta.js`, archivo local de la Etapa de Diseño, no versionado en esta rama).
+- `pnpm trazas:verificar`: ✓ las 7 corridas · `pnpm m9:reporte --verificar`: 8/8 y control limpio · `pnpm brecha:informe --verificar` al día en las 3 (golden, v1.1, v1.2).
+- Auditorías de dependencias: `pnpm audit` sin vulnerabilidades; `pip-audit --skip-editable` limpio (K4).
+
+### Demos en rojo (regla 15)
+
+| Gate | Cambio deliberado | Resultado |
+|---|---|---|
+| Compatibilidad de lotes, TypeScript (ADR-005) | `mismaVerdad` devuelve siempre `true` | 🔴 2 tests: lector «con otra verdad → rechazo» y enmienda v1.2 «la v1.1 no tenía la misma verdad que el v1» → 🟢 |
+| Compatibilidad de lotes, Python (ADR-005) | `misma_verdad` devuelve siempre `True` | 🔴 `test_un_lote_de_otro_plan_solo_vale_si_da_la_misma_verdad` y `test_plan_v1_2_es_una_enmienda_de_solo_medicion` → 🟢 |
+| Nota del error de la línea base | nota suprimida en `supuestos.ts` | 🔴 4 tests: supuestos, informe v1.2 y frescura del informe versionado en `core` y `core-jsdom` → 🟢 |
+
 ## Desviación del plan
 
 1. **Carnada C03 del contrato `instrumentos-de-plan` v0.1.0** (se aplica en la fase 1): la tabla de prioridad de acción AIAG-VDA 2019 da `baja` para S8·O3·D4, no `alta`. Enmienda propuesta en el summary: C03 → S8·O6·D2 (`alta`, RPN 96) y C03-bis → S8·O3·D4 (`baja`, RPN 96). Fuente secundaria verificada 2026-09-26 (Relyence, tabla AP); la primaria (handbook) no es accesible por curl.
@@ -327,7 +396,7 @@ Casos ejemplares: exitoso A-001 · escalado correctamente A-004 · fallido: **ni
 7. **Regla 6 (`--max-turns 1`) y `--json-schema`** (fase 3): `error_max_turns` en 3/46 llamadas del multiagente y 9/16 de la línea base; se reintenta (ADR-004). Propuesta a la planeadora: `--max-turns 2` solo con `--json-schema`.
 8. **R5 tiene el detector mal formado desde el plan v0** (fase 4): `extraccion != verdad_conocida.campos` compara la extracción ENTERA (campos, faltantes, confianza…) con sus campos → siempre «distinto»; medido tal cual, R5 «ocurriría» en el 100 % de su población. El verificador lo detecta de forma genérica (comparación de objetos con claves distintas) y lo reporta `mal_formado`, sin medirlo. Corrección propuesta: `extraccion.campos != verdad_conocida.campos`.
 9. **S1 y S2 no declaran umbral numérico de confirmación** (ECE ≤ 0,10 · AUROC ≥ 0,75 · 95 % están solo en la prosa de `prueba_barata`), y **S2 no puede fallar** con U3 = 2: el grafo manda a una persona al llegar a 2 ciclos, así que `ciclos_aclaracion <= 2` se cumple por construcción (A-007, que se quedó sin respuesta y escaló, cuenta como «bastaron dos ciclos»). Propuesta: `umbral_confirmacion` `{ece_max: 0.10, auroc_min: 0.75}` en S1 y `{tasa_min: 0.95}` en S2, y S2 reformulado a «faltantes resueltos sin escalar» (`pausa_humana == false`).
-10. **Un plan v1.2 con 8–9 cambia solo la medición** (criterios, riesgos, supuestos), no el grafo ni los umbrales; pero las corridas declaran la huella del plan con que corrieron y el lector exige la misma huella en las repeticiones de `pass^k`. Decisión del usuario en el gate de la fase 4 (ver resumen).
+10. **Un plan v1.2 con 8–9 cambia solo la medición** (criterios, riesgos, supuestos), no el grafo ni los umbrales; pero las corridas declaran la huella del plan con que corrieron y el lector exige la misma huella en las repeticiones de `pass^k`. **Decisión del usuario (gate de la fase 4, 2026-09-27): «v1.2 y 3 corridas»** — plan v1.2 aprobado y las corridas rehechas (fase 5). Para no romper la historia v1.1 se decidió ADR-005 (un lote vale si el plan conserva umbrales y contrato de grafo). La línea base también se rehízo con la v1.2 (S3 exige el mismo plan): 4 corridas en vez de 3.
 
 ## Registro de miradas
 

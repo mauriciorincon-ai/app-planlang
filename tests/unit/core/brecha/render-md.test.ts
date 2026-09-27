@@ -41,6 +41,12 @@ describe("render del informe", () => {
     expect(renderizarInforme(inf, "es")).toMatch(/senal_confianza < 0,75/);
     expect(renderizarInforme(inf, "en")).toMatch(/senal_confianza < 0\.75/);
   });
+  it("el disparador de un riesgo sale en el formato del idioma", async () => {
+    const inf = await generarInforme(entradaSimulada());
+    expect(renderizarInforme(inf, "es")).toContain("0 % (ocurre si > 10 %)");
+    expect(renderizarInforme(inf, "en")).toContain("0% (occurs if > 10%)");
+    expect(renderizarInforme(inf, "es")).toContain("0 (ocurre si > 0)");
+  });
   it.each(["es", "en"] as const)(
     "%s: un no cumple muestra qué bloquea y el caso fallido",
     async (i) => {

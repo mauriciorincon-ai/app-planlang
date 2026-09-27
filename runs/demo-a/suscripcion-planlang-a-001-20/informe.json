@@ -500,6 +500,10 @@
       "huella": "886e36e5dff396ab9cd74a03615782d320c5287afe8702e8a6dcff5a2eee359c",
       "id": "planlang-a-001-20",
       "n_lote": 20,
+      "plan_de_generacion": {
+        "huella": "2e3763849ee4fc56f7fd6ff0c7c1c3093adf002db1ff2aa552266e99bb4cf6f3",
+        "version": "1.1.0"
+      },
       "semilla": "planlang-a-001"
     },
     "corrida": {
@@ -548,7 +552,7 @@
     }
   },
   "formato": "planlang-informe/v1",
-  "huella": "16e50e294d5bdd9ff4b15d6fe58c95f4b43d6fb47e07a4b053847066f71093e9",
+  "huella": "824624a492bc46105dc15b127911b2a42d6d453404f46fdfefcf1a1b4e93b0ac",
   "plan_en_breve": {
     "decisiones_una_via": [
       {
@@ -1090,7 +1094,12 @@
       "estado": "confirmado",
       "estado_en_plan": "sin_probar",
       "id": "S3",
-      "limitaciones": [],
+      "limitaciones": [
+        {
+          "en": "Small sample (20 cases): the measure guides, it does not prove.",
+          "es": "Muestra pequeña (20 casos): la medida orienta, no prueba."
+        }
+      ],
       "metricas": {
         "exactitud": 1,
         "exactitud_base": 0.9,

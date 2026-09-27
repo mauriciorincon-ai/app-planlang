@@ -18,7 +18,7 @@ import {
   type RamasEsperadas,
   type Traza,
 } from "../formatos/traza";
-import { cargarPlan, type Plan } from "../plan";
+import { cargarPlan, mismaVerdad, type Plan } from "../plan";
 import { LoteSchema, type Caso, type Lote } from "../sintetico/esquema";
 
 export interface ArchivosDeCorrida {
@@ -39,6 +39,11 @@ export interface EntradaVerificador {
   repeticiones?: readonly ArchivosDeCorrida[];
   /** Línea base de agente único sobre el mismo lote (supuesto S3). */
   base?: ArchivosDeCorrida | null;
+  /**
+   * El plan con que se GENERÓ el lote, si no es el de la corrida: solo se acepta si conserva sus
+   * umbrales y su contrato de grafo (`mismaVerdad`), es decir, si la enmienda fue de solo medición.
+   */
+  planDelLote?: unknown;
 }
 
 export const CODIGOS_LECTURA = [
@@ -353,6 +358,50 @@ function compatible(
       );
 }
 
+/** El lote se generó con otro plan: aceptarlo solo si ese plan existe, verifica y da la misma verdad. */
+async function loteCompatible(
+  planBruto: unknown,
+  huellaPlan: string,
+  lote: Lote,
+  planDelLote: unknown,
+  motivos: MotivoLectura[],
+): Promise<void> {
+  if (lote.plan.huella === huellaPlan) return;
+  const version = lote.plan.version;
+  if (planDelLote === undefined || planDelLote === null) {
+    motivos.push(
+      m(
+        "CORRIDA_INCOMPATIBLE",
+        "casos",
+        `el lote se generó con el plan ${version} y no se entregó ese plan para comprobar que conserva umbrales y contrato de grafo`,
+        `the batch was generated with plan ${version} and that plan was not provided to check it keeps thresholds and graph contract`,
+      ),
+    );
+    return;
+  }
+  const carga = await cargarPlan(planDelLote);
+  if (!carga.ok || carga.huella !== lote.plan.huella) {
+    motivos.push(
+      m(
+        "HUELLA_NO_COINCIDE",
+        "casos",
+        `el plan entregado como plan del lote no es el ${version} con que se generó`,
+        `the plan provided as the batch's plan is not the ${version} it was generated with`,
+      ),
+    );
+    return;
+  }
+  if (!mismaVerdad(planDelLote, planBruto))
+    motivos.push(
+      m(
+        "CORRIDA_INCOMPATIBLE",
+        "casos",
+        `el lote se generó con el plan ${version}, que tiene otros umbrales u otro contrato de grafo: su verdad conocida no vale para este plan`,
+        `the batch was generated with plan ${version}, which has other thresholds or another graph contract: its known truth does not hold for this plan`,
+      ),
+    );
+}
+
 /** Lee y verifica todo; lanza `ErrorDeLectura` con TODOS los motivos si algo no cuadra. */
 export async function leerEntrada(
   e: EntradaVerificador,
@@ -376,6 +425,7 @@ export async function leerEntrada(
   const base = e.base ? await leerCorrida(e.base, motivos) : null;
 
   if (carga.ok && lote && corrida) {
+    await loteCompatible(e.plan, carga.huella, lote, e.planDelLote, motivos);
     const casos = new Map(lote.casos.map((c) => [c.id, c]));
     const plan = { huella: carga.huella };
     compatible(corrida, plan, lote, casos, "multiagente", motivos);
@@ -414,6 +464,7 @@ export async function leerCorridaVerificada(
   a: ArchivosDeCorrida,
   planBruto: unknown,
   casosBruto: unknown,
+  planDelLote?: unknown,
 ): Promise<CorridaLeida> {
   const motivos: MotivoLectura[] = [];
   const carga = await cargarPlan(planBruto);
@@ -427,6 +478,7 @@ export async function leerCorridaVerificada(
   if (lote) await huellaCoincide(casosBruto, "casos", motivos);
   const corrida = await leerCorrida(a, motivos);
   if (carga.ok && lote && corrida) {
+    await loteCompatible(planBruto, carga.huella, lote, planDelLote, motivos);
     const casos = new Map(lote.casos.map((c) => [c.id, c]));
     compatible(
       corrida,

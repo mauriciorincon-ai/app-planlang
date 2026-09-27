@@ -258,6 +258,46 @@ describe("comparación con la línea base (S3)", () => {
       })[0]?.motivo.en,
     ).toMatch(/accuracy and median latency/);
   });
+  it("una base con error del proveedor lo declara; toda muestra < 30 lleva su nota", () => {
+    const base = [
+      caso("1", true, 11, [paso(50, 0.05)]),
+      vista(
+        "2",
+        {
+          decision_final: null,
+          pausa_humana: false,
+          latencia_total_s: 13,
+          verdad_conocida: { decision: "aprobar", debe_escalar: false },
+        },
+        { pasos: [], error_proveedor: "esquema_invalido" } as Partial<Traza>,
+      ),
+    ];
+    const [r] = evaluarSupuestos(conSupuestos(s3), multi, U, {
+      corrida_id: "b",
+      vistas: base,
+    });
+    expect(r?.limitaciones.map((l) => l.es)).toEqual([
+      "La línea base terminó 1 caso(s) con error del proveedor, que cuentan como mal resueltos: 2 (esquema_invalido).",
+      "Muestra pequeña (2 casos): la medida orienta, no prueba.",
+    ]);
+    const [s2] = evaluarSupuestos(
+      conSupuestos(
+        supuesto("S2", {
+          metricas: ["tasa"],
+          poblacion: "tipo == 'faltante'",
+          condicion: "ok",
+          umbral_confirmacion: { tasa_min: 0.95 },
+        }),
+      ),
+      [vista("1", { tipo: "faltante", ok: true })],
+      U,
+      null,
+    );
+    expect(s2?.estado).toBe("confirmado");
+    expect(s2?.limitaciones[0]?.en).toBe(
+      "Small sample (1 cases): the measure guides, it does not prove.",
+    );
+  });
   it("presupuestoDe no cuenta pasos de modelo que no gastaron nada", () => {
     expect(
       presupuestoDe([

@@ -8,14 +8,26 @@
  *      deja de llevar `si_falso` (el validador prohíbe ambas cosas a la vez).
  *   3. `servicio_exento` pasa a señal obligatoria en la traza.
  *   4. El paso 2 del flujo objetivo lo dice en ES y EN.
- * Uso: `pnpm tsx scripts/enmendar-plan-demo-a.ts --por <nombre> --el <YYYY-MM-DD>`
+ * Con `--a 1.2`, la enmienda v1.1 → v1.2 (solo medición: R5, S1, S2; gate de la fase 4 del S1),
+ * que parte del v1.1 aprobado y lo deja intacto.
+ * Uso: `pnpm tsx scripts/enmendar-plan-demo-a.ts [--a 1.2] --por <nombre> --el <YYYY-MM-DD>`
  */
 import { aprobarPlan, cargarPlan } from "../core/plan";
-import { enmendar } from "./enmienda-plan-demo-a";
+import { enmendar, enmendarAV12 } from "./enmienda-plan-demo-a";
 import { argumentos, escribirJson, leerJson } from "./_io";
 
-const ENTRADA = "plans/demo-a/v1.json";
-const SALIDA = "plans/demo-a/v1.1.json";
+const ENMIENDAS = {
+  "1.1": {
+    entrada: "plans/demo-a/v1.json",
+    salida: "plans/demo-a/v1.1.json",
+    f: enmendar,
+  },
+  "1.2": {
+    entrada: "plans/demo-a/v1.1.json",
+    salida: "plans/demo-a/v1.2.json",
+    f: enmendarAV12,
+  },
+} as const;
 
 async function main(): Promise<number> {
   const args = argumentos(process.argv.slice(2));
@@ -23,9 +35,11 @@ async function main(): Promise<number> {
     console.error("uso: enmendar-plan-demo-a --por <nombre> --el <YYYY-MM-DD>");
     return 2;
   }
-  const v1 = await cargarPlan(leerJson(ENTRADA));
-  if (!v1.ok) throw new Error("el v1 no carga");
-  const r = await aprobarPlan(enmendar(v1.plan), {
+  const a = args.a === "1.2" ? "1.2" : "1.1";
+  const { entrada: ENTRADA, salida: SALIDA, f } = ENMIENDAS[a];
+  const previo = await cargarPlan(leerJson(ENTRADA));
+  if (!previo.ok) throw new Error(`${ENTRADA} no carga`);
+  const r = await aprobarPlan(f(previo.plan), {
     por: args.por,
     el: args.el,
   });

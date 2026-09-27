@@ -1,4 +1,5 @@
 export * from "./esquema";
+export { mismaVerdad } from "./compatibilidad";
 export {
   validarPlan,
   CODIGOS,

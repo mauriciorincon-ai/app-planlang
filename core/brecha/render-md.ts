@@ -6,6 +6,7 @@
 import type { Idioma, TextoBilingue } from "../formatos/bilingue";
 import type { ResultadoCriterio } from "./criterios";
 import type { ResultadoRiesgo } from "./detectores";
+import { partirDisparador } from "./detectores";
 import type { CasoEjemplar, Informe, UmbralJugable } from "./informe";
 import { num, numCorto, pct } from "./numeros";
 import type { ResultadoSupuesto } from "./supuestos";
@@ -231,9 +232,13 @@ function seccionCriterios(inf: Informe, i: Idioma): string {
 
 function valorRiesgo(r: ResultadoRiesgo, i: Idioma): string {
   if (r.valor === null) return "—";
-  return r.tipo_detector === "tasa"
-    ? `${pct(r.valor, i)} (${i === "es" ? "ocurre si" : "occurs if"} ${r.ocurre_si})`
-    : `${r.valor} (${i === "es" ? "ocurre si" : "occurs if"} ${r.ocurre_si})`;
+  const tasa = r.tipo_detector === "tasa";
+  const fmt = (x: number): string => (tasa ? pct(x, i) : numCorto(x, i));
+  const d = r.ocurre_si === null ? null : partirDisparador(r.ocurre_si);
+  const regla = d
+    ? ` (${i === "es" ? "ocurre si" : "occurs if"} ${d.op} ${fmt(d.n)})`
+    : "";
+  return `${fmt(r.valor)}${regla}`;
 }
 
 function seccionRiesgos(inf: Informe, i: Idioma): string {
@@ -460,7 +465,9 @@ function seccionSupuesto(s: ResultadoSupuesto, i: Idioma): string {
             lat(c.latencia_mediana_s.agente_unico),
           ],
           [
-            i === "es" ? "Llamadas al modelo (con reintentos)" : "Model calls (with retries)",
+            i === "es"
+              ? "Llamadas al modelo (con reintentos)"
+              : "Model calls (with retries)",
             String(c.presupuesto.multiagente.llamadas_al_modelo),
             String(c.presupuesto.agente_unico.llamadas_al_modelo),
           ],
@@ -587,7 +594,7 @@ function seccionFicha(inf: Informe, i: Idioma): string {
     ],
     [
       i === "es" ? "Casos" : "Cases",
-      `${f.casos.id} · ${i === "es" ? "semilla" : "seed"} ${f.casos.semilla} · n = ${f.casos.n_lote}`,
+      `${f.casos.id} · ${i === "es" ? "semilla" : "seed"} ${f.casos.semilla} · n = ${f.casos.n_lote} · ${i === "es" ? "generado con el plan" : "generated with plan"} ${f.casos.plan_de_generacion.version}`,
       `\`${f.casos.huella}\``,
     ],
     [
