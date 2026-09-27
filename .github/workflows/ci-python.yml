@@ -1,0 +1,36 @@
+# CI del perfil --python del kit-app (v1.30.0) — se estampa SOLO con `--python`, junto a ci.yml.
+# Job `python`: cuarto check requerido de la ruleset (quality · e2e · lighthouse|build-escritorio · python).
+# Regla del método (v1.12.0): TODO gate nuevo nace con su DEMO en rojo — un cambio deliberado que lo
+# hace fallar, registrado en la bitácora del sprint. Regla del kit (v1.26.0): sube su evidencia al fallar.
+name: CI Python
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: agents
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: agents/pyproject.toml
+      - run: python -m pip install --upgrade pip
+      - run: pip install -e ".[dev]"
+      - run: ruff check .
+      - run: ruff format --check .
+      - run: pytest --junitxml=../test-results/pytest.xml   # cobertura y umbral: [tool.pytest.ini_options] del pyproject
+      - run: pip-audit --strict --skip-editable
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: pytest-results
+          path: test-results/
+          retention-days: 7
+          if-no-files-found: ignore

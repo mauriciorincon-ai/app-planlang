@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "app-agents"
+version = "0.1.0"
+description = "Agentes de la app (perfil --python del kit-app, v1.30.0). Las librerías de agentes y el proveedor de modelo se deciden por ADR en el sprint que los active — el estampado no prejuzga (misma regla que `ai`/`@ai-sdk` en el perfil web)."
+requires-python = ">=3.12,<3.15"
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "pytest-cov>=5", "ruff>=0.6", "pip-audit>=2.7"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# Umbral de cobertura del perfil: 70 % (paridad con vitest). La app lo sube por ADR cuando su
+# núcleo viva aquí (planlang: el núcleo es TypeScript; aquí viven solo los agentes).
+addopts = "--cov=app_agents --cov-report=term-missing --cov-fail-under=70"
+
+[tool.coverage.run]
+source = ["src"]
