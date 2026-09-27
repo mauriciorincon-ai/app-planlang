@@ -164,7 +164,88 @@ una etiqueta de la curva se cortaba en el borde.
 humana; el contrato la declara `modelo`. Ahora usa un nombre de ejemplo con nota, igual que el kit
 (el contrato no declara herramientas ni una segunda pausa humana).
 
-**Lo que dijo el usuario:** _(pendiente)_
+**Lo que dijo el usuario (2026-09-27, con la pantalla del agente abierta en el preview):**
 
-**Qué cambió:** _(pendiente)_
+> «0. si aprobado el kit del sistema 1. Si hablamos de esta [URL del preview de `/diseno/03-agente`,
+> omitida aquí por la regla de cero enlaces] la verda es que si es simpre pero no se enutnedo por que
+> no dice el objetivo que hace que ingresa que actividades desarrolala y que entrega y capacidad cosas
+> generales 2. Sime siven pero esperaria mucha mayor informacion segun el perfil 3. pues esta bien solo
+> por los comentarios que te di»
+
+**Veredicto:**
+
+- **`kit.html` y `design-system.md` v0.1: APROBADOS** («si aprobado el kit del sistema»). La
+  aprobación nombra el artefacto; la evidencia de mirada de la sesión es el comentario del mismo
+  mensaje sobre la pantalla del agente, que cita su ruta en el preview. Sobre el kit no hubo
+  comentario propio, y así se registra.
+- **`03-agente.html`: NO aprobada todavía, pasa a ronda 2.** Lo que funciona: es simple, y las cuatro
+  vistas del detalle (líder, experto, código, trazas) sirven. Lo que falta, en palabras del usuario:
+  (1) **no se entiende el agente**, porque la pantalla no dice su objetivo, qué hace, qué recibe, qué
+  actividades desarrolla, qué entrega ni su capacidad: las generalidades; (2) cada vista necesita
+  **mucha más información según el perfil**. El punto 3 condiciona la aprobación a esos dos
+  comentarios, así que la pantalla corregida se vuelve a mirar antes de la mirada 3.
+
+**Qué cambia (ronda 2 de P3, entrada siguiente).** El plan de miradas no cambia: es una ronda dentro
+de la mirada 2, como las tres rondas de la mirada 1. La mirada 3 no se construye hasta que la
+ronda 2 de P3 quede aprobada.
+
+## Mirada 2 · ronda 2 — `03-agente.html` · 2026-09-27
+
+**Respuesta a los dos comentarios, uno por uno (se cambió de verdad, no se matizó):**
+
+- **«No dice el objetivo, qué hace, qué ingresa, qué actividades desarrolla, qué entrega, capacidad,
+  cosas generales».** La pantalla abre ahora con **«El agente en una mirada»**: el **objetivo** en una
+  frase de líder; **Recibe → Hace → Entrega** en tres columnas unidas por flechas (4 entradas, las
+  **7 actividades** del flujo del plan en orden con el nodo que hace cada una, 3 respuestas y la
+  traza), cada fila con su marca frente al spike (● corrió · ◐ en parte · ◌ exigido y aún no; hoy
+  1 actividad corrió, 1 en parte, 5 faltan); **Puede** (5 capacidades vistas en el spike, cada una
+  con su evidencia), **Nunca** (5 reglas del plan con su decisión, criterio o ley) y **Participan**
+  (médico, afiliado, auditor, plan de beneficios, el agente); y la **capacidad medida**: 4,74 s por
+  caso (mediana, el plan pide ≤ 30 s), ≈ 0,010 USD nominal por caso, ~1,6 mil tokens de contexto,
+  2 de 5 casos a una persona (≈ 24 min de auditor), 5 de 5 caminos iguales a la verdad y ≈ 65–70 min
+  para un lote de 200 (estimación del spike, con su chip). «Experto» cambia la ficha por la **ficha
+  técnica**: arquitectura, grafo, estado (11 claves y las 15 señales que el plan exige en la traza),
+  modelo y proveedor, persistencia, evaluación, versiones, la **matriz plan → nodo** (qué decisiones,
+  riesgos, supuestos, criterios y umbrales gobiernan cada uno de los 8 nodos del contrato, y si
+  corrió) y el código del estado.
+- **«Esperaría mucha mayor información según el perfil».** Cada nodo (extractor, enrutador,
+  pausa_humana y ahora también `aprobar`, que pasa a ser seleccionable) trae una línea de rol y:
+  **Líder**: recibe → nodo → entrega, y hasta siete campos (para qué existe, cómo lo hace, su punto clave,
+  si falla, cómo se mide, qué pasó en los 5 casos, lo que aún no hace), cada texto ≤ 50 palabras.
+  **Experto**: contrato y estado (lee, escribe, entra desde, sale hacia, lo que el plan le pide),
+  configuración o regla, lo que el plan le exige (decisiones, riesgos con prioridad de acción y
+  S·O·D, supuestos, criterios, umbrales), lo observado en el spike (latencias, tokens, costo) y las
+  brechas frente al contrato. **Código**: firma, qué lee y escribe, y dos o tres bloques copiados del
+  spike sin editar (el nodo, su esquema, su instrucción, el armado del grafo, la reanudación).
+  **Trazas**: los casos que pasaron por el nodo; cada uno se abre y muestra el texto de la solicitud
+  (con su glosa en inglés), lo que el nodo leyó o anotó, los tokens, el costo y la verdad conocida.
+  La tabla de ausentes suma **recibe → entrega** por nodo; la arista U1, su lectura de líder, el
+  rango jugable y el costo humano.
+- **Selección por defecto:** `extractor`, el primer nodo del flujo (antes, `enrutador`).
+- **Hallazgo nuevo, a la vista:** ningún modo de falla del plan cubre «aprobar sin verificar
+  cobertura»; el plan lo evita con el contrato de grafo, no con un riesgo (panel de `aprobar`,
+  chip «brecha no prevista»).
+- **Corrección de fidelidad:** el código del enrutador ahora se copia del spike tal cual (la
+  ronda 1 abreviaba un comentario y omitía `# type: ignore`); todo bloque se lee de `spike.py`.
+- **Sistema:** `design-system.md` sube a 0.2.0 con seis componentes (ficha del agente, flujo del
+  nodo, campos por perfil, referencias al plan, matriz plan → nodo, traza abrible), las tres marcas
+  de estado y 13 íconos nuevos de la misma versión de Lucide. El kit aprobado no se toca; los
+  componentes entran a él al consolidar G-Diseño.
+
+**Pasada de capturas del builder (antes de entregar):** 64 encuadres (agente en sus 6 selecciones,
+kit y dirección × 2 temas × 2 idiomas × 380/1280) + 60 con simulación de daltonismo (el agente a
+1280 en sus 6 selecciones × 2 temas × normal, deutan, protan, tritan y acromatopsia) + corrida con
+movimiento reducido en las tres páginas: 0 desbordes, 0 textos fuera del lienzo o de su nodo,
+fuentes cargadas, 0 animaciones. Leídos como imagen: ficha líder y experto, las cuatro vistas del
+extractor, trazas de la pausa en claro e inglés, ausentes, arista, y la ficha, los paneles y la
+matriz a 380 px. Ajustes por lo visto: el panel perdía su rejilla al mostrarse (la sala lo abre con
+`display: revert`); en la tabla de ausentes el texto de «recibe → entrega» se partía palabra por
+palabra (una regla alcanzaba los spans de idioma); el chip de estimación heredaba 14 px; los chips
+de tipo se estiraban en las trazas; en teléfono el número de faltantes quedaba sin rótulo y la
+marca de la matriz sin etiqueta.
+
+**Preguntas para el usuario:** ¿ahora se entiende qué es el agente? · ¿cada perfil trae lo que
+esperabas? · «lo abrí y apruebo» para pasar a la mirada 3.
+
+**Lo que dijo el usuario:** _(pendiente)_
 

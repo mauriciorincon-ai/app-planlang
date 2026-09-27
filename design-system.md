@@ -1,6 +1,6 @@
 ---
-version: 0.1.0
-estado: borrador de la mirada 2 (Etapa de Diseño F2a) — sube a 1.0.0 al aprobar G-Diseño
+version: 0.2.0
+estado: kit aprobado en la mirada 2 (2026-09-27); 0.2 suma los componentes de la ronda 2 de P3 — sube a 1.0.0 al aprobar G-Diseño
 fecha: 2026-09-27
 fuente_visual: docs/diseno/ (kit.html es este documento en vivo)
 tokens: scripts/paleta/generar-tokens.mjs → docs/diseno/assets/tokens.{json,css} (generados; gate diseno-tokens)
@@ -17,7 +17,9 @@ Nació de la mirada 1 (tres rondas, 2026-09-26/27, registro textual en `docs/dis
 ronda 1 (dos direcciones con Space Grotesk y Newsreader) fue rechazada por «tipografía, elementos de
 magnitud desproporcionada, tarjetas tiradas sin sentido»; la ronda 2 fijó la escala y la rejilla y el
 usuario eligió **Inter**; la ronda 3 sumó íconos y miniaturas gráficas y fue aprobada («lo abrí y
-apruebo»).
+apruebo»). En la mirada 2 el usuario aprobó el kit («si aprobado el kit del sistema») y pidió que la
+pantalla del agente dijera qué es el agente (objetivo, qué recibe, qué hace, qué entrega, capacidad) y
+trajera mucha más información por perfil: de ahí salen los componentes de la versión 0.2.
 
 ## 1. Personalidad
 
@@ -131,6 +133,12 @@ cabecera de banda 13 / 11,5, etiqueta de arista 10,5 mono.
 - Juego actual: casa, portapapeles, flujo, indicador, deslizadores, matraz, archivo con visto,
   rama, ojo, lista con vistos, brújula, estetoscopio, edificio público, bocadillo con pregunta,
   escudo con visto, información, luna, sol, idiomas, teléfono, flecha, regla, lápiz sobre portapapeles.
+  La 0.2 suma: diana (objetivo), personas, prohibido, base de datos (estado), procesador (modelo),
+  documento, llaves (versiones), historial (reanudación), capas (arquitectura), bifurcación, enviar
+  (entrega), visto y persona con visto (auditor).
+- **Marcas de estado frente a lo que corrió** (dibujadas, 0.2): ● corrió (círculo lleno con visto) ·
+  ◐ en parte (medio círculo) · ◌ exigido y aún no (círculo discontinuo). Se distinguen por forma, sin
+  color; van con su palabra para lectores de pantalla y con leyenda visible.
 
 ### 2.6 Movimiento
 
@@ -184,6 +192,12 @@ propios (shadcn/ui personalizado donde aplique, jamás el estilo por defecto).
 | **Baldosa**                   | el ícono que abre un bloque (36 px; 28 px la chica)                                                                     | —                                                              |
 | **Miniatura**                 | gráfico pequeño con su pie de procedencia («Cómo funciona»)                                                             | —                                                              |
 | **Tabla de filas**            | listas comparables (demos, criterios, riesgos): filetes, cabecera en `t-dato`, en teléfono cada celda lleva su etiqueta | escritorio · teléfono                                          |
+| **Ficha del agente** (0.2)    | abre toda pantalla de agente: objetivo · recibe → hace → entrega (tres columnas unidas por flechas, cada fila con su marca de estado) · puede / nunca / participan · capacidad medida; «Experto» la cambia por la ficha técnica | líder · experto · escritorio · teléfono (columnas apiladas, flechas hacia abajo) — ver `03-agente.html` |
+| **Flujo del nodo** (0.2)      | la misma idea a escala de nodo: lo que recibe → el nodo → lo que entrega                                                | escritorio · teléfono                                          |
+| **Campos por perfil** (0.2)   | lista de dos columnas con ícono y rótulo: para qué existe, cómo lo hace, si falla, cómo se mide, en los casos, lo que aún no hace (este último en tinta-2) | líder; cada texto ≤ 50 palabras                                |
+| **Referencias al plan** (0.2) | id del plan + enunciado + su medida (prioridad de acción con S·O·D, «sin probar», regla, «una vía»)                      | experto                                                        |
+| **Matriz plan → nodo** (0.2)  | qué decisiones, riesgos, supuestos, criterios y umbrales gobiernan cada nodo del contrato, y si corrió                   | escritorio · teléfono (cada celda con su etiqueta)             |
+| **Traza abrible** (0.2)       | una fila por caso que se abre (`<details>`): el texto del caso, lo que el nodo leyó y escribió, tokens, costo, verdad    | cerrada · abierta · teléfono                                   |
 
 ## 6. Anti-patrones (prohibidos, además de los del skill `diseno-ui`)
 
@@ -198,6 +212,9 @@ propios (shadcn/ui personalizado donde aplique, jamás el estilo por defecto).
 - Simular lo que no corrió (el demo B dice «en construcción» y no muestra resultados).
 
 ## 7. Pendiente para 1.0.0 (G-Diseño)
+
+- Los seis componentes de la 0.2 viven hoy en `03-agente.html`; entran al kit al consolidar
+  G-Diseño (el kit ya aprobado no se toca a mitad de etapa).
 
 - Miradas 3 y 4: pantallas Brecha, Playground, Entrada final, Plan, Caso y Fichas ensamblan estos
   componentes; lo que cambie en ellas vuelve aquí.
