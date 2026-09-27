@@ -1,0 +1,1 @@
+{ "id": "C03", "descripcion": "ENMENDADA (S1 planlang): S8·O6·D2 → prioridad alta con RPN 96. La versión original del contrato (S8·O3·D4) da «baja» según la tabla AIAG-VDA que cita; ver C03-bis.", "modo": { "id": "M", "severidad": 8, "ocurrencia": 6, "deteccion": 2, "mitigaciones": [] }, "esperado": { "prioridad_de_accion": "alta", "rpn": 96 } }

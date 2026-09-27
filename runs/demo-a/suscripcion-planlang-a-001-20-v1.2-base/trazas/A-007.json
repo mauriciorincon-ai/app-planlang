@@ -1,0 +1,253 @@
+{
+  "aclaraciones": [],
+  "caso_id": "A-007",
+  "cobertura": null,
+  "corrida_id": "suscripcion-planlang-a-001-20-v1.2-base",
+  "decisiones_de_arista": [
+    {
+      "desde": "enrutador",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 1,
+      "rama_tomada": "agente_unico",
+      "resultado": false,
+      "senal": "tipo_atencion",
+      "tipo": "tripleta",
+      "umbral_aplicado": "urgencia",
+      "valor_declarado": "urgencia",
+      "valor_observado": "ambulatoria"
+    },
+    {
+      "desde": "enrutador",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 2,
+      "paso": 1,
+      "rama_tomada": "agente_unico",
+      "resultado": false,
+      "senal": "servicio_exento",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    },
+    {
+      "desde": "agente_unico",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "mayor_que",
+      "orden_arista": 1,
+      "paso": 2,
+      "rama_tomada": "pausa_humana",
+      "resultado": true,
+      "senal": "campos_faltantes_count",
+      "tipo": "tripleta",
+      "umbral_aplicado": 0,
+      "valor_declarado": 0,
+      "valor_observado": 1
+    }
+  ],
+  "documento_adverso": null,
+  "error_de_esquema_en_traspaso": false,
+  "error_proveedor": null,
+  "extraccion": {
+    "campos": {
+      "costo_estimado": null,
+      "diagnostico": "SYN-D-12",
+      "procedimiento": "SYN-P-005",
+      "urgencia": false
+    },
+    "campos_faltantes": [
+      "costo_estimado"
+    ],
+    "confianza": 0.95,
+    "costo_estimado": null,
+    "urgencia": false
+  },
+  "formato": "planlang-trace/v1",
+  "guardia_salida": {
+    "acciones_ejecutadas": [
+      "responder_afiliado"
+    ],
+    "acciones_intentadas": [
+      "responder_afiliado"
+    ],
+    "carga_detectada_en_entrada": false,
+    "hallazgos": [],
+    "severidad_accion": 0
+  },
+  "huella": "c02870af1511731bc0fa5e1109145b7d442eeced73589a94776878a4b8fa792b",
+  "nodos_visitados": [
+    "enrutador",
+    "agente_unico",
+    "pausa_humana",
+    "cierre",
+    "guardia_salida"
+  ],
+  "pasos": [
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 1,
+      "nodo": "enrutador",
+      "orden": 1,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "enrutador",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0.026463,
+      "duracion_ms": 11586,
+      "error_proveedor": null,
+      "inicio_ms": 1,
+      "nodo": "agente_unico",
+      "orden": 2,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 4793,
+        "salida": 1183
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 1,
+      "error_proveedor": null,
+      "inicio_ms": 11599,
+      "nodo": "pausa_humana",
+      "orden": 3,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "pausa_humana",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 11600,
+      "nodo": "cierre",
+      "orden": 4,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "regla",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 11601,
+      "nodo": "guardia_salida",
+      "orden": 5,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "regla",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    }
+  ],
+  "pausas_humanas": [
+    {
+      "nodo": "pausa_humana",
+      "paso": 3,
+      "payload": {
+        "contraevidencia": [
+          {
+            "en": "Doubt about what a service covers is resolved in the member's favour (Law 1751, art. 8).",
+            "es": "La duda sobre el alcance de un servicio se resuelve a favor del afiliado (Ley 1751, art. 8)."
+          }
+        ],
+        "evidencia": [
+          {
+            "en": "Details still missing (costo_estimado) after 0 clarifications.",
+            "es": "Siguen faltando datos (costo_estimado) tras 0 aclaraciones."
+          }
+        ],
+        "extraccion": {
+          "campos": {
+            "costo_estimado": null,
+            "diagnostico": "SYN-D-12",
+            "procedimiento": "SYN-P-005",
+            "urgencia": false
+          },
+          "campos_faltantes": [
+            "costo_estimado"
+          ],
+          "confianza": 0.95,
+          "costo_estimado": null,
+          "urgencia": false
+        },
+        "motivo": {
+          "desde": "agente_unico",
+          "en": "Edge 1 of agente_unico: campos_faltantes_count (1) greater than 0 (0).",
+          "es": "Arista 1 de agente_unico: campos_faltantes_count (1) mayor que 0 (0).",
+          "orden_arista": 1
+        },
+        "senal": "campos_faltantes_count",
+        "texto_original": {
+          "en": "Dear authorisations team: 59-year-old woman. Diagnosis: Persistent dyspepsia. Symptoms for several months that have not improved with conservative care. Request: Upper GI endoscopy. Thank you.",
+          "es": "Respetado equipo de autorizaciones: Paciente mujer de 59 años. Diagnóstico: Dispepsia persistente. Síntomas de varios meses que no mejoran con manejo conservador. Se solicita: Endoscopia digestiva alta. Gracias."
+        },
+        "umbral": {
+          "aplicado": 0,
+          "declarado": 0
+        }
+      },
+      "respuesta_simulada": {
+        "decision": "aprobar",
+        "politica": "sigue_verdad_conocida"
+      },
+      "rol": "auditor"
+    }
+  ],
+  "resultado": "completo",
+  "salida_final": {
+    "aviso_ia": {
+      "en": "Notice: this reply was drafted by an artificial intelligence in a simulation with synthetic data. No denial is issued without review by a person.",
+      "es": "Aviso: esta respuesta la redactó una inteligencia artificial en una simulación con datos sintéticos. Ninguna negación se emite sin la revisión de una persona."
+    },
+    "en": "{\"procedimiento\": \"SYN-P-005\", \"diagnostico\": \"SYN-D-12\", \"urgencia\": false, \"costo_estimado\": null, \"confianza\": 0.95, \"propuesta\": \"aprobar\", \"carta_es\": \"Estimado(a) afiliado(a):\\n\\nEn respuesta a la solicitud de autorización enviada por su médico tratante, le informamos que el procedimiento \\\"Endoscopia digestiva alta\\\", relacionado con el diagnóstico de dispepsia persistente, ha sido APROBADO conforme a las condiciones de su plan de beneficios.\\n\\nSu institución prestadora de servicios de salud se pondrá en contacto con usted para coordinar la programación del procedimiento. Le recomendamos seguir las indicaciones de preparación que le sean suministradas.\\n\\nAnte cualquier duda, no dude en comunicarse con nuestra línea de atención al afiliado.\\n\\nCordialmente,\\nEquipo de Autorizaciones\", \"carta_en\": \"Dear Member:\\n\\nIn response to the authorization request submitted by your treating physician, we inform you that the procedure \\\"Upper Digestive Endoscopy,\\\" related to the diagnosis of persistent dyspepsia, has been APPROVED in accordance with the terms of your benefits plan.\\n\\nYour healthcare provider will contact you to coordinate scheduling of the procedure. We recommend following any preparation instructions provided to you.\\n\\nShould you have any questions, please do not hesitate to contact our member services line.\\n\\nSincerely,\\nAuthorizations Team\", \"acciones\": [\"responder_afiliado\"]}",
+    "es": "Estimado(a) afiliado(a):\n\nEn respuesta a la solicitud de autorización enviada por su médico tratante, le informamos que el procedimiento \"Endoscopia digestiva alta\", relacionado con el diagnóstico de dispepsia persistente, ha sido APROBADO conforme a las condiciones de su plan de beneficios. Su institución prestadora de servicios de salud se pondrá en contacto con usted para coordinar la programación del procedimiento. Le recomendamos seguir las indicaciones de preparación que le sean suministradas. Ante cualquier duda, no dude en comunicarse con nuestra línea de atención al afiliado. Cordialmente,\nEquipo de Autorizaciones"
+  },
+  "senales": {
+    "campos_faltantes_count": 1,
+    "ciclos_aclaracion": 0,
+    "contradiccion_orden_texto": null,
+    "costo_estimado": null,
+    "decision_final": "aprobar",
+    "error_proveedor": null,
+    "latencia_total_s": 11.587,
+    "modo_texas": false,
+    "nodos_visitados": [
+      "enrutador",
+      "agente_unico",
+      "pausa_humana",
+      "cierre",
+      "guardia_salida"
+    ],
+    "pausa_humana": true,
+    "propuesta": null,
+    "senal_confianza": 0.95,
+    "servicio_exento": false,
+    "severidad_accion": 0,
+    "tipo_atencion": "ambulatoria",
+    "tokens": 5976
+  },
+  "variante": "agente_unico"
+}

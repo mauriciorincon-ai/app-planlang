@@ -1,0 +1,1 @@
+{ "id": "C01", "descripcion": "A depende_de B y B depende_de A: rechazo con el ciclo completo", "decisiones": [ { "id": "A", "reversibilidad": "dos_vias", "depende_de": ["B"] }, { "id": "B", "reversibilidad": "dos_vias", "depende_de": ["A"] } ], "esperado": { "ok": false, "ciclo": ["A", "B", "A"] } }

@@ -1,0 +1,253 @@
+{
+  "aclaraciones": [],
+  "caso_id": "A-020",
+  "cobertura": null,
+  "corrida_id": "suscripcion-planlang-a-001-20-base",
+  "decisiones_de_arista": [
+    {
+      "desde": "enrutador",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 1,
+      "rama_tomada": "agente_unico",
+      "resultado": false,
+      "senal": "tipo_atencion",
+      "tipo": "tripleta",
+      "umbral_aplicado": "urgencia",
+      "valor_declarado": "urgencia",
+      "valor_observado": "ambulatoria"
+    },
+    {
+      "desde": "enrutador",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 2,
+      "paso": 1,
+      "rama_tomada": "agente_unico",
+      "resultado": false,
+      "senal": "servicio_exento",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    },
+    {
+      "desde": "agente_unico",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "mayor_que",
+      "orden_arista": 1,
+      "paso": 2,
+      "rama_tomada": "pausa_humana",
+      "resultado": true,
+      "senal": "campos_faltantes_count",
+      "tipo": "tripleta",
+      "umbral_aplicado": 0,
+      "valor_declarado": 0,
+      "valor_observado": 1
+    }
+  ],
+  "documento_adverso": null,
+  "error_de_esquema_en_traspaso": false,
+  "error_proveedor": null,
+  "extraccion": {
+    "campos": {
+      "costo_estimado": null,
+      "diagnostico": "SYN-D-08",
+      "procedimiento": "SYN-P-008",
+      "urgencia": false
+    },
+    "campos_faltantes": [
+      "costo_estimado"
+    ],
+    "confianza": 0.9,
+    "costo_estimado": null,
+    "urgencia": false
+  },
+  "formato": "planlang-trace/v1",
+  "guardia_salida": {
+    "acciones_ejecutadas": [
+      "responder_afiliado"
+    ],
+    "acciones_intentadas": [
+      "responder_afiliado"
+    ],
+    "carga_detectada_en_entrada": false,
+    "hallazgos": [],
+    "severidad_accion": 0
+  },
+  "huella": "8052495c06804a525ac7a6b4081ecaabb4da8aff268c3fbc119fc3f6fcbf87cf",
+  "nodos_visitados": [
+    "enrutador",
+    "agente_unico",
+    "pausa_humana",
+    "cierre",
+    "guardia_salida"
+  ],
+  "pasos": [
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 2,
+      "nodo": "enrutador",
+      "orden": 1,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "enrutador",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0.025612,
+      "duracion_ms": 11154,
+      "error_proveedor": null,
+      "inicio_ms": 3,
+      "nodo": "agente_unico",
+      "orden": 2,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 4788,
+        "salida": 1097
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 11163,
+      "nodo": "pausa_humana",
+      "orden": 3,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "pausa_humana",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 11164,
+      "nodo": "cierre",
+      "orden": 4,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "regla",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 1,
+      "error_proveedor": null,
+      "inicio_ms": 11164,
+      "nodo": "guardia_salida",
+      "orden": 5,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "regla",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    }
+  ],
+  "pausas_humanas": [
+    {
+      "nodo": "pausa_humana",
+      "paso": 3,
+      "payload": {
+        "contraevidencia": [
+          {
+            "en": "Doubt about what a service covers is resolved in the member's favour (Law 1751, art. 8).",
+            "es": "La duda sobre el alcance de un servicio se resuelve a favor del afiliado (Ley 1751, art. 8)."
+          }
+        ],
+        "evidencia": [
+          {
+            "en": "Details still missing (costo_estimado) after 0 clarifications.",
+            "es": "Siguen faltando datos (costo_estimado) tras 0 aclaraciones."
+          }
+        ],
+        "extraccion": {
+          "campos": {
+            "costo_estimado": null,
+            "diagnostico": "SYN-D-08",
+            "procedimiento": "SYN-P-008",
+            "urgencia": false
+          },
+          "campos_faltantes": [
+            "costo_estimado"
+          ],
+          "confianza": 0.9,
+          "costo_estimado": null,
+          "urgencia": false
+        },
+        "motivo": {
+          "desde": "agente_unico",
+          "en": "Edge 1 of agente_unico: campos_faltantes_count (1) greater than 0 (0).",
+          "es": "Arista 1 de agente_unico: campos_faltantes_count (1) mayor que 0 (0).",
+          "orden_arista": 1
+        },
+        "senal": "campos_faltantes_count",
+        "texto_original": {
+          "en": "Referral note. 65-year-old woman. Diagnosis: Stable coronary artery disease. No relevant history. Request: Exercise stress test. Thank you.",
+          "es": "Nota de remisión. Paciente mujer de 65 años. Diagnóstico: Enfermedad coronaria estable. Sin antecedentes relevantes. Se solicita: Prueba de esfuerzo. Gracias."
+        },
+        "umbral": {
+          "aplicado": 0,
+          "declarado": 0
+        }
+      },
+      "respuesta_simulada": {
+        "decision": "aprobar",
+        "politica": "sigue_verdad_conocida"
+      },
+      "rol": "auditor"
+    }
+  ],
+  "resultado": "completo",
+  "salida_final": {
+    "aviso_ia": {
+      "en": "Notice: this reply was drafted by an artificial intelligence in a simulation with synthetic data. No denial is issued without review by a person.",
+      "es": "Aviso: esta respuesta la redactó una inteligencia artificial en una simulación con datos sintéticos. Ninguna negación se emite sin la revisión de una persona."
+    },
+    "en": "{\"procedimiento\": \"SYN-P-008\", \"diagnostico\": \"SYN-D-08\", \"urgencia\": false, \"costo_estimado\": null, \"confianza\": 0.9, \"propuesta\": \"aprobar\", \"carta_es\": \"Estimada afiliada:\\n\\nHemos revisado la solicitud de autorización enviada por su médico tratante para la realización de una Prueba de esfuerzo, relacionada con el diagnóstico de Enfermedad coronaria estable.\\n\\nLe informamos que dicho procedimiento se encuentra cubierto dentro de su plan de beneficios, por lo que su solicitud ha sido APROBADA.\\n\\nPor favor comuníquese con su médico tratante o con nuestra línea de servicio al afiliado para coordinar la programación de este procedimiento.\\n\\nAgradecemos su confianza.\\n\\nAtentamente,\\nEquipo de Autorizaciones\", \"carta_en\": \"Dear Member:\\n\\nWe have reviewed the authorization request submitted by your treating physician for a Stress Test, related to the diagnosis of Stable Coronary Artery Disease.\\n\\nWe are pleased to inform you that this procedure is covered under your benefits plan, and therefore your request has been APPROVED.\\n\\nPlease contact your treating physician or our member service line to coordinate the scheduling of this procedure.\\n\\nThank you for your trust.\\n\\nSincerely,\\nAuthorizations Team\", \"acciones\": [\"responder_afiliado\"]}",
+    "es": "Estimada afiliada:\n\nHemos revisado la solicitud de autorización enviada por su médico tratante para la realización de una Prueba de esfuerzo, relacionada con el diagnóstico de Enfermedad coronaria estable. Le informamos que dicho procedimiento se encuentra cubierto dentro de su plan de beneficios, por lo que su solicitud ha sido APROBADA. Por favor comuníquese con su médico tratante o con nuestra línea de servicio al afiliado para coordinar la programación de este procedimiento. Agradecemos su confianza. Atentamente,\nEquipo de Autorizaciones"
+  },
+  "senales": {
+    "campos_faltantes_count": 1,
+    "ciclos_aclaracion": 0,
+    "contradiccion_orden_texto": null,
+    "costo_estimado": null,
+    "decision_final": "aprobar",
+    "error_proveedor": null,
+    "latencia_total_s": 11.155,
+    "modo_texas": false,
+    "nodos_visitados": [
+      "enrutador",
+      "agente_unico",
+      "pausa_humana",
+      "cierre",
+      "guardia_salida"
+    ],
+    "pausa_humana": true,
+    "propuesta": null,
+    "senal_confianza": 0.9,
+    "servicio_exento": false,
+    "severidad_accion": 0,
+    "tipo_atencion": "ambulatoria",
+    "tokens": 5885
+  },
+  "variante": "agente_unico"
+}

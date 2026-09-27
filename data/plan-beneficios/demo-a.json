@@ -1,0 +1,1060 @@
+{
+  "aviso": {
+    "en": "Invented for a simulation: it is not Colombia's Health Benefit Plan nor any insurer's. Costs are in synthetic units and the classifications are not a clinical judgement.",
+    "es": "Inventado para una simulación: no es el Plan de Beneficios en Salud de Colombia ni el de ninguna aseguradora. Los costos están en unidades sintéticas y las clasificaciones no son un juicio clínico."
+  },
+  "causales_de_exclusion": [
+    {
+      "id": "a",
+      "norma": "Ley Estatutaria 1751 de 2015, art. 15, literal a",
+      "resumen": {
+        "en": "Its main purpose is cosmetic or luxury, unrelated to recovering or keeping functional or vital capacity.",
+        "es": "Su finalidad principal es cosmética o suntuaria, sin relación con recuperar o mantener la capacidad funcional o vital."
+      }
+    },
+    {
+      "id": "b",
+      "norma": "Ley Estatutaria 1751 de 2015, art. 15, literal b",
+      "resumen": {
+        "en": "There is no scientific evidence of its safety and clinical efficacy.",
+        "es": "No hay evidencia científica sobre su seguridad y eficacia clínica."
+      }
+    },
+    {
+      "id": "c",
+      "norma": "Ley Estatutaria 1751 de 2015, art. 15, literal c",
+      "resumen": {
+        "en": "There is no scientific evidence of its clinical effectiveness.",
+        "es": "No hay evidencia científica sobre su efectividad clínica."
+      }
+    },
+    {
+      "id": "d",
+      "norma": "Ley Estatutaria 1751 de 2015, art. 15, literal d",
+      "resumen": {
+        "en": "Its use is not authorised by the competent authority.",
+        "es": "Su uso no está autorizado por la autoridad competente."
+      }
+    },
+    {
+      "id": "e",
+      "norma": "Ley Estatutaria 1751 de 2015, art. 15, literal e",
+      "resumen": {
+        "en": "It is at an experimental stage.",
+        "es": "Está en fase de experimentación."
+      }
+    },
+    {
+      "id": "f",
+      "norma": "Ley Estatutaria 1751 de 2015, art. 15, literal f",
+      "resumen": {
+        "en": "It has to be provided abroad.",
+        "es": "Tiene que prestarse en el exterior."
+      }
+    }
+  ],
+  "demo_id": "demo-a",
+  "diagnosticos": [
+    {
+      "codigo": "SYN-D-01",
+      "nombre": {
+        "en": "Knee meniscus tear",
+        "es": "Lesión de menisco de rodilla"
+      }
+    },
+    {
+      "codigo": "SYN-D-02",
+      "nombre": {
+        "en": "Knee osteoarthritis",
+        "es": "Artrosis de rodilla"
+      }
+    },
+    {
+      "codigo": "SYN-D-03",
+      "nombre": {
+        "en": "Hip osteoarthritis",
+        "es": "Artrosis de cadera"
+      }
+    },
+    {
+      "codigo": "SYN-D-04",
+      "nombre": {
+        "en": "Lumbar disc herniation",
+        "es": "Hernia discal lumbar"
+      }
+    },
+    {
+      "codigo": "SYN-D-05",
+      "nombre": {
+        "en": "Symptomatic gallstones",
+        "es": "Colelitiasis sintomática"
+      }
+    },
+    {
+      "codigo": "SYN-D-06",
+      "nombre": {
+        "en": "Inguinal hernia",
+        "es": "Hernia inguinal"
+      }
+    },
+    {
+      "codigo": "SYN-D-07",
+      "nombre": {
+        "en": "Cataract",
+        "es": "Catarata"
+      }
+    },
+    {
+      "codigo": "SYN-D-08",
+      "nombre": {
+        "en": "Stable coronary artery disease",
+        "es": "Enfermedad coronaria estable"
+      }
+    },
+    {
+      "codigo": "SYN-D-09",
+      "nombre": {
+        "en": "Arrhythmia under evaluation",
+        "es": "Arritmia en estudio"
+      }
+    },
+    {
+      "codigo": "SYN-D-10",
+      "nombre": {
+        "en": "Obstructive sleep apnea",
+        "es": "Apnea obstructiva del sueño"
+      }
+    },
+    {
+      "codigo": "SYN-D-11",
+      "nombre": {
+        "en": "Colon polyp follow-up",
+        "es": "Pólipo de colon en seguimiento"
+      }
+    },
+    {
+      "codigo": "SYN-D-12",
+      "nombre": {
+        "en": "Persistent dyspepsia",
+        "es": "Dispepsia persistente"
+      }
+    },
+    {
+      "codigo": "SYN-D-13",
+      "nombre": {
+        "en": "Pulmonary nodule",
+        "es": "Nódulo pulmonar"
+      }
+    },
+    {
+      "codigo": "SYN-D-14",
+      "nombre": {
+        "en": "Benign prostatic hyperplasia",
+        "es": "Hiperplasia prostática benigna"
+      }
+    },
+    {
+      "codigo": "SYN-D-15",
+      "nombre": {
+        "en": "Raised prostate-specific antigen",
+        "es": "Antígeno prostático elevado"
+      }
+    },
+    {
+      "codigo": "SYN-D-16",
+      "nombre": {
+        "en": "Osteoporosis",
+        "es": "Osteoporosis"
+      }
+    },
+    {
+      "codigo": "SYN-D-17",
+      "nombre": {
+        "en": "Carpal tunnel syndrome",
+        "es": "Síndrome del túnel carpiano"
+      }
+    },
+    {
+      "codigo": "SYN-D-18",
+      "nombre": {
+        "en": "Kidney stone",
+        "es": "Cálculo renal"
+      }
+    },
+    {
+      "codigo": "SYN-D-19",
+      "nombre": {
+        "en": "Uterine fibroids",
+        "es": "Miomatosis uterina"
+      }
+    },
+    {
+      "codigo": "SYN-D-20",
+      "nombre": {
+        "en": "Recurrent tonsillitis",
+        "es": "Amigdalitis recurrente"
+      }
+    },
+    {
+      "codigo": "SYN-D-21",
+      "nombre": {
+        "en": "Nasal obstruction from a deviated septum",
+        "es": "Obstrucción nasal por desviación del tabique"
+      }
+    },
+    {
+      "codigo": "SYN-D-22",
+      "nombre": {
+        "en": "High blood pressure",
+        "es": "Hipertensión arterial"
+      }
+    },
+    {
+      "codigo": "SYN-D-23",
+      "nombre": {
+        "en": "Type 2 diabetes",
+        "es": "Diabetes tipo 2"
+      }
+    },
+    {
+      "codigo": "SYN-D-24",
+      "nombre": {
+        "en": "Chronic obstructive pulmonary disease",
+        "es": "Enfermedad pulmonar obstructiva crónica"
+      }
+    },
+    {
+      "codigo": "SYN-D-25",
+      "nombre": {
+        "en": "Diabetic foot ulcer",
+        "es": "Úlcera de pie diabético"
+      }
+    },
+    {
+      "codigo": "SYN-D-26",
+      "nombre": {
+        "en": "Breast lump",
+        "es": "Nódulo mamario"
+      }
+    },
+    {
+      "codigo": "SYN-D-27",
+      "nombre": {
+        "en": "Peripheral neuropathy",
+        "es": "Neuropatía periférica"
+      }
+    },
+    {
+      "codigo": "SYN-D-28",
+      "nombre": {
+        "en": "Hearing loss",
+        "es": "Hipoacusia"
+      }
+    },
+    {
+      "codigo": "SYN-D-29",
+      "nombre": {
+        "en": "Chronic low back pain",
+        "es": "Lumbalgia crónica"
+      }
+    },
+    {
+      "codigo": "SYN-D-30",
+      "nombre": {
+        "en": "Cosmetic wish with no functional problem",
+        "es": "Motivo estético sin alteración funcional"
+      }
+    },
+    {
+      "codigo": "SYN-D-31",
+      "nombre": {
+        "en": "Inherited retinal dystrophy",
+        "es": "Distrofia retiniana hereditaria"
+      }
+    },
+    {
+      "codigo": "SYN-D-32",
+      "nombre": {
+        "en": "Nonspecific joint pain",
+        "es": "Dolor articular inespecífico"
+      }
+    },
+    {
+      "codigo": "SYN-D-33",
+      "nombre": {
+        "en": "Chronic fatigue",
+        "es": "Fatiga crónica"
+      }
+    },
+    {
+      "codigo": "SYN-D-34",
+      "nombre": {
+        "en": "Rheumatoid arthritis",
+        "es": "Artritis reumatoide"
+      }
+    },
+    {
+      "codigo": "SYN-D-35",
+      "nombre": {
+        "en": "Bone lesion under evaluation",
+        "es": "Lesión ósea en estudio"
+      }
+    },
+    {
+      "codigo": "SYN-D-36",
+      "nombre": {
+        "en": "Acute cholecystitis",
+        "es": "Colecistitis aguda"
+      }
+    },
+    {
+      "codigo": "SYN-D-37",
+      "nombre": {
+        "en": "Acute coronary syndrome",
+        "es": "Síndrome coronario agudo"
+      }
+    },
+    {
+      "codigo": "SYN-D-38",
+      "nombre": {
+        "en": "Blunt chest trauma",
+        "es": "Trauma cerrado de tórax"
+      }
+    },
+    {
+      "codigo": "SYN-D-39",
+      "nombre": {
+        "en": "Adult congenital heart disease",
+        "es": "Cardiopatía congénita del adulto"
+      }
+    }
+  ],
+  "dominio_id": "dom-salud",
+  "formato": "planlang-plan-beneficios/v1",
+  "huella": "8e07b276176e477400954879b1fd998f49b633c6e2d550408974284853c0eda4",
+  "id": "pb-demo-a",
+  "nombre": {
+    "en": "Demo A synthetic benefit plan",
+    "es": "Plan de beneficios sintético del demo A"
+  },
+  "procedimientos": [
+    {
+      "categoria": "imagen",
+      "causal": null,
+      "codigo": "SYN-P-001",
+      "costo": 850,
+      "diagnosticos_compatibles": [
+        "SYN-D-04",
+        "SYN-D-29"
+      ],
+      "estado": "requiere_autorizacion",
+      "exento_motivo": null,
+      "homonimo_de": null,
+      "nombre": {
+        "en": "Lumbar spine MRI",
+        "es": "Resonancia magnética de columna lumbar"
+      }
+    },
+    {
+      "categoria": "imagen",
+      "causal": null,
+      "codigo": "SYN-P-002",
+      "costo": 1000,
+      "diagnosticos_compatibles": [
+        "SYN-D-01",
+        "SYN-D-02"
+      ],
+      "estado": "requiere_autorizacion",
+      "exento_motivo": null,
+      "homonimo_de": null,
+      "nombre": {
+        "en": "Knee MRI",
+        "es": "Resonancia magnética de rodilla"
+      }
+    },
+    {
+      "categoria": "imagen",
+      "causal": null,
+      "codigo": "SYN-P-003",
+      "costo": 600,
+      "diagnosticos_compatibles": [
+        "SYN-D-13"
+      ],
+      "estado": "requiere_autorizacion",
+      "exento_motivo": null,
+      "homonimo_de": null,
+      "nombre": {
+        "en": "Chest CT scan",
+        "es": "Tomografía de tórax"
+      }
+    },
+    {
+      "categoria": "endoscopia",
+      "causal": null,
+      "codigo": "SYN-P-004",
+      "costo": 450,
+      "diagnosticos_compatibles": [
+        "SYN-D-11"
+      ],
+      "estado": "requiere_autorizacion",
+      "exento_motivo": null,
+      "homonimo_de": null,
+      "nombre": {
+        "en": "Diagnostic colonoscopy",
+        "es": "Colonoscopia diagnóstica"
+      }
+    },
+    {
+      "categoria": "endoscopia",
+      "causal": null,
+      "codigo": "SYN-P-005",
+      "costo": 380,
+      "diagnosticos_compatibles": [
+        "SYN-D-12"
+      ],
+      "estado": "requiere_autorizacion",
+      "exento_motivo": null,
+      "homonimo_de": null,
+      "nombre": {
+        "en": "Upper GI endoscopy",
+        "es": "Endoscopia digestiva alta"
+      }
+    },
+    {
+      "categoria": "cardiologia",
+      "causal": null,
+      "codigo": "SYN-P-006",
+      "costo": 300,
+      "diagnosticos_compatibles": [
+        "SYN-D-08",
+        "SYN-D-09"
+      ],
+      "estado": "requiere_autorizacion",
+      "exento_motivo": null,
+      "homonimo_de": null,
+      "nombre": {
+        "en": "Transthoracic echocardiogram",
+        "es": "Ecocardiograma transtorácico"
+      }
+    },
+    {
+      "categoria": "cardiologia",
+      "causal": null,
+      "codigo": "SYN-P-007",
+      "costo": 220,
+      "diagnosticos_compatibles": [
+        "SYN-D-09"
+      ],
+      "estado": "requiere_autorizacion",
+      "exento_motivo": null,
+      "homonimo_de": null,
+      "nombre": {
+        "en": "24-hour Holter monitoring",
+        "es": "Monitoreo Holter de 24 horas"
+      }
+    },
+    {
+      "categoria": "cardiologia",
+      "causal": null,
+      "codigo": "SYN-P-008",
+      "costo": 260,
+      "diagnosticos_compatibles": [
+        "SYN-D-08"
+      ],
+      "estado": "requiere_autorizacion",
+      "exento_motivo": null,
+      "homonimo_de": null,
+      "nombre": {
+        "en": "Exercise stress test",
+        "es": "Prueba de esfuerzo"
+      }
+    },
+    {
+      "categoria": "cirugia",
+      "causal": null,
+      "codigo": "SYN-P-009",
+      "costo": 1800,
+      "diagnosticos_compatibles": [
+        "SYN-D-01"
+      ],
+      "estado": "requiere_autorizacion",
+      "exento_motivo": null,
+      "homonimo_de": null,
+      "nombre": {
+        "en": "Knee arthroscopy",
+        "es": "Artroscopia de rodilla"
+      }
+    },
+    {
+      "categoria": "cirugia",
+      "causal": null,
+      "codigo": "SYN-P-010",
+      "costo": 2400,
+      "diagnosticos_compatibles": [
+        "SYN-D-05"
+      ],
+      "estado": "requiere_autorizacion",
+      "exento_motivo": null,
+      "homonimo_de": null,
+      "nombre": {
+        "en": "Laparoscopic gallbladder removal",
+        "es": "Colecistectomía laparoscópica"
+      }
+    },
+    {
+      "categoria": "cirugia",
+      "causal": null,
+      "codigo": "SYN-P-011",
+      "costo": 1500,
+      "diagnosticos_compatibles": [
+        "SYN-D-06"
+      ],
+      "estado": "requiere_autorizacion",
+      "exento_motivo": null,
+      "homonimo_de": null,
+      "nombre": {
+        "en": "Inguinal hernia repair",
+        "es": "Herniorrafia inguinal"
+      }
+    },
+    {
+      "categoria": "cirugia",
+      "causal": null,
+      "codigo": "SYN-P-012",
+      "costo": 1300,
+      "diagnosticos_compatibles": [
+        "SYN-D-07"
+      ],
+      "estado": "requiere_autorizacion",
+      "exento_motivo": null,
+      "homonimo_de": null,
+      "nombre": {
+        "en": "Cataract surgery with lens implant",
+        "es": "Cirugía de catarata con lente intraocular"
+      }
+    },
+    {
+      "categoria": "cirugia",
+      "causal": null,
+      "codigo": "SYN-P-013",
+      "costo": 4200,
+      "diagnosticos_compatibles": [
+        "SYN-D-03"
+      ],
+      "estado": "requiere_autorizacion",
+      "exento_motivo": null,
+      "homonimo_de": null,
+      "nombre": {
+        "en": "Total hip replacement",
+        "es": "Reemplazo total de cadera"
+      }
+    },
+    {
+      "categoria": "cirugia",
+      "causal": null,
+      "codigo": "SYN-P-014",
+      "costo": 4000,
+      "diagnosticos_compatibles": [
+        "SYN-D-02"
+      ],
+      "estado": "requiere_autorizacion",
+      "exento_motivo": null,
+      "homonimo_de": null,
+      "nombre": {
+        "en": "Total knee replacement",
+        "es": "Reemplazo total de rodilla"
+      }
+    },
+    {
+      "categoria": "cardiologia",
+      "causal": null,
+      "codigo": "SYN-P-015",
+      "costo": 2100,
+      "diagnosticos_compatibles": [
+        "SYN-D-08"
+      ],
+      "estado": "requiere_autorizacion",
+      "exento_motivo": null,
+      "homonimo_de": null,
+      "nombre": {
+        "en": "Diagnostic cardiac catheterization",
+        "es": "Cateterismo cardiaco diagnóstico"
+      }
+    },
+    {
+      "categoria": "diagnostico",
+      "causal": null,
+      "codigo": "SYN-P-016",
+      "costo": 520,
+      "diagnosticos_compatibles": [
+        "SYN-D-10"
+      ],
+      "estado": "requiere_autorizacion",
+      "exento_motivo": null,
+      "homonimo_de": null,
+      "nombre": {
+        "en": "Sleep study (polysomnography)",
+        "es": "Polisomnografía"
+      }
+    },
+    {
+      "categoria": "rehabilitacion",
+      "causal": null,
+      "codigo": "SYN-P-017",
+      "costo": 350,
+      "diagnosticos_compatibles": [
+        "SYN-D-29",
+        "SYN-D-04"
+      ],
+      "estado": "requiere_autorizacion",
+      "exento_motivo": null,
+      "homonimo_de": null,
+      "nombre": {
+        "en": "Physical therapy (10 sessions)",
+        "es": "Terapia física (10 sesiones)"
+      }
+    },
+    {
+      "categoria": "imagen",
+      "causal": null,
+      "codigo": "SYN-P-018",
+      "costo": 150,
+      "diagnosticos_compatibles": [
+        "SYN-D-26"
+      ],
+      "estado": "requiere_autorizacion",
+      "exento_motivo": null,
+      "homonimo_de": null,
+      "nombre": {
+        "en": "Diagnostic mammogram",
+        "es": "Mamografía diagnóstica"
+      }
+    },
+    {
+      "categoria": "diagnostico",
+      "causal": null,
+      "codigo": "SYN-P-019",
+      "costo": 700,
+      "diagnosticos_compatibles": [
+        "SYN-D-15"
+      ],
+      "estado": "requiere_autorizacion",
+      "exento_motivo": null,
+      "homonimo_de": null,
+      "nombre": {
+        "en": "Ultrasound-guided prostate biopsy",
+        "es": "Biopsia de próstata guiada por ecografía"
+      }
+    },
+    {
+      "categoria": "imagen",
+      "causal": null,
+      "codigo": "SYN-P-020",
+      "costo": 180,
+      "diagnosticos_compatibles": [
+        "SYN-D-16"
+      ],
+      "estado": "requiere_autorizacion",
+      "exento_motivo": null,
+      "homonimo_de": null,
+      "nombre": {
+        "en": "Bone density scan",
+        "es": "Densitometría ósea"
+      }
+    },
+    {
+      "categoria": "diagnostico",
+      "causal": null,
+      "codigo": "SYN-P-021",
+      "costo": 240,
+      "diagnosticos_compatibles": [
+        "SYN-D-27",
+        "SYN-D-17"
+      ],
+      "estado": "requiere_autorizacion",
+      "exento_motivo": null,
+      "homonimo_de": null,
+      "nombre": {
+        "en": "Electromyography",
+        "es": "Electromiografía"
+      }
+    },
+    {
+      "categoria": "cirugia",
+      "causal": null,
+      "codigo": "SYN-P-022",
+      "costo": 950,
+      "diagnosticos_compatibles": [
+        "SYN-D-21"
+      ],
+      "estado": "requiere_autorizacion",
+      "exento_motivo": null,
+      "homonimo_de": "SYN-P-035",
+      "nombre": {
+        "en": "Functional rhinoplasty",
+        "es": "Rinoplastia funcional"
+      }
+    },
+    {
+      "categoria": "cirugia",
+      "causal": null,
+      "codigo": "SYN-P-023",
+      "costo": 900,
+      "diagnosticos_compatibles": [
+        "SYN-D-20"
+      ],
+      "estado": "requiere_autorizacion",
+      "exento_motivo": null,
+      "homonimo_de": null,
+      "nombre": {
+        "en": "Tonsillectomy",
+        "es": "Amigdalectomía"
+      }
+    },
+    {
+      "categoria": "cirugia",
+      "causal": null,
+      "codigo": "SYN-P-024",
+      "costo": 2600,
+      "diagnosticos_compatibles": [
+        "SYN-D-19"
+      ],
+      "estado": "requiere_autorizacion",
+      "exento_motivo": null,
+      "homonimo_de": null,
+      "nombre": {
+        "en": "Laparoscopic hysterectomy",
+        "es": "Histerectomía laparoscópica"
+      }
+    },
+    {
+      "categoria": "cirugia",
+      "causal": null,
+      "codigo": "SYN-P-025",
+      "costo": 750,
+      "diagnosticos_compatibles": [
+        "SYN-D-17"
+      ],
+      "estado": "requiere_autorizacion",
+      "exento_motivo": null,
+      "homonimo_de": null,
+      "nombre": {
+        "en": "Carpal tunnel release",
+        "es": "Liberación del túnel carpiano"
+      }
+    },
+    {
+      "categoria": "urologia",
+      "causal": null,
+      "codigo": "SYN-P-026",
+      "costo": 1200,
+      "diagnosticos_compatibles": [
+        "SYN-D-18"
+      ],
+      "estado": "requiere_autorizacion",
+      "exento_motivo": null,
+      "homonimo_de": null,
+      "nombre": {
+        "en": "Shock-wave lithotripsy",
+        "es": "Litotricia extracorpórea"
+      }
+    },
+    {
+      "categoria": "imagen",
+      "causal": null,
+      "codigo": "SYN-P-027",
+      "costo": 120,
+      "diagnosticos_compatibles": [
+        "SYN-D-05",
+        "SYN-D-18"
+      ],
+      "estado": "requiere_autorizacion",
+      "exento_motivo": null,
+      "homonimo_de": null,
+      "nombre": {
+        "en": "Full abdominal ultrasound",
+        "es": "Ecografía abdominal total"
+      }
+    },
+    {
+      "categoria": "imagen",
+      "causal": null,
+      "codigo": "SYN-P-028",
+      "costo": 480,
+      "diagnosticos_compatibles": [
+        "SYN-D-35"
+      ],
+      "estado": "requiere_autorizacion",
+      "exento_motivo": null,
+      "homonimo_de": null,
+      "nombre": {
+        "en": "Bone scan",
+        "es": "Gammagrafía ósea"
+      }
+    },
+    {
+      "categoria": "urologia",
+      "causal": null,
+      "codigo": "SYN-P-029",
+      "costo": 1900,
+      "diagnosticos_compatibles": [
+        "SYN-D-14"
+      ],
+      "estado": "requiere_autorizacion",
+      "exento_motivo": null,
+      "homonimo_de": null,
+      "nombre": {
+        "en": "Transurethral resection of the prostate",
+        "es": "Resección transuretral de próstata"
+      }
+    },
+    {
+      "categoria": "control_cronico",
+      "causal": null,
+      "codigo": "SYN-P-030",
+      "costo": 60,
+      "diagnosticos_compatibles": [
+        "SYN-D-22"
+      ],
+      "estado": "exento",
+      "exento_motivo": {
+        "en": "Chronic condition under follow-up: synthetic analogue of the removal of prior authorisation by Joint Circular 019 of 2025.",
+        "es": "Condición crónica en control: análogo sintético de la eliminación de autorizaciones de la Circular Conjunta 019 de 2025."
+      },
+      "homonimo_de": null,
+      "nombre": {
+        "en": "High blood pressure follow-up visit",
+        "es": "Consulta de control de hipertensión arterial"
+      }
+    },
+    {
+      "categoria": "control_cronico",
+      "causal": null,
+      "codigo": "SYN-P-031",
+      "costo": 60,
+      "diagnosticos_compatibles": [
+        "SYN-D-23"
+      ],
+      "estado": "exento",
+      "exento_motivo": {
+        "en": "Chronic condition under follow-up: synthetic analogue of the removal of prior authorisation by Joint Circular 019 of 2025.",
+        "es": "Condición crónica en control: análogo sintético de la eliminación de autorizaciones de la Circular Conjunta 019 de 2025."
+      },
+      "homonimo_de": null,
+      "nombre": {
+        "en": "Diabetes follow-up visit",
+        "es": "Consulta de control de diabetes"
+      }
+    },
+    {
+      "categoria": "control_cronico",
+      "causal": null,
+      "codigo": "SYN-P-032",
+      "costo": 25,
+      "diagnosticos_compatibles": [
+        "SYN-D-23"
+      ],
+      "estado": "exento",
+      "exento_motivo": {
+        "en": "Chronic condition under follow-up: synthetic analogue of the removal of prior authorisation by Joint Circular 019 of 2025.",
+        "es": "Condición crónica en control: análogo sintético de la eliminación de autorizaciones de la Circular Conjunta 019 de 2025."
+      },
+      "homonimo_de": null,
+      "nombre": {
+        "en": "Glycated haemoglobin test",
+        "es": "Hemoglobina glicosilada"
+      }
+    },
+    {
+      "categoria": "control_cronico",
+      "causal": null,
+      "codigo": "SYN-P-033",
+      "costo": 90,
+      "diagnosticos_compatibles": [
+        "SYN-D-24"
+      ],
+      "estado": "exento",
+      "exento_motivo": {
+        "en": "Chronic condition under follow-up: synthetic analogue of the removal of prior authorisation by Joint Circular 019 of 2025.",
+        "es": "Condición crónica en control: análogo sintético de la eliminación de autorizaciones de la Circular Conjunta 019 de 2025."
+      },
+      "homonimo_de": null,
+      "nombre": {
+        "en": "Follow-up spirometry",
+        "es": "Espirometría de control"
+      }
+    },
+    {
+      "categoria": "control_cronico",
+      "causal": null,
+      "codigo": "SYN-P-034",
+      "costo": 110,
+      "diagnosticos_compatibles": [
+        "SYN-D-25"
+      ],
+      "estado": "exento",
+      "exento_motivo": {
+        "en": "Chronic condition under follow-up: synthetic analogue of the removal of prior authorisation by Joint Circular 019 of 2025.",
+        "es": "Condición crónica en control: análogo sintético de la eliminación de autorizaciones de la Circular Conjunta 019 de 2025."
+      },
+      "homonimo_de": null,
+      "nombre": {
+        "en": "Diabetic foot wound care",
+        "es": "Curación de pie diabético"
+      }
+    },
+    {
+      "categoria": "cirugia",
+      "causal": "a",
+      "codigo": "SYN-P-035",
+      "costo": 1400,
+      "diagnosticos_compatibles": [
+        "SYN-D-30"
+      ],
+      "estado": "excluido",
+      "exento_motivo": null,
+      "homonimo_de": "SYN-P-022",
+      "nombre": {
+        "en": "Cosmetic rhinoplasty",
+        "es": "Rinoplastia estética"
+      }
+    },
+    {
+      "categoria": "terapia",
+      "causal": "b",
+      "codigo": "SYN-P-036",
+      "costo": 300,
+      "diagnosticos_compatibles": [
+        "SYN-D-32"
+      ],
+      "estado": "excluido",
+      "exento_motivo": null,
+      "homonimo_de": null,
+      "nombre": {
+        "en": "Bioresonance therapy",
+        "es": "Biorresonancia terapéutica"
+      }
+    },
+    {
+      "categoria": "diagnostico",
+      "causal": "c",
+      "codigo": "SYN-P-037",
+      "costo": 80,
+      "diagnosticos_compatibles": [
+        "SYN-D-33"
+      ],
+      "estado": "excluido",
+      "exento_motivo": null,
+      "homonimo_de": null,
+      "nombre": {
+        "en": "Diagnostic iridology",
+        "es": "Iridología diagnóstica"
+      }
+    },
+    {
+      "categoria": "medicamento",
+      "causal": "d",
+      "codigo": "SYN-P-038",
+      "costo": 650,
+      "diagnosticos_compatibles": [
+        "SYN-D-34"
+      ],
+      "estado": "excluido",
+      "exento_motivo": null,
+      "homonimo_de": null,
+      "nombre": {
+        "en": "Medicine without a current health registration",
+        "es": "Medicamento sin registro sanitario vigente"
+      }
+    },
+    {
+      "categoria": "terapia",
+      "causal": "e",
+      "codigo": "SYN-P-039",
+      "costo": 4800,
+      "diagnosticos_compatibles": [
+        "SYN-D-31"
+      ],
+      "estado": "excluido",
+      "exento_motivo": null,
+      "homonimo_de": null,
+      "nombre": {
+        "en": "Gene therapy at an experimental stage",
+        "es": "Terapia génica en fase experimental"
+      }
+    },
+    {
+      "categoria": "cirugia",
+      "causal": "f",
+      "codigo": "SYN-P-040",
+      "costo": 3500,
+      "diagnosticos_compatibles": [
+        "SYN-D-39"
+      ],
+      "estado": "excluido",
+      "exento_motivo": null,
+      "homonimo_de": null,
+      "nombre": {
+        "en": "Planned surgery abroad",
+        "es": "Cirugía programada en el exterior"
+      }
+    }
+  ],
+  "reglas": [
+    {
+      "id": "RB-01",
+      "texto": {
+        "en": "Emergency: no authorisation is requested and coverage is not checked; it is approved (Law 1751, art. 14).",
+        "es": "Urgencia: no se pide autorización ni se revisa cobertura; se aprueba (Ley 1751, art. 14)."
+      }
+    },
+    {
+      "id": "RB-02",
+      "texto": {
+        "en": "Exempt service: approved without requesting authorisation or checking coverage.",
+        "es": "Servicio exento: se aprueba sin pedir autorización ni revisar cobertura."
+      }
+    },
+    {
+      "id": "RB-03",
+      "texto": {
+        "en": "Excluded service: it is denied only by citing its ground under art. 15 of Law 1751, and a person confirms the denial.",
+        "es": "Servicio excluido: solo se niega citando su causal del art. 15 de la Ley 1751, y la negación la confirma una persona."
+      }
+    },
+    {
+      "id": "RB-04",
+      "texto": {
+        "en": "High cost: if the estimated cost exceeds the plan's U2 threshold, a human auditor decides.",
+        "es": "Alto costo: si el costo estimado supera el umbral U2 del plan, decide un auditor humano."
+      }
+    },
+    {
+      "id": "RB-05",
+      "texto": {
+        "en": "Contradiction: if the order and the doctor's note ask for different procedures, a human auditor decides.",
+        "es": "Contradicción: si la orden y el texto del médico piden procedimientos distintos, decide un auditor humano."
+      }
+    },
+    {
+      "id": "RB-06",
+      "texto": {
+        "en": "Doubt about what a service covers: it is resolved in the member's favour (Law 1751, art. 8).",
+        "es": "Duda sobre el alcance de un servicio: se resuelve a favor del afiliado (Ley 1751, art. 8)."
+      }
+    },
+    {
+      "id": "RB-07",
+      "texto": {
+        "en": "A plan service that needs authorisation, with complete information and none of the conditions above: it is approved.",
+        "es": "Servicio del plan que requiere autorización, con información completa y sin ninguna condición anterior: se aprueba."
+      }
+    }
+  ],
+  "tope_alto_costo": "umbral.U2",
+  "unidad_de_costo": {
+    "en": "synthetic units",
+    "es": "unidades sintéticas"
+  },
+  "version": "1.0.0"
+}

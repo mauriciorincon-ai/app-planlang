@@ -1,0 +1,16 @@
+{
+  "nombre": "Escalas ancladas de severidad, ocurrencia y detección (1–10) y de reversibilidad",
+  "fuente": "contrato instrumentos-de-plan v0.1.0 § 3 (anclas iniciales heredadas de la especificación del segundo consumidor § 11); cada app puede sustituirlas en datos",
+  "severidad_ocurrencia_deteccion": [
+    { "valores": [1, 2], "severidad": { "es": "Molestia menor", "en": "Minor annoyance" }, "ocurrencia": { "es": "Muy improbable", "en": "Very unlikely" }, "deteccion": { "es": "Se detecta casi siempre antes de causar daño", "en": "Almost always detected before harm" } },
+    { "valores": [3, 4], "severidad": { "es": "Retrabajo de días", "en": "Days of rework" }, "ocurrencia": { "es": "Improbable", "en": "Unlikely" }, "deteccion": { "es": "Alta probabilidad de detección temprana", "en": "High probability of early detection" } },
+    { "valores": [5, 6], "severidad": { "es": "Retrabajo de semanas o sobrecosto moderado", "en": "Weeks of rework or moderate overrun" }, "ocurrencia": { "es": "Posible", "en": "Possible" }, "deteccion": { "es": "Se detecta a veces, a menudo tarde", "en": "Sometimes detected, often late" } },
+    { "valores": [7, 8], "severidad": { "es": "Retrabajo de meses, sobrecosto alto o riesgo regulatorio", "en": "Months of rework, high overrun or regulatory risk" }, "ocurrencia": { "es": "Probable", "en": "Likely" }, "deteccion": { "es": "Difícil de detectar antes de producción", "en": "Hard to detect before production" } },
+    { "valores": [9, 10], "severidad": { "es": "Daño a una persona, incidente de datos sensibles, sanción regulatoria o fracaso del proyecto", "en": "Harm to a person, sensitive-data incident, regulatory sanction or project failure" }, "ocurrencia": { "es": "Casi segura", "en": "Almost certain" }, "deteccion": { "es": "Prácticamente indetectable hasta que ocurre", "en": "Practically undetectable until it happens" } }
+  ],
+  "reversibilidad": {
+    "una_via": { "es": "Revertirla implica rehacer la arquitectura, cambiar qué datos ve un sistema o renegociar con áreas. Análisis de riesgos obligatorio; se decide primero.", "en": "Reversing it means redoing the architecture, changing what data a system sees or renegotiating with teams. Risk analysis mandatory; decided first." },
+    "costosa": { "es": "Reversible con esfuerzo acotado. Análisis recomendado.", "en": "Reversible with bounded effort. Analysis recommended." },
+    "dos_vias": { "es": "Se cambia con bajo costo (un umbral, un parámetro). Se decide rápido y se ajusta con evidencia.", "en": "Changed at low cost (a threshold, a parameter). Decided fast and adjusted with evidence." }
+  }
+}

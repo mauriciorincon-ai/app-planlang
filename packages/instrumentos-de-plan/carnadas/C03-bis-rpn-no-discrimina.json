@@ -1,0 +1,1 @@
+{ "id": "C03-bis", "descripcion": "Mismo RPN 96 (S8·O3·D4) → prioridad baja: el RPN no discrimina, la tabla sí (severidad primero, luego ocurrencia)", "modo": { "id": "M", "severidad": 8, "ocurrencia": 3, "deteccion": 4, "mitigaciones": [] }, "esperado": { "prioridad_de_accion": "baja", "rpn": 96 } }

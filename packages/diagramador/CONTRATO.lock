@@ -1,0 +1,9 @@
+{
+  "objeto": "diagramador",
+  "contrato": "reusables/diagramador/CONTRATO.md (planeadora)",
+  "version": "0.2.0",
+  "sha256": "0e62bc60d05ea1062118491c995e4accbbe8f559ccdf342bff9c4717bb37d317",
+  "fijado": "2026-09-27",
+  "consumidor": "planlang (segundo consumidor; gramática agentes-ia v1.0.0). En el S1 solo se fija el contrato: el conversor grafo → mapa vive en core/visor (S2) y el SVG llega con el piloto de big-d.",
+  "enmiendas_propuestas": []
+}

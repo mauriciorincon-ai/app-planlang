@@ -1,0 +1,1 @@
+{ "id": "C05", "descripcion": "Supuesto de criticidad alta con prueba_barata vacía: rechazo", "supuestos": [ { "id": "S1", "criticidad": "alta", "prueba_barata": "" }, { "id": "S2", "criticidad": "baja", "prueba_barata": "" }, { "id": "S3", "criticidad": "alta", "prueba_barata": { "es": "medir", "en": "" } } ], "esperado": { "ok": false, "invalidos": ["S1", "S3"] } }

@@ -1,0 +1,50 @@
+{
+  "nombre": "Tabla de prioridad de acción (AP) para modos de falla",
+  "fuente": "AIAG & VDA FMEA Handbook, 1.ª ed. (2019), tabla de Action Priority (AP) para DFMEA/PFMEA",
+  "fuente_secundaria_verificada": "Relyence, FMEA AP (Action Priority) user guide — reproduce la tabla del handbook; la primaria no es accesible por curl (se vende como documento)",
+  "verificada": "2026-09-26",
+  "gap_declarado": "Una fuente secundaria de blog (quasist.com) afirma que S10·O2·D2 es alta; la tabla reproducida por Relyence da baja para S 9-10 · O 2-3 · D 2-4. Se adopta Relyence (implementa el handbook en producto). La planeadora debe cerrar el gap con la fuente primaria antes de promover el reusable a «probado».",
+  "principio": "severidad primero, luego ocurrencia, luego detección; el RPN es solo orden secundario",
+  "bandas": {
+    "severidad": { "9-10": [9, 10], "7-8": [7, 8], "4-6": [4, 6], "2-3": [2, 3], "1": [1, 1] },
+    "ocurrencia": { "8-10": [8, 10], "6-7": [6, 7], "4-5": [4, 5], "2-3": [2, 3], "1": [1, 1] },
+    "deteccion": { "7-10": [7, 10], "5-6": [5, 6], "2-4": [2, 4], "1": [1, 1] }
+  },
+  "tabla": {
+    "9-10": {
+      "8-10": { "7-10": "alta", "5-6": "alta", "2-4": "alta", "1": "alta" },
+      "6-7": { "7-10": "alta", "5-6": "alta", "2-4": "alta", "1": "alta" },
+      "4-5": { "7-10": "alta", "5-6": "alta", "2-4": "alta", "1": "media" },
+      "2-3": { "7-10": "alta", "5-6": "media", "2-4": "baja", "1": "baja" },
+      "1": { "7-10": "baja", "5-6": "baja", "2-4": "baja", "1": "baja" }
+    },
+    "7-8": {
+      "8-10": { "7-10": "alta", "5-6": "alta", "2-4": "alta", "1": "alta" },
+      "6-7": { "7-10": "alta", "5-6": "alta", "2-4": "alta", "1": "media" },
+      "4-5": { "7-10": "alta", "5-6": "media", "2-4": "media", "1": "media" },
+      "2-3": { "7-10": "media", "5-6": "media", "2-4": "baja", "1": "baja" },
+      "1": { "7-10": "baja", "5-6": "baja", "2-4": "baja", "1": "baja" }
+    },
+    "4-6": {
+      "8-10": { "7-10": "alta", "5-6": "alta", "2-4": "media", "1": "media" },
+      "6-7": { "7-10": "media", "5-6": "media", "2-4": "media", "1": "baja" },
+      "4-5": { "7-10": "media", "5-6": "baja", "2-4": "baja", "1": "baja" },
+      "2-3": { "7-10": "baja", "5-6": "baja", "2-4": "baja", "1": "baja" },
+      "1": { "7-10": "baja", "5-6": "baja", "2-4": "baja", "1": "baja" }
+    },
+    "2-3": {
+      "8-10": { "7-10": "media", "5-6": "media", "2-4": "baja", "1": "baja" },
+      "6-7": { "7-10": "baja", "5-6": "baja", "2-4": "baja", "1": "baja" },
+      "4-5": { "7-10": "baja", "5-6": "baja", "2-4": "baja", "1": "baja" },
+      "2-3": { "7-10": "baja", "5-6": "baja", "2-4": "baja", "1": "baja" },
+      "1": { "7-10": "baja", "5-6": "baja", "2-4": "baja", "1": "baja" }
+    },
+    "1": {
+      "8-10": { "7-10": "baja", "5-6": "baja", "2-4": "baja", "1": "baja" },
+      "6-7": { "7-10": "baja", "5-6": "baja", "2-4": "baja", "1": "baja" },
+      "4-5": { "7-10": "baja", "5-6": "baja", "2-4": "baja", "1": "baja" },
+      "2-3": { "7-10": "baja", "5-6": "baja", "2-4": "baja", "1": "baja" },
+      "1": { "7-10": "baja", "5-6": "baja", "2-4": "baja", "1": "baja" }
+    }
+  }
+}

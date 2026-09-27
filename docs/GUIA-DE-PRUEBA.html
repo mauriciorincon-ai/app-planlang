@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Guía de prueba — [APP_NAME]</title>
+<title>Guía de prueba — planlang</title>
 <!--
   GUÍA DE PRUEBA VIVA Y ACUMULATIVA — entregable estándar de TODO sprint con UI (reglas duras
   del pipeline, G-Metodo 2026-07-12). Referencia: app-habla/docs/GUIA-DE-PRUEBA.html.
@@ -61,9 +61,9 @@
      la prueba A6 de habla pedía ver subir un mínimo corrido dentro de la misma sesión — un
      imposible del instrumento que solo el gate humano detectó.
 
-  AL ESTAMPAR/ACTUALIZAR: reemplazar [APP_NAME], [SLUG], [SPRINT], [FECHA], la URL de preview y
-  los bloques de ejemplo por los reales. Actualizar el NS del script a s[SPRINT]. Los tokens de
-  color pueden alinearse con el design-system de la app.
+  planlang S1: nace sin pantalla. Las pruebas se hacen en la terminal (raíz del repo) y sobre
+  archivos del repo; la caja de URL de la plantilla se reemplaza por «Dónde se prueba». Los tokens
+  de color son los de la plantilla: el design system de planlang se aprueba en G-Diseño (S2).
 -->
 <style>
   :root {
@@ -157,28 +157,22 @@
 <body>
 <div class="pagina">
   <header>
-    <p class="eyebrow">[APP_NAME] · Guía de prueba viva y acumulativa · Sprint [SPRINT] · [FECHA]</p>
+    <p class="eyebrow">planlang · Guía de prueba viva y acumulativa · Sprint 1 · 2026-09-27</p>
     <h1>Guía de prueba</h1>
-    <p class="suave">Todas las pruebas vigentes de la app — las nuevas de este sprint, las que
-      cambiaron y las heredadas (regresión). Filtra por origen para correr todo o solo lo que
-      cambió. Las casillas se guardan solas en este navegador.</p>
-    <p class="chica"><strong>Gate corto ⭐⭐: [K] paradas · ~20 min — es el que el cierre de
-      ciclo exige.</strong> Solo lo que únicamente un humano puede juzgar; si el CI lo verifica
-      por otro camino, no entra. Deja fuera [N−K] pruebas ⭐ — ninguna se borra: siguen enteras
-      en el filtro ⭐, que se ofrece para cuando quieras la confianza completa.</p>
-    <p class="chica"><strong>Gate mínimo ⭐: [N] pruebas · ~[M] min.</strong> Es lo que ninguna
-      automatización puede verificar (hardware/micrófono/voz reales, juicio sobre el contenido,
-      aprobación visual). Lo que la CI ya respalda queda fuera del mínimo y se corre en pases
-      completos.</p>
+    <p class="suave">Todas las pruebas vigentes de la app, con su origen. En el sprint 1 no hay pantalla: se prueba en la
+      terminal y leyendo archivos del repo. Las casillas se guardan solas en este navegador.</p>
+    <p class="chica"><strong>Gate corto ⭐⭐: 3 paradas · ~15 min — diferido al cierre de pruebas del ciclo (MVP) por decisión del usuario (2026-09-27).</strong> Solo lo
+      que únicamente tú puedes juzgar: correr el lote con tu suscripción, leer el informe y mirar el espejo en LangSmith.
+      Deja fuera 2 pruebas ⭐ (bloque D) porque la CI ya las verifica; ninguna se borra.</p>
+    <p class="chica"><strong>Gate mínimo ⭐: 5 pruebas · ~20 min.</strong> Las 3 paradas más la re-verificación de confianza
+      del bloque D. <strong>Todo lo demás lo verifica la CI</strong> (golden files, prueba cruzada de ramas, M9, validador de
+      identificadores): bloques E–H, y el kit de prueba en <code>docs/kit-de-prueba/</code>.</p>
     <div class="url-caja">
-      <p class="eyebrow" style="margin:0 0 6px">URL de prueba</p>
-      <code>[URL de la preview de la rama del sprint]</code>
-      <p class="chica suave" style="margin:8px 0 0">Dirección estable de la rama: no cambia aunque
-        se suban correcciones. Si pide login de Vercel: Settings → Deployment Protection →
-        Vercel Authentication → Disabled.</p>
-      <p class="chica suave" style="margin:8px 0 0"><strong>Cada bloque abre con "Empieza en:"</strong> —
-        la ruta exacta (sobre esta URL) donde arranca su primera prueba. Navega ahí antes de
-        empezar el bloque.</p>
+      <p class="eyebrow" style="margin:0 0 6px">Dónde se prueba</p>
+      <p style="margin:0">Una terminal abierta en la raíz del repositorio (<code>~/Code/app-planlang</code>), con
+        <code>pnpm install</code> hecho y Claude Code con tu sesión iniciada. Sin URL: el S1 no tiene pantalla.</p>
+      <p class="chica suave" style="margin:8px 0 0"><strong>Cada bloque abre con «Empieza en:»</strong>: la terminal, un
+        archivo del repo o un servicio. Ve ahí antes de empezar el bloque.</p>
     </div>
   </header>
 
@@ -189,72 +183,171 @@
     </div>
     <div class="filtros" role="group" aria-label="Filtrar pruebas por origen">
       <button type="button" data-filtro="todo" class="activo">Todo</button>
-      <button type="button" data-filtro="cambios">Lo que cambió en S[SPRINT]</button>
+      <button type="button" data-filtro="cambios">Lo que cambió en S1</button>
       <button type="button" data-filtro="minimo">Gate mínimo ⭐</button>
       <button type="button" data-filtro="corto">Gate corto ⭐⭐</button>
     </div>
   </div>
 
-  <!-- ANATOMÍA DE UN BLOQUE (copiar y adaptar; uno por área a probar).
-       Cada <li> DEBE llevar data-origen="nuevo|mejorado|heredada" + su chip visible, y
-       data-minimo (sin valor) + "⭐ mínimo" si integra el gate mínimo, y ADEMÁS data-corto +
-       "⭐⭐ Parada N de M" si integra el gate corto (toda data-corto lleva también data-minimo:
-       el corto es subconjunto del mínimo). Ids únicos.
-       La meta-línea SIEMPRE abre con "Empieza en:" + la ruta exacta (regla 8). -->
   <section class="bloque">
-    <div class="bloque-cabeza"><span class="letra">A</span><h2>[Nombre del bloque]</h2></div>
-    <p class="meta-bloque chica suave"><strong>Empieza en:</strong> <code>[/ruta-exacta]</code> ·
-      [~N min · qué valida en una línea]</p>
+    <div class="bloque-cabeza"><span class="letra">A</span><h2>Correr un lote de 20 con tu suscripción</h2></div>
+    <p class="meta-bloque chica suave"><strong>Empieza en:</strong> <code>terminal · raíz del repo</code> · ~8 min (5 de espera) · latencia y cuota reales en tu Mac</p>
     <ul class="pasos">
-      <li data-origen="nuevo" data-minimo data-corto><input type="checkbox" id="a1"><label for="a1">[Paso
-        NUEVO de este sprint cuyo veredicto SOLO puede ser humano — entra al gate corto.]
-        <span class="origen origen-nuevo">Nuevo · S[SPRINT]</span>
+      <li data-origen="nuevo" data-minimo data-corto><input type="checkbox" id="a1"><label for="a1"><strong>1 · Prepara la terminal (para la parada 3).</strong> Si ya tienes cuenta de LangSmith, en ESTA terminal
+        escribe <code>read -s LANGSMITH_API_KEY &amp;&amp; export LANGSMITH_API_KEY</code> (pega la clave; no se ve ni queda en el
+        historial), luego <code>export LANGSMITH_TRACING=true LANGSMITH_PROJECT=planlang-demo-a</code>. <strong>Nunca</strong>
+        la escribas en un archivo del repo. Sin cuenta: salta este paso y la parada 3 queda como deuda declarada.<br>
+        <strong>2 · Mira tu cuota antes.</strong> En la app de Claude: Configuración → Uso. Anota el porcentaje usado.
+        Luego corre <code>pnpm lote:demo --corrida gate-s1 --fecha AAAA-MM-DD --salida /tmp/planlang-gate</code> (con la fecha
+        de hoy; el comando ya deja 2 s entre casos y, con la suscripción, no acepta más de 20 ni correr sin pausa). Esperado: <strong>20 casos, 0 con error, unos 5 minutos</strong>; cada caso imprime una línea con
+        <code>latencia_ms</code>. Vuelve a mirar la cuota: la diferencia es lo que cuesta un lote de 20 (dato para decidir
+        el lote de 200).
+        <span class="origen origen-nuevo">Nuevo · S1</span>
         <span class="minimo">⭐ mínimo</span>
-        <span class="minimo">⭐⭐ Parada 1 de [K]</span></label></li>
-      <li data-origen="mejorado"><input type="checkbox" id="a2"><label for="a2">[Paso que venía
-        de antes y este sprint CAMBIÓ — con el resultado esperado en <strong>negrita</strong>.]
-        <span class="origen origen-mejorado">Mejorado en S[SPRINT]</span></label></li>
-      <li data-origen="heredada"><input type="checkbox" id="a3"><label for="a3">[Paso heredado
-        del sprint anterior SIN cambios ⇒ regresión. Se copia ENTERO, no se resume.]
-        <span class="origen origen-heredada">S[SPRINT-1]</span></label></li>
+        <span class="minimo">⭐⭐ Parada 1 de 3</span></label></li>
     </ul>
     <div class="tabla-scroll"><table>
       <tr><th>Qué mirar</th><th>Valor / comportamiento correcto</th></tr>
-      <tr><td>[dato o pantalla]</td><td class="valor">[lo que debe verse si está bien]</td></tr>
+      <tr><td>Casos ejecutados</td><td class="valor">20 de 20 · 0 con error del proveedor</td></tr>
+      <tr><td>Latencia por caso</td><td class="valor">la mayoría entre 5 y 20 s; mediana ≈ 11 s (el plan exige ≤ 30 s)</td></tr>
+      <tr><td>Consumo de cuota</td><td class="valor">un lote de 20 ≈ US$ 0,70 nominales (46–50 llamadas al modelo)</td></tr>
     </table></div>
-    <div class="kit"><p><strong>Kit de prueba:</strong> [si un paso necesita documento, código o
-      dataset de prueba, vive en <code>docs/kit-de-prueba/</code> — nómbralo aquí con su ruta y
-      cómo usarlo. Si el bloque no necesita kit, elimina este callout].</p></div>
-    <div class="reportame"><p><strong>Repórtame sí o sí:</strong> [las señales que significan que
-      algo está roto y hay que arreglar antes del merge].</p></div>
+    <div class="reportame"><p><strong>Repórtame sí o sí:</strong> un límite de uso a mitad de lote, un caso con error, una
+      latencia por caso mayor de 60 s, o cualquier línea que muestre una clave o un identificador de sesión.</p></div>
   </section>
 
-  <!-- Repetir <section class="bloque"> por cada área. -->
+  <section class="bloque">
+    <div class="bloque-cabeza"><span class="letra">B</span><h2>Leer el informe de brecha</h2></div>
+    <p class="meta-bloque chica suave"><strong>Empieza en:</strong> <code>runs/demo-a/suscripcion-planlang-a-001-20-v1.2/informe.es.md</code> · ~5 min · ¿reconoces tu plan?</p>
+    <ul class="pasos">
+      <li data-origen="nuevo" data-minimo data-corto><input type="checkbox" id="b1"><label for="b1">Abre <code>informe.es.md</code> de esa carpeta (en VS Code, <code>Cmd+Shift+V</code> lo muestra formateado) y
+        luego <code>informe.en.md</code>. Lee la sección 1 y responde: <strong>¿reconoces tu plan?</strong> ¿El veredicto,
+        el criterio que no cierra (si hay uno) y la recomendación se entienden sin saber programar, en los dos idiomas?
+        <span class="origen origen-nuevo">Nuevo · S1</span>
+        <span class="minimo">⭐ mínimo</span>
+        <span class="minimo">⭐⭐ Parada 2 de 3</span></label></li>
+    </ul>
+    <div class="tabla-scroll"><table>
+      <tr><th>Qué mirar</th><th>Valor / comportamiento correcto</th></tr>
+      <tr><td>Encabezado</td><td class="valor">«Simulación · no operativo», la corrida, la fecha y el plan 1.2.0</td></tr>
+      <tr><td>Sección 1</td><td class="valor">veredicto con símbolo y texto, un resumen de ≤ 50 palabras y una recomendación accionable</td></tr>
+      <tr><td>Sección 1</td><td class="valor">«cumple con alertas»: 9 de 9 criterios cumplidos (C5 medido con 3 de 3 corridas), ningún riesgo
+        ocurrido, y tres alertas a la vista: S1 sin probar, S3 refutado y 5 fallas no previstas</td></tr>
+      <tr><td>Sección 5</td><td class="valor">5 fallas no previstas: 1 en la corrida y 4 en las repeticiones (cada una dice en cuál)</td></tr>
+      <tr><td>Sección 6 · supuestos</td><td class="valor">S3 <strong>refutado</strong> por latencia (el multiagente acierta más pero tarda más), con la regla que lo decidió,
+        el error de la línea base en A-012 y sus 5 respuestas inservibles, dicho sin maquillar; S1 sin probar con su razón (sin errores
+        de extracción no hay nada que discriminar); S2 confirmado con la nota de muestra pequeña</td></tr>
+      <tr><td>Sección 8</td><td class="valor">«U4 (Modo Texas): conmutarlo cambia 0 de las 62 decisiones»: con este plan, el modo Texas no mueve nada
+        (toda negación ya pasa por una persona) y el informe lo calcula en vez de prometerlo</td></tr>
+      <tr><td>Sección 9</td><td class="valor">huellas del plan, los casos y la corrida; «generado con el plan 1.1.0» en los casos</td></tr>
+    </table></div>
+    <div class="kit"><p><strong>Kit de prueba:</strong> <code>docs/kit-de-prueba/README.md</code> explica qué informe es cuál (el
+      de la v1.2, el de la v1.1 que queda como historia y el de la corrida simulada que usa la CI).</p></div>
+    <div class="reportame"><p><strong>Repórtame sí o sí:</strong> una frase que no entiendas, un número que no coincida entre
+      español e inglés, o un resultado que te parezca escondido o maquillado.</p></div>
+  </section>
 
   <section class="bloque">
-    <div class="bloque-cabeza"><span class="letra">B</span><h2>[Siguiente bloque]</h2></div>
-    <p class="meta-bloque chica suave"><strong>Empieza en:</strong> <code>[/ruta-exacta]</code> ·
-      [~N min · qué valida en una línea]</p>
+    <div class="bloque-cabeza"><span class="letra">C</span><h2>Ver el espejo en LangSmith</h2></div>
+    <p class="meta-bloque chica suave"><strong>Empieza en:</strong> <code>LangSmith · proyecto planlang-demo-a</code> · ~3 min · nada que no sea sintético</p>
     <ul class="pasos">
-      <li data-origen="heredada"><input type="checkbox" id="b1"><label for="b1">[…]
-        <span class="origen origen-heredada">S[SPRINT-1]</span></label></li>
+      <li data-origen="nuevo" data-minimo data-corto><input type="checkbox" id="c1"><label for="c1">Entra a LangSmith, proyecto <code>planlang-demo-a</code>. Debes ver las 20 trazas del lote de la parada 1, con los
+        nombres de nodo (<code>extractor</code>, <code>redactor</code>…). Abre dos al azar y confirma que <strong>ninguna muestra
+        una credencial</strong> ni un dato que no sea sintético (los documentos empiezan por <code>SYN-</code>, los teléfonos por
+        <code>555-01</code>, los correos terminan en <code>example.com</code>).
+        <span class="origen origen-nuevo">Nuevo · S1</span>
+        <span class="minimo">⭐ mínimo</span>
+        <span class="minimo">⭐⭐ Parada 3 de 3</span></label></li>
     </ul>
-    <div class="diferido"><p><strong>Diferido:</strong> [lo que no se puede probar hoy y por qué;
-      cuándo se probará. Los diferidos se ACUMULAN entre sprints hasta pagarse].</p></div>
+    <div class="diferido"><p><strong>Si no configuraste LangSmith en la parada 1:</strong> esta parada queda <strong>diferida y
+      declarada</strong> en el summary del sprint (deuda del espejo desde la fase 3). Las trazas propias en <code>runs/</code> son
+      la fuente de verdad; LangSmith es solo un espejo.</p></div>
+  </section>
+
+  <section class="bloque">
+    <div class="bloque-cabeza"><span class="letra">D</span><h2>Re-verificación de confianza (la CI ya lo cubre)</h2></div>
+    <p class="meta-bloque chica suave"><strong>Empieza en:</strong> <code>terminal · raíz del repo</code> · ~2 min · opcional, fuera del gate corto</p>
+    <ul class="pasos">
+      <li data-origen="nuevo" data-minimo><input type="checkbox" id="d1"><label for="d1"><code>pnpm trazas:verificar</code>. Esperado: <strong>✓ en cada corrida de <code>runs/</code></strong> (huellas, ramas
+        reproducibles desde el plan, ninguna credencial).
+        <span class="origen origen-nuevo">Nuevo · S1</span>
+        <span class="minimo">⭐ mínimo</span></label></li>
+      <li data-origen="nuevo" data-minimo><input type="checkbox" id="d2"><label for="d2"><code>pnpm m9:reporte --verificar</code>. Esperado: <strong>«M9: 10/10 · control limpio»</strong>: las 10 fallas sembradas
+        a propósito se detectan y la corrida limpia no dispara ninguna.
+        <span class="origen origen-nuevo">Nuevo · S1</span>
+        <span class="minimo">⭐ mínimo</span></label></li>
+    </ul>
+  </section>
+
+  <section class="bloque">
+    <div class="bloque-cabeza"><span class="letra">E</span><h2>Automatizadas · el plan como contrato</h2></div>
+    <p class="meta-bloque chica suave"><strong>Empieza en:</strong> <code>CI · job quality</code> · no requiere acción · referencia</p>
+    <ul class="pasos">
+      <li data-origen="nuevo"><input type="checkbox" id="e1"><label for="e1">12 planes con errores sembrados se rechazan, cada uno con su motivo. <span class="suave">Lo verifica la CI · <code>tests/unit/core/plan/planes-sembrados.test.ts</code></span>
+        <span class="origen origen-nuevo">Nuevo · S1</span></label></li>
+      <li data-origen="nuevo"><input type="checkbox" id="e2"><label for="e2">Los planes v1, v1.1 y v1.2 se reproducen con la misma huella desde sus enmiendas. <span class="suave">Lo verifica la CI · <code>tests/unit/core/plan/enmienda-*.test.ts</code></span>
+        <span class="origen origen-nuevo">Nuevo · S1</span></label></li>
+      <li data-origen="nuevo"><input type="checkbox" id="e3"><label for="e3">Carnadas C01–C05 y C03-bis del reusable instrumentos de plan (prioridad de acción AIAG-VDA). <span class="suave">Lo verifica la CI · <code>packages/instrumentos-de-plan/tests</code></span>
+        <span class="origen origen-nuevo">Nuevo · S1</span></label></li>
+      <li data-origen="nuevo"><input type="checkbox" id="e4"><label for="e4">JSON canónico y huella iguales en Python y TypeScript sobre valores difíciles. <span class="suave">Lo verifica la CI · <code>tests/contrato/jcs-python-ts.test.ts</code></span>
+        <span class="origen origen-nuevo">Nuevo · S1</span></label></li>
+      <li data-origen="nuevo"><input type="checkbox" id="e5"><label for="e5">El núcleo no usa reloj, azar ni Intl; los reusables no nombran el dominio. <span class="suave">Lo verifica la CI · <code>tests/unit/guardias/</code></span>
+        <span class="origen origen-nuevo">Nuevo · S1</span></label></li>
+    </ul>
+  </section>
+
+  <section class="bloque">
+    <div class="bloque-cabeza"><span class="letra">F</span><h2>Automatizadas · casos sintéticos</h2></div>
+    <p class="meta-bloque chica suave"><strong>Empieza en:</strong> <code>CI · jobs quality y python</code> · no requiere acción · referencia</p>
+    <ul class="pasos">
+      <li data-origen="nuevo"><input type="checkbox" id="f1"><label for="f1">Los lotes de 3, 20 y 200 casos se regeneran idénticos byte a byte, en Node y en jsdom. <span class="suave">Lo verifica la CI · <code>tests/integration/casos-versionados.test.ts</code></span>
+        <span class="origen origen-nuevo">Nuevo · S1</span></label></li>
+      <li data-origen="nuevo"><input type="checkbox" id="f2"><label for="f2">Ningún identificador con formato real en casos, planes de beneficios, corridas ni informes (3 carnadas en rojo). <span class="suave">Lo verifica la CI · <code>tests/unit/guardias/identificadores-en-datos.test.ts</code></span>
+        <span class="origen origen-nuevo">Nuevo · S1</span></label></li>
+    </ul>
+  </section>
+
+  <section class="bloque">
+    <div class="bloque-cabeza"><span class="letra">G</span><h2>Automatizadas · el agente y sus trazas</h2></div>
+    <p class="meta-bloque chica suave"><strong>Empieza en:</strong> <code>CI · job python</code> · no requiere acción · referencia</p>
+    <ul class="pasos">
+      <li data-origen="nuevo"><input type="checkbox" id="g1"><label for="g1">El adaptador llama a <code>claude</code> con los flags exactos, sin <code>--bare</code>, sin claves en el entorno y en un directorio temporal limpio. <span class="suave">Lo verifica la CI · <code>agents/tests/test_adaptador_flags.py</code></span>
+        <span class="origen origen-nuevo">Nuevo · S1</span></label></li>
+      <li data-origen="nuevo"><input type="checkbox" id="g2"><label for="g2">El grafo del demo A: urgencias y exentos sin cobertura, toda negación con pausa humana, guardia de salida, documento adverso ES/EN. <span class="suave">Lo verifica la CI · <code>agents/tests/test_grafo_demo_a.py</code></span>
+        <span class="origen origen-nuevo">Nuevo · S1</span></label></li>
+      <li data-origen="nuevo"><input type="checkbox" id="g3"><label for="g3">La corrida simulada de 3 casos se regenera idéntica (cualquier cambio del grafo o del exportador la pone en rojo). <span class="suave">Lo verifica la CI · <code>agents/tests/test_corrida_simulada_versionada.py</code></span>
+        <span class="origen origen-nuevo">Nuevo · S1</span></label></li>
+      <li data-origen="nuevo"><input type="checkbox" id="g4"><label for="g4">Lotes acumulables sin duplicar, límite de uso, reintentos de salida estructurada y lotes de otro plan solo si dan la misma verdad. <span class="suave">Lo verifica la CI · <code>agents/tests/test_lotes.py</code></span>
+        <span class="origen origen-nuevo">Nuevo · S1</span></label></li>
+    </ul>
+  </section>
+
+  <section class="bloque">
+    <div class="bloque-cabeza"><span class="letra">H</span><h2>Automatizadas · el verificador de brecha</h2></div>
+    <p class="meta-bloque chica suave"><strong>Empieza en:</strong> <code>CI · job quality</code> · no requiere acción · referencia</p>
+    <ul class="pasos">
+      <li data-origen="nuevo"><input type="checkbox" id="h1"><label for="h1">El informe de la corrida simulada es idéntico al golden en Node y en jsdom (JSON, español e inglés). <span class="suave">Lo verifica la CI · <code>tests/integration/informe-simulado.test.ts</code></span>
+        <span class="origen origen-nuevo">Nuevo · S1</span></label></li>
+      <li data-origen="nuevo"><input type="checkbox" id="h2"><label for="h2">Prueba cruzada Python ↔ TypeScript: cada decisión de cada corrida versionada se reproduce desde el plan, con la misma huella. <span class="suave">Lo verifica la CI · <code>tests/unit/core/playground/rf-09-2.test.ts</code></span>
+        <span class="origen origen-nuevo">Nuevo · S1</span></label></li>
+      <li data-origen="nuevo"><input type="checkbox" id="h3"><label for="h3">M9: 10 de 10 fallas sembradas detectadas y corrida limpia sin falsas alarmas. <span class="suave">Lo verifica la CI · <code>tests/unit/core/brecha/m9.test.ts</code></span>
+        <span class="origen origen-nuevo">Nuevo · S1</span></label></li>
+      <li data-origen="nuevo"><input type="checkbox" id="h4"><label for="h4">Los informes guardados junto a las corridas están al día. <span class="suave">Lo verifica la CI · <code>tests/integration/informes-versionados.test.ts</code></span>
+        <span class="origen origen-nuevo">Nuevo · S1</span></label></li>
+      <li data-origen="nuevo"><input type="checkbox" id="h5"><label for="h5">Informe de 200 casos en menos de 2 s; textos para quien decide dentro del presupuesto de 50 palabras. <span class="suave">Lo verifica la CI · <code>tests/unit/core/brecha/</code></span>
+        <span class="origen origen-nuevo">Nuevo · S1</span></label></li>
+    </ul>
   </section>
 
   <footer>
-    <p class="chica suave">Guía <strong>viva y acumulativa</strong>: contiene TODAS las pruebas
-      vigentes de la app con su origen visible; una prueba solo se elimina cuando su feature dejó
-      de existir (queda declarado abajo). Archivo autocontenido — se abre sin internet, se
-      versiona con el repo y se puede compartir tal cual.</p>
+    <p class="chica suave">Guía <strong>viva y acumulativa</strong>: contiene TODAS las pruebas vigentes de la app con su
+      origen visible; una prueba solo se elimina cuando su feature dejó de existir (queda declarado abajo). Archivo
+      autocontenido: se abre sin internet, se versiona con el repo y se puede compartir tal cual.</p>
     <details class="chica">
       <summary>Historial de la guía</summary>
       <ul>
-        <li><strong>S[SPRINT] · [FECHA]:</strong> [qué bloques/pruebas se agregaron o mejoraron ·
-          pruebas eliminadas y la feature muerta que las justifica — o "ninguna eliminada"].</li>
-        <li><strong>S[SPRINT-1] · [FECHA]:</strong> [entrada anterior — el historial también es
-          acumulativo].</li>
+        <li><strong>S1 · 2026-09-27:</strong> nace. 3 paradas del gate corto (lote real, informe, LangSmith), 2 de confianza
+          y 16 automatizadas de referencia. Ninguna eliminada. Las 3 paradas se difirieron al MVP (decisión del usuario).</li>
       </ul>
     </details>
   </footer>
@@ -263,8 +356,8 @@
 <script>
   (function () {
     // NS VERSIONADO POR SPRINT (regla dura): al publicar la guía de un sprint nuevo se cambia
-    // s[SPRINT] — así una regresión sin correr no aparece marcada por el sprint anterior.
-    var NS = "guia-[SLUG]:s[SPRINT]:";
+    // s1 — así una regresión sin correr no aparece marcada por el sprint anterior.
+    var NS = "guia-planlang:s1:";
     var casillas = Array.prototype.slice.call(document.querySelectorAll('input[type="checkbox"]'));
     var barra = document.getElementById("barra-avance");
     var contador = document.getElementById("contador");

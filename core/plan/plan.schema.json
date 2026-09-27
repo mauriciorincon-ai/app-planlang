@@ -1,0 +1,1212 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "actores": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "en": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "es": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "id": {
+            "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+            "type": "string"
+          },
+          "rol_en_pausa": {
+            "type": "boolean"
+          },
+          "tipo": {
+            "enum": [
+              "humano",
+              "sistema"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "es",
+          "en",
+          "tipo"
+        ],
+        "type": "object"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "aprobado_el": {
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "type": "string"
+    },
+    "aprobado_por": {
+      "type": "string"
+    },
+    "contrato_de_grafo": {
+      "additionalProperties": false,
+      "properties": {
+        "aristas_condicionales": {
+          "items": {
+            "anyOf": [
+              {
+                "additionalProperties": false,
+                "properties": {
+                  "desde": {
+                    "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+                    "type": "string"
+                  },
+                  "inclusivo": {
+                    "type": "boolean"
+                  },
+                  "operador": {
+                    "enum": [
+                      "igual_a",
+                      "distinto_de",
+                      "menor_que",
+                      "menor_o_igual_que",
+                      "mayor_que",
+                      "mayor_o_igual_que"
+                    ],
+                    "type": "string"
+                  },
+                  "orden": {
+                    "maximum": 9007199254740991,
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  "senal": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "si_falso": {
+                    "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+                    "type": "string"
+                  },
+                  "si_verdadero": {
+                    "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+                    "type": "string"
+                  },
+                  "valor": {
+                    "type": [
+                      "number",
+                      "boolean",
+                      "string"
+                    ]
+                  }
+                },
+                "required": [
+                  "desde",
+                  "orden",
+                  "senal",
+                  "operador",
+                  "valor",
+                  "inclusivo",
+                  "si_verdadero"
+                ],
+                "type": "object"
+              },
+              {
+                "additionalProperties": false,
+                "properties": {
+                  "desde": {
+                    "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+                    "type": "string"
+                  },
+                  "funcion": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "entradas": {
+                        "items": {
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "minItems": 1,
+                        "type": "array"
+                      },
+                      "nombre": {
+                        "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "nombre",
+                      "entradas"
+                    ],
+                    "type": "object"
+                  },
+                  "nota": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "en": {
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "es": {
+                        "minLength": 1,
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "es",
+                      "en"
+                    ],
+                    "type": "object"
+                  },
+                  "orden": {
+                    "maximum": 9007199254740991,
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  "si_falso": {
+                    "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+                    "type": "string"
+                  },
+                  "si_verdadero": {
+                    "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "desde",
+                  "orden",
+                  "funcion",
+                  "si_verdadero"
+                ],
+                "type": "object"
+              }
+            ]
+          },
+          "type": "array"
+        },
+        "evaluadores_requeridos": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+                "type": "string"
+              },
+              "modo": {
+                "enum": [
+                  "selectivo",
+                  "total"
+                ],
+                "type": "string"
+              },
+              "opcional_en_corte": {
+                "type": "boolean"
+              },
+              "riesgos_cubiertos": {
+                "default": [],
+                "items": {
+                  "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "tipo": {
+                "enum": [
+                  "regla",
+                  "juez_modelo",
+                  "humano"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "tipo",
+              "riesgos_cubiertos"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "linea_base": {
+          "additionalProperties": false,
+          "properties": {
+            "agente_unico": {
+              "type": "boolean"
+            },
+            "lote": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "mismo_presupuesto": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "agente_unico",
+            "lote",
+            "mismo_presupuesto"
+          ],
+          "type": "object"
+        },
+        "nodos_esperados": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+                "type": "string"
+              },
+              "tipo": {
+                "enum": [
+                  "enrutador",
+                  "modelo",
+                  "regla",
+                  "pausa_humana",
+                  "herramienta"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "tipo"
+            ],
+            "type": "object"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "pausas_humanas": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "nodo": {
+                "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+                "type": "string"
+              },
+              "payload_minimo": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "politica_simulada": {
+                "additionalProperties": false,
+                "properties": {
+                  "en": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "es": {
+                    "minLength": 1,
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "es",
+                  "en"
+                ],
+                "type": "object"
+              },
+              "rol": {
+                "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+                "type": "string"
+              }
+            },
+            "required": [
+              "nodo",
+              "rol",
+              "payload_minimo",
+              "politica_simulada"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "ramas_por_defecto": {
+          "additionalProperties": {
+            "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+            "type": "string"
+          },
+          "default": {},
+          "propertyNames": {
+            "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "senales_obligatorias_en_traza": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        }
+      },
+      "required": [
+        "nodos_esperados",
+        "aristas_condicionales",
+        "ramas_por_defecto",
+        "pausas_humanas",
+        "senales_obligatorias_en_traza",
+        "evaluadores_requeridos"
+      ],
+      "type": "object"
+    },
+    "criterios_aceptacion": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "enunciado": {
+            "additionalProperties": false,
+            "properties": {
+              "en": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "es": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "es",
+              "en"
+            ],
+            "type": "object"
+          },
+          "id": {
+            "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+            "type": "string"
+          },
+          "origen": {
+            "enum": [
+              "plantilla",
+              "entrevistador",
+              "usuario"
+            ],
+            "type": "string"
+          },
+          "regla_de_medicion": {
+            "additionalProperties": false,
+            "properties": {
+              "agregacion": {
+                "enum": [
+                  "todos_cumplen",
+                  "pass^k",
+                  "tasa",
+                  "mediana",
+                  "promedio",
+                  "maximo"
+                ],
+                "type": "string"
+              },
+              "condicion": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "k": {
+                "maximum": 9007199254740991,
+                "minimum": 1,
+                "type": "integer"
+              },
+              "k_aplica_a": {
+                "type": "string"
+              },
+              "metrica": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "poblacion": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "poblacion",
+              "agregacion"
+            ],
+            "type": "object"
+          },
+          "tipo": {
+            "enum": [
+              "absoluto",
+              "tasa",
+              "latencia",
+              "costo"
+            ],
+            "type": "string"
+          },
+          "valor_objetivo": {
+            "type": [
+              "number",
+              "boolean"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "enunciado",
+          "tipo",
+          "regla_de_medicion",
+          "valor_objetivo",
+          "origen"
+        ],
+        "type": "object"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "decisiones": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "depende_de": {
+            "default": [],
+            "items": {
+              "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "estado": {
+            "enum": [
+              "abierta",
+              "decidida",
+              "superada"
+            ],
+            "type": "string"
+          },
+          "id": {
+            "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+            "type": "string"
+          },
+          "justificacion": {
+            "additionalProperties": false,
+            "properties": {
+              "en": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "es": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "es",
+              "en"
+            ],
+            "type": "object"
+          },
+          "opcion_elegida": {
+            "type": "string"
+          },
+          "opciones": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "contras": {
+                  "type": "string"
+                },
+                "nombre": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "pros": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "nombre"
+              ],
+              "type": "object"
+            },
+            "minItems": 2,
+            "type": "array"
+          },
+          "pregunta": {
+            "additionalProperties": false,
+            "properties": {
+              "en": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "es": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "es",
+              "en"
+            ],
+            "type": "object"
+          },
+          "reversibilidad": {
+            "enum": [
+              "una_via",
+              "costosa",
+              "dos_vias"
+            ],
+            "type": "string"
+          },
+          "riesgos_asociados": {
+            "default": [],
+            "items": {
+              "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "tipo": {
+            "enum": [
+              "explicita",
+              "implicita"
+            ],
+            "type": "string"
+          },
+          "umbrales_asociados": {
+            "default": [],
+            "items": {
+              "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "pregunta",
+          "opciones",
+          "reversibilidad",
+          "tipo",
+          "estado",
+          "depende_de",
+          "umbrales_asociados",
+          "riesgos_asociados"
+        ],
+        "type": "object"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "dominio_id": {
+      "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+      "type": "string"
+    },
+    "estado_aprobacion": {
+      "enum": [
+        "borrador",
+        "aprobado"
+      ],
+      "type": "string"
+    },
+    "etiqueta_riesgo": {
+      "additionalProperties": false,
+      "properties": {
+        "en": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "es": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "es",
+        "en"
+      ],
+      "type": "object"
+    },
+    "flujo_objetivo": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "en": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "es": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "es",
+          "en"
+        ],
+        "type": "object"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "huella": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "id": {
+      "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+      "type": "string"
+    },
+    "lotes": {
+      "additionalProperties": false,
+      "properties": {
+        "completo": {
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991,
+          "type": "integer"
+        },
+        "corridas_espaciadas_de": {
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991,
+          "type": "integer"
+        },
+        "demo": {
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991,
+          "type": "integer"
+        },
+        "fuera_de_ci": {
+          "const": true,
+          "type": "boolean"
+        },
+        "modelo_alias": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "proveedor": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "demo",
+        "completo",
+        "corridas_espaciadas_de",
+        "fuera_de_ci",
+        "proveedor",
+        "modelo_alias"
+      ],
+      "type": "object"
+    },
+    "nombre": {
+      "additionalProperties": false,
+      "properties": {
+        "en": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "es": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "es",
+        "en"
+      ],
+      "type": "object"
+    },
+    "plan_beneficios_sintetico": {
+      "additionalProperties": false,
+      "properties": {
+        "exclusiones_con_causal": {
+          "maximum": 9007199254740991,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "exentos_de_autorizacion": {
+          "maximum": 9007199254740991,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "procedimientos": {
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991,
+          "type": "integer"
+        },
+        "tope_alto_costo": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "procedimientos",
+        "exentos_de_autorizacion",
+        "exclusiones_con_causal",
+        "tope_alto_costo"
+      ],
+      "type": "object"
+    },
+    "problema": {
+      "additionalProperties": false,
+      "properties": {
+        "en": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "es": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "es",
+        "en"
+      ],
+      "type": "object"
+    },
+    "riesgos": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "causa": {
+            "additionalProperties": false,
+            "properties": {
+              "en": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "es": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "es",
+              "en"
+            ],
+            "type": "object"
+          },
+          "decision_id": {
+            "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+            "type": "string"
+          },
+          "deteccion": {
+            "maximum": 10,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "detector_en_trazas": {
+            "anyOf": [
+              {
+                "additionalProperties": false,
+                "properties": {
+                  "condicion": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "ocurre_si": {
+                    "pattern": "^(>|>=|<|<=|==)\\s*-?[0-9]+(\\.[0-9]+)?$",
+                    "type": "string"
+                  },
+                  "poblacion": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "tipo": {
+                    "enum": [
+                      "conteo",
+                      "tasa"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "tipo",
+                  "poblacion",
+                  "condicion",
+                  "ocurre_si"
+                ],
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "efecto": {
+            "additionalProperties": false,
+            "properties": {
+              "en": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "es": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "es",
+              "en"
+            ],
+            "type": "object"
+          },
+          "id": {
+            "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+            "type": "string"
+          },
+          "mitigaciones": {
+            "default": [],
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "accion": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "efecto_esperado": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "momento": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "accion",
+                "momento",
+                "efecto_esperado"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "modo": {
+            "additionalProperties": false,
+            "properties": {
+              "en": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "es": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "es",
+              "en"
+            ],
+            "type": "object"
+          },
+          "no_detectable_en_trazas": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "ocurrencia": {
+            "maximum": 10,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "severidad": {
+            "maximum": 10,
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "modo",
+          "efecto",
+          "causa",
+          "severidad",
+          "ocurrencia",
+          "deteccion",
+          "mitigaciones",
+          "detector_en_trazas"
+        ],
+        "type": "object"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "supuestos": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "criticidad": {
+            "enum": [
+              "alta",
+              "media",
+              "baja"
+            ],
+            "type": "string"
+          },
+          "enunciado": {
+            "additionalProperties": false,
+            "properties": {
+              "en": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "es": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "es",
+              "en"
+            ],
+            "type": "object"
+          },
+          "estado": {
+            "enum": [
+              "sin_probar",
+              "confirmado",
+              "refutado"
+            ],
+            "type": "string"
+          },
+          "id": {
+            "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+            "type": "string"
+          },
+          "medible_en_trazas": {
+            "additionalProperties": false,
+            "properties": {
+              "comparacion": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "condicion": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "metricas": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "poblacion": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "umbral_confirmacion": {
+                "additionalProperties": {
+                  "type": "number"
+                },
+                "propertyNames": {
+                  "type": "string"
+                },
+                "type": "object"
+              }
+            },
+            "required": [
+              "metricas",
+              "poblacion"
+            ],
+            "type": "object"
+          },
+          "prueba_barata": {
+            "additionalProperties": false,
+            "properties": {
+              "en": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "es": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "es",
+              "en"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "id",
+          "enunciado",
+          "criticidad",
+          "prueba_barata",
+          "estado"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "umbrales": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "consecuencia_si_verdadero": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "costo_humano_por_caso_min": {
+            "minimum": 0,
+            "type": "number"
+          },
+          "decision_id": {
+            "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+            "type": "string"
+          },
+          "descripcion_lider": {
+            "additionalProperties": false,
+            "properties": {
+              "en": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "es": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "es",
+              "en"
+            ],
+            "type": "object"
+          },
+          "id": {
+            "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+            "type": "string"
+          },
+          "inclusivo": {
+            "type": "boolean"
+          },
+          "nombre": {
+            "additionalProperties": false,
+            "properties": {
+              "en": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "es": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "es",
+              "en"
+            ],
+            "type": "object"
+          },
+          "operador": {
+            "enum": [
+              "igual_a",
+              "distinto_de",
+              "menor_que",
+              "menor_o_igual_que",
+              "mayor_que",
+              "mayor_o_igual_que"
+            ],
+            "type": "string"
+          },
+          "rango_jugable": {
+            "anyOf": [
+              {
+                "additionalProperties": false,
+                "properties": {
+                  "max": {
+                    "type": "number"
+                  },
+                  "min": {
+                    "type": "number"
+                  },
+                  "paso": {
+                    "exclusiveMinimum": 0,
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "min",
+                  "max",
+                  "paso"
+                ],
+                "type": "object"
+              },
+              {
+                "additionalProperties": false,
+                "properties": {
+                  "tipo": {
+                    "const": "booleano",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "tipo"
+                ],
+                "type": "object"
+              }
+            ]
+          },
+          "senal": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "unidad": {
+            "type": "string"
+          },
+          "valor_en_plan": {
+            "type": [
+              "number",
+              "boolean"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "nombre",
+          "descripcion_lider",
+          "decision_id",
+          "senal",
+          "operador",
+          "inclusivo",
+          "valor_en_plan",
+          "rango_jugable",
+          "consecuencia_si_verdadero"
+        ],
+        "type": "object"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "version": {
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "nombre",
+    "version",
+    "dominio_id",
+    "estado_aprobacion",
+    "problema",
+    "actores",
+    "flujo_objetivo",
+    "decisiones",
+    "riesgos",
+    "supuestos",
+    "criterios_aceptacion",
+    "umbrales",
+    "contrato_de_grafo",
+    "lotes",
+    "huella"
+  ],
+  "type": "object"
+}

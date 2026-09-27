@@ -1,0 +1,424 @@
+{
+  "aclaraciones": [
+    {
+      "ciclo": 1,
+      "pregunta": "Por favor indique el costo estimado del procedimiento (endoscopia digestiva alta) para completar la solicitud de autorización.",
+      "respuesta": "Ver historia clínica adjunta."
+    },
+    {
+      "ciclo": 2,
+      "pregunta": "Doctor, para continuar con el trámite de autorización, ¿podría indicarnos el costo estimado del procedimiento de endoscopia digestiva alta solicitado?",
+      "respuesta": "El paciente ya fue valorado."
+    }
+  ],
+  "caso_id": "A-007",
+  "cobertura": null,
+  "corrida_id": "suscripcion-planlang-a-001-20-v1.2-r2",
+  "decisiones_de_arista": [
+    {
+      "desde": "enrutador",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 1,
+      "rama_tomada": "extractor",
+      "resultado": false,
+      "senal": "tipo_atencion",
+      "tipo": "tripleta",
+      "umbral_aplicado": "urgencia",
+      "valor_declarado": "urgencia",
+      "valor_observado": "ambulatoria"
+    },
+    {
+      "desde": "enrutador",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 2,
+      "paso": 1,
+      "rama_tomada": "extractor",
+      "resultado": false,
+      "senal": "servicio_exento",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    },
+    {
+      "desde": "extractor",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "mayor_que",
+      "orden_arista": 1,
+      "paso": 2,
+      "rama_tomada": "aclaracion",
+      "resultado": true,
+      "senal": "campos_faltantes_count",
+      "tipo": "tripleta",
+      "umbral_aplicado": 0,
+      "valor_declarado": 0,
+      "valor_observado": 1
+    },
+    {
+      "desde": "aclaracion",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": true,
+      "operador": "mayor_o_igual_que",
+      "orden_arista": 1,
+      "paso": 3,
+      "rama_tomada": "extractor",
+      "resultado": false,
+      "senal": "ciclos_aclaracion",
+      "tipo": "tripleta",
+      "umbral_aplicado": 2,
+      "valor_declarado": "umbral.U3",
+      "valor_observado": 0
+    },
+    {
+      "desde": "extractor",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "mayor_que",
+      "orden_arista": 1,
+      "paso": 4,
+      "rama_tomada": "aclaracion",
+      "resultado": true,
+      "senal": "campos_faltantes_count",
+      "tipo": "tripleta",
+      "umbral_aplicado": 0,
+      "valor_declarado": 0,
+      "valor_observado": 1
+    },
+    {
+      "desde": "aclaracion",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": true,
+      "operador": "mayor_o_igual_que",
+      "orden_arista": 1,
+      "paso": 5,
+      "rama_tomada": "extractor",
+      "resultado": false,
+      "senal": "ciclos_aclaracion",
+      "tipo": "tripleta",
+      "umbral_aplicado": 2,
+      "valor_declarado": "umbral.U3",
+      "valor_observado": 1
+    },
+    {
+      "desde": "extractor",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "mayor_que",
+      "orden_arista": 1,
+      "paso": 6,
+      "rama_tomada": "aclaracion",
+      "resultado": true,
+      "senal": "campos_faltantes_count",
+      "tipo": "tripleta",
+      "umbral_aplicado": 0,
+      "valor_declarado": 0,
+      "valor_observado": 1
+    },
+    {
+      "desde": "aclaracion",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": true,
+      "operador": "mayor_o_igual_que",
+      "orden_arista": 1,
+      "paso": 7,
+      "rama_tomada": "pausa_humana",
+      "resultado": true,
+      "senal": "ciclos_aclaracion",
+      "tipo": "tripleta",
+      "umbral_aplicado": 2,
+      "valor_declarado": "umbral.U3",
+      "valor_observado": 2
+    }
+  ],
+  "documento_adverso": null,
+  "error_de_esquema_en_traspaso": false,
+  "error_proveedor": null,
+  "extraccion": {
+    "campos": {
+      "costo_estimado": null,
+      "diagnostico": "SYN-D-12",
+      "procedimiento": "SYN-P-005",
+      "urgencia": false
+    },
+    "campos_faltantes": [
+      "costo_estimado"
+    ],
+    "confianza": 0.95,
+    "costo_estimado": null,
+    "urgencia": false
+  },
+  "formato": "planlang-trace/v1",
+  "guardia_salida": {
+    "acciones_ejecutadas": [
+      "responder_afiliado"
+    ],
+    "acciones_intentadas": [
+      "responder_afiliado"
+    ],
+    "carga_detectada_en_entrada": false,
+    "hallazgos": [],
+    "severidad_accion": 0
+  },
+  "huella": "1149cf407862a25f50e9bf431e8e673f4d9afc347e935d4cf32b7c0f6ec14533",
+  "nodos_visitados": [
+    "enrutador",
+    "extractor",
+    "aclaracion",
+    "extractor",
+    "aclaracion",
+    "extractor",
+    "aclaracion",
+    "pausa_humana",
+    "redactor",
+    "guardia_salida"
+  ],
+  "pasos": [
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 3,
+      "nodo": "enrutador",
+      "orden": 1,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "enrutador",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0.017189,
+      "duracion_ms": 4416,
+      "error_proveedor": null,
+      "inicio_ms": 5,
+      "nodo": "extractor",
+      "orden": 2,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 4638,
+        "salida": 269
+      }
+    },
+    {
+      "costo_nominal_usd": 0.009155,
+      "duracion_ms": 5014,
+      "error_proveedor": null,
+      "inicio_ms": 4422,
+      "nodo": "aclaracion",
+      "orden": 3,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 1776,
+        "salida": 97
+      }
+    },
+    {
+      "costo_nominal_usd": 0.017838,
+      "duracion_ms": 5037,
+      "error_proveedor": null,
+      "inicio_ms": 9438,
+      "nodo": "extractor",
+      "orden": 4,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 4645,
+        "salida": 330
+      }
+    },
+    {
+      "costo_nominal_usd": 0.009259,
+      "duracion_ms": 3286,
+      "error_proveedor": null,
+      "inicio_ms": 14477,
+      "nodo": "aclaracion",
+      "orden": 5,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 1767,
+        "salida": 111
+      }
+    },
+    {
+      "costo_nominal_usd": 0.016292,
+      "duracion_ms": 4505,
+      "error_proveedor": null,
+      "inicio_ms": 17764,
+      "nodo": "extractor",
+      "orden": 6,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 4662,
+        "salida": 167
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 22270,
+      "nodo": "aclaracion",
+      "orden": 7,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 22272,
+      "nodo": "pausa_humana",
+      "orden": 8,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "pausa_humana",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0.011207,
+      "duracion_ms": 6677,
+      "error_proveedor": null,
+      "inicio_ms": 22273,
+      "nodo": "redactor",
+      "orden": 9,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 1863,
+        "salida": 274
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 28951,
+      "nodo": "guardia_salida",
+      "orden": 10,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "regla",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    }
+  ],
+  "pausas_humanas": [
+    {
+      "nodo": "pausa_humana",
+      "paso": 8,
+      "payload": {
+        "contraevidencia": [
+          {
+            "en": "Doubt about what a service covers is resolved in the member's favour (Law 1751, art. 8).",
+            "es": "La duda sobre el alcance de un servicio se resuelve a favor del afiliado (Ley 1751, art. 8)."
+          }
+        ],
+        "evidencia": [
+          {
+            "en": "Details still missing (costo_estimado) after 2 clarifications.",
+            "es": "Siguen faltando datos (costo_estimado) tras 2 aclaraciones."
+          }
+        ],
+        "extraccion": {
+          "campos": {
+            "costo_estimado": null,
+            "diagnostico": "SYN-D-12",
+            "procedimiento": "SYN-P-005",
+            "urgencia": false
+          },
+          "campos_faltantes": [
+            "costo_estimado"
+          ],
+          "confianza": 0.95,
+          "costo_estimado": null,
+          "urgencia": false
+        },
+        "motivo": {
+          "desde": "aclaracion",
+          "en": "Edge 1 of aclaracion: ciclos_aclaracion (2) at least umbral.U3 (2).",
+          "es": "Arista 1 de aclaracion: ciclos_aclaracion (2) mayor o igual que umbral.U3 (2).",
+          "orden_arista": 1
+        },
+        "senal": "ciclos_aclaracion",
+        "texto_original": {
+          "en": "Dear authorisations team: 59-year-old woman. Diagnosis: Persistent dyspepsia. Symptoms for several months that have not improved with conservative care. Request: Upper GI endoscopy. Thank you.",
+          "es": "Respetado equipo de autorizaciones: Paciente mujer de 59 años. Diagnóstico: Dispepsia persistente. Síntomas de varios meses que no mejoran con manejo conservador. Se solicita: Endoscopia digestiva alta. Gracias."
+        },
+        "umbral": {
+          "aplicado": 2,
+          "declarado": "umbral.U3"
+        }
+      },
+      "respuesta_simulada": {
+        "decision": "aprobar",
+        "politica": "sigue_verdad_conocida"
+      },
+      "rol": "auditor"
+    }
+  ],
+  "resultado": "completo",
+  "salida_final": {
+    "aviso_ia": {
+      "en": "Notice: this reply was drafted by an artificial intelligence in a simulation with synthetic data. No denial is issued without review by a person.",
+      "es": "Aviso: esta respuesta la redactó una inteligencia artificial en una simulación con datos sintéticos. Ninguna negación se emite sin la revisión de una persona."
+    },
+    "en": "We are pleased to inform you that your request for an upper gastrointestinal endoscopy has been approved. This decision was reviewed and confirmed by authorized medical staff. You may proceed to coordinate your procedure following your treating physician's instructions.",
+    "es": "Le informamos que su solicitud de endoscopia digestiva alta ha sido aprobada. Esta decisión fue revisada y confirmada por personal médico autorizado. Puede continuar con la coordinación de su procedimiento según las indicaciones de su médico tratante."
+  },
+  "senales": {
+    "campos_faltantes_count": 1,
+    "ciclos_aclaracion": 2,
+    "contradiccion_orden_texto": null,
+    "costo_estimado": null,
+    "decision_final": "aprobar",
+    "error_proveedor": null,
+    "latencia_total_s": 28.935,
+    "modo_texas": false,
+    "nodos_visitados": [
+      "enrutador",
+      "extractor",
+      "aclaracion",
+      "extractor",
+      "aclaracion",
+      "extractor",
+      "aclaracion",
+      "pausa_humana",
+      "redactor",
+      "guardia_salida"
+    ],
+    "pausa_humana": true,
+    "propuesta": null,
+    "senal_confianza": 0.95,
+    "servicio_exento": false,
+    "severidad_accion": 0,
+    "tipo_atencion": "ambulatoria",
+    "tokens": 20599
+  },
+  "variante": "multiagente"
+}
