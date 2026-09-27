@@ -18,9 +18,9 @@ modelo: Fable 5.1 (todo el sprint, decisión del usuario 2026-09-27)
 
 | Fase                                         | Estado                                 | Cierre     |
 | -------------------------------------------- | -------------------------------------- | ---------- |
-| 0 · Setup y precondiciones                   | ✅ construida, pendiente de «continúa» | 2026-09-27 |
-| 1 · El plan como contrato                    | ⏳                                     |            |
-| 2 · Casos sintéticos                         | ⏳                                     |            |
+| 0 · Setup y precondiciones                   | ✅ aprobada («continúa»)               | 2026-09-27 |
+| 1 · El plan como contrato                    | ✅ aprobada («continúa», v1 confirmado) | 2026-09-27 |
+| 2 · Casos sintéticos                         | ✅ construida, pendiente de «continúa» | 2026-09-27 |
 | 3 · Demo A en LangGraph                      | ⏳                                     |            |
 | 4 · Verificador y validación del instrumento | ⏳                                     |            |
 | 5 · Cierre                                   | ⏳                                     |            |
@@ -128,13 +128,52 @@ Dato de la tabla AIAG-VDA sobre el plan real: R5, R3 y R2 salen `alta`; **R1 (ne
 | `sanción` en `escalas.json` disparó la neutralidad | término genérico de la escala | quitado de la lista; `medico` → `medic` |
 | **La Etapa de Diseño escribe en el MISMO árbol de trabajo** (`docs/diseno/` sin versionar aquí; rama `diseno/fundacion` existe) | dos sesiones, una carpeta | este sprint hace `git add` por rutas explícitas y jamás toca `docs/diseno/` ni `design-system.md` |
 
+## Fase 2 — Casos sintéticos con verdad conocida (2026-09-27)
+
+### Qué se construyó
+
+| Pieza | Archivos | Notas |
+|---|---|---|
+| Plan de beneficios sintético legible | `data/plan-beneficios/demo-a.json` (sellado con `scripts/sellar.ts`) | 40 procedimientos `SYN-P-###` · 5 exentos (control crónico, análogo de la Circular 019/2025) · 6 excluidos, **uno por causal del art. 15 de la Ley 1751** (a–f) · 39 diagnósticos `SYN-D-##` · 7 reglas RB-01…07 en `{es,en}` · tope de alto costo = `umbral.U2` · un servicio con costo **exactamente** U2 (RM de rodilla, 1000) · par homónimo rinoplastia funcional (cubierta) / estética (excluida) · aviso «no es el PBS» |
+| Azar con semilla | `core/sintetico/sfc32.ts` | sfc32 sembrado con cyrb128; solo aritmética de 32 bits; vector de referencia calculado con una implementación independiente en Python |
+| Esquemas | `core/sintetico/esquema.ts` | plan de beneficios (integridad referencial), caso (spec § 6.8 + `subtipo`, `adversario{vector,carga,intenta}`, `esperado`, `identificadores_sinteticos`, `simulacion`), lote |
+| Generador | `core/sintetico/{generador,diccionarios}.ts` | 18 subtipos; **bloques de 20** con 60/15/15/10 por bloque (mayor resto con enteros) → el lote de 20 es exactamente el primer bloque del de 200 y todo prefijo de k·20 conserva proporciones; garantías por bloque (bloque 0: los 13 subtipos del lote de 20; bloque 1: texto ambiguo, tres ciclos, inyección en orden adjunta, homónimo); sub-semilla por caso; verdad conocida derivada de U1–U4 **y del contrato de grafo** del plan; textos redactados en ES y EN; `simulacion` = lo que responderá `ChatSimulado` (ruido determinista) |
+| Validador de identificadores (E-11) | `core/sintetico/validador-identificadores.ts` | cédula en rango real (1–99.999.999 y NUIP 1.000.000.000–1.999.999.999) · NIT con DV válido (módulo 11) · HIPAA con formato realista (SSN, teléfono salvo 555-01XX, correo/URL salvo dominios reservados, IP salvo documentación, fechas día+mes, edad > 89, direcciones, placas) · identificador sin prefijo `SYN-` · nombre fuera de los diccionarios |
+| CLI | `scripts/{casos-generar,lotes-versionados,sellar}.ts` | `pnpm casos:generar --versionados`; solo escribe si el validador no encuentra nada |
+| Lotes versionados | `data/casos/demo-a/planlang-a-001-20.json` (66 KB) · `planlang-a-001-200.json` (620 KB) · `planlang-a-humo-3.json` · `AFIRMACION-DE-PRIVACIDAD.md` (generado) | 20 = 12/3/3/2 · 200 = 120/30/30/20 · humo = normal · empate en U1 **y** U2 · inyección con negación (para la corrida simulada de CI de la fase 3) |
+
+Verdad conocida por caso: `decision` (aprobar/negar), `campos` (procedimiento, diagnóstico, urgencia, costo), `debe_escalar` y `motivos_escalamiento` (en el orden de las aristas), `urgencia`, `servicio_exento`, `contradiccion_orden_texto`, `causal`, `ciclos_aclaracion_necesarios` y `presente` (= el caso pasa por el extractor según el contrato de grafo y su verdad de campos es alcanzable). Faltantes: el médico simulado entrega los campos ciclo a ciclo según un guion (`aclaraciones_simuladas`); «duda a favor del afiliado» (art. 8) ⇒ los que agotan las aclaraciones se aprueban tras la pausa.
+
+### Tests
+
+`pnpm test` (sin el test de paleta de la Etapa de Diseño, que vive sin versionar en este árbol): **257 tests, 24 archivos**, cobertura `core/sintetico` 98 %. Nuevos: `tests/unit/core/sintetico/{sfc32,plan-beneficios,generador,validador-identificadores}.test.ts`, `tests/unit/guardias/identificadores-en-datos.test.ts` (gate sobre `data/casos`, `data/plan-beneficios` y `runs/`), `tests/integration/casos-versionados.test.ts` (**frescura byte a byte en `core` y `core-jsdom`** = paridad Node/jsdom del generador). `pytest`: 32 passed, 3 skipped, 95 % — nuevo `agents/tests/test_casos_versionados.py`: **Python recalcula la huella de los tres lotes emitidos por TypeScript** (gate de contrato TS → Python de la regla 19 sobre texto bilingüe real: tildes, «», ñ). `typecheck` ✓ · `lint` 0 errores.
+
+### Demos en rojo (regla 15)
+
+| Gate | Cambio deliberado | Resultado |
+|---|---|---|
+| Identificadores en datos (E-11) | `C.C. 1.023.456.789` inyectada en `planlang-a-001-20.json` | 🔴 `[cedula_rango_real] $.casos[2].entrada.texto_medico.es` → 🟢 al restaurar |
+| Carnada HIPAA | regla SSN apagada (`juzgar: () => null`) | 🔴 `carnada-hipaa: expected [] to include 'hipaa_ssn'` → 🟢 |
+| Frescura byte a byte (proyecto `core-jsdom`) | «Sin antecedentes relevantes» → «…de importancia» en el diccionario | 🔴 `planlang-a-001-20`, `planlang-a-001-200` y la afirmación Markdown (el lote de humo no usa esa frase: no se enciende, correcto) → 🟢 |
+| Vector de sfc32 | `b >>> 9` → `b >>> 8` | 🔴 vector de referencia + los 3 lotes + afirmación → 🟢 |
+| Huella del lote desde Python | «Gracias.» → «Gracias!» en una copia | 🔴 `HuellaInvalida` (test) |
+
+¿Pueden fallar? Sí, las cinco: cada una se vio en rojo con un estado alcanzable del repo.
+
+### Hallazgos de coherencia del plan v1 (los encontró el constructor al derivar la verdad conocida)
+
+1. **Exentos contra C4/R6.** C4 exige que un servicio exento se apruebe **sin pasar por `verificador_cobertura`** y R6 cuenta como riesgo ocurrido que lo visite; pero el contrato de grafo v1 solo saca del flujo las urgencias (`enrutador · tipo_atencion == urgencia → redactor`). Con el grafo v1 todo exento pasa por el extractor y el verificador: **C4 falla y R6 «ocurre» por diseño**, no por el agente. Propuesta: plan **v1.1** con la arista `enrutador · servicio_exento · igual_a · true → redactor` (orden 2; el enrutador lo decide por regla con el código de la orden y el plan de beneficios) y `servicio_exento` entre las señales obligatorias. El generador ya lee el contrato: con v1.1, los exentos quedan `presente: false` al regenerar (probado en test).
+2. **Límite de aclaraciones (U3) y el supuesto S2.** La arista `aclaracion · ciclos_aclaracion ≥ U3 → pausa_humana` se evalúa al salir del nodo: si la señal cuenta la aclaración recién pedida, con U3 = 2 la respuesta a la segunda aclaración nunca se usa («máximo 2» sería en la práctica 1). La verdad conocida asume la lectura del plan: se pueden pedir hasta U3 aclaraciones y usar todas sus respuestas (la fase 3 escribe la señal como «aclaraciones ya hechas» y pregunta solo si está por debajo de U3). Además, S2 medido como `ciclos_aclaracion <= 2` sobre los faltantes es **tautológico con U3 = 2** (el ciclo no puede pasar de 2), y la proporción de faltantes que el médico completa en ≤ 2 respuestas la fija el diseño del sintético, no el mundo (pesos del generador: 75 % de los faltantes sorteados se completan en ≤ 2 respuestas; en el lote de 200 salieron 19 de 30): el informe tiene que decirlo así.
+3. **C3 y las urgencias de alto costo.** La población de C3 es `extraccion.costo_estimado > umbral.U2`; las urgencias no pasan por el extractor. El verificador (fase 4) trata «sin extracción» como fuera de la población, no como error.
+
 ## Desviación del plan
 
 1. **Carnada C03 del contrato `instrumentos-de-plan` v0.1.0** (se aplica en la fase 1): la tabla de prioridad de acción AIAG-VDA 2019 da `baja` para S8·O3·D4, no `alta`. Enmienda propuesta en el summary: C03 → S8·O6·D2 (`alta`, RPN 96) y C03-bis → S8·O3·D4 (`baja`, RPN 96). Fuente secundaria verificada 2026-09-26 (Relyence, tabla AP); la primaria (handbook) no es accesible por curl.
 2. **`pass^3` de C5** con una sola corrida real en este sprint: el informe declara `k_observado = 1 de 3 · incompleto`; las corridas 2 y 3 se acumulan en background.
 3. **Arista «modo Texas»** del plan v0 no cabe en la tripleta: se declara como función nombrada `texas_y_no_aprobar(modo_texas, propuesta)` (regla 2).
 4. **Aristas del nodo `decision`** necesitan `orden` y `rama_por_defecto`; el plan v0 no lo declara.
-5. Otras correcciones del plan v0 que el validador exija: se anotan en la fase 1.
+5. Otras correcciones del plan v0 que el validador exija: se anotan en la fase 1 (10 correcciones; confirmadas por el usuario con el «continúa» de la fase 1).
+6. **Hallazgos de coherencia del plan v1** (fase 2): exentos contra C4/R6, semántica de U3 y medida de S2, población de C3 en urgencias. Propuesta de plan v1.1 antes de la fase 3; decisión del usuario pendiente.
 
 ## Registro de miradas
 
@@ -147,3 +186,4 @@ No aplica en este sprint (sin artefacto visual). La guía de prueba nace en la f
 | 2026-09-27 | `.gitignore` no ignoraba el egg-info tras K2                | comentario en la misma línea que el patrón                                      | comentario en su propia línea |
 | 2026-09-27 | gitleaks bloqueó el commit de la fase 0                     | falso positivo `generic-api-key` sobre un id de modelo junto a la palabra «API» | constantes renombradas (K12)  |
 | 2026-09-27 | GitHub API `i/o timeout` intermitente al mergear Dependabot | red                                                                             | reintento                     |
+| 2026-09-27 | El barrido de cero enlaces encuentra `CHANGELOG.md:211` | el changelog del kit estampado cita el literal del dominio de Pages al narrar el patrón (regla 17: los documentos que narran el barrido escriben el patrón sin el literal) | se corrige en el `/deploy-check` de la fase 5 (K13, fricción del kit) |
