@@ -1,0 +1,11 @@
+const t = Date.now();
+const d = new Date();
+const r = Math.random();
+const f = new Intl.NumberFormat("es");
+const s = (1234.5).toLocaleString();
+const p = performance.now();
+const h = process.hrtime();
+const u = crypto.randomUUID();
+const g = crypto.getRandomValues(new Uint8Array(4));
+import { readFileSync } from "node:fs";
+const m = require("fs");

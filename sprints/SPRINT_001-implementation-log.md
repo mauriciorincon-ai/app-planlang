@@ -77,6 +77,57 @@ modelo: Fable 5.1 (todo el sprint, decisión del usuario 2026-09-27)
 
 `pnpm lint` ✓ · `pnpm typecheck` ✓ · `pnpm test` (cobertura activa) ✓ 5 tests · `pnpm build` ✓ · `ruff check/format` ✓ · `pytest` ✓ · `pip-audit --skip-editable` ✓ · `pnpm install --frozen-lockfile` ✓ tras el merge de `main`.
 
+## Fase 1 — El plan como contrato (2026-09-27)
+
+### Qué se construyó
+
+| Pieza | Archivos | Notas |
+|---|---|---|
+| JCS (RFC 8785) + huella SHA-256, TS y Python | `core/formatos/{jcs,huella,bilingue}.ts` · `agents/src/app_agents/canonico.py` | huella = SHA-256(JCS(objeto sin `huella`)); archivos «bonitos» en disco; `rfc8785` 0.1.4 rechaza 2^53 exacto → límite 2^53 − 1 |
+| **Gate de contrato JCS Python → TS** (regla 19) | `tests/contrato/jcs-valores-tramposos.json` (17 casos, emitido por Python) · `tests/contrato/jcs-python-ts.test.ts` (corre en `core` y `core-jsdom`) · `agents/tests/test_canonico.py` (frescura) | paridad de string y de huella en los 17 casos |
+| Mini-lenguaje de condiciones | `core/brecha/condiciones.ts` (tokenizador, parser de precedencia, evaluador; `==,!=,<,<=,>,>=,IN,CONTIENE,IMPLICA,AND,OR,NOT`, rutas con punto, funciones) | identificador desconocido = error (no `false`): base de M9 «señal faltante» |
+| Esquemas Zod del plan + JSON Schema | `core/plan/esquema.ts` · `core/plan/plan.schema.json` (generado, test de frescura) | strict; `{es,en}` en todo texto; `orden`, `ramas_por_defecto`, aristas con función nombrada, `riesgos_cubiertos` |
+| Validador RF-01.2–01.5 | `core/plan/validador.ts` (16 códigos de motivo, ES/EN, con elemento) | usa el reusable para ciclos/prioridad/supuestos y el parser para toda condición |
+| Contrato para el constructor · carga con huella | `core/plan/{contrato-constructor,cargar}.ts` | umbrales resueltos; `aprobarPlan` calcula la huella; `cargarPlan` rechaza huella alterada |
+| Reusable `instrumentos-de-plan` v0.1.0 | `packages/instrumentos-de-plan/{src,datos,carnadas,tests,CONTRATO.lock,README.md}` | Kahn por ondas + DFS con ciclo mostrado; tabla AIAG-VDA en datos con fuente y gap declarado; RPN secundario; C01–C05 + C03-bis |
+| `diagramador` | `packages/diagramador/{CONTRATO.lock,README.md}` | solo la copia fijada (v0.2.0) |
+| Guardias | `tests/unit/guardias/{determinismo,neutralidad}.test.ts` + carnada | 11 tokens prohibidos; términos de dominio en `packages/` |
+| Detector de jerga y presupuesto de líder | `core/formatos/jerga.ts` | ≤ 50 palabras, ≤ 1 término vigilado, ES y EN |
+| Plantillas de dominio | `data/dominios/{dom-salud,dom-financiero}.json` | actores, decisiones, riesgos, criterios, restricciones (legal F1–F15 con URL, fecha, vigencia, `{es,en}`), preguntas guía, etiqueta de riesgo (F14) |
+| Plan v1 aprobado | `plans/demo-a/v0-migrado.json` (borrador migrado, base de fixtures) · `plans/demo-a/v1.json` | `pnpm plan:validar --aprobar` → huella `c8b92541…2cd2f2`; **Python verifica la misma huella** (`test_plan_aprobado.py`) |
+| Scripts | `scripts/{_io,plan-validar,migrar-plan-demo-a,sembrar-planes,plan-schema}.ts` | solo los scripts tocan disco |
+
+### Correcciones al plan v0 (registradas por `scripts/migrar-plan-demo-a.ts`, reproducibles)
+
+1. `_nota` eliminada (esquema estricto). 2. `version` → `1.0.0`. 3. `opciones` de cadenas → `{nombre}` (pros/contras opcionales: enmienda propuesta al contrato). 4. `ocurre_si` normalizado. 5. `orden` explícito por nodo escritor e `inclusivo` explícito en toda arista (true solo en ≥/≤; el resto estricto, como el v0). 6. Arista «modo Texas» → función nombrada `texas_y_no_aprobar(modo_texas, propuesta)` (desviación 3). 7. `ramas_por_defecto: {decision: redactor}` (desviación 4). 8. `politica_simulada` bilingüe. 9. `evaluadores_requeridos[].riesgos_cubiertos` (exactitud→R5,R7 · datos sensibles→R2 · pausas→R1,R6 · inyección→R3). 10. `etiqueta_riesgo` (F14). **Ningún cambio de contenido de decisiones, riesgos, criterios ni umbrales.** Aprobado en el chat con el «continúa» tras el gate de la fase 1 (si el usuario objeta, se regenera).
+
+Dato de la tabla AIAG-VDA sobre el plan real: R5, R3 y R2 salen `alta`; **R1 (negación indebida, S9·O3·D3) y R6 (S8·O3·D2) salen `baja`** por la tabla (ocurrencia 2-3 y detección 2-4). El validador no bloquea porque tienen mitigación; el summary lo lleva como observación para la planeadora (¿ocurrencia 3 es honesta para R1 antes de la mitigación?).
+
+### Tests
+
+`pnpm test`: **178 tests, 17 archivos**, cobertura `core/plan` 99,2 % · `core/brecha` 97,8 % · `core/formatos` 97,5 % · `packages/instrumentos-de-plan` (en umbral 80). `pytest`: 26 passed, 3 skipped, 95 %. `typecheck` ✓ · `lint` ✓ (2 warnings en `docs/diseno/assets/maqueta.js`, archivo de la Etapa de Diseño, no de este sprint).
+
+### Demos en rojo (regla 15)
+
+| Gate | Cambio deliberado | Resultado |
+|---|---|---|
+| Contrato JCS Python → TS | `"jcs": "1e-7"` → `"1e-07"` en el fixture | 🔴 `reproduce el string JCS de Python: exponente_pequeno` → 🟢 al restaurar |
+| Lint determinista | `export const marca = Date.now();` en `core/formatos/huella.ts` | 🔴 nombra `core/formatos/huella.ts:78 Date.now` → 🟢 |
+| Neutralidad G6 | `// reglas de autorizaciones` en `packages/instrumentos-de-plan/src/tipos.ts` | 🔴 nombra `tipos.ts:43 «autorizacion»` → 🟢 |
+| Huella del plan (RF-06.1) | `version` 1.0.0 → 1.0.1 en una copia de `v1.json` | 🔴 `plan:validar --verificar` rc=1 con las dos huellas; Python `HuellaInvalida` (test) |
+| Planes sembrados (RF-09.4) | 12 fixtures generados (`tests/fixtures/planes-sembrados/`) | 🔴 los 12 rechazados con código y elemento esperados (test) |
+| Carnadas C01–C05 (+C03-bis) | datos en `packages/instrumentos-de-plan/carnadas/` | 🔴/🟢 por test (C03 en su forma enmendada) |
+| Presupuesto de líder / jerga | 51 palabras · «LLM» + «JSON» | 🔴 por test |
+
+### Fricciones
+
+| Qué | Causa | Resolución |
+|---|---|---|
+| `rfc8785` rechaza `2**53` | dominio seguro de JSON es < 2^53 | límite 2^53 − 1 en el perfil del emisor |
+| Un comentario `/** … packages/*/src … */` cerró el bloque | `*/` dentro del comentario | reescrito |
+| `sanción` en `escalas.json` disparó la neutralidad | término genérico de la escala | quitado de la lista; `medico` → `medic` |
+| **La Etapa de Diseño escribe en el MISMO árbol de trabajo** (`docs/diseno/` sin versionar aquí; rama `diseno/fundacion` existe) | dos sesiones, una carpeta | este sprint hace `git add` por rutas explícitas y jamás toca `docs/diseno/` ni `design-system.md` |
+
 ## Desviación del plan
 
 1. **Carnada C03 del contrato `instrumentos-de-plan` v0.1.0** (se aplica en la fase 1): la tabla de prioridad de acción AIAG-VDA 2019 da `baja` para S8·O3·D4, no `alta`. Enmienda propuesta en el summary: C03 → S8·O6·D2 (`alta`, RPN 96) y C03-bis → S8·O3·D4 (`baja`, RPN 96). Fuente secundaria verificada 2026-09-26 (Relyence, tabla AP); la primaria (handbook) no es accesible por curl.
