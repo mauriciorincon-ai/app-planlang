@@ -23,7 +23,7 @@ modelo: Fable 5.1 (todo el sprint, decisión del usuario 2026-09-27)
 | 2 · Casos sintéticos                         | ✅ aprobada («continúa»)               | 2026-09-27 |
 | 3 · Demo A en LangGraph                      | ✅ aprobada («continúa»)               | 2026-09-27 |
 | 4 · Verificador y validación del instrumento | ✅ aprobada («continúa», v1.2 elegida) | 2026-09-27 |
-| 5 · Cierre                                   | 🔄 auditoría ✓ · deploy-check ✓ · gate ⭐ pendiente |            |
+| 5 · Cierre                                   | ✅ auditoría ✓ · deploy-check ✓ · gate ⭐ diferido al MVP (decisión del usuario) | 2026-09-27 |
 
 ## Fase 0 — Setup y precondiciones (2026-09-27)
 
@@ -461,6 +461,12 @@ S3 refutado es un resultado legítimo del plan: la tesis «multiagente no rinde 
 
 **Decisión: MERGE OK tras el gate ⭐ del usuario** (el merge lo condiciona el gate corto obligatorio).
 
+### Gate ⭐ corto (2026-09-27)
+
+**Diferido al MVP por decisión del usuario** («Gate aplazado hasta MVP»), antes de correr la parada 1. Ninguna
+parada corrió, así que no hubo ajustes en caliente ni backlog nuevo. Las 3 paradas pasan al acumulado del ciclo
+(S1: 3) y el merge queda sin gate ⭐ (desviación 15).
+
 ## Desviación del plan
 
 1. **Carnada C03 del contrato `instrumentos-de-plan` v0.1.0** (se aplica en la fase 1): la tabla de prioridad de acción AIAG-VDA 2019 da `baja` para S8·O3·D4, no `alta`. Enmienda propuesta en el summary: C03 → S8·O6·D2 (`alta`, RPN 96) y C03-bis → S8·O3·D4 (`baja`, RPN 96). Fuente secundaria verificada 2026-09-26 (Relyence, tabla AP); la primaria (handbook) no es accesible por curl.
@@ -477,6 +483,8 @@ S3 refutado es un resultado legítimo del plan: la tesis «multiagente no rinde 
 12. **Avance hacia 200 (paso 34, outcome terciario): 0 de 180 casos restantes.** Las corridas de la fase 5 se destinaron a pass^3 del mismo lote de 20 (decisión del usuario, gate de la fase 4). La acumulación sin duplicar está probada (`agents/tests/test_lotes.py`); el avance pasa al S2. Outcome terciario: **parcial**.
 13. **Desviaciones menores sin declarar hasta la auditoría:** las siembras de M9 son código (`core/brecha/m9.ts`), no fixtures en `tests/fixtures/brechas-sembradas/`; las reglas deterministas del demo viven en `agents/src/app_agents/demo_a/nodos.py` (no hay `demo_a/reglas.py`).
 14. **El ADR-001 §4 prometía un respaldo que no existía** (enrutar a `pausa_humana` con motivo `proveedor_no_disponible`): enmendado con el comportamiento real (auditoría final, AU-9); el respaldo pasa a deuda del S2. Y la línea base no es «a igual presupuesto» sino «a presupuesto no mayor»: ADR-006 lo decide y propone a la planeadora ajustar S3 (M-10).
+
+15. **Gate ⭐ corto diferido al MVP** (decisión del usuario, 2026-09-27), contra la orden, que lo declaraba «OBLIGATORIO en este sprint … No se difiere … Deja 0 ⭐ al acumulado» porque sin UI no hay contrapesos mecánicos. Quedan **3 ⭐⭐ al acumulado del ciclo (S1: 3)** y LangSmith sin aprovisionar. **Aviso a la planeadora** (por este registro y el summary; el constructor no escribe allá): el gate ⭐⭐ del cierre de pruebas del ciclo debe contar estas 3 paradas, y la orden del S2 puede querer fijar LangSmith como precondición.
 
 ## Registro de miradas
 

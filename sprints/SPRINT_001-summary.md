@@ -9,8 +9,9 @@ pr: https://github.com/mauriciorincon-ai/app-planlang/pull/7
 ---
 # Sprint 001 Summary — planlang «El contrato y la corrida»
 
-> Estado de este documento: **escrito antes del gate ⭐ corto** (condición de merge: viaja dentro del PR).
-> La sección «Gate ⭐» se completa parada a parada durante el gate, antes del merge.
+> Estado de este documento: **final para el merge** (condición de merge: viaja dentro del PR). El gate ⭐ corto
+> **se difirió al cierre de pruebas del ciclo (MVP) por decisión del usuario** (2026-09-27), contra lo que pedía la
+> orden: ver «Gate ⭐».
 > Acto de ciclo: **ninguno** — el S1 es el sprint 1 de 3 del ciclo H1; no cierra ciclo.
 
 ## Outcome
@@ -56,7 +57,7 @@ pr: https://github.com/mauriciorincon-ai/app-planlang/pull/7
 |---|---|---|
 | Testing | ✓ | vitest **588** en CI (45 archivos; cobertura `core/brecha` 98,4 % · 93,3 % ramas, `core/playground` 100 %, `core/plan` 99,2 %); pytest **137** (96,2 %, umbral 70); e2e de punta a punta = corrida simulada de 3 casos → informe contra golden en `core` y `core-jsdom`; Playwright 2/2 sin flaky; cada gate nuevo con demo en rojo (bitácora, fases 0–5 y auditoría) |
 | CI/CD | ✓ | `quality · e2e · lighthouse · python` con conclusión propia `success` sobre `daa8ac5`; ruleset de 4 checks sin cambios (ningún job nuevo; `trazas:verificar` es un paso nuevo dentro de `quality`) |
-| Observabilidad | ✓ con deuda | logger JSON de vocabulario cerrado en `agents/`; cero credenciales en `runs/` (barrido en CI desde este sprint); **LangSmith sin aprovisionar** → espejo nunca corrió en vivo (deuda; parada 3 del gate) |
+| Observabilidad | ✓ con deuda | logger JSON de vocabulario cerrado en `agents/`; cero credenciales en `runs/` (barrido en CI desde este sprint); **LangSmith sin aprovisionar** → espejo nunca corrió en vivo (deuda; parada 3 del gate ⭐⭐, diferida al MVP) |
 | Seguridad | ✓ con fricción | `pnpm audit` sin vulnerabilidades; `pip-audit --skip-editable` limpio (con `--strict` falla solo por el paquete editable: K4); gitleaks en cada commit; flags y `env` del hijo con test literal (y filtro por prefijo, M-11); humo real 3/3 |
 | Performance | ✓ | informe de 200 casos en **62 ms** en Node (presupuesto 2 s; medido tras la auditoría) |
 | UX/A11y | ✓ (sin UI) | textos de líder ≤ 50 palabras y detector de jerga ES/EN como test; axe del scaffold verde |
@@ -76,7 +77,7 @@ pr: https://github.com/mauriciorincon-ai/app-planlang/pull/7
 | RF-09.2 verde en CI con demo en rojo | ✓ TS y Python, 7 corridas |
 | M9 n/n | ✓ 10/10 (8 + 2 nuevas de la auditoría) |
 | C1 medido | ✓ ninguna negación sin pausa (y desde la auditoría, además, prohibida por arquitectura) |
-| 4 checks con conclusión propia; PR mergeado | ✓ checks · merge pendiente del gate ⭐ |
+| 4 checks con conclusión propia; PR mergeado | ✓ checks · merge sin gate ⭐ (diferido al MVP por decisión del usuario) |
 
 **Primera ejecución de checks en este PR (sin histórico, no puede afirmarse regresión ni no-regresión):** el job
 `python` corrió por primera vez con contenido real; el paso `pnpm trazas:verificar` de `quality` corrió por
@@ -101,19 +102,28 @@ Demos en rojo de cada gate nuevo en la bitácora. Veredicto tras la Fase 2: **li
 
 ## Gate ⭐ — diferimiento y contrapesos
 
-**⭐ OBLIGATORIO — se corre parada a parada, sin diferimiento** (el S1 no tiene UI: los dos contrapesos mecánicos
-no aplican, así que no hay derecho a diferir).
+**⭐ DIFERIDO por decisión del usuario (2026-09-27): «Gate aplazado hasta MVP».** Ninguna parada corrió. Las tres
+pasan al gate ⭐⭐ del cierre de pruebas del ciclo (acto 2, el sello MVP).
+**⭐ diferido: 3 pruebas al acumulado del ciclo (S1: 3).**
+
+**Contradice la orden, y se declara así:** la orden del S1 decía «OBLIGATORIO en este sprint … No se difiere … Deja
+0 ⭐ al acumulado», porque sin UI los dos contrapesos mecánicos del diferimiento no aplican. Lo que el constructor
+hizo en su lugar va abajo; **no equivale al juicio del usuario** y no se presenta como tal (desviación 15 de la
+bitácora).
 
 | Contrapeso | Evidencia |
 |---|---|
 | Pasada de capturas del builder | No aplica: sin UI en el S1 (excepción F1 registrada) |
 | e2e de `reduced-motion` | No aplica: sin UI en el S1 |
+| Parada 1 (lote real), corrida por el constructor | 6 corridas reales de 20 con la suscripción (4 con el plan v1.2, 2 con la v1.1) · `pnpm lote:demo` en vivo tras la auditoría (1 caso, 0 errores, 2 s de pausa) · humo real 3/3. **Falta:** la cuota que un lote consume en la cuenta del usuario |
+| Parada 2 (leer el informe) | informe v1.2 ES/EN contra golden en CI · detector de jerga y presupuesto de líder como test · auditoría independiente de honestidad. **Falta:** «¿reconoces tu plan?», que solo el usuario responde |
+| Parada 3 (LangSmith) | **Sin sustituto:** el espejo nunca corrió (clave sin aprovisionar). Las trazas propias de `runs/` no llevan credenciales (`pnpm trazas:verificar` en CI) |
 
 | Parada | Resultado | Ajustes en caliente |
 |---|---|---|
-| 1 de 3 · correr el lote de 20 en tu Mac | _pendiente_ | |
-| 2 de 3 · leer el informe v1.2 ES/EN | _pendiente_ | |
-| 3 de 3 · LangSmith `planlang-demo-a` | _pendiente — depende de aprovisionar la clave; si se difiere, queda «1 ⭐ al acumulado» y contradice el «0 ⭐» de la orden: decisión del usuario_ | |
+| 1 de 3 · correr el lote de 20 en tu Mac | diferida al MVP | — |
+| 2 de 3 · leer el informe v1.2 ES/EN | diferida al MVP | — |
+| 3 de 3 · LangSmith `planlang-demo-a` | diferida al MVP; exige aprovisionar la clave antes | — |
 
 ## Decisiones no anticipadas
 
@@ -200,7 +210,8 @@ no aplican, así que no hay derecho a diferir).
 
 | Qué | Por qué | Sprint de pago |
 |---|---|---|
-| Espejo LangSmith sin aprovisionar | la clave no está en el entorno del builder | parada 3 del gate o S2 |
+| Gate ⭐ corto del S1 (3 paradas) | diferido por decisión del usuario, contra la orden | gate ⭐⭐ del MVP (cierre de pruebas del ciclo) |
+| Espejo LangSmith sin aprovisionar | la clave no está en el entorno del builder | antes del gate ⭐⭐ del MVP (parada 3) |
 | Avance hacia 200 (0 de 180) | corridas destinadas a pass^3 | S2 (background) |
 | Respaldo `proveedor_no_disponible` → `pausa_humana` (AU-9) | el ADR lo prometía y no existía | S2 |
 | Payload del revisor sin orden adjunta, aclaraciones ni cobertura (M-8) | cambia la forma de las trazas | S2 |
