@@ -8,3 +8,6 @@
    IBM Plex y Geist (ronda 2). Subconjunto latino. */
 @font-face { font-family: "Inter"; src: url("fuentes/inter.woff2") format("woff2"); font-weight: 400 700; font-style: normal; font-display: block; }
 @font-face { font-family: "JetBrains Mono"; src: url("fuentes/jetbrains-mono.woff2") format("woff2"); font-weight: 100 800; font-style: normal; font-display: block; }
+/* Fraunces (500, OFL): solo dentro del marco que muestra las fichas en la piel de CV Viva (P7), porque
+   así las pinta hoja-de-vida. No es una letra de planlang. */
+@font-face { font-family: "Fraunces"; src: url("fuentes/fraunces-500.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: block; }

@@ -4,7 +4,8 @@
 > planeadora (`portafolio/planlang/ordenes/DISENO-orden.md`) manda; este archivo registra el
 > resultado. Regla dura: cero React, cero motores, cero `src/` de producto hasta que el usuario
 > apruebe **G-Diseño** sobre la maqueta desplegada en Vercel. El S1 «El contrato y la corrida»
-> corre en paralelo en `sprint-001/contrato-y-corrida` (excepción registrada F1) y no se mezcla.
+> corrió en paralelo (excepción registrada F1) y se mergeó a `main` el 2026-09-27; desde la mirada 3 la
+> maqueta lee sus datos reales de `main` sin mezclar su código.
 
 ## Cómo abrir la maqueta
 
@@ -40,12 +41,20 @@
   vivo, casos que cambian, curva riesgo-cobertura y escenarios de sala; el líder lee una frase llana que cambia con cada movimiento y el
   experto, la regla de decisión con sus valores y las 20 decisiones. `assets/perfil.js` es el conmutador «Leer como»: dice qué ve
   cada perfil, cuenta los bloques del experto y hace entrar lo nuevo con un fundido corto.
-- Al pie de cada página de la mirada 3, **«Qué revisar y qué deberías ver»**: la matriz de mirada que el usuario pidió en la ronda 1.
-- `01-entrada.html`, `02-plan.html`, `06-caso.html`, `07-fichas.html` _(mirada 4)_ — una página por pantalla, HTML autocontenido
-  (cero CDNs, cero frameworks), 380 px y desktop, oscuro y claro, ES y EN.
+- Al pie de cada página desde la mirada 3, **«Qué revisar y qué deberías ver»**: la matriz de mirada que el usuario pidió en la
+  ronda 1 de la mirada 3.
+- `01-entrada.html` — **mirada 4**: P1 final, la dirección aprobada en la mirada 1 con la corrida real: el demo A «cumple con
+  alertas», las 8 piezas del agente del S1, lo que falló nombrado y la capacidad medida; estado «maqueta: no cumple» para el gate
+  de lectura.
+- `02-plan.html` — **mirada 4**: P2, el plan v1.2 real en seis partes (decisiones, riesgos, supuestos, criterios, umbrales y
+  contrato del grafo), cada renglón con su detalle desplegable; el experto suma la ficha técnica, las 9 aristas y las 16 señales.
+- `06-caso.html` — **mirada 4**: P6, cuatro trazas reales de punta a punta (A-004, A-006, A-008, A-001): recorrido paso a paso con
+  la razón de cada rama, pausa humana, respuesta, guardia y documento de decisión adversa en ES y EN.
+- `07-fichas.html` — **mirada 4**: P7, la ficha de reproducibilidad y las fichas de la app y del agente A en la piel de CV Viva
+  (Fraunces 500 con su OFL en `assets/fuentes/`), con la validación de cada campo contra el contrato v1.3.1 para el experto.
 - `assets/` — `tokens.{json,css}` (**GENERADOS** por `pnpm tokens` desde `scripts/paleta/generar-tokens.mjs`),
   `planlang.css` (identidad), `diagrama.css` (gramática visual del visor), `fuentes/` (Inter y
-  JetBrains Mono, woff2 + OFL), `iconos/` (licencia ISC de Lucide; los íconos van incrustados en cada
+  JetBrains Mono, woff2 + OFL; Fraunces 500 solo para el marco de CV Viva de Fichas), `iconos/` (licencia ISC de Lucide; los íconos van incrustados en cada
   página),
   `sprite.js` (glifos, marcas e íconos compartidos), `maqueta.{css,js}` y `lienzo.js` (utilería de sala).
 - `MIRADAS.md` — cada mirada: lo que el usuario dijo, textual, y lo que cambió.
@@ -88,6 +97,7 @@ en toda cifra (real · spike vs maqueta) — **cambiada en la mirada 3**: Brecha
 | 2026-09-27 | `03-agente.html` (mirada 2, ronda 2) | «Claro muchisimo mejor 1. Si se entiende perfecto muy buen trabajo 2. Igualmente el perfil perfecto tambien aprobado 3. lo abrí y apruebo» — **mirada 2 aprobada** | mirada 3: `04-brecha.html` + `05-playground.html`, cada una con su ficha general y detalle por perfil |
 | 2026-09-27 | `04-brecha.html` + `05-playground.html` (mirada 3) | «0. Antes que nadacada vez que me hagas mirar algo construye una matriz donde me digas que revisar y que deberia mirar. 0.1. Brecha esta letra "El plan se cumplió: 9 de 9 criterios y ningún riesgo ocurrió. Pero un supuesto quedó refutado, otro no se pudo probar y aparecieron 5 fallas que el plan no preveía." está muy grande, segundo pues si se ve que algo falla peor no se ve que exactamente. 0.2Playground en cambio esta esa muy bien al mover lor elementos va arrojando alertas. 1. No me queda claro que s e cumplio y que fallo 2. Si esta claro muy bien trabajo 3. No veo que cambie nada o noe s evidente la verdad 4. No hay que revisar» — **no aprobada**: el Playground se entiende; Brecha no dice qué se cumplió y qué falló; el cambio de perfil no se ve; regla nueva: matriz de qué revisar en cada mirada | ronda 2: balance «qué se planeó · qué pasó» al frente de Brecha, resumen a escala de lectura, perfiles con cambio evidente en las dos páginas |
 | 2026-09-27 | `04-brecha.html` + `05-playground.html` (mirada 3, ronda 2) | «Brecha se entiende muchomejor y play gorund muy bien 1. si se entiende 2. La letra se ve mejor 3. ahora si hay una diferenci clara tanto visual como en contenido porque son dos audiencias distintas» — **mirada 3 aprobada** (comentarios que delatan las páginas abiertas; sí a las tres preguntas, sin cambios) | mirada 4: `01-entrada.html`, `02-plan.html`, `06-caso.html`, `07-fichas.html` e `index.html` |
+| 2026-09-27 | `01-entrada.html` + `02-plan.html` + `06-caso.html` + `07-fichas.html` + `index.html` (mirada 4) | _(pendiente)_ | — |
 
 ## Gates de esta etapa y su demo en rojo (regla 15 del kit)
 
@@ -106,6 +116,10 @@ en toda cifra (real · spike vs maqueta) — **cambiada en la mirada 3**: Brecha
 | `kit.html`           | el sistema de diseño (transversal) | tokens en vivo por tema · 5 tipos × 5 estados de nodo · 3 modos de arista · criterio, riesgo, consecuencias, curva y ficha en contenido / éxito / vacío / cargando / error · deslizador en reposo / movido / foco / deshabilitado / booleano |
 | `04-brecha.html`     | Verificador de brecha ★ (P4) | corrida real v1.2 · maqueta no cumple (C5 y R5) · cargando · error · vacío · líder y experto · las 9 secciones de § 12 · oscuro y claro · ES y EN · 380 px y desktop |
 | `05-playground.html` | Mover los umbrales del plan ★ (P5) | en el plan · U1 0,90 · U2 1600 (error introducido, C3 falla) · U3 0 · U3 3 (no observado) · modo Texas · cargando · error · líder y experto · curva y tabla · oscuro y claro · ES y EN · 380 px y desktop |
+| `01-entrada.html`    | Página de entrada (P1) | corrida real v1.2 · maqueta no cumple · líder y experto · dos teléfonos (líder · experto) · oscuro y claro · ES y EN · 380 px y desktop |
+| `02-plan.html`       | El plan como contrato ejecutable (P2) | plan v1.2 · cargando · error (plan inválido) · desplegables cerrados y abiertos · líder y experto · oscuro y claro · ES y EN · 380 px y desktop |
+| `06-caso.html`       | Una traza de punta a punta · documento de decisión adversa (P6) | A-004 negación con persona · A-006 adversario · A-008 dos aclaraciones · A-001 aprobado solo · error · líder y experto · oscuro y claro · ES y EN · 380 px y desktop |
+| `07-fichas.html`     | Ficha de reproducibilidad · fichas de la app y del agente A (P7) | las tres fichas · error (ficha inválida) · líder y experto (validación v1.3.1) · oscuro y claro · ES y EN · 380 px y desktop |
 | `03-agente.html`     | El grafo real desde el código (P3) | ronda 2: ficha del agente líder / experto · selección extractor / enrutador / pausa_humana / aprobar / arista U1 / ausentes · líder · experto · código · trazas cerradas y abiertas · lienzo A y lista por capa · oscuro y claro · ES y EN · 380 px y desktop |
 
 ## Registro de G-Diseño (se llena al cerrar la etapa)

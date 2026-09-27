@@ -1,6 +1,6 @@
 ---
-version: 0.3.1
-estado: kit aprobado en la mirada 2 (2026-09-27); 0.2 suma los componentes de P3, 0.3 los de Brecha y Playground (mirada 3) y 0.3.1 el balance y el perfil evidente (mirada 3, ronda 2) — sube a 1.0.0 al aprobar G-Diseño
+version: 0.4.0
+estado: kit aprobado en la mirada 2 (2026-09-27); 0.2 suma los componentes de P3, 0.3 los de Brecha y Playground (mirada 3) 0.3.1 el balance y el perfil evidente (mirada 3, ronda 2) y 0.4.0 los de Entrada, Plan, Caso y Fichas (mirada 4) — sube a 1.0.0 al aprobar G-Diseño
 fecha: 2026-09-27
 fuente_visual: docs/diseno/ (kit.html es este documento en vivo)
 tokens: scripts/paleta/generar-tokens.mjs → docs/diseno/assets/tokens.{json,css} (generados; gate diseno-tokens)
@@ -103,13 +103,19 @@ distancia: ahí cargan el glifo y la etiqueta.
 | Subtítulo         | 15                  | 1,4        | 600                     | `--t-sub`     |
 | Texto             | 15                  | 1,6        | 400                     | `--t-texto`   |
 | Guía (entradilla) | 17 · 16 en teléfono | 1,55       | 400, `tinta-2`          | `--t-guia`    |
-
-La guía de 17 px es solo la entradilla de la portada. **Toda lectura dentro de una sección —la frase
-del veredicto, la entradilla de cada sección, los renglones del balance— va en Texto (15 px).** En la
-mirada 3 la frase del veredicto a 17 px se leyó «muy grande» (0.3.1).
 | Secundario        | 13                  | 1,5        | 400, `tinta-2`          | `--t-chico`   |
 | Dato              | 12                  | 1,5        | 400 mono                | `--t-dato`    |
 | Cifra             | 28 · 24 en teléfono | 1          | 600, tabular            | `--t-cifra`   |
+
+La guía de 17 px es solo la entradilla de la portada. **Toda lectura dentro de una sección —la frase
+del veredicto, la entradilla de cada sección, los renglones del balance, el objetivo de cada ficha—
+va en Texto (15 px).** En la mirada 3 la frase del veredicto a 17 px se leyó «muy grande» (0.3.1); en
+la 0.4.0 el objetivo de la ficha general también baja a 15 px en todas las pantallas (Agente y
+Playground incluidas).
+
+**Fraunces 500** (OFL) existe en la maqueta **solo dentro del marco de CV Viva** de Fichas (0.4.0): es
+la piel con que hoja-de-vida pinta las fichas de la app y del agente, no una letra de planlang. Fuera
+de ese marco no se usa.
 
 Nada fuera de esta escala. Dentro del diagrama: nombre de nodo 12,5, etiqueta corta 10,5 mono,
 cabecera de banda 13 / 11,5, etiqueta de arista 10,5 mono.
@@ -162,7 +168,9 @@ desarrollo 5-a: nada decide qué se pinta según `useReducedMotion()`).
 
 Bilingüe integral (regla 20): cada texto nace como `{ es, en }` **redactado**, nunca traducido por
 máquina. Los identificadores de código (`senal_confianza`, `pausa_humana`, `aprobar`) no se traducen;
-los números sí se formatean por idioma. Rótulo en toda pantalla: «Simulación · no operativo» /
+los números sí se formatean por idioma: la cifra y su signo van unidos por un espacio duro
+(«89 %» no se parte al final de la línea) y todo texto armado con un número concuerda con él («1
+bloque es», «3 bloques son»; «1 sprint»). Rótulo en toda pantalla: «Simulación · no operativo» /
 «Simulation · not operational». Texto de líder: ≤ 50 palabras y ≤ 1 término definido.
 
 ## 4. Estados
@@ -222,6 +230,22 @@ propios (shadcn/ui personalizado donde aplique, jamás el estilo por defecto).
 | **Lo cumplido, uno por uno** (0.3.1) | dos listas compactas (criterios · riesgos) con marca, id, nombre y cifra; el experto ve la regla bajo cada uno    | líder · experto · teléfono (la cifra baja a su línea)          |
 | **Frase viva** (0.3.1)        | playground, líder: una frase llana que se reescribe con cada movimiento y nombra casos, errores, minutos y criterios       | en el plan · con cambios · error · no observado                |
 | **Regla viva** (0.3.1)        | playground, experto: la regla de cada nodo escrita con las aristas del contrato del plan, en orden, con el valor movido subrayado | en el plan · movido                                        |
+| **Selector de casos** (0.4)   | Caso: un chip por caso con su id en mono y su tipo en llano; el activo con borde; debajo, que en el producto abren los 20 | activo · reposo · teléfono (se envuelven)                      |
+| **Debía y pasó** (0.4)        | cabeza del caso: lo que debía pasar según la verdad conocida frente a lo que pasó, con sello y «coincide con la verdad conocida» | coincide · no coincide · error                                 |
+| **Recorrido paso a paso** (0.4) | un paso por nodo visitado: glifo y nombre en mono, qué hizo en llano, la razón de su rama tras una flecha, costo a la derecha («sin modelo» o segundos · tokens); el experto suma medidas y la tabla de aristas | líder · experto · teléfono                                     |
+| **Tabla de aristas** (0.4)    | las reglas de un nodo en orden: señal, regla, observado, ¿se cumple?, rama; la rama se escribe solo en la regla que decidió (la primera que se cumple o, si ninguna, la última) y esa fila se resalta | escritorio · teléfono (la señal a todo el ancho; los identificadores se parten solo tras «_») |
+| **Pausa humana** (0.4)        | por qué se detuvo (en llano; el experto ve además el motivo crudo del payload), evidencia, contraevidencia, lo que leyó el extractor y lo que respondió el auditor, con la divulgación de que fue simulado | con pausa · sin pausa (la sección no aparece)                  |
+| **Instrucción inyectada** (0.4) | dentro del texto del caso, la instrucción escondida va con borde discontinuo y ⚠; la guardia dice que la vio y que no cambió nada | —                                                              |
+| **Respuesta y guardia** (0.4) | la respuesta al afiliado con su aviso de IA, y la guardia de salida: acciones intentadas y ejecutadas, instrucción en la entrada, hallazgos, severidad | escritorio · teléfono                                          |
+| **Documento de decisión adversa** (0.4) | lo arma el código: servicio, decisión, causal con su ley, regla aplicada, datos usados, versión con huellas, quién decidió y cómo contradecirla; los códigos de catálogo no se parten | ES · EN · teléfono (una columna)                               |
+| **Fila del plan** (0.4)       | id en mono, enunciado, lo elegido y un desplegable («por qué y qué más se consideró», «qué pasaría y qué se hizo», «cómo se prueba y qué dio»); a la derecha su sello: una vía (⚠ y filete a la izquierda) · dos vías · costosa; prioridad de acción con barras y S·O·D; estado del supuesto; cumplió | cerrada · abierta · teléfono (el sello baja bajo el texto)     |
+| **Cifras del plan** (0.4)     | cinco cifras (decisiones, riesgos, supuestos, criterios, umbrales), cada una con lo que pasó en la corrida y enlace a su sección | —                                                              |
+| **Índice del plan** (0.4)     | seis anclas numeradas a las partes del plan                                                                             | —                                                              |
+| **Miniaturas del ciclo** (0.4) | «Cómo funciona» de la Entrada: barras del plan, cadena de las 8 piezas del agente, 9 marcas de criterio y lo que falló nombrado | real · no cumple (maqueta) · teléfono                          |
+| **Capacidad medida** (0.4)    | cuatro cifras con su chip de procedencia (real con su fuente · declarado)                                               | —                                                              |
+| **Marco de CV Viva** (0.4)    | las fichas de la app y del agente como las pinta hoja-de-vida: papel, Fraunces en titulares, Inter en texto; la cabecera del marco nombra el archivo y el contrato. Es el único lugar con otra piel | ficha de la app · ficha del agente · error (ficha inválida)    |
+| **Pasos por carril** (0.4)    | proceso de la ficha del agente: pasos numerados por actor (médico, agente, auditor, afiliado), las decisiones con borde discontinuo; en hoja-de-vida los dibuja su motor BPMN | —                                                              |
+| **Validación de campos** (0.4) | experto: cada campo de una ficha contra los límites del contrato v1.3.1 con «Cabe» o «No cabe»                         | cabe · no cabe (error)                                         |
 
 ## 6. Anti-patrones (prohibidos, además de los del skill `diseno-ui`)
 
@@ -244,9 +268,11 @@ propios (shadcn/ui personalizado donde aplique, jamás el estilo por defecto).
   gráficas crece en unidades del SVG. Ambas reglas ya rigen en la hoja de estilos.
 - Los componentes de la 0.3.1 (en `04-brecha.html` y `05-playground.html`) entran al kit con los de la
   0.2 y la 0.3.
-- Toda cifra que la maqueta ponga sin fuente lleva su chip «maqueta» (los 12 minutos por revisión del
-  playground no estaban rotulados hasta la ronda 2; el plan debe declarar ese dato).
+- Toda cifra lleva su procedencia: chip «real» con su fuente o chip «maqueta». Los 12 minutos por
+  revisión del playground son el `costo_humano_por_caso_min` que el plan v1.2 declara en cada umbral.
 
+- Los componentes de la 0.4.0 (en `01-entrada.html`, `02-plan.html`, `06-caso.html` y
+  `07-fichas.html`) entran al kit con los demás al consolidar G-Diseño.
 - Miradas 3 y 4: pantallas Brecha, Playground, Entrada final, Plan, Caso y Fichas ensamblan estos
   componentes; lo que cambie en ellas vuelve aquí.
 - Tabla de métricas de Inter para el diagramador (G15), propuesta como enmienda al contrato en el

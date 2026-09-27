@@ -9,10 +9,15 @@
     var todos = document.querySelectorAll(".marcado"), n = 0;
     for (var k = 0; k < todos.length; k++) if (todos[k].getClientRects().length) n++;
     var ls = document.querySelectorAll("[data-cuenta-experto]");
+    // Concordancia con el número: «1 bloque … es», «3 bloques … son»; sin bloques, se dice.
+    var es = n === 0 ? "Esta vista no tiene bloques solo para este perfil."
+      : n === 1 ? "1 bloque de esta página es solo para este perfil: lleva el rótulo «Experto» y fondo gris."
+      : n + " bloques de esta página son solo para este perfil: llevan el rótulo «Experto» y fondo gris.";
+    var en = n === 0 ? "This view has no blocks for this profile only."
+      : n === 1 ? "1 block on this page is for this profile only: it carries the “Expert” label and a grey background."
+      : n + " blocks on this page are for this profile only: they carry the “Expert” label and a grey background.";
     for (var i = 0; i < ls.length; i++)
-      ls[i].innerHTML =
-        '<span lang="es">' + n + " bloques de esta página son solo para este perfil: llevan el rótulo «Experto» y fondo gris.</span>" +
-        '<span lang="en">' + n + " blocks on this page are for this profile only: they carry the “Expert” label and a grey background.</span>";
+      ls[i].innerHTML = '<span lang="es">' + es + '</span><span lang="en">' + en + "</span>";
   }
   function poner(v, animar) {
     html.setAttribute("data-perfil", v);

@@ -460,3 +460,98 @@ gate de mirada admite. Queda sellado:
 **Qué cambió:** nada en las dos páginas. Siguiente: mirada 4 (`01-entrada.html`, `02-plan.html`,
 `06-caso.html`, `07-fichas.html` e `index.html`), según el plan de miradas aprobado.
 
+**Corrección posterior (2026-09-27, al preparar la mirada 4):** en la ronda 2 escribí que los 12
+minutos por revisión «no salen del plan v1.2 ni de la planeadora» y los rotulé como supuesto de la
+maqueta. Era falso: cada umbral del plan declara `costo_humano_por_caso_min = 12`; la búsqueda que
+hice no dio con ese nombre de campo. El Playground vuelve a decir la verdad: la nota bajo las cifras
+lo atribuye al plan con su chip «real · plan v1.2», y la ficha técnica nombra el campo. No hay
+propuesta que llevar a la planeadora por este tema. Se le dice al usuario en el mensaje de la mirada 4.
+
+
+## Mirada 4 — Entrada, Plan, Caso y Fichas (2026-09-27)
+
+**Qué se entregó:** las cuatro pantallas que faltaban y el recorrido de sala al día, todas con datos
+**reales** del S1 (plan v1.2, corrida `suscripcion-planlang-a-001-20-v1.2` y sus repeticiones, informe
+del verificador, entorno), leídos de `main` con `git show`. Cada una abre con su ficha general
+(objetivo · recibe → hace → entrega · capacidad) antes del detalle, trae «Leer como» líder o experto
+con el aviso y los bloques marcados de la mirada 3, y cierra con su matriz «Qué revisar y qué deberías
+ver».
+
+- `01-entrada.html` (P1 final): nace de `direccion.html` aprobada en la mirada 1 y cambia lo inventado
+  por la corrida real: el demo A «cumple con alertas», «Construí» muestra las 8 piezas del agente del
+  sprint 1, «Medí la brecha» nombra lo que falló (S3 refutado, 5 respuestas fuera de formato) y lo que
+  quedó sin probar (S1); capacidad medida con su procedencia; el estado de sala «maqueta: no cumple»
+  sirve al gate de lectura de G-Diseño.
+- `02-plan.html` (P2): el plan v1.2 en seis partes (6 decisiones, 8 riesgos por prioridad de acción,
+  3 supuestos con lo que dio su prueba, 9 criterios, 4 umbrales y el contrato del grafo), cada renglón
+  con su detalle desplegable; el experto suma la ficha técnica del plan, las 9 aristas en orden y las
+  16 señales; estados cargando y error (plan inválido, rotulado «maqueta»).
+- `06-caso.html` (P6): cuatro trazas reales —A-004 (negación con persona), A-006 (adversario con
+  inyección), A-008 (dos aclaraciones), A-001 (aprobado solo)— de punta a punta: debía y pasó, recibe →
+  hace → entrega con el relato llano, el recorrido paso a paso con la razón de cada rama, la pausa
+  humana, la respuesta y la guardia, y el documento de decisión adversa en ES y EN; estado de error.
+  Brecha y Playground enlazan aquí los casos que tienen traza en la maqueta.
+- `07-fichas.html` (P7): la ficha de reproducibilidad en la piel de planlang y las fichas de la app y
+  del agente A dentro de un marco con la piel de CV Viva (papel, Fraunces 500 copiada con su OFL a
+  `assets/fuentes/`); el experto ve cada campo contra los límites del contrato v1.3.1; estado de error
+  (una cifra sin fuente que hoja-de-vida rechaza).
+- `index.html`: las cuatro pantallas enlazadas; la navegación común suma «Fichas» y «Entrada» lleva a
+  `01-entrada.html`.
+
+**Cambios que tocan páginas ya aprobadas (declarados):** el objetivo de la ficha general baja a 15 px
+también en Agente y Playground (regla de lectura de la 0.3.1); la navegación suma «Fichas» en las tres;
+Brecha y Playground enlazan sus casos con traza; la pestaña activa de Agente tenía un enlace vacío
+(`href="#"`) y ahora apunta a su página; la cifra y el «%» van unidos por espacio duro en todas; el
+texto oculto de la marca de estado (lo que oye un lector de pantalla) decía «corrió en el spike» en
+Brecha, Playground y las nuevas, que leen la corrida del S1: ahora dice «hecho» / «pendiente» (Agente,
+que sí muestra el spike, lo conserva). Nada de eso cambia lo que se aprobó a la vista.
+
+**Corrección de los 12 minutos:** ver la corrección posterior de la mirada 3; el Plan lo dice en la
+entradilla de los umbrales («cada caso que pasa a una persona cuesta 12 minutos de auditor»).
+
+**Observaciones para la planeadora y el S2 (anotadas aquí, no escritas allá):**
+
+1. **Campos del plan solo en español:** `opcion_elegida`, `opciones[].nombre` y `mitigaciones` del plan
+   v1.2 no son mapas `{es, en}` (regla 20). La maqueta redacta el inglés; el esquema del plan debería
+   exigir el mapa.
+2. **Las aclaraciones del modelo solo en español:** las preguntas al médico y sus respuestas simuladas
+   (A-008) nacen en un idioma. El caso es texto de dominio en español; el S2 decide si se muestran tal
+   cual con una nota o si el generador sintético las redacta en los dos idiomas.
+3. **La VISION dice 23 funcionalidades (14 + 9) y enumera 25 (16 + 9).** La ficha de la app cuenta las
+   25 enumeradas por grupo (5 · 7 · 6 · 1 · 2 · 4); la cifra declarada debe corregirse en la planeadora.
+4. **El contrato ficha técnica v1.3.1 recibe la ficha en un idioma:** planlang entrega un archivo por
+   idioma y la maqueta mide cada campo en los dos contra el mismo límite.
+5. **El documento de decisión adversa lleva el aviso de la respuesta:** su pie dice «esta respuesta la
+   redactó una inteligencia artificial», pero el documento lo arma el código (lo dice la misma
+   pantalla). Es el texto real de la traza del S1 y la maqueta lo muestra tal cual; el S2 debe darle al
+   documento su propio aviso (generado por código a partir de una decisión que revisó una persona).
+6. **El motivo del `interrupt` es texto de máquina:** «Arista 4 de decision: propuesta (negar) igual a
+   negar (negar)». La maqueta escribe para el líder una frase llana por señal y deja el motivo crudo al
+   experto; el S2 debe generar la frase llana desde el plan, con código.
+
+**Propuesta para Agente (no aplicada; necesita tu aprobación):** P3 dibuja hoy el grafo del spike (3
+de las 8 piezas del contrato y un nodo fuera de él) y dice que las que faltan «llegan con el agente del
+demo A en el sprint 1». El S1 ya llegó y su grafo real tiene las 8. Propongo que P3 muestre el grafo del
+S1 y conserve el del spike como ejemplo de «exigido y ausente».
+
+**Pasada de capturas del builder:** 192 encuadres de las cuatro pantallas nuevas (todos sus estados ×
+2 temas × 2 idiomas × 380/1280 × líder y experto) + 120 con simulación de daltonismo y escala de grises
+(380 px, ES) + 192 de nuevo tras los ajustes + medida de las 10 páginas con los dos perfiles, normal y
+con movimiento reducido: 0 desbordes, 0 textos fuera del lienzo, fuentes cargadas (Fraunces en Fichas),
+0 animaciones con movimiento reducido. Enlaces internos: ninguno roto; errores de página: ninguno; las
+frases del Playground, sin errores. Leídos como imagen: Entrada, Plan (líder y experto, con los
+desplegables abiertos), Caso A-004 y A-006 (líder y experto), Fichas, cada una a 1280 y a 380 px, en
+oscuro y claro, en español e inglés, en acromatopsia y deuteranopía. Los teléfonos de sala salen vacíos
+en la captura de página completa (Chromium no pinta un iframe fuera de la ventana): se comprobaron
+desplazando la ventana hasta ellos, y cargan.
+
+**Ajustes por lo visto en las capturas:** «1 bloques de esta página son…» (el conteo del experto ahora
+concuerda en número); «89 %» se partía al final de la línea; las notas S·O·D de los riesgos no decían
+qué es cada letra (la entradilla ahora lo dice); el recuadro del contrato del grafo desaparecía para el
+experto y dejaba media sección vacía; «Por qué se detuvo» mostraba al líder el motivo crudo del
+payload; el relato del caso era solo del líder y dejaba vacía la tarjeta «Hace» del experto; la tabla de
+aristas escribía la rama también en la última regla aunque no decidiera; en el teléfono los
+identificadores se partían a media palabra («campos_faltantes_co / unt») y «SYN-P-038» en su guion; la
+ficha decía «1 sprints»; la marca de estado oculta decía «corrió en el spike» fuera de Agente.
+
+**Lo que dijo el usuario:** _(pendiente)_.
