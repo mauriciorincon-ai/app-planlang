@@ -1,6 +1,6 @@
 ---
-version: 0.5.0
-estado: kit aprobado en la mirada 2 (2026-09-27); 0.2 suma los componentes de P3, 0.3 los de Brecha y Playground (mirada 3) 0.3.1 el balance y el perfil evidente (mirada 3, ronda 2) 0.4.0 los de Entrada, Plan, Caso y Fichas (mirada 4) 0.4.1 «Ver N más», el aviso de estado arriba y la pestaña Casos (mirada 4, ronda 2) y 0.5.0 el salto, la distribución de una arista y el kit consolidado (mirada 5) — candidato a 1.0.0: sube al aprobar G-Diseño
+version: 1.0.0
+estado: kit aprobado en la mirada 2 (2026-09-27); 0.2 suma los componentes de P3, 0.3 los de Brecha y Playground (mirada 3) 0.3.1 el balance y el perfil evidente (mirada 3, ronda 2) 0.4.0 los de Entrada, Plan, Caso y Fichas (mirada 4) 0.4.1 «Ver N más», el aviso de estado arriba y la pestaña Casos (mirada 4, ronda 2) y 0.5.0 el salto, la distribución de una arista y el kit consolidado (mirada 5) — 1.0.0: G-Diseño aprobado por el usuario el 2026-09-27 (mirada 5, ronda 2)
 fecha: 2026-09-27
 fuente_visual: docs/diseno/ (kit.html es este documento en vivo)
 tokens: scripts/paleta/generar-tokens.mjs → docs/diseno/assets/tokens.{json,css} (generados; gate diseno-tokens)
@@ -262,7 +262,11 @@ propios (shadcn/ui personalizado donde aplique, jamás el estilo por defecto).
 - Sombras; radios grandes uniformes; emojis; texto de relleno o inglés residual.
 - Simular lo que no corrió (el demo B dice «en construcción» y no muestra resultados).
 
-## 7. Pendiente para 1.0.0 (G-Diseño)
+## 7. 1.0.0: lo que selló G-Diseño y lo que queda abierto
+
+G-Diseño aprobado el 2026-09-27 («apruebo G-Diseño», mirada 5, ronda 2); el veredicto textual y el
+registro viven en `docs/diseno/README.md`. Desde aquí el sistema se extiende por ADR y nunca se
+contradice en silencio; el S2 reproduce la maqueta, no la copia. Entró en la 1.0.0:
 
 - **Consolidado en la mirada 5:** `kit.html` suma «Componentes de pantalla», el catálogo de los 44
   componentes de la 0.2 a la 0.5, cada uno con su uso, sus estados y el enlace a su instancia viva
@@ -275,8 +279,12 @@ propios (shadcn/ui personalizado donde aplique, jamás el estilo por defecto).
   de Agente las volvía a encender (su regla `font:` las reiniciaba): corregido.
 - Toda cifra lleva su procedencia: chip «real» con su fuente o chip «maqueta». Los 12 minutos por
   revisión del playground son el `costo_humano_por_caso_min` que el plan v1.2 declara en cada umbral.
+- Glifo de «regla»: hexágono (gramática v1.0.0); el escudo quedó como alternativa explicada al
+  usuario, no elegida.
+
+Queda abierto después de la 1.0.0:
+
 - Tabla de métricas de Inter para el diagramador (G15), propuesta como enmienda al contrato en el
-  summary (el piloto big-d la fijó para Space Grotesk).
-- Glifo de «regla»: hexágono por defecto (gramática v1.0.0); el escudo queda como alternativa
-  explicada al usuario.
-- **Al aprobar G-Diseño:** `version: 1.0.0`, la fecha y el veredicto en `docs/diseno/README.md`.
+  summary del S2 (el piloto big-d la fijó para Space Grotesk).
+- Gate ⭐ de lectura de la etapa (una persona no técnica explica, tras Entrada y Brecha en «maqueta: no
+  cumple», qué se planeó y qué falló): no reportado al aprobar; su resultado va al registro de G-Diseño.

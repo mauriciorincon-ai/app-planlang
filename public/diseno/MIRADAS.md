@@ -679,4 +679,22 @@ abre cada una de las 9 páginas desde el índice y vuelve al índice desde cada 
   carga sus hojas desde `/diseno/assets/`.
 - La revisión de enlaces y errores de las 10 páginas sigue limpia.
 
-**Lo que dijo el usuario:** _(pendiente)_.
+**Lo que dijo el usuario (2026-09-27, con el recorrido abierto en el preview):**
+
+> «Ya funcioona bien [URL del preview omitida: regla de cero enlaces]. apruebo G-Diseño»
+
+**Veredicto: G-DISEÑO APROBADO** («apruebo G-Diseño», textual; «ya funciona bien» sobre el recorrido
+que había fallado en la ronda 1 es la evidencia de que lo abrió). Queda sellado:
+
+- **`design-system.md` 1.0.0** y la maqueta de las 7 pantallas, el kit y el recorrido, con todo lo
+  sellado en las miradas 1 a 4 y el Agente sobre el grafo del sprint 1.
+- **Gate ⭐ de lectura: no reportado.** La orden lo pide junto con la aprobación: «una persona no
+  técnica explica, tras P1 y P4, qué se planeó y qué falló (usar el criterio fallido visible de la
+  maqueta)». El mensaje de aprobación no trae lo que dijo esa persona: queda **pendiente** y se le
+  pregunta al usuario si lo corrió, si lo corre ahora o si decide dejarlo para después. Es decisión
+  suya y se registra así.
+- **Corrección del constructor sobre ese gate:** al pedirlo, el mensaje de la mirada 5 decía «deja la
+  pantalla como abre» (la corrida real). La orden pide el criterio fallido visible, que en la corrida
+  real no existe (9 de 9 criterios cumplidos): la lectura va con el estado **«maqueta: no cumple»**
+  en Entrada y en Brecha, donde C5 falla.
+- **Sin mergear:** el PR de `diseno/fundacion` → `main` espera el permiso explícito del usuario.

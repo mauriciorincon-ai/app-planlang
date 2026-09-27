@@ -101,7 +101,7 @@ en toda cifra (real · spike vs maqueta) — **cambiada en la mirada 3**: Brecha
 | 2026-09-27 | `01-entrada.html` + `02-plan.html` + `06-caso.html` + `07-fichas.html` + `index.html` (mirada 4) | «3. no vi esa transicion revisala. Excelente las visuales de Plan muy bien trabajo, pero me gustaria que Decisiones Riesgos, Supuestos etc mostrara los 5 promeros y un boton de mostrar mas para no alargar tanto la visual. No encontre los casos el restante esta muy bien dime donde estan lso casos para verlos» — **no aprobada todavía**: Plan aprobado a la vista; faltan la transición «no cumple» de la Entrada, «mostrar más» en el Plan y encontrar los casos | ronda 2: transición visible en la Entrada, 5 primeras + «mostrar más» en cada parte del Plan, pestaña «Casos» en la navegación |
 | 2026-09-27 | `01-entrada.html` + `02-plan.html` + `06-caso.html` (mirada 4, ronda 2) | «Si apruebo que Agente muestre el grafo real del sprint 1, con sus 8 piezas, el reto lo abri y lo apruebo continua» — **mirada 4 aprobada**; P3 al grafo real del S1, aprobado | mirada 5 = G-Diseño: `03-agente.html` con el grafo del S1 (el del spike como «exigido y ausente»), kit consolidado, `design-system.md` candidato a 1.0.0 |
 | 2026-09-27 | todo, desplegado: `03-agente.html` con el grafo del S1, `kit.html` consolidado, `design-system.md` 0.5.0 (mirada 5 = G-Diseño) | «Esto no sirve [URL del preview omitida: regla de cero enlaces] aparece una pantalla incial con links y cuando abri agen otra vez 404» — **G-Diseño no aprobado todavía**: en el preview, el índice servido en `/diseno` resolvía sus enlaces contra la raíz del sitio (404 y sin estilos) | ronda 2: el índice fija su base en `/diseno/`; recorrido probado entrando por el índice como lo sirve Vercel |
-| 2026-09-27 | recorrido desplegado corregido: `index.html` con su base en `/diseno/` (mirada 5, ronda 2 = G-Diseño) | _(pendiente)_ | — |
+| 2026-09-27 | recorrido desplegado corregido: `index.html` con su base en `/diseno/` (mirada 5, ronda 2 = G-Diseño) | «Ya funcioona bien [URL del preview omitida: regla de cero enlaces]. apruebo G-Diseño» — **G-Diseño aprobado**; gate ⭐ de lectura no reportado (pendiente, se le pregunta al usuario) | `design-system.md` 1.0.0; PR a `main` con permiso explícito del usuario |
 
 ## Gates de esta etapa y su demo en rojo (regla 15 del kit)
 
@@ -130,11 +130,12 @@ en toda cifra (real · spike vs maqueta) — **cambiada en la mirada 3**: Brecha
 
 | Campo                        | Valor                                                                                               |
 | ---------------------------- | --------------------------------------------------------------------------------------------------- |
-| **Veredicto del usuario**    | _(pendiente)_ — aprobado / aprobado con notas                                                       |
-| **Fecha**                    |                                                                                                     |
-| **Rondas de sala de diseño** |                                                                                                     |
+| **Veredicto del usuario**    | **aprobado** — «Ya funcioona bien [URL del preview omitida: regla de cero enlaces]. apruebo G-Diseño» |
+| **Fecha**                    | 2026-09-27                                                                                          |
+| **Rondas de sala de diseño** | 11 en 5 miradas: mirada 1 × 3 · mirada 2 × 2 · mirada 3 × 2 · mirada 4 × 2 · mirada 5 × 2 (detalle en `MIRADAS.md`) |
 | **Dónde se aprobó**          | preview de Vercel del PR de `diseno/fundacion` (la URL vive en la planeadora, jamás aquí: regla 17) |
-| **Decisiones selladas**      |                                                                                                     |
-| **Notas del usuario**        |                                                                                                     |
+| **Decisiones selladas**      | dirección sobria de la ronda 3 de la mirada 1: Inter + JetBrains Mono, siete tamaños, filas antes que tarjetas, íconos de línea · grafo en teléfono como lienzo que se desliza de lado, con la lista por capa como vista alterna · «regla» con hexágono · ficha general (objetivo, recibe, hace, entrega, capacidad) antes del detalle, con perfiles líder y experto de cambio visible · Brecha abre con el balance plan frente a corrida y nombra cada falla · Plan con las 5 primeras y «Ver N más» · pestaña «Casos» · Agente sobre el grafo real del sprint 1, con el spike como «exigido y ausente» · lectura a 15 px · `design-system.md` 1.0.0 |
+| **Gate ⭐ de lectura**        | **no reportado — pendiente.** La orden pide que una persona no técnica explique, tras Entrada y Brecha en el estado «maqueta: no cumple», qué se planeó y qué falló. Se le pregunta al usuario |
+| **Notas del usuario**        | el recorrido del preview falló en la ronda 1 (el índice en `/diseno` daba 404) y se aprobó tras la corrección. Regla del usuario vigente para todo lo que venga: cada mirada trae su matriz de qué revisar y qué debería ver |
 
 **Sin este registro lleno, G-Diseño no está aprobado y ninguna orden de construcción se ejecuta.**
