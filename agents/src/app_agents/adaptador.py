@@ -88,9 +88,16 @@ class ErrorProveedor(RuntimeError):
         super().__init__(f"{tipo}: {detalle}" if detalle else tipo)
 
 
-def argv_claude(
-    modelo: str, system_prompt: str, json_schema: dict[str, Any] | None = None, max_turns: int = 1
-) -> list[str]:
+def turnos_maximos(json_schema: dict[str, Any] | None) -> int:
+    """Regla 6 (constitución S2, ADR-004 enmendado): `--max-turns 2` ÚNICAMENTE cuando va `--json-schema`.
+
+    Con un solo turno el CLI corta con `error_max_turns` hasta el 56 % de las llamadas estructuradas (S1).
+    No es configurable a propósito: la regla fija el número, no quien llama.
+    """
+    return 2 if json_schema is not None else 1
+
+
+def argv_claude(modelo: str, system_prompt: str, json_schema: dict[str, Any] | None = None) -> list[str]:
     """La línea de comando EXACTA de la regla 6. Un test la compara literalmente (gate 7-S)."""
     cmd = [
         CLAUDE_BIN,
@@ -100,7 +107,7 @@ def argv_claude(
         "--model",
         modelo,
         "--max-turns",
-        str(max_turns),
+        str(turnos_maximos(json_schema)),
         "--no-session-persistence",
         "--strict-mcp-config",
         "--mcp-config",
@@ -151,9 +158,9 @@ def _es_limite(texto: str) -> bool:
 def _clasificar_is_error(data: dict[str, Any], con_esquema: bool) -> ErrorProveedor:
     """El CLI reporta el fallo en su JSON (`is_error` + `subtype`), a veces con rc = 1 y stderr vacío.
 
-    Con `--json-schema` y `--max-turns 1`, el modelo a veces necesita un segundo turno para entregar la
-    salida estructurada y el CLI corta con `error_max_turns` (hallazgo de la corrida real del S1): es una
-    salida estructurada que no llegó, así que cuenta como `esquema_invalido` y se reintenta (§ 9.1).
+    Con `--json-schema`, el modelo a veces necesita más turnos de los que tiene y el CLI corta con
+    `error_max_turns` (S1, con 1 turno: entre el 6 % y el 56 % de las llamadas; desde el S2 van 2, regla 6):
+    es una salida estructurada que no llegó, así que cuenta como `esquema_invalido` y se reintenta (§ 9.1).
     """
     subtipo = str(data.get("subtype") or "")
     costo = float(data.get("total_cost_usd") or 0.0)
@@ -192,7 +199,6 @@ class ChatClaudeCode(BaseChatModel):
 
     modelo: str = MODELO_POR_DEFECTO
     json_schema: dict[str, Any] | None = None
-    max_turns: int = 1
     timeout_s: int = 180
     cwd: str | None = None  # se crea perezosamente; siempre temporal y limpio
     ejecutar: Callable[..., subprocess.CompletedProcess[str]] = Field(default=subprocess.run, exclude=True)
@@ -205,7 +211,7 @@ class ChatClaudeCode(BaseChatModel):
     def _identifying_params(self) -> dict[str, Any]:
         return {
             "modelo": self.modelo,
-            "max_turns": self.max_turns,
+            "max_turns": turnos_maximos(self.json_schema),
             "json_schema": self.json_schema is not None,
         }
 
@@ -223,7 +229,7 @@ class ChatClaudeCode(BaseChatModel):
     ) -> ChatResult:
         system = "\n".join(str(m.content) for m in messages if isinstance(m, SystemMessage))
         prompt = "\n\n".join(str(m.content) for m in messages if not isinstance(m, SystemMessage))
-        cmd = argv_claude(self.modelo, system, self.json_schema, self.max_turns)
+        cmd = argv_claude(self.modelo, system, self.json_schema)
         t0 = time.monotonic()
         try:
             proc = self.ejecutar(
@@ -479,6 +485,7 @@ __all__: Sequence[str] = (
     "PROVEEDORES",
     "VARIABLES_PROHIBIDAS_EN_HIJO",
     "argv_claude",
+    "turnos_maximos",
     "crear_modelo",
     "cwd_limpio",
     "entorno_hijo",

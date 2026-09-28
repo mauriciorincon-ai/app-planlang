@@ -1,5 +1,7 @@
 # ADR-005 — Enmiendas de solo medición: el lote vale si el plan conserva su verdad
 
+**Summary (EN):** A batch generated with plan A is valid for plan B when B keeps exactly the same thresholds, graph contract and benefits plan (compared as canonical JSON), because each case's known truth derives from them. Measurement-only amendments (criteria, risks, assumptions) do not invalidate the cases; both the runner and the verifier enforce it.
+
 **Estado:** aceptado · **Fecha:** 2026-09-27 · **Sprint:** S1 «El contrato y la corrida»
 **Cítese por tema:** «ADR de enmiendas de medición y lotes».
 

@@ -10,17 +10,16 @@
 ## Cómo abrir la maqueta
 
 - **En local:** doble clic en `docs/diseno/index.html` (sin red, sin build).
-- **En el preview de Vercel del PR** (protegido: pide tu sesión): ruta `/diseno` (recorrido) y
-  `/diseno/direccion` (mirada 1). **Sin `.html`:** el builder de Vercel para `next export` sirve
-  cada HTML del `out/` por su nombre limpio; `vercel.json` lleva `cleanUrls: true` para que la ruta
-  con `.html` (la que usan los enlaces internos de la maqueta, necesarios en local) redirija a la
-  limpia en vez de dar 404. La URL vive en la planeadora y en el chat, jamás aquí.
-- **Dónde están los archivos de verdad:** en `public/diseno/` (Next los copia a `out/` en la
-  exportación, sin paso de copia propio); `docs/diseno/` es un enlace simbólico a esa carpeta para
-  respetar la ruta que el kit y las órdenes citan. Nació así tras la mirada 1, cuando el preview
-  daba 404 en `/diseno/…`: la causa real no era el paso de copia sino el nombre limpio de Vercel.
+- **Servida en local:** `pnpm maqueta` y abre `localhost:3101/diseno/` — así la recorren el arnés de
+  capturas y las comparaciones de fidelidad del S2 (entrando por el índice, como el usuario).
+- **Desde el S2 la maqueta NO viaja al export (ADR-007):** vive en `docs/diseno/` como carpeta real y
+  `tests/unit/export-sin-maqueta.test.ts` impide que vuelva a `public/`. Hasta el S2 vivía en
+  `public/diseno/` con `docs/diseno` como enlace, y Next la copiaba a `out/`: la producción publicaba la
+  sala de diseño, incluidos este README y `MIRADAS.md`. Durante la etapa el usuario la recorrió en el
+  preview del PR #5 (ruta `/diseno`, protegida con su sesión de Vercel); la URL vive en la planeadora.
 - Cada página trae su **barra de sala**: estado · tema (oscuro/claro) · idioma (ES/EN). Lo que hay
-  que mirar está en la nota bajo la barra. Todo lo que ves es utilería de sala, no producto.
+  que mirar está en la nota bajo la barra. Todo lo que ves es utilería de sala, no producto: la vitrina
+  la reproduce con componentes (S2), no la copia.
 
 ## Qué vive aquí
 
@@ -113,6 +112,28 @@ en toda cifra (real · spike vs maqueta) — **cambiada en la mirada 3**: Brecha
 | `capturar-maqueta` · texto dentro de su nodo (ronda 2) | que el nombre y la etiqueta de cada nodo del lienzo quepan en su caja con 4 px de aire, en las tres letras | 2026-09-27: nombre forzado a «aprobar_sin_revision_humana», **3 fallos** «nodo … (33 / 29 / 32 px de más)» en Inter, Plex y Geist; con Inter solo lo ve esta medida (el texto aún cabía en el lienzo) | 0 fallos al revertir |
 | `capturar-maqueta` · perfiles y movimiento reducido (mirada 3, ronda 2) | con `--perfiles lider,experto`, mide y captura cada perfil; bajo movimiento reducido, el fundido del cambio de perfil no debe correr | 2026-09-27: quitar solo la guarda local **no** da rojo (la regla global `animation: none` ya lo cubre: dos cinturones); en una copia sin las dos guardas la medida ve **9 animaciones** | 0 animaciones con la hoja real |
 
+## Fase 0 (kit v1.32.0) — registro retroactivo del S2
+
+La etapa se aprobó antes de que el kit v1.32.0 trajera esta sección; se registra lo que pasó con cada casilla:
+
+- [x] **El preview del PR abre la maqueta** — no el primer día: el índice en `/diseno` dio 404 en la ronda 1
+      de la mirada 5 y se corrigió con una base explícita (`index.html`). Es exactamente el caso que la
+      casilla previene.
+- [ ] **Generador de la maqueta en el repo con gate de deriva** — solo el de tokens
+      (`scripts/paleta/generar-tokens.mjs` + `tests/unit/diseno-tokens.test.ts`); las páginas no tienen
+      generador en el repo. La etapa está cerrada y la maqueta congelada: vacío declarado (desviación 10 del
+      S2), no se reconstruye.
+- [x] **Controladores cargados** — `tests/unit/controladores-maqueta.test.ts` (S2, con su demo en rojo).
+- [ ] **Arnés de capturas con pasada de interacción** — `scripts/capturar-maqueta.mjs` pulsa los controles
+      pero no comprueba que algo cambie; la pasada de interacción nace en el arnés de la vitrina (S2).
+
+## Tokens de reusables consumidos
+
+| Reusable | Contrato base (planeadora, RO) | Propuesta de tokens | Estado |
+|---|---|---|---|
+| diagramador | `reusables/diagramador/CONTRATO.md` 0.3.0 (gramática `agentes-ia` 1.1.0) | glifo de `regla` = hexágono (el 0.3.0 dice `escudo`), métricas de Inter para G15, geometría de la maqueta (paso 172), relleno tintado del nodo seleccionado | enmiendas en el summary del S2 → G-Metodo |
+| instrumentos-de-plan | `reusables/instrumentos-de-plan/CONTRATO.md` 0.2.0 | ninguna (sin gramática visual) | — |
+
 ## Cobertura (se llena durante la etapa)
 
 | Página de la maqueta | Funcionalidad de la VISION                                          | Estados que muestra                                                                                                                              |
@@ -134,7 +155,7 @@ en toda cifra (real · spike vs maqueta) — **cambiada en la mirada 3**: Brecha
 | **Veredicto del usuario**    | **aprobado** — «Ya funcioona bien [URL del preview omitida: regla de cero enlaces]. apruebo G-Diseño» |
 | **Fecha**                    | 2026-09-27                                                                                          |
 | **Rondas de sala de diseño** | 11 en 5 miradas: mirada 1 × 3 · mirada 2 × 2 · mirada 3 × 2 · mirada 4 × 2 · mirada 5 × 2 (detalle en `MIRADAS.md`) |
-| **Dónde se aprobó**          | preview de Vercel del PR de `diseno/fundacion` (la URL vive en la planeadora, jamás aquí: regla 17) |
+| **Dónde se aprobó**          | preview del PR #5 (`diseno/fundacion`); la URL vive en la planeadora, jamás aquí (regla 17) |
 | **Decisiones selladas**      | dirección sobria de la ronda 3 de la mirada 1: Inter + JetBrains Mono, siete tamaños, filas antes que tarjetas, íconos de línea · grafo en teléfono como lienzo que se desliza de lado, con la lista por capa como vista alterna · «regla» con hexágono · ficha general (objetivo, recibe, hace, entrega, capacidad) antes del detalle, con perfiles líder y experto de cambio visible · Brecha abre con el balance plan frente a corrida y nombra cada falla · Plan con las 5 primeras y «Ver N más» · pestaña «Casos» · Agente sobre el grafo real del sprint 1, con el spike como «exigido y ausente» · lectura a 15 px · `design-system.md` 1.0.0 |
 | **Gate ⭐ de lectura**        | **omitido por decisión explícita del usuario** (2026-09-27): «Omite la prueba d electura no la vamos a hacer, quien lo dice? lo digo yo y es mi orden. 2. si fusiona». No se corrió: la etapa cierra sin él, y no se da por pasado |
 | **Notas del usuario**        | el recorrido del preview falló en la ronda 1 (el índice en `/diseno` daba 404) y se aprobó tras la corrección. Regla del usuario vigente para todo lo que venga: cada mirada trae su matriz de qué revisar y qué debería ver |

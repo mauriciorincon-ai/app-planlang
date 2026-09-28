@@ -23,6 +23,11 @@ jobs:
         with: { node-version: 22, cache: pnpm }
       - run: pnpm install --frozen-lockfile
       - run: pnpm peers check     # unico gate que ve un peer insatisfecho (kit v1.24.0 — caso @supabase/ssr)
+      - name: Regla 18 — ningun paquete por debajo de main (kit v1.32.0)
+        if: github.event_name == 'pull_request'
+        run: |
+          git fetch origin main --depth=1
+          node scripts/verificar-dependencias.mjs origin/main
       - run: pnpm typecheck
       - run: pnpm lint
       - run: pnpm test            # vitest run --coverage (umbral 70% en vitest.config)

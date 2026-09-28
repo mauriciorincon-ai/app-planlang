@@ -1,5 +1,7 @@
 # ADR-004 — Salida estructurada con `--max-turns 1`: `error_max_turns` se clasifica y se reintenta
 
+**Summary (EN):** With `--json-schema` the CLI may stop with `error_max_turns`; the adapter classifies it as `esquema_invalido` and retries within §9.1 (one try plus two retries), declaring the retries and their cost in the trace. Amended in S2: rule 6 now gives `--max-turns 2` only when `--json-schema` is present, and 1 otherwise.
+
 **Estado:** aceptado · **Fecha:** 2026-09-27 · **Sprint:** S1 «El contrato y la corrida»
 **Cítese por tema:** «ADR de salida estructurada y max-turns».
 
@@ -25,7 +27,7 @@ y 9 de 16 en la línea base (un esquema con extracción, propuesta y dos cartas)
 3. Los reintentos NO se esconden: cada paso de la traza lleva `reintentos_esquema`, y el costo nominal
    de los intentos fallidos se suma a su `costo_nominal_usd` (`costo_reintentos_usd` en los metadatos).
    Los tokens de los intentos fallidos no se suman (el CLI solo informa su costo): límite declarado.
-4. `--max-turns 1` NO cambia: cambiarlo es cambiar la regla 6 (planeadora, G-Metodo).
+4. `--max-turns 1` NO cambia: cambiarlo es cambiar la regla 6 (planeadora, G-Metodo). *(Superado por la enmienda del S2, abajo.)*
 
 ## Consecuencias
 
@@ -41,3 +43,17 @@ y 9 de 16 en la línea base (un esquema con extracción, propuesta y dos cartas)
 - Tests: `test_adaptador_flags.py` (rc = 1 con `error_max_turns` en stdout, reintento declarado, tres
   fallas seguidas con su costo, «otro» sin reintento). Demo en rojo: volver ciego el adaptador al JSON
   de stdout pone tres tests en rojo.
+
+## Enmienda S2 (2026-09-28) — `--max-turns 2` únicamente con `--json-schema`
+
+- **Origen:** la planeadora cambió la regla 6 al cerrar el S1 (estándar 7-S v2.16.0), a partir de la medición de
+  este ADR: con un solo turno el CLI cortaba entre el 6 % y el 56 % de las llamadas estructuradas. La constitución
+  se sincronizó en la fase 0 del S2.
+- **Implementación:** `turnos_maximos(json_schema)` en `agents/src/app_agents/adaptador.py` devuelve 2 con esquema y
+  1 sin él. No es un parámetro: la regla fija el número, no quien llama. `test_adaptador_flags.py` compara la línea
+  de comando literal en los dos casos (demo en rojo: devolver siempre 1).
+- **Humo real 3/3** con la suscripción el 2026-09-28, ya con 2 turnos.
+- **Clasificación y reintentos:** sin cambios. Un `error_max_turns` con esquema sigue siendo `esquema_invalido`
+  y se reintenta; con 2 turnos se espera que sea raro.
+- **Medición pendiente:** la tasa de `error_max_turns` con 2 turnos se mide en las corridas del S2 (parada 1 del ⭐
+  del S1 si el usuario la corre, y corridas de fondo de la fase 4) y se anota aquí.

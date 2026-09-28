@@ -1,5 +1,7 @@
 # ADR-002 — Proveedor de modelo por suscripción de Claude Code: lectura de los términos, régimen de lotes e interruptor
 
+**Summary (EN):** The model is served by the user's Claude Code subscription through `ChatClaudeCode`: `claude -p` with the exact flags of rule 6, never `--bare`, a clean temporary cwd and a child environment stripped of keys and of every `ANTHROPIC_`/`LANGSMITH_`/`LANGCHAIN_`/`CLAUDE_CODE_` variable. The token never leaves the binary. Batches of 20 run outside CI, spaced; a configuration switch moves to the Anthropic API or Groq under a declared cap. The terms are re-read before each release.
+
 **Estado:** aceptado · **Fecha:** 2026-09-27 · **Sprint:** S1 · **Estándar:** 7-S (estándares v2.15.0)
 **Cítese por tema:** «ADR de proveedor y cumplimiento».
 **Re-lectura obligatoria antes de cada release** (tabla al final).
@@ -59,7 +61,7 @@ queda trazado en LangSmith. La investigación técnica (§ 5) leyó los término
 
 1. **Proveedor por defecto = suscripción de Claude Code** vía `ChatClaudeCode(BaseChatModel)`
    (`agents/src/app_agents/adaptador.py`): `claude -p --output-format json --model sonnet
---max-turns 1 --no-session-persistence --strict-mcp-config --mcp-config '{"mcpServers":{}}'
+--max-turns <2 con --json-schema, 1 sin él: enmienda S2 del ADR-004> --no-session-persistence --strict-mcp-config --mcp-config '{"mcpServers":{}}'
 --setting-sources "" --tools "" --system-prompt <propio> --json-schema <esquema>`, **nunca `--bare`**,
    cwd = directorio temporal limpio (esta constitución no entra al prompt), `env` del hijo sin
    `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN`, `LANGSMITH_API_KEY`,

@@ -1,5 +1,7 @@
 # ADR-001 — Los demos de planlang usan IA generativa solo para extraer y redactar texto libre: por qué el código no alcanza
 
+**Summary (EN):** Demo agents use generative AI only where code cannot reach: extracting fields from free clinical text, asking one clarifying question and drafting the reply. Routing, coverage checks, the output guard and the adverse-decision document are deterministic code. §4 records the real fallback behaviour; routing a provider outage to the human pause is S2 debt.
+
 > Plantilla del kit v1.27.0 (regla dura «código primero», estándares § 7, G-Metodo 2026-07-12).
 > **Cítese por tema:** «ADR código primero de los demos».
 

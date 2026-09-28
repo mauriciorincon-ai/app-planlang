@@ -1,5 +1,7 @@
 # ADR-003 — Pines de Python para `agents/` (LangChain 1.x, LangGraph 1.x, LangSmith SDK, canonicalización)
 
+**Summary (EN):** Python pins for `agents/`: langchain >=1.4,<2 · langgraph >=1.2,<1.3 · langchain-core <2 · langsmith <1 · langgraph-checkpoint-sqlite >=3.1,<4 · pydantic >=2,<3 · rfc8785 >=0.1,<1. Pins move only by ADR inside a sprint (there is no Dependabot for pip).
+
 **Estado:** aceptado · **Fecha:** 2026-09-27 · **Sprint:** S1 «El contrato y la corrida»
 **Cítese por tema:** «ADR de pines de Python».
 
