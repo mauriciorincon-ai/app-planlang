@@ -19,6 +19,7 @@ type Entrada = {
   "package-ecosystem": string;
   "open-pull-requests-limit"?: number;
   groups?: Record<string, Grupo>;
+  ignore?: { "dependency-name": string; "update-types"?: string[] }[];
 };
 
 const config = parse(readFileSync(".github/dependabot.yml", "utf8")) as {
@@ -57,5 +58,30 @@ describe("dependabot.yml — máximo dos PRs abiertos y el lote nunca arrastra u
       expect(tipos, `el grupo «${nombre}» admite major`).not.toContain("major");
       expect(tipos?.slice().sort()).toEqual(["minor", "patch"]);
     }
+  });
+
+  it("@types/node sigue al Node de la CI: su mayor coincide y dependabot no propone otro (kit v1.32.1)", () => {
+    // Origen: planlang S1, PR #6 — @types/node 26 con la CI en Node 22 pasó verde; los tipos
+    // aceptaban APIs que el runtime no tiene. El `ignore` solo no es gate (no se ve operar): este
+    // test cruza el `ignore`, el package.json y el node-version de la CI.
+    const ci = readFileSync(".github/workflows/ci.yml", "utf8");
+    const nodes = [...ci.matchAll(/node-version:\s*(\d+)/g)].map((m) => m[1]);
+    expect(nodes.length).toBeGreaterThan(0);
+    expect(new Set(nodes).size, "la CI usa un solo Node").toBe(1);
+    const pkg = JSON.parse(readFileSync("package.json", "utf8")) as {
+      devDependencies: Record<string, string>;
+    };
+    const tipos = pkg.devDependencies["@types/node"] ?? "";
+    expect(
+      tipos.match(/(\d+)/)?.[1],
+      `@types/node ${tipos} vs Node ${nodes[0]} de la CI`,
+    ).toBe(nodes[0]);
+    const ign = npm?.ignore?.find(
+      (i) => i["dependency-name"] === "@types/node",
+    );
+    expect(
+      ign?.["update-types"],
+      "dependabot debe ignorar los mayores de @types/node",
+    ).toContain("version-update:semver-major");
   });
 });
