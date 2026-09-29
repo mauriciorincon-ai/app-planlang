@@ -75,7 +75,7 @@
   --color-c: var(--c);
 
   --font-letra: var(--fuente-letra), system-ui, sans-serif;
-  --font-mono: var(--fuente-mono), ui-monospace, monospace;
+  --font-mono: var(--mono-activa, ui-monospace, monospace);
 
   /* Escala tipográfica (design-system § 2.3). Título, guía y cifra cambian bajo 721 px (base.css). */
   --text-titulo: var(--t-titulo);

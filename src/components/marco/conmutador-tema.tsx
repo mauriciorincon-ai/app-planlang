@@ -21,6 +21,8 @@ export function ConmutadorTema({
       <button
         type="button"
         className={SEG_OPCION}
+        data-pref="tema"
+        data-valor="oscuro"
         aria-pressed={tema === "oscuro"}
         onClick={() => fijarPreferencia("tema", "oscuro")}
       >
@@ -30,6 +32,8 @@ export function ConmutadorTema({
       <button
         type="button"
         className={SEG_OPCION}
+        data-pref="tema"
+        data-valor="claro"
         aria-pressed={tema === "claro"}
         onClick={() => fijarPreferencia("tema", "claro")}
       >

@@ -18,6 +18,10 @@ function consolaLimpia(page: Page): string[] {
 }
 
 async function sinViolacionesSerias(page: Page) {
+  // axe mide colores: una transición a medias (150 ms) daría un contraste que nadie ve quieto.
+  await page.waitForFunction(() =>
+    document.getAnimations().every((a) => a.playState !== "running"),
+  );
   const scan = await new AxeBuilder({ page }).analyze();
   const serias = scan.violations.filter(
     (v) => v.impact === "critical" || v.impact === "serious",

@@ -188,7 +188,15 @@ const mediciones = [];
 const fallas = [];
 
 async function asentar(page) {
-  await page.evaluate(() => document.fonts.ready);
+  // La mono de datos de la vitrina entra tras la carga (`html[data-mono]`, ADR-008): se espera a que esté.
+  if (page.url().startsWith(V))
+    await page.waitForFunction(() =>
+      document.documentElement.hasAttribute("data-mono"),
+    );
+  await page.evaluate(async () => {
+    void document.body.offsetHeight;
+    await document.fonts.ready;
+  });
   // Las transiciones de color duran 150 ms: se deja que terminen antes de capturar.
   await page.waitForTimeout(400);
 }

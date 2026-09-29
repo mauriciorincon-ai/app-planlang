@@ -23,6 +23,8 @@ export function LeerComo({
         <button
           type="button"
           className={SEG_OPCION}
+          data-pref="perfil"
+          data-valor="lider"
           aria-pressed={perfil === "lider"}
           onClick={() => fijarPreferencia("perfil", "lider")}
         >
@@ -32,6 +34,8 @@ export function LeerComo({
         <button
           type="button"
           className={SEG_OPCION}
+          data-pref="perfil"
+          data-valor="experto"
           aria-pressed={perfil === "experto"}
           onClick={() => fijarPreferencia("perfil", "experto")}
         >

@@ -46,7 +46,9 @@ design-system tokens; the approved fonts ship byte-for-byte; Sentry is loaded on
    anterior al `<body>`, así que ningún píxel se pinta con el tema equivocado. `<html suppressHydrationWarning>`
    (sus atributos cambian antes de que React llegue). Los dos perfiles se pintan en el servidor y el atributo oculta
    uno (`.solo-lider` / `.solo-experto`); los conmutadores leen el atributo con `useSyncExternalStore` (instantánea
-   del servidor `null`) y solo cambian propiedades (`aria-pressed`). Sin JS: el tema sigue al sistema (bloque
+   del servidor `null`) y solo cambian propiedades (`aria-pressed`). La opción ELEGIDA de tema y perfil se pinta
+   desde el atributo del `<html>` (CSS), no desde `aria-pressed`: correcta desde el primer cuadro, sin destello al
+   hidratar. Sin JS: el tema sigue al sistema (bloque
    `prefers-color-scheme` de `src/styles/tokens.css` para `:root` sin atributo) y se lee como líder.
 5. **Tailwind v4 limitado al sistema.** `src/styles/tema.css` borra la paleta, sombras, radios, letras, tamaños,
    contenedores y cortes por defecto, y declara solo los del design system (`@theme inline` sobre las variables de
@@ -57,7 +59,10 @@ design-system tokens; the approved fonts ship byte-for-byte; Sentry is loaded on
    hereda del cuerpo (la tabla del § 2.3 dice 1,5). Se proponen al `design-system.md` en el cierre del ciclo.
 6. **Fuentes y íconos.** Inter y JetBrains Mono son los MISMOS archivos que la maqueta (prueba de huellas) vía
    `next/font/local`, con licencias OFL en `/licencias`. `display: "swap"` con respaldo ajustado a métricas, y no
-   `block` como la maqueta: la primera pintura no espera a la fuente (LCP ≤ 2,5 s en `perf-budget.json`). Lucide
+   `block` como la maqueta: la primera pintura no espera a la fuente (LCP ≤ 2,5 s en `perf-budget.json`). **La
+   mono de datos entra después de la carga:** no se precarga y su familia solo se activa con `html[data-mono]`, que
+   el script previo pone en `load`; hasta entonces los datos van en la mono del sistema (nada de lo primero que se
+   lee es mono). Medido con Lighthouse móvil (3 corridas, mediana): LCP 2,61 s → 2,31 s, CLS 0. Lucide
    `lucide-react` 1.48.0 exacto; los glifos de tipo, las marcas de veredicto y procedencia y la marca de planlang se
    dibujan con geometría calculada en `src/components/marcas.tsx` (el glifo de `regla` es el hexágono sellado).
 7. **Sentry solo con DSN.** `instrumentation-client.ts` importa `@sentry/nextjs` de forma dinámica detrás del `if`

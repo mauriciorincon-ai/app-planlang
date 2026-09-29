@@ -227,6 +227,24 @@ responde; la mirada del preview viaja a la fidelidad de P1.
 | 380 px sin desplazamiento lateral | un bloque de 400×4 px en el pie | rojo en `telefono` (tres pruebas) → verde. **La primera demo salió verde por error mío**: el bloque no tenía alto y un bloque de área cero no cuenta como desbordamiento; el gate estaba bien |
 | pasada de interacción (22 b) | el botón «Claro» no hace nada | rojo: «tema → Claro» y «tema → Oscuro» «no cambió nada» → verde |
 
+### CI del commit `8c7ae2d` y el LCP de la Entrada
+
+`quality`, `python` y `e2e` en `success`; **`lighthouse` en rojo**: LCP de `/es` 2,72 s (mediana de 3; presupuesto
+2,5 s, que esta fase bajó desde 3 s). Primera corrida del paso «Export de la vitrina» en `quality`: `success`.
+Diagnóstico local con Lighthouse móvil (3 corridas, mediana 2,61 s): el LCP es el párrafo de la entradilla, que se
+pinta con la fuente de respaldo; el estimador suma todo lo que empezó a bajar antes del primer pintado observado.
+Sin los scripts de Next el LCP simulado baja a 1,5 s (el runtime de React y Next, 137 KB comprimidos, no se puede
+quitar en el App Router); sin la mono de datos, a 2,31 s. Arreglo: la mono no se precarga y se activa después de la
+carga (`html[data-mono]`, ADR-008): LCP 2,31 s, CLS 0, rendimiento 98 y 100 en las otras tres categorías. Probados y
+descartados: quitar solo la precarga de la mono (sin efecto) y `experimental.inlineCss` (sin efecto en el LCP).
+Mis dos primeras mediciones con copias alteradas de `out/` quedaron contaminadas por un `serve` viejo en `:3000`
+(el `pkill` no casaba con la línea de comando real); se repitieron sobre el build real con el proceso verificado.
+
+Al repetir el e2e apareció un rojo de contraste que no era de color: axe medía los botones de tema y perfil a mitad
+de la transición de 150 ms con que pasaban a «pulsado» al hidratar. Arreglo de raíz: la opción elegida se pinta desde
+el atributo del `<html>` (lo fija el script previo antes de pintar), sin destello; y el e2e espera a que no haya
+animaciones antes de axe. `--repeat-each 2`: 38/38.
+
 ### Gate de FIDELIDAD — pendiente
 
 `docs/fidelidad/p1/index.html` (doble clic): 10 pares maqueta | vitrina y la matriz de qué mirar. Diferencias
@@ -287,6 +305,8 @@ fidelidad» no se construye P2–P7.
 21. **`sprint` en el manifiesto de la vitrina** (`corrida.sprint: 1`): «el agente del sprint 1» y el chip «real ·
     sprint 1» salen del dato, no de la copia.
 22. **Sentry solo con DSN** (importación dinámica): no estaba en el plan; ahorra 148 KB comprimidos por página.
+23. **La mono de datos entra después de la carga** (no estaba en el plan; la pidió el presupuesto de LCP): hasta el
+    `load` los datos van en la mono del sistema. Las capturas y el arnés esperan a `html[data-mono]`.
 
 ## Registro de miradas
 
@@ -301,4 +321,6 @@ fidelidad» no se construye P2–P7.
 | 2026-09-28 | El e2e no arrancaba: `:3000` ocupado | un `serve out -l 3000` de una sesión anterior (26-09) seguía vivo | se detuvo (servía este mismo `out/`); el e2e levanta el suyo |
 | 2026-09-28 | Sentry se descargaba sin DSN | importación estática del kit en `instrumentation-client.ts` | importación dinámica detrás del `if` (desviación 22) |
 | 2026-09-28 | Demo de desbordamiento verde por error | bloque de 400 px sin alto (área cero no desborda) | demo repetida con 400×4 px: rojo |
+| 2026-09-28 | `lighthouse` rojo: LCP 2,72 s > 2,5 s | el runtime de Next y la mono de datos bajaban antes del primer pintado | mono diferida al `load` (LCP local 2,31 s); ver «CI del commit `8c7ae2d`» |
+| 2026-09-28 | Contraste rojo intermitente en axe | los botones de tema y perfil pasaban a «pulsado» con transición al hidratar | la opción elegida se pinta desde el atributo del `<html>`; axe espera a que no haya animaciones |
 | 2026-09-28 | Prettier reformateó `src/lib/observability.ts` sin cambios de fondo | `prettier --write` sobre `src/**` | revertido; el diff solo lleva lo del sprint |

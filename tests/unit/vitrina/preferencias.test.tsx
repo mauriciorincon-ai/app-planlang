@@ -81,6 +81,15 @@ describe("script previo: tema y perfil antes de pintar", () => {
     expect(localStorage.getItem("planlang.idioma")).toBe("en");
   });
 
+  it("la mono de datos se activa al terminar la carga, no antes", () => {
+    html.removeAttribute("data-mono");
+    correr();
+    expect(html.hasAttribute("data-mono")).toBe(false);
+    window.dispatchEvent(new Event("load"));
+    expect(html.hasAttribute("data-mono")).toBe(true);
+    html.removeAttribute("data-mono");
+  });
+
   it("con el almacenamiento bloqueado pinta los valores por defecto sin lanzar", () => {
     const get = vi
       .spyOn(Storage.prototype, "getItem")
