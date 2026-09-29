@@ -10,8 +10,8 @@
 
 | Fase | Estado | Cierre |
 |---|---|---|
-| 0 · Setup, deltas, plan v1.3 y ⭐ del S1 | 🔄 en curso | |
-| 1 · Fundación de UI + P1 → gate de FIDELIDAD | ⏳ | |
+| 0 · Setup, deltas, plan v1.3 y ⭐ del S1 | ✅ cerrada · paradas del S1 diferidas con nombre | «continúa» 2026-09-28 |
+| 1 · Fundación de UI + P1 → gate de FIDELIDAD | 🔨 en construcción | |
 | 2 · P2 Plan · P3 Agente (visor) · P6 Caso | ⏳ | |
 | 3 · P4 Brecha · P5 Playground | ⏳ | |
 | 4 · P7 Fichas · paquete · corridas de fondo · deuda | ⏳ | |
@@ -128,6 +128,23 @@ legal (tabla: baja)», R8 «1 sesión · no ocurrió». `data/vitrina/manifiesto
 línea base e informe con sus huellas; `tests/integration/manifiesto-vitrina.test.ts` las verifica y regenera el
 informe.
 
+### CI del PR borrador #8 (2026-09-28, commit `5e6097d`)
+
+`quality`, `python`, `e2e` y `lighthouse`: `SUCCESS` con conclusión propia. **Primera corrida** del paso «Regla 18 —
+ningún paquete por debajo de main» (`success`, no `skipped`): sin histórico no puede afirmarse regresión ni
+no-regresión. Vercel desplegó la rama (`Deployment has completed`); que `/es` y `/en` respondan en el preview protegido
+lo confirma el usuario con su sesión. Local: `pnpm test` 648 (52 archivos, umbrales de cobertura verdes) · `pytest` 137
+(96,2 %) · humo real 3/3 · `pnpm lint`, `pnpm typecheck`, `pnpm trazas:verificar` limpios.
+
+### Las 3 paradas del ⭐ del S1 — diferidas otra vez (excepción con nombre)
+
+Ofrecidas en el gate de la fase 0 (lote real de 3 mirando la cuota · «¿reconoces tu plan?» sobre el informe v1.3 ES/EN ·
+LangSmith). El usuario respondió «continúa» sin correrlas (2026-09-28). Quedan como **excepción nombrada
+«paradas-S1-diferidas-S2»** en el acumulado ⭐ del ciclo: la guía acumulativa del cierre las lista como pendientes con
+origen S1, y la de LangSmith conserva su fecha límite (antes de las corridas de fondo de la fase 4). El preview de
+`/es` y `/en` tampoco recibió confirmación explícita: la CI de Vercel desplegó la rama y el e2e local del export
+responde; la mirada del preview viaja a la fidelidad de P1.
+
 ### Demos en rojo (regla 15)
 
 | Gate | Cambio deliberado | Resultado |
@@ -175,6 +192,13 @@ informe.
    M-17, M-18 (refactor del grafo con riesgo sobre RF-09.2) y los Bajos que la auditoría no suba.
 10. **Regla 22: los generadores de las páginas de la maqueta no están en el repo** (solo el de tokens). La etapa
     está cerrada y la maqueta congelada: vacío declarado, no se reconstruye.
+11. **Lista de degradaciones a propósito para `verificar-dependencias`** (`scripts/degradaciones-permitidas.json`):
+    este mismo PR baja `@types/node` 26 → 22 por orden; la copia del kit no admite una bajada deliberada. Coincidencia
+    exacta de versiones; una entrada que no se usa avisa.
+12. **Los `informe.*` de `runs/` se regeneran** con el verificador 1.1.0 (como en el S1): son derivados; trazas,
+    manifiestos, grafos y ramas no se tocan (append-only).
+13. **La unidad de U2 queda solo en español** en la v1.3: cambiarla rompería `mismaVerdad(v1.2, v1.3)` (ADR-005) e
+    invalidaría el lote de 20.
 
 ## Registro de miradas
 
