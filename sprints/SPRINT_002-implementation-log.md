@@ -11,8 +11,8 @@
 | Fase | Estado | Cierre |
 |---|---|---|
 | 0 · Setup, deltas, plan v1.3 y ⭐ del S1 | ✅ cerrada · paradas del S1 diferidas con nombre | «continúa» 2026-09-28 |
-| 1 · Fundación de UI + P1 → gate de FIDELIDAD | ✅ construida · **gate de FIDELIDAD pendiente** (`docs/fidelidad/p1/index.html`) | |
-| 2 · P2 Plan · P3 Agente (visor) · P6 Caso | ⏳ | |
+| 1 · Fundación de UI + P1 → gate de FIDELIDAD | ✅ cerrada · **fidelidad aprobada** (`docs/fidelidad/p1/index.html`) | «lo abrí y lo apruebo» + «avancemos» 2026-09-29 |
+| 2 · P2 Plan · P3 Agente (visor) · P6 Caso | 🔨 en construcción (desde 2026-09-29) | |
 | 3 · P4 Brecha · P5 Playground | ⏳ | |
 | 4 · P7 Fichas · paquete · corridas de fondo · deuda | ⏳ | |
 | 5 · Cierre | ⏳ | |
@@ -249,12 +249,18 @@ animaciones antes de axe. `--repeat-each 2`: 38/38.
 presupuestos con LCP ≤ 2,5 s y categorías ≥ 90, mediana de 3 corridas sobre `/es`); 950 pruebas + 2 saltadas (las que
 comparan con la planeadora, ausente en el runner) y 19 e2e.
 
-### Gate de FIDELIDAD — pendiente
+**CI del commit `c04c1bd`** (marcas discontinuas con punta recta y capturas regeneradas): `quality`, `python`, `e2e`
+y `lighthouse` en `success` con conclusión propia, más el preview de Vercel.
+
+### Gate de FIDELIDAD — aprobado (2026-09-29)
 
 `docs/fidelidad/p1/index.html` (doble clic): 10 pares maqueta | vitrina y la matriz de qué mirar. Diferencias
 deliberadas, anotadas en la matriz: la fila del demo dice «plan v1.3 · corrida con v1.2» (la maqueta decía «plan
-v1.2»: el informe que se publica es el del plan v1.3) y en inglés los porcentajes van pegados («89%»). Sin «apruebo
-fidelidad» no se construye P2–P7.
+v1.2»: el informe que se publica es el del plan v1.3) y en inglés los porcentajes van pegados («89%»).
+
+**Veredicto del usuario, textual (2026-09-29):** «Avancemos lo abri y lo apruebo». Es la fórmula «lo abrí y apruebo»
+de la regla 10: pasa el gate de MIRADA y, con «avancemos», el de FASE. Sobre las capturas de `c04c1bd`. Desde aquí
+se construyen P2–P7.
 
 ## Desviación del plan
 
@@ -316,7 +322,7 @@ fidelidad» no se construye P2–P7.
 
 | Fecha | Mirada | Artefacto | Veredicto del usuario (textual) | Qué se construyó encima |
 |---|---|---|---|---|
-| 2026-09-28 | Fidelidad P1 (indiferible) | `docs/fidelidad/p1/index.html` | *pendiente* | nada: P2–P7 esperan el «apruebo fidelidad» |
+| 2026-09-29 | Fidelidad P1 (indiferible; presentada el 2026-09-28) | `docs/fidelidad/p1/index.html` (capturas de `c04c1bd`) | «Avancemos lo abri y lo apruebo» | fase 2: P2 Plan · P3 Agente · P6 Caso |
 
 ## Bugs y fricciones
 
