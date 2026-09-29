@@ -3,7 +3,7 @@
  * del que salen los Markdown en español y en inglés (`render-md.ts`). Dos ejecuciones sobre los mismos
  * archivos dan los mismos bytes: no hay reloj (la fecha es la de la corrida), ni azar, ni `Intl`.
  */
-import type { TextoBilingue } from "../formatos/bilingue";
+import { comoBilingue, type TextoBilingue } from "../formatos/bilingue";
 import { conHuella } from "../formatos/huella";
 import type { JsonValor } from "../formatos/jcs";
 import { ligadurasDeUmbrales } from "../plan/contrato-constructor";
@@ -18,7 +18,11 @@ import {
   type BrechaNoPrevista,
   type ResultadoEvaluador,
 } from "./brechas-no-previstas";
-import { vistasDeCorrida, type VistaDeCaso } from "./contexto";
+import {
+  vistasDeCorrida,
+  vistasDeSesiones,
+  type VistaDeCaso,
+} from "./contexto";
 import { verificarContrato, type ResultadoContrato } from "./contrato-grafo";
 import { evaluarCriterios, type ResultadoCriterio } from "./criterios";
 import { evaluarRiesgos, type ResultadoRiesgo } from "./detectores";
@@ -36,7 +40,11 @@ import {
 } from "./veredicto";
 
 export const FORMATO_INFORME = "planlang-informe/v1";
-export const VERSION_VERIFICADOR = "1.0.0";
+/**
+ * 1.1.0 (S2): cada riesgo trae la prioridad de tabla y el control legal junto a la efectiva (instrumentos-de-plan
+ * v0.2.0, G8); `opcion_elegida` de las decisiones de una vía es bilingüe (M-25).
+ */
+export const VERSION_VERIFICADOR = "1.1.0";
 
 export interface CasoEjemplar {
   caso_id: string;
@@ -87,7 +95,7 @@ export interface Informe {
     decisiones_una_via: {
       id: string;
       pregunta: TextoBilingue;
-      opcion_elegida: string | null;
+      opcion_elegida: TextoBilingue | null;
       justificacion: TextoBilingue | null;
     }[];
   };
@@ -129,6 +137,8 @@ export interface Informe {
       casos_ejecutados: number;
       casos_con_error: number;
       limites_alcanzados: number;
+      /** El plan con que se ejecutó (puede ser anterior al verificado si solo cambió la medición, ADR-005). */
+      plan_de_ejecucion: { version: string; huella: string };
     };
     repeticiones: { corrida_id: string; huella: string }[];
     linea_base: { corrida_id: string; huella: string } | null;
@@ -529,7 +539,7 @@ export async function generarInforme(
     vistas,
     e.repeticiones.map(vistasDe),
   );
-  const riesgos = evaluarRiesgos(plan, vistas);
+  const riesgos = evaluarRiesgos(plan, vistas, vistasDeSesiones(m.sesiones));
   const supuestos = evaluarSupuestos(
     plan,
     vistas,
@@ -546,7 +556,11 @@ export async function generarInforme(
   // Las repeticiones que cierran pass^k también se miran: sus riesgos y sus brechas se reportan (AU-2).
   const deRepeticiones = e.repeticiones.map((r) => {
     const vs = vistasDe(r);
-    const rs = evaluarRiesgos(plan, vs);
+    const rs = evaluarRiesgos(
+      plan,
+      vs,
+      vistasDeSesiones(r.manifiesto.sesiones),
+    );
     return {
       id: r.manifiesto.corrida_id,
       riesgos: rs,
@@ -597,7 +611,9 @@ export async function generarInforme(
         .map((d) => ({
           id: d.id,
           pregunta: d.pregunta,
-          opcion_elegida: d.opcion_elegida ?? null,
+          opcion_elegida: d.opcion_elegida
+            ? comoBilingue(d.opcion_elegida)
+            : null,
           justificacion: d.justificacion ?? null,
         })),
     },
@@ -612,7 +628,7 @@ export async function generarInforme(
       plan: {
         id: plan.id,
         version: plan.version,
-        archivo: m.plan.archivo,
+        archivo: entrada.archivoPlan ?? m.plan.archivo,
         huella: e.huellaPlan,
       },
       casos: {
@@ -641,6 +657,7 @@ export async function generarInforme(
           (n, s) => n + s.limites_alcanzados,
           0,
         ),
+        plan_de_ejecucion: e.planCorrida,
       },
       repeticiones: e.repeticiones.map((r) => ({
         corrida_id: r.manifiesto.corrida_id,

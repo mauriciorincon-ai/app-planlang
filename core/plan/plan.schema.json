@@ -503,21 +503,112 @@
             "type": "object"
           },
           "opcion_elegida": {
-            "type": "string"
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "additionalProperties": false,
+                "properties": {
+                  "en": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "es": {
+                    "minLength": 1,
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "es",
+                  "en"
+                ],
+                "type": "object"
+              }
+            ]
           },
           "opciones": {
             "items": {
               "additionalProperties": false,
               "properties": {
                 "contras": {
-                  "type": "string"
+                  "anyOf": [
+                    {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    {
+                      "additionalProperties": false,
+                      "properties": {
+                        "en": {
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "es": {
+                          "minLength": 1,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "es",
+                        "en"
+                      ],
+                      "type": "object"
+                    }
+                  ]
                 },
                 "nombre": {
-                  "minLength": 1,
-                  "type": "string"
+                  "anyOf": [
+                    {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    {
+                      "additionalProperties": false,
+                      "properties": {
+                        "en": {
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "es": {
+                          "minLength": 1,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "es",
+                        "en"
+                      ],
+                      "type": "object"
+                    }
+                  ]
                 },
                 "pros": {
-                  "type": "string"
+                  "anyOf": [
+                    {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    {
+                      "additionalProperties": false,
+                      "properties": {
+                        "en": {
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "es": {
+                          "minLength": 1,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "es",
+                        "en"
+                      ],
+                      "type": "object"
+                    }
+                  ]
                 }
               },
               "required": [
@@ -790,6 +881,9 @@
             ],
             "type": "object"
           },
+          "control_legal": {
+            "type": "boolean"
+          },
           "decision_id": {
             "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
             "type": "string"
@@ -804,6 +898,13 @@
               {
                 "additionalProperties": false,
                 "properties": {
+                  "ambito": {
+                    "enum": [
+                      "caso",
+                      "sesion"
+                    ],
+                    "type": "string"
+                  },
                   "condicion": {
                     "minLength": 1,
                     "type": "string"
@@ -865,16 +966,82 @@
               "additionalProperties": false,
               "properties": {
                 "accion": {
-                  "minLength": 1,
-                  "type": "string"
+                  "anyOf": [
+                    {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    {
+                      "additionalProperties": false,
+                      "properties": {
+                        "en": {
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "es": {
+                          "minLength": 1,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "es",
+                        "en"
+                      ],
+                      "type": "object"
+                    }
+                  ]
                 },
                 "efecto_esperado": {
-                  "minLength": 1,
-                  "type": "string"
+                  "anyOf": [
+                    {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    {
+                      "additionalProperties": false,
+                      "properties": {
+                        "en": {
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "es": {
+                          "minLength": 1,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "es",
+                        "en"
+                      ],
+                      "type": "object"
+                    }
+                  ]
                 },
                 "momento": {
-                  "minLength": 1,
-                  "type": "string"
+                  "anyOf": [
+                    {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    {
+                      "additionalProperties": false,
+                      "properties": {
+                        "en": {
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "es": {
+                          "minLength": 1,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "es",
+                        "en"
+                      ],
+                      "type": "object"
+                    }
+                  ]
                 }
               },
               "required": [
@@ -905,8 +1072,30 @@
             "type": "object"
           },
           "no_detectable_en_trazas": {
-            "minLength": 1,
-            "type": "string"
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "additionalProperties": false,
+                "properties": {
+                  "en": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "es": {
+                    "minLength": 1,
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "es",
+                  "en"
+                ],
+                "type": "object"
+              }
+            ]
           },
           "ocurrencia": {
             "maximum": 10,
@@ -1159,7 +1348,30 @@
             "type": "string"
           },
           "unidad": {
-            "type": "string"
+            "anyOf": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "additionalProperties": false,
+                "properties": {
+                  "en": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "es": {
+                    "minLength": 1,
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "es",
+                  "en"
+                ],
+                "type": "object"
+              }
+            ]
           },
           "valor_en_plan": {
             "type": [

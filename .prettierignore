@@ -10,6 +10,7 @@ docs/kit-de-prueba/
 packages/*/carnadas/
 packages/*/datos/
 packages/*/CONTRATO.lock
+packages/*/contrato/
 core/plan/plan.schema.json
 agents/
 pnpm-lock.yaml

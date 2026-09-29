@@ -127,6 +127,36 @@ export interface VistaDeCaso {
   ctx: Contexto;
 }
 
+/** Lo que una regla necesita de una unidad medida: su id y su contexto (un caso o una sesión). */
+export interface VistaEvaluable {
+  caso_id: string;
+  ctx: Contexto;
+}
+
+/**
+ * Vistas de las sesiones de una corrida para los detectores de ámbito `sesion` (M-14): el id es `sesion-N` y el
+ * contexto expone `todos` (como el de caso), `limites_alcanzados`, `detenida_por` y `casos_ejecutados` (cuántos
+ * casos corrió la sesión).
+ */
+export function vistasDeSesiones(
+  sesiones: readonly {
+    numero: number;
+    limites_alcanzados: number;
+    detenida_por?: string | null;
+    casos_ejecutados: readonly string[];
+  }[],
+): VistaEvaluable[] {
+  return sesiones.map((s) => ({
+    caso_id: `sesion-${s.numero}`,
+    ctx: contextoDesdeObjeto({
+      todos: true,
+      limites_alcanzados: s.limites_alcanzados,
+      detenida_por: s.detenida_por ?? null,
+      casos_ejecutados: s.casos_ejecutados.length,
+    }),
+  }));
+}
+
 export function vistasDeCorrida(
   trazas: readonly Traza[],
   casos: ReadonlyMap<string, Caso>,

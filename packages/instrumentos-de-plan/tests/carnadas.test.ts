@@ -1,5 +1,6 @@
 /**
- * Carnadas C01–C05 del contrato v0.1.0 (+ C03-bis, enmienda propuesta en el S1 de planlang).
+ * Carnadas C01–C06 y C03-bis del contrato v0.2.0 (C03/C03-bis nacieron como enmienda del S1 de planlang;
+ * C06 y las opciones «sin argumentos» llegan con la v0.2.0).
  * Cada carnada vive como DATO en `../carnadas/`; este test la carga y compara con lo esperado.
  */
 import { describe, expect, it } from "vitest";
@@ -9,11 +10,13 @@ import C03bis from "../carnadas/C03-bis-rpn-no-discrimina.json";
 import C03 from "../carnadas/C03-severidad-primero.json";
 import C04 from "../carnadas/C04-alta-sin-mitigacion.json";
 import C05 from "../carnadas/C05-supuesto-sin-prueba.json";
+import C06 from "../carnadas/C06-control-legal.json";
 import {
   evaluarModosDeFalla,
   informeDeInstrumentos,
   ordenarDecisiones,
   prioridadDeAccion,
+  prioridades,
   rpn,
   supuestosInvalidos,
   TABLA_AIAG_VDA,
@@ -23,7 +26,7 @@ import {
   type SupuestoMinimo,
 } from "../src";
 
-describe("carnadas del contrato instrumentos-de-plan v0.1.0", () => {
+describe("carnadas del contrato instrumentos-de-plan v0.2.0", () => {
   it("C01 — un ciclo rechaza la carga y muestra el ciclo completo", () => {
     const r = ordenarDecisiones(C01.decisiones as DecisionMinima[]);
     expect(r).toEqual({
@@ -50,7 +53,7 @@ describe("carnadas del contrato instrumentos-de-plan v0.1.0", () => {
     });
   });
 
-  it("C03 (enmendada) — S8·O6·D2 es prioridad alta con RPN 96", () => {
+  it("C03 — S8·O6·D2 es prioridad alta con RPN 96", () => {
     const m = C03.modo as ModoDeFallaMinimo;
     expect(prioridadDeAccion(m.severidad, m.ocurrencia, m.deteccion)).toBe(
       C03.esperado.prioridad_de_accion,
@@ -61,7 +64,7 @@ describe("carnadas del contrato instrumentos-de-plan v0.1.0", () => {
   it("C03-bis — S8·O3·D4 tiene el mismo RPN 96 y prioridad baja: el RPN no discrimina", () => {
     const m = C03bis.modo as ModoDeFallaMinimo;
     expect(prioridadDeAccion(m.severidad, m.ocurrencia, m.deteccion)).toBe(
-      "baja",
+      C03bis.esperado.prioridad_de_accion,
     );
     expect(rpn(m)).toBe(96);
   });
@@ -80,9 +83,62 @@ describe("carnadas del contrato instrumentos-de-plan v0.1.0", () => {
     expect(informe.modos[0]).toEqual({
       id: "R9",
       prioridad_de_accion: "alta",
+      prioridad_de_tabla: "alta",
+      control_legal: false,
       rpn: 180,
       bloqueante: true,
     });
+  });
+
+  it("C06 — control legal: prioridad efectiva alta con la de tabla visible, y sin mitigación el plan no se aprueba", () => {
+    const m = C06.modo as ModoDeFallaMinimo;
+    expect(prioridades(m)).toEqual({
+      prioridad_de_accion: C06.esperado.prioridad_de_accion,
+      prioridad_de_tabla: C06.esperado.prioridad_de_tabla,
+      control_legal: C06.esperado.control_legal,
+    });
+    const informe = informeDeInstrumentos({
+      decisiones: [],
+      modos_de_falla: [m],
+      supuestos: [],
+    });
+    expect(informe.ok).toBe(C06.esperado.ok);
+    expect(informe.bloqueantes.map((b) => b.ids[0])).toEqual(
+      C06.esperado.bloqueantes,
+    );
+    expect(informe.bloqueantes[0]?.mensaje.es).toContain("obligación legal");
+    expect(informe.bloqueantes[0]?.mensaje.en).toContain("table: low");
+    // Con una mitigación deja de bloquear, pero la prioridad efectiva sigue alta.
+    const mitigado = informeDeInstrumentos({
+      decisiones: [],
+      modos_de_falla: [{ ...m, mitigaciones: [{}] }],
+      supuestos: [],
+    });
+    expect(mitigado.ok).toBe(true);
+    expect(mitigado.modos[0]?.prioridad_de_accion).toBe("alta");
+  });
+
+  it("F-002 — opciones sin pros ni contras: la carga es válida y el informe las señala", () => {
+    const informe = informeDeInstrumentos({
+      decisiones: [
+        {
+          id: "D1",
+          reversibilidad: "dos_vias",
+          opciones: [
+            { nombre: "A", pros: ["rápido"] },
+            { nombre: { es: "B", en: "B" } },
+            { nombre: "C", pros: [], contras: { es: " ", en: "" } },
+          ],
+        },
+      ],
+      modos_de_falla: [],
+      supuestos: [],
+    });
+    expect(informe.ok).toBe(true);
+    expect(informe.opciones_sin_argumentos).toEqual([
+      { decision: "D1", indice: 2, nombre: { es: "B", en: "B" } },
+      { decision: "D1", indice: 3, nombre: "C" },
+    ]);
   });
 
   it("C05 — supuesto de criticidad alta sin prueba barata (en cualquier idioma) se rechaza", () => {

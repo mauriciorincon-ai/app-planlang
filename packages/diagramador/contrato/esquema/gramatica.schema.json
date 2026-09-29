@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "diagramador/gramatica.schema.json",
+  "title": "Gramática del diagramador (contrato 0.3.0)",
+  "description": "Reglas de un dominio: idiomas, bandas, tipos de nodo, modos de flujo, escala de madurez, vigencia y límites. Todo texto que se dibuja es un MAPA DE IDIOMA {es, en, …}; la gramática declara qué idiomas y cuál es el base. Las referencias cruzadas (ids únicos, órdenes únicos, niveles únicos, bandas de recorrido existentes, umbrales crecientes, idiomas completos) se validan en código: ver CONTRATO § 6.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contrato_version", "id", "version", "nombre", "idiomas", "idioma_base", "bandas", "tipos_de_nodo", "modos_de_flujo", "escala_madurez", "vigencia", "limites"],
+  "properties": {
+    "contrato_version": { "$ref": "#/$defs/semver" },
+    "id": { "$ref": "#/$defs/id" },
+    "version": { "$ref": "#/$defs/semver" },
+    "nombre": { "$ref": "#/$defs/texto_idioma" },
+    "descripcion": { "type": "string", "description": "Nota para quien mantiene la gramática; no se dibuja, por eso no es mapa de idioma" },
+    "idiomas": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/idioma" }, "description": "Idiomas que todo texto de la gramática y de sus mapas debe traer (G7, V14)" },
+    "idioma_base": { "$ref": "#/$defs/idioma", "description": "Idioma en que se redacta primero; debe estar en `idiomas` (G7)" },
+    "bandas": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/banda" } },
+    "tipos_de_nodo": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/tipo_de_nodo" } },
+    "modos_de_flujo": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/modo_de_flujo" } },
+    "escala_madurez": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/nivel_madurez" } },
+    "vigencia": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["umbral_revisar_dias", "umbral_vencido_dias"],
+      "properties": {
+        "umbral_revisar_dias": { "type": "integer", "minimum": 1 },
+        "umbral_vencido_dias": { "type": "integer", "minimum": 2 }
+      }
+    },
+    "recorrido_referencia": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["desde_bandas", "hasta_bandas", "llegadas"],
+      "properties": {
+        "desde_bandas": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/id" } },
+        "hasta_bandas": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/id" } },
+        "llegadas": { "enum": ["todas", "alguna"], "description": "todas: el recorrido debe terminar en CADA banda de hasta_bandas (p. ej., tablero Y agente); alguna: basta una" }
+      }
+    },
+    "limites": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bloques_min", "bloques_max", "frases_lider_max", "nodos_por_banda_max"],
+      "properties": {
+        "bloques_min": { "type": "integer", "minimum": 0 },
+        "bloques_max": { "type": "integer", "minimum": 1 },
+        "frases_lider_max": { "type": "integer", "minimum": 1 },
+        "nodos_por_banda_max": { "type": "integer", "minimum": 1, "description": "Densidad máxima por banda en el nivel 2 (P10; V11). 6 en el piloto" }
+      }
+    },
+    "terminos_a_explicar": {
+      "type": "object",
+      "description": "Por idioma, los términos que un texto de líder no puede usar sin explicar (V9)",
+      "propertyNames": { "$ref": "#/$defs/idioma" },
+      "additionalProperties": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+    }
+  },
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+    "semver": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "idioma": { "type": "string", "pattern": "^[a-z]{2}$" },
+    "texto_idioma": {
+      "type": "object",
+      "description": "Mapa de idioma: una cadena no vacía por idioma declarado. El esquema exige al menos uno; que estén TODOS los de `idiomas` lo verifica el código (G7 en la gramática, V14 en el mapa)",
+      "minProperties": 1,
+      "propertyNames": { "$ref": "#/$defs/idioma" },
+      "additionalProperties": { "type": "string", "minLength": 1 }
+    },
+    "etiqueta_idioma": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": { "$ref": "#/$defs/idioma" },
+      "additionalProperties": { "type": "string", "minLength": 1, "maxLength": 4 }
+    },
+    "banda": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "nombre", "clase", "orden", "pregunta_lider"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "nombre": { "$ref": "#/$defs/texto_idioma" },
+        "clase": { "enum": ["capa", "carril", "transversal"] },
+        "orden": { "type": "integer", "minimum": 1, "description": "Único dentro de cada clase" },
+        "pregunta_lider": { "$ref": "#/$defs/texto_idioma" }
+      }
+    },
+    "tipo_de_nodo": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "nombre", "token_color", "glifo", "etiqueta_corta"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "nombre": { "$ref": "#/$defs/texto_idioma" },
+        "token_color": { "$ref": "#/$defs/id", "description": "Nombre del token; el valor por tema lo fija el design system del consumidor bajo el umbral de paleta del CONTRATO § 5.2" },
+        "glifo": { "enum": ["circulo", "cuadrado", "rombo", "triangulo", "escudo", "estrella", "anillo", "barras"], "description": "Paths de caja 16 u en el CONTRATO § 5.4 (0.3.0: salen hexagono y pentagono, entran escudo y barras)" },
+        "etiqueta_corta": { "$ref": "#/$defs/etiqueta_idioma" }
+      }
+    },
+    "modo_de_flujo": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "nombre", "estilo_linea", "marcador", "descripcion"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "nombre": { "$ref": "#/$defs/texto_idioma" },
+        "estilo_linea": { "enum": ["continua", "discontinua", "punteada", "doble"] },
+        "marcador": { "enum": ["cuadros", "onda", "ida-y-vuelta", "enlace", "ninguno"], "description": "Paths de caja 12 u en el CONTRATO § 5.4 (0.3.0: sale reloj, entra ida-y-vuelta)" },
+        "descripcion": { "$ref": "#/$defs/texto_idioma" },
+        "exige_condicion": { "type": "boolean", "description": "Si es true, todo flujo de este modo debe traer `condicion` (V13). Ausente = false" }
+      }
+    },
+    "nivel_madurez": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "nombre", "nivel", "disponible"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "nombre": { "$ref": "#/$defs/texto_idioma" },
+        "nivel": { "type": "integer", "minimum": -1, "maximum": 4, "description": "Se dibuja como medidor (D13): −1 vacío y tachado (retirado) · 0 vacío discontinuo · 1 un cuarto · 2 la mitad · 3 tres cuartos · 4 lleno. Único dentro de la escala (G2)" },
+        "disponible": { "type": "boolean" }
+      }
+    }
+  }
+}

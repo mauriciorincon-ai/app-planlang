@@ -84,6 +84,50 @@ y `out/en.html` (`lang="en"`), sin `diseno/`. La regla `@next/next/no-html-link-
 compara la línea literal con y sin esquema. Humo real 3/3 con la suscripción (2026-09-28). ADR-002 alineado. B-10:
 los ADR 001–006 llevan su «Summary (EN)».
 
+### Reusables: instrumentos-de-plan 0.2.0 y diagramador 0.3.0
+
+- **instrumentos-de-plan 0.2.0:** `control_legal` (prioridad EFECTIVA `alta`, la de TABLA al lado; `prioridades()`),
+  carnada C06, opciones «sin argumentos» en el informe (F-002, aviso, no bloquea), `version_contrato` 0.2.0, README.
+- **Copia fijada** de lo que se consume en `packages/<objeto>/contrato/` (instrumentos: `CONTRATO.md`; diagramador:
+  `CONTRATO.md`, `esquema/{mapa,gramatica}.schema.json`, `gramaticas/agentes-ia.json` 1.1.0) y `CONTRATO.lock` con
+  la huella de cada archivo. `tests/unit/guardias/contratos-lock.test.ts` las recalcula en la CI y, con la planeadora
+  en la máquina, compara byte a byte.
+- **Esquema del plan:** `control_legal`; campos de texto que eran monolingües (`opciones`, `opcion_elegida`,
+  mitigaciones, `no_detectable_en_trazas`, `unidad`) aceptan texto o `{es, en}` (`TextoLibreSchema`: los planes
+  v1–v1.2, con los que corrieron las corridas versionadas, siguen cargando); detector con `ambito: caso | sesion`.
+
+### Verificador 1.1.0
+
+- Cada riesgo trae `prioridad_de_tabla` y `control_legal` junto a la efectiva, y su `ambito`; el informe muestra
+  «alta · control legal (tabla: baja)» (G8).
+- **Detectores de ámbito sesión (M-14):** miden sobre las sesiones del manifiesto (`limites_alcanzados`,
+  `detenida_por`, `casos_ejecutados`); los casos se leen «sesión N».
+- **Tolerancia declarada de S3:** `exactitud_dif_min` y `latencia_mediana_razon_max` en `umbral_confirmacion`; el
+  motivo dice «Tolerancia declarada en el plan» en vez de «Regla por defecto»; una clave desconocida se declara como
+  limitación.
+- **Corridas de otro plan con la misma verdad (ADR-005):** `planDeLaCorrida` en la entrada del verificador (y `--plan`
+  en `pnpm brecha:informe`): el plan de las corridas debe ser el de su manifiesto y dar la misma verdad; la ficha dice
+  «ejecutada con el plan 1.2.0 (misma verdad…)».
+- `opcion_elegida` bilingüe. Informes de referencia y versionados regenerados; el diff es exactamente los campos nuevos.
+- **Aclaración sobre `runs/` append-only:** trazas, manifiestos, grafos y ramas no se tocan; los `informe.*` junto a
+  cada corrida son derivados del verificador vigente y se regeneran (test de frescura del S1), como en el S1.
+
+### Plan v1.3 (`plans/demo-a/v1.3.json`, huella `bbe1b9c4…`)
+
+`pnpm tsx scripts/enmendar-plan-demo-a.ts --a 1.3 --por "Mauricio Rincón" --el 2026-09-28` (función pura
+`enmendarAV13`, reproducible por test). Decisiones del usuario en el plan del S2: **U4 queda** y **tolerancia de S3
+estricta** («no peor en nada»; rescatar S3 con una tolerancia elegida después de ver el resultado sería maquillarlo).
+Cambios: R8 sobre las sesiones · R1 y R6 `control_legal` · S3 con tolerancia declarada y «a un presupuesto no mayor»
+· decisiones y mitigaciones bilingües, y el EN de D1, D2 y D4 con los hechos del ES. **Umbrales y contrato de grafo
+idénticos** (`mismaVerdad(v1.2, v1.3)`): por eso U4 y la unidad de U2 («unidades sintéticas», único texto que queda
+solo en español) no se tocan — cambiarlos invalidaría el lote. **Si el usuario objeta la redacción, se regenera.**
+
+**Informe v1.3 sobre la corrida v1.2** en `data/vitrina/demo-a/suscripcion-planlang-a-001-20-v1.2/` (huella
+`70c1cb23…`): mismo veredicto «cumple con alertas» (S1 sin probar, S3 refutado, 5 brechas), R1/R6 «alta · control
+legal (tabla: baja)», R8 «1 sesión · no ocurrió». `data/vitrina/manifiesto.json` declara plan, corrida, repeticiones,
+línea base e informe con sus huellas; `tests/integration/manifiesto-vitrina.test.ts` las verifica y regenera el
+informe.
+
 ### Demos en rojo (regla 15)
 
 | Gate | Cambio deliberado | Resultado |
@@ -97,6 +141,11 @@ los ADR 001–006 llevan su «Summary (EN)».
 | controladores de la maqueta | `01-entrada.html` con `assets/maqueta-no-existe.js` | rojo: «falta el script» (1 de 10) → verde al revertir |
 | la maqueta no viaja al export | `public/diseno/MIRADAS.md` | rojo: «documentos en public/» → verde al borrarlo |
 | `--max-turns 2` con esquema | `turnos_maximos` devuelve siempre 1 | rojo: `test_argv_es_exactamente_el_de_la_regla_6` → verde al revertir |
+| C06 control legal | `prioridades()` ignora `control_legal` | rojo: «C06 — control legal…» → verde al revertir |
+| copia fijada de los contratos | un byte cambiado en `packages/diagramador/contrato/gramaticas/agentes-ia.json` | rojo: «cada archivo de la copia está en el lock con su huella» → verde al revertir |
+| detector de ámbito sesión | el detector evalúa siempre sobre las trazas | rojo: 2 pruebas «detector de ámbito sesión» → verde al revertir |
+| tolerancia declarada de S3 | la latencia ignora `latencia_mediana_razon_max` | rojo: «tolerancia declarada en el plan…» → verde al revertir |
+| corridas de otro plan (ADR-005) | el lector no exige la misma verdad | rojo: «un plan de la corrida que no es el del manifiesto, o que da otra verdad» → verde al revertir |
 
 ## Desviación del plan
 

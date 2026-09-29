@@ -291,6 +291,44 @@ describe("comparación con la línea base (S3)", () => {
       })[0]?.motivo.en,
     ).toMatch(/accuracy and median latency/);
   });
+  it("tolerancia declarada en el plan (v1.3): la regla es la del plan y se dice; claves desconocidas se declaran", () => {
+    // multiagente: exactitud 1, latencia mediana 11 · base: exactitud 1, latencia mediana 8 (37,5 % más rápida).
+    const base = [
+      caso("1", true, 7, [paso(50, 0.05)]),
+      caso("2", true, 9, [paso(50, 0.05)]),
+    ];
+    const con = (umbral: Record<string, number>) =>
+      evaluarSupuestos(
+        conSupuestos({
+          ...s3,
+          medible_en_trazas: {
+            ...(s3.medible_en_trazas as NonNullable<
+              typeof s3.medible_en_trazas
+            >),
+            umbral_confirmacion: umbral,
+          },
+        }),
+        multi,
+        U,
+        { corrida_id: "b", vistas: base },
+      )[0];
+    const estricta = con({
+      exactitud_dif_min: 0,
+      latencia_mediana_razon_max: 1,
+    });
+    expect(estricta?.estado).toBe("refutado");
+    expect(estricta?.motivo.es).toMatch(/Tolerancia declarada en el plan/);
+    expect(estricta?.motivo.es).not.toMatch(/Regla por defecto/);
+    expect(estricta?.motivo.en).toMatch(/median latency ≤ 1 × the baseline's/);
+    expect(con({ latencia_mediana_razon_max: 1.5 })?.estado).toBe("confirmado");
+    expect(
+      con({ exactitud_dif_min: 0.1, latencia_mediana_razon_max: 2 })?.estado,
+    ).toBe("refutado");
+    const rara = con({ latencia_max: 1 });
+    expect(rara?.limitaciones.map((l) => l.es).join(" ")).toMatch(
+      /claves de tolerancia que la comparación no conoce y no aplica: latencia_max/,
+    );
+  });
   it("una base con error del proveedor lo declara; toda muestra < 30 lleva su nota", () => {
     const base = [
       caso("1", true, 11, [paso(50, 0.05)]),

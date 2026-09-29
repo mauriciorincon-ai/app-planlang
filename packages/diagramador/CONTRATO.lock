@@ -1,9 +1,16 @@
 {
   "objeto": "diagramador",
-  "contrato": "reusables/diagramador/CONTRATO.md (planeadora)",
-  "version": "0.2.0",
-  "sha256": "0e62bc60d05ea1062118491c995e4accbbe8f559ccdf342bff9c4717bb37d317",
-  "fijado": "2026-09-27",
-  "consumidor": "planlang (segundo consumidor; gramática agentes-ia v1.0.0). En el S1 solo se fija el contrato: el conversor grafo → mapa vive en core/visor (S2) y el SVG llega con el piloto de big-d.",
+  "contrato": "reusables/diagramador/ (planeadora)",
+  "version": "0.3.0",
+  "gramatica": "agentes-ia 1.1.0",
+  "sha256": "763bde26d46c8c4ff7293500be6048fdb8d51d2181c0b4555aa53244d2ced602",
+  "archivos": {
+    "CONTRATO.md": "763bde26d46c8c4ff7293500be6048fdb8d51d2181c0b4555aa53244d2ced602",
+    "esquema/gramatica.schema.json": "b99d68eee1d38f197d11846e709888bdb62b0799371971b167a89ce6d63db9e2",
+    "esquema/mapa.schema.json": "d64ec0864d49e7d38259ac86fdcd3f267f8f3e42ba175592f058fdf2297746c9",
+    "gramaticas/agentes-ia.json": "bd9c73b36eb1a513dc70ff37adb8ab94b4c9cfd8c2bf81e6d99ba60b90002014"
+  },
+  "fijado": "2026-09-28",
+  "consumidor": "planlang (segundo consumidor). Copia fijada en contrato/: el contrato, los dos esquemas y la gramática agentes-ia. El conversor grafo → mapa vive en core/visor (S2) y dibuja con el SVG propio de la vitrina.",
   "enmiendas_propuestas": []
 }

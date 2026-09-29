@@ -28,7 +28,7 @@ import {
   type Umbrales,
   type VistaDeCaso,
 } from "./contexto";
-import { mediana, redondear } from "./numeros";
+import { mediana, numCorto, pct, redondear } from "./numeros";
 import { evaluarRegla } from "./reglas";
 
 /** Qué cuenta como extracción correcta para la calibración (la misma regla que el criterio de exactitud). */
@@ -381,6 +381,23 @@ export function respuestaInservible(t: Traza): boolean {
   });
 }
 
+/**
+ * Tolerancia de la comparación con la línea base (plan v1.3, S3): `exactitud_dif_min` = cuánto puede quedar la
+ * exactitud del multiagente por debajo (negativo) o por encima (positivo) de la base; `latencia_mediana_razon_max`
+ * = cuántas veces la latencia mediana de la base se tolera. Sin claves declaradas rige la regla por defecto
+ * («no peor»: 0 y 1), y el informe lo dice.
+ */
+const TOLERANCIA = ["exactitud_dif_min", "latencia_mediana_razon_max"] as const;
+
+function reglaDeclarada(dif: number, razon: number): TextoBilingue {
+  const margen = (i: "es" | "en") =>
+    dif === 0 ? "" : ` ${dif > 0 ? "+" : "−"} ${pct(Math.abs(dif), i)}`;
+  return {
+    es: ` Tolerancia declarada en el plan: exactitud del multiagente ≥ la de la línea base${margen("es")} y latencia mediana ≤ ${numCorto(razon, "es")} × la de la línea base.`,
+    en: ` Tolerance declared in the plan: multi-agent accuracy ≥ the baseline's${margen("en")} and median latency ≤ ${numCorto(razon, "en")} × the baseline's.`,
+  };
+}
+
 const REGLA_POR_DEFECTO: TextoBilingue = {
   es: " Regla por defecto del verificador (el plan no declara tolerancia): exactitud mayor o igual y latencia mediana menor o igual que las de la línea base.",
   en: " Verifier default rule (the plan declares no tolerance): accuracy greater than or equal to, and median latency less than or equal to, the baseline's.",
@@ -431,8 +448,20 @@ function comparacion(
       pu.costo_nominal_usd <= pm.costo_nominal_usd,
     casos_distintos,
   };
-  const noPeorExactitud = multi.exactitud >= unico.exactitud;
+  const umbral = s.medible_en_trazas?.umbral_confirmacion ?? {};
+  const declarada = Object.keys(umbral).length > 0;
+  const dif = umbral.exactitud_dif_min ?? 0;
+  const razon = umbral.latencia_mediana_razon_max ?? 1;
+  const noPeorExactitud = redondear(multi.exactitud - unico.exactitud) >= dif;
   const limitaciones: TextoBilingue[] = [];
+  const desconocidas = Object.keys(umbral)
+    .filter((k) => !(TOLERANCIA as readonly string[]).includes(k))
+    .sort();
+  if (desconocidas.length > 0)
+    limitaciones.push({
+      es: `El plan declara claves de tolerancia que la comparación no conoce y no aplica: ${desconocidas.join(", ")}.`,
+      en: `The plan declares tolerance keys the comparison does not know and does not apply: ${desconocidas.join(", ")}.`,
+    });
   const idsMulti = new Set(vistas.map((v) => v.caso_id));
   const idsBase = new Set(base.vistas.map((v) => v.caso_id));
   const soloUno = [...ids]
@@ -491,7 +520,7 @@ function comparacion(
       comparacion: comp,
       limitaciones,
     };
-  const noPeorLatencia = multi.latencia <= unico.latencia;
+  const noPeorLatencia = multi.latencia <= unico.latencia * razon;
   const confirmado = noPeorExactitud && noPeorLatencia;
   const motivo: TextoBilingue = confirmado
     ? {
@@ -505,8 +534,8 @@ function comparacion(
   return {
     estado: confirmado ? "confirmado" : "refutado",
     motivo: {
-      es: `${motivo.es}${REGLA_POR_DEFECTO.es}`,
-      en: `${motivo.en}${REGLA_POR_DEFECTO.en}`,
+      es: `${motivo.es}${(declarada ? reglaDeclarada(dif, razon) : REGLA_POR_DEFECTO).es}`,
+      en: `${motivo.en}${(declarada ? reglaDeclarada(dif, razon) : REGLA_POR_DEFECTO).en}`,
     },
     n: vistas.length,
     metricas,

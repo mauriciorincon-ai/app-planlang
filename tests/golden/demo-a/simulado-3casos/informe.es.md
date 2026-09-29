@@ -182,7 +182,7 @@ Medidas (n = 0): tasa = no existe.
 | --- | --- | --- |
 | Plan | plan-demo-a 1.2.0 (`plans/demo-a/v1.2.json`) | `9add6e5ad5515a03e9efb8c1c691e0c6b38d414622ae028dd5f7bb8b529592c2` |
 | Casos | planlang-a-humo-3 · semilla planlang-a-humo · n = 3 · generado con el plan 1.1.0 | `b63d36da8176fab642b5d6a6bd66ff73b6d722c7a960621da5cdb07704ce011a` |
-| Corrida | simulado-3casos · 2026-09-27 · simulado/simulado · multiagente | `45fc7a2c2f9f42b9bc526dac8b2919c714d3b0bbf0680af6cf5cc5918f69df5f` |
+| Corrida | simulado-3casos · 2026-09-27 · simulado/simulado · multiagente · ejecutada con el plan 1.2.0 | `45fc7a2c2f9f42b9bc526dac8b2919c714d3b0bbf0680af6cf5cc5918f69df5f` |
 | Grafo | versión del grafo exportado | `896708bdb11415ac928ba24776d3fa65d05bcc45f9d924a7f6c23ad5b4acff76` |
 
 Sesiones: 1 · casos ejecutados: 3 · con error del proveedor: 0 · límites de uso alcanzados: 0.
@@ -191,4 +191,4 @@ Umbrales aplicados: U1 = 0,75 · U2 = 1000 · U3 = 2 · U4 = false · en el plan
 
 Revisión humana: En lotes, el revisor simulado sigue la verdad conocida del caso (DA-04); la vitrina lo divulga.
 
-Verificador 1.0.0 · planlang-informe/v1 · huella de este informe: `6c56025576e6bcadd1133498c73233ceea467f62469556b89b52f68ec9cd724f`
+Verificador 1.1.0 · planlang-informe/v1 · huella de este informe: `9436beacfeb99a21787713e037eace46db3956d5f200cc54f0c643971ac753fb`

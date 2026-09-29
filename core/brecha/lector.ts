@@ -44,6 +44,14 @@ export interface EntradaVerificador {
    * umbrales y su contrato de grafo (`mismaVerdad`), es decir, si la enmienda fue de solo medición.
    */
   planDelLote?: unknown;
+  /**
+   * El plan con que se EJECUTARON las corridas, si no es el que se verifica (ADR-005, S2): solo se acepta si
+   * verifica su huella contra el manifiesto y da la misma verdad que el plan verificado (mismos umbrales y
+   * contrato de grafo), porque entonces el agente habría hecho exactamente lo mismo con cualquiera de los dos.
+   */
+  planDeLaCorrida?: unknown;
+  /** Ruta del plan verificado, para la ficha, cuando no es el que nombra el manifiesto. */
+  archivoPlan?: string;
 }
 
 export const CODIGOS_LECTURA = [
@@ -87,6 +95,8 @@ export interface CorridaLeida {
 export interface EntradaLeida {
   plan: Plan;
   huellaPlan: string;
+  /** El plan con que se ejecutaron las corridas (el mismo que `plan` salvo `planDeLaCorrida`). */
+  planCorrida: { version: string; huella: string };
   lote: Lote;
   casos: ReadonlyMap<string, Caso>;
   corrida: CorridaLeida;
@@ -468,6 +478,50 @@ async function loteCompatible(
     );
 }
 
+/**
+ * Identidad del plan contra la que se comparan las corridas: la del plan verificado o, con `planDeLaCorrida`, la
+ * del plan con que se ejecutaron — aceptado solo si es el que declara el manifiesto y da la misma verdad.
+ */
+async function planDeEjecucion(
+  e: EntradaVerificador,
+  carga: { huella: string; plan: Plan },
+  corrida: CorridaLeida,
+  motivos: MotivoLectura[],
+): Promise<{ huella: string; id: string; version: string }> {
+  const propio = {
+    huella: carga.huella,
+    id: carga.plan.id,
+    version: carga.plan.version,
+  };
+  if (e.planDeLaCorrida === undefined || e.planDeLaCorrida === null)
+    return propio;
+  const c = await cargarPlan(e.planDeLaCorrida);
+  const archivo = `${corrida.ruta}/corrida.json`;
+  if (!c.ok || c.huella !== corrida.manifiesto.plan.huella) {
+    motivos.push(
+      m(
+        "HUELLA_NO_COINCIDE",
+        archivo,
+        "el plan entregado como plan de las corridas no es el que declara su manifiesto",
+        "the plan provided as the runs' plan is not the one their manifest declares",
+      ),
+    );
+    return propio;
+  }
+  if (c.plan.id !== carga.plan.id || !mismaVerdad(e.planDeLaCorrida, e.plan)) {
+    motivos.push(
+      m(
+        "CORRIDA_INCOMPATIBLE",
+        archivo,
+        `las corridas se hicieron con el plan ${c.plan.version}, que es otro plan o tiene otros umbrales u otro contrato de grafo: no valen para verificar el ${carga.plan.version}`,
+        `the runs used plan ${c.plan.version}, which is another plan or has other thresholds or another graph contract: they cannot verify ${carga.plan.version}`,
+      ),
+    );
+    return propio;
+  }
+  return { huella: c.huella, id: c.plan.id, version: c.plan.version };
+}
+
 /** Lee y verifica todo; lanza `ErrorDeLectura` con TODOS los motivos si algo no cuadra. */
 export async function leerEntrada(
   e: EntradaVerificador,
@@ -493,11 +547,7 @@ export async function leerEntrada(
   if (carga.ok && lote && corrida) {
     await loteCompatible(e.plan, carga.huella, lote, e.planDelLote, motivos);
     const casos = new Map(lote.casos.map((c) => [c.id, c]));
-    const plan = {
-      huella: carga.huella,
-      id: carga.plan.id,
-      version: carga.plan.version,
-    };
+    const plan = await planDeEjecucion(e, carga, corrida, motivos);
     compatible(corrida, plan, lote, casos, "multiagente", motivos);
     const casosDe = (c: CorridaLeida) =>
       [...c.manifiesto.casos_ejecutados].sort().join(",");
@@ -540,6 +590,7 @@ export async function leerEntrada(
       return {
         plan: carga.plan,
         huellaPlan: carga.huella,
+        planCorrida: { version: plan.version, huella: plan.huella },
         lote,
         casos,
         corrida,

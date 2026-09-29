@@ -50,6 +50,21 @@ const PRIORIDAD: Record<string, Tb> = {
   baja: tb("baja", "low"),
 };
 
+/**
+ * Prioridad de un riesgo (instrumentos-de-plan v0.2.0, G8): la efectiva manda; con control legal se dice, y
+ * la de tabla se muestra al lado cuando difiere — nunca se oculta.
+ */
+function prioridadRiesgo(r: Informe["riesgos"][number], i: Idioma): string {
+  const efectiva =
+    PRIORIDAD[r.prioridad_de_accion]?.[i] ?? r.prioridad_de_accion;
+  if (!r.control_legal) return efectiva;
+  const legal = i === "es" ? "control legal" : "legal control";
+  if (r.prioridad_de_tabla === r.prioridad_de_accion)
+    return `${efectiva} · ${legal}`;
+  const tabla = PRIORIDAD[r.prioridad_de_tabla]?.[i] ?? r.prioridad_de_tabla;
+  return `${efectiva} · ${legal} (${i === "es" ? "tabla" : "table"}: ${tabla})`;
+}
+
 /** Enumeraciones del dominio del verificador, redactadas en los dos idiomas (regla 20). */
 const TIPO_NODO: Record<string, Tb> = {
   enrutador: tb("enrutador", "router"),
@@ -103,6 +118,16 @@ const siNo = (b: boolean, i: Idioma) =>
   b ? (i === "es" ? "sí" : "yes") : "no";
 const casos = (ids: readonly string[]) =>
   ids.length === 0 ? "—" : ids.join(", ");
+
+/** Casos de un riesgo; con detector de ámbito `sesion` (M-14) son sesiones del manifiesto. */
+const casosDeRiesgo = (r: Informe["riesgos"][number], i: Idioma) =>
+  r.ambito === "sesion"
+    ? casos(
+        r.casos.map((c) =>
+          c.replace(/^sesion-/, i === "es" ? "sesión " : "session "),
+        ),
+      )
+    : casos(r.casos);
 
 function valorCriterio(c: ResultadoCriterio, i: Idioma): string {
   const v = c.valor_medido;
@@ -182,7 +207,7 @@ function seccionResumen(inf: Informe, i: Idioma): string {
           ? "ninguno."
           : "none."
         : ocurridos
-            .map((r) => `${r.id} (${r.modo[i]}, ${casos(r.casos)})`)
+            .map((r) => `${r.id} (${r.modo[i]}, ${casosDeRiesgo(r, i)})`)
             .join("; ") + "."
     }`,
     "",
@@ -310,11 +335,13 @@ function seccionRiesgos(inf: Informe, i: Idioma): string {
         r.id,
         r.modo[i],
         `${r.severidad}·${r.ocurrencia}·${r.deteccion}`,
-        PRIORIDAD[r.prioridad_de_accion]?.[i] ?? r.prioridad_de_accion,
-        String(r.n_poblacion),
+        prioridadRiesgo(r, i),
+        r.ambito === "sesion"
+          ? `${r.n_poblacion} ${i === "es" ? (r.n_poblacion === 1 ? "sesión" : "sesiones") : r.n_poblacion === 1 ? "session" : "sessions"}`
+          : String(r.n_poblacion),
         valorRiesgo(r, i),
         ESTADO_RIESGO[r.estado][i],
-        casos(r.casos),
+        casosDeRiesgo(r, i),
       ]),
     ),
     "",
@@ -631,7 +658,7 @@ function seccionFicha(inf: Informe, i: Idioma): string {
     ],
     [
       i === "es" ? "Corrida" : "Run",
-      `${f.corrida.id} · ${f.corrida.fecha} · ${f.corrida.proveedor}/${f.corrida.modelo} · ${nombre(VARIANTE, f.corrida.variante, i)}`,
+      `${f.corrida.id} · ${f.corrida.fecha} · ${f.corrida.proveedor}/${f.corrida.modelo} · ${nombre(VARIANTE, f.corrida.variante, i)} · ${i === "es" ? "ejecutada con el plan" : "run with plan"} ${f.corrida.plan_de_ejecucion.version}${f.corrida.plan_de_ejecucion.huella === f.plan.huella ? "" : i === "es" ? " (misma verdad: mismos umbrales y contrato de grafo, ADR-005)" : " (same truth: same thresholds and graph contract, ADR-005)"}`,
       `\`${f.corrida.huella}\``,
     ],
     [
