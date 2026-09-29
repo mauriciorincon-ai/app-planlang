@@ -3,6 +3,7 @@
 // mano — el gate `diseno-tokens` (tests/unit/diseno-tokens.test.ts) detecta la deriva:
 //   docs/diseno/assets/tokens.json  — hex por tema y cromo, más las medidas
 //   docs/diseno/assets/tokens.css   — variables CSS por tema ([data-theme]) y cromo ([data-cromo])
+//   src/styles/tokens.css           — los mismos colores para la vitrina (S2), con el tema sin JS
 // Uso: `pnpm tokens` (escribe) · importado por el test (compara sin escribir).
 //
 // Método (regla dura 13: el color nunca va solo; daltonismo leve del usuario):
@@ -15,7 +16,7 @@
 //    ese tinte. La escala de grises no exige distancia: ahí cargan glifo y etiqueta.
 //  - Umbrales declarados (convención de la casa, no evidencia publicada): ΔE ≥ 0,10 en normal,
 //    ≥ 0,06 en severidad 0,6, ≥ 0,03 en dicromacia.
-import { writeFileSync } from "node:fs";
+import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { contraste, mezclaHex, oklchToHex, peorPar, VISTAS } from "./color.mjs";
@@ -160,14 +161,43 @@ export function aCss(tokens) {
   ].join("\n");
 }
 
+/**
+ * Los tokens de la VITRINA (S2, ADR-008): los mismos colores que la maqueta, con dos diferencias.
+ * (1) Sin JavaScript, el tema sigue `prefers-color-scheme`: el bloque claro se repite bajo la media
+ *     query para `:root` sin `data-theme` (el script previo del `<head>` fija el atributo cuando hay JS).
+ * (2) Las medidas de la maqueta no viajan: la vitrina solo necesita los colores.
+ */
+export function aCssVitrina(tokens) {
+  const lineas = (tema) => {
+    const t = tokens.temas[tema];
+    return [
+      ...Object.entries(t.neutros[BASE]).map(([k, v]) => `  --${k}: ${v};`),
+      ...Object.entries(t.cromaticos).map(([k, v]) => `  --${k}: ${v.hex};`),
+      ...Object.entries(t.tintes[BASE]).map(([k, v]) => `  --${k}-tinte: ${v};`),
+    ];
+  };
+  const claro = lineas("claro");
+  return [
+    "/* GENERADO por scripts/paleta/generar-tokens.mjs — no editar a mano. `pnpm tokens` lo regenera. */",
+    `:root,\n[data-theme="oscuro"] {\n${lineas("oscuro").join("\n")}\n  color-scheme: dark;\n}`,
+    `@media (prefers-color-scheme: light) {\n  :root:not([data-theme]) {\n${claro.map((l) => "  " + l).join("\n")}\n    color-scheme: light;\n  }\n}`,
+    `[data-theme="claro"] {\n${claro.join("\n")}\n  color-scheme: light;\n}`,
+    ":root {\n  --modelo: var(--tipo-1);\n  --herramienta: var(--tipo-2);\n  --regla: var(--tipo-3);\n  --pausa-humana: var(--tipo-4);\n  --enrutador: var(--tipo-5);\n}",
+    "",
+  ].join("\n");
+}
+
 const raiz = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..");
 export const RUTA_JSON = join(raiz, "docs", "diseno", "assets", "tokens.json");
 export const RUTA_CSS = join(raiz, "docs", "diseno", "assets", "tokens.css");
+export const RUTA_CSS_VITRINA = join(raiz, "src", "styles", "tokens.css");
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const tokens = generar();
   writeFileSync(RUTA_JSON, JSON.stringify(tokens, null, 2) + "\n");
   writeFileSync(RUTA_CSS, aCss(tokens));
+  mkdirSync(dirname(RUTA_CSS_VITRINA), { recursive: true });
+  writeFileSync(RUTA_CSS_VITRINA, aCssVitrina(tokens));
   for (const tema of ["oscuro", "claro"]) {
     console.log(`\n${tema}`);
     for (const [k, v] of Object.entries(tokens.temas[tema].cromaticos)) console.log(`  ${k.padEnd(10)} ${v.familia.padEnd(8)} L ${v.L.toFixed(2)}  ${v.hex}`);

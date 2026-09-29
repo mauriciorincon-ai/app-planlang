@@ -8,6 +8,8 @@ const nextConfig: NextConfig = {
   // El indicador de desarrollo de Next tapa la navegación inferior móvil e intercepta taps en los
   // e2e (visto en nutri-kids S1) — apagado por default.
   devIndicators: false,
+  // Dos raíces (`(raiz)` para `/`, `[idioma]` para la vitrina): el 404 tiene que ser global (ADR-008).
+  experimental: { globalNotFound: true },
 };
 
 export default nextConfig;

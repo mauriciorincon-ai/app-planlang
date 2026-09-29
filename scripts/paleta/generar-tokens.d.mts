@@ -27,5 +27,7 @@ export const UMBRALES: Record<string, number>;
 export const TINTE: number;
 export const RUTA_JSON: string;
 export const RUTA_CSS: string;
+export const RUTA_CSS_VITRINA: string;
 export function generar(): Tokens;
 export function aCss(tokens: Tokens): string;
+export function aCssVitrina(tokens: Tokens): string;

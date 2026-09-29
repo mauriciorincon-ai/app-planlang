@@ -154,7 +154,8 @@ fuente: 89 % observan, 52 % evalúan, casi nadie planeó qué evaluar.
 ## Stack
 
 - **Frontend (vitrina):** Next.js 16.3 LTS **exportado estático** (`output: "export"`, perfil `--estatico`) + TypeScript
-  strict + Tailwind + shadcn/ui; trazas precargadas en **IndexedDB** (no `localStorage`); `serve` sirve `out/`.
+  strict + Tailwind + shadcn/ui; **datos precomputados y verificados en build, sin IndexedDB** (enmienda del S2,
+  ADR-008; la orden original decía «trazas precargadas en IndexedDB»); `serve` sirve `out/`.
 - **Núcleo determinista (`core/`):** TypeScript estricto, un solo módulo para verificador y playground que corre en
   Node y en el navegador; JCS (RFC 8785) + `crypto.subtle.digest`; golden files.
 - **Agentes (`agents/`, perfil `--python`):** Python 3.12 · LangChain 1.4 · LangGraph 1.2 (estado tipado, nodos

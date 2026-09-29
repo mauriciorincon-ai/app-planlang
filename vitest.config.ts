@@ -11,7 +11,13 @@ import { defineConfig } from "vitest/config";
 //                     con Chromium/Firefox/WebKit reales llega en S2 con la vitrina.
 //   - `vitrina`     → el arnés original del kit (jsdom + Testing Library) para `src/`.
 // La cobertura vive en la raíz y se aplica SOLO con `--coverage` en el script `test` (K7 ds S1).
-const alias = { "@": path.resolve(__dirname, "src") };
+// `server-only` lanza fuera de un componente de servidor: en vitest se sustituye por un módulo vacío (el
+// build de Next sigue impidiendo que la capa de datos llegue al cliente).
+const alias = {
+  "@": path.resolve(__dirname, "src"),
+  "@core": path.resolve(__dirname, "core"),
+  "server-only": path.resolve(__dirname, "tests/stubs/server-only.ts"),
+};
 
 const incluyeNucleo = [
   "tests/unit/core/**/*.test.ts",
@@ -69,6 +75,8 @@ export default defineConfig({
         "packages/*/src/**/*.ts",
         "src/lib/**/*.ts",
         "src/engine/**/*.ts",
+        // S2: los componentes de la vitrina (UI > 50 %, regla 2); las páginas de src/app las cubre el e2e.
+        "src/components/**/*.{ts,tsx}",
       ],
       thresholds: {
         lines: 70,
@@ -118,6 +126,12 @@ export default defineConfig({
           functions: 80,
           branches: 80,
           statements: 80,
+        },
+        "src/components/**/*.{ts,tsx}": {
+          lines: 50,
+          functions: 50,
+          branches: 50,
+          statements: 50,
         },
       },
     },

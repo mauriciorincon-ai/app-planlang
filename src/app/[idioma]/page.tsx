@@ -1,31 +1,39 @@
-/** `/es` y `/en` — S2 fase 0: esqueleto para que el preview responda el primer día; P1 llega en la fase 1. */
-const TEXTO = {
-  es: {
-    rotulo: "Simulación · no operativo · datos sintéticos",
-    titulo: "planlang — la vitrina está en construcción",
-    otro: { href: "/en", nombre: "English" },
-  },
-  en: {
-    rotulo: "Simulation · not operational · synthetic data",
-    titulo: "planlang — the showcase is under construction",
-    otro: { href: "/es", nombre: "Español" },
-  },
-} as const;
+import type { Metadata } from "next";
+import { ComoFunciona } from "@/components/entrada/como-funciona";
+import { Demos } from "@/components/entrada/demos";
+import { LoQueNinguna } from "@/components/entrada/lo-que-ninguna";
+import { Portada } from "@/components/entrada/portada";
+import { Pregunta } from "@/components/entrada/pregunta";
+import { CONT } from "@/components/cx";
+import { Marco } from "@/components/marco/marco";
+import { datosDemo } from "@/lib/datos/vitrina";
+import { idiomaDeRuta } from "@/lib/idioma";
+import { vistaEntrada } from "@/lib/vista/entrada";
+import { DESCRIPCION_PAGINA, TITULO_PAGINA } from "@/textos/entrada";
 
-export default async function Entrada({
-  params,
-}: {
-  params: Promise<{ idioma: string }>;
-}) {
-  const { idioma } = await params;
-  const t = TEXTO[idioma === "en" ? "en" : "es"];
+type Props = { params: Promise<{ idioma: string }> };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const idioma = await idiomaDeRuta(params);
+  return {
+    title: TITULO_PAGINA[idioma],
+    description: DESCRIPCION_PAGINA[idioma],
+  };
+}
+
+/** P1 Entrada (maqueta `01-entrada.html`): la tesis, cómo funciona, lo que ninguna herramienta muestra y los demos. */
+export default async function Entrada({ params }: Props) {
+  const idioma = await idiomaDeRuta(params);
+  const vista = vistaEntrada(await datosDemo(), idioma);
   return (
-    <main>
-      <p>{t.rotulo}</p>
-      <h1>{t.titulo}</h1>
-      <p>
-        <a href={t.otro.href}>{t.otro.nombre}</a>
-      </p>
-    </main>
+    <Marco idioma={idioma} pagina="entrada">
+      <div className={CONT}>
+        <Portada idioma={idioma} />
+        <ComoFunciona vista={vista} idioma={idioma} />
+        <LoQueNinguna vista={vista} idioma={idioma} />
+        <Demos vista={vista} idioma={idioma} />
+        <Pregunta idioma={idioma} />
+      </div>
+    </Marco>
   );
 }

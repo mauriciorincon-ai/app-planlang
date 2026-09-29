@@ -1,11 +1,7 @@
-/* S2 fase 0: esqueleto. Los tokens del design-system (src/styles/tokens.css) y el tema llegan en la fase 1.
-   `source("..")` limita el escaneo de Tailwind a src/ (sin él recorre docs/diseno y runs/). */
+/* Hoja de estilos de la vitrina (ADR-008). `source("..")` limita el escaneo de Tailwind a src/: sin él
+   recorre docs/diseno y runs/. Los colores salen de tokens.css (GENERADO por `pnpm tokens`); el tema de
+   Tailwind y la base, de los dos archivos siguientes. */
 @import "tailwindcss" source("..");
-
-:root {
-  color-scheme: dark light;
-}
-
-body {
-  font-family: system-ui, sans-serif;
-}
+@import "../styles/tokens.css";
+@import "../styles/tema.css";
+@import "../styles/base.css";

@@ -20,15 +20,19 @@
     "lote:demo": "agents/.venv/bin/python -m app_agents.lotes --demo a --pausa-s 2",
     "lote:base": "agents/.venv/bin/python -m app_agents.lotes --demo a --pausa-s 2 --variante agente_unico",
     "capturas:maqueta": "node scripts/capturar-maqueta.mjs",
+    "capturas:vitrina": "node scripts/capturar-vitrina.mjs",
+    "export:verificar": "node scripts/verificar-export.mjs",
     "tokens": "node scripts/paleta/generar-tokens.mjs",
     "maqueta": "serve docs -l 3101"
   },
   "dependencies": {
     "@sentry/nextjs": "^11.0.0",
+    "lucide-react": "1.48.0",
     "next": "16.3.6",
     "pino": "^10.3.1",
     "react": "19.3.0",
     "react-dom": "19.3.0",
+    "server-only": "0.0.1",
     "zod": "^4.6.5"
   },
   "devDependencies": {

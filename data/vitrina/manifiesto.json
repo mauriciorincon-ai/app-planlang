@@ -1,6 +1,6 @@
 {
   "formato": "planlang-vitrina/v1",
-  "nota": "Editado a mano: declara qué muestra la vitrina. tests/integration/manifiesto-vitrina.test.ts verifica cada huella y regenera el informe.",
+  "nota": "Editado a mano: declara qué muestra la vitrina (`sprint`: el sprint en que se construyó el agente y corrió el lote). tests/integration/manifiesto-vitrina.test.ts verifica cada huella y regenera el informe; src/lib/datos/vitrina.ts lo valida al compilar.",
   "demos": {
     "demo-a": {
       "plan": {
@@ -9,7 +9,8 @@
       },
       "corrida": {
         "ruta": "runs/demo-a/suscripcion-planlang-a-001-20-v1.2",
-        "huella": "60b272f60e46fa23d95e23add14292a74b74733fb8ad7ba83dd49420ff55f3f1"
+        "huella": "60b272f60e46fa23d95e23add14292a74b74733fb8ad7ba83dd49420ff55f3f1",
+        "sprint": 1
       },
       "repeticiones": [
         {
