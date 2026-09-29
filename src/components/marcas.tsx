@@ -111,6 +111,7 @@ function dibujo(tipo: TipoDeMarca) {
             {...TRAZO}
             strokeWidth={1.4}
             strokeDasharray="3 2.5"
+            strokeLinecap="butt"
           />
           <path
             d="M-2.5,-3.5 V3.5 M2.5,-3.5 V3.5"
@@ -126,13 +127,20 @@ function dibujo(tipo: TipoDeMarca) {
           {...TRAZO}
           strokeWidth={1.5}
           strokeDasharray="2.6 2.1"
+          strokeLinecap="butt"
         />
       );
     case "real":
       return <circle r={5.5} fill="currentColor" />;
     case "maqueta":
       return (
-        <circle r={5.5} {...TRAZO} strokeWidth={1.8} strokeDasharray="2.5 2" />
+        <circle
+          r={5.5}
+          {...TRAZO}
+          strokeWidth={1.8}
+          strokeDasharray="2.5 2"
+          strokeLinecap="butt"
+        />
       );
   }
 }

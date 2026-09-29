@@ -75,6 +75,10 @@ describe("veredicto y chip: forma + texto + color", () => {
     expect(
       m.querySelector("circle")?.getAttribute("stroke-dasharray"),
     ).toBeTruthy();
+    // Punta recta: con punta redonda los huecos se cierran y lo discontinuo se lee continuo.
+    expect(m.querySelector("circle")?.getAttribute("stroke-linecap")).toBe(
+      "butt",
+    );
     expect(r.querySelector("circle")?.getAttribute("fill")).toBe(
       "currentColor",
     );

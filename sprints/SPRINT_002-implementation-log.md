@@ -245,6 +245,10 @@ de la transición de 150 ms con que pasaban a «pulsado» al hidratar. Arreglo d
 el atributo del `<html>` (lo fija el script previo antes de pintar), sin destello; y el e2e espera a que no haya
 animaciones antes de axe. `--repeat-each 2`: 38/38.
 
+**CI del commit `d20d1e1`:** `quality`, `python`, `e2e` y `lighthouse` en `success` con conclusión propia (Lighthouse:
+presupuestos con LCP ≤ 2,5 s y categorías ≥ 90, mediana de 3 corridas sobre `/es`); 950 pruebas + 2 saltadas (las que
+comparan con la planeadora, ausente en el runner) y 19 e2e.
+
 ### Gate de FIDELIDAD — pendiente
 
 `docs/fidelidad/p1/index.html` (doble clic): 10 pares maqueta | vitrina y la matriz de qué mirar. Diferencias
@@ -323,4 +327,5 @@ fidelidad» no se construye P2–P7.
 | 2026-09-28 | Demo de desbordamiento verde por error | bloque de 400 px sin alto (área cero no desborda) | demo repetida con 400×4 px: rojo |
 | 2026-09-28 | `lighthouse` rojo: LCP 2,72 s > 2,5 s | el runtime de Next y la mono de datos bajaban antes del primer pintado | mono diferida al `load` (LCP local 2,31 s); ver «CI del commit `8c7ae2d`» |
 | 2026-09-28 | Contraste rojo intermitente en axe | los botones de tema y perfil pasaban a «pulsado» con transición al hidratar | la opción elegida se pinta desde el atributo del `<html>`; axe espera a que no haya animaciones |
+| 2026-09-28 | «Sin probar» se veía como anillo continuo | las marcas discontinuas llevaban punta redonda y cerraban los huecos | punta recta en `falta`, `maqueta` y `beta` + prueba; capturas regeneradas |
 | 2026-09-28 | Prettier reformateó `src/lib/observability.ts` sin cambios de fondo | `prettier --write` sobre `src/**` | revertido; el diff solo lleva lo del sprint |
