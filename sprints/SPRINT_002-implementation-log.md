@@ -11,7 +11,7 @@
 | Fase | Estado | Cierre |
 |---|---|---|
 | 0 · Setup, deltas, plan v1.3 y ⭐ del S1 | ✅ cerrada · paradas del S1 diferidas con nombre | «continúa» 2026-09-28 |
-| 1 · Fundación de UI + P1 → gate de FIDELIDAD | 🔨 en construcción | |
+| 1 · Fundación de UI + P1 → gate de FIDELIDAD | ✅ construida · **gate de FIDELIDAD pendiente** (`docs/fidelidad/p1/index.html`) | |
 | 2 · P2 Plan · P3 Agente (visor) · P6 Caso | ⏳ | |
 | 3 · P4 Brecha · P5 Playground | ⏳ | |
 | 4 · P7 Fichas · paquete · corridas de fondo · deuda | ⏳ | |
@@ -164,6 +164,76 @@ responde; la mirada del preview viaja a la fidelidad de P1.
 | tolerancia declarada de S3 | la latencia ignora `latencia_mediana_razon_max` | rojo: «tolerancia declarada en el plan…» → verde al revertir |
 | corridas de otro plan (ADR-005) | el lector no exige la misma verdad | rojo: «un plan de la corrida que no es el del manifiesto, o que da otra verdad» → verde al revertir |
 
+## Fase 1 — Fundación de UI + P1 Entrada (2026-09-28)
+
+### Qué se construyó
+
+- **Rutas (ADR-008):** `src/app/[idioma]/` es la raíz de la vitrina (es/en, `dynamicParams = false`); `/` elige
+  idioma (memoria > `navigator.languages` > español; `?elegir` no redirige); 404 global bilingüe
+  (`global-not-found.tsx`, `experimental.globalNotFound`); las seis pestañas que llegan en las fases 2–4 existen y
+  dicen «en construcción» (sin simular nada). Se borró el `favicon.ico` del scaffold: `src/app/icon.svg` es la marca.
+- **Preferencias:** `src/lib/preferencias/script-previo.ts` (tema y perfil antes de pintar: URL > guardado >
+  sistema/líder; recuerda el idioma solo en páginas de un idioma), `script-idioma.ts` (la raíz), `cliente.ts`
+  (`useSyncExternalStore` con instantánea de servidor `null`; `fijarPreferencia` con el fundido de 0,45 s).
+- **Tokens y estilos:** el generador emite además `src/styles/tokens.css` (con el tema claro sin JS por
+  `prefers-color-scheme`); `src/styles/tema.css` restringe Tailwind v4 al sistema (sin paleta, sombras, radios ni
+  tamaños por defecto; cortes 721/861); `src/styles/base.css` (perfil por atributo, movimiento reducido, `data-v` /
+  `data-tipo`).
+- **Fuentes e íconos:** Inter y JetBrains Mono byte a byte con la maqueta vía `next/font/local` (`swap` con
+  respaldo ajustado); licencias OFL e ISC en `public/licencias/`; `lucide-react` 1.48.0 exacto; glifos y marcas
+  dibujados con geometría calculada (`src/components/marcas.tsx`, hexágono para `regla`).
+- **Datos:** `src/lib/datos/vitrina.ts` (`server-only`) verifica en build la huella de plan, informe y corrida
+  contra `data/vitrina/manifiesto.json` (que suma `sprint: 1` en la corrida); `src/lib/vista/entrada.ts` arma P1 sin
+  una cifra escrita a mano (partes del plan, piezas del agente, cuadros de criterios, lo que falló nombrado,
+  capacidad, veredicto, corrida, pila).
+- **Textos:** `src/textos/comun.ts` y `src/textos/entrada.ts`, `{ es, en }` redactados; la copia es la aprobada en
+  la mirada 4; las lecturas cortas de los supuestos y el nombre de cada categoría de brecha, ligados por id.
+- **Componentes canon** (`src/components/`): rótulo, barra (pestañas, idioma por enlaces, tema), pie, baldosa, chip
+  de procedencia, veredicto dibujado, botón, control segmentado, «Leer como», aviso de perfil (el foco pasa al botón
+  del otro lado), bloque del experto, sección, cadena de nodos y las secciones de P1 (portada con gancho, cómo
+  funciona con sus tres miniaturas y la capacidad, lo que ninguna herramienta muestra, los demos, la pregunta).
+- **P1 Entrada** completa en `/es` y `/en`.
+- **Sentry solo con DSN:** `instrumentation-client.ts` lo importa de forma dinámica; `/es` pasó de 253 KB a 177 KB de
+  JavaScript comprimido (148 KB de Sentry que se bajaban sin DSN).
+- **Calidad:** `lighthouse-urls.json` → `/es`; `perf-budget.json` con LCP ≤ 2 500 ms; proyectos de Playwright
+  `telefono` (380×800) y `escritorio` (1280×800); `scripts/verificar-export.mjs` en el job `quality`;
+  cobertura de `src/components/**` (≥ 50 %).
+- **Arnés de fidelidad** `scripts/capturar-vitrina.mjs` (`pnpm capturas:vitrina`): sirve `out/` y la maqueta, entra
+  por el índice, captura 10 pares lado a lado (380 px y escritorio × oscuro/claro × es/en + 2 como experto), mide
+  (sin desplazamiento lateral, fuentes cargadas, consola limpia) y hace la pasada de interacción (7 controles). Salida:
+  `docs/fidelidad/p1/index.html` con la matriz al pie.
+
+### Pruebas
+
+`pnpm test` 951 (60 archivos, umbrales de cobertura verdes; `src/components` 97 % de líneas) · `pnpm test:e2e` 19 +
+1 saltada (la de pestañas deslizables solo corre en el teléfono) · `pnpm lint`, `pnpm typecheck` limpios ·
+`node scripts/verificar-export.mjs` verde (17 HTML, 14 pantallas) · arnés de capturas verde (7/7 interacciones).
+
+### Demos en rojo de la fase 1 (regla 15)
+
+| Gate | Cambio deliberado | Resultado |
+|---|---|---|
+| deriva de `src/styles/tokens.css` | `--tinta-1: #ffffff` a mano | rojo: «src/styles/tokens.css (vitrina, S2) es lo que el generador produce» y «mismos colores por tema» → verde al revertir |
+| tintas vetadas (ESLint) | `text-tinta-3` en el chip | rojo: `no-restricted-syntax` en `chip.tsx:20` → verde al revertir |
+| tintas vetadas (barrido) | ídem | rojo: «src/components/chip.tsx no pinta texto con tinta-3 ni linea» → verde |
+| variables CSS declaradas | `var(--tinta-4)` en la cadena | rojo: «cadena.tsx solo lee variables que existen» → verde |
+| presupuesto de líder | «medi» con «JSON» y «LLM» | rojo: «párrafo de líder «medi»» → verde |
+| fuentes = maqueta | un byte de más en `inter.woff2` | rojo: «inter.woff2: los mismos bytes que la maqueta aprobada» → verde |
+| huellas en build | plan alterado · huella del informe cambiada · corrida con otra huella | rojo en `datos.test.ts` (tres casos, en la misma prueba) nombrando el archivo |
+| forma invariante (5-a) | «Leer como» quita su rótulo si el perfil es experto | rojo: «líder y experto tienen el mismo árbol» → verde |
+| export sin `localhost` | `openGraph.images` sin `metadataBase` | rojo: `es.html` y `en.html` «hornea localhost» → verde al revertir. (Con solo `openGraph.url` Next deja la URL relativa: el gate no lo ve porque no hay nada que ver.) |
+| export: enlaces, rótulo, maqueta | copia de `out/` con `/es/nada`, sin rótulo en `es/fichas.html` y `diseno/01-entrada.html` | rojo con las tres fallas nombradas |
+| movimiento reducido | la animación de perfil sin su guarda | rojo en los dos proyectos («sin animación») → verde |
+| 380 px sin desplazamiento lateral | un bloque de 400×4 px en el pie | rojo en `telefono` (tres pruebas) → verde. **La primera demo salió verde por error mío**: el bloque no tenía alto y un bloque de área cero no cuenta como desbordamiento; el gate estaba bien |
+| pasada de interacción (22 b) | el botón «Claro» no hace nada | rojo: «tema → Claro» y «tema → Oscuro» «no cambió nada» → verde |
+
+### Gate de FIDELIDAD — pendiente
+
+`docs/fidelidad/p1/index.html` (doble clic): 10 pares maqueta | vitrina y la matriz de qué mirar. Diferencias
+deliberadas, anotadas en la matriz: la fila del demo dice «plan v1.3 · corrida con v1.2» (la maqueta decía «plan
+v1.2»: el informe que se publica es el del plan v1.3) y en inglés los porcentajes van pegados («89%»). Sin «apruebo
+fidelidad» no se construye P2–P7.
+
 ## Desviación del plan
 
 1. **El centinela «Worktrees prohibidos» no existe** en `ordenes/CLAUDE-md-para-app.md` (vive en el batch
@@ -199,13 +269,36 @@ responde; la mirada del preview viaja a la fidelidad de P1.
     manifiestos, grafos y ramas no se tocan (append-only).
 13. **La unidad de U2 queda solo en español** en la v1.3: cambiarla rompería `mismaVerdad(v1.2, v1.3)` (ADR-005) e
     invalidaría el lote de 20.
+14. **Los componentes canon nacen con su primer consumidor:** nodo, arista, deslizador, tabla de casos y curva
+    llegan en las fases 2–3 con P3/P5/P6, no en la fase 1; igual `core/playground/compactar.ts` y `senales.json`
+    (fase 3, con la prueba de paridad que los consume). Un componente sin pantalla no se puede mirar ni medir.
+15. **Tamaños de apoyo y la interlínea que la maqueta usa fuera del § 2.3** (14 · 22 · 11 px; 1,6 en «secundario» y
+    «dato»): la vitrina reproduce la maqueta aprobada y el ADR-008 lo registra; se proponen al `design-system.md` al
+    cierre del ciclo.
+16. **`font-display: swap`** (con respaldo ajustado) en lugar de `block` como la maqueta: la primera pintura no
+    espera a la fuente (LCP). ADR-008.
+17. **El script previo no queda «primer hijo del `<head>`»:** React 19 sube los `<meta>` y `<link>` por encima.
+    Sigue síncrono y anterior al `<body>`: ningún píxel sale con el tema equivocado.
+18. **Las capturas de fidelidad pesan 3,8 MB** (el plan decía ≤ 2 MB): 20 capturas de página entera a calidad 45;
+    bajar más rompe la lectura del texto.
+19. **Porcentajes en inglés pegados** («89%») frente a la maqueta («89 %»): gana el formato del design system § 3.
+20. **La fila del demo A dice «plan v1.3 · corrida con v1.2»** donde la maqueta decía «plan v1.2»: la vitrina publica
+    el informe del plan v1.3 sobre el lote de la v1.2 (ADR-005) y lo dice.
+21. **`sprint` en el manifiesto de la vitrina** (`corrida.sprint: 1`): «el agente del sprint 1» y el chip «real ·
+    sprint 1» salen del dato, no de la copia.
+22. **Sentry solo con DSN** (importación dinámica): no estaba en el plan; ahorra 148 KB comprimidos por página.
 
 ## Registro de miradas
 
 | Fecha | Mirada | Artefacto | Veredicto del usuario (textual) | Qué se construyó encima |
 |---|---|---|---|---|
+| 2026-09-28 | Fidelidad P1 (indiferible) | `docs/fidelidad/p1/index.html` | *pendiente* | nada: P2–P7 esperan el «apruebo fidelidad» |
 
 ## Bugs y fricciones
 
 | Fecha | Qué | Causa | Resolución |
 |---|---|---|---|
+| 2026-09-28 | El e2e no arrancaba: `:3000` ocupado | un `serve out -l 3000` de una sesión anterior (26-09) seguía vivo | se detuvo (servía este mismo `out/`); el e2e levanta el suyo |
+| 2026-09-28 | Sentry se descargaba sin DSN | importación estática del kit en `instrumentation-client.ts` | importación dinámica detrás del `if` (desviación 22) |
+| 2026-09-28 | Demo de desbordamiento verde por error | bloque de 400 px sin alto (área cero no desborda) | demo repetida con 400×4 px: rojo |
+| 2026-09-28 | Prettier reformateó `src/lib/observability.ts` sin cambios de fondo | `prettier --write` sobre `src/**` | revertido; el diff solo lleva lo del sprint |

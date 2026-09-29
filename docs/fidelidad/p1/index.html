@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fidelidad · P1 Entrada frente a su maqueta</title>
+<style>
+:root{color-scheme:dark;--fondo:#0b0c0f;--sup:#191b1d;--linea:#2c2e31;--t1:#eceff3;--t2:#b8bbbe}
+body{margin:0;background:var(--fondo);color:var(--t1);font:15px/1.6 system-ui,sans-serif}
+main{max-width:1500px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:24px;margin:0 0 4px} h2{font-size:15px;margin:32px 0 8px;color:var(--t2);font-weight:600}
+p{color:var(--t2);max-width:80ch} code{font:12px ui-monospace,monospace}
+.filtros{display:flex;gap:8px;margin:16px 0}.filtros button{font:inherit;font-size:13px;color:var(--t1);background:transparent;border:1px solid #75777b;border-radius:6px;padding:4px 10px;cursor:pointer}.filtros button[aria-pressed=true]{background:var(--t1);color:var(--fondo)}
+.lado{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+.par[data-ancho="380"] .lado{grid-template-columns:repeat(2,minmax(0,400px));justify-content:start}
+figure{margin:0}figcaption{font-size:12px;color:var(--t2);margin-bottom:6px}img{width:100%;height:auto;border:1px solid var(--linea);border-radius:6px;display:block}
+table{border-collapse:collapse;width:100%;font-size:13px;margin-top:8px}th,td{border-top:1px solid var(--linea);padding:8px;text-align:left;vertical-align:top}th{color:var(--t2);font-weight:500}
+ul{padding-left:20px;font-size:13px;color:var(--t2)}
+@media (max-width:860px){.lado{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+<h1>¿La Entrada construida se ve como la maqueta que aprobaste?</h1>
+<p>P1 Entrada frente a su maqueta. A la izquierda, la maqueta aprobada (sin el cromo de la sala de diseño); a la derecha, la vitrina que se construyó en el sprint 2, capturada del export estático entrando por el índice. 10 pares: 380 px y escritorio × oscuro y claro × español e inglés, más dos como experto. La matriz de qué mirar está al pie.</p>
+<div class="filtros" role="group" aria-label="Filtrar por ancho"><button type="button" aria-pressed="true" data-f="todos">Todos</button><button type="button" aria-pressed="false" data-f="1280">Escritorio</button><button type="button" aria-pressed="false" data-f="380">Teléfono (380 px)</button></div>
+<section class="par" data-ancho="380"><h2>380 px · oscuro · ES · líder</h2><div class="lado"><figure><figcaption>Maqueta aprobada · <code>docs/diseno/01-entrada.html</code></figcaption><img loading="lazy" src="maqueta-380-oscuro-es.jpg" alt="Maqueta 380 px oscuro es lider"></figure><figure><figcaption>Vitrina construida · <code>out/es.html</code></figcaption><img loading="lazy" src="vitrina-380-oscuro-es.jpg" alt="Vitrina 380 px oscuro es lider"></figure></div></section>
+<section class="par" data-ancho="380"><h2>380 px · oscuro · EN · líder</h2><div class="lado"><figure><figcaption>Maqueta aprobada · <code>docs/diseno/01-entrada.html</code></figcaption><img loading="lazy" src="maqueta-380-oscuro-en.jpg" alt="Maqueta 380 px oscuro en lider"></figure><figure><figcaption>Vitrina construida · <code>out/en.html</code></figcaption><img loading="lazy" src="vitrina-380-oscuro-en.jpg" alt="Vitrina 380 px oscuro en lider"></figure></div></section>
+<section class="par" data-ancho="380"><h2>380 px · claro · ES · líder</h2><div class="lado"><figure><figcaption>Maqueta aprobada · <code>docs/diseno/01-entrada.html</code></figcaption><img loading="lazy" src="maqueta-380-claro-es.jpg" alt="Maqueta 380 px claro es lider"></figure><figure><figcaption>Vitrina construida · <code>out/es.html</code></figcaption><img loading="lazy" src="vitrina-380-claro-es.jpg" alt="Vitrina 380 px claro es lider"></figure></div></section>
+<section class="par" data-ancho="380"><h2>380 px · claro · EN · líder</h2><div class="lado"><figure><figcaption>Maqueta aprobada · <code>docs/diseno/01-entrada.html</code></figcaption><img loading="lazy" src="maqueta-380-claro-en.jpg" alt="Maqueta 380 px claro en lider"></figure><figure><figcaption>Vitrina construida · <code>out/en.html</code></figcaption><img loading="lazy" src="vitrina-380-claro-en.jpg" alt="Vitrina 380 px claro en lider"></figure></div></section>
+<section class="par" data-ancho="1280"><h2>1280 px · oscuro · ES · líder</h2><div class="lado"><figure><figcaption>Maqueta aprobada · <code>docs/diseno/01-entrada.html</code></figcaption><img loading="lazy" src="maqueta-1280-oscuro-es.jpg" alt="Maqueta 1280 px oscuro es lider"></figure><figure><figcaption>Vitrina construida · <code>out/es.html</code></figcaption><img loading="lazy" src="vitrina-1280-oscuro-es.jpg" alt="Vitrina 1280 px oscuro es lider"></figure></div></section>
+<section class="par" data-ancho="1280"><h2>1280 px · oscuro · EN · líder</h2><div class="lado"><figure><figcaption>Maqueta aprobada · <code>docs/diseno/01-entrada.html</code></figcaption><img loading="lazy" src="maqueta-1280-oscuro-en.jpg" alt="Maqueta 1280 px oscuro en lider"></figure><figure><figcaption>Vitrina construida · <code>out/en.html</code></figcaption><img loading="lazy" src="vitrina-1280-oscuro-en.jpg" alt="Vitrina 1280 px oscuro en lider"></figure></div></section>
+<section class="par" data-ancho="1280"><h2>1280 px · claro · ES · líder</h2><div class="lado"><figure><figcaption>Maqueta aprobada · <code>docs/diseno/01-entrada.html</code></figcaption><img loading="lazy" src="maqueta-1280-claro-es.jpg" alt="Maqueta 1280 px claro es lider"></figure><figure><figcaption>Vitrina construida · <code>out/es.html</code></figcaption><img loading="lazy" src="vitrina-1280-claro-es.jpg" alt="Vitrina 1280 px claro es lider"></figure></div></section>
+<section class="par" data-ancho="1280"><h2>1280 px · claro · EN · líder</h2><div class="lado"><figure><figcaption>Maqueta aprobada · <code>docs/diseno/01-entrada.html</code></figcaption><img loading="lazy" src="maqueta-1280-claro-en.jpg" alt="Maqueta 1280 px claro en lider"></figure><figure><figcaption>Vitrina construida · <code>out/en.html</code></figcaption><img loading="lazy" src="vitrina-1280-claro-en.jpg" alt="Vitrina 1280 px claro en lider"></figure></div></section>
+<section class="par" data-ancho="1280"><h2>1280 px · oscuro · ES · experto</h2><div class="lado"><figure><figcaption>Maqueta aprobada · <code>docs/diseno/01-entrada.html</code></figcaption><img loading="lazy" src="maqueta-1280-oscuro-es-experto.jpg" alt="Maqueta 1280 px oscuro es experto"></figure><figure><figcaption>Vitrina construida · <code>out/es.html</code></figcaption><img loading="lazy" src="vitrina-1280-oscuro-es-experto.jpg" alt="Vitrina 1280 px oscuro es experto"></figure></div></section>
+<section class="par" data-ancho="380"><h2>380 px · oscuro · ES · experto</h2><div class="lado"><figure><figcaption>Maqueta aprobada · <code>docs/diseno/01-entrada.html</code></figcaption><img loading="lazy" src="maqueta-380-oscuro-es-experto.jpg" alt="Maqueta 380 px oscuro es experto"></figure><figure><figcaption>Vitrina construida · <code>out/es.html</code></figcaption><img loading="lazy" src="vitrina-380-oscuro-es-experto.jpg" alt="Vitrina 380 px oscuro es experto"></figure></div></section>
+<h2 id="matriz">Qué mirar y qué deberías ver</h2>
+<table><thead><tr><th>#</th><th>Pantalla</th><th>Dónde</th><th>Qué hacer</th><th>Qué debe verse</th></tr></thead><tbody>
+<tr><td>1</td><td>P1 Entrada</td><td>Arriba: la tesis y el gancho</td><td>Lee el titular y la columna de la derecha.</td><td>«Planeé, construí y medí la brecha» y los datos con su fuente: 89 % observan, 52 % evalúan, nadie pregunta si se planeó qué evaluar.</td></tr>
+<tr><td>2</td><td>P1 Entrada</td><td>«Cómo funciona»</td><td>Lee el objetivo y los tres pasos.</td><td>El objetivo en una frase; «Construí» con las 8 piezas del agente real; «Medí la brecha» con 9 de 9 criterios y lo que falló, nombrado.</td></tr>
+<tr><td>3</td><td>P1 Entrada</td><td>«Capacidad medida», bajo los tres pasos</td><td>Mira las cuatro cifras.</td><td>20 × 3 casos, 233 decisiones con 0 diferencias, 9 de 9 · 0 de 8 y 0 llamadas a modelos, cada una con su procedencia.</td></tr>
+<tr><td>4</td><td>P1 Entrada</td><td>«Los demos», fila A</td><td>Compara la columna «Corrida» con la maqueta.</td><td>Demo A «Cumple con alertas». La corrida dice «plan v1.3 · corrida con v1.2»: el informe es el del plan v1.3 sobre el lote que corrió con la v1.2 (la maqueta decía «plan v1.2»).</td></tr>
+<tr><td>5</td><td>P1 Entrada</td><td>Botón «Ver como experto»</td><td>Mira el par «experto».</td><td>Aparece «Cómo se sostiene cada afirmación» con el rótulo «Experto»: núcleo sin IA, trazas, prueba cruzada, modelo, decisiones simuladas, pila y fuente.</td></tr>
+<tr><td>6</td><td>P1 Entrada</td><td>Barra de arriba, en el teléfono</td><td>Mira los pares de 380 px.</td><td>Las pestañas bajan a su propia fila y se deslizan de lado; la página no se desplaza de lado.</td></tr>
+<tr><td>7</td><td>P1 Entrada</td><td>Toda la página, tema claro</td><td>Mira los pares «claro».</td><td>Los mismos colores que la maqueta en claro; ningún texto en gris tenue sobre blanco.</td></tr>
+<tr><td>8</td><td>P1 Entrada</td><td>Toda la página, en inglés</td><td>Mira los pares «en».</td><td>Todo redactado en inglés, sin español residual; decimales con punto y porcentajes pegados («89%», como pide el design system para el inglés; la maqueta los dejaba con espacio).</td></tr>
+</tbody></table>
+<h2>Mediciones del arnés</h2>
+<ul><li>✓ vitrina 380 oscuro es lider — sin desplazamiento lateral · fuentes cargadas · consola limpia</li><li>✓ vitrina 380 oscuro en lider — sin desplazamiento lateral · fuentes cargadas · consola limpia</li><li>✓ vitrina 380 claro es lider — sin desplazamiento lateral · fuentes cargadas · consola limpia</li><li>✓ vitrina 380 claro en lider — sin desplazamiento lateral · fuentes cargadas · consola limpia</li><li>✓ vitrina 1280 oscuro es lider — sin desplazamiento lateral · fuentes cargadas · consola limpia</li><li>✓ vitrina 1280 oscuro en lider — sin desplazamiento lateral · fuentes cargadas · consola limpia</li><li>✓ vitrina 1280 claro es lider — sin desplazamiento lateral · fuentes cargadas · consola limpia</li><li>✓ vitrina 1280 claro en lider — sin desplazamiento lateral · fuentes cargadas · consola limpia</li><li>✓ vitrina 1280 oscuro es experto — sin desplazamiento lateral · fuentes cargadas · consola limpia</li><li>✓ vitrina 380 oscuro es experto — sin desplazamiento lateral · fuentes cargadas · consola limpia</li></ul>
+<h2>Pasada de interacción (regla 22)</h2>
+<ul><li>✓ tema → Claro</li><li>✓ tema → Oscuro</li><li>✓ Leer como → Experto</li><li>✓ Volver a líder</li><li>✓ Ver como experto</li><li>✓ idioma → EN</li><li>✓ pestaña → Plan</li></ul>
+<p>Generado por <code>node scripts/capturar-vitrina.mjs --mirada p1</code> sobre el export de <code>pnpm build</code>. Las capturas se regeneran; no se editan a mano.</p>
+</main>
+<script>
+document.querySelector(".filtros").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;var f=b.dataset.f;document.querySelectorAll(".filtros button").forEach(function(x){x.setAttribute("aria-pressed",String(x===b))});document.querySelectorAll(".par").forEach(function(s){s.hidden=f!=="todos"&&s.dataset.ancho!==f})});
+</script>
+</body>
+</html>
