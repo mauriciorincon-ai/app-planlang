@@ -12,7 +12,7 @@
 |---|---|---|
 | 0 · Setup, deltas, plan v1.3 y ⭐ del S1 | ✅ cerrada · paradas del S1 diferidas con nombre | «continúa» 2026-09-28 |
 | 1 · Fundación de UI + P1 → gate de FIDELIDAD | ✅ cerrada · **fidelidad aprobada** (`docs/fidelidad/p1/index.html`) | «lo abrí y lo apruebo» + «avancemos» 2026-09-29 |
-| 2 · P2 Plan · P3 Agente (visor) · P6 Caso | ⏸ construida · **esperando la mirada 2** (`docs/fidelidad/p2/index.html`, presentada 2026-09-29) | |
+| 2 · P2 Plan · P3 Agente (visor) · P6 Caso | ✅ construida · **mirada 2 aprobada** (`docs/fidelidad/p2/index.html`) · ⏸ esperando el «continúa» de fase | «lo abrí y apruebo» 2026-09-30 |
 | 3 · P4 Brecha · P5 Playground | ⏳ | |
 | 4 · P7 Fichas · paquete · corridas de fondo · deuda | ⏳ | |
 | 5 · Cierre | ⏳ | |
@@ -503,6 +503,7 @@ la entrada `p2`) → DETENERSE para la mirada 2.
 | Fecha | Mirada | Artefacto | Veredicto del usuario (textual) | Qué se construyó encima |
 |---|---|---|---|---|
 | 2026-09-29 | Fidelidad P1 (indiferible; presentada el 2026-09-28) | `docs/fidelidad/p1/index.html` (capturas de `c04c1bd`) | «Avancemos lo abri y lo apruebo» | fase 2: P2 Plan · P3 Agente · P6 Caso |
+| 2026-09-30 | Mirada 2: P2 Plan · P3 Agente · P6 Caso (presentada el 2026-09-29; matriz de 16 filas) | `docs/fidelidad/p2/index.html` (capturas de `c8db3b3`: 30 pares, 7/7 interacciones) | «lo abrí y apruebo» | fase 3: P4 Brecha · P5 Playground (arranca con el «continúa» de fase) |
 
 ## Bugs y fricciones
 
