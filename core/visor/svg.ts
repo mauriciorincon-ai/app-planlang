@@ -28,6 +28,8 @@ export interface OpcionesSvg {
   descripcion: TextoIdioma;
   /** Nodos y líneas con reglas como botones (la vitrina los selecciona). */
   seleccionables?: boolean;
+  /** Si se da, solo estas líneas son botones (por defecto, todas las que llevan reglas). */
+  lineasSeleccionables?: readonly string[];
 }
 
 const MARCA_EXIGIDO = "M0,-2.5 V2.5 M0,5 V5.3";
@@ -230,7 +232,10 @@ export function aSvg(geo: Geometria, g: Gramatica, op: OpcionesSvg): string {
 
   // Líneas.
   for (const l of geo.lineas) {
-    const sel = op.seleccionables && l.reglas > 0;
+    const sel =
+      op.seleccionables &&
+      l.reglas > 0 &&
+      (op.lineasSeleccionables ?? [l.id]).includes(l.id);
     let hijos = el("path", [
       ["d", trazado(l)],
       ["marker-end", `url(#${ns}-punta)`],

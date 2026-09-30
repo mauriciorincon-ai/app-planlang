@@ -22,14 +22,19 @@ function copia(): string {
   copias.push(dir);
   const m = JSON.parse(readFileSync("data/vitrina/manifiesto.json", "utf8"));
   const d = m.demos["demo-a"];
+  const c = JSON.parse(
+    readFileSync(join(d.corrida.ruta, "corrida.json"), "utf8"),
+  );
   for (const r of [
     "data/vitrina/manifiesto.json",
-    d.plan.archivo,
+    "data/vitrina/demo-a/grafo-codigo.json",
+    "data/plan-beneficios",
+    "plans/demo-a",
     d.informe.archivo,
-    join(d.corrida.ruta, "corrida.json"),
-    join(d.corrida.ruta, "entorno.json"),
+    d.corrida.ruta,
+    c.casos.archivo,
   ])
-    cpSync(r, join(dir, r));
+    cpSync(r, join(dir, r), { recursive: true });
   return dir;
 }
 afterAll(() => {
@@ -43,6 +48,11 @@ describe("datos de la vitrina", () => {
     expect(d.informe.ficha_reproducibilidad.plan.version).toBe("1.3.0");
     expect(d.manifiesto.corrida.sprint).toBe(1);
     expect(d.entorno.paquetes.langgraph).toMatch(/^1\.2\./);
+    expect(d.corrida.trazas).toHaveLength(20);
+    expect(d.corrida.grafo.huella).toBe(d.corrida.manifiesto.version_grafo);
+    expect(d.lote.casos).toHaveLength(20);
+    expect(Object.keys(d.codigo.nodos)).toHaveLength(8);
+    expect(d.planBeneficios.procedimientos).toHaveLength(40);
     expect(await datosDemo()).toBe(d);
   });
 
@@ -69,6 +79,29 @@ describe("datos de la vitrina", () => {
     writeFileSync(ruta, JSON.stringify(m));
     await expect(cargarDemo("demo-a", dir)).rejects.toThrow(
       /informe\.json tiene la huella 70c1cb23…, el manifiesto declara 00000000…/,
+    );
+  });
+
+  it("rojo: una traza alterada no pasa el lector del verificador", async () => {
+    const dir = copia();
+    const m = JSON.parse(
+      readFileSync(join(dir, "data/vitrina/manifiesto.json"), "utf8"),
+    );
+    const ruta = join(dir, m.demos["demo-a"].corrida.ruta, "trazas/A-004.json");
+    const t = JSON.parse(readFileSync(ruta, "utf8"));
+    t.senales.decision_final = "aprobar";
+    writeFileSync(ruta, JSON.stringify(t));
+    await expect(cargarDemo("demo-a", dir)).rejects.toThrow(/A-004/);
+  });
+
+  it("rojo: el código por nodo sin su huella", async () => {
+    const dir = copia();
+    const ruta = join(dir, "data/vitrina/demo-a/grafo-codigo.json");
+    const c = JSON.parse(readFileSync(ruta, "utf8"));
+    c.nodos.enrutador.hasta += 1;
+    writeFileSync(ruta, JSON.stringify(c));
+    await expect(cargarDemo("demo-a", dir)).rejects.toThrow(
+      /grafo-codigo\.json no trae una huella válida/,
     );
   });
 

@@ -32,3 +32,25 @@ export function versionCorta(version: string): string {
 export function deCada(a: number, b: number, idioma: Idioma): string {
   return `${a}${ESPACIO_DURO}${idioma === "es" ? "de" : "of"}${ESPACIO_DURO}${b}`;
 }
+
+/** Entero con separador de miles: «7.083» (es) · «7,083» (en), como la maqueta. */
+export function entero(n: number, idioma: Idioma): string {
+  const s = String(Math.round(Math.abs(n))).replace(
+    /\B(?=(\d{3})+(?!\d))/g,
+    idioma === "es" ? "." : ",",
+  );
+  return n < 0 ? `-${s}` : s;
+}
+
+/** Decimal con `d` cifras: «11,8» (es) · «11.8» (en). */
+export function decimal(x: number, d: number, idioma: Idioma): string {
+  const s = x.toFixed(d);
+  return idioma === "es" ? s.replace(".", ",") : s;
+}
+
+/** Lista legible: «A, B y C» · «A, B and C». */
+export function enumerar(items: readonly string[], idioma: Idioma): string {
+  if (items.length <= 1) return items.join("");
+  const y = idioma === "es" ? "y" : "and";
+  return `${items.slice(0, -1).join(", ")} ${y} ${items[items.length - 1]}`;
+}

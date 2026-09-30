@@ -293,6 +293,26 @@ se construyen P2–P7.
 - **Grafo del spike** (sección «Antes: el spike»): copia fijada del `grafo.json` del spike de la F1 (planeadora,
   solo lectura) en `data/vitrina/demo-a/spike-2026-09-26/`, con su huella en el manifiesto de la vitrina.
 
+### Punto de retoma (2026-09-29, compactación pedida por el usuario)
+
+**Hecho y comiteado:** `core/visor` completo (mapa 0.3.0, validación, disposición en serpiente, ruteo A* con
+arrancar-y-rehacer, SVG con golden ES/EN, métricas G15, gate «diagrama = grafo» en `core/visor/igualdad.ts`) ·
+`agents/src/app_agents/exportar_grafo.py` → `data/vitrina/demo-a/grafo-codigo.json` con frescura · capa de datos
+con corrida verificada entera, lote, código por nodo y plan de beneficios · `src/textos/agente.ts`,
+`src/textos/plan-comun.ts`, `src/lib/vista/visor.ts` (lienzo de la página) y `src/lib/vista/agente.ts` (todas las
+cifras de P3, probadas en `tests/unit/vitrina/agente.test.ts`: coinciden con las que la maqueta tomó de la corrida).
+CI verde en `8acb0d6`.
+
+**Sigue (en orden):** componentes de P3 en `src/components/agente/` (ficha líder/experto con `LeerComo` global,
+capacidad, «Lo que corrió», lienzo con isla de cliente: selección por `data-sel-id`, índice de capas y sombras,
+conmutador lienzo/lista, paneles por nodo con pestañas Líder·Experto = perfil global y Código·Trazas locales,
+panel de la arista U1 con su distribución, pie) → página `src/app/[idioma]/agente/page.tsx` → sección del spike
+(copiar `grafo.json` del spike de la planeadora a `data/vitrina/demo-a/spike-2026-09-26/` con sha256 en el
+manifiesto + lectura de su regla U1) → `scripts/diagrama-igual-grafo.ts` y su prueba de página con demo en rojo
+(quitar `guardia_salida` del mapa) → ADR-010 → P2 Plan → P6 Caso (índice + 20 × 2) → e2e/axe/380 → capturas de
+la mirada 2 con matriz. Decisión tomada: la lectura «qué del plan toca a cada nodo» es del autor
+(`PLAN_POR_NODO`), comprobada por prueba contra el plan (pendiente escribir esa prueba) — desviación a anotar.
+
 ### Demos en rojo de la fase 2 (regla 15; el rojo nace con el gate)
 
 | Gate | Cambio deliberado | Resultado |

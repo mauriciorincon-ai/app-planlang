@@ -74,3 +74,53 @@ export const InformeMinimoSchema = z
     huella: Huella,
   })
   .loose();
+
+const BloqueDeCodigo = z
+  .object({
+    archivo: z.string().regex(/^agents\/src\/[\w/.-]+\.py$/),
+    desde: z.number().int().positive(),
+    hasta: z.number().int().positive(),
+    codigo: z.string().min(1),
+  })
+  .strict();
+export type BloqueDeCodigo = z.infer<typeof BloqueDeCodigo>;
+
+/**
+ * `data/vitrina/<demo>/grafo-codigo.json` (S2, `agents/src/app_agents/exportar_grafo.py`): por nodo, su función
+ * con archivo y líneas y las claves del estado que escribe; más la clase del estado y la función de la arista.
+ * Rutas relativas al repo, sin URL (regla 17). Frescura: `agents/tests/test_exportar_grafo.py`.
+ */
+export const GrafoCodigoSchema = z
+  .object({
+    formato: z.literal("planlang-grafo-codigo/v1"),
+    demo_id: z.string().min(1),
+    nodos: z.record(
+      z.string(),
+      BloqueDeCodigo.extend({ escribe: z.array(z.string().min(1)) }),
+    ),
+    ruta: BloqueDeCodigo,
+    estado: BloqueDeCodigo,
+    huella: Huella,
+  })
+  .strict();
+export type GrafoCodigo = z.infer<typeof GrafoCodigoSchema>;
+
+/** Lo que la vitrina lee del plan de beneficios sintético de la corrida (la ficha del agente cuenta sus reglas). */
+export const PlanBeneficiosMinimoSchema = z
+  .object({
+    id: z.string().min(1),
+    version: z.string().min(1),
+    procedimientos: z
+      .array(
+        z
+          .object({
+            codigo: z.string().min(1),
+            estado: z.enum(["requiere_autorizacion", "excluido", "exento"]),
+          })
+          .loose(),
+      )
+      .min(1),
+    huella: Huella,
+  })
+  .loose();
+export type PlanBeneficiosMinimo = z.infer<typeof PlanBeneficiosMinimoSchema>;
