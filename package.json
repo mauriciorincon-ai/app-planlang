@@ -23,6 +23,7 @@
     "capturas:vitrina": "node scripts/capturar-vitrina.mjs",
     "export:verificar": "node scripts/verificar-export.mjs",
     "tokens": "node scripts/paleta/generar-tokens.mjs",
+    "visor:metricas": "tsx scripts/visor/metricas.ts",
     "maqueta": "serve docs -l 3101"
   },
   "dependencies": {
@@ -45,6 +46,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitest/coverage-v8": "^5.0.2",
+    "ajv": "8.18.0",
     "eslint": "^9",
     "eslint-config-next": "16.3.6",
     "eslint-plugin-jsx-a11y": "^6.10.2",

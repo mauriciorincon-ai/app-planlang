@@ -60,6 +60,9 @@ importers:
       '@vitest/coverage-v8':
         specifier: ^5.0.2
         version: 5.0.2(vitest@5.0.2)
+      ajv:
+        specifier: 8.18.0
+        version: 8.18.0
       eslint:
         specifier: ^9
         version: 9.39.5(jiti@2.7.0)

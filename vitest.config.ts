@@ -30,6 +30,8 @@ const incluyeNucleo = [
 // Subconjunto que PRODUCE bytes (huellas, informes, JCS): corre dos veces, en node y en jsdom.
 const produceBytes = [
   "tests/unit/core/formatos/**/*.test.ts",
+  // S2: el lienzo del visor (golden SVG ES/EN) — mismos bytes en Node y en jsdom (G1 del diagramador).
+  "tests/unit/core/visor/svg.test.ts",
   "tests/integration/**/*.test.ts",
   "tests/contrato/**/*.test.ts",
 ];
@@ -97,6 +99,13 @@ export default defineConfig({
           statements: 90,
         },
         "core/playground/**/*.ts": {
+          lines: 90,
+          functions: 90,
+          branches: 90,
+          statements: 90,
+        },
+        // S2: el visor (conversor, validación, geometría, SVG) — núcleo determinista, como brecha y playground.
+        "core/visor/**/*.ts": {
           lines: 90,
           functions: 90,
           branches: 90,

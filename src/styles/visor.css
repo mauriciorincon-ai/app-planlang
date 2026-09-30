@@ -1,0 +1,202 @@
+/*
+ * Lienzo del visor (P3 Agente y la sección del spike): el SVG que genera core/visor. Un solo SVG para los dos
+ * temas (G13 del diagramador): todo color sale de los tokens. Tipo de nodo = matiz del filete + glifo + etiqueta
+ * corta (regla dura 13); modo de flujo = estilo de línea + marcador. El texto siempre en tinta (D14). La letra
+ * y el peso son los de la tabla de métricas con que el núcleo midió (core/visor/estilos.ts).
+ */
+svg.visor {
+  display: block;
+  max-width: none;
+  height: auto;
+}
+svg.visor text {
+  font-family: var(--font-letra);
+}
+.visor .d-guia path {
+  fill: none;
+  stroke: var(--linea);
+  stroke-dasharray: 2 4;
+}
+.visor .d-banda-num {
+  font: 500 12px var(--font-mono);
+  fill: var(--tinta-2);
+}
+.visor .d-banda-nombre {
+  font-weight: 600;
+  font-size: 13px;
+  fill: var(--tinta-1);
+}
+.visor .d-banda-preg {
+  font-size: 12px;
+  fill: var(--tinta-2);
+}
+
+/* Nodos: tarjeta + filete + glifo, texto en tinta. */
+.visor .d-nodo {
+  --c: var(--tinta-2);
+  --t: var(--sup-2);
+  outline: none;
+}
+.visor .d-nodo[data-tipo="modelo"] {
+  --c: var(--tipo-1);
+  --t: var(--tipo-1-tinte);
+}
+.visor .d-nodo[data-tipo="herramienta"] {
+  --c: var(--tipo-2);
+  --t: var(--tipo-2-tinte);
+}
+.visor .d-nodo[data-tipo="regla"] {
+  --c: var(--tipo-3);
+  --t: var(--tipo-3-tinte);
+}
+.visor .d-nodo[data-tipo="pausa-humana"] {
+  --c: var(--tipo-4);
+  --t: var(--tipo-4-tinte);
+}
+.visor .d-nodo[data-tipo="enrutador"] {
+  --c: var(--tipo-5);
+  --t: var(--tipo-5-tinte);
+}
+.visor .d-nodo .caja {
+  fill: var(--sup-2);
+  stroke: var(--linea);
+}
+.visor .d-nodo .filete,
+.visor .d-nodo .glifo {
+  fill: var(--c);
+}
+.visor .d-nodo .cod {
+  font: 500 12px var(--font-mono);
+  fill: var(--tinta-2);
+}
+.visor .d-nodo .nombre {
+  font-weight: 500;
+  font-size: 13px;
+  fill: var(--tinta-1);
+}
+.visor .d-nodo[data-sel-id] {
+  cursor: pointer;
+}
+.visor .d-nodo[data-sel="true"] .caja {
+  fill: var(--t);
+  stroke: var(--c);
+  stroke-width: 2;
+}
+.visor .d-nodo:focus-visible .caja {
+  stroke: var(--tinta-1);
+  stroke-width: 2;
+  stroke-dasharray: none;
+}
+.visor .d-nodo[data-madurez="exigido"] .caja {
+  fill: none;
+  stroke: var(--tinta-2);
+  stroke-dasharray: 4 3;
+}
+.visor .d-nodo[data-madurez="exigido"] .glifo {
+  fill: none;
+  stroke: var(--c);
+  stroke-width: 2.2;
+}
+.visor .d-nodo[data-madurez="exigido"] .nombre {
+  fill: var(--tinta-2);
+}
+.visor .d-nodo .aus rect,
+.visor .d-nodo .extra rect {
+  fill: none;
+  stroke: var(--tinta-2);
+}
+.visor .d-nodo .extra rect {
+  stroke-dasharray: 2 2;
+}
+.visor .d-nodo .aus path,
+.visor .d-nodo .extra path {
+  fill: none;
+  stroke: var(--tinta-1);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+}
+.visor .d-nodo .aus text,
+.visor .d-nodo .extra text {
+  font-weight: 500;
+  font-size: 12px;
+  fill: var(--tinta-1);
+}
+
+/* Flujos: secuencia (sólida) · condicional (discontinua + cuadro) · reanudación (punteada). */
+.visor .d-flujo path {
+  fill: none;
+  stroke: var(--tinta-2);
+  stroke-width: 1.5;
+}
+.visor .d-flujo[data-modo="condicional"] path {
+  stroke-dasharray: 6 4;
+  stroke-linecap: butt;
+}
+.visor .d-flujo[data-modo="reanudacion"] path {
+  stroke-width: 2.2;
+  stroke-dasharray: 0.1 4.5;
+  stroke-linecap: round;
+}
+.visor .d-flujo .marcador {
+  fill: var(--sup-1);
+  stroke: var(--tinta-2);
+  stroke-width: 1.5;
+}
+.visor .d-flujo .et-fondo {
+  fill: var(--sup-1);
+}
+.visor .d-flujo text.regla {
+  font: 400 12px var(--font-mono);
+  fill: var(--tinta-1);
+}
+.visor .d-flujo text.suave {
+  font-size: 12px;
+  fill: var(--tinta-2);
+}
+.visor .d-flujo[data-sel-id] {
+  cursor: pointer;
+  outline: none;
+}
+.visor .d-flujo[data-sel="true"] path {
+  stroke: var(--tinta-1);
+  stroke-width: 2.25;
+}
+.visor .d-flujo[data-sel="true"] text {
+  font-weight: 600;
+}
+.visor .d-flujo[data-sel-id]:focus-visible path {
+  stroke: var(--tinta-1);
+  stroke-width: 2.5;
+}
+.visor .punta {
+  fill: var(--tinta-2);
+}
+.visor .d-terminal circle {
+  fill: var(--sup-1);
+  stroke: var(--tinta-2);
+  stroke-width: 1.5;
+}
+.visor .d-terminal circle.centro {
+  fill: var(--tinta-2);
+  stroke: none;
+}
+.visor .d-terminal text {
+  font-size: 12px;
+  fill: var(--tinta-2);
+}
+
+@media (forced-colors: active) {
+  .visor .d-nodo .caja,
+  .visor .d-flujo path,
+  .visor .d-terminal circle {
+    stroke: CanvasText;
+  }
+  .visor .d-nodo .filete,
+  .visor .d-nodo .glifo,
+  .visor .punta {
+    fill: CanvasText;
+  }
+  .visor text {
+    fill: CanvasText;
+  }
+}

@@ -17,3 +17,4 @@ pnpm-lock.yaml
 coverage/
 out/
 .next/
+core/visor/metricas.json

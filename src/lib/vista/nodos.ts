@@ -3,6 +3,8 @@
  * nunca el color solo (regla dura 13). El glifo de `regla` es el HEXÁGONO que selló el usuario (desviación
  * 4 del S2 frente al `escudo` del contrato diagramador 0.3.0; enmienda propuesta en el summary).
  */
+import type { FormaDeGlifo } from "@core/visor/glifos";
+
 export const TIPOS_DE_NODO = [
   "modelo",
   "herramienta",
@@ -12,8 +14,7 @@ export const TIPOS_DE_NODO = [
 ] as const;
 export type TipoDeNodo = (typeof TIPOS_DE_NODO)[number];
 
-export type FormaDeGlifo =
-  "estrella" | "triangulo" | "hexagono" | "cuadrado" | "rombo";
+export type { FormaDeGlifo };
 
 export const GLIFO_DE_TIPO: Record<TipoDeNodo, FormaDeGlifo> = {
   modelo: "estrella",

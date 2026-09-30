@@ -262,6 +262,48 @@ v1.2»: el informe que se publica es el del plan v1.3) y en inglés los porcenta
 de la regla 10: pasa el gate de MIRADA y, con «avancemos», el de FASE. Sobre las capturas de `c04c1bd`. Desde aquí
 se construyen P2–P7.
 
+## Fase 2 — P2 Plan · P3 Agente (visor) · P6 Caso (desde 2026-09-29)
+
+### Orden de construcción
+
+1. Métricas de letra (G15): tabla de avances de Inter y JetBrains Mono leída de los woff2 del repo (con HVAR:
+   las dos son variables) → `core/visor/metricas.json`, con prueba de deriva.
+2. `core/visor`: ids · mapa 0.3.0 (grafo compilado + plan + textos) · validación · geometría (disposición y
+   ruteo) · SVG · lista por capa. Golden ES/EN. ADR-010.
+3. `agents/src/app_agents/exportar_grafo.py` → `data/vitrina/demo-a/grafo-codigo.json` (nodo → archivo, líneas,
+   claves que escribe) + pytest de frescura.
+4. Gate «diagrama = grafo» (`scripts/diagrama-igual-grafo.ts` + prueba) con su rojo.
+5. P3 Agente → P2 Plan → P6 Caso (índice + 20 × 2).
+6. e2e, axe, 380 px, pasada de interacción y capturas de la mirada 2 con su matriz.
+
+### Decisiones de la fase (se consolidan en el ADR-010)
+
+- **Cabeceras de banda con el texto de la gramática `agentes-ia` 1.1.0** («Agentes especializados», «¿Quién razona
+  y con qué modelo?»), partidas en líneas con la tabla de métricas; la maqueta, dibujada a mano, usaba versiones
+  cortas. El mapa no declara bandas (G4): el texto es de la gramática.
+- **Geometría de la maqueta** (columna 160 u, paso 172, nodo 160 × 56, filas cada 140 u) y no la de § 5.3: el
+  lienzo cabe en 1040 px como el aprobado. Filas por «serpiente»: el camino principal (ramas por defecto y
+  secuencias) avanza de izquierda a derecha y abre fila nueva cuando vuelve atrás; los nodos fuera del camino van
+  en la fila intermedia. Ruteo ortogonal por el camino más corto sobre una rejilla dispersa de líneas candidatas
+  (bordes de caja, canales, calles), con penalización por codo, cruce y solape; D11 (cruces con cajas = 0) es prueba.
+- **`__start__` y `__end__` son terminales del dibujo, no nodos del mapa** (el mapa 0.3.0 no tiene tipo
+  terminal): enmienda propuesta `terminal`.
+- **Código por nodo desde el repo en el build** (`grafo-codigo.json`); la nota lo dice y cita la huella del grafo
+  compilado de la corrida (el código de los nodos puede cambiar con la deuda de la fase 4).
+- **Grafo del spike** (sección «Antes: el spike»): copia fijada del `grafo.json` del spike de la F1 (planeadora,
+  solo lectura) en `data/vitrina/demo-a/spike-2026-09-26/`, con su huella en el manifiesto de la vitrina.
+
+### Demos en rojo de la fase 2 (regla 15; el rojo nace con el gate)
+
+| Gate | Cambio deliberado | Resultado |
+|---|---|---|
+| G2 del visor (`determinismo.test.ts`) | `Math.cos(0)` en `core/visor/geometria.ts` | rojo con archivo:línea → verde al revertir |
+| Deriva de la tabla de métricas (`medida.test.ts`) | `unidades_por_em` 2048 → 2049 en `metricas.json` | rojo → verde |
+| Huella de la tabla en `CONTRATO.lock` (`contratos-lock.test.ts`) | el mismo byte | rojo → verde |
+| Golden SVG ES/EN (`svg.test.ts`, Node y jsdom) | radio del terminal 9 → 10 | rojo en 4 pruebas (2 idiomas × 2 proyectos) → verde |
+| D11 (`geometria.test.ts`) | el ruteo deja de ver las cajas como obstáculo | rojo en 2 (avisos D11 y cruces medidos) → verde |
+| Esquema del contrato, fase 1 (`mapa.test.ts`, Ajv 2020) | el mapa sin `estado` | rojo → verde |
+
 ## Desviación del plan
 
 1. **El centinela «Worktrees prohibidos» no existe** en `ordenes/CLAUDE-md-para-app.md` (vive en el batch

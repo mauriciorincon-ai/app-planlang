@@ -1,32 +1,13 @@
 /**
  * Lo que NO es un ícono de Lucide se dibuja (design-system § 2.5): los glifos de tipo de la gramática
- * `agentes-ia`, las marcas de veredicto y de procedencia, y la marca de planlang. La geometría se calcula
- * aquí (polígonos regulares y una estrella de cinco puntas); ninguna ruta se copia de la maqueta.
+ * `agentes-ia`, las marcas de veredicto y de procedencia, y la marca de planlang. Las rutas de los glifos
+ * viven en el núcleo del visor (`core/visor/glifos.ts`, las mismas que dibuja el lienzo); ninguna ruta se
+ * copia de la maqueta.
  */
+import { RUTA_GLIFO } from "@core/visor/glifos";
 import type { FormaDeGlifo } from "@/lib/vista/nodos";
 
-const r2 = (x: number) => Math.round(x * 100) / 100;
-
-function poligono(radios: number[], giro = -90): string {
-  const n = radios.length;
-  return (
-    radios
-      .map((r, i) => {
-        const a = ((giro + (360 / n) * i) * Math.PI) / 180;
-        return `${i === 0 ? "M" : "L"}${r2(r * Math.cos(a))},${r2(r * Math.sin(a))}`;
-      })
-      .join(" ") + " Z"
-  );
-}
-
-/** Rutas de los cinco glifos en una caja de −9 a 9. */
-export const RUTA_GLIFO: Record<FormaDeGlifo, string> = {
-  estrella: poligono(Array.from({ length: 10 }, (_, i) => (i % 2 ? 3.5 : 8.2))),
-  triangulo: "M0,-7.5 L7.5,6 L-7.5,6 Z",
-  hexagono: poligono([8, 8, 8, 8, 8, 8]),
-  cuadrado: "M-6.5,-6.5 H6.5 V6.5 H-6.5 Z",
-  rombo: poligono([8, 8, 8, 8]),
-};
+export { RUTA_GLIFO };
 
 /** Glifo de tipo de nodo, relleno con el color que le da quien lo usa (`fill`). Hueco si es «exigido y ausente». */
 export function Glifo({

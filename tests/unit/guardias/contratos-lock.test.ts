@@ -18,6 +18,7 @@ interface Lock {
   version: string;
   sha256: string;
   archivos: Record<string, string>;
+  tabla_de_metricas?: Record<string, string>;
 }
 
 const sha = (ruta: string) =>
@@ -46,6 +47,16 @@ describe.each(PAQUETES)("contrato fijado de %s", (paquete) => {
       expect(sha(join(copia, ruta)), ruta).toBe(huella);
     expect(lock.sha256).toBe(lock.archivos["CONTRATO.md"]);
   });
+
+  it.runIf(paquete === "diagramador")(
+    "la tabla de métricas del visor (G15) está en el lock con su huella",
+    () => {
+      const t = lock.tabla_de_metricas ?? {};
+      const rutas = Object.keys(t).filter((k) => k !== "nota");
+      expect(rutas).toEqual(["core/visor/metricas.json"]);
+      for (const r of rutas) expect(sha(r), r).toBe(t[r]);
+    },
+  );
 
   it("la versión del lock es la del contrato copiado", () => {
     const md = readFileSync(join(copia, "CONTRATO.md"), "utf8");
