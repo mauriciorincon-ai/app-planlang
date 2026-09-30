@@ -1,5 +1,5 @@
-import AxeBuilder from "@axe-core/playwright";
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test } from "@playwright/test";
+import { consolaLimpia, sinViolacionesSerias } from "./_comun";
 
 /**
  * P1 Entrada en el export servido (S2 fase 1). Se entra por el ÍNDICE (`/`), como un visitante; se recorre en
@@ -7,30 +7,6 @@ import { expect, test, type Page } from "@playwright/test";
  * sin violaciones serias; sin desplazamiento de lado a 380 px; consola limpia (sin #418 de hidratación); y con
  * movimiento reducido lo que aparece se ve de verdad.
  */
-
-function consolaLimpia(page: Page): string[] {
-  const errores: string[] = [];
-  page.on("console", (m) => {
-    if (m.type() === "error") errores.push(m.text());
-  });
-  page.on("pageerror", (e) => errores.push(String(e)));
-  return errores;
-}
-
-async function sinViolacionesSerias(page: Page) {
-  // axe mide colores: una transición a medias (150 ms) daría un contraste que nadie ve quieto.
-  await page.waitForFunction(() =>
-    document.getAnimations().every((a) => a.playState !== "running"),
-  );
-  const scan = await new AxeBuilder({ page }).analyze();
-  const serias = scan.violations.filter(
-    (v) => v.impact === "critical" || v.impact === "serious",
-  );
-  expect(
-    serias,
-    JSON.stringify(serias.map((v) => [v.id, v.nodes.map((n) => n.target)])),
-  ).toEqual([]);
-}
 
 test.describe("el índice elige idioma", () => {
   test.describe("navegador en español", () => {

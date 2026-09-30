@@ -20,6 +20,10 @@
      las rejillas (bajo ese ancho todo va en una columna). */
   --breakpoint-tableta: 721px;
   --breakpoint-escritorio: 861px;
+  /* Cortes secundarios de la maqueta aprobada de P3 (ficha y paneles del agente): desde 561 px las cifras y
+     las definiciones van en dos columnas; desde 1001 px la ficha abre recibe → hace → entrega en fila. */
+  --breakpoint-chico: 561px;
+  --breakpoint-amplio: 1001px;
 
   --container-ancho: 1120px;
   /* Medidas de lectura: la entradilla (60 caracteres), la respuesta de la pregunta (62) y el objetivo (76). */
@@ -73,6 +77,7 @@
   --color-v: var(--v);
   --color-vt: var(--vt);
   --color-c: var(--c);
+  --color-ct: var(--ct);
 
   --font-letra: var(--fuente-letra), system-ui, sans-serif;
   --font-mono: var(--mono-activa, ui-monospace, monospace);

@@ -332,6 +332,7 @@ export const FICHA = {
 export const ACTIVIDADES: ReadonlyArray<{
   titulo: TextoBilingue;
   nodos: readonly string[];
+  flecha?: boolean;
 }> = [
   {
     titulo: tb(
@@ -346,6 +347,8 @@ export const ACTIVIDADES: ReadonlyArray<{
       "If so, authorizes it without a coverage check",
     ),
     nodos: ["enrutador", "redactor"],
+    /** El caso va de un nodo al otro (se dibuja con flecha); en las demás, los nodos trabajan juntos. */
+    flecha: true,
   },
   {
     titulo: tb(
@@ -519,8 +522,8 @@ export const EXPERTO = {
     orquestacion: [
       tb("Orquestación", "Orchestration"),
       tb(
-        "LangGraph 1.x: StateGraph, add_conditional_edges con path_map explícito, interrupt + Command(resume=…); sin langgraph-supervisor",
-        "LangGraph 1.x: StateGraph, add_conditional_edges with an explicit path_map, interrupt + Command(resume=…); no langgraph-supervisor",
+        "LangGraph 1.x: `StateGraph`, `add_conditional_edges` con `path_map` explícito, `interrupt` + `Command(resume=…)`; sin `langgraph-supervisor`",
+        "LangGraph 1.x: `StateGraph`, `add_conditional_edges` with an explicit `path_map`, `interrupt` + `Command(resume=…)`; no `langgraph-supervisor`",
       ),
     ],
   },
@@ -552,8 +555,8 @@ export const EXPERTO = {
       condicionales: number;
     }) =>
       tb(
-        `${p.nodos} nodos + inicio y fin · ${p.aristas} aristas · ${p.condicionales} condicionales (get_graph().to_json())`,
-        `${p.nodos} nodes + start and end · ${p.aristas} edges · ${p.condicionales} conditional (get_graph().to_json())`,
+        `${p.nodos} nodos + inicio y fin · ${p.aristas} aristas · ${p.condicionales} condicionales (\`get_graph().to_json()\`)`,
+        `${p.nodos} nodes + start and end · ${p.aristas} edges · ${p.condicionales} conditional (\`get_graph().to_json()\`)`,
       )) as Plantilla<{
       nodos: number;
       aristas: number;
@@ -585,8 +588,8 @@ export const EXPERTO = {
     modelo: tb("Modelo", "Model"),
     modeloTexto: ((p: { alias: string; n: number }) =>
       tb(
-        `alias ${p.alias} en los ${p.n} nodos con modelo`,
-        `alias ${p.alias} on the ${p.n} model nodes`,
+        `alias \`${p.alias}\` en los ${p.n} nodos con modelo`,
+        `alias \`${p.alias}\` on the ${p.n} model nodes`,
       )) as Plantilla<{
       alias: string;
       n: number;
@@ -601,8 +604,8 @@ export const EXPERTO = {
     aislamiento: [
       tb("Aislamiento", "Isolation"),
       tb(
-        "sin herramientas · MCP vacío · sin settings · directorio temporal limpio · nunca --bare",
-        "no tools · empty MCP · no settings · clean temp directory · never --bare",
+        "sin herramientas · MCP vacío · sin settings · directorio temporal limpio · nunca `--bare`",
+        "no tools · empty MCP · no settings · clean temp directory · never `--bare`",
       ),
     ],
   },
@@ -612,8 +615,8 @@ export const EXPERTO = {
     tipo: tb("Tipo", "Type"),
     tipoTexto: ((p: { senales: number; trabajo: number }) =>
       tb(
-        `TypedDict Estado: ${p.senales} señales del plan con su nombre del contrato + ${p.trabajo} claves de trabajo`,
-        `TypedDict Estado: ${p.senales} plan signals under their contract names + ${p.trabajo} working keys`,
+        `\`TypedDict Estado\`: ${p.senales} señales del plan con su nombre del contrato + ${p.trabajo} claves de trabajo`,
+        `\`TypedDict Estado\`: ${p.senales} plan signals under their contract names + ${p.trabajo} working keys`,
       )) as Plantilla<{ senales: number; trabajo: number }>,
     trabajo: tb("Claves de trabajo", "Working keys"),
     senales: tb(
@@ -626,19 +629,19 @@ export const EXPERTO = {
     checkpointer: [
       tb("Checkpointer", "Checkpointer"),
       tb(
-        "SqliteSaver en las corridas (archivo 600, derivado privado) · InMemorySaver en las pruebas",
-        "SqliteSaver in runs (mode 600, private derivative) · InMemorySaver in tests",
+        "`SqliteSaver` en las corridas (archivo 600, derivado privado) · `InMemorySaver` en las pruebas",
+        "`SqliteSaver` in runs (mode 600, private derivative) · `InMemorySaver` in tests",
       ),
     ],
     hilo: [
       tb("Hilo", "Thread"),
-      tb("un thread_id por caso", "one thread_id per case"),
+      tb("un `thread_id` por caso", "one `thread_id` per case"),
     ],
     trazas: [
       tb("Trazas", "Traces"),
       tb(
-        "propias, planlang-trace/v1, una por caso con su huella; LangSmith solo como espejo",
-        "own, planlang-trace/v1, one per case with its fingerprint; LangSmith only as a mirror",
+        "propias, `planlang-trace/v1`, una por caso con su huella; LangSmith solo como espejo",
+        "own, `planlang-trace/v1`, one per case with its fingerprint; LangSmith only as a mirror",
       ),
     ],
   },
@@ -756,8 +759,8 @@ export const CONTRATO_CIFRAS = {
   ),
   fuente: ((p: { plan: string; corrida: string; huella: string }) =>
     tb(
-      `Contrato de grafo del plan ${p.plan} frente al grafo exportado de la corrida ${p.corrida} (huella ${p.huella}).`,
-      `Plan ${p.plan} graph contract against the graph exported by run ${p.corrida} (fingerprint ${p.huella}).`,
+      `Contrato de grafo del plan ${p.plan} frente al grafo exportado de la corrida ${p.corrida} (huella \`${p.huella}\`).`,
+      `Plan ${p.plan} graph contract against the graph exported by run ${p.corrida} (fingerprint \`${p.huella}\`).`,
     )) as Plantilla<{ plan: string; corrida: string; huella: string }>,
 };
 
@@ -926,8 +929,8 @@ export const PANEL = {
       )) as Plantilla<{ desde: number; hasta: number }>,
     fuente: ((p: { grafo: string; corrida: string }) =>
       tb(
-        `Código del repositorio en este build, sin editar. El grafo que compila es el de la corrida ${p.corrida} (huella ${p.grafo}).`,
-        `The repository's code in this build, unedited. The graph it compiles is run ${p.corrida}'s (fingerprint ${p.grafo}).`,
+        `Código del repositorio en este build, sin editar. El grafo que compila es el de la corrida ${p.corrida} (huella \`${p.grafo}\`).`,
+        `The repository's code in this build, unedited. The graph it compiles is run ${p.corrida}'s (fingerprint \`${p.grafo}\`).`,
       )) as Plantilla<{ grafo: string; corrida: string }>,
     chip: tb("real · código", "real · code"),
   },
@@ -936,15 +939,12 @@ export const PANEL = {
     tipo: tb("Tipo", "Type"),
     solicitud: tb("Solicitud · texto sintético", "Request · synthetic text"),
     verCaso: tb("Ver el caso de punta a punta", "See the case end to end"),
-    verMas: ((p: { n: number; desde: string; hasta: string }) =>
+    /** `casos`: «A-016, A-017, A-018» si son pocos, o «A-006 … A-020». */
+    verMas: ((p: { n: number; casos: string }) =>
       tb(
-        `Ver ${p.n} más: ${p.desde} … ${p.hasta}`,
-        `See ${p.n} more: ${p.desde} … ${p.hasta}`,
-      )) as Plantilla<{
-      n: number;
-      desde: string;
-      hasta: string;
-    }>,
+        `Ver ${p.n} más: ${p.casos}`,
+        `See ${p.n} more: ${p.casos}`,
+      )) as Plantilla<{ n: number; casos: string }>,
     verMenos: tb("Ver menos", "See less"),
     reglaQueDecidio: tb("Regla que decidió", "Rule that decided"),
     porDefecto: tb("ninguna: rama por defecto", "none: default branch"),
@@ -972,14 +972,39 @@ export interface TextosDeNodoVitrina {
   decide?: TextoBilingue;
   siFalla: TextoBilingue;
   seMide: TextoBilingue;
-  /** Un campo más, propio del nodo («Doble cinturón», «Lo que aún no hace»). */
-  extra?: { rotulo: TextoBilingue; texto: TextoBilingue };
+  /**
+   * Un campo más, propio del nodo. `falta: true` es lo que el nodo aún no hace («Lo que aún no hace»: va tras «Qué
+   * decide», en tinta 2); si no, es una garantía más («Doble cinturón») y va al final.
+   */
+  extra?: { rotulo: TextoBilingue; texto: TextoBilingue; falta?: boolean };
   lee: TextoBilingue;
-  /** Código primero (regla 14): por qué usa, o no, un modelo. */
-  modelo: { usa: boolean; titulo: TextoBilingue; texto: TextoBilingue };
+  /**
+   * El grupo propio del nodo en el panel del experto (maqueta): por qué no usa modelo, cómo está configurado, qué
+   * reglas aplica o qué revisa. En los valores, `{modelo}` es el alias de la corrida, `{politica}` la del revisor
+   * simulado y `{acciones}` la lista blanca vista en las trazas; `{n}` en el rótulo, cuántas reglas. Con
+   * `reglasDelPlan`, las filas son las reglas del plan para el nodo, en orden.
+   */
+  modelo: {
+    rotulo: TextoBilingue;
+    filas: ReadonlyArray<readonly [TextoBilingue, TextoBilingue]>;
+    reglasDelPlan?: boolean;
+  };
   /** Fuentes del mapa del diagramador (V3): la documentación oficial del primitivo de LangGraph que usa. */
   fuentes: Fuente[];
 }
+
+/** Filas comunes de la configuración de los nodos con modelo (adaptador de la regla 6). */
+const LLAMADA = tb("Llamada", "Call");
+const LLAMADA_TEXTO = tb(
+  "`claude -p` · sin herramientas · MCP vacío · directorio temporal limpio",
+  "`claude -p` · no tools · empty MCP · clean temp directory",
+);
+const SALIDA = tb("Salida", "Output");
+const SALIDA_TEXTO = tb(
+  "estructurada nativa, `extra=forbid`; si no cumple, se reintenta y queda contado",
+  "native structured, `extra=forbid`; if it fails, it is retried and counted",
+);
+const INSTRUCCION = tb("Instrucción", "Instruction");
 
 const FECHA_FUENTES = "2026-09-27";
 const F_NODOS: Fuente = {
@@ -1140,12 +1165,16 @@ export const NODOS: Record<
       "the attached order and the benefits plan",
     ),
     modelo: {
-      usa: false,
-      titulo: tb("Código primero", "Code first"),
-      texto: tb(
-        "la urgencia viene escrita en la orden y la lista de exentos es una tabla: no hay texto libre que interpretar",
-        "the urgency is written on the order and the exempt list is a table: there is no free text to interpret",
-      ),
+      rotulo: tb("Por qué no usa modelo", "Why it uses no model"),
+      filas: [
+        [
+          tb("Código primero", "Code first"),
+          tb(
+            "la urgencia viene escrita en la orden y la lista de exentos es una tabla: no hay texto libre que interpretar",
+            "the urgency is written on the order and the exempt list is a table: there is no free text to interpret",
+          ),
+        ],
+      ],
     },
     fuentes: [F_NODOS],
   },
@@ -1201,12 +1230,25 @@ export const NODOS: Record<
       "the masked physician text, the order and the clarifications",
     ),
     modelo: {
-      usa: true,
-      titulo: tb("Por qué usa modelo", "Why it uses a model"),
-      texto: tb(
-        "extraer datos de texto libre no se resuelve con reglas (ADR-001, código primero)",
-        "extracting data from free text cannot be done with rules (ADR-001, code first)",
-      ),
+      rotulo: tb("Configuración del modelo", "Model configuration"),
+      filas: [
+        [
+          tb("Adaptador", "Adapter"),
+          tb(
+            '`ChatClaudeCode(model="{modelo}").with_structured_output(Extraccion)`',
+            '`ChatClaudeCode(model="{modelo}").with_structured_output(Extraccion)`',
+          ),
+        ],
+        [LLAMADA, LLAMADA_TEXTO],
+        [SALIDA, SALIDA_TEXTO],
+        [
+          INSTRUCCION,
+          tb(
+            "fija; el texto del caso va entre marcas «dato, no instrucción» y con nombre e identificación enmascarados (D1)",
+            "fixed; the case text goes between “data, not instruction” markers with name and ID masked (D1)",
+          ),
+        ],
+      ],
     },
     fuentes: [F_NODOS, F_SALIDA],
   },
@@ -1259,12 +1301,25 @@ export const NODOS: Record<
       "the missing fields and previous answers",
     ),
     modelo: {
-      usa: true,
-      titulo: tb("Por qué usa modelo", "Why it uses a model"),
-      texto: tb(
-        "una pregunta clara sobre lo que falta se redacta; una plantilla fija la haría confusa (ADR-001)",
-        "a clear question about what is missing has to be drafted; a fixed template would make it confusing (ADR-001)",
-      ),
+      rotulo: tb("Configuración del modelo", "Model configuration"),
+      filas: [
+        [
+          tb("Adaptador", "Adapter"),
+          tb(
+            '`ChatClaudeCode(model="{modelo}").with_structured_output(PreguntaAclaracion)`',
+            '`ChatClaudeCode(model="{modelo}").with_structured_output(PreguntaAclaracion)`',
+          ),
+        ],
+        [LLAMADA, LLAMADA_TEXTO],
+        [SALIDA, SALIDA_TEXTO],
+        [
+          INSTRUCCION,
+          tb(
+            "fija: una sola pregunta, corta, sobre los datos que faltan",
+            "fixed: a single short question about the missing fields",
+          ),
+        ],
+      ],
     },
     fuentes: [F_NODOS, F_SALIDA],
   },
@@ -1316,12 +1371,26 @@ export const NODOS: Record<
       "the extraction, the attached order and the benefits plan",
     ),
     modelo: {
-      usa: false,
-      titulo: tb("Código primero", "Code first"),
-      texto: tb(
-        "la cobertura es una tabla con causales de ley: ningún juicio que delegar",
-        "coverage is a table with legal causes: no judgment to delegate",
-      ),
+      rotulo: tb("Reglas del plan de beneficios", "Benefits-plan rules"),
+      filas: [
+        [tb("RB-02", "RB-02"), tb("servicio exento", "exempt service")],
+        [
+          tb("RB-03", "RB-03"),
+          tb(
+            "servicio excluido: se niega citando la causal del art. 15 de la Ley 1751 y lo confirma una persona",
+            "excluded service: denied citing its art. 15 cause of Law 1751, confirmed by a person",
+          ),
+        ],
+        [tb("RB-04", "RB-04"), tb("alto costo: por encima de U2", "high cost: above U2")],
+        [
+          tb("RB-05", "RB-05"),
+          tb(
+            "contradicción entre el código leído y el de la orden",
+            "contradiction between the code read and the order's",
+          ),
+        ],
+        [tb("RB-07", "RB-07"), tb("cubierto, sin observaciones", "covered, no remarks")],
+      ],
     },
     fuentes: [F_NODOS],
   },
@@ -1423,12 +1492,9 @@ export const NODOS: Record<
       "the proposal, the signals and the applied thresholds",
     ),
     modelo: {
-      usa: false,
-      titulo: tb("Código primero", "Code first"),
-      texto: tb(
-        "los umbrales del plan son comparaciones: la regla ES el código de la arista (regla dura 2)",
-        "the plan's thresholds are comparisons: the rule IS the edge's code (hard rule 2)",
-      ),
+      rotulo: tb("Las {n} reglas, en orden", "The {n} rules, in order"),
+      filas: [],
+      reglasDelPlan: true,
     },
     fuentes: [F_NODOS],
   },
@@ -1468,6 +1534,7 @@ export const NODOS: Record<
       "Every denial goes through here (C1) and the auditor sees the full case, with evidence and counter-evidence (C9).",
     ),
     extra: {
+      falta: true,
       rotulo: tb("Lo que aún no hace", "What it does not do yet"),
       texto: tb(
         "Tener un auditor de verdad: aquí responde un revisor simulado que sigue la verdad conocida del caso (DA-04), y la vitrina lo dice en cada pantalla.",
@@ -1484,12 +1551,17 @@ export const NODOS: Record<
       "the reason, the signal, the threshold, the extraction, the text and the evidence",
     ),
     modelo: {
-      usa: false,
-      titulo: tb("Ni código ni modelo", "Neither code nor model"),
-      texto: tb(
-        "decide una persona; el grafo solo se detiene y espera",
-        "a person decides; the graph only halts and waits",
-      ),
+      rotulo: tb("Revisor simulado", "Simulated reviewer"),
+      filas: [
+        [tb("Política", "Policy"), tb("`{politica}`", "`{politica}`")],
+        [
+          tb("Divulgación", "Disclosure"),
+          tb(
+            "franja del oráculo en Brecha, Playground y Casos; pie de toda pantalla",
+            "oracle strip on Gap, Playground and Cases; footer of every screen",
+          ),
+        ],
+      ],
     },
     fuentes: [F_INTERRUPT],
   },
@@ -1551,12 +1623,25 @@ export const NODOS: Record<
       "the decision, the cause and the extraction, without the free text",
     ),
     modelo: {
-      usa: true,
-      titulo: tb("Por qué usa modelo", "Why it uses a model"),
-      texto: tb(
-        "una respuesta legible al afiliado se redacta; el documento adverso, no: lo arma el código",
-        "a readable answer to the member has to be drafted; the adverse document does not: code assembles it",
-      ),
+      rotulo: tb("Configuración del modelo", "Model configuration"),
+      filas: [
+        [
+          tb("Adaptador", "Adapter"),
+          tb(
+            '`ChatClaudeCode(model="{modelo}").with_structured_output(Carta)`',
+            '`ChatClaudeCode(model="{modelo}").with_structured_output(Carta)`',
+          ),
+        ],
+        [LLAMADA, LLAMADA_TEXTO],
+        [SALIDA, SALIDA_TEXTO],
+        [
+          INSTRUCCION,
+          tb(
+            "fija: la carta en ES y EN y la lista de acciones; recibe solo decisión, procedimiento, causal y si hubo persona",
+            "fixed: the letter in ES and EN and the action list; it only gets decision, procedure, cause and whether a person reviewed it",
+          ),
+        ],
+      ],
     },
     fuentes: [F_NODOS, F_SALIDA],
   },
@@ -1608,12 +1693,21 @@ export const NODOS: Record<
       "the answer, the attempted actions and the input",
     ),
     modelo: {
-      usa: false,
-      titulo: tb("Código primero", "Code first"),
-      texto: tb(
-        "un filtro que se pueda convencer no es un filtro: reglas fijas en código (regla dura 5)",
-        "a filter that can be persuaded is no filter: fixed rules in code (hard rule 5)",
-      ),
+      rotulo: tb("Qué revisa", "What it checks"),
+      filas: [
+        [tb("Acciones", "Actions"), tb("lista blanca: {acciones}", "allowlist: {acciones}")],
+        [
+          tb("Datos sensibles", "Sensitive data"),
+          tb(
+            "los identificadores del conjunto sintético, en ES y EN",
+            "the synthetic set's identifiers, in ES and EN",
+          ),
+        ],
+        [
+          tb("Aviso de IA", "AI notice"),
+          tb("lo añade este nodo a toda salida", "this node adds it to every output"),
+        ],
+      ],
     },
     fuentes: [F_NODOS],
   },
@@ -1911,6 +2005,7 @@ export const TRAZAS_DE_NODO: Record<
   pausa_humana: {
     columnas: [
       tb("Por qué se detuvo", "Why it stopped"),
+      tb("Auditor", "Auditor"),
       tb("Decisión final", "Final decision"),
     ],
     detalle: [tb("Señal", "Signal")],
@@ -1931,6 +2026,56 @@ export const TRAZAS_DE_NODO: Record<
     ],
     detalle: [tb("Acciones intentadas", "Actions attempted")],
   },
+};
+
+/** La nota bajo la tabla de trazas de cada nodo; los casos que nombra salen de la corrida. */
+export const NOTA_TRAZAS = {
+  enrutador: tb(
+    "Toca un caso para ver su texto. Las urgencias y los exentos no pasan por el extractor.",
+    "Tap a case to see its text. Emergencies and exempt services skip the extractor.",
+  ),
+  extractor: ((u1: string) =>
+    tb(
+      `La marca vertical de cada barra es U1 = ${u1}. Toca un caso para ver su texto.`,
+      `The vertical mark on each bar is U1 = ${u1}. Tap a case to see its text.`,
+    )) as Plantilla<string>,
+  aclaracion: ((caso: string) =>
+    tb(
+      `Las preguntas y respuestas completas de ${caso} están en la página Casos.`,
+      `${caso}'s full questions and answers are on the Cases page.`,
+    )) as Plantilla<string>,
+  verificador_cobertura: tb(
+    "La propuesta no es la decisión: la toma el nodo siguiente, y una negación siempre pasa por una persona.",
+    "The proposal is not the decision: the next node makes it, and a denial always goes through a person.",
+  ),
+  decision: tb(
+    "La tabla de cada regla, con su valor observado, está en la página Casos (paso «decision»).",
+    "Each rule's table, with its observed value, is on the Cases page (the “decision” step).",
+  ),
+  pausa_humana: ((casos: TextoBilingue) =>
+    tb(
+      `Lo que vio el auditor en ${casos.es}, campo por campo, está en la página Casos.`,
+      `What the auditor saw on ${casos.en}, field by field, is on the Cases page.`,
+    )) as Plantilla<TextoBilingue>,
+  redactor: ((casos: TextoBilingue) =>
+    tb(
+      `La respuesta y el documento de ${casos.es}, completos y en los dos idiomas, están en la página Casos.`,
+      `${casos.en}'s answer and document, complete and in both languages, are on the Cases page.`,
+    )) as Plantilla<TextoBilingue>,
+  guardia_salida: ((p: {
+    inyeccion: string;
+    dato: string;
+    sinEfecto: boolean;
+  }) =>
+    p.sinEfecto
+      ? tb(
+          `${p.inyeccion} traía una instrucción escondida; ${p.dato} intentaba sacar un dato sensible. Ninguna tuvo efecto.`,
+          `${p.inyeccion} carried a hidden instruction; ${p.dato} tried to extract sensitive data. Neither had any effect.`,
+        )
+      : tb(
+          `${p.inyeccion} traía una instrucción escondida; ${p.dato} intentaba sacar un dato sensible. La guardia registró su efecto: está en la página Casos.`,
+          `${p.inyeccion} carried a hidden instruction; ${p.dato} tried to extract sensitive data. The guard recorded their effect: it is on the Cases page.`,
+        )) as Plantilla<{ inyeccion: string; dato: string; sinEfecto: boolean }>,
 };
 
 export const UNIDADES = {

@@ -70,6 +70,11 @@ export const PIE = {
     "El modelo de los agentes corrió con la suscripción de Claude Code del autor. Ningún visitante lanza llamadas a modelos: esta página es estática. LangChain, LangGraph, LangSmith y Anthropic son marcas de sus titulares; aquí solo se nombran.",
     "The agents' model ran on the author's Claude Code subscription. No visitor triggers model calls: this page is static. LangChain, LangGraph, LangSmith and Anthropic are trademarks of their owners; they are only named here.",
   ),
+  /** Lo que cierra el pie cuando la pantalla dice de qué corrida salen sus datos (P3 Agente). */
+  marcas: tb(
+    "LangChain, LangGraph, LangSmith y Anthropic son marcas de sus titulares; aquí solo se nombran.",
+    "LangChain, LangGraph, LangSmith and Anthropic are trademarks of their owners; they are only named here.",
+  ),
 };
 
 /** Las pantallas que llegan en las fases siguientes del sprint 2 dicen que están en construcción, sin simular nada. */

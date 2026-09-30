@@ -40,3 +40,8 @@ export function tipoDeNodo(tipo: string): TipoDeNodo {
     `vitrina: tipo de nodo «${tipo}» fuera de la gramática agentes-ia`,
   );
 }
+
+/** El glifo de un tipo escrito como en el plan (`pausa_humana`) o como en el mapa (`pausa-humana`). */
+export function formaDeTipo(tipo: string): FormaDeGlifo {
+  return GLIFO_DE_TIPO[tipoDeNodo(tipo.replaceAll("-", "_"))];
+}

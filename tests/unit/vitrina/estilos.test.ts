@@ -56,8 +56,13 @@ describe("variables CSS declaradas", () => {
       ...texto.matchAll(/var\(--([a-z0-9-]+)/g),
       ...texto.matchAll(/-\(--([a-z0-9-]+)\)/g), // utilidades de Tailwind con variable: px-(--margen)
     ].map((m) => m[1]);
+    // Una variable que el propio componente fija en `style` (p. ej. el reparto de columnas de las trazas).
+    const locales = new Set(
+      [...texto.matchAll(/"--([a-z0-9-]+)"\s*:/g)].map((m) => m[1]),
+    );
     const faltan = leidas.filter(
-      (v) => !declaradas.has(v) && !/^(tw-|default-)/.test(v),
+      (v) =>
+        !declaradas.has(v) && !locales.has(v) && !/^(tw-|default-)/.test(v),
     );
     expect(faltan, f).toEqual([]);
   });

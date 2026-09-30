@@ -295,23 +295,37 @@ se construyen P2–P7.
 
 ### Punto de retoma (2026-09-29, compactación pedida por el usuario)
 
-**Hecho y comiteado:** `core/visor` completo (mapa 0.3.0, validación, disposición en serpiente, ruteo A* con
-arrancar-y-rehacer, SVG con golden ES/EN, métricas G15, gate «diagrama = grafo» en `core/visor/igualdad.ts`) ·
-`agents/src/app_agents/exportar_grafo.py` → `data/vitrina/demo-a/grafo-codigo.json` con frescura · capa de datos
-con corrida verificada entera, lote, código por nodo y plan de beneficios · `src/textos/agente.ts`,
-`src/textos/plan-comun.ts`, `src/lib/vista/visor.ts` (lienzo de la página) y `src/lib/vista/agente.ts` (todas las
-cifras de P3, probadas en `tests/unit/vitrina/agente.test.ts`: coinciden con las que la maqueta tomó de la corrida).
-CI verde en `8acb0d6`.
+**Hecho y comiteado entonces (`54ddfca`, CI verde: quality, python, e2e, lighthouse y Vercel):** `core/visor`
+completo · `exportar_grafo.py` → `grafo-codigo.json` con frescura · capa de datos con la corrida verificada entera,
+lote, código por nodo y plan de beneficios · textos y vista de P3 con sus cifras probadas.
 
-**Sigue (en orden):** componentes de P3 en `src/components/agente/` (ficha líder/experto con `LeerComo` global,
-capacidad, «Lo que corrió», lienzo con isla de cliente: selección por `data-sel-id`, índice de capas y sombras,
-conmutador lienzo/lista, paneles por nodo con pestañas Líder·Experto = perfil global y Código·Trazas locales,
-panel de la arista U1 con su distribución, pie) → página `src/app/[idioma]/agente/page.tsx` → sección del spike
-(copiar `grafo.json` del spike de la planeadora a `data/vitrina/demo-a/spike-2026-09-26/` con sha256 en el
-manifiesto + lectura de su regla U1) → `scripts/diagrama-igual-grafo.ts` y su prueba de página con demo en rojo
-(quitar `guardia_salida` del mapa) → ADR-010 → P2 Plan → P6 Caso (índice + 20 × 2) → e2e/axe/380 → capturas de
-la mirada 2 con matriz. Decisión tomada: la lectura «qué del plan toca a cada nodo» es del autor
-(`PLAN_POR_NODO`), comprobada por prueba contra el plan (pendiente escribir esa prueba) — desviación a anotar.
+### P3 Agente — componentes y página (2026-09-29)
+
+- **`src/components/agente/`**: ficha líder/experto con el «Leer como» global (el rótulo queda para el lector de
+  pantalla, como en la maqueta) · «Lo que corrió, frente a su plan» (`contrato.tsx`, lo reusa el spike) · lienzo
+  (`lienzo.tsx`, isla de cliente: el SVG del núcleo tal cual, desplazamiento lateral, índice de capas que se oculta
+  por atributo cuando cabe, flechas del teclado, selección por `data-sel-id` con `data-sel` y `aria-pressed`) ·
+  lista por capa con cada nodo como botón que elige su detalle · leyenda · paneles por nodo (`panel-nodo.tsx`) con
+  pestañas Líder · Experto = perfil de la página y Código · Trazas del panel (`pestanas-panel.tsx`) · tabla de
+  trazas con «Ver N más», barra de confianza con la marca de U1 y nota por nodo sacada de la corrida · panel de la
+  arista U1 con su distribución generada · anuncio `aria-live` de la selección.
+- **Piezas comunes nuevas:** `con-codigo.tsx` (lo que va entre acentos graves se pinta en la mono, como la
+  maqueta), `vistas.tsx` (vistas alternas por atributo `hidden`), `ver-mas.tsx`. `Pie` y `Marco` aceptan la corrida
+  de la pantalla. Cortes `chico` (561 px) y `amplio` (1001 px) en el tema: los secundarios de la maqueta de P3.
+- **Textos:** el grupo propio de cada nodo reproduce el de la maqueta (configuración del modelo, reglas del plan
+  de beneficios, las 5 reglas de `decision` generadas del plan, revisor simulado, qué revisa la guardia), con el
+  alias del modelo, la política del revisor y la lista blanca sacados de las trazas.
+- **Página** `src/app/[idioma]/agente/page.tsx`; abre con `enrutador` seleccionado (lo mismo sin JS).
+- **Pruebas:** `tests/unit/vitrina/agente-componentes.test.tsx` (12: selección desde el lienzo, el teclado y la
+  lista; pestañas; «Ver más»; enlaces a los 20 casos; inglés sin residuo; forma invariante) y
+  `tests/e2e/agente.spec.ts` (6 × 2 proyectos: axe en 2 idiomas × 2 temas × 2 perfiles sin desplazamiento lateral,
+  pasada de interacción, índice de capas en el teléfono, movimiento reducido). Ayudas de e2e en `tests/e2e/_comun.ts`.
+- **Lighthouse local de `/es/agente`** (3 corridas, mediana): rendimiento 96–99, las otras tres 100; TBT 4–10 ms;
+  LCP 2,1 s (presupuesto 2,5 s). Se añade a `lighthouse-urls.json`. El HTML pesa 1,7 MB (143 KB comprimido): los 8
+  paneles con sus 4 pestañas y 20 trazas se pintan todos (regla 5-a); el DOM tiene 7 308 nodos.
+
+**Sigue:** sección del spike → `scripts/diagrama-igual-grafo.ts` con su demo en rojo → prueba de `PLAN_POR_NODO`
+contra el plan → ADR-010 → P2 Plan → P6 Caso (índice + 20 × 2) → capturas de la mirada 2 con matriz.
 
 ### Demos en rojo de la fase 2 (regla 15; el rojo nace con el gate)
 
@@ -323,6 +337,7 @@ la mirada 2 con matriz. Decisión tomada: la lectura «qué del plan toca a cada
 | Golden SVG ES/EN (`svg.test.ts`, Node y jsdom) | radio del terminal 9 → 10 | rojo en 4 pruebas (2 idiomas × 2 proyectos) → verde |
 | D11 (`geometria.test.ts`) | el ruteo deja de ver las cajas como obstáculo | rojo en 2 (avisos D11 y cruces medidos) → verde |
 | Esquema del contrato, fase 1 (`mapa.test.ts`, Ajv 2020) | el mapa sin `estado` | rojo → verde |
+| Forma invariante de P3 (`agente-componentes.test.tsx`) | `PanelSeleccion` pinta sus hijos solo si está seleccionado | rojo solo en «no cambia la forma» (las demás siguen viendo el panel correcto) → verde |
 
 ## Desviación del plan
 
@@ -380,6 +395,18 @@ la mirada 2 con matriz. Decisión tomada: la lectura «qué del plan toca a cada
 23. **La mono de datos entra después de la carga** (no estaba en el plan; la pidió el presupuesto de LCP): hasta el
     `load` los datos van en la mono del sistema. Las capturas y el arnés esperan a `html[data-mono]`.
 
+24. **Tokens por caso «7.084»** donde la maqueta decía «7.083»: la mediana de 20 valores es 7 083,5 y se redondea.
+25. **«Participan» con los nombres de actor del plan** («Afiliado (sintético)», «Auditor médico humano»…) en lugar de
+    los cortos de la maqueta: salen del dato.
+26. **«Llamada» de los nodos con modelo sin «1 turno»**: desde el ADR-004 enmendado el código va con 2 turnos cuando
+    lleva esquema, y la pestaña Código muestra el código de este build.
+27. **La matriz «qué del plan toca a cada nodo» lleva el chip «declarado»** (lectura del autor comprobada por prueba)
+    donde la maqueta decía «maqueta · en el producto la calcula el núcleo»: el núcleo no la calcula (ver
+    `PLAN_POR_NODO`).
+28. **Los nodos de la lista por capa son botones** que eligen su detalle (la maqueta los pintaba inertes): sin el
+    lienzo, el teclado llega igual a cada panel.
+29. **El pie de Agente conserva la frase de marcas** tras la de la corrida (la maqueta la quitaba).
+
 ## Registro de miradas
 
 | Fecha | Mirada | Artefacto | Veredicto del usuario (textual) | Qué se construyó encima |
@@ -397,3 +424,5 @@ la mirada 2 con matriz. Decisión tomada: la lectura «qué del plan toca a cada
 | 2026-09-28 | Contraste rojo intermitente en axe | los botones de tema y perfil pasaban a «pulsado» con transición al hidratar | la opción elegida se pinta desde el atributo del `<html>`; axe espera a que no haya animaciones |
 | 2026-09-28 | «Sin probar» se veía como anillo continuo | las marcas discontinuas llevaban punta redonda y cerraban los huecos | punta recta en `falta`, `maqueta` y `beta` + prueba; capturas regeneradas |
 | 2026-09-28 | Prettier reformateó `src/lib/observability.ts` sin cambios de fondo | `prettier --write` sobre `src/**` | revertido; el diff solo lleva lo del sprint |
+| 2026-09-29 | En el teléfono el índice marcaba la capa 05 al llegar al final del lienzo | la última capa nunca alcanza el borde izquierdo (lógica heredada de la maqueta) | al final del recorrido la activa es la última; lo cubre el e2e del índice |
+| 2026-09-29 | `estilos.test.ts` rojo con `--cols` | la variable la fija el propio componente en `style` | el barrido acepta las variables que el archivo declara en su `style` |

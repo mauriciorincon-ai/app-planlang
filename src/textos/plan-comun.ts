@@ -36,6 +36,11 @@ export const PRIORIDAD_ACCION: Record<string, TextoBilingue> = {
 };
 
 export const CONTROL_LEGAL = tb("control legal", "legal control");
+
+/** El valor de un umbral booleano y el lado inclusivo de su comparación. */
+export const ENCENDIDO = tb("encendido", "on");
+export const APAGADO = tb("apagado", "off");
+export const INCLUSIVO = tb("inclusivo", "inclusive");
 export const TABLA = tb("tabla", "table");
 
 export const REVERSIBILIDAD: Record<string, TextoBilingue> = {

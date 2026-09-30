@@ -10,15 +10,20 @@ export function LeerComo({
   rotulo,
   lider,
   experto,
+  rotuloVisible = true,
 }: {
   rotulo: string;
   lider: string;
   experto: string;
+  /** En la ficha del agente la maqueta muestra solo los dos botones; el rótulo queda para el lector de pantalla. */
+  rotuloVisible?: boolean;
 }) {
   const perfil = usePreferencia("perfil");
   return (
     <div className="flex items-center gap-2.5 text-chico text-tinta-2">
-      <span id="leer-como-rotulo">{rotulo}</span>
+      <span id="leer-como-rotulo" className={rotuloVisible ? undefined : "sr-only"}>
+        {rotulo}
+      </span>
       <div className={SEG} role="group" aria-labelledby="leer-como-rotulo">
         <button
           type="button"

@@ -25,6 +25,7 @@ import {
   MARCA_CORRIO,
   MOTIVO_PAUSA,
   NODOS,
+  NOTA_TRAZAS,
   PANEL,
   PIE_AGENTE,
   PLAN_POR_NODO,
@@ -38,10 +39,13 @@ import {
   type CifrasDeNodo,
 } from "@/textos/agente";
 import {
+  APAGADO,
   CONTROL_LEGAL,
+  ENCENDIDO,
   ESTADO_CRITERIO,
   ESTADO_RIESGO,
   ESTADO_SUPUESTO,
+  INCLUSIVO,
   PRIORIDAD_ACCION,
   REVERSIBILIDAD,
   TABLA,
@@ -53,6 +57,8 @@ export interface Item {
   titulo: string;
   detalle: string;
   corrio?: boolean;
+  /** Id del plan (actor), cuando lo tiene. */
+  id?: string;
 }
 export interface Fila {
   k: string;
@@ -70,17 +76,28 @@ export interface Cifra {
   texto: string;
   detalle: string;
   estimacion?: boolean;
+  /** Fracción (0–1) de lo que el plan permite, para la barra bajo la cifra. */
+  barra?: number;
 }
+export type ClaseDeEstado = "cumple" | "alerta" | "no-cumple" | "beta";
+/** Un elemento del plan que gobierna un nodo, como lo lista «Lo que el plan le exige». */
 export interface RefPlan {
   id: string;
   texto: string;
-  meta: string;
-  estado: string;
-  clase: "cumple" | "alerta" | "no-cumple" | "beta";
+  /** Decisión: su reversibilidad (la de una vía lleva marca de alerta). */
+  etiqueta?: { texto: string; unaVia: boolean };
+  /** Riesgo: prioridad de acción efectiva, en barras (1–3) y en palabras. */
+  ap?: { barras: number; texto: string };
+  /** Riesgo: S · O · D · RPN (y el control legal); umbral: señal · operador. */
+  factores?: string;
+  /** Riesgo, supuesto o criterio: lo que midió el verificador. */
+  estado?: { texto: string; clase: ClaseDeEstado };
 }
 export interface BloqueCodigo {
   titulo: string;
   archivo: string;
+  /** Número de la primera línea en el archivo. */
+  desde: number;
   lineas: string;
   codigo: string;
 }
@@ -88,9 +105,26 @@ export interface FilaTraza {
   id: string;
   tipo: string;
   celdas: string[];
+  /** La primera celda es una señal numérica: su barra (0–1) con la marca del umbral del plan. */
+  barra?: { valor: number; umbral: number };
   solicitud: string;
   pares: Array<{ k: string; v: string }>;
   enlace: string;
+}
+/** Qué dice un campo del panel del líder (elige su ícono; `falta` se pinta en tinta 2). */
+export type ClaveCampo =
+  | "paraQue"
+  | "como"
+  | "decide"
+  | "siFalla"
+  | "seMide"
+  | "enLaCorrida"
+  | "falta"
+  | "garantia";
+export interface Campo {
+  clave: ClaveCampo;
+  rotulo: string;
+  texto: string;
 }
 export interface PanelNodo {
   id: string;
@@ -102,7 +136,7 @@ export interface PanelNodo {
   lider: {
     recibe: { titulo: string; sub: string };
     entrega: { titulo: string; sub: string };
-    campos: Array<{ rotulo: string; texto: string }>;
+    campos: Campo[];
   };
   experto: {
     contrato: Grupo;
@@ -112,7 +146,12 @@ export interface PanelNodo {
   };
   codigoBloques: BloqueCodigo[];
   codigoFuente: string;
-  trazas: { columnas: string[]; filas: FilaTraza[]; visibles: number };
+  trazas: {
+    columnas: string[];
+    filas: FilaTraza[];
+    visibles: number;
+    nota: string;
+  };
 }
 export interface PanelArista {
   id: string;
@@ -131,7 +170,10 @@ export interface VistaAgente {
   ficha: {
     objetivo: string;
     recibe: Item[];
-    hace: { sub: string; items: Array<Item & { n: number; nodos: string[] }> };
+    hace: {
+      sub: string;
+      items: Array<Item & { n: number; nodos: string[]; flecha: boolean }>;
+    };
     entrega: Item[];
     leyenda: string;
     puede: Item[];
@@ -146,7 +188,12 @@ export interface VistaAgente {
     grupos: Grupo[];
     matriz: {
       columnas: string[];
-      filas: Array<{ nodo: string; celdas: string[]; corrio: boolean }>;
+      filas: Array<{
+        nodo: string;
+        tipo: string;
+        celdas: string[];
+        corrio: boolean;
+      }>;
       nota: string;
       fuente: string;
     };
@@ -157,9 +204,19 @@ export interface VistaAgente {
   paneles: PanelNodo[];
   arista: PanelArista;
   pie: string;
+  /** El tipo de cada nodo del contrato (para su glifo donde se nombra). */
+  tipoDe: Record<string, string>;
 }
 
 const X = (t: TextoBilingue, i: Idioma) => t[i];
+
+/** El valor de un umbral como lo lee una persona: decimales con coma en español, booleanos en palabras. */
+export function valorDeUmbral(v: unknown, i: Idioma): string {
+  if (typeof v === "boolean") return X(v ? ENCENDIDO : APAGADO, i);
+  if (typeof v === "number")
+    return Number.isInteger(v) ? entero(v, i) : decimal(v, 2, i);
+  return String(v);
+}
 
 /** La rama que tomó cada visita a un nodo y la regla que la decidió (la primera que se cumplió, o ninguna). */
 function visitas(t: Traza, nodo: string) {
@@ -427,6 +484,7 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
         titulo: X(a.titulo, i),
         detalle: X(cifrasActividad[k]!, i),
         nodos: [...a.nodos],
+        flecha: a.flecha === true,
         corrio: corrioActividad[k],
       })),
     },
@@ -493,6 +551,7 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
       ),
     },
     participan: d.plan.actores.map((a) => ({
+      id: a.id,
       titulo: a[i],
       detalle: X(FICHA.participan.papel[a.id] ?? { es: "", en: "" }, i),
     })),
@@ -508,6 +567,10 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
           }),
           i,
         )}`,
+        barra:
+          typeof c7?.objetivo === "number" && c7.objetivo > 0
+            ? Math.min(1, (mediana(latencias) ?? 0) / c7.objetivo)
+            : undefined,
       },
       {
         cifra: decimal(costoTotal / n, 3, i),
@@ -692,7 +755,10 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
               i,
             ),
           },
-          { k: X(EXPERTO.grafo.huella, i), v: `${grafo.huella.slice(0, 16)}…` },
+          {
+            k: X(EXPERTO.grafo.huella, i),
+            v: `\`${grafo.huella.slice(0, 16)}…\``,
+          },
         ],
       },
       {
@@ -700,7 +766,7 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
         filas: [
           {
             k: X(EXPERTO.modelo.adaptador, i),
-            v: "ChatClaudeCode(BaseChatModel) → claude -p",
+            v: "`ChatClaudeCode(BaseChatModel)` → `claude -p`",
           },
           {
             k: X(EXPERTO.modelo.modelo, i),
@@ -834,6 +900,7 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
         ];
         return {
           nodo: x.id,
+          tipo: x.tipo,
           celdas: [
             lista(p.decisiones),
             lista(p.riesgos),
@@ -851,6 +918,7 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
     estado: {
       titulo: X(EXPERTO.codigoEstado, i),
       archivo: d.codigo.estado.archivo,
+      desde: d.codigo.estado.desde,
       lineas: X(
         PANEL.codigo_.lineas({
           desde: d.codigo.estado.desde,
@@ -910,6 +978,7 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
     capas.findIndex((b) => b.id === BANDA_DE_TIPO[idDeMapa(tipo)]);
   const bandaDe = (tipo: string): TextoBilingue =>
     capas[banda(tipo)]?.nombre ?? { es: tipo, en: tipo };
+  const BARRAS: Record<string, number> = { baja: 1, media: 2, alta: 3 };
   const refPlan = (id: string): RefPlan | null => {
     const p = d.plan;
     const dd = p.decisiones.find((x) => x.id === id);
@@ -917,9 +986,10 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
       return {
         id,
         texto: X(dd.pregunta, i),
-        meta: X(REVERSIBILIDAD[dd.reversibilidad]!, i),
-        estado: "",
-        clase: "beta",
+        etiqueta: {
+          texto: X(REVERSIBILIDAD[dd.reversibilidad]!, i),
+          unaVia: dd.reversibilidad === "una_via",
+        },
       };
     const r = p.riesgos.find((x) => x.id === id);
     if (r) {
@@ -942,14 +1012,20 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
       return {
         id,
         texto: X(r.modo, i),
-        meta: `${ap}${legal} · S${r.severidad} · O${r.ocurrencia} · D${r.deteccion} · RPN ${ri?.rpn ?? r.severidad * r.ocurrencia * r.deteccion}`,
-        estado: X(ESTADO_RIESGO[ri?.estado ?? "indeterminado"]!, i),
-        clase:
-          ri?.estado === "no_ocurrio"
-            ? "cumple"
-            : ri?.estado === "ocurrio"
-              ? "no-cumple"
-              : "alerta",
+        ap: {
+          barras: BARRAS[ri?.prioridad_de_accion ?? ""] ?? 0,
+          texto: ap,
+        },
+        factores: `S${r.severidad} · O${r.ocurrencia} · D${r.deteccion} · RPN ${ri?.rpn ?? r.severidad * r.ocurrencia * r.deteccion}${legal}`,
+        estado: {
+          texto: X(ESTADO_RIESGO[ri?.estado ?? "indeterminado"]!, i),
+          clase:
+            ri?.estado === "no_ocurrio"
+              ? "cumple"
+              : ri?.estado === "ocurrio"
+                ? "no-cumple"
+                : "alerta",
+        },
       };
     }
     const s = p.supuestos.find((x) => x.id === id);
@@ -958,14 +1034,15 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
       return {
         id,
         texto: X(s.enunciado, i),
-        meta: "",
-        estado: X(ESTADO_SUPUESTO[si?.estado ?? "sin_probar"]!, i),
-        clase:
-          si?.estado === "confirmado"
-            ? "cumple"
-            : si?.estado === "refutado"
-              ? "no-cumple"
-              : "beta",
+        estado: {
+          texto: X(ESTADO_SUPUESTO[si?.estado ?? "sin_probar"]!, i),
+          clase:
+            si?.estado === "confirmado"
+              ? "cumple"
+              : si?.estado === "refutado"
+                ? "no-cumple"
+                : "beta",
+        },
       };
     }
     const c = p.criterios_aceptacion.find((x) => x.id === id);
@@ -974,26 +1051,64 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
       return {
         id,
         texto: X(c.enunciado, i),
-        meta: "",
-        estado: X(ESTADO_CRITERIO[ci?.estado ?? "indeterminado"]!, i),
-        clase:
-          ci?.estado === "cumple"
-            ? "cumple"
-            : ci?.estado === "incumple"
-              ? "no-cumple"
-              : "alerta",
+        estado: {
+          texto: X(ESTADO_CRITERIO[ci?.estado ?? "indeterminado"]!, i),
+          clase:
+            ci?.estado === "cumple"
+              ? "cumple"
+              : ci?.estado === "incumple"
+                ? "no-cumple"
+                : "alerta",
+        },
       };
     }
     const u = p.umbrales.find((x) => x.id === id);
     if (u)
       return {
         id,
-        texto: X(u.nombre, i),
-        meta: `${u.senal} · ${u.operador} · ${String(u.valor_en_plan)}`,
-        estado: "",
-        clase: "beta",
+        texto: `${X(u.nombre, i)} · ${valorDeUmbral(u.valor_en_plan, i)}`,
+        factores: `${u.senal} · ${u.operador}${u.inclusivo ? ` · ${X(INCLUSIVO, i)}` : ""}`,
       };
     return null;
+  };
+  const politicas = [
+    ...new Set(
+      trazas.flatMap((t) =>
+        t.pausas_humanas.map((p) => p.respuesta_simulada.politica),
+      ),
+    ),
+  ];
+  const acciones = [
+    ...new Set(
+      trazas.flatMap((t) => t.guardia_salida?.acciones_ejecutadas ?? []),
+    ),
+  ];
+  const conValores = (v: string) =>
+    v
+      .replaceAll("{modelo}", modelo)
+      .replaceAll("{politica}", politicas.join(", ") || "—")
+      .replaceAll("{acciones}", acciones.map((a) => `\`${a}\``).join(", "));
+  /** El grupo propio del nodo (por qué no usa modelo, su configuración, sus reglas o qué revisa). */
+  const grupoModelo = (nodo: string): Grupo => {
+    const m = NODOS[nodo]!.modelo;
+    if (m.reglasDelPlan) {
+      const reglas = d.plan.contrato_de_grafo.aristas_condicionales
+        .filter((a) => a.desde === nodo)
+        .sort((a, b) => a.orden - b.orden);
+      return {
+        rotulo: X(m.rotulo, i).replace("{n}", String(reglas.length)),
+        filas: reglas.map((a) => ({
+          k: String(a.orden),
+          v: esAristaTripleta(a)
+            ? `\`${a.senal} · ${a.operador} · ${String(a.valor)}\``
+            : `\`${a.funcion.nombre}(${a.funcion.entradas.join(", ")})\``,
+        })),
+      };
+    }
+    return {
+      rotulo: X(m.rotulo, i),
+      filas: m.filas.map(([k, v]) => ({ k: X(k, i), v: conValores(X(v, i)) })),
+    };
   };
   const reglasDelPlan = (nodo: string) =>
     d.plan.contrato_de_grafo.aristas_condicionales
@@ -1001,8 +1116,8 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
       .sort((a, b) => a.orden - b.orden)
       .map((a) =>
         esAristaTripleta(a)
-          ? `${a.senal} · ${a.operador} · ${String(a.valor).replace(/^umbral\./, "")} → ${a.si_verdadero}`
-          : `${a.funcion.nombre}(${a.funcion.entradas.join(", ")}) → ${a.si_verdadero}`,
+          ? `\`${a.senal} · ${a.operador} · ${String(a.valor).replace(/^umbral\./, "")}\` → \`${a.si_verdadero}\``
+          : `\`${a.funcion.nombre}(${a.funcion.entradas.join(", ")})\` → \`${a.si_verdadero}\``,
       );
   const aristas = grafo.langgraph.edges as unknown as Array<{
     source: string;
@@ -1144,7 +1259,11 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
         ];
         break;
       case "pausa_humana":
-        celdas = [motivoPausa(), valor(pausa?.respuesta_simulada.decision)];
+        celdas = [
+          motivoPausa(),
+          valor(pausa?.respuesta_simulada.decision),
+          valor(decisionFinal(t)),
+        ];
         pares = [{ k: et[0]!, v: String(pausa?.payload.senal ?? "—") }];
         break;
       case "redactor":
@@ -1166,14 +1285,77 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
         break;
       }
     }
+    const u1 = d.plan.umbrales.find((u) => u.id === "U1");
     return {
       id: t.caso_id,
       tipo: X(TIPO_DE_CASO[caso.tipo] ?? { es: caso.tipo, en: caso.tipo }, i),
       celdas,
+      barra:
+        nodo === "extractor" && ext && typeof u1?.valor_en_plan === "number"
+          ? { valor: ext.confianza, umbral: u1.valor_en_plan }
+          : undefined,
       solicitud: caso.entrada.texto_medico[i],
       pares,
       enlace: ruta(i, "caso", t.caso_id),
     };
+  };
+
+  const primeros = (ids: string[]): TextoBilingue => ({
+    es: enumerar(ids.slice(0, 2), "es"),
+    en: enumerar(ids.slice(0, 2), "en"),
+  });
+  const adversario = (detalle: string) =>
+    d.lote.casos.find((c) => c.adversario_detalle === detalle)?.id ?? "—";
+  const notaTrazas = (nodo: string): string => {
+    const N = NOTA_TRAZAS;
+    switch (nodo) {
+      case "extractor": {
+        const u1 = d.plan.umbrales.find((u) => u.id === "U1");
+        return X(N.extractor(valorDeUmbral(u1?.valor_en_plan, i)), i);
+      }
+      case "aclaracion": {
+        const mas = [...acl].sort(
+          (a, b) =>
+            b.aclaraciones.length - a.aclaraciones.length ||
+            (a.caso_id < b.caso_id ? -1 : 1),
+        )[0];
+        return X(N.aclaracion(mas?.caso_id ?? "—"), i);
+      }
+      case "pausa_humana":
+        return X(
+          N.pausa_humana(
+            primeros(pausas.map(({ t }) => t.caso_id).sort()),
+          ),
+          i,
+        );
+      case "redactor":
+        return X(
+          N.redactor(
+            primeros(
+              trazas
+                .filter((t) => t.documento_adverso !== null)
+                .map((t) => t.caso_id)
+                .sort(),
+            ),
+          ),
+          i,
+        );
+      case "guardia_salida":
+        return X(
+          N.guardia_salida({
+            inyeccion: adversario("inyeccion"),
+            dato: adversario("dato_sensible"),
+            sinEfecto: cifrasDe.guardia_salida!.severidadMax === 0 && cumple("C6"),
+          }),
+          i,
+        );
+      case "enrutador":
+      case "verificador_cobertura":
+      case "decision":
+        return X(N[nodo], i);
+      default:
+        return "";
+    }
   };
 
   const paneles: PanelNodo[] = d.plan.contrato_de_grafo.nodos_esperados.map(
@@ -1220,6 +1402,7 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
         ...plan.riesgos,
         ...plan.supuestos,
         ...plan.criterios,
+        ...plan.umbrales,
       ]
         .map(refPlan)
         .filter((r): r is RefPlan => r !== null);
@@ -1227,6 +1410,7 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
         {
           titulo: X(PANEL.codigo_.nodo, i),
           archivo: d.codigo.nodos[x.id]!.archivo,
+          desde: d.codigo.nodos[x.id]!.desde,
           lineas: X(
             PANEL.codigo_.lineas({
               desde: d.codigo.nodos[x.id]!.desde,
@@ -1241,6 +1425,7 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
         bloques.push({
           titulo: X(PANEL.codigo_.ruta, i),
           archivo: d.codigo.ruta.archivo,
+          desde: d.codigo.ruta.desde,
           lineas: X(
             PANEL.codigo_.lineas({
               desde: d.codigo.ruta.desde,
@@ -1252,35 +1437,52 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
         });
       const reglas = reglasDelPlan(x.id);
       const defecto = grafo.ramas_por_defecto[x.id];
-      const campos: Array<{ rotulo: string; texto: string }> = [
-        { rotulo: X(PANEL.campos.paraQue, i), texto: X(t.paraQue, i) },
-        { rotulo: X(PANEL.campos.como, i), texto: X(t.como, i) },
+      const campos: Campo[] = [
+        {
+          clave: "paraQue",
+          rotulo: X(PANEL.campos.paraQue, i),
+          texto: X(t.paraQue, i),
+        },
+        { clave: "como", rotulo: X(PANEL.campos.como, i), texto: X(t.como, i) },
       ];
       if (t.decide)
         campos.push({
+          clave: "decide",
           rotulo: X(PANEL.campos.decide, i),
           texto: X(t.decide, i),
         });
-      if (t.extra && x.id === "redactor")
+      if (t.extra?.falta)
         campos.push({
+          clave: "falta",
           rotulo: X(t.extra.rotulo, i),
           texto: X(t.extra.texto, i),
         });
       campos.push(
-        { rotulo: X(PANEL.campos.siFalla, i), texto: X(t.siFalla, i) },
-        { rotulo: X(PANEL.campos.seMide, i), texto: X(t.seMide, i) },
         {
+          clave: "siFalla",
+          rotulo: X(PANEL.campos.siFalla, i),
+          texto: X(t.siFalla, i),
+        },
+        {
+          clave: "seMide",
+          rotulo: X(PANEL.campos.seMide, i),
+          texto: X(t.seMide, i),
+        },
+        {
+          clave: "enLaCorrida",
           rotulo: X(PANEL.campos.enLaCorrida(n), i),
           texto: X(t.enLaCorrida(c), i),
         },
       );
-      if (t.extra && x.id !== "redactor")
+      if (t.extra && !t.extra.falta)
         campos.push({
+          clave: "garantia",
           rotulo: X(t.extra.rotulo, i),
           texto: X(t.extra.texto, i),
         });
       if (x.id === "extractor" && c.s1.sinProbar)
         campos.push({
+          clave: "falta",
           rotulo: X(EXTRACTOR_S1.rotulo, i),
           texto: X(EXTRACTOR_S1.texto({ medidos: c.s1.medidos }), i),
         });
@@ -1303,7 +1505,7 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
             filas: [
               {
                 k: X(PANEL.experto_.nodo, i),
-                v: `${x.id} · ${x.tipo} · ${X(
+                v: `\`${x.id}\` · ${x.tipo} · ${X(
                   PANEL.experto_.capa({
                     n: String(banda(x.tipo) + 1).padStart(2, "0"),
                     banda: bandaDe(x.tipo),
@@ -1325,19 +1527,21 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
                   ),
                 ].join(", "),
               },
-              { k: X(PANEL.experto_.saleHacia, i), v: salen.join(" · ") },
+              {
+                k: X(PANEL.experto_.saleHacia, i),
+                v: salen
+                  .map((s) => (aristas.some((a) => a.target === s) ? `\`${s}\`` : s))
+                  .join(" · "),
+              },
               {
                 k: X(PANEL.experto_.reglas, i),
                 v: reglas.length
-                  ? `${reglas.join(" · ")}${defecto ? ` · ${X(GRAFO.lista_.siNo, i)} → ${defecto}` : ""}`
+                  ? `${reglas.join(" · ")}${defecto ? ` · ${X(GRAFO.lista_.siNo, i)} → \`${defecto}\`` : ""}`
                   : X(PANEL.experto_.sinReglas, i),
               },
             ],
           },
-          modelo: {
-            rotulo: X(t.modelo.titulo, i),
-            filas: [{ k: X(t.modelo.titulo, i), v: X(t.modelo.texto, i) }],
-          },
+          modelo: grupoModelo(x.id),
           plan: refs,
           observado: {
             rotulo: X(PANEL.experto_.observado(corrida), i),
@@ -1376,6 +1580,7 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
           columnas,
           filas: con(x.id).map((tr) => filaTraza(tr, x.id)),
           visibles: 5,
+          nota: notaTrazas(x.id),
         },
       };
     },
@@ -1496,6 +1701,9 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
     lienzo: lienzoVista,
     paneles,
     arista,
+    tipoDe: Object.fromEntries(
+      d.plan.contrato_de_grafo.nodos_esperados.map((x) => [x.id, x.tipo]),
+    ),
     pie: X(
       PIE_AGENTE({
         sprint,

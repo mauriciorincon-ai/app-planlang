@@ -10,11 +10,14 @@ export function Marco({
   idioma,
   pagina,
   id,
+  corrida,
   children,
 }: {
   idioma: Idioma;
   pagina: Pantalla;
   id?: string;
+  /** De qué corrida salen los datos de la pantalla (va al pie). */
+  corrida?: string;
   children: ReactNode;
 }) {
   return (
@@ -22,7 +25,7 @@ export function Marco({
       <Rotulo idioma={idioma} />
       <Barra idioma={idioma} pagina={pagina} id={id} />
       <main id="contenido">{children}</main>
-      <Pie idioma={idioma} />
+      <Pie idioma={idioma} corrida={corrida} />
     </>
   );
 }

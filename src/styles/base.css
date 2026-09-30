@@ -87,6 +87,13 @@ html[data-perfil="experto"] [data-pref="perfil"][data-valor="experto"] {
   color: var(--fondo);
 }
 
+/* En las pestañas de un panel del agente (Líder · Experto · Código · Trazas), Líder y Experto se pintan desde el
+   perfil solo mientras el panel muestra el perfil; con Código o Trazas a la vista, la elegida es esa. */
+html [data-vista-actual]:not([data-vista-actual="perfil"]) [data-pref="perfil"][data-valor] {
+  background-color: transparent;
+  color: var(--tinta-2);
+}
+
 /* Lo que solo ve el experto entra con un fundido de 0,45 s (design-system § 5, «Bloque del experto»). */
 @keyframes perfil-entra {
   from {
@@ -134,16 +141,23 @@ html[data-perfil="experto"] [data-pref="perfil"][data-valor="experto"] {
 }
 [data-tipo="modelo"] {
   --c: var(--tipo-1);
+  --ct: var(--tipo-1-tinte);
 }
 [data-tipo="herramienta"] {
   --c: var(--tipo-2);
+  --ct: var(--tipo-2-tinte);
 }
 [data-tipo="regla"] {
   --c: var(--tipo-3);
+  --ct: var(--tipo-3-tinte);
 }
-[data-tipo="pausa_humana"] {
+/* El plan escribe `pausa_humana`; el mapa del diagramador, `pausa-humana` (ids con guion, ADR-010). */
+[data-tipo="pausa_humana"],
+[data-tipo="pausa-humana"] {
   --c: var(--tipo-4);
+  --ct: var(--tipo-4-tinte);
 }
 [data-tipo="enrutador"] {
   --c: var(--tipo-5);
+  --ct: var(--tipo-5-tinte);
 }
