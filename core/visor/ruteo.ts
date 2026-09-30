@@ -51,6 +51,8 @@ export interface Escenario {
   lineasY: readonly number[];
   /** Pasillos estrechos (entre dos cajas de una fila): recorrerlos cuesta el triple por unidad. */
   estrechos?: readonly Rect[];
+  /** Lados por los que una caja no se conecta (un terminal, por abajo: ahí va su rótulo). */
+  sinLado?: ReadonlyMap<string, readonly Lado[]>;
 }
 
 export const HOLGURA = 4;
@@ -491,7 +493,8 @@ function extremosCandidatos(e: Escenario, caja: string): Extremo[] {
   if (!r) throw new Error(`visor: caja desconocida «${caja}»`);
   const out: Extremo[] = [];
   const vistos = new Set<string>();
-  for (const lado of LADOS)
+  const vedados = e.sinLado?.get(caja) ?? [];
+  for (const lado of LADOS.filter((l) => !vedados.includes(l)))
     for (const [i, k] of [
       [0, 1],
       [0, 2],

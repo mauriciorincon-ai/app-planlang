@@ -35,6 +35,8 @@ jobs:
       - run: pnpm build
       - name: Export de la vitrina — sin localhost, recursos y enlaces que existen, rótulo, sin maqueta (S2)
         run: node scripts/verificar-export.mjs
+      - name: Diagrama = grafo sobre lo publicado — el lienzo de out/ dibuja el grafo de la corrida (S2)
+        run: pnpm diagrama:verificar
       - run: pnpm audit --audit-level high
 
   e2e:

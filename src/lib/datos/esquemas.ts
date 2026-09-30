@@ -4,6 +4,10 @@
  * forma mínima del informe que las pantallas consumen (el informe entero lo tipa `core/brecha/informe`).
  */
 import { z } from "zod";
+import {
+  AristaCondicionalSchema,
+  PausaHumanaSchema,
+} from "@core/plan/esquema";
 
 const Huella = z.string().regex(/^[0-9a-f]{64}$/);
 const RefCorrida = z.object({ ruta: z.string().min(1), huella: Huella });
@@ -20,6 +24,22 @@ export const ManifiestoVitrinaSchema = z.object({
       repeticiones: z.array(RefCorrida),
       linea_base: RefCorrida.nullable(),
       informe: z.object({ archivo: z.string().min(1), huella: Huella }),
+      /**
+       * El spike de la F1, dibujado frente al mismo contrato (P3): la copia fijada de su grafo exportado y la
+       * lectura del autor (reglas, tipos y pausa, con la línea del código). Ambos por SHA-256 de sus bytes: la
+       * copia no lleva huella propia.
+       */
+      spike: z
+        .object({
+          fecha: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+          grafo: z.object({
+            archivo: z.string().min(1),
+            sha256: Huella,
+            origen: z.string().min(1),
+          }),
+          lectura: z.object({ archivo: z.string().min(1), sha256: Huella }),
+        })
+        .optional(),
     }),
   ),
 });
@@ -124,3 +144,33 @@ export const PlanBeneficiosMinimoSchema = z
   })
   .loose();
 export type PlanBeneficiosMinimo = z.infer<typeof PlanBeneficiosMinimoSchema>;
+
+/** El grafo exportado del spike: `get_graph().to_json()` tal cual (nodos y aristas de LangGraph). */
+export const GrafoLangGraphSchema = z.object({
+  nodes: z.array(z.object({ id: z.string().min(1) }).loose()),
+  edges: z.array(
+    z
+      .object({
+        source: z.string().min(1),
+        target: z.string().min(1),
+        conditional: z.boolean().optional(),
+      })
+      .loose(),
+  ),
+});
+
+/** La lectura del autor del spike: lo que el grafo exportado no dice (tipos, reglas, ramas por defecto, pausa). */
+export const LecturaSpikeSchema = z
+  .object({
+    formato: z.literal("planlang-lectura-spike/v1"),
+    nota: z.string().min(1),
+    fecha: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    modelo: z.string().min(1),
+    tipos: z.record(z.string(), z.string()),
+    aristas_condicionales: z.array(AristaCondicionalSchema),
+    ramas_por_defecto: z.record(z.string(), z.string()),
+    pausas_humanas: z.array(PausaHumanaSchema),
+    citas: z.record(z.string(), z.string()),
+  })
+  .strict();
+export type LecturaSpike = z.infer<typeof LecturaSpikeSchema>;

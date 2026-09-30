@@ -7,6 +7,8 @@
 import { beforeAll, describe, expect, it } from "vitest";
 import { datosDemo } from "@/lib/datos/vitrina";
 import { vistaAgente, type VistaAgente } from "@/lib/vista/agente";
+import { PLAN_POR_NODO } from "@/textos/agente";
+import { esAristaTripleta } from "@core/plan/esquema";
 
 let es: VistaAgente;
 let en: VistaAgente;
@@ -65,5 +67,65 @@ describe("P3 Agente: las cifras salen de las trazas", () => {
     expect(es.lienzo.lista[1]!.nodos.map((n) => n.nombre)).toEqual(["enrutador", "decision"]);
     expect(es.paneles).toHaveLength(8);
     for (const p of es.paneles) expect(p.trazas.filas.length).toBeGreaterThan(0);
+  });
+});
+
+describe("el spike, frente al mismo contrato", () => {
+  it("3 de 8 nodos, 1 de 9 reglas (la de U1, en otro nodo) y aprobar fuera del contrato", async () => {
+    const v = vistaAgente(await datosDemo(), "es");
+    expect(v.spike).not.toBeNull();
+    const s = v.spike!;
+    expect(s.cifras.map((c) => c.cifra)).toEqual(["3 de 8", "1 de 9", "1"]);
+    expect(s.cifras[0]!.detalle).toBe(
+      "faltaban aclaracion, verificador_cobertura, decision, redactor y guardia_salida",
+    );
+    expect(s.cifras[1]!.detalle).toBe(
+      "la de U1, pero en enrutador y no en decision",
+    );
+    expect(s.lienzo.comparacion.nodos.fueraDelContrato).toEqual(["aprobar"]);
+    // Lo exigido y ausente va discontinuo con su marca; lo que sobraba, «sin contrato»; nada se elige.
+    expect(s.lienzo.svg.match(/data-madurez="exigido"/g)).toHaveLength(5);
+    expect(s.lienzo.svg).toContain("sin contrato");
+    expect(s.lienzo.svg).not.toContain("data-sel-id");
+    expect(s.lienzo.svg).toContain("senal_confianza &lt; 0,75");
+  });
+});
+
+describe("«qué del plan toca a cada nodo» (lectura del autor, comprobada contra el plan)", () => {
+  it("cada nodo del contrato tiene su fila, cada id existe y ningún elemento del plan queda sin nodo", async () => {
+    const { plan } = await datosDemo();
+    const nodos = plan.contrato_de_grafo.nodos_esperados.map((n) => n.id);
+    expect(Object.keys(PLAN_POR_NODO).sort()).toEqual([...nodos].sort());
+    const delPlan = {
+      decisiones: plan.decisiones.map((x) => x.id),
+      riesgos: plan.riesgos.map((x) => x.id),
+      supuestos: plan.supuestos.map((x) => x.id),
+      criterios: plan.criterios_aceptacion.map((x) => x.id),
+      umbrales: plan.umbrales.map((x) => x.id),
+    };
+    for (const [nodo, p] of Object.entries(PLAN_POR_NODO)) {
+      for (const k of Object.keys(delPlan) as Array<keyof typeof delPlan>)
+        for (const id of p[k])
+          expect(delPlan[k], `${nodo}: ${k} ${id}`).toContain(id);
+      for (const id of p.senal ?? [])
+        expect(delPlan.umbrales, `${nodo}: señal ${id}`).toContain(id);
+    }
+    for (const k of Object.keys(delPlan) as Array<keyof typeof delPlan>)
+      for (const id of delPlan[k])
+        expect(
+          Object.values(PLAN_POR_NODO).some(
+            (p) => p[k].includes(id) || (k === "umbrales" && p.senal?.includes(id)),
+          ),
+          `${id} no toca ningún nodo`,
+        ).toBe(true);
+  });
+
+  it("el umbral de cada regla de arista está en la fila del nodo donde vive la regla", async () => {
+    const { plan } = await datosDemo();
+    for (const a of plan.contrato_de_grafo.aristas_condicionales)
+      if (esAristaTripleta(a) && typeof a.valor === "string" && a.valor.startsWith("umbral."))
+        expect(PLAN_POR_NODO[a.desde]!.umbrales, `${a.desde} ${a.valor}`).toContain(
+          a.valor.slice("umbral.".length),
+        );
   });
 });

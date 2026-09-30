@@ -8,7 +8,11 @@ import type { Idioma } from "@core/formatos/bilingue";
 import type { Grafo } from "@core/formatos/traza";
 import type { ContratoDeGrafo } from "@core/plan/esquema";
 import { esAristaTripleta } from "@core/plan/esquema";
-import { geometria, type Geometria } from "@core/visor/geometria";
+import {
+  geometria,
+  valorDeRegla,
+  type Geometria,
+} from "@core/visor/geometria";
 import { idDeCodigo, idDeMapa } from "@core/visor/ids";
 import {
   diagramaIgualGrafo,
@@ -25,7 +29,13 @@ import { aSvg } from "@core/visor/svg";
 import type { Gramatica, Mapa, TextoIdioma } from "@core/visor/tipos";
 import { validarMapa, erroresDe } from "@core/visor/validar";
 import gramaticaJson from "../../../packages/diagramador/contrato/gramaticas/agentes-ia.json";
-import { DETALLE_NODO, GRAFO, NODOS, REGLA_CORTA } from "@/textos/agente";
+import {
+  DETALLE_NODO,
+  GRAFO,
+  NODOS,
+  NODOS_FUERA_DEL_CONTRATO,
+  REGLA_CORTA,
+} from "@/textos/agente";
 
 export const GRAMATICA = gramaticaJson as unknown as Gramatica;
 
@@ -42,7 +52,7 @@ export function grafoParaMapa(g: Grafo): GrafoParaMapa {
 function textosDeNodos(ids: readonly string[]): Record<string, TextosDeNodo> {
   const out: Record<string, TextosDeNodo> = {};
   for (const id of ids) {
-    const t = NODOS[id];
+    const t = NODOS[id] ?? NODOS_FUERA_DEL_CONTRATO[id];
     if (!t)
       throw new Error(
         `vitrina: faltan los textos del nodo «${id}» en src/textos/agente.ts`,
@@ -201,7 +211,7 @@ function reglasEnTexto(
       f.condicion.senal !== SENAL_POR_DEFECTO,
   );
   const txt = (c: NonNullable<(typeof reglas)[number]["condicion"]>) =>
-    `${idDeCodigo(c.senal)} ${{ "<": "<", "<=": "≤", "=": "=", "!=": "≠", ">=": "≥", ">": ">" }[c.operador]} ${String(c.valor)}`;
+    `${idDeCodigo(c.senal)} ${{ "<": "<", "<=": "≤", "=": "=", "!=": "≠", ">=": "≥", ">": ">" }[c.operador]} ${valorDeRegla(c.valor, i)}`;
   if (reglas.length >= 3)
     return `${GRAFO.lista_.reglasEnOrden(reglas.length)[i]} (${reglas.map((f) => cortas[f.id]?.[i] ?? idDeCodigo(f.condicion!.senal)).join(" · ")})`;
   return reglas.map((f) => txt(f.condicion!)).join(` ${GRAFO.lista_.o[i]} `);

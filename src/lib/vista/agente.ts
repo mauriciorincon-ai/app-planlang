@@ -31,6 +31,7 @@ import {
   PLAN_POR_NODO,
   PORTADA,
   PUEDE,
+  SPIKE,
   TIPO_DE_CASO,
   TRAZAS_DE_NODO,
   UNIDADES,
@@ -165,6 +166,14 @@ export interface PanelArista {
   eje: { min: number; max: number };
   nota: string;
 }
+/** El spike de la F1 frente al mismo contrato: su lectura, tres cifras y su lienzo (sin selección). */
+export interface VistaSpike {
+  chip: string;
+  lectura: string;
+  cifras: Cifra[];
+  lienzo: Lienzo;
+  region: string;
+}
 export interface VistaAgente {
   portada: { antetitulo: string; titulo: string; guia: string };
   ficha: {
@@ -204,6 +213,7 @@ export interface VistaAgente {
   paneles: PanelNodo[];
   arista: PanelArista;
   pie: string;
+  spike: VistaSpike | null;
   /** El tipo de cada nodo del contrato (para su glifo donde se nombra). */
   tipoDe: Record<string, string>;
 }
@@ -1689,6 +1699,106 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
     ),
   };
 
+  // ── el spike, frente al mismo contrato ───────────────────────────────────────────────────────────
+  let spike: VistaSpike | null = null;
+  if (d.spike) {
+    const sp = d.spike;
+    const contratoG = d.plan.contrato_de_grafo;
+    const lz = lienzo(
+      {
+        grafo: sp.grafo,
+        contrato: contratoG,
+        sujeto: { id: `${d.id}-spike`, nombre: demo },
+        version: `spike-${sp.fecha}`,
+        fecha: sp.fecha,
+        modelo: sp.lectura.modelo,
+      },
+      `spike:${d.manifiesto.spike!.grafo.sha256}:${d.plan.huella}`,
+      i,
+      {
+        ns: "spike",
+        titulo: SPIKE.svgTitulo,
+        descripcion: SPIKE.svgDescripcion,
+        seleccionables: false,
+      },
+    );
+    const cs = lz.comparacion;
+    const valorDe = (v: unknown) =>
+      typeof v === "string" && v.startsWith("umbral.")
+        ? d.plan.umbrales.find((u) => `umbral.${u.id}` === v)?.valor_en_plan
+        : v;
+    const iguales = sp.lectura.aristas_condicionales
+      .filter(esAristaTripleta)
+      .flatMap((a) =>
+        contratoG.aristas_condicionales
+          .filter(esAristaTripleta)
+          .filter(
+            (c) =>
+              c.senal === a.senal &&
+              c.operador === a.operador &&
+              valorDe(c.valor) === valorDe(a.valor),
+          )
+          .map((c) => ({ spike: a, plan: c })),
+      );
+    const primera = iguales[0];
+    spike = {
+      chip: X(SPIKE.chip(sp.fecha), i),
+      lectura: X(
+        SPIKE.lectura({
+          fecha: sp.fecha,
+          presentes: cs.nodos.coinciden,
+          total: cs.nodos.contrato,
+          ausentes: cs.nodos.exigidosAusentes.length,
+          fuera: cs.nodos.fueraDelContrato.length,
+          sprint,
+        }),
+        i,
+      ),
+      cifras: [
+        {
+          cifra: es
+            ? `${cs.nodos.coinciden} de ${cs.nodos.contrato}`
+            : `${cs.nodos.coinciden} of ${cs.nodos.contrato}`,
+          texto: X(SPIKE.nodos, i),
+          detalle: X(
+            SPIKE.faltaban(
+              enumerar(
+                contratoG.nodos_esperados
+                  .map((x) => x.id)
+                  .filter((x) => cs.nodos.exigidosAusentes.includes(idDeMapa(x))),
+                i,
+              ),
+            ),
+            i,
+          ),
+        },
+        {
+          cifra: es
+            ? `${new Set(iguales.map((x) => x.plan)).size} de ${contratoG.aristas_condicionales.length}`
+            : `${new Set(iguales.map((x) => x.plan)).size} of ${contratoG.aristas_condicionales.length}`,
+          texto: X(SPIKE.reglas, i),
+          detalle: primera
+            ? X(
+                SPIKE.reglasDetalle({
+                  umbral: String(primera.plan.valor).replace(/^umbral\./, ""),
+                  desde: primera.spike.desde,
+                  enPlan: primera.plan.desde,
+                }),
+                i,
+              )
+            : "",
+        },
+        {
+          cifra: String(cs.nodos.fueraDelContrato.length),
+          texto: X(SPIKE.fuera, i),
+          detalle: X(SPIKE.fueraDetalle, i),
+        },
+      ],
+      lienzo: lz,
+      region: X(SPIKE.region, i),
+    };
+  }
+
   return {
     portada: {
       antetitulo: X(PORTADA.antetitulo({ demo, corrida, sprint, fecha }), i),
@@ -1701,6 +1811,7 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
     lienzo: lienzoVista,
     paneles,
     arista,
+    spike,
     tipoDe: Object.fromEntries(
       d.plan.contrato_de_grafo.nodos_esperados.map((x) => [x.id, x.tipo]),
     ),

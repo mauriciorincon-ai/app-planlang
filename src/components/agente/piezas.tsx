@@ -9,6 +9,8 @@ import type { Fila } from "@/lib/vista/agente";
 import { formaDeTipo } from "@/lib/vista/nodos";
 import { ConCodigo } from "../con-codigo";
 import { cx } from "../cx";
+import { ArrowRight } from "lucide-react";
+import { Baldosa } from "../baldosa";
 import { Icono } from "../icono";
 import { Glifo, Marca } from "../marcas";
 
@@ -251,3 +253,37 @@ export function PrioridadAccion({
     </span>
   );
 }
+
+/** Una columna de «recibe → hace → entrega»: caja con baldosa, título y subtítulo. */
+export function ColumnaIpo({
+  icono,
+  titulo,
+  sub,
+  children,
+}: {
+  icono: LucideIcon;
+  titulo: string;
+  sub: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className="grid min-w-0 content-start gap-3 rounded-baldosa border border-linea bg-sup-1 px-4.5 py-4">
+      <div className="flex items-center gap-2.5">
+        <Baldosa icono={icono} chica />
+        <h3 className="flex-1 text-sub font-semibold">{titulo}</h3>
+        <small className="text-right text-dato text-tinta-2">{sub}</small>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+/** Flecha entre columnas: de lado en escritorio, hacia abajo cuando se apilan. */
+export function FlechaIpo() {
+  return (
+    <span className="grid h-7 place-items-center text-tinta-2 amplio:h-auto">
+      <Icono de={ArrowRight} className="rotate-90 amplio:rotate-0" />
+    </span>
+  );
+}
+

@@ -28,6 +28,7 @@ export function Lienzo({
   indice,
   irACapa,
   seleccionable = true,
+  conIndice = true,
 }: {
   svg: string;
   columnas: ReadonlyArray<{ numero: string; x: number }>;
@@ -35,6 +36,8 @@ export function Lienzo({
   indice: string;
   irACapa: string;
   seleccionable?: boolean;
+  /** El del spike, como en la maqueta, va sin índice de capas. */
+  conIndice?: boolean;
 }) {
   const scroll = useRef<HTMLDivElement>(null);
   const [cabe, setCabe] = useState<boolean | null>(null);
@@ -119,6 +122,7 @@ export function Lienzo({
         dangerouslySetInnerHTML={{ __html: svg }}
       />
       <div
+        hidden={!conIndice}
         className="mt-2 flex flex-wrap items-center gap-1 text-dato text-tinta-2 group-data-[cabe=true]:hidden"
         role="group"
         aria-label={irACapa}

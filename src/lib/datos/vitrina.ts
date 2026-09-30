@@ -14,19 +14,24 @@ import {
   type ArchivosDeCorrida,
   type CorridaLeida,
 } from "@core/brecha/lector";
-import { verificarHuella } from "@core/formatos/huella";
+import { sha256Hex, verificarHuella } from "@core/formatos/huella";
 import type { JsonValor } from "@core/formatos/jcs";
 import { PlanSchema, type Plan } from "@core/plan/esquema";
 import { LoteSchema, type Lote } from "@core/sintetico/esquema";
+import type { GrafoParaMapa } from "@core/visor/mapa";
+import type { z } from "zod";
 import {
   EntornoCorridaSchema,
   GrafoCodigoSchema,
+  GrafoLangGraphSchema,
   InformeMinimoSchema,
+  LecturaSpikeSchema,
   ManifiestoVitrinaSchema,
   PlanBeneficiosMinimoSchema,
   type DemoDelManifiesto,
   type EntornoCorrida,
   type GrafoCodigo,
+  type LecturaSpike,
   type PlanBeneficiosMinimo,
 } from "./esquemas";
 
@@ -44,6 +49,76 @@ export interface DatosDemo {
   codigo: GrafoCodigo;
   /** El plan de beneficios sintético con que corrió (la huella es la que declara la corrida). */
   planBeneficios: PlanBeneficiosMinimo;
+  /** El spike de la F1, si el manifiesto lo declara: su grafo con la lectura del autor. */
+  spike: SpikeLeido | null;
+}
+
+export interface SpikeLeido {
+  fecha: string;
+  origen: string;
+  lectura: LecturaSpike;
+  /** El grafo del spike en la forma que dibuja el visor. */
+  grafo: GrafoParaMapa;
+}
+
+const TERMINALES = new Set(["__start__", "__end__"]);
+
+/**
+ * El grafo exportado del spike más la lectura del autor. Falla si la lectura no cubre el grafo: un nodo sin tipo,
+ * una arista condicional sin regla ni rama por defecto, o una regla hacia una arista que el grafo no tiene.
+ */
+export function grafoDelSpike(
+  exportado: z.infer<typeof GrafoLangGraphSchema>,
+  lectura: LecturaSpike,
+): GrafoParaMapa {
+  const nodos = exportado.nodes
+    .filter((n) => !TERMINALES.has(n.id))
+    .map((n) => {
+      const tipo = lectura.tipos[n.id];
+      if (!tipo)
+        throw new Error(`vitrina: la lectura del spike no da tipo a «${n.id}».`);
+      return { id: n.id, tipo };
+    });
+  const condicionales = exportado.edges.filter((e) => e.conditional);
+  for (const e of condicionales) {
+    const conRegla = lectura.aristas_condicionales.some(
+      (a) => a.desde === e.source && a.si_verdadero === e.target,
+    );
+    if (!conRegla && lectura.ramas_por_defecto[e.source] !== e.target)
+      throw new Error(
+        `vitrina: la arista condicional ${e.source} → ${e.target} del spike no tiene regla en la lectura.`,
+      );
+  }
+  for (const a of lectura.aristas_condicionales)
+    if (
+      !condicionales.some(
+        (e) => e.source === a.desde && e.target === a.si_verdadero,
+      )
+    )
+      throw new Error(
+        `vitrina: la lectura del spike declara ${a.desde} → ${a.si_verdadero}, que el grafo no tiene.`,
+      );
+  return {
+    nodos,
+    aristas: exportado.edges,
+    aristas_condicionales: lectura.aristas_condicionales,
+    ramas_por_defecto: lectura.ramas_por_defecto,
+    pausas_humanas: lectura.pausas_humanas,
+  };
+}
+
+async function conSha256(
+  raiz: string,
+  ruta: string,
+  esperado: string,
+): Promise<string> {
+  const texto = readFileSync(join(raiz, ruta), "utf8");
+  const h = await sha256Hex(texto);
+  if (h !== esperado)
+    throw new Error(
+      `vitrina: ${ruta} tiene SHA-256 ${h.slice(0, 8)}…, el manifiesto declara ${esperado.slice(0, 8)}….`,
+    );
+  return texto;
 }
 
 function lector(raiz: string) {
@@ -137,6 +212,30 @@ export async function cargarDemo(
   );
   const planBeneficios = PlanBeneficiosMinimoSchema.parse(pbCrudo);
 
+  let spike: SpikeLeido | null = null;
+  if (demo.spike) {
+    const exportado = GrafoLangGraphSchema.parse(
+      JSON.parse(
+        await conSha256(raiz, demo.spike.grafo.archivo, demo.spike.grafo.sha256),
+      ),
+    );
+    const lectura = LecturaSpikeSchema.parse(
+      JSON.parse(
+        await conSha256(
+          raiz,
+          demo.spike.lectura.archivo,
+          demo.spike.lectura.sha256,
+        ),
+      ),
+    );
+    spike = {
+      fecha: demo.spike.fecha,
+      origen: demo.spike.grafo.origen,
+      lectura,
+      grafo: grafoDelSpike(exportado, lectura),
+    };
+  }
+
   return {
     id,
     manifiesto: demo,
@@ -147,6 +246,7 @@ export async function cargarDemo(
     lote,
     codigo,
     planBeneficios,
+    spike,
   };
 }
 

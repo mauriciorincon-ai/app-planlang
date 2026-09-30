@@ -3,7 +3,11 @@
  * ajena), etiquetas sin encimarse, independencia del idioma y determinismo.
  */
 import { describe, expect, it } from "vitest";
-import { geometria, type Geometria } from "@core/visor/geometria";
+import {
+  geometria,
+  textoDeRegla,
+  type Geometria,
+} from "@core/visor/geometria";
 import type { Punto, Rect } from "@core/visor/ruteo";
 import {
   GRAMATICA,
@@ -132,4 +136,15 @@ describe("determinismo e idioma", () => {
       expect(sinTexto(g2)).toBe(sinTexto(geo));
     },
   );
+});
+
+describe("texto de una regla", () => {
+  it("el valor numérico lleva coma en español y punto en inglés; lo demás, tal cual", () => {
+    const c = { senal: "senal_confianza", operador: "<", valor: 0.75 } as const;
+    expect(textoDeRegla(c, "es")).toBe("senal_confianza < 0,75");
+    expect(textoDeRegla(c, "en")).toBe("senal_confianza < 0.75");
+    expect(
+      textoDeRegla({ senal: "tipo_atencion", operador: "=", valor: "urgencia" }, "es"),
+    ).toBe("tipo_atencion = urgencia");
+  });
 });

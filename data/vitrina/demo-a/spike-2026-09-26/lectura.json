@@ -1,0 +1,43 @@
+{
+  "formato": "planlang-lectura-spike/v1",
+  "nota": "Lectura del autor del spike del 2026-09-26 (planeadora, solo lectura: portafolio/planlang/investigacion/spike-adaptador-claude-code/spike.py). El grafo exportado (grafo.json, copia fijada) no trae las reglas ni los tipos: los dice esta lectura, con la línea del código de donde sale cada uno. Se dibuja contra el contrato de grafo del plan del demo A.",
+  "fecha": "2026-09-26",
+  "modelo": "sonnet",
+  "tipos": {
+    "extractor": "modelo",
+    "enrutador": "enrutador",
+    "pausa_humana": "pausa_humana",
+    "aprobar": "regla"
+  },
+  "aristas_condicionales": [
+    {
+      "desde": "enrutador",
+      "orden": 1,
+      "senal": "senal_confianza",
+      "operador": "menor_que",
+      "valor": 0.75,
+      "inclusivo": false,
+      "si_verdadero": "pausa_humana",
+      "si_falso": "aprobar"
+    }
+  ],
+  "ramas_por_defecto": { "enrutador": "aprobar" },
+  "pausas_humanas": [
+    {
+      "nodo": "pausa_humana",
+      "rol": "auditor",
+      "payload_minimo": ["motivo", "senal", "umbral", "extraccion"],
+      "politica_simulada": {
+        "es": "El script del spike reanudó cada pausa con la decisión de la verdad conocida del caso (DA-04).",
+        "en": "The spike script resumed each pause with the decision from the case's known truth (DA-04)."
+      }
+    }
+  ],
+  "citas": {
+    "umbral": "spike.py:44 UMBRAL_CONFIANZA = 0.75",
+    "regla": "spike.py:198 ruta = \"pausa_humana\" if state[\"senal_confianza\"] < UMBRAL_CONFIANZA else \"aprobar\"",
+    "aristas": "spike.py:228 add_conditional_edges(\"enrutador\", decidir, {\"pausa_humana\": ..., \"aprobar\": ...})",
+    "pausa": "spike.py:207 interrupt({motivo, senal, umbral, extraccion})",
+    "tipos": "spike.py:189-218: extractor llama al modelo; enrutador elige la ruta; pausa_humana interrumpe; aprobar escribe la salida sin modelo"
+  }
+}

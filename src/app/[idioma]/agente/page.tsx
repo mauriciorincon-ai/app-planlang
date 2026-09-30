@@ -5,6 +5,7 @@ import { Detalle } from "@/components/agente/detalle";
 import { FichaAgente } from "@/components/agente/ficha";
 import { SeccionGrafo } from "@/components/agente/grafo";
 import { Seleccion } from "@/components/agente/seleccion";
+import { SeccionSpike } from "@/components/agente/spike";
 import { Chip } from "@/components/chip";
 import { ConCodigo } from "@/components/con-codigo";
 import { CONT } from "@/components/cx";
@@ -42,7 +43,8 @@ function conSeleccion(svg: string, id: string): string {
 
 /**
  * P3 Agente (maqueta `03-agente.html`): la ficha del agente por perfil, lo que corrió frente a su plan, el grafo
- * generado desde el código con el detalle de cada nodo y de la regla U1, y el pie con la corrida.
+ * generado desde el código con el detalle de cada nodo y de la regla U1, el spike frente al mismo contrato y el
+ * pie con la corrida.
  */
 export default async function Agente({ params }: Props) {
   const idioma = await idiomaDeRuta(params);
@@ -95,6 +97,7 @@ export default async function Agente({ params }: Props) {
           />
           <Detalle vista={vista} idioma={idioma} />
         </Seleccion>
+        {vista.spike ? <SeccionSpike spike={vista.spike} idioma={idioma} /> : null}
       </div>
     </Marco>
   );

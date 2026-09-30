@@ -324,8 +324,39 @@ lote, código por nodo y plan de beneficios · textos y vista de P3 con sus cifr
   LCP 2,1 s (presupuesto 2,5 s). Se añade a `lighthouse-urls.json`. El HTML pesa 1,7 MB (143 KB comprimido): los 8
   paneles con sus 4 pestañas y 20 trazas se pintan todos (regla 5-a); el DOM tiene 7 308 nodos.
 
-**Sigue:** sección del spike → `scripts/diagrama-igual-grafo.ts` con su demo en rojo → prueba de `PLAN_POR_NODO`
-contra el plan → ADR-010 → P2 Plan → P6 Caso (índice + 20 × 2) → capturas de la mirada 2 con matriz.
+El CI de `6093384` salió **rojo en `quality`** por el gate de enlaces del export (`verificar-export.mjs`): la tabla
+de trazas enlaza a `/es/caso/A-001…A-020`, que aún no existían. El gate hizo su trabajo; P6 se adelantó dentro de la
+fase (la mirada 2 sigue agrupando P2 · P3 · P6) y desde aquí el job `quality` entero corre en local antes de cada push.
+
+### Spike, gate «diagrama = grafo» publicado y P6 Caso (2026-09-29)
+
+- **El spike frente al mismo contrato:** copia fijada de su `grafo.json` (SHA-256 `bfabad3e…`) y la lectura del autor
+  (`lectura.json`: tipos, la regla `senal_confianza < 0,75`, rama por defecto `aprobar` y la pausa, cada una con la
+  línea de `spike.py`), las dos por SHA-256 en el manifiesto. `grafoDelSpike` falla si la lectura no cubre el grafo.
+  Cifras calculadas: 3 de 8 nodos, 1 de 9 reglas («la de U1, pero en enrutador y no en decision»), `aprobar` fuera
+  del contrato. Nodo fuera del contrato con sus textos (`NODOS_FUERA_DEL_CONTRATO`).
+- **Núcleo del visor:** los valores de regla llevan coma decimal en español (`valorDeRegla`); los terminales no se
+  conectan por abajo (`sinLado`: ahí va su rótulo) y el aviso D11 cuenta también las líneas que tachan el rótulo de
+  un terminal. Golden del demo A sin cambios.
+- **`scripts/diagrama-igual-grafo.ts`** (`pnpm diagrama:verificar`, paso nuevo del job `quality` tras el build): el
+  lienzo de `out/{es,en}/agente.html` dibuja los nodos, las aristas y las reglas del grafo de la corrida frente al
+  contrato. Prueba en `tests/unit/visor/diagrama-igual-grafo.test.ts`.
+- **`PLAN_POR_NODO` probado contra el plan** (`agente.test.ts`): fila por nodo, cada id existe, ningún elemento sin
+  nodo, y el umbral de cada regla en la fila del nodo donde vive.
+- **P6 Caso:** `src/textos/caso.ts` (copia aprobada; lo de cada caso se ARMA con plantillas: relato, qué hizo cada
+  nodo, por qué tomó cada rama) · `src/lib/vista/caso.ts` · `src/components/caso/{cabecera,caso}.tsx` · páginas
+  `/[idioma]/caso` (índice con los 20) y `/[idioma]/caso/[id]` (20 × 2). Pruebas en `tests/unit/vitrina/caso.test.ts`.
+  Piezas movidas a `agente/piezas.tsx` (`ColumnaIpo`, `FlechaIpo`); `BloqueExperto` con variante `sutil`.
+- Local antes del push: `pnpm lint` · `pnpm typecheck` · `pnpm test` (1111 + 1 omitida, umbrales verdes) ·
+  `pnpm trazas:verificar` · `pnpm build` · `verificar-export.mjs` (57 HTML) · `pnpm diagrama:verificar` · `pnpm audit`.
+
+### Punto de retoma (2026-09-29, segunda compactación pedida por el usuario)
+
+**Sigue (en orden):** e2e de P6 (`tests/e2e/caso.spec.ts`: axe en 2 idiomas × 2 temas × 2 perfiles, 380 px, enlaces
+del selector, un caso con pausa y uno sin ella) y pruebas de componentes de P6 con forma invariante → mirar P6 en
+teléfono y en los casos A-006 (marca de inyección) y A-008 (diálogo) → ADR-010 → P2 Plan (maqueta `02-plan.html`) →
+capturas de la mirada 2 (P2 · P3 · P6) con matriz en `docs/fidelidad/p2/` (el arnés `capturar-vitrina.mjs` necesita
+la entrada `p2`) → DETENERSE para la mirada 2.
 
 ### Demos en rojo de la fase 2 (regla 15; el rojo nace con el gate)
 
@@ -338,6 +369,9 @@ contra el plan → ADR-010 → P2 Plan → P6 Caso (índice + 20 × 2) → captu
 | D11 (`geometria.test.ts`) | el ruteo deja de ver las cajas como obstáculo | rojo en 2 (avisos D11 y cruces medidos) → verde |
 | Esquema del contrato, fase 1 (`mapa.test.ts`, Ajv 2020) | el mapa sin `estado` | rojo → verde |
 | Forma invariante de P3 (`agente-componentes.test.tsx`) | `PanelSeleccion` pinta sus hijos solo si está seleccionado | rojo solo en «no cambia la forma» (las demás siguen viendo el panel correcto) → verde |
+| D11 con rótulos de terminal (`geometria.ts` + `agente.test.ts`) | sin `sinLado` para los terminales | la vista del spike no se dibuja: «D11: l-pausa-humana-a-fin atraviesa el rótulo de fin» → verde |
+| `PLAN_POR_NODO` contra el plan (`agente.test.ts`) | quitar D5 de `aclaracion` | «D5 no toca ningún nodo» → verde |
+| Diagrama = grafo publicado (`diagrama-igual-grafo.ts`) | quitar `data-nodo-id="guardia-salida"` del lienzo de `out/es/agente.html` | `✗ demo-a/es: nodo del grafo sin dibujar: guardia-salida`, salida 1 → verde al restaurar; en la prueba, además, las dos aristas de `guardia_salida` |
 
 ## Desviación del plan
 
@@ -426,3 +460,6 @@ contra el plan → ADR-010 → P2 Plan → P6 Caso (índice + 20 × 2) → captu
 | 2026-09-28 | Prettier reformateó `src/lib/observability.ts` sin cambios de fondo | `prettier --write` sobre `src/**` | revertido; el diff solo lleva lo del sprint |
 | 2026-09-29 | En el teléfono el índice marcaba la capa 05 al llegar al final del lienzo | la última capa nunca alcanza el borde izquierdo (lógica heredada de la maqueta) | al final del recorrido la activa es la última; lo cubre el e2e del índice |
 | 2026-09-29 | `estilos.test.ts` rojo con `--cols` | la variable la fija el propio componente en `style` | el barrido acepta las variables que el archivo declara en su `style` |
+| 2026-09-29 | CI rojo en `quality` (`6093384`) | enlaces a `/[idioma]/caso/*` antes de que existiera P6 | P6 adelantado; el job `quality` corre entero en local antes de cada push |
+| 2026-09-29 | En el spike, la línea a «fin» tachaba su rótulo | el ruteo dejaba entrar a un terminal por abajo | `sinLado` para terminales + D11 sobre los rótulos |
+| 2026-09-29 | «0.75» en el lienzo en español | el núcleo escribía el valor de la regla con `String` | `valorDeRegla` (coma en español, sin `Intl`) |

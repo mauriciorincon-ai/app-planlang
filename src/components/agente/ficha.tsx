@@ -1,5 +1,4 @@
 import {
-  ArrowRight,
   Ban,
   Braces,
   Check,
@@ -29,12 +28,13 @@ import { PERFIL, PROCEDENCIA } from "@/textos/comun";
 import { Baldosa } from "../baldosa";
 import { Chip } from "../chip";
 import { cx } from "../cx";
-import { Icono } from "../icono";
 import { LeerComo } from "../perfil/leer-como";
 import { Seccion } from "../seccion";
 import { BloqueCodigo } from "./codigo";
 import {
+  ColumnaIpo,
   Definiciones,
+  FlechaIpo,
   GrupoT,
   IconoFila,
   ItemEst,
@@ -63,38 +63,6 @@ const ICONO_ACTOR: Record<string, LucideIcon> = {
   plan_beneficios: ClipboardList,
   agente: Workflow,
 };
-
-function Columna({
-  icono,
-  titulo,
-  sub,
-  children,
-}: {
-  icono: LucideIcon;
-  titulo: string;
-  sub: string;
-  children: ReactNode;
-}) {
-  return (
-    <div className="grid min-w-0 content-start gap-3 rounded-baldosa border border-linea bg-sup-1 px-4.5 py-4">
-      <div className="flex items-center gap-2.5">
-        <Baldosa icono={icono} chica />
-        <h3 className="flex-1 text-sub font-semibold">{titulo}</h3>
-        <small className="text-right text-dato text-tinta-2">{sub}</small>
-      </div>
-      {children}
-    </div>
-  );
-}
-
-/** Flecha entre columnas: de lado en escritorio, hacia abajo cuando se apilan. */
-function Flecha() {
-  return (
-    <span className="grid h-7 place-items-center text-tinta-2 amplio:h-auto">
-      <Icono de={ArrowRight} className="rotate-90 amplio:rotate-0" />
-    </span>
-  );
-}
 
 function Bloque({
   icono,
@@ -184,15 +152,15 @@ function Lider({ v, idioma }: { v: VistaAgente; idioma: Idioma }) {
       </div>
 
       <div className="mt-6 grid grid-cols-1 amplio:grid-cols-[minmax(0,4fr)_28px_minmax(0,5fr)_28px_minmax(0,4fr)]">
-        <Columna
+        <ColumnaIpo
           icono={Inbox}
           titulo={FICHA.recibe.rotulo[idioma]}
           sub={FICHA.recibe.sub[idioma]}
         >
           <ListaCorrio items={f.recibe} marca={f.marca} />
-        </Columna>
-        <Flecha />
-        <Columna
+        </ColumnaIpo>
+        <FlechaIpo />
+        <ColumnaIpo
           icono={Workflow}
           titulo={FICHA.hace.rotulo[idioma]}
           sub={f.hace.sub}
@@ -222,15 +190,15 @@ function Lider({ v, idioma }: { v: VistaAgente; idioma: Idioma }) {
               />
             ))}
           </ListaEst>
-        </Columna>
-        <Flecha />
-        <Columna
+        </ColumnaIpo>
+        <FlechaIpo />
+        <ColumnaIpo
           icono={Send}
           titulo={FICHA.entrega.rotulo[idioma]}
           sub={FICHA.entrega.sub[idioma]}
         >
           <ListaCorrio items={f.entrega} marca={f.marca} />
-        </Columna>
+        </ColumnaIpo>
       </div>
       <p className="mt-3 flex flex-wrap items-center gap-x-4.5 gap-y-1.5 text-dato text-tinta-2">
         <span className="inline-flex items-center gap-1.5">

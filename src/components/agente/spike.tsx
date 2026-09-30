@@ -1,0 +1,46 @@
+import { CircleAlert, Route, Workflow } from "lucide-react";
+import type { Idioma } from "@core/formatos/bilingue";
+import type { VistaSpike } from "@/lib/vista/agente";
+import { SPIKE } from "@/textos/agente";
+import { Chip } from "../chip";
+import { Seccion } from "../seccion";
+import { CifrasContrato } from "./contrato";
+import { Lienzo } from "./lienzo";
+
+/**
+ * «Antes: el spike, frente al mismo contrato»: el grafo del spike de la F1 dibujado por el mismo visor contra el
+ * contrato del plan, con lo exigido y ausente discontinuo y lo que sobraba marcado «sin contrato».
+ */
+export function SeccionSpike({
+  spike,
+  idioma,
+}: {
+  spike: VistaSpike;
+  idioma: Idioma;
+}) {
+  return (
+    <Seccion
+      id="s-spike"
+      titulo={SPIKE.titulo[idioma]}
+      cabecera={<Chip procedencia="real">{spike.chip}</Chip>}
+    >
+      <p className="mb-6 max-w-objetivo text-texto">{spike.lectura}</p>
+      <CifrasContrato
+        cifras={spike.cifras}
+        iconos={[Workflow, Route, CircleAlert]}
+        rotulo={SPIKE.titulo[idioma]}
+      />
+      <div className="mt-4">
+        <Lienzo
+          svg={spike.lienzo.svg}
+          columnas={spike.lienzo.columnas}
+          region={spike.region}
+          indice=""
+          irACapa=""
+          seleccionable={false}
+          conIndice={false}
+        />
+      </div>
+    </Seccion>
+  );
+}

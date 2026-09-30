@@ -1896,10 +1896,13 @@ export const SPIKE = {
   faltaban: ((ids: string) =>
     tb(`faltaban ${ids}`, `${ids} were missing`)) as Plantilla<string>,
   reglas: tb("reglas de arista", "edge rules"),
-  reglasDetalle: tb(
-    "la de U1, pero en enrutador y no en decision",
-    "U1’s, but on enrutador rather than decision",
-  ),
+  reglasDetalle: ((p: { umbral: string; desde: string; enPlan: string }) =>
+    p.desde === p.enPlan
+      ? tb(`la de ${p.umbral}, en ${p.desde}`, `${p.umbral}’s, on ${p.desde}`)
+      : tb(
+          `la de ${p.umbral}, pero en ${p.desde} y no en ${p.enPlan}`,
+          `${p.umbral}’s, but on ${p.desde} rather than ${p.enPlan}`,
+        )) as Plantilla<{ umbral: string; desde: string; enPlan: string }>,
   fuera: tb("nodo fuera del contrato", "node outside the contract"),
   fueraDetalle: tb(
     "aprobar, que aprobaba sin pasar por decision",
@@ -1936,6 +1939,31 @@ export const PIE_AGENTE = ((p: {
   n: number;
   modelo: string;
 }>;
+
+/**
+ * Nodos que existieron fuera del contrato (el spike): cómo se nombran en su mapa. Mismos campos que los del
+ * contrato que el mapa del diagramador exige (V3).
+ */
+export const NODOS_FUERA_DEL_CONTRATO: Record<
+  string,
+  Pick<TextosDeNodoVitrina, "rol" | "como" | "paraQue" | "fuentes">
+> = {
+  aprobar: {
+    rol: tb(
+      "Aprobaba el caso sin pasar por una decisión ni por la cobertura.",
+      "It approved the case without going through a decision or the coverage check.",
+    ),
+    como: tb(
+      "Escribía «aprobación automática» en la salida, sin modelo y sin revisar nada más.",
+      "It wrote “automatic approval” into the output, with no model and no further check.",
+    ),
+    paraQue: tb(
+      "En el spike bastaba para probar el enrutamiento; el plan no lo tiene: toda decisión pasa por decision.",
+      "In the spike it was enough to test routing; the plan has no such node: every decision goes through decision.",
+    ),
+    fuentes: [F_NODOS],
+  },
+};
 
 /** Por qué se detuvo un caso: la categoría de la primera regla que se cumplió (o el tope de aclaraciones). */
 export const MOTIVO_PAUSA: Record<string, TextoBilingue> = {

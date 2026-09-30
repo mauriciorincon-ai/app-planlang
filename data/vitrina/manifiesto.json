@@ -29,6 +29,18 @@
       "informe": {
         "archivo": "data/vitrina/demo-a/suscripcion-planlang-a-001-20-v1.2/informe.json",
         "huella": "70c1cb2368075ec3263ddce8dba2641a0196cd6e3f8b31492a3cdb0d564b9dd7"
+      },
+      "spike": {
+        "fecha": "2026-09-26",
+        "grafo": {
+          "archivo": "data/vitrina/demo-a/spike-2026-09-26/grafo.json",
+          "sha256": "bfabad3ed6f7c7da3785cc3f8a16827b3f0cab8c1acfc8ecbfb9c7c17b28897f",
+          "origen": "planeadora: portafolio/planlang/investigacion/spike-adaptador-claude-code/salidas/grafo.json (copia fijada, byte a byte)"
+        },
+        "lectura": {
+          "archivo": "data/vitrina/demo-a/spike-2026-09-26/lectura.json",
+          "sha256": "b138df37c5d1987cbeac89657059fa2e60cf51d2040a502b64ae630dd6205527"
+        }
       }
     }
   }

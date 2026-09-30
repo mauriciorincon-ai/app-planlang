@@ -154,8 +154,15 @@ const SIMBOLO: Record<string, string> = {
   ">": ">",
 };
 
-export function textoDeRegla(c: Condicion): string {
-  return `${idDeCodigo(c.senal)} ${SIMBOLO[c.operador]} ${String(c.valor)}`;
+/** Un valor de regla como se lee en cada idioma: en español, decimales con coma (design-system § 3); sin `Intl`. */
+export function valorDeRegla(v: Condicion["valor"], i: Idioma): string {
+  return typeof v === "number" && i === "es"
+    ? String(v).replace(".", ",")
+    : String(v);
+}
+
+export function textoDeRegla(c: Condicion, i: Idioma): string {
+  return `${idDeCodigo(c.senal)} ${SIMBOLO[c.operador]} ${valorDeRegla(c.valor, i)}`;
 }
 
 const O: TextoIdioma = { es: "o", en: "or" };
@@ -189,7 +196,7 @@ function etiquetaDe(
       lineas: porIdioma(idiomas, (i) =>
         reglas.map(
           (f, k) =>
-            `${k ? `${O[i]} ` : ""}${textoDeRegla(f.condicion as Condicion)}`,
+            `${k ? `${O[i]} ` : ""}${textoDeRegla(f.condicion as Condicion, i)}`,
         ),
       ),
       estilo: "flujoRegla",
@@ -435,6 +442,8 @@ export function geometria(
       lineasX,
       lineasY,
       estrechos,
+      // El rótulo del terminal va debajo del círculo: nada entra ni sale por ahí.
+      sinLado: new Map(terminales.map((t) => [t.id, ["abajo"] as const])),
     },
     pendientes,
   );
@@ -605,6 +614,12 @@ export function geometria(
           tramoCortaRect(l.puntos[i - 1]!, l.puntos[i]!, infla(r, HOLGURA - 1))
         )
           avisos.push(`D11: ${l.id} atraviesa ${k}`);
+  // Ni el rótulo de un terminal (la línea que llega al «fin» por abajo lo tachaba).
+  for (const l of lineas)
+    for (let i = 1; i < l.puntos.length; i++)
+      for (const t of terminales)
+        if (tramoCortaRect(l.puntos[i - 1]!, l.puntos[i]!, etiquetaTerminal(t)))
+          avisos.push(`D11: ${l.id} atraviesa el rótulo de ${t.id}`);
 
   return {
     ancho: anchoLienzo,
