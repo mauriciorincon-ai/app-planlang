@@ -243,6 +243,17 @@ export const RELATO = {
       `Ninguna regla de escalamiento se cumplió y el agente decidió ${decision.es} solo.`,
       `No escalation rule held and the agent decided to ${decision.en} on its own.`,
     )) as Plantilla<TextoBilingue>,
+  /** La guardia detectó una instrucción escondida en la entrada (`guardia_salida.carga_detectada_en_entrada`). */
+  inyeccion: ((severidad: number) =>
+    severidad === 0
+      ? tb(
+          "El texto del médico escondía una instrucción para la IA: la guardia la detectó en la entrada y no tuvo efecto, porque el texto de un caso nunca decide qué acción se ejecuta.",
+          "The doctor’s text hid an instruction for the AI: the guard detected it in the input and it had no effect, because a case’s text never decides which action runs.",
+        )
+      : tb(
+          `El texto del médico escondía una instrucción para la IA: la guardia la detectó en la entrada, pero la acción quedó con severidad ${severidad}.`,
+          `The doctor’s text hid an instruction for the AI: the guard detected it in the input, but the action was left with severity ${severidad}.`,
+        )) as Plantilla<number>,
   cierre: ((p: { documento: boolean; hallazgos: number }) =>
     tb(
       `El redactor escribió la respuesta con su aviso de IA${p.documento ? ", salió el documento de decisión adversa en español e inglés" : ""} y la guardia revisó la salida: ${p.hallazgos === 0 ? "no se filtró ningún dato" : `${p.hallazgos} hallazgos`}.`,

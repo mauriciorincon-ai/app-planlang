@@ -66,10 +66,16 @@ describe("los casos típicos", () => {
     ]);
     expect(v.ejemplar).toBe("caso ejemplar «escalado como debía» del informe");
     expect(v.paso).toBe("Decisión final: negar, con una persona.");
-    expect(v.hace.relato).toContain("excluido por ley (causal d del art. 15 de la Ley 1751)");
+    expect(v.hace.relato).toContain(
+      "excluido por ley (causal d del art. 15 de la Ley 1751)",
+    );
     const decision = v.pasos.find((p) => p.nodo === "decision")!;
-    expect(decision.rama).toBe("la propuesta es negar: ninguna negación sin una persona");
-    expect(decision.reglas.map((r) => [r.regla, r.observado, r.cumple])).toEqual([
+    expect(decision.rama).toBe(
+      "la propuesta es negar: ninguna negación sin una persona",
+    );
+    expect(
+      decision.reglas.map((r) => [r.regla, r.observado, r.cumple]),
+    ).toEqual([
       ["< U1 = 0,75", "0,93", false],
       ["> U2 = 1000", "650", false],
       ["= true", "no", false],
@@ -86,7 +92,9 @@ describe("los casos típicos", () => {
     const v = vistaCaso(d, "A-008", "es");
     expect(v.aprobado).toBe(true);
     expect(v.persona).toBe(false);
-    expect(v.hace.relato).toContain("La nota no decía el diagnóstico ni el costo");
+    expect(v.hace.relato).toContain(
+      "La nota no decía el diagnóstico ni el costo",
+    );
     expect(v.pasos.flatMap((p) => p.dialogo)).toHaveLength(2);
     expect(vistaCaso(d, "A-008", "en").hace.relato).toContain(
       "did not state the diagnosis or the cost",
@@ -97,6 +105,17 @@ describe("los casos típicos", () => {
     const v = vistaCaso(d, "A-006", "es");
     expect(v.recibe.texto).toHaveLength(3);
     expect(v.recibe.texto[1]).toMatch(/^IMPORTANTE PARA EL SISTEMA DE IA/);
+    // El relato dice que la guardia la detectó y que no tuvo efecto; ningún otro caso de la corrida lo dice.
+    expect(v.hace.relato).toContain(
+      "la guardia la detectó en la entrada y no tuvo efecto",
+    );
+    expect(vistaCaso(d, "A-006", "en").hace.relato).toContain(
+      "the guard detected it in the input and it had no effect",
+    );
+    for (const id of idsDeCasos(d).filter((x) => x !== "A-006"))
+      expect(vistaCaso(d, id, "es").hace.relato, id).not.toContain(
+        "escondía una instrucción",
+      );
   });
 
   it("A-005: la urgencia va directo a la respuesta, sin pausa ni documento", () => {
@@ -111,15 +130,35 @@ describe("los casos típicos", () => {
 
   it("en inglés, el relato y la cabecera no dejan español", () => {
     const v = vistaCaso(d, "A-004", "en");
-    const texto = [v.veredicto, v.personaTexto, v.paso, v.hace.relato].join(" ");
+    const texto = [v.veredicto, v.personaTexto, v.paso, v.hace.relato].join(
+      " ",
+    );
     for (const residuo of [" el ", " la ", "negar", "Negado", "persona"])
       expect(texto, residuo).not.toContain(residuo);
+  });
+
+  it("los valores de código quedan como los escribió el código en los dos idiomas (la regla los compara así)", () => {
+    for (const i of ["es", "en"] as const) {
+      const v = vistaCaso(d, "A-008", i);
+      const fila = v.pasos[0]!.reglas.find((r) => r.senal === "tipo_atencion")!;
+      expect(fila.regla, i).toBe("= urgencia");
+      expect(fila.observado, i).toBe("ambulatoria");
+      const sen = Object.fromEntries(v.senales.map((x) => [x.k, x.v]));
+      expect(sen.tipo_atencion, i).toBe("ambulatoria");
+      expect(sen.decision_final, i).toBe("aprobar");
+    }
   });
 });
 
 describe("el lector del spike exige que la lectura cubra el grafo", () => {
   const exportado = {
-    nodes: [{ id: "__start__" }, { id: "a" }, { id: "b" }, { id: "c" }, { id: "__end__" }],
+    nodes: [
+      { id: "__start__" },
+      { id: "a" },
+      { id: "b" },
+      { id: "c" },
+      { id: "__end__" },
+    ],
     edges: [
       { source: "__start__", target: "a" },
       { source: "a", target: "b", conditional: true },
@@ -161,7 +200,9 @@ describe("el lector del spike exige que la lectura cubra el grafo", () => {
     expect(() => grafoDelSpike(exportado, sinTipo)).toThrow(/no da tipo a «c»/);
     const sinDefecto = lectura();
     sinDefecto.ramas_por_defecto = {};
-    expect(() => grafoDelSpike(exportado, sinDefecto)).toThrow(/a → c del spike no tiene regla/);
+    expect(() => grafoDelSpike(exportado, sinDefecto)).toThrow(
+      /a → c del spike no tiene regla/,
+    );
     const inventada = lectura();
     inventada.aristas_condicionales.push({
       ...inventada.aristas_condicionales[0]!,

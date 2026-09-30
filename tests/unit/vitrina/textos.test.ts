@@ -11,6 +11,7 @@ import type { TextoBilingue } from "@core/formatos/bilingue";
 import { datosDemo } from "@/lib/datos/vitrina";
 import * as comun from "@/textos/comun";
 import * as entrada from "@/textos/entrada";
+import * as plan from "@/textos/plan";
 
 /** Recorre un módulo de textos y devuelve cada `{ es, en }` con su ruta. */
 function bilingues(
@@ -32,10 +33,23 @@ function bilingues(
   }
   return out;
 }
-const todos = [...bilingues(comun, "comun"), ...bilingues(entrada, "entrada")];
+const todos = [
+  ...bilingues(comun, "comun"),
+  ...bilingues(entrada, "entrada"),
+  ...bilingues(plan, "plan"),
+];
 
 /** Iguales en los dos idiomas a propósito: nombres propios, siglas y palabras que el inglés comparte. */
-const IGUALES = new Set(["Plan", "Playground", "real", "Demo", "planlang"]);
+const IGUALES = new Set([
+  "Plan",
+  "Playground",
+  "real",
+  "Demo",
+  "planlang",
+  "Id",
+  "#",
+  "payload",
+]);
 
 describe("textos de la vitrina", () => {
   it("hay textos que revisar", () => expect(todos.length).toBeGreaterThan(80));

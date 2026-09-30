@@ -148,6 +148,9 @@ export function Definiciones({
             ) : (
               <ConCodigo texto={f.v} />
             )}
+            {f.nota ? (
+              <span className="text-tinta-2"> ({f.nota})</span>
+            ) : null}
           </dd>
         </div>
       ))}
@@ -209,7 +212,7 @@ export function TarjetaNodo({
   );
 }
 
-/** Reversibilidad de una decisión del plan; la de una vía lleva la marca de alerta. */
+/** Reversibilidad de una decisión del plan; la de una vía lleva la marca de alerta y va en tinta 1 (maqueta). */
 export function Etiqueta({
   unaVia,
   children,
@@ -218,8 +221,13 @@ export function Etiqueta({
   children: ReactNode;
 }) {
   return (
-    <span className="inline-flex h-5 items-center gap-1.25 rounded-chip border border-tinta-3 px-1.75 text-dato leading-none font-medium whitespace-nowrap text-tinta-2">
-      {unaVia ? <Marca tipo="alerta" tam={9} /> : null}
+    <span
+      className={cx(
+        "inline-flex h-5 items-center gap-1.25 rounded-chip border px-1.75 text-dato leading-none font-medium whitespace-nowrap",
+        unaVia ? "border-tinta-1 text-tinta-1" : "border-tinta-3 text-tinta-2",
+      )}
+    >
+      {unaVia ? <Marca tipo="alerta" tam={13} /> : null}
       {children}
     </span>
   );

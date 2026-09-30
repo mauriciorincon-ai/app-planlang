@@ -12,7 +12,7 @@
 |---|---|---|
 | 0 · Setup, deltas, plan v1.3 y ⭐ del S1 | ✅ cerrada · paradas del S1 diferidas con nombre | «continúa» 2026-09-28 |
 | 1 · Fundación de UI + P1 → gate de FIDELIDAD | ✅ cerrada · **fidelidad aprobada** (`docs/fidelidad/p1/index.html`) | «lo abrí y lo apruebo» + «avancemos» 2026-09-29 |
-| 2 · P2 Plan · P3 Agente (visor) · P6 Caso | 🔨 en construcción (desde 2026-09-29) | |
+| 2 · P2 Plan · P3 Agente (visor) · P6 Caso | ⏸ construida · **esperando la mirada 2** (`docs/fidelidad/p2/index.html`, presentada 2026-09-29) | |
 | 3 · P4 Brecha · P5 Playground | ⏳ | |
 | 4 · P7 Fichas · paquete · corridas de fondo · deuda | ⏳ | |
 | 5 · Cierre | ⏳ | |
@@ -350,13 +350,54 @@ fase (la mirada 2 sigue agrupando P2 · P3 · P6) y desde aquí el job `quality`
 - Local antes del push: `pnpm lint` · `pnpm typecheck` · `pnpm test` (1111 + 1 omitida, umbrales verdes) ·
   `pnpm trazas:verificar` · `pnpm build` · `verificar-export.mjs` (57 HTML) · `pnpm diagrama:verificar` · `pnpm audit`.
 
-### Punto de retoma (2026-09-29, segunda compactación pedida por el usuario)
+### Punto de retoma (2026-09-29, segunda compactación pedida por el usuario) — cumplido, ver «P6 cerrado, ADR-010 y P2 Plan»
 
 **Sigue (en orden):** e2e de P6 (`tests/e2e/caso.spec.ts`: axe en 2 idiomas × 2 temas × 2 perfiles, 380 px, enlaces
 del selector, un caso con pausa y uno sin ella) y pruebas de componentes de P6 con forma invariante → mirar P6 en
 teléfono y en los casos A-006 (marca de inyección) y A-008 (diálogo) → ADR-010 → P2 Plan (maqueta `02-plan.html`) →
 capturas de la mirada 2 (P2 · P3 · P6) con matriz en `docs/fidelidad/p2/` (el arnés `capturar-vitrina.mjs` necesita
 la entrada `p2`) → DETENERSE para la mirada 2.
+
+### P6 cerrado, ADR-010 y P2 Plan (2026-09-29)
+
+- **P6, pruebas:** `tests/e2e/caso.spec.ts` (9 × 2 proyectos: del índice a un caso por la pestaña, el selector con 20
+  enlaces y solo el actual marcado, el cambio de idioma conserva el caso; A-004 en 2 temas × 2 perfiles con axe y sin
+  desplazamiento lateral; A-001 sin pausa ni documento; la marca de A-006 y el diálogo de A-008; movimiento reducido) y
+  `tests/unit/vitrina/caso-componentes.test.tsx` (7: pausa y documento en A-004, ausentes en A-001, marca y diálogo,
+  selector, inglés sin residuo y forma invariante).
+- **P6 mirado en el teléfono y en A-006 / A-008** (capturas leídas como imagen): marca de inyección con borde
+  discontinuo y ⚠, pausa, guardia y documento caben a 380 px; el diálogo de A-008 con sus citas en `lang="es"`.
+  Dos correcciones salieron de mirar: (1) en inglés la columna «Observado» traducía `ambulatoria` → «outpatient»
+  junto a la regla `= urgencia`, y las 16 señales traducían `negar`/`aprobar`: los valores de código quedan como los
+  escribió el código en los dos idiomas, como la maqueta (prueba nueva); (2) el relato de A-006 no decía nada de la
+  instrucción escondida: la frase sale de `guardia_salida.carga_detectada_en_entrada` y su severidad (plantilla
+  `RELATO.inyeccion`; solo A-006 la activa en la corrida, y la prueba lo exige).
+- **ADR-010** (`decisions/010-conversion-grafo-a-mapa.md`): conversión grafo → mapa 0.3.0, convenciones donde la app
+  no cabe en el contrato (terminales, función nombrada, rama por defecto, ids con guion, fuentes, glifo), geometría de
+  la maqueta, métricas G15, ruteo, SVG y los dos gates. Precisión frente a la desviación 5: la ubicación del código
+  NO viaja en `refs_externas` del mapa; la exporta `exportar_grafo.py` a `grafo-codigo.json` y la muestra la pestaña
+  Código (`refs_externas` queda solo para `planlang:fuera-del-contrato`).
+- **P2 Plan** (maqueta `02-plan.html`): `src/textos/plan.ts` (copia aprobada; frases llanas de los criterios por id,
+  con prueba de que cada criterio del plan tiene la suya) · `src/lib/vista/plan.ts` (cifras contadas en plan e informe,
+  riesgos por prioridad de acción efectiva, 5 renglones a la vista y el resto tras «Ver N más» —`VISIBLES`, parámetro
+  de lectura—, contrato con las 9 reglas y su «si no»; un plan sin lo de un plan aprobado hace fallar el build nombrando
+  el campo) · `src/lib/vista/plan-comun.ts` (prioridad, control legal y estados; P3 Agente lo usa también: salió de su
+  vista) · `src/components/plan/{fila,secciones}.tsx` · `src/app/[idioma]/plan/page.tsx`. `Fila.nota` (la mitigación
+  con su efecto esperado) y `pieDeCorrida` compartido con Casos. La etiqueta «Una vía» va en tinta 1 con la marca a
+  13 px, como la maqueta (P3 también la usa).
+- **P2, pruebas:** `tests/unit/vitrina/plan.test.ts` (15), `tests/unit/vitrina/plan-componentes.test.tsx` (6: cifras e
+  índice llevan a secciones que existen, «Ver N más», «Moverlo», forma invariante con perfil, «Ver más» y un renglón
+  abierto, inglés), `tests/e2e/plan.spec.ts` (5 × 2 proyectos) y los textos de Plan en `textos.test.ts`.
+- **Lighthouse local** (3 corridas): `/es/plan` rendimiento 98–100, las otras tres 100, LCP 1,8–2,3 s, TBT ≤ 8 ms,
+  268 KB; `/es/caso/A-004` 98 / 100 / 100 / 100, LCP 2,3 s. Presupuestos verdes. Las dos rutas entran a
+  `lighthouse-urls.json`.
+- **Mirada 2:** `scripts/capturar-vitrina.mjs` admite varias pantallas por mirada (`pantallas`, pasada de interacción
+  por mirada, filtros por pantalla y por ancho, matriz de cuatro columnas) → `docs/fidelidad/p2/index.html` con 30
+  pares (P2, P3 y P6 × 380/1280 × temas × idiomas + 2 de experto por pantalla), 16 filas de matriz y 7/7
+  interacciones. La mirada 1 se volvió a medir con el arnés nuevo: 10 pares, 7/7, verde.
+- Local antes del push: `pnpm peers check` · `verificar-dependencias` · `pnpm typecheck` · `pnpm lint` · `pnpm test`
+  (1267 + 1 omitida, umbrales verdes) · `pnpm trazas:verificar` · `pnpm build` · `verificar-export.mjs` (57 HTML) ·
+  `pnpm diagrama:verificar` · `pnpm audit` · `pnpm test:e2e` (58, sin reintentos).
 
 ### Demos en rojo de la fase 2 (regla 15; el rojo nace con el gate)
 
@@ -372,6 +413,11 @@ la entrada `p2`) → DETENERSE para la mirada 2.
 | D11 con rótulos de terminal (`geometria.ts` + `agente.test.ts`) | sin `sinLado` para los terminales | la vista del spike no se dibuja: «D11: l-pausa-humana-a-fin atraviesa el rótulo de fin» → verde |
 | `PLAN_POR_NODO` contra el plan (`agente.test.ts`) | quitar D5 de `aclaracion` | «D5 no toca ningún nodo» → verde |
 | Diagrama = grafo publicado (`diagrama-igual-grafo.ts`) | quitar `data-nodo-id="guardia-salida"` del lienzo de `out/es/agente.html` | `✗ demo-a/es: nodo del grafo sin dibujar: guardia-salida`, salida 1 → verde al restaurar; en la prueba, además, las dos aristas de `guardia_salida` |
+| Forma invariante de P6 (`caso-componentes.test.tsx`) | `Caso` pinta las 16 señales solo si `html[data-perfil]` es experto | rojo en «el servidor pinta lo mismo sea cual sea el perfil» y en A-004 → verde |
+| Valores de código crudos (`caso.test.ts`) | `valorLeido` vuelve a traducir las cadenas | `Expected "ambulatoria"`, `Received "outpatient"` → verde |
+| Relato de la inyección (`caso.test.ts`) | quitar la frase de `carga_detectada_en_entrada` | rojo en A-006 → verde |
+| «Ver N más» sin cambiar la forma, P2 (`plan-componentes.test.tsx`) | `VerMas` pinta el resto solo si está abierto | rojo en 3 («Ver N más», forma en el servidor y en el cliente) → verde |
+| Estado de sala de la maqueta (`capturar-vitrina.mjs`) | la configuración con que nació la mirada 2 (`estado=real` para Plan y Casos) | `✕ maqueta diseno/02-plan.html: no tiene el estado de sala «real»` (y 06-caso), en rojo → verde con `plan` y `a006` |
 
 ## Desviación del plan
 
@@ -440,6 +486,17 @@ la entrada `p2`) → DETENERSE para la mirada 2.
 28. **Los nodos de la lista por capa son botones** que eligen su detalle (la maqueta los pintaba inertes): sin el
     lienzo, el teclado llega igual a cada panel.
 29. **El pie de Agente conserva la frase de marcas** tras la de la corrida (la maqueta la quitaba).
+30. **P2: «5 con prioridad alta, 2 por control legal»** donde la maqueta decía «3 con prioridad alta», y R1 y R6
+    suben al grupo alto con la línea «control legal (tabla: baja)»: el plan v1.3 declara su control legal
+    (instrumentos-de-plan 0.2.0, desviación 7).
+31. **P2: «Las 9 reglas del plan deciden…»** donde la maqueta escribía «Nueve reglas deciden…»: la cifra sale del
+    dato y una frase no empieza con dígito.
+32. **P2: «Quién participa» con los nombres de actor del plan** (como la desviación 25).
+33. **Las capturas de la mirada 2 pesan 17 MB** (calidad 30; 30 pares de páginas largas, P3 pasa de 5.000 px): sigue
+    la desviación 18. Se probó calidad 35 (19 MB con las tres maquetas completas) y 30 se lee igual.
+34. **P6 en inglés:** los valores de código (`ambulatoria`, `negar`) ya no se traducen en la tabla de reglas, las
+    señales, lo que leyó el extractor ni la respuesta del auditor: así los muestra la maqueta y así se comparan con la
+    regla del plan. La prosa (relato, «qué hizo») sigue redactada en cada idioma.
 
 ## Registro de miradas
 
@@ -463,3 +520,8 @@ la entrada `p2`) → DETENERSE para la mirada 2.
 | 2026-09-29 | CI rojo en `quality` (`6093384`) | enlaces a `/[idioma]/caso/*` antes de que existiera P6 | P6 adelantado; el job `quality` corre entero en local antes de cada push |
 | 2026-09-29 | En el spike, la línea a «fin» tachaba su rótulo | el ruteo dejaba entrar a un terminal por abajo | `sinLado` para terminales + D11 sobre los rótulos |
 | 2026-09-29 | «0.75» en el lienzo en español | el núcleo escribía el valor de la regla con `String` | `valorDeRegla` (coma en español, sin `Intl`) |
+| 2026-09-29 | Arnés: la pestaña «Código» de Agente salió «no cambió nada» | la huella de la pasada de interacción era la LONGITUD del HTML; cambiar de pestaña intercambia atributos del mismo largo | la huella es un hash de todo el HTML; 7/7. (El e2e ya veía la pestaña funcionar: falso rojo del arnés, no del producto) |
+| 2026-09-29 | Arnés: las maquetas de Plan y Casos salieron vacías (900 px) | el arnés pedía `estado=real`, que esas maquetas no tienen (sus estados son `plan` y `a006`); la de Agente, sin nodo elegido | estado de sala por pantalla + control nuevo que pone el arnés en rojo si la maqueta no tiene el estado pedido; lo cazó la lectura de las capturas, no una medición |
+| 2026-09-29 | P6 en inglés: «Observado: outpatient» junto a `= urgencia` | `valorLeido` traducía las cadenas con el mapa de valores de Agente | los valores de código quedan crudos (desviación 34) |
+| 2026-09-29 | Relato de A-006 sin la instrucción escondida | la plantilla del relato no leía la guardia de entrada | `RELATO.inyeccion` desde `carga_detectada_en_entrada` y su severidad |
+| 2026-09-29 | Plan en el teléfono: «enrutad/or» en la tabla de reglas | una `<table>` con `overflow-wrap:anywhere` en columnas estrechas | una tarjeta por regla en el teléfono, como la maqueta y la tabla de reglas de Casos |

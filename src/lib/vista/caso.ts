@@ -142,14 +142,17 @@ const OPERADOR: Record<string, string> = {
   distinto_de: "≠",
 };
 
-/** Un valor de la traza como se lee: booleanos en palabras, decimales con coma en español, listas con flechas. */
+/**
+ * Un valor de la traza como se lee: booleanos en palabras, decimales con coma en español, listas con flechas. Las
+ * cadenas quedan como las escribió el código (`ambulatoria`, `negar`) en los dos idiomas, como en la maqueta: se
+ * comparan contra la regla del plan, que también está en código.
+ */
 function valorLeido(v: unknown, i: Idioma): string {
   if (v === null || v === undefined) return "—";
   if (typeof v === "boolean") return X(v ? SI_NO.si : SI_NO.no, i);
   if (typeof v === "number")
     return Number.isInteger(v) ? String(v) : decimal(v, 2, i);
   if (Array.isArray(v)) return v.map(String).join(" → ");
-  if (typeof v === "string" && VALORES[v]) return X(VALORES[v]!, i);
   return String(v);
 }
 
@@ -196,6 +199,22 @@ export function idsDeCasos(d: DatosDemo): string[] {
   return d.corrida.trazas.map((t) => t.caso_id);
 }
 
+/** El pie de las páginas que leen la corrida (Casos, Plan): qué corrida, de qué sprint, cuántos casos y con qué modelo. */
+export function pieDeCorrida(d: DatosDemo, i: Idioma): string {
+  return X(
+    PIE_CASO({
+      corrida: d.corrida.manifiesto.corrida_id,
+      sprint: d.manifiesto.corrida.sprint,
+      fecha: d.corrida.manifiesto.fecha,
+      n: d.corrida.trazas.length,
+      repeticiones: 1 + d.manifiesto.repeticiones.length,
+      base: d.manifiesto.linea_base !== null,
+      modelo: d.corrida.manifiesto.modelo,
+    }),
+    i,
+  );
+}
+
 export function portadaCasos(d: DatosDemo, i: Idioma) {
   return {
     antetitulo: X(PORTADA.antetitulo(d.corrida.manifiesto.corrida_id), i),
@@ -206,18 +225,7 @@ export function portadaCasos(d: DatosDemo, i: Idioma) {
       }),
       i,
     ),
-    pie: X(
-      PIE_CASO({
-        corrida: d.corrida.manifiesto.corrida_id,
-        sprint: d.manifiesto.corrida.sprint,
-        fecha: d.corrida.manifiesto.fecha,
-        n: d.corrida.trazas.length,
-        repeticiones: 1 + d.manifiesto.repeticiones.length,
-        base: d.manifiesto.linea_base !== null,
-        modelo: d.corrida.manifiesto.modelo,
-      }),
-      i,
-    ),
+    pie: pieDeCorrida(d, i),
   };
 }
 
@@ -455,8 +463,14 @@ export function vistaCaso(d: DatosDemo, id: string, i: Idioma): VistaCaso {
     ).map((k) => CAMPO[k] ?? { es: k, en: k });
     // En negación: «no decía el diagnóstico ni el costo» · «did not state the diagnosis or the cost».
     const juntos = (l: TextoBilingue[]): TextoBilingue => ({
-      es: enumerar(l.map((x) => x.es), "es").replace(/ y (?=[^,]*$)/, " ni "),
-      en: enumerar(l.map((x) => x.en), "en").replace(/ and (?=[^,]*$)/, " or "),
+      es: enumerar(
+        l.map((x) => x.es),
+        "es",
+      ).replace(/ y (?=[^,]*$)/, " ni "),
+      en: enumerar(
+        l.map((x) => x.en),
+        "en",
+      ).replace(/ and (?=[^,]*$)/, " or "),
     });
     relato.push(
       X(
@@ -501,6 +515,8 @@ export function vistaCaso(d: DatosDemo, id: string, i: Idioma): VistaCaso {
       ),
     );
   }
+  if (t.guardia_salida?.carga_detectada_en_entrada)
+    relato.push(X(RELATO.inyeccion(t.guardia_salida.severidad_accion), i));
   relato.push(
     X(
       RELATO.cierre({

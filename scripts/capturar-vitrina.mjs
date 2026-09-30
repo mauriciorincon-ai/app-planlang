@@ -35,19 +35,159 @@ const arg = (n, def) => {
 };
 const bandera = (n) => process.argv.includes(`--${n}`);
 
-/** Las miradas que el arnés sabe capturar: ruta de la vitrina, página de la maqueta y la matriz de qué mirar. */
+/** Pasada de interacción de la Entrada: tema, perfil, «Ver como experto», idioma y una pestaña. */
+async function interaccionEntrada({ page, probar }) {
+  await page.goto(`${V}/es?tema=oscuro&perfil=lider`);
+  await asentar(page);
+  await probar(
+    "tema → Claro",
+    () => page.getByRole("button", { name: "Claro" }).click(),
+    () =>
+      page.evaluate(
+        () =>
+          document.documentElement.dataset.theme === "claro" &&
+          getComputedStyle(document.body).backgroundColor !== "rgb(11, 12, 15)",
+      ),
+  );
+  await probar(
+    "tema → Oscuro",
+    () => page.getByRole("button", { name: "Oscuro" }).click(),
+    () =>
+      page.evaluate(() => document.documentElement.dataset.theme === "oscuro"),
+  );
+  await probar(
+    "Leer como → Experto",
+    () => page.getByRole("button", { name: "Experto", exact: true }).click(),
+    () =>
+      page
+        .getByRole("heading", { name: "Cómo se sostiene cada afirmación" })
+        .isVisible(),
+  );
+  await probar(
+    "Volver a líder",
+    () => page.getByRole("button", { name: "Volver a líder" }).click(),
+    async () =>
+      !(await page
+        .getByRole("heading", { name: "Cómo se sostiene cada afirmación" })
+        .isVisible()),
+  );
+  await probar(
+    "Ver como experto",
+    () => page.getByRole("button", { name: "Ver como experto" }).click(),
+    () =>
+      page
+        .getByRole("heading", { name: "Cómo se sostiene cada afirmación" })
+        .isVisible(),
+  );
+  await probar(
+    "idioma → EN",
+    () => page.getByRole("link", { name: "English" }).click(),
+    () =>
+      page.evaluate(
+        () =>
+          document.documentElement.lang === "en" && location.pathname === "/en",
+      ),
+  );
+  await probar(
+    "pestaña → Plan",
+    () =>
+      page
+        .getByRole("navigation", { name: "Sections" })
+        .getByRole("link", { name: "Plan" })
+        .click(),
+    () => page.evaluate(() => location.pathname === "/en/plan"),
+  );
+}
+
+/** Pasada de interacción de la mirada 2: los controles propios de Plan, Agente y Caso. */
+async function interaccionMirada2({ page, probar }) {
+  await page.goto(`${V}/es/plan?tema=oscuro&perfil=lider`);
+  await asentar(page);
+  await probar(
+    "Plan: índice → Riesgos",
+    () =>
+      page
+        .getByRole("navigation", { name: "Partes del plan" })
+        .getByRole("link", { name: "Riesgos" })
+        .click(),
+    () => page.evaluate(() => location.hash === "#p-ries"),
+  );
+  await probar(
+    "Plan: «Ver 3 más»",
+    () => page.getByRole("button", { name: "Ver 3 más: R7, R4, R8" }).click(),
+    () => page.getByText("Bucle de aclaraciones", { exact: true }).isVisible(),
+  );
+  await probar(
+    "Plan: abrir un renglón",
+    () => page.locator("#fila-R2 summary").click(),
+    () => page.locator("#fila-R2").getByText("Si pasa").isVisible(),
+  );
+  await probar(
+    "Plan: Leer como → Experto",
+    () =>
+      page
+        .getByRole("group", { name: "Leer como" })
+        .getByRole("button", { name: "Experto" })
+        .click(),
+    () =>
+      page.getByRole("heading", { name: "Ficha técnica del plan" }).isVisible(),
+  );
+  await page.goto(`${V}/es/agente?tema=oscuro&perfil=lider`);
+  await asentar(page);
+  await probar(
+    "Agente: elegir «decision» en el lienzo",
+    () => page.locator('[data-sel-id="decision"]').click(),
+    () => page.locator("#detalle-decision").isVisible(),
+  );
+  await probar(
+    "Agente: pestaña «Código» del panel",
+    () =>
+      page
+        .locator("#detalle-decision")
+        .getByRole("button", { name: "Código", exact: true })
+        .click(),
+    () => page.locator("#detalle-decision figure").first().isVisible(),
+  );
+  await page.goto(`${V}/es/caso/A-006?tema=oscuro&perfil=lider`);
+  await asentar(page);
+  await probar(
+    "Caso: selector → A-008",
+    () =>
+      page
+        .getByRole("navigation", { name: "Casos", exact: true })
+        .getByRole("link", { name: /^A-008/ })
+        .click(),
+    () => page.evaluate(() => location.pathname === "/es/caso/A-008"),
+  );
+}
+
+/** Los pares de experto de cada pantalla (oscuro, español, en los dos anchos). */
+const EXPERTO = [
+  { ancho: 1280, tema: "oscuro", idioma: "es", perfil: "experto" },
+  { ancho: 380, tema: "oscuro", idioma: "es", perfil: "experto" },
+];
+
+/**
+ * Las miradas que el arnés sabe capturar: sus pantallas (ruta de la vitrina y página de la maqueta), la pasada de
+ * interacción y la matriz de qué mirar (pantalla · dónde · qué hacer · qué debe verse).
+ */
 const MIRADAS = {
   p1: {
     titulo: {
       es: "P1 Entrada frente a su maqueta",
       en: "P1 Home against its mock-up",
     },
-    ruta: (idioma) => `/${idioma}`,
-    maqueta: "diseno/01-entrada.html",
-    extra: [
-      { ancho: 1280, tema: "oscuro", idioma: "es", perfil: "experto" },
-      { ancho: 380, tema: "oscuro", idioma: "es", perfil: "experto" },
+    pregunta: "¿La Entrada construida se ve como la maqueta que aprobaste?",
+    pantallas: [
+      {
+        clave: "p1",
+        nombre: "P1 Entrada",
+        ruta: (idioma) => `/${idioma}`,
+        maqueta: "diseno/01-entrada.html",
+        extra: EXPERTO,
+      },
     ],
+    interaccion: interaccionEntrada,
     matriz: [
       [
         "Arriba: la tesis y el gancho",
@@ -88,6 +228,140 @@ const MIRADAS = {
         "Toda la página, en inglés",
         "Mira los pares «en».",
         "Todo redactado en inglés, sin español residual; decimales con punto y porcentajes pegados («89%», como pide el design system para el inglés; la maqueta los dejaba con espacio).",
+      ],
+    ],
+  },
+  p2: {
+    titulo: {
+      es: "Mirada 2: P2 Plan, P3 Agente y P6 Caso frente a sus maquetas",
+      en: "Look 2: P2 Plan, P3 Agent and P6 Case against their mock-ups",
+    },
+    pregunta:
+      "¿Plan, Agente y Casos construidos se ven como las maquetas que aprobaste?",
+    pantallas: [
+      {
+        clave: "p2",
+        nombre: "P2 Plan",
+        ruta: (idioma) => `/${idioma}/plan`,
+        maqueta: "diseno/02-plan.html",
+        estadoMaqueta: "plan",
+        extra: EXPERTO,
+      },
+      {
+        clave: "p3",
+        nombre: "P3 Agente",
+        ruta: (idioma) => `/${idioma}/agente`,
+        maqueta: "diseno/03-agente.html",
+        // En esta maqueta el estado de sala es el nodo elegido; la vitrina abre con el primero del contrato.
+        estadoMaqueta: "enrutador",
+        extra: EXPERTO,
+      },
+      {
+        clave: "p6",
+        nombre: "P6 Caso (A-006)",
+        ruta: (idioma) => `/${idioma}/caso/A-006`,
+        maqueta: "diseno/06-caso.html",
+        estadoMaqueta: "a006",
+        extra: EXPERTO,
+      },
+    ],
+    interaccion: interaccionMirada2,
+    matriz: [
+      [
+        "P2 Plan",
+        "Arriba, «El plan en una mirada»",
+        "Lee «Para qué» y las tres cajas.",
+        "El problema, el dominio (40 procedimientos, 5 exentos, 6 exclusiones) y quién participa; seis pasos con ✓; tres entregas, la primera con la huella del plan v1.3.",
+      ],
+      [
+        "P2 Plan",
+        "Las cinco cifras",
+        "Mira «riesgos».",
+        "«5 con prioridad alta, 2 por control legal». La maqueta decía 3: el plan v1.3 declara el control legal de R1 y R6, que sube su prioridad.",
+      ],
+      [
+        "P2 Plan",
+        "«Riesgos»",
+        "Mira el orden y la columna de la derecha de R1 y R6.",
+        "R2, R3, R1, R6 y R5 a la vista; R1 y R6 con «AP alta» y la línea «control legal (tabla: baja)»; abajo, «Ver 3 más: R7, R4, R8».",
+      ],
+      [
+        "P2 Plan",
+        "Cualquier renglón",
+        "Pulsa «Por qué y qué más se consideró» o «Qué pasaría y qué se hizo».",
+        "Se abre el porqué con sus filas; como experto, además, la línea técnica en letra de código.",
+      ],
+      [
+        "P2 Plan",
+        "Pares «experto»",
+        "Mira bajo las cifras y al final de la página.",
+        "«Ficha técnica del plan» y «Las 9 aristas condicionales, en orden»; en el teléfono, una tarjeta por regla, sin cortar palabras.",
+      ],
+      [
+        "P2 Plan",
+        "«Umbrales»",
+        "Pulsa «Moverlo».",
+        "Lleva a Playground, que sigue «en construcción» hasta la fase 3.",
+      ],
+      [
+        "P3 Agente",
+        "El lienzo",
+        "Mira las formas de los nodos.",
+        "Las reglas (verificador_cobertura, guardia_salida) con hexágono, distintas de los círculos de inicio y fin; ninguna línea cruza una caja ni el rótulo «fin».",
+      ],
+      [
+        "P3 Agente",
+        "El lienzo, pares de 380 px",
+        "Mira el marco del lienzo y el índice de capas.",
+        "El lienzo se desliza dentro de su marco con el índice de capas debajo; la página no se desplaza de lado.",
+      ],
+      [
+        "P3 Agente",
+        "El panel del nodo",
+        "Abre la página, toca «decision» y luego la pestaña «Trazas».",
+        "El panel cambia al nodo; «Trazas · 15» muestra 5 casos reales y «Ver 10 más»; cada fila se abre y enlaza a su caso.",
+      ],
+      [
+        "P3 Agente",
+        "«Antes: el spike», al final",
+        "Lee las tres cifras.",
+        "«3 de 8» nodos, «1 de 9» reglas (la de U1, pero en enrutador y no en decision) y «1 nodo fuera del contrato» (aprobar), con el lienzo del spike dibujado contra el mismo contrato y lo que faltaba en discontinuo.",
+      ],
+      [
+        "P3 Agente",
+        "La ficha, pares «experto»",
+        "Mira la matriz «Qué del plan toca a cada nodo».",
+        "Lleva el chip «declarado»: la lectura del autor comprobada por prueba (la maqueta decía «maqueta»).",
+      ],
+      [
+        "P6 Caso",
+        "«Recibe»",
+        "Mira el texto del médico.",
+        "La instrucción escondida va marcada con borde discontinuo y ⚠, y el resto del texto sigue normal.",
+      ],
+      [
+        "P6 Caso",
+        "«El recorrido, paso a paso»",
+        "Lee los pasos; luego mira un par «experto».",
+        "Cada paso dice qué hizo y por qué tomó su rama; como experto, la tabla de reglas con que decidió y la regla que eligió la rama resaltada.",
+      ],
+      [
+        "P6 Caso",
+        "La pausa humana y el documento",
+        "Mira las dos secciones.",
+        "Lo que vio el auditor (evidencia y contraevidencia, respuesta simulada dicha) y el documento de decisión adversa con su aviso de IA.",
+      ],
+      [
+        "P6 Caso",
+        "El selector de casos",
+        "En la página, pulsa A-008.",
+        "Cambia de caso y lo marca; A-008 muestra el diálogo con el médico y no trae pausa ni documento.",
+      ],
+      [
+        "Las tres",
+        "Pares «claro» y «en»",
+        "Míralos junto a su maqueta.",
+        "Los mismos colores que la maqueta en claro; en inglés todo redactado, salvo los nombres del código y las citas del modelo (marcadas en español).",
       ],
     ],
   },
@@ -170,17 +444,20 @@ const Q = `http://127.0.0.1:${pM}`;
 const CROMO_SALA =
   ".mq-bar,.mq-nota,.mq-solo-sala,.mq-cierre{display:none!important}";
 const combinaciones = [];
-for (const ancho of anchos)
-  for (const tema of temas)
-    for (const idioma of idiomas)
-      combinaciones.push({ ancho, tema, idioma, perfil: "lider" });
-for (const e of M.extra)
-  if (
-    anchos.includes(e.ancho) &&
-    temas.includes(e.tema) &&
-    idiomas.includes(e.idioma)
-  )
-    combinaciones.push(e);
+for (const pantalla of M.pantallas) {
+  for (const ancho of anchos)
+    for (const tema of temas)
+      for (const idioma of idiomas)
+        combinaciones.push({ pantalla, ancho, tema, idioma, perfil: "lider" });
+  for (const e of pantalla.extra)
+    if (
+      anchos.includes(e.ancho) &&
+      temas.includes(e.tema) &&
+      idiomas.includes(e.idioma)
+    )
+      combinaciones.push({ pantalla, ...e });
+}
+const varias = M.pantallas.length > 1;
 
 const navegador = await chromium.launch();
 const pares = [];
@@ -233,6 +510,32 @@ async function medir(page, que) {
   }, que);
 }
 
+/**
+ * La maqueta toma el perfil de `?perfil=` (perfil.js); la de Agente no lo carga y su ficha cambia de perfil con sus
+ * pestañas. Se comprueba y, si no quedó en experto, se pulsa el control que la maqueta dibuja para eso.
+ */
+async function maquetaEnExperto(page, c) {
+  const enExperto = () =>
+    page.evaluate(
+      () =>
+        document.documentElement.getAttribute("data-perfil") === "experto" ||
+        document
+          .querySelector(".vista-alterna button[data-vista=experto]")
+          ?.getAttribute("aria-pressed") === "true",
+    );
+  if (await enExperto()) return;
+  const boton = page
+    .locator(
+      "button[data-perfil-set=experto]:visible, .vista-alterna button[data-vista=experto]:visible",
+    )
+    .first();
+  if (await boton.count()) await boton.click();
+  if (!(await enExperto()))
+    fallas.push(
+      `maqueta ${c.pantalla.nombre} ${c.ancho}: no se pudo poner en experto`,
+    );
+}
+
 for (const c of combinaciones) {
   const ctx = await navegador.newContext({
     viewport: { width: c.ancho, height: 900 },
@@ -246,11 +549,13 @@ for (const c of combinaciones) {
   // Entra por el índice (sin redirección) y de ahí a la pantalla, con el tema y el perfil en la URL.
   await page.goto(`${V}/?elegir`);
   await page.click(`a[hreflang="${c.idioma}"]`);
-  await page.goto(`${V}${M.ruta(c.idioma)}?tema=${c.tema}&perfil=${c.perfil}`);
+  await page.goto(
+    `${V}${c.pantalla.ruta(c.idioma)}?tema=${c.tema}&perfil=${c.perfil}`,
+  );
   await asentar(page);
   const m = await medir(
     page,
-    `vitrina ${c.ancho} ${c.tema} ${c.idioma} ${c.perfil}`,
+    `vitrina ${c.pantalla.nombre} ${c.ancho} ${c.tema} ${c.idioma} ${c.perfil}`,
   );
   m.errores = errores.slice();
   mediciones.push(m);
@@ -259,7 +564,7 @@ for (const c of combinaciones) {
     fallas.push(`${m.que}: una fuente no cargó (${JSON.stringify(m.fuentes)})`);
   if (errores.length)
     fallas.push(`${m.que}: errores de consola ${JSON.stringify(errores)}`);
-  const base = `${c.ancho}-${c.tema}-${c.idioma}${c.perfil === "experto" ? "-experto" : ""}`;
+  const base = `${varias ? `${c.pantalla.clave}-` : ""}${c.ancho}-${c.tema}-${c.idioma}${c.perfil === "experto" ? "-experto" : ""}`;
   const archivoV = `vitrina-${base}.jpg`;
   const archivoM = `maqueta-${base}.jpg`;
   if (!soloMedir) {
@@ -272,9 +577,21 @@ for (const c of combinaciones) {
     });
   }
   await page.goto(
-    `${Q}/${M.maqueta}?tema=${c.tema}&lang=${c.idioma}&estado=real&perfil=${c.perfil}`,
+    `${Q}/${c.pantalla.maqueta}?tema=${c.tema}&lang=${c.idioma}&estado=${c.pantalla.estadoMaqueta ?? "real"}&perfil=${c.perfil}`,
   );
   await page.addStyleTag({ content: CROMO_SALA });
+  // El estado de sala tiene que existir en esa maqueta: con uno que no tiene, la sala oculta todo lo que depende
+  // de un estado y la captura sale vacía (le pasó a Plan y a Casos con «real» en la mirada 2).
+  const estadoPedido = c.pantalla.estadoMaqueta ?? "real";
+  const tieneEstado = await page.evaluate(
+    (e) => !!document.querySelector(`button[data-estado="${e}"]`),
+    estadoPedido,
+  );
+  if (!tieneEstado)
+    fallas.push(
+      `maqueta ${c.pantalla.maqueta}: no tiene el estado de sala «${estadoPedido}»; la captura saldría vacía`,
+    );
+  if (c.perfil === "experto") await maquetaEnExperto(page, c);
   await asentar(page);
   if (!soloMedir)
     await page.screenshot({
@@ -294,13 +611,18 @@ const interacciones = [];
     viewport: { width: 1280, height: 900 },
   });
   const page = await ctx.newPage();
+  // Un hash de TODO el HTML, no su longitud: cambiar de pestaña intercambia atributos del mismo largo
+  // (`hidden`, `aria-pressed="true"`/`"false"`) y una huella por longitud lo daba por «no cambió nada».
   const huella = () =>
     page.evaluate(() =>
       [
-        document.documentElement.outerHTML.length,
+        [...document.documentElement.outerHTML].reduce(
+          (h, ch) => (h * 31 + ch.charCodeAt(0)) | 0,
+          0,
+        ),
         document.documentElement.getAttribute("data-theme"),
         document.documentElement.getAttribute("data-perfil"),
-        location.pathname,
+        location.pathname + location.hash,
         document.documentElement.lang,
       ].join("|"),
     );
@@ -313,66 +635,7 @@ const interacciones = [];
     interacciones.push({ nombre, ok, antes, despues });
     if (!ok) fallas.push(`interacción «${nombre}»: no cambió nada`);
   };
-  await page.goto(`${V}/es?tema=oscuro&perfil=lider`);
-  await asentar(page);
-  await probar(
-    "tema → Claro",
-    () => page.getByRole("button", { name: "Claro" }).click(),
-    () =>
-      page.evaluate(
-        () =>
-          document.documentElement.dataset.theme === "claro" &&
-          getComputedStyle(document.body).backgroundColor !== "rgb(11, 12, 15)",
-      ),
-  );
-  await probar(
-    "tema → Oscuro",
-    () => page.getByRole("button", { name: "Oscuro" }).click(),
-    () =>
-      page.evaluate(() => document.documentElement.dataset.theme === "oscuro"),
-  );
-  await probar(
-    "Leer como → Experto",
-    () => page.getByRole("button", { name: "Experto", exact: true }).click(),
-    () =>
-      page
-        .getByRole("heading", { name: "Cómo se sostiene cada afirmación" })
-        .isVisible(),
-  );
-  await probar(
-    "Volver a líder",
-    () => page.getByRole("button", { name: "Volver a líder" }).click(),
-    async () =>
-      !(await page
-        .getByRole("heading", { name: "Cómo se sostiene cada afirmación" })
-        .isVisible()),
-  );
-  await probar(
-    "Ver como experto",
-    () => page.getByRole("button", { name: "Ver como experto" }).click(),
-    () =>
-      page
-        .getByRole("heading", { name: "Cómo se sostiene cada afirmación" })
-        .isVisible(),
-  );
-  await probar(
-    "idioma → EN",
-    () => page.getByRole("link", { name: "English" }).click(),
-    () =>
-      page.evaluate(
-        () =>
-          document.documentElement.lang === "en" && location.pathname === "/en",
-      ),
-  );
-  await probar(
-    "pestaña → Plan",
-    () =>
-      page
-        .getByRole("navigation", { name: "Sections" })
-        .getByRole("link", { name: "Plan" })
-        .click(),
-    () => page.evaluate(() => location.pathname === "/en/plan"),
-  );
+  await M.interaccion({ page, probar });
   await ctx.close();
 }
 
@@ -384,18 +647,27 @@ const esc = (s) =>
   String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 if (!soloMedir) {
   const TEMA = { oscuro: "oscuro", claro: "claro" };
-  const bloques = pares
+  const par = (p) =>
+    `<section class="par" data-ancho="${p.ancho}" data-pantalla="${p.pantalla.clave}"><h2>${varias ? `${esc(p.pantalla.nombre)} · ` : ""}${p.ancho} px · ${TEMA[p.tema]} · ${p.idioma.toUpperCase()} · ${p.perfil === "experto" ? "experto" : "líder"}</h2><div class="lado"><figure><figcaption>Maqueta aprobada · <code>docs/${p.pantalla.maqueta}</code></figcaption><img loading="lazy" src="${p.archivoM}" alt="Maqueta ${esc(p.pantalla.nombre)} ${p.ancho} px ${p.tema} ${p.idioma} ${p.perfil}"></figure><figure><figcaption>Vitrina construida · <code>out${p.pantalla.ruta(p.idioma)}.html</code></figcaption><img loading="lazy" src="${p.archivoV}" alt="Vitrina ${esc(p.pantalla.nombre)} ${p.ancho} px ${p.tema} ${p.idioma} ${p.perfil}"></figure></div></section>`;
+  const bloques = M.pantallas
     .map(
-      (p) =>
-        `<section class="par" data-ancho="${p.ancho}"><h2>${p.ancho} px · ${TEMA[p.tema]} · ${p.idioma.toUpperCase()} · ${p.perfil === "experto" ? "experto" : "líder"}</h2><div class="lado"><figure><figcaption>Maqueta aprobada · <code>docs/${M.maqueta}</code></figcaption><img loading="lazy" src="${p.archivoM}" alt="Maqueta ${p.ancho} px ${p.tema} ${p.idioma} ${p.perfil}"></figure><figure><figcaption>Vitrina construida · <code>out${M.ruta(p.idioma)}.html</code></figcaption><img loading="lazy" src="${p.archivoV}" alt="Vitrina ${p.ancho} px ${p.tema} ${p.idioma} ${p.perfil}"></figure></div></section>`,
+      (pt) =>
+        `${varias ? `<h2 class="pantalla" id="${pt.clave}">${esc(pt.nombre)}</h2>` : ""}${pares
+          .filter((p) => p.pantalla === pt)
+          .map(par)
+          .join("\n")}`,
     )
     .join("\n");
   const matriz = M.matriz
-    .map(
-      ([donde, hacer, ver], i) =>
-        `<tr><td>${i + 1}</td><td>${esc(M.titulo.es.split(" frente")[0])}</td><td>${esc(donde)}</td><td>${esc(hacer)}</td><td>${esc(ver)}</td></tr>`,
-    )
+    .map((fila, i) => {
+      const [pantalla, donde, hacer, ver] =
+        fila.length === 4 ? fila : [M.pantallas[0].nombre, ...fila];
+      return `<tr><td>${i + 1}</td><td>${esc(pantalla)}</td><td>${esc(donde)}</td><td>${esc(hacer)}</td><td>${esc(ver)}</td></tr>`;
+    })
     .join("\n");
+  const filtroPantallas = varias
+    ? `<div class="filtros" role="group" aria-label="Filtrar por pantalla" data-eje="pantalla"><button type="button" aria-pressed="true" data-f="todos">Las ${M.pantallas.length}</button>${M.pantallas.map((pt) => `<button type="button" aria-pressed="false" data-f="${pt.clave}">${esc(pt.nombre)}</button>`).join("")}</div>`
+    : "";
   const inter = interacciones
     .map((x) => `<li>${x.ok ? "✓" : "✕"} ${esc(x.nombre)}</li>`)
     .join("");
@@ -415,7 +687,7 @@ if (!soloMedir) {
 :root{color-scheme:dark;--fondo:#0b0c0f;--sup:#191b1d;--linea:#2c2e31;--t1:#eceff3;--t2:#b8bbbe}
 body{margin:0;background:var(--fondo);color:var(--t1);font:15px/1.6 system-ui,sans-serif}
 main{max-width:1500px;margin:0 auto;padding:24px 16px 64px}
-h1{font-size:24px;margin:0 0 4px} h2{font-size:15px;margin:32px 0 8px;color:var(--t2);font-weight:600}
+h1{font-size:24px;margin:0 0 4px} h2{font-size:15px;margin:32px 0 8px;color:var(--t2);font-weight:600} h2.pantalla{font-size:20px;color:var(--t1);margin-top:48px;padding-top:16px;border-top:1px solid var(--linea)} a{color:var(--t1)}
 p{color:var(--t2);max-width:80ch} code{font:12px ui-monospace,monospace}
 .filtros{display:flex;gap:8px;margin:16px 0}.filtros button{font:inherit;font-size:13px;color:var(--t1);background:transparent;border:1px solid #75777b;border-radius:6px;padding:4px 10px;cursor:pointer}.filtros button[aria-pressed=true]{background:var(--t1);color:var(--fondo)}
 .lado{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
@@ -428,9 +700,10 @@ ul{padding-left:20px;font-size:13px;color:var(--t2)}
 </head>
 <body>
 <main>
-<h1>¿La Entrada construida se ve como la maqueta que aprobaste?</h1>
-<p>${esc(M.titulo.es)}. A la izquierda, la maqueta aprobada (sin el cromo de la sala de diseño); a la derecha, la vitrina que se construyó en el sprint 2, capturada del export estático entrando por el índice. ${pares.length} pares: 380 px y escritorio × oscuro y claro × español e inglés, más dos como experto. La matriz de qué mirar está al pie.</p>
-<div class="filtros" role="group" aria-label="Filtrar por ancho"><button type="button" aria-pressed="true" data-f="todos">Todos</button><button type="button" aria-pressed="false" data-f="1280">Escritorio</button><button type="button" aria-pressed="false" data-f="380">Teléfono (380 px)</button></div>
+<h1>${esc(M.pregunta)}</h1>
+<p>${esc(M.titulo.es)}. A la izquierda, la maqueta aprobada (sin el cromo de la sala de diseño); a la derecha, la vitrina que se construyó en el sprint 2, capturada del export estático entrando por el índice. ${pares.length} pares: 380 px y escritorio × oscuro y claro × español e inglés, más dos como experto${varias ? " por pantalla" : ""}. <a href="#matriz">La matriz de qué mirar</a> está al pie.</p>
+${filtroPantallas}
+<div class="filtros" role="group" aria-label="Filtrar por ancho" data-eje="ancho"><button type="button" aria-pressed="true" data-f="todos">Todos</button><button type="button" aria-pressed="false" data-f="1280">Escritorio</button><button type="button" aria-pressed="false" data-f="380">Teléfono (380 px)</button></div>
 ${bloques}
 <h2 id="matriz">Qué mirar y qué deberías ver</h2>
 <table><thead><tr><th>#</th><th>Pantalla</th><th>Dónde</th><th>Qué hacer</th><th>Qué debe verse</th></tr></thead><tbody>
@@ -443,7 +716,7 @@ ${matriz}
 <p>Generado por <code>node scripts/capturar-vitrina.mjs --mirada ${mirada}</code> sobre el export de <code>pnpm build</code>. Las capturas se regeneran; no se editan a mano.</p>
 </main>
 <script>
-document.querySelector(".filtros").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;var f=b.dataset.f;document.querySelectorAll(".filtros button").forEach(function(x){x.setAttribute("aria-pressed",String(x===b))});document.querySelectorAll(".par").forEach(function(s){s.hidden=f!=="todos"&&s.dataset.ancho!==f})});
+var sel={ancho:"todos",pantalla:"todos"};document.querySelectorAll(".filtros").forEach(function(g){g.addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;sel[g.dataset.eje]=b.dataset.f;g.querySelectorAll("button").forEach(function(x){x.setAttribute("aria-pressed",String(x===b))});document.querySelectorAll(".par").forEach(function(s){s.hidden=(sel.ancho!=="todos"&&s.dataset.ancho!==sel.ancho)||(sel.pantalla!=="todos"&&s.dataset.pantalla!==sel.pantalla)});document.querySelectorAll("h2.pantalla").forEach(function(h){h.hidden=sel.pantalla!=="todos"&&h.id!==sel.pantalla})})});
 </script>
 </body>
 </html>

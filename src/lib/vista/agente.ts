@@ -41,17 +41,21 @@ import {
 } from "@/textos/agente";
 import {
   APAGADO,
-  CONTROL_LEGAL,
   ENCENDIDO,
-  ESTADO_CRITERIO,
-  ESTADO_RIESGO,
   ESTADO_SUPUESTO,
   INCLUSIVO,
-  PRIORIDAD_ACCION,
   REVERSIBILIDAD,
-  TABLA,
 } from "@/textos/plan-comun";
 import { decimal, entero, enumerar, versionCorta } from "./formato";
+import {
+  controlLegal,
+  estadoDeCriterio,
+  estadoDeRiesgo,
+  estadoDeSupuesto,
+  prioridad,
+  type ClaseDeEstado,
+  type RiesgoDelInforme,
+} from "./plan-comun";
 import { GRAMATICA, grafoParaMapa, lienzo, type Lienzo } from "./visor";
 
 export interface Item {
@@ -66,6 +70,8 @@ export interface Fila {
   v: string;
   /** Lista de códigos (chips mono) en lugar de texto. */
   codigos?: string[];
+  /** Una aclaración tras el valor, en tinta 2 y entre paréntesis (P2: el efecto esperado de una mitigación). */
+  nota?: string;
 }
 export interface Grupo {
   rotulo: string;
@@ -80,7 +86,7 @@ export interface Cifra {
   /** Fracción (0–1) de lo que el plan permite, para la barra bajo la cifra. */
   barra?: number;
 }
-export type ClaseDeEstado = "cumple" | "alerta" | "no-cumple" | "beta";
+export type { ClaseDeEstado };
 /** Un elemento del plan que gobierna un nodo, como lo lista «Lo que el plan le exige». */
 export interface RefPlan {
   id: string;
@@ -988,7 +994,6 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
     capas.findIndex((b) => b.id === BANDA_DE_TIPO[idDeMapa(tipo)]);
   const bandaDe = (tipo: string): TextoBilingue =>
     capas[banda(tipo)]?.nombre ?? { es: tipo, en: tipo };
-  const BARRAS: Record<string, number> = { baja: 1, media: 2, alta: 3 };
   const refPlan = (id: string): RefPlan | null => {
     const p = d.plan;
     const dd = p.decisiones.find((x) => x.id === id);
@@ -1004,74 +1009,34 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
     const r = p.riesgos.find((x) => x.id === id);
     if (r) {
       const ri = informe.riesgos.find((x) => x.id === id) as
-        | {
-            estado: string;
-            prioridad_de_accion: string;
-            prioridad_de_tabla: string;
-            control_legal?: boolean;
-            rpn: number;
-          }
+        | RiesgoDelInforme
         | undefined;
-      const ap = X(
-        PRIORIDAD_ACCION[ri?.prioridad_de_accion ?? ""] ?? { es: "", en: "" },
-        i,
-      );
-      const legal = ri?.control_legal
-        ? ` · ${X(CONTROL_LEGAL, i)}${ri.prioridad_de_tabla !== ri.prioridad_de_accion ? ` (${X(TABLA, i)}: ${X(PRIORIDAD_ACCION[ri.prioridad_de_tabla]!, i).replace(/^AP /, "")})` : ""}`
-        : "";
+      const legal = controlLegal(ri, i);
       return {
         id,
         texto: X(r.modo, i),
-        ap: {
-          barras: BARRAS[ri?.prioridad_de_accion ?? ""] ?? 0,
-          texto: ap,
-        },
-        factores: `S${r.severidad} · O${r.ocurrencia} · D${r.deteccion} · RPN ${ri?.rpn ?? r.severidad * r.ocurrencia * r.deteccion}${legal}`,
-        estado: {
-          texto: X(ESTADO_RIESGO[ri?.estado ?? "indeterminado"]!, i),
-          clase:
-            ri?.estado === "no_ocurrio"
-              ? "cumple"
-              : ri?.estado === "ocurrio"
-                ? "no-cumple"
-                : "alerta",
-        },
+        ap: prioridad(ri, i),
+        factores: `S${r.severidad} · O${r.ocurrencia} · D${r.deteccion} · RPN ${ri?.rpn ?? r.severidad * r.ocurrencia * r.deteccion}${legal ? ` · ${legal}` : ""}`,
+        estado: estadoDeRiesgo(ri?.estado, i),
       };
     }
     const s = p.supuestos.find((x) => x.id === id);
-    if (s) {
-      const si = informe.supuestos.find((x) => x.id === id);
+    if (s)
       return {
         id,
         texto: X(s.enunciado, i),
-        estado: {
-          texto: X(ESTADO_SUPUESTO[si?.estado ?? "sin_probar"]!, i),
-          clase:
-            si?.estado === "confirmado"
-              ? "cumple"
-              : si?.estado === "refutado"
-                ? "no-cumple"
-                : "beta",
-        },
+        estado: estadoDeSupuesto(
+          informe.supuestos.find((x) => x.id === id)?.estado,
+          i,
+        ),
       };
-    }
     const c = p.criterios_aceptacion.find((x) => x.id === id);
-    if (c) {
-      const ci = criterio(id);
+    if (c)
       return {
         id,
         texto: X(c.enunciado, i),
-        estado: {
-          texto: X(ESTADO_CRITERIO[ci?.estado ?? "indeterminado"]!, i),
-          clase:
-            ci?.estado === "cumple"
-              ? "cumple"
-              : ci?.estado === "incumple"
-                ? "no-cumple"
-                : "alerta",
-        },
+        estado: estadoDeCriterio(criterio(id)?.estado, i),
       };
-    }
     const u = p.umbrales.find((x) => x.id === id);
     if (u)
       return {
