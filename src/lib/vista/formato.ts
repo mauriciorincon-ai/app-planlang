@@ -48,6 +48,12 @@ export function decimal(x: number, d: number, idioma: Idioma): string {
   return idioma === "es" ? s.replace(".", ",") : s;
 }
 
+/** 0,9333 con 1 decimal → «93,3 %» (es) · «93.3%» (en): para columnas que se leen alineadas (la curva). */
+export function porcentajeFijo(x: number, d: number, idioma: Idioma): string {
+  const s = decimal(x * 100, d, idioma);
+  return idioma === "es" ? `${s}${ESPACIO_DURO}%` : `${s}%`;
+}
+
 /** Lista legible: «A, B y C» · «A, B and C». */
 export function enumerar(items: readonly string[], idioma: Idioma): string {
   if (items.length <= 1) return items.join("");

@@ -7,6 +7,7 @@ import type { Idioma } from "@core/formatos/bilingue";
 import {
   CONTROL_LEGAL,
   ESTADO_CRITERIO,
+  ESTADO_CRITERIO_INFORME,
   ESTADO_RIESGO,
   ESTADO_SUPUESTO,
   PRIORIDAD_ACCION,
@@ -95,9 +96,12 @@ export function estadoDeSupuesto(
 export function estadoDeCriterio(
   estado: string | undefined,
   i: Idioma,
+  /** «corrida» (Plan, Agente: «Cumplió») o «informe» (Brecha: «Cumple»), como sus maquetas. */
+  voz: "corrida" | "informe" = "corrida",
 ): EstadoMedido {
+  const m = voz === "informe" ? ESTADO_CRITERIO_INFORME : ESTADO_CRITERIO;
   return {
-    texto: (ESTADO_CRITERIO[estado ?? ""] ?? ESTADO_CRITERIO.indeterminado!)[i],
+    texto: (m[estado ?? ""] ?? m.indeterminado!)[i],
     clase:
       estado === "cumple"
         ? "cumple"

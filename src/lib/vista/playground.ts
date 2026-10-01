@@ -6,7 +6,10 @@
  */
 import type { Idioma, TextoBilingue } from "@core/formatos/bilingue";
 import { SENAL_DE_CONFIANZA } from "@core/brecha/contexto";
-import { compactar } from "@core/playground/compactar";
+import {
+  compactar,
+  senalesQueLeenLasAristas,
+} from "@core/playground/compactar";
 import type { Compacto } from "@core/playground/compacto";
 import { consecuencias, umbralesDelPlan } from "@core/playground/consecuencias";
 import { esAristaTripleta } from "@core/plan/esquema";
@@ -51,11 +54,15 @@ export interface DatosIsla {
   casos: { id: string; tipo: string; href: string }[];
   /** Columnas de la tabla de las decisiones: las señales que leen las aristas de los nodos jugables. */
   columnas: { senal: string; nodo: string; titulo: string }[];
+  /** Los nodos que deciden, en el orden del grafo del plan (el compacto los guarda en orden canónico). */
+  nodosEnOrden: string[];
   curva: {
     puntos: PuntoCurva[];
     plan: number;
     n: number;
     umbral: string;
+    /** La lectura de la curva en llano (con riesgo 0 en todo el rango dice que aún no puede mostrar el equilibrio). */
+    lectura: string;
   } | null;
   version: string;
 }
@@ -68,8 +75,6 @@ export interface VistaPlayground {
   entrega: { titulo: string; detalle: string }[];
   ejemplo: string | null;
   ficha: Fila[];
-  curvaLectura: string;
-  curvaChip: string;
   limites: string[];
   nucleoDetalle: string;
   isla: DatosIsla;
@@ -79,6 +84,19 @@ export interface VistaPlayground {
 function decimalesDe(paso: number): number {
   const s = String(paso);
   return s.includes(".") ? s.length - s.indexOf(".") - 1 : 0;
+}
+
+/**
+ * El nombre llano de una señal. Una señal que decide en el grafo y no tiene nombre detiene el build nombrándola: la
+ * vitrina no pone el código donde iba la palabra.
+ */
+function nombreLlano(s: string): TextoBilingue {
+  const n = SENAL[s];
+  if (!n)
+    throw new Error(
+      `vitrina: la señal «${s}» decide en el grafo y el playground no tiene su nombre llano (src/textos/playground.ts, SENAL).`,
+    );
+  return n;
 }
 
 /** El valor de un umbral como se lee en la vitrina (0,75 · 1000). */
@@ -115,7 +133,7 @@ function ejemplo(c: Compacto, d: DatosDemo, i: Idioma): string | null {
           desde: valorUmbral(u.valor_en_plan, dec, i),
           hasta: valorUmbral(v, dec, i),
           caso: caso.id,
-          senal: SENAL[u.senal] ?? { es: u.senal, en: u.senal },
+          senal: nombreLlano(u.senal),
           valor: valorUmbral(valor, dec, i),
           minutos: r.minutos - r.minutos_plan,
           errores: r.introducidos.length,
@@ -127,15 +145,28 @@ function ejemplo(c: Compacto, d: DatosDemo, i: Idioma): string | null {
   return null;
 }
 
+/** Los nodos con aristas condicionales, en el orden en que el plan declara el grafo. */
+function nodosEnOrden(c: Compacto, d: DatosDemo): string[] {
+  const orden = d.plan.contrato_de_grafo.nodos_esperados.map((n) => n.id);
+  const pos = (n: string) => {
+    const k = orden.indexOf(n);
+    return k < 0 ? orden.length : k;
+  };
+  // `sort` es estable: los nodos que el plan no nombra quedan al final, en el orden canónico del compacto.
+  return [...new Set(c.aristas.map((a) => a.desde))].sort(
+    (a, b) => pos(a) - pos(b),
+  );
+}
+
 /** La regla de un nodo escritor en una línea (orden de evaluación de la ficha técnica). */
-function ordenDeEvaluacion(c: Compacto): string {
-  const nodos = [...new Set(c.aristas.map((a) => a.desde))];
+function ordenDeEvaluacion(c: Compacto, nodos: string[]): string {
   return nodos
     .map((n) => {
       const reglas = c.aristas
         .filter((a) => a.desde === n)
         .sort((a, b) => a.orden - b.orden);
-      const destino = reglas[0]?.si_verdadero ?? "";
+      // Cada nodo sale de una arista: tiene al menos una regla.
+      const destino = reglas[0]!.si_verdadero;
       const conds = reglas.map((a) => {
         if (!esAristaTripleta(a))
           return `${a.funcion.nombre}(${a.funcion.entradas.join(", ")})`;
@@ -143,7 +174,7 @@ function ordenDeEvaluacion(c: Compacto): string {
           typeof a.valor === "string" && a.valor.startsWith("umbral.")
             ? a.valor.slice(7)
             : String(a.valor);
-        return `${a.senal} ${SIMBOLO[a.operador] ?? a.operador} ${v}`;
+        return `${a.senal} ${SIMBOLO[a.operador]} ${v}`;
       });
       const mismoDestino = reglas.every((a) => a.si_verdadero === destino);
       return mismoDestino
@@ -156,6 +187,8 @@ function ordenDeEvaluacion(c: Compacto): string {
 export function vistaPlayground(d: DatosDemo, i: Idioma): VistaPlayground {
   const inf = d.informe;
   const c = compactar(d.plan, d.corrida, d.lote, inf);
+  // Toda señal que decide tiene su nombre llano antes de que la isla las pinte (la isla no adivina uno).
+  for (const s of senalesQueLeenLasAristas(c.aristas)) nombreLlano(s);
   const decisiones = inf.contrato_de_grafo.rf_09_2[0]?.visitas ?? 0;
   const v = versionCorta(
     inf.ficha_reproducibilidad.corrida.plan_de_ejecucion.version,
@@ -176,7 +209,7 @@ export function vistaPlayground(d: DatosDemo, i: Idioma): VistaPlayground {
       .map((s) => ({
         senal: s,
         nodo: n,
-        titulo: X(SENAL[s] ?? { es: s, en: s }, i),
+        titulo: X(nombreLlano(s), i),
       })),
   );
   // Primero el nodo que más reglas tiene (el que más se mueve al jugar), como la maqueta.
@@ -195,6 +228,7 @@ export function vistaPlayground(d: DatosDemo, i: Idioma): VistaPlayground {
     .join("; ");
   const minutos = c.minutos_por_persona;
   const rf = inf.contrato_de_grafo.rf_09_2;
+  const orden = nodosEnOrden(c, d);
   return {
     portada: {
       antetitulo: X(
@@ -230,7 +264,7 @@ export function vistaPlayground(d: DatosDemo, i: Idioma): VistaPlayground {
         k: X(FICHA_TECNICA.regla, i),
         v: X(FICHA_TECNICA.reglaValor(funciones), i),
       },
-      { k: X(FICHA_TECNICA.orden, i), v: ordenDeEvaluacion(c) },
+      { k: X(FICHA_TECNICA.orden, i), v: ordenDeEvaluacion(c, orden) },
       {
         k: X(FICHA_TECNICA.cruzada, i),
         v: X(
@@ -266,12 +300,6 @@ export function vistaPlayground(d: DatosDemo, i: Idioma): VistaPlayground {
         v: X(FICHA_TECNICA.criteriosValor(c.criterios.length), i),
       },
     ],
-    curvaLectura: s1
-      ? s1.curva!.some((p) => (p.riesgo ?? 0) > 0)
-        ? X(CURVA.lectura, i)
-        : X(CURVA.lecturaSinRiesgo(s1.n), i)
-      : "",
-    curvaChip: s1 ? X(CURVA.chip(s1.n), i) : "",
     limites: inf.playground.limites.map((l) => X(l, i)),
     nucleoDetalle: X(
       LIMITES.nucleoDetalle(rf.reduce((n, r) => n + r.visitas, 0)),
@@ -307,6 +335,7 @@ export function vistaPlayground(d: DatosDemo, i: Idioma): VistaPlayground {
         href: ruta(i, "caso", k.id),
       })),
       columnas,
+      nodosEnOrden: orden,
       curva:
         s1 && typeof u1?.valor_en_plan === "number"
           ? {
@@ -314,6 +343,9 @@ export function vistaPlayground(d: DatosDemo, i: Idioma): VistaPlayground {
               plan: u1.valor_en_plan,
               n: s1.n,
               umbral: u1.id,
+              lectura: s1.curva!.some((p) => (p.riesgo ?? 0) > 0)
+                ? X(CURVA.lectura, i)
+                : X(CURVA.lecturaSinRiesgo(s1.n), i),
             }
           : null,
       version: vPlan,

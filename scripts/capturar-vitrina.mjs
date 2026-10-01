@@ -161,6 +161,64 @@ async function interaccionMirada2({ page, probar }) {
   );
 }
 
+/** Mueve U2 del playground a 1600 con el teclado (seis pasos de 100 desde el plan, 1000). */
+async function u2a1600(page) {
+  await page.locator("#w-U2 input[type=range]").focus();
+  for (let k = 0; k < 6; k++) await page.keyboard.press("ArrowRight");
+  await page.locator('#cambios [data-caso="A-010"]').waitFor();
+  // Sin el anillo de foco del teclado en la captura: se compara la pantalla, no el foco.
+  await page.evaluate(() => document.activeElement?.blur());
+}
+
+/** Pasada de interacción de la mirada 3: los controles propios de Brecha y del Playground. */
+async function interaccionMirada3({ page, probar }) {
+  await page.goto(`${V}/es/brecha?tema=oscuro&perfil=lider`);
+  await asentar(page);
+  await probar(
+    "Brecha: «Ver como experto»",
+    () => page.getByRole("button", { name: "Ver como experto" }).click(),
+    () =>
+      page.evaluate(
+        () => document.documentElement.getAttribute("data-perfil") === "experto",
+      ),
+  );
+  await probar(
+    "Brecha: balance «1 · S3» → lo que falló",
+    () => page.locator('a[href="#f-S3"]').first().click(),
+    () => page.evaluate(() => location.hash === "#f-S3"),
+  );
+  await probar(
+    "Brecha: «Abrir el playground»",
+    () => page.getByRole("link", { name: "Abrir el playground" }).click(),
+    () => page.evaluate(() => location.pathname === "/es/playground"),
+  );
+  await asentar(page);
+  await probar(
+    "Playground: U2 → 1600 con el teclado",
+    () => u2a1600(page),
+    () => page.locator('#cambios [data-caso="A-010"]').isVisible(),
+  );
+  await probar(
+    "Playground: «Volver al plan»",
+    () => page.getByRole("button", { name: "Volver al plan" }).click(),
+    () =>
+      page.evaluate(
+        () => document.querySelectorAll("#cambios [data-caso]").length === 0,
+      ),
+  );
+  await probar(
+    "Playground: modo Texas encendido",
+    () => page.getByRole("switch", { name: /Modo Texas/ }).click(),
+    () =>
+      page.evaluate(
+        () =>
+          document
+            .querySelector("#w-U4 [role=switch]")
+            ?.getAttribute("aria-checked") === "true",
+      ),
+  );
+}
+
 /** Los pares de experto de cada pantalla (oscuro, español, en los dos anchos). */
 const EXPERTO = [
   { ancho: 1280, tema: "oscuro", idioma: "es", perfil: "experto" },
@@ -365,6 +423,128 @@ const MIRADAS = {
       ],
     ],
   },
+  p3: {
+    titulo: {
+      es: "Mirada 3: P4 Brecha y P5 Playground frente a sus maquetas",
+      en: "Look 3: P4 Gap and P5 Playground against their mock-ups",
+    },
+    pregunta:
+      "¿Brecha y Playground construidos se ven como las maquetas que aprobaste?",
+    pantallas: [
+      {
+        clave: "p4",
+        nombre: "P4 Brecha",
+        ruta: (idioma) => `/${idioma}/brecha`,
+        maqueta: "diseno/04-brecha.html",
+        estadoMaqueta: "real",
+        extra: EXPERTO,
+      },
+      {
+        clave: "p5",
+        nombre: "P5 Playground",
+        ruta: (idioma) => `/${idioma}/playground`,
+        maqueta: "diseno/05-playground.html",
+        estadoMaqueta: "plan",
+        extra: EXPERTO,
+      },
+      {
+        clave: "p5-u2",
+        nombre: "P5 Playground con U2 en 1600",
+        ruta: (idioma) => `/${idioma}/playground`,
+        maqueta: "diseno/05-playground.html",
+        estadoMaqueta: "u2",
+        accion: u2a1600,
+        // Un estado movido basta en los dos anchos, oscuro, en los dos idiomas: el resto ya lo cubren los pares
+        // del plan.
+        pares: [
+          { ancho: 1280, tema: "oscuro", idioma: "es", perfil: "lider" },
+          { ancho: 380, tema: "oscuro", idioma: "es", perfil: "lider" },
+          { ancho: 1280, tema: "oscuro", idioma: "en", perfil: "lider" },
+        ],
+      },
+    ],
+    interaccion: interaccionMirada3,
+    matriz: [
+      [
+        "P4 Brecha",
+        "«El informe en una mirada»",
+        "Lee el sello y la frase debajo.",
+        "«Cumple con alertas»: se cumplieron los 9 criterios y no ocurrió ninguno de los 8 riesgos; fallaron S3 (varios agentes, más lentos que uno) y 5 respuestas fuera de formato; S1 quedó sin probar.",
+      ],
+      [
+        "P4 Brecha",
+        "El balance",
+        "Pulsa «1 · S3» en la fila de supuestos.",
+        "Baja a «Lo que falló», al renglón de S3, con sus casos A-008, A-012 y A-020 enlazados.",
+      ],
+      [
+        "P4 Brecha",
+        "«Lo que quedó sin probar»",
+        "Mira el renglón de S1.",
+        "Borde discontinuo y «Sin probar»: el modelo acertó los 15 casos medidos y sin un error no hay con qué medir su confianza.",
+      ],
+      [
+        "P4 Brecha",
+        "«Se cumplió, con una nota»",
+        "Lee el renglón de C3.",
+        "Cumple sobre solo 3 casos; con U2 en 1500 deja de cumplirse (A-010 saldría sin persona). Ese 1500 lo calcula el playground, no está escrito a mano.",
+      ],
+      [
+        "P4 Brecha",
+        "Lo cumplido, renglón R8",
+        "Mira la columna de la derecha.",
+        "«0 de 1 sesión»: R8 se cuenta por sesión, no por caso (la maqueta decía «casos»).",
+      ],
+      [
+        "P4 Brecha",
+        "§ 5 Brechas no previstas, pares «experto»",
+        "Mira cada falla y la tabla de evaluadores.",
+        "Cada falla con su categoría y sus reintentos, y una columna «No evaluables» en los evaluadores: es la deuda M-24 pagada.",
+      ],
+      [
+        "P4 Brecha",
+        "§ 6 Supuestos, S1",
+        "Mira la curva en miniatura.",
+        "La curva plana en 0 % con las etiquetas de U1 sin encimarse y el punto del plan en 0,75.",
+      ],
+      [
+        "P5 Playground",
+        "«El playground en una mirada», como líder",
+        "Lee «Un ejemplo».",
+        "Subir U1 de 0,75 a 0,90 manda A-008 (confianza 0,88) a una persona: 12 minutos más, ningún error nuevo. Es una medida, no un texto fijo.",
+      ],
+      [
+        "P5 Playground",
+        "Pares «experto»",
+        "Mira la ficha técnica y la regla de decisión.",
+        "El orden de evaluación sigue el grafo (enrutador, extractor, aclaracion, decision) y no el alfabeto; la regla muestra los valores que muevas, subrayados.",
+      ],
+      [
+        "P5 Playground",
+        "Par «U2 en 1600»",
+        "Compáralo con la maqueta en el mismo estado.",
+        "A-010 pasa a «solo» y es un error; C3 deja de cumplirse. La maqueta decía «8 de 9»; aquí dice «6 de 9» porque C2 y C7 no se pueden medir en A-010: leen lo que pasa después del cambio, que la traza no registró.",
+      ],
+      [
+        "P5 Playground",
+        "Modo Texas (U4)",
+        "En la página, enciéndelo.",
+        "Ningún caso cambia, y la lista lo dice: toda propuesta adversa ya pasaba por una persona; abajo, «conmutarlo cambia 0 de las 62 decisiones».",
+      ],
+      [
+        "P5 Playground",
+        "La curva riesgo-cobertura",
+        "En la página, mueve U1.",
+        "El cuadro ■ sigue a U1 en la curva y en la tabla; el círculo es el plan. La lectura dice que el riesgo quedó en 0 % porque no hubo errores.",
+      ],
+      [
+        "Las dos",
+        "Pares «claro» y «en»",
+        "Míralos junto a su maqueta.",
+        "Los mismos colores que la maqueta en claro; en inglés todo redactado, salvo los nombres del código.",
+      ],
+    ],
+  },
 };
 
 const mirada = arg("mirada", "p1");
@@ -445,6 +625,16 @@ const CROMO_SALA =
   ".mq-bar,.mq-nota,.mq-solo-sala,.mq-cierre{display:none!important}";
 const combinaciones = [];
 for (const pantalla of M.pantallas) {
+  if (pantalla.pares) {
+    for (const e of pantalla.pares)
+      if (
+        anchos.includes(e.ancho) &&
+        temas.includes(e.tema) &&
+        idiomas.includes(e.idioma)
+      )
+        combinaciones.push({ pantalla, ...e });
+    continue;
+  }
   for (const ancho of anchos)
     for (const tema of temas)
       for (const idioma of idiomas)
@@ -553,6 +743,11 @@ for (const c of combinaciones) {
     `${V}${c.pantalla.ruta(c.idioma)}?tema=${c.tema}&perfil=${c.perfil}`,
   );
   await asentar(page);
+  // Un estado movido (p. ej. U2 en 1600): se llega con el control, como lo haría quien lee.
+  if (c.pantalla.accion) {
+    await c.pantalla.accion(page);
+    await asentar(page);
+  }
   const m = await medir(
     page,
     `vitrina ${c.pantalla.nombre} ${c.ancho} ${c.tema} ${c.idioma} ${c.perfil}`,
@@ -574,6 +769,8 @@ for (const c of combinaciones) {
       fullPage: true,
       type: "jpeg",
       quality: calidad,
+      // Brecha en el teléfono pasa de 20.000 px: la captura de página entera tarda más que los 30 s por omisión.
+      timeout: 120_000,
     });
   }
   await page.goto(
@@ -599,6 +796,8 @@ for (const c of combinaciones) {
       fullPage: true,
       type: "jpeg",
       quality: calidad,
+      // Brecha en el teléfono pasa de 20.000 px: la captura de página entera tarda más que los 30 s por omisión.
+      timeout: 120_000,
     });
   pares.push({ ...c, archivoV, archivoM });
   await ctx.close();
@@ -701,7 +900,7 @@ ul{padding-left:20px;font-size:13px;color:var(--t2)}
 <body>
 <main>
 <h1>${esc(M.pregunta)}</h1>
-<p>${esc(M.titulo.es)}. A la izquierda, la maqueta aprobada (sin el cromo de la sala de diseño); a la derecha, la vitrina que se construyó en el sprint 2, capturada del export estático entrando por el índice. ${pares.length} pares: 380 px y escritorio × oscuro y claro × español e inglés, más dos como experto${varias ? " por pantalla" : ""}. <a href="#matriz">La matriz de qué mirar</a> está al pie.</p>
+<p>${esc(M.titulo.es)}. A la izquierda, la maqueta aprobada (sin el cromo de la sala de diseño); a la derecha, la vitrina que se construyó en el sprint 2, capturada del export estático entrando por el índice. ${pares.length} pares: 380 px y escritorio × oscuro y claro × español e inglés, más dos como experto${varias ? " por pantalla" : ""}${pares.some((p) => p.pantalla.pares) ? `; además, ${pares.filter((p) => p.pantalla.pares).length} con un umbral movido` : ""}. <a href="#matriz">La matriz de qué mirar</a> está al pie.</p>
 ${filtroPantallas}
 <div class="filtros" role="group" aria-label="Filtrar por ancho" data-eje="ancho"><button type="button" aria-pressed="true" data-f="todos">Todos</button><button type="button" aria-pressed="false" data-f="1280">Escritorio</button><button type="button" aria-pressed="false" data-f="380">Teléfono (380 px)</button></div>
 ${bloques}

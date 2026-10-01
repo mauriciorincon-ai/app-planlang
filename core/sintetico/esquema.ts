@@ -4,7 +4,7 @@
  * los consume como JSON; el generador valida su propia salida contra estos esquemas.
  */
 import { z } from "zod";
-import { TextoBilingueSchema } from "../formatos/bilingue";
+import { TextoBilingueSchema } from "../formatos/bilingue-esquema";
 
 const HEX64 = /^[0-9a-f]{64}$/;
 const CODIGO_PROCEDIMIENTO = /^SYN-P-\d{3}$/;

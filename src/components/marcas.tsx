@@ -41,7 +41,14 @@ export function Glifo({
 }
 
 export type TipoDeMarca =
-  "cumple" | "alerta" | "no-cumple" | "beta" | "falta" | "real" | "maqueta";
+  | "cumple"
+  | "alerta"
+  | "no-cumple"
+  | "beta"
+  | "falta"
+  | "parcial"
+  | "real"
+  | "maqueta";
 
 const TRAZO = {
   fill: "none",
@@ -110,6 +117,14 @@ function dibujo(tipo: TipoDeMarca) {
           strokeDasharray="2.6 2.1"
           strokeLinecap="butt"
         />
+      );
+    case "parcial":
+      // A medio camino (un umbral movido del plan): círculo con la mitad izquierda llena.
+      return (
+        <>
+          <circle r={6.3} {...TRAZO} strokeWidth={1.5} />
+          <path d="M0,-6.3 A6.3,6.3 0 0 0 0,6.3 Z" fill="currentColor" />
+        </>
       );
     case "real":
       return <circle r={5.5} fill="currentColor" />;

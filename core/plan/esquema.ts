@@ -8,7 +8,10 @@
  * clave desconocida es un error, no un silencio.
  */
 import { z } from "zod";
-import { TextoBilingueSchema, TextoLibreSchema } from "../formatos/bilingue";
+import {
+  TextoBilingueSchema,
+  TextoLibreSchema,
+} from "../formatos/bilingue-esquema";
 
 export const ID = z
   .string()

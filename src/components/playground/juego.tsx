@@ -15,7 +15,13 @@ import {
   History,
   ListChecks,
 } from "lucide-react";
-import { useId, useMemo, useState, type CSSProperties, type ReactNode } from "react";
+import {
+  useId,
+  useMemo,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from "react";
 import type { Idioma } from "@core/formatos/bilingue";
 import type { JsonValor } from "@core/formatos/jcs";
 import type { RegistroDeArista, Umbrales } from "@core/playground/aristas";
@@ -28,7 +34,12 @@ import {
   type Consecuencias,
   type CriterioRecalculado,
 } from "@core/playground/consecuencias";
-import { decimal, enumerar, porcentaje } from "@/lib/vista/formato";
+import {
+  decimal,
+  enumerar,
+  porcentaje,
+  porcentajeFijo,
+} from "@/lib/vista/formato";
 import type { DatosIsla, UmbralIsla } from "@/lib/vista/playground";
 import { PERFIL } from "@/textos/comun";
 import {
@@ -58,12 +69,11 @@ import { Glifo, Marca } from "../marcas";
 import { BloqueExperto } from "../perfil/bloque-experto";
 import { Seccion } from "../seccion";
 import { Veredicto } from "../veredicto";
-import { SinProbar } from "../brecha/mirada";
+import { SinProbar } from "../sin-probar";
 
 const MONO = "font-mono text-dato leading-normal [overflow-wrap:anywhere]";
 const ET =
   "block font-letra text-dato leading-[1.4] text-tinta-2 escritorio:hidden";
-
 
 function datoCorto(x: JsonValor | undefined, i: Idioma): string {
   if (x === undefined || x === null) return "—";
@@ -544,7 +554,7 @@ function ReglaViva({
 }) {
   const c = d.compacto;
   const plan = umbralesDelPlan(c);
-  const nodos = [...new Set(c.aristas.map((a) => a.desde))];
+  const nodos = d.nodosEnOrden;
   const valorDe = (id: string) => {
     const um = d.umbrales.find((x) => x.id === id)!;
     const v = u[id] as number | boolean;
@@ -828,7 +838,7 @@ export function Juego({ datos }: { datos: DatosIsla }) {
                   className="flex items-center gap-2 text-chico"
                 >
                   <Marca
-                    tipo={r.movidos.length ? "alerta" : "cumple"}
+                    tipo={r.movidos.length ? "parcial" : "cumple"}
                     tam={15}
                     className="text-tinta-1"
                   />
@@ -865,7 +875,7 @@ export function Juego({ datos }: { datos: DatosIsla }) {
                 </p>
               ) : (
                 <div id="cambios" className="grid">
-                  <div className="hidden gap-3 pb-1.5 text-dato text-tinta-2 escritorio:grid escritorio:grid-cols-[56px_minmax(0,0.9fr)_minmax(0,1.1fr)_minmax(0,1.3fr)_minmax(0,1.1fr)]">
+                  <div className="hidden gap-3 pb-1.5 text-dato text-tinta-2 escritorio:grid escritorio:grid-cols-[56px_minmax(0,1.1fr)_minmax(0,1.3fr)_minmax(0,1.4fr)_minmax(0,1.2fr)]">
                     <span>{CAMBIOS.columnas.caso[i]}</span>
                     <span>{CAMBIOS.columnas.tipo[i]}</span>
                     <span>{CAMBIOS.columnas.antesAhora[i]}</span>
@@ -878,7 +888,7 @@ export function Juego({ datos }: { datos: DatosIsla }) {
                       <div
                         key={x.id}
                         data-caso={x.id}
-                        className="grid grid-cols-[56px_minmax(0,1fr)] items-start gap-x-3 gap-y-1.5 border-t border-linea py-3 text-chico escritorio:grid-cols-[56px_minmax(0,0.9fr)_minmax(0,1.1fr)_minmax(0,1.3fr)_minmax(0,1.1fr)]"
+                        className="grid grid-cols-[56px_minmax(0,1fr)] items-start gap-x-3 gap-y-1.5 border-t border-linea py-3 text-chico escritorio:grid-cols-[56px_minmax(0,1.1fr)_minmax(0,1.3fr)_minmax(0,1.4fr)_minmax(0,1.2fr)]"
                       >
                         <span className="font-mono text-dato">{x.id}</span>
                         <span className="text-tinta-2">{caso?.tipo}</span>
@@ -903,7 +913,8 @@ export function Juego({ datos }: { datos: DatosIsla }) {
                             {reglaAplicada(x)}
                           </span>
                         </span>
-                        <span className="col-start-2 grid justify-items-start gap-1 escritorio:col-start-auto">
+                        {/* En la columna angosta la marca de la consecuencia se parte en dos líneas, como en la maqueta. */}
+                        <span className="col-start-2 grid justify-items-start gap-1 escritorio:col-start-auto [&>span]:h-auto [&>span]:min-h-5 [&>span]:py-0.5 [&>span]:leading-[1.3] [&>span]:whitespace-normal">
                           <Efecto x={x} minutos={minutos} i={i} />
                           {caso ? (
                             <a
@@ -953,6 +964,9 @@ export function Juego({ datos }: { datos: DatosIsla }) {
           titulo={CURVA.titulo[i]}
           cabecera={<Chip procedencia="real">{CURVA.chip(curva.n)[i]}</Chip>}
         >
+          <p className="mb-6 max-w-[72ch] text-texto leading-[1.6]">
+            {curva.lectura}
+          </p>
           <div className="grid grid-cols-1 items-start gap-6 amplio:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
             <figure className="m-0 rounded-baldosa border border-linea bg-sup-1 p-4">
               <Curva
@@ -978,7 +992,7 @@ export function Juego({ datos }: { datos: DatosIsla }) {
               </figcaption>
             </figure>
             <div className="grid">
-              <div className="grid grid-cols-[minmax(0,0.8fr)_repeat(4,minmax(0,1fr))] gap-2 pb-1.5 text-dato text-tinta-2">
+              <div className="grid grid-cols-[60px_minmax(0,1fr)_minmax(0,1.3fr)_minmax(0,0.8fr)_minmax(0,0.8fr)] gap-2 pb-1.5 text-dato text-tinta-2">
                 <span>{curva.umbral}</span>
                 <span>{CURVA.columnas.cobertura[i]}</span>
                 <span>{CURVA.columnas.escalamiento[i]}</span>
@@ -995,7 +1009,7 @@ export function Juego({ datos }: { datos: DatosIsla }) {
                     data-actual={esActual}
                     data-plan={esPlan}
                     className={cx(
-                      "grid grid-cols-[minmax(0,0.8fr)_repeat(4,minmax(0,1fr))] items-center gap-2 border-t border-linea py-1.75 font-mono text-dato",
+                      "grid grid-cols-[60px_minmax(0,1fr)_minmax(0,1.3fr)_minmax(0,0.8fr)_minmax(0,0.8fr)] items-center gap-2 border-t border-linea py-1.75 font-mono text-dato",
                       esActual && "bg-sup-2",
                     )}
                   >
@@ -1020,15 +1034,8 @@ export function Juego({ datos }: { datos: DatosIsla }) {
                         <span className="sr-only"> ({CURVA.srPlan[i]})</span>
                       ) : null}
                     </span>
-                    <span>
-                      {porcentaje(Math.round(p.cobertura * 1000) / 1000, i)}
-                    </span>
-                    <span>
-                      {porcentaje(
-                        Math.round((1 - p.cobertura) * 1000) / 1000,
-                        i,
-                      )}
-                    </span>
+                    <span>{porcentajeFijo(p.cobertura, 1, i)}</span>
+                    <span>{porcentajeFijo(1 - p.cobertura, 1, i)}</span>
                     <span>
                       {p.riesgo === null
                         ? CURVA.sinCaso[i]

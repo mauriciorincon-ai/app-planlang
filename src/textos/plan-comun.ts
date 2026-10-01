@@ -13,6 +13,13 @@ export const ESTADO_CRITERIO: Record<string, TextoBilingue> = {
   mal_formado: tb("Regla mal formada", "Malformed rule"),
 };
 
+/** En el informe (P4 Brecha) el criterio se lee en presente, como su veredicto: «Cumple», «No cumple». */
+export const ESTADO_CRITERIO_INFORME: Record<string, TextoBilingue> = {
+  ...ESTADO_CRITERIO,
+  cumple: tb("Cumple", "Meets"),
+  incumple: tb("No cumple", "Does not meet"),
+};
+
 export const ESTADO_RIESGO: Record<string, TextoBilingue> = {
   ocurrio: tb("Ocurrió", "Occurred"),
   no_ocurrio: tb("No ocurrió", "Did not occur"),

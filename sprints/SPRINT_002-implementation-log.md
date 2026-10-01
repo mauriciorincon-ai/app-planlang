@@ -13,7 +13,7 @@
 | 0 · Setup, deltas, plan v1.3 y ⭐ del S1 | ✅ cerrada · paradas del S1 diferidas con nombre | «continúa» 2026-09-28 |
 | 1 · Fundación de UI + P1 → gate de FIDELIDAD | ✅ cerrada · **fidelidad aprobada** (`docs/fidelidad/p1/index.html`) | «lo abrí y lo apruebo» + «avancemos» 2026-09-29 |
 | 2 · P2 Plan · P3 Agente (visor) · P6 Caso | ✅ construida · **mirada 2 aprobada** (`docs/fidelidad/p2/index.html`) · ⏸ esperando el «continúa» de fase | «lo abrí y apruebo» 2026-09-30 |
-| 3 · P4 Brecha · P5 Playground | 🔨 en construcción (núcleo del playground, M-24 y M-26 hechos; pantallas en curso) | «continúa» 2026-09-30 |
+| 3 · P4 Brecha · P5 Playground | ✅ construida · ⏸ **esperando la mirada 3** (`docs/fidelidad/p3/index.html`) | |
 | 4 · P7 Fichas · paquete · corridas de fondo · deuda | ⏳ | |
 | 5 · Cierre | ⏳ | |
 
@@ -490,8 +490,14 @@ la entrada `p2`) → DETENERSE para la mirada 2.
 | M-26 en criterios (`criterios.test.ts`) | volver a «sin población» cuando no hay valores | `expected 'sin_poblacion' to be 'indeterminado'` → verde |
 | M-26 en el validador (`validador.test.ts`) | apagar el rechazo de métrica en `pass^k` | `expected [[CRITERIO_SIN_REGLA, C7]] to deep equally contain [CRITERIO_SIN_REGLA, C5]` → verde |
 | M-24 en el informe (`render-md.test.ts`) | quitar la categoría de la línea de cada brecha | rojo en «M-24: cada brecha dice su categoría…» → verde |
+| Hidratación de la isla (`playground-componentes`) | el U1 inicial del cliente sale de un `useSyncExternalStore` (0,80) distinto del del servidor | `expected '<section aria-labelledby="s-juego-t" …' to be …` → verde |
+| Forma invariante por perfil (`playground-componentes`) | la tabla de las 20 decisiones solo se pinta si el perfil es experto | rojo en «cambiar a experto y volver no cambia la forma» (el servidor no lo vio: por eso existe la prueba del clic) → verde |
+| Deslizador y Texas por teclado (e2e) | sin manejadores en el deslizador y en el interruptor | 4 rojos: `toHaveValue("0.9")` recibió `0.75`; `aria-checked` `true` recibió `false` → verde |
+| Nombre llano de cada señal (`playground.test.ts`) | `nombreLlano` vuelve a poner el código en silencio | rojo en «una señal que decide sin nombre llano detiene el build» → verde |
+| Informe que no cumple, al frente (`brecha*.test.*`) | los criterios incumplidos no entran a «Lo que falló» | 2 rojos (vista y componentes) → verde |
+| Presupuesto de Lighthouse (heredado, primera vez que P4/P5 dependen de él) | LCP y FCP de 100 ms | `largest-contentful-paint failure … found: 2499.99` → el gate puede fallar |
 
-### Punto de retoma (2026-09-30, compactación pedida por el usuario)
+### Punto de retoma (2026-09-30, compactación pedida por el usuario) — cumplido, ver «P5 Playground, pruebas y cierre de la fase»
 
 Hecho y comiteado en local (sin push: falta correr el job de calidad completo con build y e2e):
 - núcleo del playground + paridad (arriba);
@@ -533,6 +539,88 @@ Siguiente, en orden:
    - `docs/fidelidad/p3`;
    - job de calidad completo, push, `gh pr checks`;
    - **DETENERSE para la mirada 3** con pregunta simple + ruta + matriz.
+
+### P5 Playground, pruebas y cierre de la fase (2026-09-30)
+
+**La página** (`src/app/[idioma]/playground/page.tsx`): portada, `Oraculo`, «El playground en una mirada»
+(`src/components/playground/mirada.tsx`: Leer como, aviso de perfil, objetivo, recibe → hace → entrega, el ejemplo
+medido solo para el líder y la ficha técnica en el bloque del experto), la isla `<Juego>` y «Lo que el playground no
+puede saber» con el aparte del núcleo. La lectura de la curva pasó a los datos de la isla (`isla.curva.lectura`): la
+maqueta la trae y la isla no la pintaba.
+
+**Lo que salió de mirar las capturas como imagen** (escritorio, teléfono, ES/EN, líder/experto, U2 en 1600, Texas):
+- la marca de la consecuencia («error: debía ir a una persona») se salía de la tarjeta en escritorio → se parte en dos
+  líneas dentro de la tabla de cambios, como en la maqueta, con sus proporciones de columna;
+- a 380 px, «Escalamiento» pisaba «Riesgo» en la tabla de la curva → la columna del umbral queda fija (60 px) y la de
+  escalamiento más ancha;
+- el ejemplo decía «Si subes confianza mínima…» → «Si subes el umbral de confianza mínima de extracción (U1)…», que
+  vale para cualquier umbral (desviación 38);
+- el orden de evaluación salía alfabético (aclaracion, decision, enrutador, extractor) → sigue el grafo del plan
+  (`nodos_esperados`), en la ficha técnica y en la regla del experto;
+- la tabla de la curva con un decimal fijo en cobertura y escalamiento («100,0 %», como la maqueta;
+  `porcentajeFijo`);
+- «Movido» llevaba el triángulo de alerta → la marca «parcial» de la maqueta (círculo a medio llenar), nueva en
+  `marcas.tsx`;
+- Brecha decía «Cumplió» (el mapa compartido con Plan y Agente) → «Cumple» / «Meets», como su maqueta
+  (`ESTADO_CRITERIO_INFORME`); Plan y Agente siguen con «Cumplió», como las suyas.
+
+**Zod viajaba a la isla.** Lighthouse local dejó el LCP mediano del Playground en 2.499,99 ms contra un presupuesto
+de 2.500 (corridas: 2,50 · 2,53 · 3,01 s; 395 KB). El chunk propio de la página pesaba 527 KB (132 KB comprimido) y
+traía Zod por dos caminos: (1) la isla importaba `SinProbar` de `brecha/mirada.tsx`, que importa valores de la vista
+de Brecha (compactador, analizador de reglas, esquemas); (2) los diccionarios importan `tb` de
+`core/formatos/bilingue.ts`, que definía sus esquemas Zod en el nivel superior (efecto que el empaquetador no puede
+descartar). Arreglo: `SinProbar` en su propio archivo (`src/components/sin-probar.tsx`) y los esquemas en
+`core/formatos/bilingue-esquema.ts` (`satisfies` los ata al tipo); `bilingue.ts` queda sin Zod. Resultado: chunk
+propio 17 KB comprimido, JS de la página 195 KB (Brecha 177, Agente 180), peso total 282 KB.
+
+**Lighthouse local** (3 corridas, mediana; `lhci assert` de presupuestos y de categorías en verde):
+
+| Ruta | Rendimiento · A11y · BP · SEO | LCP | TBT | Peso |
+|---|---|---|---|---|
+| `/es/brecha` | 92–98 · 100 · 100 · 100 | 1,87–2,41 s | 150–268 ms | 284 KB |
+| `/es/playground` | 97–99 · 100 · 100 · 100 | 1,96–2,67 s | 53–67 ms | 282 KB |
+
+Se añaden a `lighthouse-urls.json`. Antes de confiar en el presupuesto se comprobó que **puede fallar**: con un LCP
+imposible (100 ms) `lhci assert --budgetsFile` sale en rojo con los valores de cada corrida.
+
+**Pruebas nuevas:**
+- `tests/unit/vitrina/brecha.test.ts` (12): veredicto y balance; lo que falló y lo sin probar; C3 con nota y el umbral
+  que lo rompe medido por el playground (U2 1500, y 1400 todavía cumple); C4 sin nota inventada; R8 en sesiones; las
+  9 secciones; un supuesto o una categoría de brecha sin lectura detienen el build; y **un informe que no cumple**
+  (`_brecha-no-cumple.ts`: C7 con objetivo de 10 s, R2 ocurrido en A-015, C6 sin población, R5 indeterminado) se
+  publica con sus fallas al frente, en los dos idiomas.
+- `tests/unit/vitrina/playground.test.ts` (13): portada y recibe contados en la corrida; el ejemplo es una medida (U1
+  0,80 y 0,85 no mueven nada; 0,90 mueve A-008); ficha técnica; orden por grafo; límites del informe; la isla con sus
+  umbrales, columnas, casos y curva; la isla sobrevive a JSON (datos puros); sin ejemplo si ningún valor mueve un
+  caso; la lectura de la curva con riesgo; y una señal que decide sin nombre llano detiene el build.
+- `*-componentes.test.tsx` de Brecha (7) y Playground (7): la isla hidrata sobre el HTML del servidor sin errores y sin
+  cambiar una coma; U1 0,90 y «Volver al plan»; U2 1600 con C3; Texas; inglés sin residuo; forma invariante por
+  perfil; el informe que no cumple pintado entero.
+- `paridad.test.ts` (+13): 8 reglas de medición distintas (promedio, máximo, métrica a superar, objetivo no numérico,
+  población vacía en métrica y en condición, tasa, regla mal formada) miden igual en el playground que en el
+  verificador en 6 posiciones de los umbrales; los cuatro efectos según la verdad conocida (DA-04); y las entradas
+  que el compacto rechaza nombrándolas (dos costos humanos, ningún costo, informe sin un criterio, traza sin su caso,
+  camino sin evaluación).
+- `textos.test.ts`: `brecha` y `playground` entran al barrido de los dos idiomas, y seis párrafos de líder de P4/P5 al
+  presupuesto de líder.
+- e2e `tests/e2e/{brecha,playground}.spec.ts` (30 por proyecto): llegar por la pestaña; cada tema × perfil por
+  separado con axe, sin desplazamiento lateral y consola limpia (juntos pasaban de 30 s); el balance lleva a S3 y S1;
+  U1 y U2 con el teclado; Texas con la barra espaciadora; el enlace de A-010 a su traza; movimiento reducido.
+
+**Cobertura:** `core/playground` 96,4 % de ramas (umbral 90) y `src/lib` 80,0 % (umbral 80); la primera corrida dio
+86 % y 77,4 % — las agregaciones que el demo no usa y los estados de un informe que no cumple no tenían prueba. El
+proyecto `vitrina` de Vitest pasa a 30 s por prueba y por gancho: con cobertura y todo en paralelo, el primer render de
+una página entera pasaba de los 5 s (no colgaba: Agente y Caso también cayeron).
+
+**Job de calidad local completo, verde:** `pnpm peers check` · `typecheck` · `lint` · `pnpm test` (1735 pasan, 1
+omitida) · `trazas:verificar` · `build` · `verificar-export` (57 HTML) · `diagrama:verificar` · `pnpm audit` · e2e
+(118 pasan, 2 omitidas, 0 inestables).
+
+**Mirada 3** (`node scripts/capturar-vitrina.mjs --mirada p3 --calidad 30`): 23 pares — Brecha y Playground en 380 px
+y escritorio × 2 temas × 2 idiomas + 2 de experto cada una, y 3 del Playground con U2 en 1600 contra el estado «u2» de
+la maqueta — y 6/6 interacciones que cambian algo. El arnés gana `pares` (un estado movido no necesita toda la
+matriz), `accion` (llegar al estado con el control, como quien lee) y 120 s por captura de página entera (Brecha a
+380 px pasa de 20.000 px).
 
 ## Desviación del plan
 
@@ -622,6 +710,14 @@ Siguiente, en orden:
     medirse en A-008» donde la maqueta decía «9 de 9». Es la regla 15 de la app: jamás se simula lo que no corrió.
 37. **Verificador 1.2.0 (M-24):** `reintentos` es un campo nuevo de cada brecha no prevista, porque la pantalla
     Brecha muestra la columna «Reintentos» y no debía leerla de una frase.
+38. **P5, el ejemplo del líder:** «Si subes el umbral de confianza mínima de extracción (U1)…» donde la maqueta decía
+    «Si subes la confianza mínima (U1)…»: el ejemplo se mide y se escribe para el primer umbral que mueva un caso, y
+    «el umbral de» concuerda con cualquiera.
+39. **P5, la ficha técnica del experto:** el orden de evaluación se escribe con las reglas del plan en código
+    (`enrutador (tipo_atencion = urgencia ∨ servicio_exento = true → redactor) · …`) donde la maqueta lo resumía en
+    palabras: sale del grafo, no de una copia.
+40. **Las capturas de la mirada 3 pesan 20 MB** (calidad 30; Brecha a 380 px pasa de 20.000 px): sigue las
+    desviaciones 18 y 33.
 
 ## Registro de miradas
 
@@ -638,6 +734,10 @@ Siguiente, en orden:
 | 2026-09-28 | Sentry se descargaba sin DSN | importación estática del kit en `instrumentation-client.ts` | importación dinámica detrás del `if` (desviación 22) |
 | 2026-09-28 | Demo de desbordamiento verde por error | bloque de 400 px sin alto (área cero no desborda) | demo repetida con 400×4 px: rojo |
 | 2026-09-28 | `lighthouse` rojo: LCP 2,72 s > 2,5 s | el runtime de Next y la mono de datos bajaban antes del primer pintado | mono diferida al `load` (LCP local 2,31 s); ver «CI del commit `8c7ae2d`» |
+| 2026-09-30 | LCP del Playground en el borde (2.499,99 ms) | Zod en la isla: `SinProbar` importado de `brecha/mirada.tsx` y esquemas Zod en `core/formatos/bilingue.ts` | `sin-probar.tsx` y `bilingue-esquema.ts`; JS propio 132 → 17 KB comprimido (ver «P5 Playground, pruebas y cierre») |
+| 2026-09-30 | Pruebas de componentes por tiempo bajo cobertura | 5 s por omisión; el primer render de páginas enteras en paralelo los pasa | `testTimeout`/`hookTimeout` de 30 s en el proyecto `vitrina` |
+| 2026-09-30 | La captura de la mirada 3 cayó a mitad | 30 s por omisión para una captura de página entera de 20.000 px | 120 s por captura en el arnés |
+| 2026-09-30 | `out/` quedó con el build de un rojo a propósito | el e2e de la demo en rojo recompila; revertir la fuente no recompila | se recompila antes de capturar; las capturas salen siempre de un build posterior al último cambio |
 | 2026-09-28 | Contraste rojo intermitente en axe | los botones de tema y perfil pasaban a «pulsado» con transición al hidratar | la opción elegida se pinta desde el atributo del `<html>`; axe espera a que no haya animaciones |
 | 2026-09-28 | «Sin probar» se veía como anillo continuo | las marcas discontinuas llevaban punta redonda y cerraban los huecos | punta recta en `falta`, `maqueta` y `beta` + prueba; capturas regeneradas |
 | 2026-09-28 | Prettier reformateó `src/lib/observability.ts` sin cambios de fondo | `prettier --write` sobre `src/**` | revertido; el diff solo lleva lo del sprint |

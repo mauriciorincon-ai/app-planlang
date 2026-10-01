@@ -52,7 +52,7 @@ import { BloqueExperto } from "../perfil/bloque-experto";
 import { Seccion } from "../seccion";
 import { TablaF } from "../tabla-f";
 import { Veredicto } from "../veredicto";
-import { SinProbar } from "./mirada";
+import { SinProbar } from "../sin-probar";
 
 const MONO = "font-mono text-dato leading-normal [overflow-wrap:anywhere]";
 const LECTURA = "mb-6 max-w-[72ch] text-texto leading-[1.6]";

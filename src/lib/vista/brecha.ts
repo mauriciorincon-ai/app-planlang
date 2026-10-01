@@ -1021,7 +1021,7 @@ export function vistaBrecha(d: DatosDemo, i: Idioma): VistaBrecha {
           typeof c.valor_medido === "boolean"
             ? `${X(c.valor_medido ? RESUMEN.si : RESUMEN.no, i)} · ${c.n_poblacion} ${i === "es" ? "casos" : "cases"}`
             : valorDe(c, i),
-        estado: estadoDeCriterio(c.estado, i),
+        estado: estadoDeCriterio(c.estado, i, "informe"),
       })),
     riesgos:
       riesgosOcurridos.length === 0
@@ -1616,7 +1616,7 @@ function filaCriterioFallido(
   i: Idioma,
   sinProbar = false,
 ): FilaFallo {
-  const estado = estadoDeCriterio(c.estado, i);
+  const estado = estadoDeCriterio(c.estado, i, "informe");
   return {
     ancla: `f-${c.id}`,
     clase: sinProbar ? "beta" : estado.clase,
@@ -1827,7 +1827,7 @@ function filaCriterio(
   latenciaDe: ReadonlyMap<string, number>,
   i: Idioma,
 ): FilaCriterio {
-  const estado = estadoDeCriterio(c.estado, i);
+  const estado = estadoDeCriterio(c.estado, i, "informe");
   let medido: { rotulo: string; valor: string };
   let pista: { medido: number; meta: number };
   let ejes: FilaCriterio["ejes"] = null;

@@ -5,6 +5,7 @@
  * solo texto y funciones puras.
  */
 import { tb, type TextoBilingue } from "@core/formatos/bilingue";
+import type { Operador } from "@core/plan/esquema";
 
 type Plantilla<P> = (p: P) => TextoBilingue;
 
@@ -188,7 +189,7 @@ export const OPERADOR: Record<string, TextoBilingue> = {
   distinto_de: tb("no es", "is not"),
 };
 
-export const SIMBOLO: Record<string, string> = {
+export const SIMBOLO: Record<Operador, string> = {
   menor_que: "<",
   mayor_que: ">",
   menor_o_igual_que: "≤",
@@ -634,7 +635,7 @@ export const EJEMPLO = {
     errores: number;
   }) =>
     tb(
-      `Si subes ${p.nombre.es.toLowerCase()} (${p.umbral}) de ${p.desde} a ${p.hasta}, el caso ${p.caso} —que el agente resolvió solo, con ${p.senal.es} ${p.valor}— pasaría a una persona: ${p.minutos} minutos más de auditor y ${p.errores === 0 ? "ningún error nuevo" : `${p.errores} errores nuevos`}. Pruébalo abajo.`,
+      `Si subes el umbral de ${p.nombre.es.toLowerCase()} (${p.umbral}) de ${p.desde} a ${p.hasta}, el caso ${p.caso} —que el agente resolvió solo, con ${p.senal.es} ${p.valor}— pasaría a una persona: ${p.minutos} minutos más de auditor y ${p.errores === 0 ? "ningún error nuevo" : `${p.errores} errores nuevos`}. Pruébalo abajo.`,
       `If you raise the ${p.nombre.en.toLowerCase()} (${p.umbral}) from ${p.desde} to ${p.hasta}, case ${p.caso} —which the agent resolved alone, with ${p.senal.en} ${p.valor}— would go to a person: ${p.minutos} more auditor minutes and ${p.errores === 0 ? "no new error" : `${p.errores} new errors`}. Try it below.`,
     )) as Plantilla<{
     umbral: string;

@@ -61,6 +61,11 @@ export default defineConfig({
           name: "vitrina",
           environment: "jsdom",
           setupFiles: ["./tests/setup.ts"],
+          // Las pruebas de componentes pintan páginas enteras (Agente pasa de 7.000 nodos; Brecha, más) bajo la
+          // instrumentación de cobertura y con todos los archivos en paralelo: el primer render pasa de los 5 s por
+          // omisión sin que nada esté colgado.
+          testTimeout: 30_000,
+          hookTimeout: 30_000,
           include: ["tests/unit/**/*.test.{ts,tsx}"],
           exclude: [
             "tests/unit/core/**",

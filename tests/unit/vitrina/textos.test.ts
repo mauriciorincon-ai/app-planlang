@@ -9,9 +9,11 @@ import { describe, expect, it } from "vitest";
 import { presupuestoLiderBilingue } from "@core/formatos/jerga";
 import type { TextoBilingue } from "@core/formatos/bilingue";
 import { datosDemo } from "@/lib/datos/vitrina";
+import * as brecha from "@/textos/brecha";
 import * as comun from "@/textos/comun";
 import * as entrada from "@/textos/entrada";
 import * as plan from "@/textos/plan";
+import * as playground from "@/textos/playground";
 
 /** Recorre un módulo de textos y devuelve cada `{ es, en }` con su ruta. */
 function bilingues(
@@ -37,6 +39,18 @@ const todos = [
   ...bilingues(comun, "comun"),
   ...bilingues(entrada, "entrada"),
   ...bilingues(plan, "plan"),
+  ...bilingues(brecha, "brecha"),
+  ...bilingues(playground, "playground"),
+];
+
+/** Los párrafos que lee el líder en P4 y P5 (los de la Entrada viven en `entrada.LIDER`). */
+const LIDER_P4_P5: [string, TextoBilingue][] = [
+  ["brecha.PORTADA.guia", brecha.PORTADA.guia],
+  ["playground.PORTADA.guia", playground.PORTADA.guia],
+  ["playground.MIRADA.avisoLider", playground.MIRADA.avisoLider],
+  ["playground.MIRADA.objetivoTexto", playground.MIRADA.objetivoTexto],
+  ["playground.CAMBIOS.texas", playground.CAMBIOS.texas],
+  ["playground.FRASE.nada", playground.FRASE.nada],
 ];
 
 /** Iguales en los dos idiomas a propósito: nombres propios, siglas y palabras que el inglés comparte. */
@@ -49,6 +63,9 @@ const IGUALES = new Set([
   "Id",
   "#",
   "payload",
+  "no",
+  "Tokens",
+  "No",
 ]);
 
 describe("textos de la vitrina", () => {
@@ -72,7 +89,7 @@ describe("textos de la vitrina", () => {
     expect(repetidos).toEqual([]);
   });
 
-  it.each(Object.entries(entrada.LIDER))(
+  it.each([...Object.entries(entrada.LIDER), ...LIDER_P4_P5])(
     "párrafo de líder «%s»: ≤ 50 palabras y ≤ 1 término vigilado, en español y en inglés",
     (_, t) => {
       const r = presupuestoLiderBilingue(t);

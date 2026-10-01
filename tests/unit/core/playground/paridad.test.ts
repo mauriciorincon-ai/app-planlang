@@ -27,12 +27,49 @@ import {
   type Umbrales,
 } from "@core/playground/interprete";
 import { umbralesAplicados } from "@core/plan/contrato-constructor";
+import type { Plan } from "@core/plan/esquema";
 import { datosDemo } from "@/lib/datos/vitrina";
 
 async function base() {
   const d = await datosDemo();
   const c = compactar(d.plan, d.corrida, d.lote, d.informe);
   return { ...d, c };
+}
+
+/** El verificador sobre el camino que dice el playground: caso por caso, el objeto registrado o el del camino nuevo. */
+async function verificadorEnElCamino(plan: Plan, c: Compacto, u: Umbrales) {
+  const d = await datosDemo();
+  const r = consecuencias(c, u);
+  const previas = new Set<string>([
+    ...senalesQueLeenLasAristas(c.aristas),
+    ...CLAVES_PREVIAS_FIJAS,
+  ]);
+  const lote = new Map(d.lote.casos.map((k) => [k.id, k]));
+  const vistas = d.corrida.trazas.map((traza) => {
+    const caso = lote.get(traza.caso_id)!;
+    const registrado = objetoDeCaso(caso, traza, umbralesAplicados(plan));
+    const cambio = r.cambios.find((x) => x.id === caso.id);
+    const compacto = c.casos.find((k) => k.id === caso.id)!;
+    const objeto = cambio
+      ? objetoEnOtroCamino(
+          registrado,
+          caso,
+          compacto.visitas,
+          compacto.visitas.findIndex(
+            (v) => v.paso === cambio.paso && v.desde === cambio.nodo,
+          ),
+          cambio.ahora,
+          previas,
+        )
+      : registrado;
+    return {
+      caso_id: caso.id,
+      caso,
+      traza,
+      ctx: contextoDeObjeto(caso, objeto),
+    };
+  });
+  return { r, verificador: evaluarCriterios(plan, vistas) };
 }
 
 describe("paridad del playground con el informe y con RF-09.2", () => {
@@ -121,9 +158,10 @@ describe("paridad del playground con el informe y con RF-09.2", () => {
       const despues = ramas({ ...delPlan, [u.id]: !u.valor_en_plan });
       const n = antes.filter((r, i) => r !== despues[i]).length;
       expect(
-        informe.playground.limites.some((l) =>
-          l.es.startsWith(`${u.id} (`) &&
-          l.es.includes(`cambia ${n} de las ${antes.length} decisiones`),
+        informe.playground.limites.some(
+          (l) =>
+            l.es.startsWith(`${u.id} (`) &&
+            l.es.includes(`cambia ${n} de las ${antes.length} decisiones`),
         ),
         u.id,
       ).toBe(true);
@@ -138,40 +176,8 @@ describe("paridad del playground con el informe y con RF-09.2", () => {
 });
 
 describe("al mover un umbral, el compacto mide igual que el verificador", () => {
-  /** El verificador sobre el camino que dice el playground: caso por caso, el objeto registrado o el del camino nuevo. */
   async function referencia(c: Compacto, u: Umbrales) {
-    const d = await datosDemo();
-    const r = consecuencias(c, u);
-    const previas = new Set<string>([
-      ...senalesQueLeenLasAristas(c.aristas),
-      ...CLAVES_PREVIAS_FIJAS,
-    ]);
-    const lote = new Map(d.lote.casos.map((k) => [k.id, k]));
-    const vistas = d.corrida.trazas.map((traza) => {
-      const caso = lote.get(traza.caso_id)!;
-      const registrado = objetoDeCaso(caso, traza, umbralesAplicados(d.plan));
-      const cambio = r.cambios.find((x) => x.id === caso.id);
-      const compacto = c.casos.find((k) => k.id === caso.id)!;
-      const objeto = cambio
-        ? objetoEnOtroCamino(
-            registrado,
-            caso,
-            compacto.visitas,
-            compacto.visitas.findIndex(
-              (v) => v.paso === cambio.paso && v.desde === cambio.nodo,
-            ),
-            cambio.ahora,
-            previas,
-          )
-        : registrado;
-      return {
-        caso_id: caso.id,
-        caso,
-        traza,
-        ctx: contextoDeObjeto(caso, objeto),
-      };
-    });
-    return { r, verificador: evaluarCriterios(d.plan, vistas) };
+    return verificadorEnElCamino((await datosDemo()).plan, c, u);
   }
 
   const combinaciones: Umbrales[] = [];
@@ -284,6 +290,181 @@ describe("el compacto se niega a adivinar", () => {
         "latencia_total_s",
       ]),
     );
+  });
+});
+
+describe("con otras reglas de medición, el compacto mide igual que el verificador", () => {
+  type Criterio = Plan["criterios_aceptacion"][number];
+  const VARIANTES: [string, string, (c: Criterio) => void][] = [
+    [
+      "C7 con promedio",
+      "C7",
+      (c) => (c.regla_de_medicion.agregacion = "promedio"),
+    ],
+    [
+      "C7 con máximo (A-008 pasa de 30 s)",
+      "C7",
+      (c) => (c.regla_de_medicion.agregacion = "maximo"),
+    ],
+    [
+      "C7 como métrica a superar (mayor es mejor)",
+      "C7",
+      (c) => {
+        c.tipo = "tasa";
+        c.regla_de_medicion.agregacion = "promedio";
+        c.valor_objetivo = 10;
+      },
+    ],
+    ["C7 sin objetivo numérico", "C7", (c) => (c.valor_objetivo = true)],
+    [
+      "C7 sobre una población vacía",
+      "C7",
+      (c) => (c.regla_de_medicion.poblacion = "tipo == 'ninguno'"),
+    ],
+    [
+      "C3 como tasa ≥ 0,9",
+      "C3",
+      (c) => {
+        c.tipo = "tasa";
+        c.regla_de_medicion.agregacion = "tasa";
+        c.valor_objetivo = 0.9;
+      },
+    ],
+    [
+      "C1 sobre una población vacía",
+      "C1",
+      (c) => (c.regla_de_medicion.poblacion = "tipo == 'ninguno'"),
+    ],
+    [
+      "C2 con una regla mal formada (compara estructuras que nunca son iguales)",
+      "C2",
+      (c) => (c.regla_de_medicion.condicion = "extraccion == verdad_conocida"),
+    ],
+  ];
+  const MOVIDOS: Partial<Umbrales>[] = [
+    {},
+    { U1: 0.9 },
+    { U2: 1600 },
+    { U2: 200 },
+    { U3: 0 },
+    { U3: 3 },
+  ];
+
+  it.each(VARIANTES)("%s", async (_, id, cambiar) => {
+    const d = await datosDemo();
+    const plan = structuredClone(d.plan) as Plan;
+    cambiar(plan.criterios_aceptacion.find((x) => x.id === id)!);
+    // El informe de esa regla: el verificador sobre lo que se registró (el playground parte de ahí).
+    const enPlan = await verificadorEnElCamino(
+      plan,
+      compactar(d.plan, d.corrida, d.lote, d.informe),
+      umbralesDelPlan(compactar(d.plan, d.corrida, d.lote, d.informe)),
+    );
+    const informe = {
+      ...d.informe,
+      criterios: d.informe.criterios.map((x) =>
+        x.id === id ? enPlan.verificador.find((v) => v.id === id)! : x,
+      ),
+    };
+    const c = compactar(plan, d.corrida, d.lote, informe);
+    for (const m of MOVIDOS) {
+      const u = { ...umbralesDelPlan(c), ...m } as Umbrales;
+      const { r, verificador } = await verificadorEnElCamino(plan, c, u);
+      const v = verificador.find((x) => x.id === id)!;
+      const x = r.criterios.find((k) => k.id === id)!;
+      const etiqueta = `${id} con ${JSON.stringify(m)}`;
+      expect(x.estado, etiqueta).toBe(v.estado);
+      expect(x.valor, etiqueta).toEqual(v.valor_medido);
+      expect([...x.casos_que_incumplen].sort(), etiqueta).toEqual(
+        [...v.casos_que_incumplen].sort(),
+      );
+    }
+  });
+});
+
+describe("los cuatro efectos dependen de la verdad conocida (DA-04)", () => {
+  async function conVerdad(id: string, debeEscalar: boolean) {
+    const { c } = await base();
+    return {
+      ...c,
+      casos: c.casos.map((k) =>
+        k.id === id ? { ...k, debe_escalar: debeEscalar } : k,
+      ),
+    };
+  }
+  it("a una persona: revisión de más si no debía escalar, error evitado si sí", async () => {
+    for (const [debe, efecto] of [
+      [false, "revision_de_mas"],
+      [true, "error_evitado"],
+    ] as const) {
+      const c = await conVerdad("A-008", debe);
+      const r = consecuencias(c, { ...umbralesDelPlan(c), U1: 0.9 });
+      expect(r.cambios.map((x) => [x.id, x.efecto])).toEqual([
+        ["A-008", efecto],
+      ]);
+      expect(r.evitados.length).toBe(debe ? 1 : 0);
+    }
+  });
+  it("sin persona: error introducido si debía escalar, revisión ahorrada si no", async () => {
+    for (const [debe, efecto] of [
+      [true, "error_introducido"],
+      [false, "revision_ahorrada"],
+    ] as const) {
+      const c = await conVerdad("A-010", debe);
+      const r = consecuencias(c, { ...umbralesDelPlan(c), U2: 1600 });
+      expect(r.cambios.map((x) => [x.id, x.efecto])).toEqual([
+        ["A-010", efecto],
+      ]);
+      expect(r.introducidos.length).toBe(debe ? 1 : 0);
+    }
+  });
+});
+
+describe("el compacto se niega a adivinar (las entradas)", () => {
+  it("un plan con dos costos humanos distintos en sus umbrales no se compacta", async () => {
+    const d = await datosDemo();
+    const plan = structuredClone(d.plan) as Plan;
+    plan.umbrales[1]!.costo_humano_por_caso_min = 15;
+    expect(() => compactar(plan, d.corrida, d.lote, d.informe)).toThrow(
+      /varios costo humano/,
+    );
+    for (const u of plan.umbrales)
+      delete (u as { costo_humano_por_caso_min?: number })
+        .costo_humano_por_caso_min;
+    expect(() => compactar(plan, d.corrida, d.lote, d.informe)).toThrow(
+      /ningún costo humano/,
+    );
+  });
+  it("un informe sin un criterio del plan, o una traza sin su caso en el lote, se nombran", async () => {
+    const d = await datosDemo();
+    const informe = {
+      ...d.informe,
+      criterios: d.informe.criterios.filter((x) => x.id !== "C9"),
+    };
+    expect(() => compactar(d.plan, d.corrida, d.lote, informe)).toThrow(
+      /no trae el criterio C9/,
+    );
+    const lote = {
+      ...d.lote,
+      casos: d.lote.casos.filter((k) => k.id !== "A-001"),
+    };
+    expect(() => compactar(d.plan, d.corrida, lote, d.informe)).toThrow(
+      /A-001 no está en el lote/,
+    );
+  });
+  it("un camino sin su evaluación precalculada no se inventa", async () => {
+    const { c } = await base();
+    const roto = {
+      ...c,
+      casos: c.casos.map((k) =>
+        k.id === "A-008"
+          ? { ...k, evaluaciones: { ...k.evaluaciones, caminos: {} } }
+          : k,
+      ),
+    };
+    expect(() =>
+      consecuencias(roto, { ...umbralesDelPlan(c), U1: 0.9 }),
+    ).toThrow(/A-008 no trae la evaluación del camino/);
   });
 });
 

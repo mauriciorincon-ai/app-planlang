@@ -42,21 +42,12 @@ import { Icono } from "../icono";
 import { Marca } from "../marcas";
 import { AvisoPerfil } from "../perfil/aviso-perfil";
 import { LeerComo } from "../perfil/leer-como";
+import { SinProbar } from "../sin-probar";
 import { Veredicto } from "../veredicto";
 
 const ET =
   "block font-letra text-dato leading-[1.4] text-tinta-2 escritorio:hidden";
 const CODIGO = "font-mono text-dato leading-normal text-tinta-2";
-
-/** Chip de «sin probar»: borde discontinuo y la marca de lo que falta (lo que no se midió se dibuja discontinuo). */
-export function SinProbar({ children }: { children: ReactNode }) {
-  return (
-    <span className="inline-flex h-5.5 items-center gap-1.5 rounded-chip border border-dashed border-tinta-3 pr-2 pl-1.25 text-dato leading-none font-medium whitespace-nowrap text-tinta-1">
-      <Marca tipo="falta" tam={12} className="text-tinta-2" />
-      {children}
-    </span>
-  );
-}
 
 function Estado({
   clase,
