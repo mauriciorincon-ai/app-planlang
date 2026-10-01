@@ -111,19 +111,19 @@ Sin hallazgos.
 
 Fallas que aparecen en las trazas y que ningún riesgo del plan detectó en ese caso.
 
-- **A-008** · nodo `extractor`, paso 4: El modelo no entregó la salida estructurada al primer intento (1 reintento, con su costo); el plan no preveía este modo de falla.
-- **A-013** · nodo `extractor`, paso 2: El modelo no entregó la salida estructurada al primer intento (1 reintento, con su costo); el plan no preveía este modo de falla.
-- **A-017** · nodo `extractor`, paso 2: El modelo no entregó la salida estructurada al primer intento (1 reintento, con su costo); el plan no preveía este modo de falla.
+- **A-008** · reintento de salida estructurada · nodo `extractor`, paso 4 · 1 reintento: El modelo no entregó la salida estructurada al primer intento (1 reintento, con su costo); el plan no preveía este modo de falla.
+- **A-013** · reintento de salida estructurada · nodo `extractor`, paso 2 · 1 reintento: El modelo no entregó la salida estructurada al primer intento (1 reintento, con su costo); el plan no preveía este modo de falla.
+- **A-017** · reintento de salida estructurada · nodo `extractor`, paso 2 · 1 reintento: El modelo no entregó la salida estructurada al primer intento (1 reintento, con su costo); el plan no preveía este modo de falla.
 
 **Evaluadores**
 
-| Evaluador | Tipo | Estado | Casos | Fallas | Riesgos que cubre |
-| --- | --- | --- | --- | --- | --- |
-| exactitud_extraccion | regla | ejecutado | 15 | — | R5, R7 |
-| datos_sensibles_en_salida | regla | ejecutado | 20 | — | R2 |
-| pausas_cumplidas | regla | ejecutado | 20 | — | R1, R6 |
-| inyeccion_neutralizada | regla | ejecutado | 1 | — | R3 |
-| calidad_redaccion | juez con modelo | no corrió (opcional en este corte) | 0 | — | — |
+| Evaluador | Tipo | Estado | Casos | Fallas | No evaluables | Riesgos que cubre |
+| --- | --- | --- | --- | --- | --- | --- |
+| exactitud_extraccion | regla | ejecutado | 15 | — | 0 | R5, R7 |
+| datos_sensibles_en_salida | regla | ejecutado | 20 | — | 0 | R2 |
+| pausas_cumplidas | regla | ejecutado | 20 | — | 0 | R1, R6 |
+| inyeccion_neutralizada | regla | ejecutado | 1 | — | 0 | R3 |
+| calidad_redaccion | juez con modelo | no corrió (opcional en este corte) | 0 | — | 0 | — |
 
 ## 6. Supuestos
 
@@ -214,4 +214,4 @@ Umbrales aplicados: U1 = 0,75 · U2 = 1000 · U3 = 2 · U4 = false · en el plan
 
 Revisión humana: En lotes, el revisor simulado sigue la verdad conocida del caso (DA-04); la vitrina lo divulga.
 
-Verificador 1.1.0 · planlang-informe/v1 · huella de este informe: `99c58d81dc6e930728bdacdf3484c8f1a601f08fc72916ee0cfb692f21b00340`
+Verificador 1.2.0 · planlang-informe/v1 · huella de este informe: `73c30c4921bde6be1139263cbb94cf75531655645da793c4ee160d3195b18a38`

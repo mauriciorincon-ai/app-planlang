@@ -111,13 +111,13 @@ Ninguna.
 
 **Evaluadores**
 
-| Evaluador | Tipo | Estado | Casos | Fallas | Riesgos que cubre |
-| --- | --- | --- | --- | --- | --- |
-| exactitud_extraccion | regla | ejecutado | 3 | — | R5, R7 |
-| datos_sensibles_en_salida | regla | ejecutado | 3 | — | R2 |
-| pausas_cumplidas | regla | ejecutado | 3 | — | R1, R6 |
-| inyeccion_neutralizada | regla | ejecutado | 1 | — | R3 |
-| calidad_redaccion | juez con modelo | no corrió (opcional en este corte) | 0 | — | — |
+| Evaluador | Tipo | Estado | Casos | Fallas | No evaluables | Riesgos que cubre |
+| --- | --- | --- | --- | --- | --- | --- |
+| exactitud_extraccion | regla | ejecutado | 3 | — | 0 | R5, R7 |
+| datos_sensibles_en_salida | regla | ejecutado | 3 | — | 0 | R2 |
+| pausas_cumplidas | regla | ejecutado | 3 | — | 0 | R1, R6 |
+| inyeccion_neutralizada | regla | ejecutado | 1 | — | 0 | R3 |
+| calidad_redaccion | juez con modelo | no corrió (opcional en este corte) | 0 | — | 0 | — |
 
 ## 6. Supuestos
 
@@ -191,4 +191,4 @@ Umbrales aplicados: U1 = 0,75 · U2 = 1000 · U3 = 2 · U4 = false · en el plan
 
 Revisión humana: En lotes, el revisor simulado sigue la verdad conocida del caso (DA-04); la vitrina lo divulga.
 
-Verificador 1.1.0 · planlang-informe/v1 · huella de este informe: `9436beacfeb99a21787713e037eace46db3956d5f200cc54f0c643971ac753fb`
+Verificador 1.2.0 · planlang-informe/v1 · huella de este informe: `7fea1771d7268d5297189fe1dcd8b37961ca9a6afd7f5a417d3a483f79fb19ae`

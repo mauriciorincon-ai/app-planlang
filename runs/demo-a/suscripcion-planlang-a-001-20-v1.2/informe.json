@@ -11,7 +11,8 @@
         },
         "evaluador": null,
         "nodo": "extractor",
-        "paso": 2
+        "paso": 2,
+        "reintentos": 1
       },
       {
         "caso_id": "A-006",
@@ -23,7 +24,8 @@
         },
         "evaluador": null,
         "nodo": "extractor",
-        "paso": 2
+        "paso": 2,
+        "reintentos": 2
       },
       {
         "caso_id": "A-017",
@@ -35,7 +37,8 @@
         },
         "evaluador": null,
         "nodo": "extractor",
-        "paso": 2
+        "paso": 2,
+        "reintentos": 1
       },
       {
         "caso_id": "A-016",
@@ -47,7 +50,8 @@
         },
         "evaluador": null,
         "nodo": "extractor",
-        "paso": 2
+        "paso": 2,
+        "reintentos": 1
       },
       {
         "caso_id": "A-017",
@@ -59,7 +63,8 @@
         },
         "evaluador": null,
         "nodo": "extractor",
-        "paso": 2
+        "paso": 2,
+        "reintentos": 2
       }
     ],
     "evaluadores": [
@@ -603,11 +608,11 @@
     },
     "verificador": {
       "formato": "planlang-informe/v1",
-      "version": "1.1.0"
+      "version": "1.2.0"
     }
   },
   "formato": "planlang-informe/v1",
-  "huella": "210b8f5325d29a16efbe8a9529a8b280ece563d12a5986781ccd0f4976dade39",
+  "huella": "e5d68065f343c4dc95824c06c481577e36f49da98323d62eb3fec455c0585f0b",
   "plan_en_breve": {
     "decisiones_una_via": [
       {
@@ -1231,5 +1236,5 @@
     "bloqueantes": [],
     "valor": "cumple_con_alertas"
   },
-  "version_verificador": "1.1.0"
+  "version_verificador": "1.2.0"
 }

@@ -78,7 +78,7 @@ describe("datos de la vitrina", () => {
     m.demos["demo-a"].informe.huella = "0".repeat(64);
     writeFileSync(ruta, JSON.stringify(m));
     await expect(cargarDemo("demo-a", dir)).rejects.toThrow(
-      /informe\.json tiene la huella 70c1cb23…, el manifiesto declara 00000000…/,
+      /informe\.json tiene la huella ca000282…, el manifiesto declara 00000000…/,
     );
   });
 

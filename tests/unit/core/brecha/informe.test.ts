@@ -59,7 +59,7 @@ describe("informe de la corrida simulada", () => {
       linea_base: null,
       repeticiones: [],
       umbrales_aplicados: { U1: 0.75 },
-      verificador: { version: "1.1.0" },
+      verificador: { version: "1.2.0" },
     });
   });
   it("el resumen y la recomendación respetan el presupuesto de líder en ES y EN", async () => {

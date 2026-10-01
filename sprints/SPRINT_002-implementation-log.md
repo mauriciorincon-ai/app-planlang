@@ -13,7 +13,7 @@
 | 0 · Setup, deltas, plan v1.3 y ⭐ del S1 | ✅ cerrada · paradas del S1 diferidas con nombre | «continúa» 2026-09-28 |
 | 1 · Fundación de UI + P1 → gate de FIDELIDAD | ✅ cerrada · **fidelidad aprobada** (`docs/fidelidad/p1/index.html`) | «lo abrí y lo apruebo» + «avancemos» 2026-09-29 |
 | 2 · P2 Plan · P3 Agente (visor) · P6 Caso | ✅ construida · **mirada 2 aprobada** (`docs/fidelidad/p2/index.html`) · ⏸ esperando el «continúa» de fase | «lo abrí y apruebo» 2026-09-30 |
-| 3 · P4 Brecha · P5 Playground | ⏳ | |
+| 3 · P4 Brecha · P5 Playground | 🔨 en construcción (núcleo del playground, M-24 y M-26 hechos; pantallas en curso) | «continúa» 2026-09-30 |
 | 4 · P7 Fichas · paquete · corridas de fondo · deuda | ⏳ | |
 | 5 · Cierre | ⏳ | |
 
@@ -419,6 +419,121 @@ la entrada `p2`) → DETENERSE para la mirada 2.
 | «Ver N más» sin cambiar la forma, P2 (`plan-componentes.test.tsx`) | `VerMas` pinta el resto solo si está abierto | rojo en 3 («Ver N más», forma en el servidor y en el cliente) → verde |
 | Estado de sala de la maqueta (`capturar-vitrina.mjs`) | la configuración con que nació la mirada 2 (`estado=real` para Plan y Casos) | `✕ maqueta diseno/02-plan.html: no tiene el estado de sala «real»` (y 06-caso), en rojo → verde con `plan` y `a006` |
 
+## Fase 3 — P4 Brecha · P5 Playground (desde 2026-09-30)
+
+### Núcleo del playground
+
+- **`core/playground/aristas.ts`** (nuevo): la evaluación pura de las aristas, que antes vivía en `interprete.ts`
+  (`comparar`, `evaluarArista`, `decidir`, `senalesDeVisita`), más **`recalcularVisita()`**, extraída de `recalcular()`.
+  Solo importa tipos, así que el navegador no carga Zod para mover un umbral. `interprete.ts` la re-exporta y
+  `recalcular()` (RF-09.2) la usa: es la misma función en los dos lados, no dos copias que coinciden.
+- **`core/playground/compacto.ts`** (tipos) y **`compactar.ts`** (build): de la corrida verificada sale lo único que
+  viaja al navegador:
+  - las visitas a los nodos escritores, con sus señales observadas y la rama registrada;
+  - el desenlace de cada rama posible (persona · solo · no observado), calculado sobre el grafo compilado;
+  - `debe_escalar` de la verdad conocida;
+  - por criterio y caso, la evaluación en lo registrado y en cada camino posible (`"i:desenlace"`).
+
+  Qué se sabe de un camino que el agente no tomó:
+  - si cambia en la **última** visita escritora, todo lo observado antes de decidir (las señales que leen las aristas,
+    más la extracción);
+  - si cambia **antes**, solo lo que observaron las visitas hasta ahí;
+  - del desenlace, solo lo que fija el plan: con persona, pausa y decisión de la verdad conocida (DA-04); solo,
+    sin pausa y con la propuesta.
+
+  Lo demás del desenlace (respuesta, documento, payload, latencia) **no se inventa**: la regla que lo lee queda «no
+  evaluable» en ese caso. Toda clave del contexto debe estar clasificada (caso · previa · desenlace); una suelta
+  hace fallar el build, nombrándola.
+- **`core/playground/consecuencias.ts`** (navegador): rehace cada visita jugable con `recalcularVisita` y entrega:
+  - el desvío, el desenlace y el efecto (error introducido o evitado, revisión de más o ahorrada, mismo destino,
+    no observado);
+  - la arista que decide ahora o la que ya no decide;
+  - las visitas ahorradas y los minutos (`costo_humano_por_caso_min` × personas; si el plan declarara costos
+    distintos, el compacto falla en vez de elegir uno);
+  - los criterios vueltos a medir con la misma agregación que `brecha/criterios.ts`; pass^k vale lo del informe
+    si ningún caso cambia su resultado, si no, «indeterminado»;
+  - los observados y los casos justo en el umbral, para el valor actual.
+- **`tests/unit/core/playground/paridad.test.ts`** (16 pruebas, en `core` y en `core-jsdom`):
+  - con los umbrales del plan: 0 cambios y 96 min (8 pausas × 12), cada visita con la rama de
+    `ramas-esperadas.json`, observados y casos en el umbral iguales al informe, y cada criterio en su estado y su
+    valor del informe;
+  - conmutar U4 cambia exactamente lo que dice el límite del informe («0 de las 62»);
+  - en 200 combinaciones de umbrales, cada criterio que no es pass^k coincide con `evaluarCriterios` sobre el mismo
+    camino;
+  - los ejemplos de la maqueta, medidos: U1 0,90 → A-008 a persona, +12 min; U2 1600 → A-010 solo, error, C3
+    incumple; U3 3 → A-007 no observado; U3 1 → A-007 con una aclaración menos; Texas → 0 cambios;
+  - 200 casos en menos de 100 ms y cada movimiento en menos de 16 ms (medianas).
+
+### Deuda pagada: M-24 y M-26 (verificador 1.2.0)
+
+- **M-24:**
+  - cada brecha no prevista trae `reintentos` (antes la cifra vivía solo dentro de la frase del detalle);
+  - el informe en Markdown dice la categoría de cada brecha y sus reintentos;
+  - la tabla de evaluadores suma «No evaluables»;
+  - los riesgos muestran sus no evaluables y los casos fuera por señal nula, como los criterios.
+- **M-26:**
+  - un criterio con métrica cuya población tiene casos pero ningún valor queda `indeterminado` (antes
+    `sin_poblacion`, que es falso), y su nota dice el sentido del objetivo;
+  - el validador rechaza una métrica en `todos_cumplen`/`tasa`/`pass^k` y una condición en
+    `mediana`/`promedio`/`maximo`, que se ignorarían en silencio.
+- **Versión e informes:** el verificador sube a **1.2.0**. Se regeneraron los informes de `runs/` (20 y v1.2), el
+  golden de `simulado-3casos` y el informe de la vitrina; el manifiesto declara la huella nueva (`ca000282…`).
+- **Refactor sin cambio de semántica:** `core/brecha/contexto.ts` suma `contextoDeObjeto()`.
+
+### Demos en rojo de la fase 3 (regla 15; el rojo nace con el gate)
+
+| Gate | Cambio deliberado | Resultado |
+|---|---|---|
+| Paridad del playground (`paridad.test.ts`) | la confianza de A-008 en `decision` pasa a 0,70 dentro del compacto | 6 rojos: `A-008\|8\|decision: expected 'pausa_humana' to be 'redactor'`, cambios ≠ [], C2 indeterminado… → verde al revertir |
+| Criterios del compacto = verificador (`paridad.test.ts`) | `medirCriterio` deja de contar los «no evaluables» | `C2 con {"U1":0.5,"U2":200,"U3":0,"U4":false}: expected 'cumple' to be 'indeterminado'` y C9 con A-008 → verde |
+| Claves clasificadas (`compactar.ts`) | quitar `tokens` de `CLAVES_DEL_DESENLACE` | 14 rojos: `playground: A-001 trae tokens, que el playground no sabe si se conoce antes de decidir…` → verde |
+| M-26 en criterios (`criterios.test.ts`) | volver a «sin población» cuando no hay valores | `expected 'sin_poblacion' to be 'indeterminado'` → verde |
+| M-26 en el validador (`validador.test.ts`) | apagar el rechazo de métrica en `pass^k` | `expected [[CRITERIO_SIN_REGLA, C7]] to deep equally contain [CRITERIO_SIN_REGLA, C5]` → verde |
+| M-24 en el informe (`render-md.test.ts`) | quitar la categoría de la línea de cada brecha | rojo en «M-24: cada brecha dice su categoría…» → verde |
+
+### Punto de retoma (2026-09-30, compactación pedida por el usuario)
+
+Hecho y comiteado en local (sin push: falta correr el job de calidad completo con build y e2e):
+- núcleo del playground + paridad (arriba);
+- M-24 y M-26, con el verificador en 1.2.0 y los informes regenerados;
+- **P4 Brecha completa:**
+  - `src/textos/brecha.ts`;
+  - `src/lib/vista/brecha.ts`: falla nombrando la lectura editorial que falte y calcula con el playground el umbral
+    que rompe un criterio con nota (C3 → U2 1500);
+  - `src/components/brecha/{mirada,secciones}.tsx`, `src/components/{curva,tabla-f}.tsx`, la página;
+  - revisada como imagen en escritorio y teléfono, líder y experto.
+- **P5, a medio armar:**
+  - `src/textos/playground.ts`, `src/lib/vista/playground.ts` y la isla `src/components/playground/juego.tsx`
+    (deslizadores, Texas, cifras, frase, regla viva, cambios, tabla de decisiones, curva);
+  - **la página `src/app/[idioma]/playground/page.tsx` sigue siendo el «en construcción».**
+
+Siguiente, en orden:
+1. **Página de P5:**
+   - portada y `Oraculo`;
+   - «El playground en una mirada»: LeerComo, AvisoPerfil, objetivo, recibe → hace → entrega, el ejemplo llano solo
+     para el líder y la ficha técnica en BloqueExperto;
+   - `<Juego datos={v.isla} />`;
+   - «Lo que el playground no puede saber», con los límites y el aparte del núcleo (`LIMITES.nucleo` /
+     `nucleoDetalle`).
+2. **Build y capturas** de P5 (ES/EN, 380/1280, líder/experto; mover U2 a 1600 y encender Texas). Brecha también en
+   EN; verificar R8 «0 de 1 sesión» y las etiquetas de la curva en miniatura (corregidas, sin volver a capturar).
+3. **Pruebas unitarias:** `tests/unit/vitrina/{brecha,playground}.test.ts` (vistas) y `*-componentes.test.tsx`:
+   - forma invariante por perfil;
+   - la isla con los valores del plan da el mismo HTML en el servidor y en el cliente.
+
+   Además: sumar `brecha` y `playground` a `textos.test.ts`.
+4. **e2e** `tests/e2e/{brecha,playground}.spec.ts`:
+   - deslizador por teclado, el interruptor y axe en temas y perfiles;
+   - sin desbordamiento a 380 px y `reduced-motion`;
+   - cada gate con su rojo.
+5. **Cierre de la fase:**
+   - `lighthouse-urls.json` + `/es/brecha`, `/es/playground`;
+   - arnés `capturar-vitrina.mjs` mirada `p3`: maqueta 04 `real` y 05 `plan`; interacciones Ver como experto,
+     «1 · S3», U2 → 1600, Texas;
+   - `docs/fidelidad/p3`;
+   - job de calidad completo, push, `gh pr checks`;
+   - **DETENERSE para la mirada 3** con pregunta simple + ruta + matriz.
+
 ## Desviación del plan
 
 1. **El centinela «Worktrees prohibidos» no existe** en `ordenes/CLAUDE-md-para-app.md` (vive en el batch
@@ -497,6 +612,16 @@ la entrada `p2`) → DETENERSE para la mirada 2.
 34. **P6 en inglés:** los valores de código (`ambulatoria`, `negar`) ya no se traducen en la tabla de reglas, las
     señales, lo que leyó el extractor ni la respuesta del auditor: así los muestra la maqueta y así se comparan con la
     regla del plan. La prosa (relato, «qué hizo») sigue redactada en cada idioma.
+35. **El compacto del playground viaja como props de la isla, no como `senales.json`:** se calcula en el build desde la
+    corrida verificada (huellas, esquema, RF-09.2), así que no hay un archivo derivado cuya frescura vigilar; la
+    paridad se prueba sobre `compactar(corrida)`. El plan decía `scripts/senales-compactas.ts` + test de frescura.
+36. **Los criterios del playground no son «C1 y C3; los otros 7 no cambian»** (ficha técnica de la maqueta): el
+    playground vuelve a medir los nueve con la regla del plan y dice cuáles cambian. Los que leen lo que pasa
+    después de un cambio (respuesta, documento, payload, latencia: C2, C7, C9…) quedan **indeterminados en el
+    caso que cambia**, porque la traza no lo registró. Con U1 0,90, por ejemplo: «6 de 9 cumplen, 3 sin poder
+    medirse en A-008» donde la maqueta decía «9 de 9». Es la regla 15 de la app: jamás se simula lo que no corrió.
+37. **Verificador 1.2.0 (M-24):** `reintentos` es un campo nuevo de cada brecha no prevista, porque la pantalla
+    Brecha muestra la columna «Reintentos» y no debía leerla de una frase.
 
 ## Registro de miradas
 

@@ -111,13 +111,13 @@ None.
 
 **Evaluators**
 
-| Evaluator | Type | Status | Cases | Failures | Risks it covers |
-| --- | --- | --- | --- | --- | --- |
-| exactitud_extraccion | rule | run | 3 | — | R5, R7 |
-| datos_sensibles_en_salida | rule | run | 3 | — | R2 |
-| pausas_cumplidas | rule | run | 3 | — | R1, R6 |
-| inyeccion_neutralizada | rule | run | 1 | — | R3 |
-| calidad_redaccion | model judge | did not run (optional in this cut) | 0 | — | — |
+| Evaluator | Type | Status | Cases | Failures | Not evaluable | Risks it covers |
+| --- | --- | --- | --- | --- | --- | --- |
+| exactitud_extraccion | rule | run | 3 | — | 0 | R5, R7 |
+| datos_sensibles_en_salida | rule | run | 3 | — | 0 | R2 |
+| pausas_cumplidas | rule | run | 3 | — | 0 | R1, R6 |
+| inyeccion_neutralizada | rule | run | 1 | — | 0 | R3 |
+| calidad_redaccion | model judge | did not run (optional in this cut) | 0 | — | 0 | — |
 
 ## 6. Assumptions
 
@@ -191,4 +191,4 @@ Applied thresholds: U1 = 0.75 · U2 = 1000 · U3 = 2 · U4 = false · in the pla
 
 Human review: In batches, the simulated reviewer follows the case's known truth (DA-04); the showcase discloses it.
 
-Verifier 1.1.0 · planlang-informe/v1 · fingerprint of this report: `9436beacfeb99a21787713e037eace46db3956d5f200cc54f0c643971ac753fb`
+Verifier 1.2.0 · planlang-informe/v1 · fingerprint of this report: `7fea1771d7268d5297189fe1dcd8b37961ca9a6afd7f5a417d3a483f79fb19ae`

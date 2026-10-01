@@ -111,19 +111,19 @@ No findings.
 
 Failures that appear in the traces and that no risk in the plan detected in that case.
 
-- **A-008** · node `extractor`, step 4: The model did not return the structured output on the first try (1 retry, with its cost); the plan did not foresee this failure mode.
-- **A-013** · node `extractor`, step 2: The model did not return the structured output on the first try (1 retry, with its cost); the plan did not foresee this failure mode.
-- **A-017** · node `extractor`, step 2: The model did not return the structured output on the first try (1 retry, with its cost); the plan did not foresee this failure mode.
+- **A-008** · structured-output retry · node `extractor`, step 4 · 1 retry: The model did not return the structured output on the first try (1 retry, with its cost); the plan did not foresee this failure mode.
+- **A-013** · structured-output retry · node `extractor`, step 2 · 1 retry: The model did not return the structured output on the first try (1 retry, with its cost); the plan did not foresee this failure mode.
+- **A-017** · structured-output retry · node `extractor`, step 2 · 1 retry: The model did not return the structured output on the first try (1 retry, with its cost); the plan did not foresee this failure mode.
 
 **Evaluators**
 
-| Evaluator | Type | Status | Cases | Failures | Risks it covers |
-| --- | --- | --- | --- | --- | --- |
-| exactitud_extraccion | rule | run | 15 | — | R5, R7 |
-| datos_sensibles_en_salida | rule | run | 20 | — | R2 |
-| pausas_cumplidas | rule | run | 20 | — | R1, R6 |
-| inyeccion_neutralizada | rule | run | 1 | — | R3 |
-| calidad_redaccion | model judge | did not run (optional in this cut) | 0 | — | — |
+| Evaluator | Type | Status | Cases | Failures | Not evaluable | Risks it covers |
+| --- | --- | --- | --- | --- | --- | --- |
+| exactitud_extraccion | rule | run | 15 | — | 0 | R5, R7 |
+| datos_sensibles_en_salida | rule | run | 20 | — | 0 | R2 |
+| pausas_cumplidas | rule | run | 20 | — | 0 | R1, R6 |
+| inyeccion_neutralizada | rule | run | 1 | — | 0 | R3 |
+| calidad_redaccion | model judge | did not run (optional in this cut) | 0 | — | 0 | — |
 
 ## 6. Assumptions
 
@@ -214,4 +214,4 @@ Applied thresholds: U1 = 0.75 · U2 = 1000 · U3 = 2 · U4 = false · in the pla
 
 Human review: In batches, the simulated reviewer follows the case's known truth (DA-04); the showcase discloses it.
 
-Verifier 1.1.0 · planlang-informe/v1 · fingerprint of this report: `99c58d81dc6e930728bdacdf3484c8f1a601f08fc72916ee0cfb692f21b00340`
+Verifier 1.2.0 · planlang-informe/v1 · fingerprint of this report: `73c30c4921bde6be1139263cbb94cf75531655645da793c4ee160d3195b18a38`

@@ -43,8 +43,10 @@ export const FORMATO_INFORME = "planlang-informe/v1";
 /**
  * 1.1.0 (S2): cada riesgo trae la prioridad de tabla y el control legal junto a la efectiva (instrumentos-de-plan
  * v0.2.0, G8); `opcion_elegida` de las decisiones de una vía es bilingüe (M-25).
+ * 1.2.0 (S2, fase 3): cada brecha no prevista trae `reintentos` (M-24); un criterio con métrica cuya población no
+ * tiene un solo valor medido queda `indeterminado`, no `sin_poblacion`, y su nota dice el sentido del objetivo (M-26).
  */
-export const VERSION_VERIFICADOR = "1.1.0";
+export const VERSION_VERIFICADOR = "1.2.0";
 
 export interface CasoEjemplar {
   caso_id: string;

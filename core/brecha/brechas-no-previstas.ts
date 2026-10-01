@@ -95,6 +95,8 @@ export interface BrechaNoPrevista {
   caso_id: string | null;
   nodo: string | null;
   paso: number | null;
+  /** Reintentos de salida estructurada del caso (solo `reintento_de_esquema`; null en las demás). */
+  reintentos: number | null;
   detalle: TextoBilingue;
 }
 
@@ -155,6 +157,7 @@ export function brechasNoPrevistas(
           caso_id: null,
           nodo: null,
           paso: null,
+          reintentos: null,
           detalle: {
             es: `El plan exige el evaluador «${e.id}» y no corrió: lo que mide no se verificó.`,
             en: `The plan requires the «${e.id}» evaluator and it did not run: what it measures went unverified.`,
@@ -173,6 +176,7 @@ export function brechasNoPrevistas(
         caso_id: null,
         nodo: null,
         paso: null,
+        reintentos: null,
         detalle: {
           es: `El evaluador «${e.id}» no pudo medir: ${ev.mal_formada.es}.`,
           en: `The «${e.id}» evaluator could not measure: ${ev.mal_formada.en}.`,
@@ -201,6 +205,7 @@ export function brechasNoPrevistas(
         caso_id: caso,
         nodo: regla.nodo,
         paso: primerPasoDe(t, regla.nodo, true),
+        reintentos: null,
         detalle: regla.falla,
       });
     }
@@ -222,6 +227,7 @@ export function brechasNoPrevistas(
         caso_id: t.caso_id,
         nodo: conError.nodo,
         paso: conError.orden,
+        reintentos: null,
         detalle: {
           es: `El proveedor del modelo falló (${conError.error_proveedor}) y ningún riesgo del plan lo anticipaba.`,
           en: `The model provider failed (${conError.error_proveedor}) and no risk in the plan anticipated it.`,
@@ -237,6 +243,7 @@ export function brechasNoPrevistas(
         caso_id: t.caso_id,
         nodo: reintento.nodo,
         paso: reintento.orden,
+        reintentos: total,
         detalle: {
           es: `El modelo no entregó la salida estructurada al primer intento (${total} reintento${total === 1 ? "" : "s"}, con su costo); el plan no preveía este modo de falla.`,
           en: `The model did not return the structured output on the first try (${total} retr${total === 1 ? "y, with its" : "ies, with their"} cost); the plan did not foresee this failure mode.`,

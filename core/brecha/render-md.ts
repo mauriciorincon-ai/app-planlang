@@ -77,6 +77,15 @@ const TIPO_EVALUADOR: Record<string, Tb> = {
   juez_modelo: tb("juez con modelo", "model judge"),
   humano: tb("persona", "person"),
 };
+const CATEGORIA_BRECHA: Record<string, Tb> = {
+  evaluador: tb("evaluador", "evaluator"),
+  error_proveedor: tb("error del proveedor", "provider error"),
+  reintento_de_esquema: tb(
+    "reintento de salida estructurada",
+    "structured-output retry",
+  ),
+  evaluador_no_ejecutado: tb("evaluador sin correr", "evaluator not run"),
+};
 const VARIANTE: Record<string, Tb> = {
   multiagente: tb("multiagente", "multi-agent"),
   agente_unico: tb("agente único", "single agent"),
@@ -297,11 +306,25 @@ function valorRiesgo(r: ResultadoRiesgo, i: Idioma): string {
   return `${fmt(r.valor)}${regla}`;
 }
 
+function notasRiesgo(r: ResultadoRiesgo, i: Idioma): string[] {
+  const out: string[] = [];
+  if (r.nota) out.push(r.nota[i]);
+  if (r.fuera_por_senal_nula > 0)
+    out.push(
+      i === "es"
+        ? `${r.fuera_por_senal_nula} caso(s) quedan fuera de la población del detector porque la señal que la define es nula en ellos.`
+        : `${r.fuera_por_senal_nula} case(s) fall outside the detector's population because the signal that defines it is null for them.`,
+    );
+  for (const n of r.no_evaluables) out.push(`${n.caso_id}: ${n.motivo[i]}`);
+  return out;
+}
+
 function seccionRiesgos(inf: Informe, i: Idioma): string {
   const ct = inf.contrato_de_grafo;
-  const notas = inf.riesgos
-    .filter((r) => r.nota)
-    .map((r) => `- **${r.id}** — ${r.nota![i]}`);
+  // M-24: los casos que el detector no pudo medir y los que quedan fuera por una señal nula se ven, como en criterios.
+  const notas = inf.riesgos.flatMap((r) =>
+    notasRiesgo(r, i).map((n) => `- **${r.id}** — ${n}`),
+  );
   const hallazgos = ct.hallazgos.map(
     (h) =>
       `- ${h.severidad === "bloqueante" ? "✗" : "⚠"} \`${h.codigo}\`${h.caso_id ? ` ${h.caso_id}` : ""} (${h.corrida_id}): ${h.detalle[i]}`,
@@ -428,7 +451,7 @@ function seccionBrechas(inf: Informe, i: Idioma): string {
       ? [i === "es" ? "Ninguna." : "None."]
       : b.brechas.map(
           (x) =>
-            `- ${x.caso_id ? `**${x.caso_id}**` : "—"}${x.corrida_id !== inf.corrida_id ? ` · ${i === "es" ? "repetición" : "repetition"} \`${x.corrida_id}\`` : ""}${x.nodo ? ` · ${i === "es" ? "nodo" : "node"} \`${x.nodo}\`, ${i === "es" ? "paso" : "step"} ${x.paso ?? "—"}` : ""}: ${x.detalle[i]}`,
+            `- ${x.caso_id ? `**${x.caso_id}**` : "—"} · ${nombre(CATEGORIA_BRECHA, x.categoria, i)}${x.corrida_id !== inf.corrida_id ? ` · ${i === "es" ? "repetición" : "repetition"} \`${x.corrida_id}\`` : ""}${x.nodo ? ` · ${i === "es" ? "nodo" : "node"} \`${x.nodo}\`, ${i === "es" ? "paso" : "step"} ${x.paso ?? "—"}` : ""}${x.reintentos !== null ? ` · ${x.reintentos} ${i === "es" ? (x.reintentos === 1 ? "reintento" : "reintentos") : x.reintentos === 1 ? "retry" : "retries"}` : ""}: ${x.detalle[i]}`,
         )),
     "",
     `**${i === "es" ? "Evaluadores" : "Evaluators"}**`,
@@ -441,6 +464,7 @@ function seccionBrechas(inf: Informe, i: Idioma): string {
             "Estado",
             "Casos",
             "Fallas",
+            "No evaluables",
             "Riesgos que cubre",
           ]
         : [
@@ -449,6 +473,7 @@ function seccionBrechas(inf: Informe, i: Idioma): string {
             "Status",
             "Cases",
             "Failures",
+            "Not evaluable",
             "Risks it covers",
           ],
       b.evaluadores.map((e) => [
@@ -457,6 +482,7 @@ function seccionBrechas(inf: Informe, i: Idioma): string {
         ESTADO_EVAL[e.estado]?.[i] ?? e.estado,
         String(e.casos_evaluados),
         casos(e.fallas),
+        String(e.no_evaluables),
         casos(e.riesgos_cubiertos),
       ]),
     ),

@@ -84,6 +84,24 @@ describe("validador — referencias rotas", () => {
   });
 });
 
+describe("validador — combinaciones de medición sin sentido (M-26)", () => {
+  it("una métrica en un criterio que no la agrega, o una condición en uno que solo agrega la métrica, se rechazan", () => {
+    const p = clon();
+    const criterios = arr(p, "criterios_aceptacion");
+    const c5 = criterios.find((c) => c.id === "C5") as Obj;
+    (c5.regla_de_medicion as Obj).metrica = "latencia_total_s";
+    const c7 = criterios.find((c) => c.id === "C7") as Obj;
+    (c7.regla_de_medicion as Obj).condicion = "pausa_humana == true";
+    const c = codigos(p);
+    expect(c).toContainEqual(["CRITERIO_SIN_REGLA", "C5"]);
+    expect(c).toContainEqual(["CRITERIO_SIN_REGLA", "C7"]);
+    // El plan sembrado, sin tocar, no las tiene.
+    expect(codigos(clon()).filter(([k]) => k === "CRITERIO_SIN_REGLA")).toEqual(
+      [],
+    );
+  });
+});
+
 describe("validador — criterios, umbrales y contrato", () => {
   it("criterio de latencia sin métrica, métrica no declarada, pass^k sin k, población con umbral roto", () => {
     const p = clon();

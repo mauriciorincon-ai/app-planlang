@@ -11,7 +11,8 @@
         },
         "evaluador": null,
         "nodo": "extractor",
-        "paso": 4
+        "paso": 4,
+        "reintentos": 1
       },
       {
         "caso_id": "A-013",
@@ -23,7 +24,8 @@
         },
         "evaluador": null,
         "nodo": "extractor",
-        "paso": 2
+        "paso": 2,
+        "reintentos": 1
       },
       {
         "caso_id": "A-017",
@@ -35,7 +37,8 @@
         },
         "evaluador": null,
         "nodo": "extractor",
-        "paso": 2
+        "paso": 2,
+        "reintentos": 1
       }
     ],
     "evaluadores": [
@@ -555,11 +558,11 @@
     },
     "verificador": {
       "formato": "planlang-informe/v1",
-      "version": "1.1.0"
+      "version": "1.2.0"
     }
   },
   "formato": "planlang-informe/v1",
-  "huella": "99c58d81dc6e930728bdacdf3484c8f1a601f08fc72916ee0cfb692f21b00340",
+  "huella": "73c30c4921bde6be1139263cbb94cf75531655645da793c4ee160d3195b18a38",
   "plan_en_breve": {
     "decisiones_una_via": [
       {
@@ -1180,5 +1183,5 @@
     "bloqueantes": [],
     "valor": "cumple_con_alertas"
   },
-  "version_verificador": "1.1.0"
+  "version_verificador": "1.2.0"
 }

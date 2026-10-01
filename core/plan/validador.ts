@@ -366,6 +366,26 @@ export function validarPlan(entrada: unknown): ResultadoValidacion {
           `Criterion ${c.id} (${r.agregacion}) declares no metric to aggregate.`,
         ),
       );
+    // M-26: una métrica con una agregación que no la agrega (o una condición en una que solo agrega la métrica) se
+    // ignoraría en silencio al medir.
+    if (exigeCondicion && r.metrica)
+      motivos.push(
+        motivo(
+          "CRITERIO_SIN_REGLA",
+          c.id,
+          `El criterio ${c.id} declara la métrica «${r.metrica}», pero ${r.agregacion} mide su condición caso por caso y no la agrega.`,
+          `Criterion ${c.id} declares metric “${r.metrica}”, but ${r.agregacion} measures its condition case by case and does not aggregate it.`,
+        ),
+      );
+    if (!exigeCondicion && r.condicion)
+      motivos.push(
+        motivo(
+          "CRITERIO_SIN_REGLA",
+          c.id,
+          `El criterio ${c.id} (${r.agregacion}) agrega la métrica y no mide la condición «${r.condicion}»: va en la población.`,
+          `Criterion ${c.id} (${r.agregacion}) aggregates the metric and does not measure condition “${r.condicion}”: it belongs in the population.`,
+        ),
+      );
     if (r.agregacion === "pass^k" && !r.k)
       motivos.push(
         motivo(

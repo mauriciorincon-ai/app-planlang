@@ -109,21 +109,21 @@ No findings.
 
 Failures that appear in the traces and that no risk in the plan detected in that case.
 
-- **A-003** · node `extractor`, step 2: The model did not return the structured output on the first try (1 retry, with its cost); the plan did not foresee this failure mode.
-- **A-006** · repetition `suscripcion-planlang-a-001-20-v1.2-r2` · node `extractor`, step 2: The model did not return the structured output on the first try (2 retries, with their cost); the plan did not foresee this failure mode.
-- **A-017** · repetition `suscripcion-planlang-a-001-20-v1.2-r2` · node `extractor`, step 2: The model did not return the structured output on the first try (1 retry, with its cost); the plan did not foresee this failure mode.
-- **A-016** · repetition `suscripcion-planlang-a-001-20-v1.2-r3` · node `extractor`, step 2: The model did not return the structured output on the first try (1 retry, with its cost); the plan did not foresee this failure mode.
-- **A-017** · repetition `suscripcion-planlang-a-001-20-v1.2-r3` · node `extractor`, step 2: The model did not return the structured output on the first try (2 retries, with their cost); the plan did not foresee this failure mode.
+- **A-003** · structured-output retry · node `extractor`, step 2 · 1 retry: The model did not return the structured output on the first try (1 retry, with its cost); the plan did not foresee this failure mode.
+- **A-006** · structured-output retry · repetition `suscripcion-planlang-a-001-20-v1.2-r2` · node `extractor`, step 2 · 2 retries: The model did not return the structured output on the first try (2 retries, with their cost); the plan did not foresee this failure mode.
+- **A-017** · structured-output retry · repetition `suscripcion-planlang-a-001-20-v1.2-r2` · node `extractor`, step 2 · 1 retry: The model did not return the structured output on the first try (1 retry, with its cost); the plan did not foresee this failure mode.
+- **A-016** · structured-output retry · repetition `suscripcion-planlang-a-001-20-v1.2-r3` · node `extractor`, step 2 · 1 retry: The model did not return the structured output on the first try (1 retry, with its cost); the plan did not foresee this failure mode.
+- **A-017** · structured-output retry · repetition `suscripcion-planlang-a-001-20-v1.2-r3` · node `extractor`, step 2 · 2 retries: The model did not return the structured output on the first try (2 retries, with their cost); the plan did not foresee this failure mode.
 
 **Evaluators**
 
-| Evaluator | Type | Status | Cases | Failures | Risks it covers |
-| --- | --- | --- | --- | --- | --- |
-| exactitud_extraccion | rule | run | 15 | — | R5, R7 |
-| datos_sensibles_en_salida | rule | run | 20 | — | R2 |
-| pausas_cumplidas | rule | run | 20 | — | R1, R6 |
-| inyeccion_neutralizada | rule | run | 1 | — | R3 |
-| calidad_redaccion | model judge | did not run (optional in this cut) | 0 | — | — |
+| Evaluator | Type | Status | Cases | Failures | Not evaluable | Risks it covers |
+| --- | --- | --- | --- | --- | --- | --- |
+| exactitud_extraccion | rule | run | 15 | — | 0 | R5, R7 |
+| datos_sensibles_en_salida | rule | run | 20 | — | 0 | R2 |
+| pausas_cumplidas | rule | run | 20 | — | 0 | R1, R6 |
+| inyeccion_neutralizada | rule | run | 1 | — | 0 | R3 |
+| calidad_redaccion | model judge | did not run (optional in this cut) | 0 | — | 0 | — |
 
 ## 6. Assumptions
 
@@ -220,4 +220,4 @@ Applied thresholds: U1 = 0.75 · U2 = 1000 · U3 = 2 · U4 = false · in the pla
 
 Human review: In batches, the simulated reviewer follows the case's known truth (DA-04); the showcase discloses it.
 
-Verifier 1.1.0 · planlang-informe/v1 · fingerprint of this report: `70c1cb2368075ec3263ddce8dba2641a0196cd6e3f8b31492a3cdb0d564b9dd7`
+Verifier 1.2.0 · planlang-informe/v1 · fingerprint of this report: `ca000282398e1e248b5f8ce86c99206e7c1fdedb99742169164bebf3126fdd9f`

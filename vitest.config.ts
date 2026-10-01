@@ -32,6 +32,8 @@ const produceBytes = [
   "tests/unit/core/formatos/**/*.test.ts",
   // S2: el lienzo del visor (golden SVG ES/EN) — mismos bytes en Node y en jsdom (G1 del diagramador).
   "tests/unit/core/visor/svg.test.ts",
+  // S2 fase 3: el playground recalcula en el navegador — la paridad con el informe y RF-09.2 corre en los dos.
+  "tests/unit/core/playground/paridad.test.ts",
   "tests/integration/**/*.test.ts",
   "tests/contrato/**/*.test.ts",
 ];

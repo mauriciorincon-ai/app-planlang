@@ -109,7 +109,18 @@ export function contextoDeCaso(
   traza: Traza,
   umbrales: Umbrales,
 ): Contexto {
-  return contextoDesdeObjeto(objetoDeCaso(caso, traza, umbrales), {
+  return contextoDeObjeto(caso, objetoDeCaso(caso, traza, umbrales));
+}
+
+/**
+ * El contexto de un caso sobre un objeto ya armado (el de `objetoDeCaso` o uno derivado: el playground lo usa
+ * con el desenlace de un camino que el agente no tomó).
+ */
+export function contextoDeObjeto(
+  caso: Caso,
+  objeto: Record<string, JsonValor>,
+): Contexto {
+  return contextoDesdeObjeto(objeto, {
     identificador_sintetico: (id) => {
       if (id !== caso.id)
         throw new ErrorEvaluacion(
