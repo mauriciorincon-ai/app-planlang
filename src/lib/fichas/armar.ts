@@ -380,7 +380,8 @@ export function brochureExport(
 export interface Complemento {
   schema_version: string;
   app: string;
-  procedencia: "app" | "cv-viva" | "planeadora";
+  /** Solo con un proceso: hoja-de-vida rechaza una procedencia sin proceso, y la ficha de la app no lo trae. */
+  procedencia?: "app" | "cv-viva" | "planeadora";
   declarado_en: string;
   titular: string;
   cifras_destacadas: string[];
@@ -402,7 +403,6 @@ export function complementoPropuesto(d: DatosDemo, i: Idioma): Complemento {
   return {
     schema_version: "1.0.0",
     app: APP.slug,
-    procedencia: "app",
     declarado_en: d.informe.ficha_reproducibilidad.corrida.fecha,
     titular: X(APP.titular, i),
     cifras_destacadas: CIFRAS_DESTACADAS,
@@ -477,9 +477,7 @@ export function armarFichaApp(
         ? { valor: a.sellado_en, etiqueta: "sellada" }
         : { valor: "—", etiqueta: "construccion" },
       { valor: `v${a.version_repo}`, etiqueta: "version" },
-      ...(dec
-        ? [{ valor: String(dec.valor), etiqueta: "decisiones" }]
-        : []),
+      ...(dec ? [{ valor: String(dec.valor), etiqueta: "decisiones" }] : []),
     ],
   };
 }

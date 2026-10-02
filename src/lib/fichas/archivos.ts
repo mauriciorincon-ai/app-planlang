@@ -15,7 +15,11 @@ import {
   complementoPropuesto,
   fichaAgente,
 } from "./armar";
-import { problemasDeExport, problemasDeFicha } from "./contrato";
+import {
+  problemasDelComplemento,
+  problemasDeExport,
+  problemasDeFicha,
+} from "./contrato";
 
 export const RUTA_FICHA_AGENTE =
   "content/agentes/planlang-demo-a.ficha-tecnica.json";
@@ -51,10 +55,11 @@ export function archivosDeFichas(
     exigir(rutaAgente, problemasDeFicha(agente));
     exigir(rutaExport, problemasDeExport(exp));
     exigir(rutaApp, problemasDeFicha(app));
+    const rutaComp = `docs/fichas/planlang.complemento-propuesto${sufijo}.json`;
+    exigir(rutaComp, problemasDelComplemento(comp));
     out[rutaAgente] = json(agente);
     out[rutaExport] = json(exp);
-    out[`docs/fichas/planlang.complemento-propuesto${sufijo}.json`] =
-      json(comp);
+    out[rutaComp] = json(comp);
     out[rutaApp] = json(app);
   }
   return out;

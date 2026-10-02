@@ -5,6 +5,7 @@ import { SCRIPT_PREVIO } from "@/lib/preferencias/script-previo";
 import { NO_ENCONTRADA } from "@/textos/comun";
 import { inter, mono } from "./fuentes";
 import "./globals.css";
+import { ruta } from "@/lib/ruta";
 
 export const metadata: Metadata = {
   title: "planlang · 404",
@@ -41,10 +42,10 @@ export default function NoEncontrada() {
             <span lang="en">{NO_ENCONTRADA.texto.en}</span>
           </p>
           <p className="flex gap-4">
-            <a href="/es" hrefLang="es" lang="es">
+            <a href={ruta("es", "entrada")} hrefLang="es" lang="es">
               {NO_ENCONTRADA.volver.es}
             </a>
-            <a href="/en" hrefLang="en" lang="en">
+            <a href={ruta("en", "entrada")} hrefLang="en" lang="en">
               {NO_ENCONTRADA.volver.en}
             </a>
           </p>

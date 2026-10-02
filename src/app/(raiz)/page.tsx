@@ -5,6 +5,7 @@ import { MarcaPlanlang } from "@/components/marcas";
 import { SCRIPT_IDIOMA } from "@/lib/preferencias/script-idioma";
 import { ELEGIR, ROTULO } from "@/textos/comun";
 import { PORTADA } from "@/textos/entrada";
+import { ruta } from "@/lib/ruta";
 
 const OPCION =
   "grid gap-1 rounded-control border border-tinta-3 px-4 py-3 no-underline transition-colors hover:border-tinta-2";
@@ -39,11 +40,21 @@ export default function Inicio() {
           </span>
         </h1>
         <nav aria-label={ELEGIR.grupo} className="flex flex-wrap gap-3">
-          <a href="/es" hrefLang="es" lang="es" className={OPCION}>
+          <a
+            href={ruta("es", "entrada")}
+            hrefLang="es"
+            lang="es"
+            className={OPCION}
+          >
             <span className="text-sub font-semibold">{ELEGIR.es.nombre}</span>
             <span className="text-chico text-tinta-2">{ELEGIR.es.texto}</span>
           </a>
-          <a href="/en" hrefLang="en" lang="en" className={OPCION}>
+          <a
+            href={ruta("en", "entrada")}
+            hrefLang="en"
+            lang="en"
+            className={OPCION}
+          >
             <span className="text-sub font-semibold">{ELEGIR.en.nombre}</span>
             <span className="text-chico text-tinta-2">{ELEGIR.en.texto}</span>
           </a>

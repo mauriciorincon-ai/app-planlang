@@ -5,7 +5,8 @@
  * vista, un SVG cambiado a mano). Biyección de nodos (los del contrato ausentes del grafo, con la marca «exigido»),
  * una línea por cada arista de LangGraph y un flujo por cada regla y rama por defecto.
  *
- * Uso (después de `pnpm build`): `pnpm diagrama:verificar`. Sale con 1 y nombra cada falla.
+ * Uso (después de `pnpm build`): `pnpm diagrama:verificar [carpeta]` (por omisión `out/`; el paquete para
+ * hoja-de-vida lo corre sobre su propio export). Sale con 1 y nombra cada falla.
  */
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -108,7 +109,7 @@ export function svgDeLaPagina(html: string, ns = "agente"): string {
   return m[0];
 }
 
-function principal(): number {
+export function principal(carpeta = "out"): number {
   const raiz = process.cwd();
   const leer = (r: string): unknown =>
     JSON.parse(readFileSync(join(raiz, r), "utf8"));
@@ -128,7 +129,7 @@ function principal(): number {
       leer(m.plan.archivo) as { contrato_de_grafo: ContratoPublicable }
     ).contrato_de_grafo;
     for (const idioma of ["es", "en"]) {
-      const pagina = join(raiz, "out", idioma, "agente.html");
+      const pagina = join(raiz, carpeta, idioma, "agente.html");
       if (!existsSync(pagina)) {
         console.error(
           `✗ ${demo}/${idioma}: falta ${pagina} (¿corrió pnpm build?)`,
@@ -153,4 +154,5 @@ function principal(): number {
   return fallas ? 1 : 0;
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) process.exit(principal());
+if (import.meta.url === `file://${process.argv[1]}`)
+  process.exit(principal(process.argv[2]));

@@ -39,6 +39,9 @@ const eslintConfig = defineConfig([
     // Default ignores of eslint-config-next:
     ".next/**",
     "out/**",
+    // El paquete para hoja-de-vida (ADR-009): su build y la carpeta que se copia, generados.
+    ".next-paquete/**",
+    "dist/**",
     "build/**",
     "next-env.d.ts",
     // planlang S1 (K5, regla 2 del CLAUDE.md): directorios generados o ajenos al lint de TS.

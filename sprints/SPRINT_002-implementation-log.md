@@ -745,6 +745,54 @@ matriz), `accion` (llegar al estado con el control, como quien lee) y 120 s por 
 La primera alarma fue real: el diagramador v0.4.0 se publicó en la planeadora a las 19:57 de hoy, y la guarda «la
 copia es la vigente» salió en rojo en el job de calidad (desviación 45).
 
+### Paquete (ADR-009, 2026-10-01)
+
+- **`next.config.ts`** con `PLANLANG_PAQUETE=1` fija:
+  - `basePath: "/piezas/planlang"`;
+  - `distDir: ".next-paquete"`: Next 16 exporta ahí y `out/` no se toca;
+  - el id de build fijo;
+  - el alias de `@sentry/nextjs` a `src/lib/sin-sentry.ts`. Sin él, el chunk del `import()` viajaba aunque nunca se
+    pidiera.
+- **`src/lib/ruta.ts`:** `BASE_RUTA` + `SUFIJO_RUTA` (`.html`) en el paquete. Los usan:
+  - la raíz;
+  - el 404 global (antes `href="/es"` a mano);
+  - el script que elige idioma.
+
+  `rutas.test.ts` prueba los dos modos.
+- **`pnpm paquete:vitrina`** (`scripts/paquete-vitrina.ts`), en orden:
+  - gate: M9, trazas y RF-09.2, fichas al día, paridad;
+  - build y diagrama = grafo sobre `.next-paquete/`;
+  - copia a `dist/paquete-hoja-de-vida/` con el árbol de hoja-de-vida, sin las 224 cargas RSC;
+  - barridos (`scripts/paquete/barridos.ts` + `tests/unit/guardias/paquete-barridos.test.ts`, 8);
+  - manifiesto SHA-256.
+
+  Resultado: 57 páginas, 85 archivos, 14 MB.
+- **Determinismo medido:** dos builds seguidos del mismo árbol → los 85 archivos con la misma huella.
+- **Proyecto Playwright `paquete`** (`playwright.paquete.config.ts`, `pnpm test:e2e:paquete`):
+  - `serve` sin URL limpias ni listado;
+  - rastreo desde `index.html?elegir` de las 54 páginas: mismo origen, todo 2xx, consola limpia;
+  - la raíz en inglés lleva a `en.html` bajo la base.
+
+  En la CI va en el job `e2e`, después del e2e de la vitrina.
+- **Dos hallazgos al armarlo:**
+  - un chunk del runtime de Next trae la palabra «localhost» (su analizador de URL). La regla se afinó: en las
+    páginas, cualquier mención; en el código, una URL completa;
+  - **el complemento propuesto llevaba `procedencia` sin proceso**, y el `complementoSchema` de hoja-de-vida lo
+    rechaza («sobra»). Se vio al validar el YAML con su propio esquema (solo lectura). Arreglo:
+    `complementoPropuesto` ya no la emite, y `contrato.ts` gana `EsquemaComplemento`, un espejo de su Zod, que
+    `pnpm fichas` exige antes de escribir.
+  - Las 6 fichas y el complemento validan con el Zod de hoja-de-vida; su `git status` quedó vacío.
+
+#### Demos en rojo del paquete (regla 15)
+
+| Gate | Cambio deliberado | Rojo | Al revertir |
+|---|---|---|---|
+| Rastreo del paquete | un `href` a `es/plan` sin `.html` en `es/fichas.html` del paquete servido | 1 falla, nombra el enlace | 2/2 |
+| Mismo origen | `<img src="https://example.invalid/x.png">` en la misma página | «sale del origen: https://example.invalid/x.png» | 2/2 |
+| Gate de publicación | un espacio de más en `docs/fichas/planlang.ficha-tecnica.json` | `paquete:vitrina` sale con 1 en «las fichas están al día», antes del build | — |
+| Espejo del complemento | `procedencia: "app"` de vuelta en `complementoPropuesto` | `fichas.test.ts` 3 fallan; `pnpm fichas` lanza «no cumple su contrato» | 12/12 |
+| Barridos | cada regla con su caso en rojo dentro de la prueba | 8 casos | — |
+
 ## Desviación del plan
 
 1. **El centinela «Worktrees prohibidos» no existe** en `ordenes/CLAUDE-md-para-app.md` (vive en el batch
@@ -872,6 +920,11 @@ copia es la vigente» salió en rojo en el job de calidad (desviación 45).
     semver («1.3.0»): allá se pinta «v{version}».
 48. **Fraunces entra después de la carga** (`html[data-mono]`, como la mono): en la primera pintura de Fichas competía
     con Inter. Hasta que entra, los titulares de la piel van en Georgia. La maqueta la servía con `block`.
+49. **El paquete se arma con el árbol de hoja-de-vida** (`dist/paquete-hoja-de-vida/public/piezas/planlang/` +
+    `content/agentes/`, `content/vitrina/`, `data/fichas/planlang.yaml`), no en `dist/paquete-hoja-de-vida/planlang/`
+    como decía el plan: así el PR de contenido es una copia directa y el proyecto Playwright sirve `public/` igual que
+    hoja-de-vida. El manifiesto va en la raíz del paquete. Las cargas RSC (`.txt`) no viajan (20 de 35 MB): la
+    vitrina navega con `<a>` y el rastreo comprueba que ninguna página las pide.
 
 ## Registro de miradas
 
@@ -890,6 +943,9 @@ copia es la vigente» salió en rojo en el job de calidad (desviación 45).
 | 2026-09-28 | Demo de desbordamiento verde por error | bloque de 400 px sin alto (área cero no desborda) | demo repetida con 400×4 px: rojo |
 | 2026-09-28 | `lighthouse` rojo: LCP 2,72 s > 2,5 s | el runtime de Next y la mono de datos bajaban antes del primer pintado | mono diferida al `load` (LCP local 2,31 s); ver «CI del commit `8c7ae2d`» |
 | 2026-09-30 | LCP del Playground en el borde (2.499,99 ms) | Zod en la isla: `SinProbar` importado de `brecha/mirada.tsx` y esquemas Zod en `core/formatos/bilingue.ts` | `sin-probar.tsx` y `bilingue-esquema.ts`; JS propio 132 → 17 KB comprimido (ver «P5 Playground, pruebas y cierre») |
+| 2026-10-01 | El complemento propuesto llevaba `procedencia` sin proceso | se copió del formato de `armar.py`, que la pone siempre; el Zod de hoja-de-vida la rechaza si no hay proceso | `complementoPropuesto` ya no la emite; espejo `EsquemaComplemento` en `contrato.ts` con su prueba |
+| 2026-10-01 | La ficha del agente se habría visto «vplan v1.3» y «5 funcionalidades» en Decisión | `pieza.version` con prefijo y `cuenta` con las reglas del plan; hoja-de-vida pinta `v{version}` y «N funcionalidades» | versión semver y `cuenta: 0` (desviación 47) |
+| 2026-10-01 | FCP de Fichas +450 ms | la `@font-face` de Fraunces en una hoja propia de la ruta (next/font importado solo en Fichas) | Fraunces declarada en `cv-viva.css` y activada tras la carga (desviación 48) |
 | 2026-09-30 | Pruebas de componentes por tiempo bajo cobertura | 5 s por omisión; el primer render de páginas enteras en paralelo los pasa | `testTimeout`/`hookTimeout` de 30 s en el proyecto `vitrina` |
 | 2026-09-30 | La captura de la mirada 3 cayó a mitad | 30 s por omisión para una captura de página entera de 20.000 px | 120 s por captura en el arnés |
 | 2026-09-30 | `out/` quedó con el build de un rojo a propósito | el e2e de la demo en rojo recompila; revertir la fuente no recompila | se recompila antes de capturar; las capturas salen siempre de un build posterior al último cambio |

@@ -16,6 +16,7 @@ import {
 import { archivosDeFichas } from "@/lib/fichas/archivos";
 import {
   limiteDe,
+  problemasDelComplemento,
   problemasDeExport,
   problemasDeFicha,
 } from "@/lib/fichas/contrato";
@@ -48,6 +49,7 @@ describe("cada ficha pasa su contrato, en los dos idiomas", () => {
       expect(
         problemasDeFicha(armarFichaApp(exp, complementoPropuesto(d, i))),
       ).toEqual([]);
+      expect(problemasDelComplemento(complementoPropuesto(d, i))).toEqual([]);
     },
   );
 });
@@ -117,6 +119,16 @@ describe("las reglas que el esquema no puede decir (el Zod de hoja-de-vida)", ()
     conEnlace.enlaces.produccion = "planlang";
     expect(problemasDeExport(conEnlace).join(" ")).toMatch(
       /\/enlaces\/produccion/,
+    );
+  });
+
+  it("el complemento: una procedencia sin proceso sobra (hoja-de-vida lo rechaza)", () => {
+    const comp = { ...complementoPropuesto(d, "es"), procedencia: "app" };
+    expect(problemasDelComplemento(comp)).toContain(
+      "/procedencia: «procedencia» sin proceso: sobra",
+    );
+    expect(problemasDelComplemento({ ...comp, extra: 1 }).join(" ")).toMatch(
+      /extra/,
     );
   });
 

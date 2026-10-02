@@ -50,6 +50,10 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm test:e2e        # incluye scans axe (@axe-core/playwright)
+      # ADR-009: el paquete para hoja-de-vida — gate de publicación, build bajo /piezas/planlang, barridos y
+      # manifiesto; luego se sirve como lo serviría hoja-de-vida (sin URL limpias) y se rastrean todos los enlaces.
+      - run: pnpm paquete:vitrina
+      - run: pnpm test:e2e:paquete
       # El primer reintento graba trace (playwright.config `trace: on-first-retry`) con
       # consola, errores y DOM — se sube SOLO cuando algo falla (kit v1.26.0).
       - uses: actions/upload-artifact@v7

@@ -238,6 +238,57 @@ export function problemasDeExport(exp: unknown): string[] {
   return out;
 }
 
+// ------------------------------------------------------------------------------------- el complemento de la app
+
+const textoHasta = (max: number) => z.string().min(1).max(max);
+
+/**
+ * Espejo del `complementoSchema` de hoja-de-vida (`src/lib/vitrina/ficha-tecnica/schema.ts`, huella en el lock): lo
+ * que a un export 1.0.0 le falta para armar la ficha (titular, cifras destacadas, límites, nunca y, si lo hay, el
+ * proceso). El proceso y su `procedencia` van juntos o no van.
+ */
+export const EsquemaComplemento = z
+  .object({
+    schema_version: z.string().regex(/^1\.\d+\.\d+$/),
+    app: z
+      .string()
+      .min(1)
+      .max(60)
+      .regex(/^[a-z0-9-]+$/),
+    declarado_en: fecha,
+    titular: textoHasta(240),
+    cifras_destacadas: z.array(lleno).min(3).max(5),
+    limites: z.array(textoHasta(160)).min(2).max(4),
+    nunca: z.array(textoHasta(160)).min(2).max(5),
+    proceso: z.record(z.string(), z.unknown()).optional(),
+    procedencia: z.enum(["app", "cv-viva", "planeadora"]).optional(),
+  })
+  .strict()
+  .superRefine((v, ctx) => {
+    if (v.proceso !== undefined && v.procedencia === undefined)
+      ctx.addIssue({
+        code: "custom",
+        path: ["procedencia"],
+        message: "el proceso necesita su procedencia",
+      });
+    if (v.proceso === undefined && v.procedencia !== undefined)
+      ctx.addIssue({
+        code: "custom",
+        path: ["procedencia"],
+        message: "«procedencia» sin proceso: sobra",
+      });
+  });
+
+/** Todo lo que el complemento incumple del esquema de hoja-de-vida (vacío: se puede proponer). */
+export function problemasDelComplemento(c: unknown): string[] {
+  const r = EsquemaComplemento.safeParse(c);
+  const out = r.success
+    ? []
+    : r.error.issues.map((i) => `/${i.path.join("/")}: ${i.message}`);
+  out.push(...sinEnlaces(c));
+  return out;
+}
+
 // ------------------------------------------------------------------------------------- límites para la tabla de P7
 
 type Nodo = {

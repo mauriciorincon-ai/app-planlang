@@ -1,7 +1,6 @@
 {
   "schema_version": "1.0.0",
   "app": "planlang",
-  "procedencia": "app",
   "declarado_en": "2026-09-27",
   "titular": "El plan de un agente se escribe como contrato, y un verificador sin IA publica, caso por caso, la brecha entre lo planeado y lo que el agente hizo, con sus fallas a la vista.",
   "cifras_destacadas": [

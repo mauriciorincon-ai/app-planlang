@@ -26,3 +26,5 @@ docs/contratos/
 content/
 docs/brochure-export.json
 docs/fichas/
+.next-paquete/
+dist/
