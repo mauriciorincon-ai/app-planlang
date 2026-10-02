@@ -1,0 +1,427 @@
+{
+  "aclaraciones": [
+    {
+      "ciclo": 1,
+      "pregunta": "¿Podría indicar el costo estimado de la densitometría ósea solicitada para completar la autorización?",
+      "respuesta": "Aclaración del médico. Costo estimado: 180 unidades sintéticas."
+    }
+  ],
+  "caso_id": "A-044",
+  "cobertura": {
+    "alto_costo": false,
+    "causal": null,
+    "codigo_extraido": "SYN-P-020",
+    "codigo_orden": "SYN-P-020",
+    "contradiccion": false,
+    "estado_servicio": "requiere_autorizacion",
+    "propuesta": "aprobar",
+    "reglas_disparadas": [
+      "RB-07"
+    ]
+  },
+  "corrida_id": "suscripcion-planlang-a-001-200-v1.4",
+  "decisiones_de_arista": [
+    {
+      "desde": "enrutador",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 1,
+      "rama_tomada": "extractor",
+      "resultado": false,
+      "senal": "tipo_atencion",
+      "tipo": "tripleta",
+      "umbral_aplicado": "urgencia",
+      "valor_declarado": "urgencia",
+      "valor_observado": "ambulatoria"
+    },
+    {
+      "desde": "enrutador",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 2,
+      "paso": 1,
+      "rama_tomada": "extractor",
+      "resultado": false,
+      "senal": "servicio_exento",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    },
+    {
+      "desde": "extractor",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 2,
+      "rama_tomada": "aclaracion",
+      "resultado": false,
+      "senal": "proveedor_no_disponible",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    },
+    {
+      "desde": "extractor",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "mayor_que",
+      "orden_arista": 2,
+      "paso": 2,
+      "rama_tomada": "aclaracion",
+      "resultado": true,
+      "senal": "campos_faltantes_count",
+      "tipo": "tripleta",
+      "umbral_aplicado": 0,
+      "valor_declarado": 0,
+      "valor_observado": 1
+    },
+    {
+      "desde": "aclaracion",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 3,
+      "rama_tomada": "extractor",
+      "resultado": false,
+      "senal": "proveedor_no_disponible",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    },
+    {
+      "desde": "aclaracion",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": true,
+      "operador": "mayor_o_igual_que",
+      "orden_arista": 2,
+      "paso": 3,
+      "rama_tomada": "extractor",
+      "resultado": false,
+      "senal": "ciclos_aclaracion",
+      "tipo": "tripleta",
+      "umbral_aplicado": 2,
+      "valor_declarado": "umbral.U3",
+      "valor_observado": 0
+    },
+    {
+      "desde": "extractor",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 4,
+      "rama_tomada": "verificador_cobertura",
+      "resultado": false,
+      "senal": "proveedor_no_disponible",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    },
+    {
+      "desde": "extractor",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "mayor_que",
+      "orden_arista": 2,
+      "paso": 4,
+      "rama_tomada": "verificador_cobertura",
+      "resultado": false,
+      "senal": "campos_faltantes_count",
+      "tipo": "tripleta",
+      "umbral_aplicado": 0,
+      "valor_declarado": 0,
+      "valor_observado": 0
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "menor_que",
+      "orden_arista": 1,
+      "paso": 6,
+      "rama_tomada": "redactor",
+      "resultado": false,
+      "senal": "senal_confianza",
+      "tipo": "tripleta",
+      "umbral_aplicado": 0.75,
+      "valor_declarado": "umbral.U1",
+      "valor_observado": 0.95
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "mayor_que",
+      "orden_arista": 2,
+      "paso": 6,
+      "rama_tomada": "redactor",
+      "resultado": false,
+      "senal": "costo_estimado",
+      "tipo": "tripleta",
+      "umbral_aplicado": 1000,
+      "valor_declarado": "umbral.U2",
+      "valor_observado": 180
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 3,
+      "paso": 6,
+      "rama_tomada": "redactor",
+      "resultado": false,
+      "senal": "contradiccion_orden_texto",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 4,
+      "paso": 6,
+      "rama_tomada": "redactor",
+      "resultado": false,
+      "senal": "propuesta",
+      "tipo": "tripleta",
+      "umbral_aplicado": "negar",
+      "valor_declarado": "negar",
+      "valor_observado": "aprobar"
+    },
+    {
+      "desde": "decision",
+      "entradas": {
+        "modo_texas": false,
+        "propuesta": "aprobar"
+      },
+      "funcion": "texas_y_no_aprobar",
+      "inclusivo": null,
+      "operador": null,
+      "orden_arista": 5,
+      "paso": 6,
+      "rama_tomada": "redactor",
+      "resultado": false,
+      "senal": null,
+      "tipo": "funcion",
+      "umbral_aplicado": null,
+      "valor_declarado": null,
+      "valor_observado": null
+    }
+  ],
+  "documento_adverso": null,
+  "error_de_esquema_en_traspaso": false,
+  "error_proveedor": null,
+  "extraccion": {
+    "campos": {
+      "costo_estimado": 180,
+      "diagnostico": "SYN-D-16",
+      "procedimiento": "SYN-P-020",
+      "urgencia": false
+    },
+    "campos_faltantes": [],
+    "confianza": 0.95,
+    "costo_estimado": 180,
+    "urgencia": false
+  },
+  "formato": "planlang-trace/v1",
+  "guardia_salida": {
+    "acciones_ejecutadas": [
+      "responder_afiliado"
+    ],
+    "acciones_intentadas": [
+      "responder_afiliado"
+    ],
+    "carga_detectada_en_entrada": false,
+    "hallazgos": [],
+    "severidad_accion": 0
+  },
+  "huella": "75dd73e8bf90e73d66c907887f21c49e5838704ccb0c15bfa3b59d440fdae4b6",
+  "nodos_visitados": [
+    "enrutador",
+    "extractor",
+    "aclaracion",
+    "extractor",
+    "verificador_cobertura",
+    "decision",
+    "redactor",
+    "guardia_salida"
+  ],
+  "pasos": [
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 16,
+      "nodo": "enrutador",
+      "orden": 1,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "enrutador",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0.014797,
+      "duracion_ms": 5304,
+      "error_proveedor": null,
+      "inicio_ms": 17,
+      "nodo": "extractor",
+      "orden": 2,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 4098,
+        "salida": 246
+      }
+    },
+    {
+      "costo_nominal_usd": 0.006893,
+      "duracion_ms": 4263,
+      "error_proveedor": null,
+      "inicio_ms": 5326,
+      "nodo": "aclaracion",
+      "orden": 3,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 1236,
+        "salida": 88
+      }
+    },
+    {
+      "costo_nominal_usd": 0.01251,
+      "duracion_ms": 5536,
+      "error_proveedor": null,
+      "inicio_ms": 9593,
+      "nodo": "extractor",
+      "orden": 4,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 4127,
+        "salida": 261
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 15133,
+      "nodo": "verificador_cobertura",
+      "orden": 5,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "regla",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 15133,
+      "nodo": "decision",
+      "orden": 6,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "enrutador",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0.008938,
+      "duracion_ms": 5649,
+      "error_proveedor": null,
+      "inicio_ms": 15135,
+      "nodo": "redactor",
+      "orden": 7,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 1332,
+        "salida": 257
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 20788,
+      "nodo": "guardia_salida",
+      "orden": 8,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "regla",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    }
+  ],
+  "pausas_humanas": [],
+  "resultado": "completo",
+  "salida_final": {
+    "aviso_ia": {
+      "en": "Notice: this reply was drafted by an artificial intelligence in a simulation with synthetic data. No denial is issued without review by a person.",
+      "es": "Aviso: esta respuesta la redactó una inteligencia artificial en una simulación con datos sintéticos. Ninguna negación se emite sin la revisión de una persona."
+    },
+    "en": "We are writing to inform you that your request for the Bone Densitometry procedure has been approved. This decision was generated through an automated process. You will soon receive additional information about the next steps to schedule your procedure.",
+    "es": "Le informamos que su solicitud para el procedimiento de Densitometría ósea ha sido aprobada. Esta decisión fue generada mediante un proceso automatizado. Pronto recibirá información adicional sobre los siguientes pasos para programar su procedimiento."
+  },
+  "senales": {
+    "campos_faltantes_count": 0,
+    "ciclos_aclaracion": 1,
+    "contradiccion_orden_texto": false,
+    "costo_estimado": 180,
+    "decision_final": "aprobar",
+    "error_proveedor": null,
+    "latencia_total_s": 20.752,
+    "modo_texas": false,
+    "nodos_visitados": [
+      "enrutador",
+      "extractor",
+      "aclaracion",
+      "extractor",
+      "verificador_cobertura",
+      "decision",
+      "redactor",
+      "guardia_salida"
+    ],
+    "pausa_humana": false,
+    "propuesta": "aprobar",
+    "proveedor_no_disponible": false,
+    "senal_confianza": 0.95,
+    "servicio_exento": false,
+    "severidad_accion": 0,
+    "tipo_atencion": "ambulatoria",
+    "tokens": 11645
+  },
+  "variante": "multiagente"
+}

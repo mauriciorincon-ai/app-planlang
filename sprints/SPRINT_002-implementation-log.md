@@ -947,8 +947,23 @@ sin espejo (desviación 54).
 
 - **Corridas:** `suscripcion-planlang-a-001-200-v1.4` (plan v1.4, lote de 200, `sonnet`). Son 10 sesiones de 20 con
   2 s entre casos y 10 min entre sesiones, fuera de CI y sin espejo de LangSmith. El ciclo se detiene ante un límite
-  de uso o un error. Sesión 1: 20 casos, 0 con error, 0 límites, unos 10 min con la máquina cargada. El registro
-  completo queda en el informe y en el summary cuando terminen.
+  de uso o un error.
+  - **Terminadas** el 2026-10-02 a las 00:18 (sesión 1: 21:32): 10 sesiones de 6 a 10 min, 200 casos, 0 con error y 0
+    límites de uso. Resultado: 172 aprobados y 28 negados. La arista de respaldo nunca tuvo que dispararse.
+  - **Medición:** 466 llamadas al modelo y **0 reintentos de esquema** con `--max-turns 2`, anotado en el ADR-004.
+    Mediana de 5.986 tokens y 14,4 s por caso; costo nominal US$5,37, con costo marginal cero en la suscripción.
+  - **Entorno:** el mismo del lock (M-12).
+  - **Verificación:** `trazas:verificar` ✓ (huellas, umbrales, RF-09.2 TS = Python, barrido de credenciales).
+    `checkpoints.sqlite` nace 600 y está ignorado por git.
+  - **Informe** (`brecha:informe`, versionado junto a la corrida): **cumple con alertas**.
+    - Criterios: 8 de 9 cumplen; C5 queda incompleto porque pide `pass^3` y hay una corrida de 200.
+    - Ningún riesgo ocurrió, el contrato de grafo no tiene hallazgos y no hay brechas no previstas.
+    - Supuestos: **S1 confirmado** (con 20 casos estaba sin probar), S2 refutado (igual que con 20) y S3 sin probar
+      (no hay línea base de 200).
+  - **Vitrina:** sigue en la corrida de 20 del plan v1.3 (recomendación en el gate de la fase 4). La de 200 queda como
+    dato para el S3.
+  - Con la corrida en `runs/`, vitest pasa de 2115 a 2324, porque las pruebas por corrida recorren sus 200 trazas.
+    Pytest pasa de 155 a 156.
 - **Mirada 4:** `docs/fidelidad/p4/` regenerada sobre el build de `84207d1`: 10 pares y 3/3 interacciones. «10
   decisiones registradas» se ve en la captura, leída como imagen a resolución real.
 - **Job de calidad local:**
@@ -966,6 +981,9 @@ sin espejo (desviación 54).
   - aisladas pasan, y la suite entera con 2 workers da 144/144 sin intermitentes.
 
   Si en la CI aparece una intermitente, se investiga con su nombre.
+- **CI del PR #8 sobre `3449bfd`:** quality, python, e2e (144, sin intermitentes; paquete 2/2) y lighthouse en
+  `success` propio. Primera vez en la CI para Lighthouse sobre `/es/fichas` (sin histórico: no se afirma regresión ni
+  no-regresión) y para el `pip install -c constraints.txt` y `test_constraints.py` en Linux.
 
 ## Desviación del plan
 

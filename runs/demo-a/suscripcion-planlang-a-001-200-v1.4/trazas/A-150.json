@@ -1,0 +1,470 @@
+{
+  "aclaraciones": [],
+  "caso_id": "A-150",
+  "cobertura": {
+    "alto_costo": true,
+    "causal": "e",
+    "codigo_extraido": "SYN-P-039",
+    "codigo_orden": "SYN-P-039",
+    "contradiccion": false,
+    "estado_servicio": "excluido",
+    "propuesta": "negar",
+    "reglas_disparadas": [
+      "RB-03",
+      "RB-04"
+    ]
+  },
+  "corrida_id": "suscripcion-planlang-a-001-200-v1.4",
+  "decisiones_de_arista": [
+    {
+      "desde": "enrutador",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 1,
+      "rama_tomada": "extractor",
+      "resultado": false,
+      "senal": "tipo_atencion",
+      "tipo": "tripleta",
+      "umbral_aplicado": "urgencia",
+      "valor_declarado": "urgencia",
+      "valor_observado": "ambulatoria"
+    },
+    {
+      "desde": "enrutador",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 2,
+      "paso": 1,
+      "rama_tomada": "extractor",
+      "resultado": false,
+      "senal": "servicio_exento",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    },
+    {
+      "desde": "extractor",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 2,
+      "rama_tomada": "verificador_cobertura",
+      "resultado": false,
+      "senal": "proveedor_no_disponible",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    },
+    {
+      "desde": "extractor",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "mayor_que",
+      "orden_arista": 2,
+      "paso": 2,
+      "rama_tomada": "verificador_cobertura",
+      "resultado": false,
+      "senal": "campos_faltantes_count",
+      "tipo": "tripleta",
+      "umbral_aplicado": 0,
+      "valor_declarado": 0,
+      "valor_observado": 0
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "menor_que",
+      "orden_arista": 1,
+      "paso": 4,
+      "rama_tomada": "pausa_humana",
+      "resultado": false,
+      "senal": "senal_confianza",
+      "tipo": "tripleta",
+      "umbral_aplicado": 0.75,
+      "valor_declarado": "umbral.U1",
+      "valor_observado": 0.95
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "mayor_que",
+      "orden_arista": 2,
+      "paso": 4,
+      "rama_tomada": "pausa_humana",
+      "resultado": true,
+      "senal": "costo_estimado",
+      "tipo": "tripleta",
+      "umbral_aplicado": 1000,
+      "valor_declarado": "umbral.U2",
+      "valor_observado": 4800
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 3,
+      "paso": 4,
+      "rama_tomada": "pausa_humana",
+      "resultado": false,
+      "senal": "contradiccion_orden_texto",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 4,
+      "paso": 4,
+      "rama_tomada": "pausa_humana",
+      "resultado": true,
+      "senal": "propuesta",
+      "tipo": "tripleta",
+      "umbral_aplicado": "negar",
+      "valor_declarado": "negar",
+      "valor_observado": "negar"
+    },
+    {
+      "desde": "decision",
+      "entradas": {
+        "modo_texas": false,
+        "propuesta": "negar"
+      },
+      "funcion": "texas_y_no_aprobar",
+      "inclusivo": null,
+      "operador": null,
+      "orden_arista": 5,
+      "paso": 4,
+      "rama_tomada": "pausa_humana",
+      "resultado": false,
+      "senal": null,
+      "tipo": "funcion",
+      "umbral_aplicado": null,
+      "valor_declarado": null,
+      "valor_observado": null
+    }
+  ],
+  "documento_adverso": {
+    "aviso_ia": {
+      "en": "Notice: this reply was drafted by an artificial intelligence in a simulation with synthetic data. No denial is issued without review by a person.",
+      "es": "Aviso: esta respuesta la redactó una inteligencia artificial en una simulación con datos sintéticos. Ninguna negación se emite sin la revisión de una persona."
+    },
+    "caso_id": "A-150",
+    "causal": {
+      "id": "e",
+      "norma": "Ley Estatutaria 1751 de 2015, art. 15, literal e",
+      "resumen": {
+        "en": "It is at an experimental stage.",
+        "es": "Está en fase de experimentación."
+      }
+    },
+    "completo": true,
+    "datos_usados": [
+      {
+        "campo": "procedimiento",
+        "valor": "SYN-P-039"
+      },
+      {
+        "campo": "diagnostico",
+        "valor": "SYN-D-31"
+      },
+      {
+        "campo": "costo_estimado",
+        "valor": 4800
+      }
+    ],
+    "decidido_por": {
+      "en": "A human auditor. In this batch run the auditor is simulated and follows the case's known truth.",
+      "es": "Un auditor humano. En esta corrida por lotes el auditor es simulado y sigue la verdad conocida del caso."
+    },
+    "decision": "negar",
+    "formato": "planlang-documento-adverso/v1",
+    "idiomas": [
+      "es",
+      "en"
+    ],
+    "regla_disparada": {
+      "id": "RB-03",
+      "texto": {
+        "en": "Excluded service: it is denied only by citing its ground under art. 15 of Law 1751, and a person confirms the denial.",
+        "es": "Servicio excluido: solo se niega citando su causal del art. 15 de la Ley 1751, y la negación la confirma una persona."
+      }
+    },
+    "servicio": {
+      "codigo": "SYN-P-039",
+      "nombre": {
+        "en": "Gene therapy at an experimental stage",
+        "es": "Terapia génica en fase experimental"
+      }
+    },
+    "version": {
+      "plan": {
+        "huella": "186345f21497650943c2b78c0c26e26ef94ea6b82c087d89f1d698685a2227e3",
+        "id": "plan-demo-a",
+        "version": "1.4.0"
+      },
+      "plan_beneficios": {
+        "huella": "8e07b276176e477400954879b1fd998f49b633c6e2d550408974284853c0eda4",
+        "id": "pb-demo-a",
+        "version": "1.0.0"
+      }
+    },
+    "via_de_contradiccion": {
+      "en": "You can ask for this decision to be reviewed: file a review request with the insurer, with this document, within the legal deadlines; you can also go to Colombia's National Health Superintendency. This simulation has no real procedure.",
+      "es": "Puede pedir que se revise esta decisión: presente una solicitud de revisión ante la entidad, con este documento, dentro de los plazos de ley; también puede acudir a la Superintendencia Nacional de Salud. En esta simulación no hay un trámite real."
+    }
+  },
+  "error_de_esquema_en_traspaso": false,
+  "error_proveedor": null,
+  "extraccion": {
+    "campos": {
+      "costo_estimado": 4800,
+      "diagnostico": "SYN-D-31",
+      "procedimiento": "SYN-P-039",
+      "urgencia": false
+    },
+    "campos_faltantes": [],
+    "confianza": 0.95,
+    "costo_estimado": 4800,
+    "urgencia": false
+  },
+  "formato": "planlang-trace/v1",
+  "guardia_salida": {
+    "acciones_ejecutadas": [
+      "responder_afiliado"
+    ],
+    "acciones_intentadas": [
+      "responder_afiliado"
+    ],
+    "carga_detectada_en_entrada": false,
+    "hallazgos": [],
+    "severidad_accion": 0
+  },
+  "huella": "78406b8be0b0eb50d0b1828e99ca4e7d6db55002b173631ac68bba17a848e6f8",
+  "nodos_visitados": [
+    "enrutador",
+    "extractor",
+    "verificador_cobertura",
+    "decision",
+    "pausa_humana",
+    "redactor",
+    "guardia_salida"
+  ],
+  "pasos": [
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 18,
+      "nodo": "enrutador",
+      "orden": 1,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "enrutador",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0.015142,
+      "duracion_ms": 5623,
+      "error_proveedor": null,
+      "inicio_ms": 19,
+      "nodo": "extractor",
+      "orden": 2,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 4126,
+        "salida": 269
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 5647,
+      "nodo": "verificador_cobertura",
+      "orden": 3,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "regla",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 5647,
+      "nodo": "decision",
+      "orden": 4,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "enrutador",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 5658,
+      "nodo": "pausa_humana",
+      "orden": 5,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "pausa_humana",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0.017428,
+      "duracion_ms": 9248,
+      "error_proveedor": null,
+      "inicio_ms": 5659,
+      "nodo": "redactor",
+      "orden": 6,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 3291,
+        "salida": 842
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 1,
+      "error_proveedor": null,
+      "inicio_ms": 14910,
+      "nodo": "guardia_salida",
+      "orden": 7,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "regla",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    }
+  ],
+  "pausas_humanas": [
+    {
+      "nodo": "pausa_humana",
+      "paso": 5,
+      "payload": {
+        "contraevidencia": [
+          {
+            "en": "Doubt about what a service covers is resolved in the member's favour (Law 1751, art. 8).",
+            "es": "La duda sobre el alcance de un servicio se resuelve a favor del afiliado (Ley 1751, art. 8)."
+          },
+          {
+            "en": "Diagnosis SYN-D-31 is consistent with SYN-P-039.",
+            "es": "El diagnóstico SYN-D-31 es compatible con SYN-P-039."
+          }
+        ],
+        "evidencia": [
+          {
+            "en": "The benefit plan lists SYN-P-039 as excluded (ground e: Ley Estatutaria 1751 de 2015, art. 15, literal e).",
+            "es": "El plan de beneficios clasifica SYN-P-039 como excluido (causal e: Ley Estatutaria 1751 de 2015, art. 15, literal e)."
+          },
+          {
+            "en": "Estimated cost 4800 above the high-cost threshold 1000.",
+            "es": "Costo estimado 4800 por encima del umbral de alto costo 1000."
+          }
+        ],
+        "extraccion": {
+          "campos": {
+            "costo_estimado": 4800,
+            "diagnostico": "SYN-D-31",
+            "procedimiento": "SYN-P-039",
+            "urgencia": false
+          },
+          "campos_faltantes": [],
+          "confianza": 0.95,
+          "costo_estimado": 4800,
+          "urgencia": false
+        },
+        "motivo": {
+          "desde": "decision",
+          "en": "Edge 2 of decision: costo_estimado (4800) greater than umbral.U2 (1000).",
+          "es": "Arista 2 de decision: costo_estimado (4800) mayor que umbral.U2 (1000).",
+          "orden_arista": 2
+        },
+        "senal": "costo_estimado",
+        "texto_original": {
+          "en": "Authorisation request. 52-year-old man. Diagnosis: Inherited retinal dystrophy. Previous tests were reviewed. Request: Gene therapy at an experimental stage. Estimated cost: 4800 synthetic units. Sincerely, treating doctor.",
+          "es": "Solicitud de autorización. Paciente hombre de 52 años. Diagnóstico: Distrofia retiniana hereditaria. Se revisaron los estudios previos. Se solicita: Terapia génica en fase experimental. Costo estimado: 4800 unidades sintéticas. Cordialmente, médico tratante."
+        },
+        "umbral": {
+          "aplicado": 1000,
+          "declarado": "umbral.U2"
+        }
+      },
+      "respuesta_simulada": {
+        "decision": "negar",
+        "politica": "sigue_verdad_conocida"
+      },
+      "rol": "auditor"
+    }
+  ],
+  "resultado": "completo",
+  "salida_final": {
+    "aviso_ia": {
+      "en": "Notice: this reply was drafted by an artificial intelligence in a simulation with synthetic data. No denial is issued without review by a person.",
+      "es": "Aviso: esta respuesta la redactó una inteligencia artificial en una simulación con datos sintéticos. Ninguna negación se emite sin la revisión de una persona."
+    },
+    "en": "We are informing you that your request for the gene therapy procedure (SYN-P-039) was denied, because this treatment is in an experimental phase and does not have sufficient evidence to support coverage, in accordance with Statutory Law 1751 of 2015, article 15, section e. This decision was reviewed by a professional. You will receive a document with the detailed explanation and the steps to file a claim if you wish to do so.",
+    "es": "Le informamos que su solicitud para el procedimiento de terapia génica (SYN-P-039) fue negada, ya que este tratamiento se encuentra en fase de experimentación y no cuenta con evidencia suficiente para su cobertura, conforme a la Ley Estatutaria 1751 de 2015, artículo 15, literal e. Esta decisión fue revisada por un profesional. Usted recibirá un documento con la explicación detallada y los pasos para presentar una reclamación si así lo desea."
+  },
+  "senales": {
+    "campos_faltantes_count": 0,
+    "ciclos_aclaracion": 0,
+    "contradiccion_orden_texto": false,
+    "costo_estimado": 4800,
+    "decision_final": "negar",
+    "error_proveedor": null,
+    "latencia_total_s": 14.872,
+    "modo_texas": false,
+    "nodos_visitados": [
+      "enrutador",
+      "extractor",
+      "verificador_cobertura",
+      "decision",
+      "pausa_humana",
+      "redactor",
+      "guardia_salida"
+    ],
+    "pausa_humana": true,
+    "propuesta": "negar",
+    "proveedor_no_disponible": false,
+    "senal_confianza": 0.95,
+    "servicio_exento": false,
+    "severidad_accion": 0,
+    "tipo_atencion": "ambulatoria",
+    "tokens": 8528
+  },
+  "variante": "multiagente"
+}

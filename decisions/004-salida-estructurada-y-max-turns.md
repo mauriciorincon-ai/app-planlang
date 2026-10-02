@@ -1,6 +1,6 @@
 # ADR-004 — Salida estructurada con `--max-turns 1`: `error_max_turns` se clasifica y se reintenta
 
-**Summary (EN):** With `--json-schema` the CLI may stop with `error_max_turns`; the adapter classifies it as `esquema_invalido` and retries within §9.1 (one try plus two retries), declaring the retries and their cost in the trace. Amended in S2: rule 6 now gives `--max-turns 2` only when `--json-schema` is present, and 1 otherwise.
+**Summary (EN):** With `--json-schema` the CLI may stop with `error_max_turns`; the adapter classifies it as `esquema_invalido` and retries within §9.1 (one try plus two retries), declaring the retries and their cost in the trace. Amended in S2: rule 6 now gives `--max-turns 2` only when `--json-schema` is present, and 1 otherwise; measured over 466 calls of the S2 200-case run, 0 schema retries.
 
 **Estado:** aceptado · **Fecha:** 2026-09-27 · **Sprint:** S1 «El contrato y la corrida»
 **Cítese por tema:** «ADR de salida estructurada y max-turns».
@@ -55,5 +55,7 @@ y 9 de 16 en la línea base (un esquema con extracción, propuesta y dos cartas)
 - **Humo real 3/3** con la suscripción el 2026-09-28, ya con 2 turnos.
 - **Clasificación y reintentos:** sin cambios. Un `error_max_turns` con esquema sigue siendo `esquema_invalido`
   y se reintenta; con 2 turnos se espera que sea raro.
-- **Medición pendiente:** la tasa de `error_max_turns` con 2 turnos se mide en las corridas del S2 (parada 1 del ⭐
-  del S1 si el usuario la corre, y corridas de fondo de la fase 4) y se anota aquí.
+- **Medido (2026-10-01/02, corridas de fondo de la fase 4 del S2):** en `runs/demo-a/suscripcion-planlang-a-001-200-v1.4`
+  (plan v1.4, 200 casos, 10 sesiones, CLI 2.1.282, `sonnet`) hubo **466 llamadas al modelo y 0 reintentos de esquema**:
+  ningún `error_max_turns` ni otra salida inválida, y ningún paso con error del proveedor. Con un turno el S1 había
+  medido entre el 6 % y el 56 %. La parada 1 del ⭐ del S1 no se corrió (sigue diferida).

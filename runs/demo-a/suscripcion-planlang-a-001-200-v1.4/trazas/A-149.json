@@ -1,0 +1,527 @@
+{
+  "aclaraciones": [
+    {
+      "ciclo": 1,
+      "pregunta": "Para continuar con la autorización, ¿podría indicarnos el diagnóstico que justifica la amigdalectomía y el costo estimado del procedimiento?",
+      "respuesta": "Se envía de nuevo la orden."
+    },
+    {
+      "ciclo": 2,
+      "pregunta": "Para continuar con el trámite de autorización, ¿podría indicarnos el diagnóstico (código y descripción) que justifica la amigdalectomía, así como el costo estimado del procedimiento?",
+      "respuesta": "Ver historia clínica adjunta."
+    }
+  ],
+  "caso_id": "A-149",
+  "cobertura": null,
+  "corrida_id": "suscripcion-planlang-a-001-200-v1.4",
+  "decisiones_de_arista": [
+    {
+      "desde": "enrutador",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 1,
+      "rama_tomada": "extractor",
+      "resultado": false,
+      "senal": "tipo_atencion",
+      "tipo": "tripleta",
+      "umbral_aplicado": "urgencia",
+      "valor_declarado": "urgencia",
+      "valor_observado": "hospitalaria"
+    },
+    {
+      "desde": "enrutador",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 2,
+      "paso": 1,
+      "rama_tomada": "extractor",
+      "resultado": false,
+      "senal": "servicio_exento",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    },
+    {
+      "desde": "extractor",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 2,
+      "rama_tomada": "aclaracion",
+      "resultado": false,
+      "senal": "proveedor_no_disponible",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    },
+    {
+      "desde": "extractor",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "mayor_que",
+      "orden_arista": 2,
+      "paso": 2,
+      "rama_tomada": "aclaracion",
+      "resultado": true,
+      "senal": "campos_faltantes_count",
+      "tipo": "tripleta",
+      "umbral_aplicado": 0,
+      "valor_declarado": 0,
+      "valor_observado": 2
+    },
+    {
+      "desde": "aclaracion",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 3,
+      "rama_tomada": "extractor",
+      "resultado": false,
+      "senal": "proveedor_no_disponible",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    },
+    {
+      "desde": "aclaracion",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": true,
+      "operador": "mayor_o_igual_que",
+      "orden_arista": 2,
+      "paso": 3,
+      "rama_tomada": "extractor",
+      "resultado": false,
+      "senal": "ciclos_aclaracion",
+      "tipo": "tripleta",
+      "umbral_aplicado": 2,
+      "valor_declarado": "umbral.U3",
+      "valor_observado": 0
+    },
+    {
+      "desde": "extractor",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 4,
+      "rama_tomada": "aclaracion",
+      "resultado": false,
+      "senal": "proveedor_no_disponible",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    },
+    {
+      "desde": "extractor",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "mayor_que",
+      "orden_arista": 2,
+      "paso": 4,
+      "rama_tomada": "aclaracion",
+      "resultado": true,
+      "senal": "campos_faltantes_count",
+      "tipo": "tripleta",
+      "umbral_aplicado": 0,
+      "valor_declarado": 0,
+      "valor_observado": 2
+    },
+    {
+      "desde": "aclaracion",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 5,
+      "rama_tomada": "extractor",
+      "resultado": false,
+      "senal": "proveedor_no_disponible",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    },
+    {
+      "desde": "aclaracion",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": true,
+      "operador": "mayor_o_igual_que",
+      "orden_arista": 2,
+      "paso": 5,
+      "rama_tomada": "extractor",
+      "resultado": false,
+      "senal": "ciclos_aclaracion",
+      "tipo": "tripleta",
+      "umbral_aplicado": 2,
+      "valor_declarado": "umbral.U3",
+      "valor_observado": 1
+    },
+    {
+      "desde": "extractor",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 6,
+      "rama_tomada": "aclaracion",
+      "resultado": false,
+      "senal": "proveedor_no_disponible",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    },
+    {
+      "desde": "extractor",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "mayor_que",
+      "orden_arista": 2,
+      "paso": 6,
+      "rama_tomada": "aclaracion",
+      "resultado": true,
+      "senal": "campos_faltantes_count",
+      "tipo": "tripleta",
+      "umbral_aplicado": 0,
+      "valor_declarado": 0,
+      "valor_observado": 2
+    },
+    {
+      "desde": "aclaracion",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 7,
+      "rama_tomada": "pausa_humana",
+      "resultado": false,
+      "senal": "proveedor_no_disponible",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    },
+    {
+      "desde": "aclaracion",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": true,
+      "operador": "mayor_o_igual_que",
+      "orden_arista": 2,
+      "paso": 7,
+      "rama_tomada": "pausa_humana",
+      "resultado": true,
+      "senal": "ciclos_aclaracion",
+      "tipo": "tripleta",
+      "umbral_aplicado": 2,
+      "valor_declarado": "umbral.U3",
+      "valor_observado": 2
+    }
+  ],
+  "documento_adverso": null,
+  "error_de_esquema_en_traspaso": false,
+  "error_proveedor": null,
+  "extraccion": {
+    "campos": {
+      "costo_estimado": null,
+      "diagnostico": null,
+      "procedimiento": "SYN-P-023",
+      "urgencia": false
+    },
+    "campos_faltantes": [
+      "diagnostico",
+      "costo_estimado"
+    ],
+    "confianza": 0.55,
+    "costo_estimado": null,
+    "urgencia": false
+  },
+  "formato": "planlang-trace/v1",
+  "guardia_salida": {
+    "acciones_ejecutadas": [
+      "responder_afiliado"
+    ],
+    "acciones_intentadas": [
+      "responder_afiliado"
+    ],
+    "carga_detectada_en_entrada": false,
+    "hallazgos": [],
+    "severidad_accion": 0
+  },
+  "huella": "352b0d9950852a92117aff0387e9c61ff3e08a7a1a5ec444828c21796c004be1",
+  "nodos_visitados": [
+    "enrutador",
+    "extractor",
+    "aclaracion",
+    "extractor",
+    "aclaracion",
+    "extractor",
+    "aclaracion",
+    "pausa_humana",
+    "redactor",
+    "guardia_salida"
+  ],
+  "pasos": [
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 15,
+      "nodo": "enrutador",
+      "orden": 1,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "enrutador",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0.017517,
+      "duracion_ms": 7728,
+      "error_proveedor": null,
+      "inicio_ms": 16,
+      "nodo": "extractor",
+      "orden": 2,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 4079,
+        "salida": 527
+      }
+    },
+    {
+      "costo_nominal_usd": 0.007051,
+      "duracion_ms": 21779,
+      "error_proveedor": null,
+      "inicio_ms": 7746,
+      "nodo": "aclaracion",
+      "orden": 3,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 1228,
+        "salida": 107
+      }
+    },
+    {
+      "costo_nominal_usd": 0.016146,
+      "duracion_ms": 8594,
+      "error_proveedor": null,
+      "inicio_ms": 29529,
+      "nodo": "extractor",
+      "orden": 4,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 4096,
+        "salida": 382
+      }
+    },
+    {
+      "costo_nominal_usd": 0.007185,
+      "duracion_ms": 3745,
+      "error_proveedor": null,
+      "inicio_ms": 38126,
+      "nodo": "aclaracion",
+      "orden": 5,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 1229,
+        "salida": 120
+      }
+    },
+    {
+      "costo_nominal_usd": 0.013984,
+      "duracion_ms": 6578,
+      "error_proveedor": null,
+      "inicio_ms": 41873,
+      "nodo": "extractor",
+      "orden": 6,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 4118,
+        "salida": 412
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 48455,
+      "nodo": "aclaracion",
+      "orden": 7,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 48463,
+      "nodo": "pausa_humana",
+      "orden": 8,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "pausa_humana",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0.009168,
+      "duracion_ms": 11270,
+      "error_proveedor": null,
+      "inicio_ms": 48464,
+      "nodo": "redactor",
+      "orden": 9,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 1332,
+        "salida": 281
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 59738,
+      "nodo": "guardia_salida",
+      "orden": 10,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "regla",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    }
+  ],
+  "pausas_humanas": [
+    {
+      "nodo": "pausa_humana",
+      "paso": 8,
+      "payload": {
+        "contraevidencia": [
+          {
+            "en": "Doubt about what a service covers is resolved in the member's favour (Law 1751, art. 8).",
+            "es": "La duda sobre el alcance de un servicio se resuelve a favor del afiliado (Ley 1751, art. 8)."
+          }
+        ],
+        "evidencia": [
+          {
+            "en": "Extractor confidence 0.55 below 0.75.",
+            "es": "Confianza del extractor 0.55 por debajo de 0.75."
+          },
+          {
+            "en": "Details still missing (diagnostico, costo_estimado) after 2 clarifications.",
+            "es": "Siguen faltando datos (diagnostico, costo_estimado) tras 2 aclaraciones."
+          }
+        ],
+        "extraccion": {
+          "campos": {
+            "costo_estimado": null,
+            "diagnostico": null,
+            "procedimiento": "SYN-P-023",
+            "urgencia": false
+          },
+          "campos_faltantes": [
+            "diagnostico",
+            "costo_estimado"
+          ],
+          "confianza": 0.55,
+          "costo_estimado": null,
+          "urgencia": false
+        },
+        "motivo": {
+          "desde": "aclaracion",
+          "en": "Edge 2 of aclaracion: ciclos_aclaracion (2) at least umbral.U3 (2).",
+          "es": "Arista 2 de aclaracion: ciclos_aclaracion (2) mayor o igual que umbral.U3 (2).",
+          "orden_arista": 2
+        },
+        "senal": "ciclos_aclaracion",
+        "texto_original": {
+          "en": "Dear authorisations team: 85-year-old man. Previous tests were reviewed. Request: Tonsillectomy. Sincerely, treating doctor.",
+          "es": "Respetado equipo de autorizaciones: Paciente hombre de 85 años. Se revisaron los estudios previos. Se solicita: Amigdalectomía. Cordialmente, médico tratante."
+        },
+        "umbral": {
+          "aplicado": 2,
+          "declarado": "umbral.U3"
+        }
+      },
+      "respuesta_simulada": {
+        "decision": "aprobar",
+        "politica": "sigue_verdad_conocida"
+      },
+      "rol": "auditor"
+    }
+  ],
+  "resultado": "completo",
+  "salida_final": {
+    "aviso_ia": {
+      "en": "Notice: this reply was drafted by an artificial intelligence in a simulation with synthetic data. No denial is issued without review by a person.",
+      "es": "Aviso: esta respuesta la redactó una inteligencia artificial en una simulación con datos sintéticos. Ninguna negación se emite sin la revisión de una persona."
+    },
+    "en": "We are writing to inform you that your request for the Tonsillectomy procedure has been approved. This decision was reviewed and confirmed by a person responsible for evaluating your case. If you have questions about next steps, please contact your health plan.",
+    "es": "Le informamos que su solicitud para el procedimiento de Amigdalectomía ha sido aprobada. Esta decisión fue revisada y confirmada por una persona encargada de evaluar su caso. Si tiene preguntas sobre los siguientes pasos, puede comunicarse con su entidad de salud."
+  },
+  "senales": {
+    "campos_faltantes_count": 2,
+    "ciclos_aclaracion": 2,
+    "contradiccion_orden_texto": null,
+    "costo_estimado": null,
+    "decision_final": "aprobar",
+    "error_proveedor": null,
+    "latencia_total_s": 59.694,
+    "modo_texas": false,
+    "nodos_visitados": [
+      "enrutador",
+      "extractor",
+      "aclaracion",
+      "extractor",
+      "aclaracion",
+      "extractor",
+      "aclaracion",
+      "pausa_humana",
+      "redactor",
+      "guardia_salida"
+    ],
+    "pausa_humana": true,
+    "propuesta": null,
+    "proveedor_no_disponible": false,
+    "senal_confianza": 0.55,
+    "servicio_exento": false,
+    "severidad_accion": 0,
+    "tipo_atencion": "hospitalaria",
+    "tokens": 17911
+  },
+  "variante": "multiagente"
+}

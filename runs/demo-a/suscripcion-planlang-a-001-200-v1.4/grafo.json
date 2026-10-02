@@ -1,0 +1,364 @@
+{
+  "aristas_condicionales": [
+    {
+      "desde": "aclaracion",
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden": 1,
+      "senal": "proveedor_no_disponible",
+      "si_verdadero": "pausa_humana",
+      "valor": true
+    },
+    {
+      "desde": "aclaracion",
+      "inclusivo": true,
+      "operador": "mayor_o_igual_que",
+      "orden": 2,
+      "senal": "ciclos_aclaracion",
+      "si_verdadero": "pausa_humana",
+      "valor": "umbral.U3"
+    },
+    {
+      "desde": "decision",
+      "inclusivo": false,
+      "operador": "menor_que",
+      "orden": 1,
+      "senal": "senal_confianza",
+      "si_verdadero": "pausa_humana",
+      "valor": "umbral.U1"
+    },
+    {
+      "desde": "decision",
+      "inclusivo": false,
+      "operador": "mayor_que",
+      "orden": 2,
+      "senal": "costo_estimado",
+      "si_verdadero": "pausa_humana",
+      "valor": "umbral.U2"
+    },
+    {
+      "desde": "decision",
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden": 3,
+      "senal": "contradiccion_orden_texto",
+      "si_verdadero": "pausa_humana",
+      "valor": true
+    },
+    {
+      "desde": "decision",
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden": 4,
+      "senal": "propuesta",
+      "si_verdadero": "pausa_humana",
+      "valor": "negar"
+    },
+    {
+      "desde": "decision",
+      "funcion": {
+        "entradas": [
+          "modo_texas",
+          "propuesta"
+        ],
+        "nombre": "texas_y_no_aprobar"
+      },
+      "nota": {
+        "en": "Texas mode: when on and the proposal is not approve, every adverse determination goes to a person (TX SB 815).",
+        "es": "Modo Texas: si está encendido y la propuesta no es aprobar, toda determinación adversa pasa por una persona (TX SB 815)."
+      },
+      "orden": 5,
+      "si_verdadero": "pausa_humana"
+    },
+    {
+      "desde": "enrutador",
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden": 1,
+      "senal": "tipo_atencion",
+      "si_verdadero": "redactor",
+      "valor": "urgencia"
+    },
+    {
+      "desde": "enrutador",
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden": 2,
+      "senal": "servicio_exento",
+      "si_verdadero": "redactor",
+      "valor": true
+    },
+    {
+      "desde": "extractor",
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden": 1,
+      "senal": "proveedor_no_disponible",
+      "si_verdadero": "pausa_humana",
+      "valor": true
+    },
+    {
+      "desde": "extractor",
+      "inclusivo": false,
+      "operador": "mayor_que",
+      "orden": 2,
+      "senal": "campos_faltantes_count",
+      "si_verdadero": "aclaracion",
+      "valor": 0
+    }
+  ],
+  "demo_id": "demo-a",
+  "formato": "planlang-grafo/v1",
+  "huella": "07b0e36434997a416ce9d371bb9ad44a81028e7838d6c4bd4ae7a091e06339c6",
+  "langgraph": {
+    "edges": [
+      {
+        "source": "__start__",
+        "target": "enrutador"
+      },
+      {
+        "conditional": true,
+        "source": "aclaracion",
+        "target": "extractor"
+      },
+      {
+        "conditional": true,
+        "source": "aclaracion",
+        "target": "pausa_humana"
+      },
+      {
+        "conditional": true,
+        "source": "decision",
+        "target": "pausa_humana"
+      },
+      {
+        "conditional": true,
+        "source": "decision",
+        "target": "redactor"
+      },
+      {
+        "conditional": true,
+        "source": "enrutador",
+        "target": "extractor"
+      },
+      {
+        "conditional": true,
+        "source": "enrutador",
+        "target": "redactor"
+      },
+      {
+        "conditional": true,
+        "source": "extractor",
+        "target": "aclaracion"
+      },
+      {
+        "conditional": true,
+        "source": "extractor",
+        "target": "pausa_humana"
+      },
+      {
+        "conditional": true,
+        "source": "extractor",
+        "target": "verificador_cobertura"
+      },
+      {
+        "source": "pausa_humana",
+        "target": "redactor"
+      },
+      {
+        "source": "redactor",
+        "target": "guardia_salida"
+      },
+      {
+        "source": "verificador_cobertura",
+        "target": "decision"
+      },
+      {
+        "source": "guardia_salida",
+        "target": "__end__"
+      }
+    ],
+    "nodes": [
+      {
+        "data": {
+          "id": [
+            "langgraph",
+            "_internal",
+            "_runnable",
+            "RunnableCallable"
+          ],
+          "name": "__start__"
+        },
+        "id": "__start__",
+        "type": "runnable"
+      },
+      {
+        "data": {
+          "id": [
+            "langgraph",
+            "_internal",
+            "_runnable",
+            "RunnableCallable"
+          ],
+          "name": "enrutador"
+        },
+        "id": "enrutador",
+        "type": "runnable"
+      },
+      {
+        "data": {
+          "id": [
+            "langgraph",
+            "_internal",
+            "_runnable",
+            "RunnableCallable"
+          ],
+          "name": "extractor"
+        },
+        "id": "extractor",
+        "type": "runnable"
+      },
+      {
+        "data": {
+          "id": [
+            "langgraph",
+            "_internal",
+            "_runnable",
+            "RunnableCallable"
+          ],
+          "name": "aclaracion"
+        },
+        "id": "aclaracion",
+        "type": "runnable"
+      },
+      {
+        "data": {
+          "id": [
+            "langgraph",
+            "_internal",
+            "_runnable",
+            "RunnableCallable"
+          ],
+          "name": "verificador_cobertura"
+        },
+        "id": "verificador_cobertura",
+        "type": "runnable"
+      },
+      {
+        "data": {
+          "id": [
+            "langgraph",
+            "_internal",
+            "_runnable",
+            "RunnableCallable"
+          ],
+          "name": "decision"
+        },
+        "id": "decision",
+        "type": "runnable"
+      },
+      {
+        "data": {
+          "id": [
+            "langgraph",
+            "_internal",
+            "_runnable",
+            "RunnableCallable"
+          ],
+          "name": "pausa_humana"
+        },
+        "id": "pausa_humana",
+        "type": "runnable"
+      },
+      {
+        "data": {
+          "id": [
+            "langgraph",
+            "_internal",
+            "_runnable",
+            "RunnableCallable"
+          ],
+          "name": "redactor"
+        },
+        "id": "redactor",
+        "type": "runnable"
+      },
+      {
+        "data": {
+          "id": [
+            "langgraph",
+            "_internal",
+            "_runnable",
+            "RunnableCallable"
+          ],
+          "name": "guardia_salida"
+        },
+        "id": "guardia_salida",
+        "type": "runnable"
+      },
+      {
+        "id": "__end__"
+      }
+    ]
+  },
+  "nodos": [
+    {
+      "id": "aclaracion",
+      "tipo": "modelo"
+    },
+    {
+      "id": "decision",
+      "tipo": "enrutador"
+    },
+    {
+      "id": "enrutador",
+      "tipo": "enrutador"
+    },
+    {
+      "id": "extractor",
+      "tipo": "modelo"
+    },
+    {
+      "id": "guardia_salida",
+      "tipo": "regla"
+    },
+    {
+      "id": "pausa_humana",
+      "tipo": "pausa_humana"
+    },
+    {
+      "id": "redactor",
+      "tipo": "modelo"
+    },
+    {
+      "id": "verificador_cobertura",
+      "tipo": "regla"
+    }
+  ],
+  "pausas_humanas": [
+    {
+      "nodo": "pausa_humana",
+      "payload_minimo": [
+        "motivo",
+        "senal",
+        "umbral",
+        "extraccion",
+        "texto_original",
+        "evidencia",
+        "contraevidencia"
+      ],
+      "politica_simulada": {
+        "en": "In batches, the simulated reviewer follows the case's known truth (DA-04); the showcase discloses it.",
+        "es": "En lotes, el revisor simulado sigue la verdad conocida del caso (DA-04); la vitrina lo divulga."
+      },
+      "rol": "auditor"
+    }
+  ],
+  "ramas_por_defecto": {
+    "aclaracion": "extractor",
+    "decision": "redactor",
+    "enrutador": "extractor",
+    "extractor": "verificador_cobertura"
+  },
+  "variante": "multiagente"
+}
