@@ -943,6 +943,30 @@ sin espejo (desviación 54).
 | Contrato Python → TS con un nulo observado | `aristas.ts` sin la regla del nulo | 5 fallan: RF-09.2 (2) e informe versionado (2) de `simulado-v1.4-respaldo` + la unitaria | 109/109 |
 | Lote de 200 de la v1.4 / corrida acumulable | regenerar el plan sin borrar la corrida simulada previa | `CorridaIncompatible`: «otro plan, otro lote de casos» | corrida regenerada |
 
+### Corridas de fondo, mirada 4 y job de calidad (2026-10-01, desde las 21:32)
+
+- **Corridas:** `suscripcion-planlang-a-001-200-v1.4` (plan v1.4, lote de 200, `sonnet`). Son 10 sesiones de 20 con
+  2 s entre casos y 10 min entre sesiones, fuera de CI y sin espejo de LangSmith. El ciclo se detiene ante un límite
+  de uso o un error. Sesión 1: 20 casos, 0 con error, 0 límites, unos 10 min con la máquina cargada. El registro
+  completo queda en el informe y en el summary cuando terminen.
+- **Mirada 4:** `docs/fidelidad/p4/` regenerada sobre el build de `84207d1`: 10 pares y 3/3 interacciones. «10
+  decisiones registradas» se ve en la captura, leída como imagen a resolución real.
+- **Job de calidad local:**
+  - typecheck, lint, `peers check` y `verificar-dependencias` (683 paquetes);
+  - vitest 2115 con cobertura (97,6 % de sentencias);
+  - `trazas:verificar` (8 corridas);
+  - build, `verificar-export` (57 HTML), `diagrama:verificar` y audit sin avisos;
+  - e2e 144 (2 omitidas, las de solo teléfono);
+  - `paquete:vitrina` verde (85 archivos) y su rastreo 2/2;
+  - pytest 155 (96 %), ruff y pip-audit limpios.
+- **e2e intermitente por carga de la máquina, no del producto:**
+  - con 4 workers fallaron 3 y luego 6 pruebas distintas, todas de las largas («se lee completa en los dos temas y
+    perfiles»), con «Test timeout of 30000ms exceeded»;
+  - la carga media era de 138 sobre 10 núcleos (`mediaanalysisd` de macOS al 253 %; las corridas, al 0,6 %);
+  - aisladas pasan, y la suite entera con 2 workers da 144/144 sin intermitentes.
+
+  Si en la CI aparece una intermitente, se investiga con su nombre.
+
 ## Desviación del plan
 
 1. **El centinela «Worktrees prohibidos» no existe** en `ordenes/CLAUDE-md-para-app.md` (vive en el batch
