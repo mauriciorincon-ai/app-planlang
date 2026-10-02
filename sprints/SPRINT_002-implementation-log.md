@@ -985,6 +985,52 @@ sin espejo (desviación 54).
   `success` propio. Primera vez en la CI para Lighthouse sobre `/es/fichas` (sin histórico: no se afirma regresión ni
   no-regresión) y para el `pip install -c constraints.txt` y `test_constraints.py` en Linux.
 
+## Fase 5 — Cierre (desde 2026-10-02)
+
+Arranca con «1. lo abrí y apruebo 2. continúa» (mirada 4 registrada arriba).
+
+### Manual, guía y bundle
+
+- **`docs/MANUAL-DE-USO.md`** (ES/EN).
+  - Corregidas las frases caducadas: «en este primer sprint todo se usa desde la terminal», «el plan vigente es
+    v1.2», «las opciones en un solo idioma» y la pregunta del playground en futuro.
+  - Secciones nuevas: abrir la vitrina (las siete pantallas), mover umbrales, las fichas, entregar el paquete y el
+    lote de 200 con el respaldo sin modelo. Fila S2 en el historial.
+  - El barrido por promesa aplazada deja 5 frases que son ciertas hoy: el entrevistador, el demo B y la corrida de
+    200 en la vitrina llegan después.
+- **`docs/GUIA-DE-PRUEBA.html`** (acumulativa, ES/EN con conmutador, NS `guia-planlang:s2:`):
+  - 46 pruebas: las 21 del S1 enteras, 5 mejoradas (e2, e4, f1, g1, h2) y 25 nuevas;
+  - ⭐ 15 (S1: 5 · S2: 10), unos 60 min;
+  - ⭐⭐ 4 paradas, unos 22 min: lote real, LangSmith, la vitrina en el teléfono como líder y el playground. Declara
+    las 11 ⭐ que deja fuera y por qué.
+
+  Pasada de interacción en Chromium: idioma, los cuatro filtros con su conteo, las paradas 1–4 en orden y las casillas
+  recordadas tras recargar, sin errores de consola. A 380 px la guía del S1 ya desbordaba (una ruta larga en
+  `<code>` de g3); corregido: 380 de ancho en los dos idiomas.
+- **`design-sync/`** (regla 16, sin publicar). `scripts/design-sync/generar.mjs` lo arma desde `design-system.md`
+  1.0.0 y los tokens generados:
+  - `README.md` y `styles.css`;
+  - 12 tarjetas con `@dsCard` en los dos temas: 5 de fundamentos y 7 de componentes;
+  - `project.json` con `projectId: null` (se publica en el cierre de pruebas del ciclo, tras el ⭐⭐, cuando el
+    usuario invoque `/design-sync`).
+
+  `tests/unit/design-sync.test.ts` (16) lo regenera byte a byte, exige la línea `@dsCard` y ninguna dirección externa,
+  y que `project.json` no lleve credenciales. Las cifras ilustrativas de la tarjeta de criterios llevan el chip
+  «maqueta». Las del marco de CV Viva son las reales de la ficha.
+
+| Gate | Cambio deliberado | Rojo | Al revertir |
+|---|---|---|---|
+| Bundle = generador | «Cumple con avisos» a mano en `veredicto.html` | 1 falla y nombra la tarjeta | 16/16 |
+| Bundle = generador | sin la línea `@dsCard` en el disco | 1 falla y nombra la tarjeta | 16/16 |
+
+### Contrapesos del ⭐ diferido
+
+- **e2e de movimiento reducido:** 14 pruebas (7 pantallas × teléfono y escritorio, `reducedMotion: "reduce"`), verdes
+  en la CI del PR #8 sobre `03f94ae`.
+- **Pasada de capturas de cierre:** `scripts/capturar-vitrina.mjs --destino` (opción nueva) escribe fuera de
+  `docs/fidelidad/` para no pisar los registros de las miradas aprobadas ni sumar unos 50 MB al repo. El resultado se
+  registra abajo.
+
 ## Desviación del plan
 
 1. **El centinela «Worktrees prohibidos» no existe** en `ordenes/CLAUDE-md-para-app.md` (vive en el batch
@@ -1146,6 +1192,7 @@ sin espejo (desviación 54).
 | 2026-09-29 | Fidelidad P1 (indiferible; presentada el 2026-09-28) | `docs/fidelidad/p1/index.html` (capturas de `c04c1bd`) | «Avancemos lo abri y lo apruebo» | fase 2: P2 Plan · P3 Agente · P6 Caso |
 | 2026-09-30 | Mirada 2: P2 Plan · P3 Agente · P6 Caso (presentada el 2026-09-29; matriz de 16 filas) | `docs/fidelidad/p2/index.html` (capturas de `c8db3b3`: 30 pares, 7/7 interacciones) | «lo abrí y apruebo» | fase 3: P4 Brecha · P5 Playground (arranca con el «continúa» de fase) |
 | 2026-10-01 | Mirada 3: P4 Brecha · P5 Playground (presentada el 2026-09-30; matriz de 13 filas) | `docs/fidelidad/p3/index.html` (capturas de `defb8a7`: 23 pares, 6/6 interacciones; CI del PR #8 en verde) | «continúa» → se repreguntó «¿qué viste al abrirlo?» → «Esta bien continua» → se pidió la constancia → «lo abrí y apruebo» | fase 4: P7 Fichas · paquete · corridas de fondo · deuda |
+| 2026-10-02 | Mirada 4: P7 Fichas (presentada el 2026-10-01; matriz de 6 filas) | `docs/fidelidad/p4/index.html` (capturas de `84207d1`: 10 pares, 3/3 interacciones; CI del PR #8 en verde sobre `3449bfd` y `03f94ae`) | «lo abrí y apruebo» (con «continúa»); sin objeción a que la vitrina siga en la corrida de 20 y la de 200 quede para el S3 | fase 5: cierre |
 
 ## Bugs y fricciones
 

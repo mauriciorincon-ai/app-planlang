@@ -12,7 +12,7 @@
 // Regla 17-bis (b): declara al arrancar los dos árboles que lee (`out/`, `docs/diseno/`) y ABORTA si una ruta
 // pedida sale de ellos. No toca datos: la vitrina solo tiene datos sintéticos precompilados.
 //
-// Uso: node scripts/capturar-vitrina.mjs [--mirada p1] [--anchos 380,1280] [--temas oscuro,claro]
+// Uso: node scripts/capturar-vitrina.mjs [--mirada p1] [--anchos 380,1280] [--temas oscuro,claro] [--destino <carpeta>]
 //      [--idiomas es,en] [--calidad 55] [--solo-medir]
 import {
   createReadStream,
@@ -655,7 +655,11 @@ const temas = arg("temas", "oscuro,claro").split(",");
 const idiomas = arg("idiomas", "es,en").split(",");
 const calidad = Number(arg("calidad", "55"));
 const soloMedir = bandera("solo-medir");
-const destino = join(raiz, "docs", "fidelidad", mirada);
+// `--destino <carpeta>`: otra salida que `docs/fidelidad/<mirada>` (la pasada de cierre del sprint no pisa los
+// registros de las miradas aprobadas ni se versiona).
+const destino = arg("destino", null)
+  ? resolve(arg("destino", null), mirada)
+  : join(raiz, "docs", "fidelidad", mirada);
 
 console.log(
   `capturar-vitrina: árboles leídos → vitrina ${OUT} · maqueta ${join(MAQUETA, "diseno")}`,
