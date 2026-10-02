@@ -12,6 +12,7 @@ import { datosDemo } from "@/lib/datos/vitrina";
 import * as brecha from "@/textos/brecha";
 import * as comun from "@/textos/comun";
 import * as entrada from "@/textos/entrada";
+import * as fichas from "@/textos/fichas";
 import * as plan from "@/textos/plan";
 import * as playground from "@/textos/playground";
 
@@ -41,6 +42,7 @@ const todos = [
   ...bilingues(plan, "plan"),
   ...bilingues(brecha, "brecha"),
   ...bilingues(playground, "playground"),
+  ...bilingues(fichas, "fichas"),
 ];
 
 /** Los párrafos que lee el líder en P4 y P5 (los de la Entrada viven en `entrada.LIDER`). */
@@ -66,6 +68,12 @@ const IGUALES = new Set([
   "no",
   "Tokens",
   "No",
+  "Apps",
+  "Extractor",
+  "Auditor",
+  "Claude Code · sonnet",
+  "Python 3.12 · LangGraph 1.2",
+  "Vitest · Playwright · axe",
 ]);
 
 describe("textos de la vitrina", () => {

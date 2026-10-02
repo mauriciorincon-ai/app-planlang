@@ -18,3 +18,11 @@ coverage/
 out/
 .next/
 core/visor/metricas.json
+
+# Copias fijadas de contratos ajenos (huella en su CONTRATO.lock): no se reformatean.
+docs/contratos/
+
+# Fichas y export que escribe scripts/fichas.ts (se comparan byte a byte con lo que generaría).
+content/
+docs/brochure-export.json
+docs/fichas/

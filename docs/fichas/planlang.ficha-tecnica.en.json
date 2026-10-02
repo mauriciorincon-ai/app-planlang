@@ -1,0 +1,159 @@
+{
+  "schema_version": "1.1.0",
+  "actualizado": "2026-09-27",
+  "pieza": {
+    "slug": "planlang",
+    "nombre": "planlang",
+    "frente": "apps",
+    "estado": "inicial",
+    "ciclo": "H1",
+    "version": "0.1.0",
+    "sellado_en": null,
+    "sprints_cerrados": 1
+  },
+  "promesa": {
+    "tagline": "I planned, built and measured the gap.",
+    "intro": "You write the plan as a contract —decisions, risks, assumptions, criteria and thresholds, each one measurable— and planlang uses it to build the agent, run it on cases with a known answer and publish the gap. Then you move a threshold and see what it would have cost.",
+    "para_quien": "For whoever plans, builds or approves an AI-agent project and today measures what the agent does without having written down first what it was supposed to do: they look at traces, run loose evaluations and decide by eye when a result is enough."
+  },
+  "titular": "An agent's plan is written as a contract, and a verifier with no AI publishes, case by case, the gap between what was planned and what the agent did, with its failures in view.",
+  "stack": [
+    {
+      "nombre": "Next.js static export",
+      "papel": "the showcase: seven screens in Spanish and English, no server"
+    },
+    {
+      "nombre": "Strict TypeScript",
+      "papel": "the deterministic core: plan, verifier, playground and viewer, the same in Node and in the browser"
+    },
+    {
+      "nombre": "Python 3.12 · LangGraph 1.2",
+      "papel": "demo A's agent, with the human pause as an interrupt"
+    },
+    {
+      "nombre": "Claude Code by subscription",
+      "papel": "the agents' model, in batches outside CI; never in the core or the showcase"
+    },
+    {
+      "nombre": "Canonical JSON + SHA-256",
+      "papel": "plans, cases, traces and reports with a fingerprint, checkable byte for byte"
+    },
+    {
+      "nombre": "Vitest · Playwright · axe",
+      "papel": "the tests, including the edge cross-check between Python and TypeScript"
+    }
+  ],
+  "cifras": [
+    {
+      "clave": "criterios_cumplidos",
+      "valor": 9,
+      "unidad": "criteria",
+      "etiqueta": "plan criteria met, of 9",
+      "fuente": "medido",
+      "detalle": "From verifier 1.2.0's report on run suscripcion-planlang-a-001-20-v1.2: 9 of 9 criteria met."
+    },
+    {
+      "clave": "decisiones_cruzadas",
+      "valor": 233,
+      "unidad": "decisions",
+      "etiqueta": "decisions redone in another language, with 0 differences",
+      "fuente": "medido",
+      "detalle": "RF-09.2 cross-check over 4 runs: the TypeScript edge interpreter redoes every decision Python recorded."
+    },
+    {
+      "clave": "casos_por_corrida",
+      "valor": 20,
+      "unidad": "cases",
+      "etiqueta": "cases per run, over 3 runs and a baseline",
+      "fuente": "medido",
+      "detalle": "Run suscripcion-planlang-a-001-20-v1.2 with its 2 repetitions (pass^k) and the single-agent baseline at equal budget."
+    },
+    {
+      "clave": "llamadas_a_modelos_en_la_vitrina",
+      "valor": 0,
+      "unidad": "calls",
+      "etiqueta": "model calls when visiting the showcase",
+      "fuente": "declarado",
+      "detalle": "Set by the architecture: the showcase is a static export with precomputed data; the package is tested without a single request outside its origin."
+    },
+    {
+      "clave": "costo_de_una_corrida",
+      "valor": 0.6704,
+      "unidad": "US$",
+      "etiqueta": "nominal cost of a 20-case run",
+      "fuente": "calculada",
+      "detalle": "Sum of the nominal cost the CLI declares per call, over the run's traces; through the subscription it was not paid separately."
+    }
+  ],
+  "bloques": [
+    {
+      "orden": 1,
+      "nombre": "Plan",
+      "linea": "The plan as a contract: templates, validator and the builder's contract.",
+      "cuenta": 3
+    },
+    {
+      "orden": 2,
+      "nombre": "Run",
+      "linea": "Cases with a known truth, demo A and batch runs.",
+      "cuenta": 4
+    },
+    {
+      "orden": 3,
+      "nombre": "Measure",
+      "linea": "The gap verifier and assumptions measured for real.",
+      "cuenta": 4
+    },
+    {
+      "orden": 4,
+      "nombre": "Play",
+      "linea": "Move the thresholds over the real traces.",
+      "cuenta": 1
+    },
+    {
+      "orden": 5,
+      "nombre": "Understand",
+      "linea": "The real graph, node by node, against the plan.",
+      "cuenta": 1
+    },
+    {
+      "orden": 6,
+      "nombre": "Show",
+      "linea": "The bilingual showcase and its records.",
+      "cuenta": 3
+    }
+  ],
+  "limites": [
+    "It is a simulation: it handles no real cases and decides on no one.",
+    "Demo B and the interviewer come later; until then they say “under construction”.",
+    "It measures what the plan declared; what it did not foresee shows up as a gap, not as a verdict."
+  ],
+  "nunca": [
+    "Uses real data: every case, member and physician is synthetic.",
+    "Lets a model decide whether the agent got it right.",
+    "Denies a case without a person reviewing it.",
+    "Hides an unfavorable result."
+  ],
+  "hitos": [
+    {
+      "valor": "H1",
+      "etiqueta": "ciclo"
+    },
+    {
+      "valor": "1",
+      "etiqueta": "sprints"
+    },
+    {
+      "valor": "—",
+      "etiqueta": "construccion"
+    },
+    {
+      "valor": "v0.1.0",
+      "etiqueta": "version"
+    },
+    {
+      "valor": "9",
+      "etiqueta": "decisiones registradas"
+    }
+  ]
+}

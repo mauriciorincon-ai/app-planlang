@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0.0",
+  "app": "planlang",
+  "procedencia": "app",
+  "declarado_en": "2026-09-27",
+  "titular": "An agent's plan is written as a contract, and a verifier with no AI publishes, case by case, the gap between what was planned and what the agent did, with its failures in view.",
+  "cifras_destacadas": [
+    "criterios_cumplidos",
+    "decisiones_cruzadas",
+    "casos_por_corrida",
+    "llamadas_a_modelos_en_la_vitrina",
+    "costo_de_una_corrida"
+  ],
+  "limites": [
+    "It is a simulation: it handles no real cases and decides on no one.",
+    "Demo B and the interviewer come later; until then they say “under construction”.",
+    "It measures what the plan declared; what it did not foresee shows up as a gap, not as a verdict."
+  ],
+  "nunca": [
+    "Uses real data: every case, member and physician is synthetic.",
+    "Lets a model decide whether the agent got it right.",
+    "Denies a case without a person reviewing it.",
+    "Hides an unfavorable result."
+  ]
+}

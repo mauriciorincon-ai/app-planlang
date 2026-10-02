@@ -73,3 +73,56 @@ describe.each(PAQUETES)("contrato fijado de %s", (paquete) => {
     },
   );
 });
+
+/**
+ * Los contratos que planlang alimenta (ficha técnica de hoja-de-vida y brochure-export de la planeadora) viven
+ * fijados en `docs/contratos/hoja-de-vida/` con su lock. Las reglas que el consumidor tiene solo en código (su Zod) se
+ * reescriben en `src/lib/fichas/contrato.ts`: si ese código cambia allá, la huella de `reglas_en_codigo` lo delata.
+ */
+describe("contratos fijados de hoja-de-vida", () => {
+  const base = join("docs", "contratos", "hoja-de-vida");
+  const lock = JSON.parse(
+    readFileSync(join(base, "CONTRATO.lock"), "utf8"),
+  ) as {
+    archivos: Record<string, string>;
+    origen: Record<string, string>;
+    version: Record<string, string>;
+    reglas_en_codigo: Record<string, string>;
+  };
+  const CODE = join(homedir(), "Code");
+
+  it("cada archivo de la copia está en el lock con su huella, y nada más", () => {
+    const enDisco = archivos(base)
+      .map((p) => relative(base, p))
+      .filter((p) => p !== "CONTRATO.lock")
+      .sort();
+    expect(enDisco).toEqual(Object.keys(lock.archivos).sort());
+    for (const [ruta, huella] of Object.entries(lock.archivos))
+      expect(sha(join(base, ruta)), ruta).toBe(huella);
+  });
+
+  it("la versión del lock es la que declaran las copias", () => {
+    const md = readFileSync(
+      join(base, "ficha-tecnica", "CLAVE-VISUAL.md"),
+      "utf8",
+    );
+    expect(md).toContain(`— v${lock.version["ficha-tecnica"]}`);
+    const exp = readFileSync(
+      join(base, "brochure-export", "contrato-brochure-export-v1.0.0.md"),
+      "utf8",
+    );
+    expect(exp.match(/^version:\s*([0-9.]+)/m)?.[1]).toBe(
+      lock.version["brochure-export"],
+    );
+  });
+
+  it.skipIf(!existsSync(join(CODE, "app-hoja-de-vida")))(
+    "la copia y las reglas en código son las vigentes en hoja-de-vida y la planeadora (solo con ellas en la máquina)",
+    () => {
+      for (const [ruta, origen] of Object.entries(lock.origen))
+        expect(sha(join(CODE, origen)), ruta).toBe(lock.archivos[ruta]);
+      for (const [ruta, huella] of Object.entries(lock.reglas_en_codigo))
+        if (ruta !== "nota") expect(sha(join(CODE, ruta)), ruta).toBe(huella);
+    },
+  );
+});

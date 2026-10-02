@@ -1,0 +1,369 @@
+{
+  "schema_version": "1.3.1",
+  "actualizado": "2026-09-27",
+  "pieza": {
+    "slug": "planlang-demo-a",
+    "nombre": "Agent A · medical prior authorizations",
+    "frente": "agentes",
+    "estado": "inicial",
+    "ciclo": "H1",
+    "version": "plan v1.3",
+    "sellado_en": null,
+    "sprints_cerrados": 1
+  },
+  "promesa": {
+    "tagline": "Approves, denies with a stated cause or escalates; never denies alone.",
+    "intro": "The agent reads the request, asks for what is missing, applies the benefit plan's rules and approves only what the plan allows; the rest goes to an auditor with the evidence and the counter-evidence, and it answers the member with an AI notice.",
+    "para_quien": "For an insurer —a synthetic one— that receives prior-authorization requests with the physician's free text and today reviews them by hand, one by one, without knowing which could be decided alone and which needed an auditor."
+  },
+  "titular": "A medical prior-authorization agent built to a verifiable plan: every path it takes is written in the plan, and a person reviews every denial with the full case in front of them.",
+  "stack": [
+    {
+      "nombre": "LangGraph 1.2",
+      "papel": "the agent's graph: typed state, conditional edges and the human pause with interrupt"
+    },
+    {
+      "nombre": "LangChain 1.4",
+      "papel": "the model adapter and schema-bound structured output"
+    },
+    {
+      "nombre": "Python 3.12",
+      "papel": "the nodes, the guard and the trace exporter"
+    },
+    {
+      "nombre": "Claude Code · sonnet",
+      "papel": "extracts and drafts; the official binary, through the author's subscription, no API key"
+    },
+    {
+      "nombre": "Deterministic rules",
+      "papel": "coverage, output guard and adverse document, no model"
+    },
+    {
+      "nombre": "planlang-trace/v1",
+      "papel": "the traces' own format, with a fingerprint; the only thing the verifier reads"
+    }
+  ],
+  "cifras": [
+    {
+      "clave": "exactitud_extraccion",
+      "valor": 100,
+      "unidad": "%",
+      "etiqueta": "extraction accuracy, 3 of 3 runs",
+      "fuente": "medido",
+      "detalle": "The plan's criterion C5, measured by the verifier as pass^3: the extracted fields are the known truth's in the 15 cases that have one, in 3 runs in a row."
+    },
+    {
+      "clave": "latencia_mediana",
+      "valor": 11.8,
+      "unidad": "s",
+      "etiqueta": "median per case, end to end",
+      "fuente": "medido",
+      "detalle": "The plan's criterion C7 over 20 cases: the median of the total latency recorded in each trace."
+    },
+    {
+      "clave": "casos_con_persona",
+      "valor": 8,
+      "etiqueta": "of 20 cases went through a person",
+      "fuente": "medido",
+      "detalle": "Human pauses recorded in the traces: the auditor saw the full case before deciding."
+    },
+    {
+      "clave": "negaciones_sin_persona",
+      "valor": 0,
+      "etiqueta": "denials without a person",
+      "fuente": "medido",
+      "detalle": "The plan's criterion C1 over 20 cases: every denial went through the human pause."
+    },
+    {
+      "clave": "costo_por_caso",
+      "valor": 0.034,
+      "unidad": "US$",
+      "etiqueta": "nominal cost per case",
+      "fuente": "calculada",
+      "detalle": "US$ 0.6704 for the run over 20 cases: the nominal cost the CLI declares per call, summed over the traces. Through the subscription it was not paid separately."
+    }
+  ],
+  "bloques": [
+    {
+      "orden": 1,
+      "nombre": "Router",
+      "linea": "Separates emergencies and exempt services, authorized without a coverage check.",
+      "cuenta": 2
+    },
+    {
+      "orden": 2,
+      "nombre": "Extractor",
+      "linea": "Turns the physician's text into fields, with their confidence.",
+      "cuenta": 1
+    },
+    {
+      "orden": 3,
+      "nombre": "Clarification",
+      "linea": "Asks for what is missing, up to the maximum the plan sets.",
+      "cuenta": 1
+    },
+    {
+      "orden": 4,
+      "nombre": "Coverage checker",
+      "linea": "Applies the benefit plan's rules, no model.",
+      "cuenta": 0
+    },
+    {
+      "orden": 5,
+      "nombre": "Decision",
+      "linea": "The rules written in the plan decide whether the case escalates.",
+      "cuenta": 5
+    },
+    {
+      "orden": 6,
+      "nombre": "Human pause",
+      "linea": "An auditor sees the full case before denying.",
+      "cuenta": 0
+    },
+    {
+      "orden": 7,
+      "nombre": "Drafter",
+      "linea": "Writes the reply and the adverse-decision document.",
+      "cuenta": 0
+    },
+    {
+      "orden": 8,
+      "nombre": "Output guard",
+      "linea": "Fixed rules: no sensitive data, no injected order.",
+      "cuenta": 0
+    }
+  ],
+  "proceso": {
+    "titulo": "One authorization request",
+    "carriles": [
+      {
+        "id": "medico",
+        "nombre": "Physician"
+      },
+      {
+        "id": "agente",
+        "nombre": "The agent"
+      },
+      {
+        "id": "auditor",
+        "nombre": "Auditor"
+      },
+      {
+        "id": "afiliado",
+        "nombre": "Member"
+      }
+    ],
+    "pasos": [
+      {
+        "id": "inicio",
+        "tipo": "inicio",
+        "carril": "medico",
+        "texto": "A request"
+      },
+      {
+        "id": "envia",
+        "tipo": "tarea",
+        "carril": "medico",
+        "texto": "Sends the request"
+      },
+      {
+        "id": "clasifica",
+        "tipo": "tarea",
+        "carril": "agente",
+        "texto": "Classifies the care"
+      },
+      {
+        "id": "urgencia",
+        "tipo": "decision",
+        "carril": "agente",
+        "texto": "Urgent or exempt?"
+      },
+      {
+        "id": "extrae",
+        "tipo": "tarea",
+        "carril": "agente",
+        "texto": "Extracts the fields"
+      },
+      {
+        "id": "falta",
+        "tipo": "decision",
+        "carril": "agente",
+        "texto": "Missing?"
+      },
+      {
+        "id": "pregunta",
+        "tipo": "tarea",
+        "carril": "agente",
+        "texto": "Asks for clarification"
+      },
+      {
+        "id": "responde",
+        "tipo": "tarea",
+        "carril": "medico",
+        "texto": "Answers the clarification"
+      },
+      {
+        "id": "cobertura",
+        "tipo": "tarea",
+        "carril": "agente",
+        "texto": "Applies the coverage rules"
+      },
+      {
+        "id": "escala",
+        "tipo": "decision",
+        "carril": "agente",
+        "texto": "Escalate?"
+      },
+      {
+        "id": "revisa",
+        "tipo": "tarea",
+        "carril": "auditor",
+        "texto": "Reviews the full case and decides"
+      },
+      {
+        "id": "redacta",
+        "tipo": "tarea",
+        "carril": "agente",
+        "texto": "Drafts with an AI notice"
+      },
+      {
+        "id": "guardia",
+        "tipo": "tarea",
+        "carril": "agente",
+        "texto": "The guard filters the output"
+      },
+      {
+        "id": "recibe",
+        "tipo": "tarea",
+        "carril": "afiliado",
+        "texto": "Receives the reply"
+      },
+      {
+        "id": "fin",
+        "tipo": "fin",
+        "carril": "afiliado",
+        "texto": ""
+      }
+    ],
+    "flujos": [
+      {
+        "de": "inicio",
+        "a": "envia"
+      },
+      {
+        "de": "envia",
+        "a": "clasifica"
+      },
+      {
+        "de": "clasifica",
+        "a": "urgencia"
+      },
+      {
+        "de": "urgencia",
+        "a": "redacta",
+        "etiqueta": "yes · authorized"
+      },
+      {
+        "de": "urgencia",
+        "a": "extrae",
+        "etiqueta": "no"
+      },
+      {
+        "de": "extrae",
+        "a": "falta"
+      },
+      {
+        "de": "falta",
+        "a": "pregunta",
+        "etiqueta": "yes"
+      },
+      {
+        "de": "falta",
+        "a": "cobertura",
+        "etiqueta": "no"
+      },
+      {
+        "de": "pregunta",
+        "a": "responde"
+      },
+      {
+        "de": "responde",
+        "a": "extrae"
+      },
+      {
+        "de": "cobertura",
+        "a": "escala"
+      },
+      {
+        "de": "escala",
+        "a": "revisa",
+        "etiqueta": "yes"
+      },
+      {
+        "de": "escala",
+        "a": "redacta",
+        "etiqueta": "no"
+      },
+      {
+        "de": "revisa",
+        "a": "redacta"
+      },
+      {
+        "de": "redacta",
+        "a": "guardia"
+      },
+      {
+        "de": "guardia",
+        "a": "recibe"
+      },
+      {
+        "de": "recibe",
+        "a": "fin"
+      }
+    ],
+    "anotaciones": [
+      {
+        "paso": "revisa",
+        "texto": "No denial goes out without the auditor; in this demo, the auditor was simulated in batch."
+      },
+      {
+        "paso": "pregunta",
+        "texto": "If something is still missing after the maximum of clarifications, the case goes to the auditor."
+      },
+      {
+        "paso": "guardia",
+        "texto": "The case's text never decides which action runs."
+      }
+    ]
+  },
+  "procedencia_proceso": "app",
+  "limites": [
+    "It decides on synthetic cases: it is a demonstration, not a service.",
+    "Its human auditor was simulated in batch, following the known truth.",
+    "It runs in batches of 20 cases, outside CI and with breaks between batches."
+  ],
+  "nunca": [
+    "Denies without a person reviewing it.",
+    "Obeys instructions hidden in a case's text.",
+    "Lets a member's data out in the reply.",
+    "Asks for authorization for an emergency."
+  ],
+  "hitos": [
+    {
+      "valor": "v1.3",
+      "etiqueta": "plan version"
+    },
+    {
+      "valor": "2026-09-27",
+      "etiqueta": "first real run"
+    },
+    {
+      "valor": "8 of 8",
+      "etiqueta": "contract pieces"
+    },
+    {
+      "valor": "233",
+      "etiqueta": "verified decisions"
+    }
+  ]
+}

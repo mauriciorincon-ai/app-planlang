@@ -1,0 +1,159 @@
+{
+  "schema_version": "1.1.0",
+  "actualizado": "2026-09-27",
+  "pieza": {
+    "slug": "planlang",
+    "nombre": "planlang",
+    "frente": "apps",
+    "estado": "inicial",
+    "ciclo": "H1",
+    "version": "0.1.0",
+    "sellado_en": null,
+    "sprints_cerrados": 1
+  },
+  "promesa": {
+    "tagline": "Planeé, construí y medí la brecha.",
+    "intro": "Escribes el plan como un contrato —decisiones, riesgos, supuestos, criterios y umbrales, cada uno medible— y planlang lo usa para construir el agente, correrlo sobre casos con respuesta conocida y publicar la brecha. Luego mueves un umbral y ves qué habría costado.",
+    "para_quien": "Para quien planea, construye o aprueba un proyecto de agentes de IA y hoy mide lo que el agente hace sin haber escrito antes qué debía hacer: mira trazas, corre evaluaciones sueltas y decide a ojo cuándo un resultado basta."
+  },
+  "titular": "El plan de un agente se escribe como contrato, y un verificador sin IA publica, caso por caso, la brecha entre lo planeado y lo que el agente hizo, con sus fallas a la vista.",
+  "stack": [
+    {
+      "nombre": "Next.js exportado estático",
+      "papel": "la vitrina: siete pantallas en español e inglés, sin servidor"
+    },
+    {
+      "nombre": "TypeScript estricto",
+      "papel": "el núcleo determinista: plan, verificador, playground y visor, iguales en Node y en el navegador"
+    },
+    {
+      "nombre": "Python 3.12 · LangGraph 1.2",
+      "papel": "el agente del demo A, con la pausa humana como interrupt"
+    },
+    {
+      "nombre": "Claude Code por suscripción",
+      "papel": "el modelo de los agentes, en lotes fuera de CI; nunca en el núcleo ni en la vitrina"
+    },
+    {
+      "nombre": "JSON canónico + SHA-256",
+      "papel": "planes, casos, trazas e informes con huella, comprobables byte a byte"
+    },
+    {
+      "nombre": "Vitest · Playwright · axe",
+      "papel": "las pruebas, incluida la cruzada de las aristas entre Python y TypeScript"
+    }
+  ],
+  "cifras": [
+    {
+      "clave": "criterios_cumplidos",
+      "valor": 9,
+      "unidad": "criterios",
+      "etiqueta": "criterios del plan cumplidos, de 9",
+      "fuente": "medido",
+      "detalle": "Del informe del verificador 1.2.0 sobre la corrida suscripcion-planlang-a-001-20-v1.2: 9 de 9 criterios cumplidos."
+    },
+    {
+      "clave": "decisiones_cruzadas",
+      "valor": 233,
+      "unidad": "decisiones",
+      "etiqueta": "decisiones rehechas en otro lenguaje, con 0 diferencias",
+      "fuente": "medido",
+      "detalle": "Prueba cruzada RF-09.2 sobre 4 corridas: el intérprete de aristas de TypeScript rehace cada decisión que registró Python."
+    },
+    {
+      "clave": "casos_por_corrida",
+      "valor": 20,
+      "unidad": "casos",
+      "etiqueta": "casos por corrida, en 3 corridas y una línea base",
+      "fuente": "medido",
+      "detalle": "Corrida suscripcion-planlang-a-001-20-v1.2 con sus 2 repeticiones (pass^k) y la línea base de agente único a igual presupuesto."
+    },
+    {
+      "clave": "llamadas_a_modelos_en_la_vitrina",
+      "valor": 0,
+      "unidad": "llamadas",
+      "etiqueta": "llamadas a modelos al visitar la vitrina",
+      "fuente": "declarado",
+      "detalle": "Lo fija la arquitectura: la vitrina es un export estático con los datos precalculados; el paquete se prueba sin una sola solicitud fuera de su origen."
+    },
+    {
+      "clave": "costo_de_una_corrida",
+      "valor": 0.6704,
+      "unidad": "US$",
+      "etiqueta": "costo nominal de una corrida de 20 casos",
+      "fuente": "calculada",
+      "detalle": "Suma del costo nominal que el CLI declara por llamada, en las trazas de la corrida; por la suscripción no se pagó aparte."
+    }
+  ],
+  "bloques": [
+    {
+      "orden": 1,
+      "nombre": "Planear",
+      "linea": "El plan como contrato: plantillas, validador y contrato para el constructor.",
+      "cuenta": 3
+    },
+    {
+      "orden": 2,
+      "nombre": "Correr",
+      "linea": "Casos con verdad conocida, el demo A y las corridas por lotes.",
+      "cuenta": 4
+    },
+    {
+      "orden": 3,
+      "nombre": "Medir",
+      "linea": "El verificador de brecha y los supuestos medidos de verdad.",
+      "cuenta": 4
+    },
+    {
+      "orden": 4,
+      "nombre": "Jugar",
+      "linea": "Mover los umbrales sobre las trazas reales.",
+      "cuenta": 1
+    },
+    {
+      "orden": 5,
+      "nombre": "Entender",
+      "linea": "El grafo real, nodo por nodo, contra el plan.",
+      "cuenta": 1
+    },
+    {
+      "orden": 6,
+      "nombre": "Mostrar",
+      "linea": "La vitrina bilingüe y sus fichas.",
+      "cuenta": 3
+    }
+  ],
+  "limites": [
+    "Es una simulación: no opera casos reales ni decide sobre personas.",
+    "El demo B y el entrevistador llegan después; hasta entonces dicen «en construcción».",
+    "Mide lo que el plan declaró; lo que no previó aparece como brecha, no como veredicto."
+  ],
+  "nunca": [
+    "Usa datos reales: todo caso, afiliado y médico es sintético.",
+    "Deja que un modelo decida si el agente acertó.",
+    "Niega un caso sin que lo revise una persona.",
+    "Esconde un resultado desfavorable."
+  ],
+  "hitos": [
+    {
+      "valor": "H1",
+      "etiqueta": "ciclo"
+    },
+    {
+      "valor": "1",
+      "etiqueta": "sprints"
+    },
+    {
+      "valor": "—",
+      "etiqueta": "construccion"
+    },
+    {
+      "valor": "v0.1.0",
+      "etiqueta": "version"
+    },
+    {
+      "valor": "9",
+      "etiqueta": "decisiones registradas"
+    }
+  ]
+}

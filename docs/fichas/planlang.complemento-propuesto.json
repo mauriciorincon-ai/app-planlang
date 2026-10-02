@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0.0",
+  "app": "planlang",
+  "procedencia": "app",
+  "declarado_en": "2026-09-27",
+  "titular": "El plan de un agente se escribe como contrato, y un verificador sin IA publica, caso por caso, la brecha entre lo planeado y lo que el agente hizo, con sus fallas a la vista.",
+  "cifras_destacadas": [
+    "criterios_cumplidos",
+    "decisiones_cruzadas",
+    "casos_por_corrida",
+    "llamadas_a_modelos_en_la_vitrina",
+    "costo_de_una_corrida"
+  ],
+  "limites": [
+    "Es una simulación: no opera casos reales ni decide sobre personas.",
+    "El demo B y el entrevistador llegan después; hasta entonces dicen «en construcción».",
+    "Mide lo que el plan declaró; lo que no previó aparece como brecha, no como veredicto."
+  ],
+  "nunca": [
+    "Usa datos reales: todo caso, afiliado y médico es sintético.",
+    "Deja que un modelo decida si el agente acertó.",
+    "Niega un caso sin que lo revise una persona.",
+    "Esconde un resultado desfavorable."
+  ]
+}
