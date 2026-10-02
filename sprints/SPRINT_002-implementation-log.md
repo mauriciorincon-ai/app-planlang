@@ -849,6 +849,100 @@ deuda sin subir; el último push fue `defb8a7`. Siguiente, en orden:
    - las decisiones: AU-9 en el S2 o en el S3 (desviación 50), diagramador v0.4.0 ahora o en el S3
      (desviación 45), y las corridas de fondo.
 
+### Decisiones del usuario sobre AU-9, el diagramador y las corridas (2026-10-01)
+
+Textual: «Si pa tus tres preguntas de decision el diagramador se adopta en S3, continua». Lectura registrada:
+1. **AU-9 entra en el S2**, antes de las corridas de fondo (desviación 50): plan v1.4 con la arista de respaldo.
+2. **Diagramador v0.4.0 en el S3** (desviación 45): la copia fijada sigue en 0.3.0 con `planeadora_adelante`.
+3. **Corridas de fondo autorizadas** con la suscripción (cuota del usuario), con el plan v1.4.
+
+### M-12 · lock de Python (2026-10-01)
+
+- `agents/constraints.txt`: `pip freeze --exclude-editable` del venv validado (Python 3.12.14, 70 paquetes)
+  con encabezado. Las seis corridas reales del S1 registraron las mismas cinco versiones en su `entorno.json`.
+- `.github/workflows/ci-python.yml`: `pip install -e ".[dev]" -c constraints.txt`; el lock entra en la llave de la
+  caché.
+- `agents/tests/test_constraints.py` (2): cada dependencia directa está en el lock y dentro de su rango; el entorno
+  instalado es el lock.
+- ADR-003 con su adenda y la línea «Summary (EN)» al día. `pip install --dry-run -c constraints.txt` resuelve sin
+  cambios.
+
+| Gate | Cambio deliberado | Rojo | Al revertir |
+|---|---|---|---|
+| Entorno = lock | `langgraph==1.2.11` en el lock | `langgraph: instalada 1.2.12, lock 1.2.11` | 2/2 |
+| Lock dentro del rango | `langgraph==1.3.0` | `fuera de «<1.3,>=1.2» (pyproject)` | 2/2 |
+| Dependencia directa fijada | sin la línea de `pydantic` | `pydantic está en el pyproject y no en constraints.txt` | 2/2 |
+
+### AU-9 · sin proveedor, el caso va a una persona (2026-10-01)
+
+**Plan v1.4** (`plans/demo-a/v1.4.json`, huella `186345f2…`, `enmendarAV14` en `scripts/enmienda-plan-demo-a.ts`,
+aprobado por el usuario en el gate de la fase 4):
+- `extractor` y `aclaracion` (los nodos escritores que llaman al modelo) ganan en el orden 1 la arista
+  `proveedor_no_disponible · igual_a · true → pausa_humana`. Sus aristas de antes pasan al orden 2, sin `si_falso`,
+  con la rama por defecto declarada, como en la enmienda v1 → v1.1.
+- `proveedor_no_disponible` pasa a señal obligatoria en la traza.
+- **R9** (el proveedor no responde a mitad de caso; S6 · O3 · D2; detector `error_proveedor != null`) y el evaluador
+  `exactitud_extraccion` declara que también cubre R9. Sin esa cobertura, la corrida simulada daba 2 brechas no previstas
+  («la extracción no coincide con la verdad») que eran la misma falla del proveedor contada otra vez; con ella, 0, y el
+  evaluador sigue nombrando los 3 casos.
+- Un paso nuevo del flujo objetivo lo dice en ES y EN. Umbrales intactos.
+
+**Intérprete de aristas, los dos lados a la vez:** una señal **nula** (no observada: el nodo no pudo medirla) no cumple
+ninguna comparación de orden. Antes era error, por decisión del S1. Sin proveedor, la arista de faltantes del extractor
+ve `campos_faltantes_count = null`, y `decidir` evalúa todas las aristas del nodo para que el playground pueda
+recalcular. Lo ausente sigue siendo error, y cualquier otro valor que no sea número también. Ninguna corrida
+versionada tenía un nulo en una comparación de orden (habría fallado al correr), así que ninguna rama cambia.
+
+**Python:**
+- `estado.py`: `proveedor_no_disponible` y `error_proveedor`.
+- `nodos.py`: `_respaldo(nodo, e)` decide si el error pasa a una persona. Solo pasa si el plan declara la arista del
+  nodo y el error no es `limite_de_uso`, que sigue deteniendo la sesión (R8). Con un plan anterior a la v1.4 todo sale
+  como antes.
+- El extractor, sin proveedor, deja sus señales nulas y conserva la extracción anterior si hubo aclaraciones.
+- La aclaración vuelve a decidir con la señal escrita.
+- El paso que falló queda con su error y su costo.
+- `exportador.py`: la señal y el campo `error_proveedor` son el primer paso que falló, y `error_de_esquema_en_traspaso`
+  se calcula desde los pasos. Si no, R7 dejaba de ver un esquema inválido que ya no corta el caso.
+- Si falla el **redactor**, la decisión ya está tomada: traza parcial como antes (ADR-001 § 4 lo dice).
+
+**Lotes:**
+- El de **200** se regeneró con la v1.4. Solo cambió la referencia al plan: los 200 casos y su verdad son idénticos,
+  porque el generador no lee estas aristas.
+- El de 20 y el de humo siguen con la v1.1, porque sus corridas los citan por huella.
+- `scripts/lotes-versionados.ts` declara el plan de cada lote. `perf-200.test.ts` re-sella en memoria el lote de 200
+  con la referencia del de 20 para replicar la corrida del S1.
+
+**Gate de contrato entre lenguajes (regla 19):** `runs/demo-a/simulado-v1.4-respaldo` (plan v1.4, lote de 200, 8
+casos) lleva fallas inyectadas:
+- A-001: `otro` al extraer, aprueba la persona;
+- A-004: `timeout` al extraer, niega la persona con su documento;
+- A-008: `esquema_invalido` al aclarar.
+
+`agents/tests/respaldo_simulado.py` la genera y `test_respaldo_versionado.py` la regenera byte a byte. TypeScript la
+lee entera: RF-09.2, `trazas:verificar` y el informe versionado. En el informe ocurren R5 (A-008: la extracción quedó
+a medias), R7 (esquema inválido) y R9 (3 casos), sin brechas no previstas.
+
+**Pruebas:**
+- `test_lotes.py` (+4: extraer, negar, aclarar, límite de uso);
+- `test_respaldo_versionado.py` (2) y `test_reglas_arista.py` (+1);
+- `enmienda-v1-4.test.ts` (4) y `interprete.test.ts` (+1);
+- `casos-versionados.test.ts` (+1, el de 20 sigue siendo el primer bloque del de 200).
+
+Totales: pytest 155 (96 %), vitest 2115.
+
+**Antes de las corridas:** humo real del adaptador 3/3 (`PLANLANG_HUMO_REAL=1`, CLI 2.1.282). LangSmith **no** está
+aprovisionado (sin `LANGSMITH_API_KEY` en el entorno ni en `~/.zshrc`; comprobado sin imprimirla): las corridas van
+sin espejo (desviación 54).
+
+#### Demos en rojo de AU-9 (regla 15)
+
+| Gate | Cambio deliberado | Rojo | Al revertir |
+|---|---|---|---|
+| El caso sin proveedor va a una persona | `_respaldo` devuelve siempre `False` | 4 fallan (extraer, negar, aclarar y la corrida versionada) | 19/19 |
+| R7 ve el esquema inválido que pasó a una persona | `error_de_esquema_en_traspaso` solo desde el error del lote | 2 fallan (aclarar y la corrida versionada) | 19/19 |
+| Contrato Python → TS con un nulo observado | `aristas.ts` sin la regla del nulo | 5 fallan: RF-09.2 (2) e informe versionado (2) de `simulado-v1.4-respaldo` + la unitaria | 109/109 |
+| Lote de 200 de la v1.4 / corrida acumulable | regenerar el plan sin borrar la corrida simulada previa | `CorridaIncompatible`: «otro plan, otro lote de casos» | corrida regenerada |
+
 ## Desviación del plan
 
 1. **El centinela «Worktrees prohibidos» no existe** en `ordenes/CLAUDE-md-para-app.md` (vive en el batch
@@ -989,6 +1083,19 @@ deuda sin subir; el último push fue `defb8a7`. Siguiente, en orden:
     cambiaría (la regla es falsa donde no hubo error). Es el mismo tipo de cambio que M-18, que se pasó al S3. Se
     deja para la decisión del usuario en el gate de la fase 4: hacerlo en el S2, antes de las corridas de fondo, o
     en el S3.
+    **Decidido (2026-10-01):** en el S2, antes de las corridas de fondo. Hecho con el plan v1.4 (ver «AU-9»).
+51. **Una señal nula ya no es error en una comparación de orden** (los dos intérpretes): no cumple ninguna. El S1
+    lo había fijado como error; sin proveedor, la arista de faltantes del extractor ve un nulo y `decidir` evalúa
+    todas las aristas del nodo. Lo ausente y lo que no es número siguen siendo error. Ninguna rama versionada cambia.
+52. **La pestaña «Código» de Agente muestra el respaldo de AU-9** y el dibujo es el grafo de la corrida del S1, que no
+    lo tenía: el código es el de este build (como la desviación 26) y dice que sin la arista en el plan el error sale
+    como antes. La vitrina sigue en el plan v1.3 sobre la corrida de la v1.2.
+53. **La corrida de fondo es de 200 casos, no de 180:** los 20 del lote de 20 corrieron con el grafo del S1, sin el
+    respaldo; una corrida tiene un solo plan y un solo grafo, así que la de la v1.4 corre el lote entero (10 sesiones
+    de 20 en vez de 9).
+54. **LangSmith sin aprovisionar** (precondición de las corridas de fondo en la orden): corren sin espejo, con las
+    trazas propias completas (regla 8). Queda en la tabla de aprovisionamiento pendiente del PR y como deuda.
+
 
 ## Registro de miradas
 

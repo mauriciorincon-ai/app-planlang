@@ -8,7 +8,8 @@
  * - `igual_a` / `distinto_de`: igualdad ESTRICTA de tipo (`true` no es `1`); ignoran `inclusivo`.
  * - `menor_que` / `mayor_que`: estrictos; con `inclusivo: true` pasan a `<=` / `>=`.
  * - `menor_o_igual_que` / `mayor_o_igual_que`: siempre inclusivos.
- * - Orden solo entre números; una señal ausente es error, jamás `false`.
+ * - Orden solo entre números; una señal nula (no observada: el nodo no pudo medirla) no cumple ninguna comparación
+ *   de orden; una señal ausente es error, jamás `false`.
  * - `valor` literal o `umbral.Ux`, resuelto con los umbrales aplicados de la corrida.
  */
 import { conHuella } from "../formatos/huella";

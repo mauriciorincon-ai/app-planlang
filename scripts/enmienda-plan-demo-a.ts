@@ -318,3 +318,125 @@ export function enmendarAV13(v12: Plan): Record<string, unknown> {
   delete borrador.aprobado_el;
   return borrador;
 }
+
+/** La arista de respaldo de AU-9 en un nodo escritor que llama al modelo: va primero, antes de las suyas. */
+const RESPALDO = (desde: string) => ({
+  desde,
+  orden: 1,
+  senal: "proveedor_no_disponible",
+  operador: "igual_a" as const,
+  valor: true,
+  inclusivo: false,
+  si_verdadero: "pausa_humana",
+});
+
+/**
+ * La enmienda v1.3 → v1.4 del S2 (AU-9, decidida por el usuario en el gate de la fase 4): sin proveedor, el caso no
+ * se inventa ni se queda sin decisión, va a una persona con el caso completo (ADR-001 § 4).
+ *   1. `extractor` y `aclaracion` (los nodos escritores que llaman al modelo) ganan una arista de respaldo en el orden 1:
+ *      `proveedor_no_disponible · igual_a · true → pausa_humana`. Sus aristas de antes pasan al orden 2, sin `si_falso`, y
+ *      su rama por defecto se declara (`verificador_cobertura` y `extractor`), como en la enmienda v1 → v1.1.
+ *   2. `proveedor_no_disponible` pasa a señal obligatoria en la traza.
+ *   3. R9: el proveedor no responde a mitad de caso, con su detector sobre `error_proveedor` (el verificador deja de
+ *      contar como «no prevista» una falla que el plan ahora anticipa), y el evaluador `exactitud_extraccion` la cubre:
+ *      sin proveedor la extracción queda ausente o a medias, y esa falla es R9, no una brecha nueva.
+ *   4. El flujo objetivo lo dice en ES y EN.
+ * Umbrales intactos; el contrato de grafo cambia, así que los lotes generados con la v1.1 NO sirven para la v1.4 (la
+ * verdad conocida del generador no lee estas aristas, pero la regla de compatibilidad compara el contrato entero): el lote
+ * de 200 se regenera con la v1.4.
+ */
+export function enmendarAV14(v13: Plan): Record<string, unknown> {
+  const contrato = v13.contrato_de_grafo;
+  const conRespaldo = new Set(["extractor", "aclaracion"]);
+  const aristas: unknown[] = [];
+  for (const a of contrato.aristas_condicionales) {
+    if (!conRespaldo.has(a.desde)) {
+      aristas.push(a);
+      continue;
+    }
+    if (a.orden !== 1 || !a.si_falso)
+      throw new Error(
+        `v1.4: ${a.desde} ya no es una arista única con si_falso`,
+      );
+    const copia: Record<string, unknown> = { ...a, orden: 2 };
+    delete copia.si_falso;
+    aristas.push(RESPALDO(a.desde), copia);
+  }
+  const porDefecto = Object.fromEntries(
+    contrato.aristas_condicionales
+      .filter((a) => conRespaldo.has(a.desde))
+      .map((a) => [a.desde, a.si_falso as string]),
+  );
+  const senales = [...contrato.senales_obligatorias_en_traza];
+  senales.splice(
+    senales.indexOf("error_proveedor") + 1,
+    0,
+    "proveedor_no_disponible",
+  );
+  const r9 = {
+    id: "R9",
+    modo: tb(
+      "El proveedor del modelo no responde a mitad de caso (tiempo agotado, salida inválida tras los reintentos u otra falla)",
+      "The model provider fails mid-case (timeout, invalid output after the retries or another failure)",
+    ),
+    efecto: tb(
+      "Caso sin decisión, o decidido sin que nadie lo vea",
+      "A case with no decision, or decided without anyone seeing it",
+    ),
+    causa: tb(
+      "Proveedor externo (suscripción o API) fuera del control de la app",
+      "External provider (subscription or API) outside the app's control",
+    ),
+    severidad: 6,
+    ocurrencia: 3,
+    deteccion: 2,
+    decision_id: "D6",
+    detector_en_trazas: {
+      tipo: "conteo",
+      poblacion: "todos",
+      condicion: "error_proveedor != null",
+      ocurre_si: "> 0",
+    },
+    mitigaciones: [
+      {
+        accion: tb(
+          "arista de respaldo: sin proveedor al extraer o al aclarar, el caso va a una persona con el caso completo (AU-9); el límite de uso detiene la sesión y el caso se reintenta (R8)",
+          "fallback edge: with no provider while extracting or clarifying, the case goes to a person with the full case (AU-9); the usage limit stops the session and the case is retried (R8)",
+        ),
+        momento: tb("S2", "S2"),
+        efecto_esperado: tb("severidad → 2", "severity → 2"),
+      },
+    ],
+  };
+  const flujo = [...v13.flujo_objetivo];
+  flujo.splice(
+    4,
+    0,
+    tb(
+      "Si el modelo no responde al extraer o al aclarar, el caso pasa a una persona con lo que haya; jamás se inventa.",
+      "If the model does not respond while extracting or clarifying, the case goes to a person with whatever there is; it is never made up.",
+    ),
+  );
+  const borrador: Record<string, unknown> = {
+    ...v13,
+    version: "1.4.0",
+    estado_aprobacion: "borrador",
+    huella: null,
+    flujo_objetivo: flujo,
+    riesgos: [...v13.riesgos, r9],
+    contrato_de_grafo: {
+      ...contrato,
+      aristas_condicionales: aristas,
+      ramas_por_defecto: { ...contrato.ramas_por_defecto, ...porDefecto },
+      senales_obligatorias_en_traza: senales,
+      evaluadores_requeridos: contrato.evaluadores_requeridos.map((e) =>
+        e.id === "exactitud_extraccion"
+          ? { ...e, riesgos_cubiertos: [...e.riesgos_cubiertos, "R9"] }
+          : e,
+      ),
+    },
+  };
+  delete borrador.aprobado_por;
+  delete borrador.aprobado_el;
+  return borrador;
+}

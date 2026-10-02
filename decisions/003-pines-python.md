@@ -1,6 +1,6 @@
 # ADR-003 — Pines de Python para `agents/` (LangChain 1.x, LangGraph 1.x, LangSmith SDK, canonicalización)
 
-**Summary (EN):** Python pins for `agents/`: langchain >=1.4,<2 · langgraph >=1.2,<1.3 · langchain-core <2 · langsmith <1 · langgraph-checkpoint-sqlite >=3.1,<4 · pydantic >=2,<3 · rfc8785 >=0.1,<1. Pins move only by ADR inside a sprint (there is no Dependabot for pip).
+**Summary (EN):** Python pins for `agents/`: langchain >=1.4,<2 · langgraph >=1.2,<1.3 · langchain-core <2 · langsmith <1 · langgraph-checkpoint-sqlite >=3.1,<4 · pydantic >=2,<3 · rfc8785 >=0.1,<1. Pins move only by ADR inside a sprint (there is no Dependabot for pip). Addendum 2026-10-01 (S2, M-12): `agents/constraints.txt` locks the exact versions of the validated venv; CI installs with `-c constraints.txt` and a test checks the installed environment is the lock.
 
 **Estado:** aceptado · **Fecha:** 2026-09-27 · **Sprint:** S1 «El contrato y la corrida»
 **Cítese por tema:** «ADR de pines de Python».
@@ -42,3 +42,23 @@ limpio.
 - Subir cualquier pin exige un ADR nuevo en sprint con la re-lectura del CHANGELOG de la librería.
 - `pip-audit` corre en cada PR con `--skip-editable` (kit v1.30.1; con `--strict` el paquete editable
   hace caer el job — la constitución regla 16 todavía dice `--strict`: fricción de documentación K4).
+
+## Adenda 2026-10-01 (S2, deuda M-12 de la auditoría del S1)
+
+**Problema.** Los rangos del `pyproject.toml` dicen qué se admite, no qué se instala: la CI resolvía en cada
+corrida lo último dentro de los rangos, y `grafo.json` depende de la forma interna de `get_graph().to_json()`
+(P-13). Dos corridas con el mismo código podían dar grafos distintos sin que nada lo dijera.
+
+**Decisión.**
+- `agents/constraints.txt` fija las versiones exactas del venv validado (Python 3.12.14), sacadas con
+  `pip freeze --exclude-editable`. Las seis corridas reales del S1 registraron en su `entorno.json` las mismas
+  langchain 1.4.2, langchain-core 1.6.5, langgraph 1.2.12, langsmith 0.14.1 y pydantic 2.13.5.
+- La CI instala con `pip install -e ".[dev]" -c constraints.txt`, y el lock entra en la llave de la caché.
+- `agents/tests/test_constraints.py` comprueba dos cosas: que cada dependencia directa del `pyproject` (con las
+  de `dev`) está en el lock dentro de su rango, y que el entorno instalado es el lock, paquete por paquete. Si
+  alguien quita el `-c` de la CI, o sube un paquete sin regenerar el lock, la prueba nombra la diferencia.
+- Los extras `anthropic` y `groq` (el interruptor) no entran al lock porque no se instalan en CI. Si se activan,
+  se instalan sobre el venv del lock y el ADR que los active fija su versión.
+
+**Para subir algo:** ADR en sprint, venv nuevo validado (pytest y corrida simulada) y el `pip freeze` pegado
+debajo del encabezado del lock, sin tocarlo a mano. Demo en rojo en la bitácora del S2 («M-12»).

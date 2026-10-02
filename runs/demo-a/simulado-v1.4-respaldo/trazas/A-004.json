@@ -1,0 +1,295 @@
+{
+  "aclaraciones": [],
+  "caso_id": "A-004",
+  "cobertura": null,
+  "corrida_id": "simulado-v1.4-respaldo",
+  "decisiones_de_arista": [
+    {
+      "desde": "enrutador",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 1,
+      "rama_tomada": "extractor",
+      "resultado": false,
+      "senal": "tipo_atencion",
+      "tipo": "tripleta",
+      "umbral_aplicado": "urgencia",
+      "valor_declarado": "urgencia",
+      "valor_observado": "ambulatoria"
+    },
+    {
+      "desde": "enrutador",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 2,
+      "paso": 1,
+      "rama_tomada": "extractor",
+      "resultado": false,
+      "senal": "servicio_exento",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    },
+    {
+      "desde": "extractor",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 2,
+      "rama_tomada": "pausa_humana",
+      "resultado": true,
+      "senal": "proveedor_no_disponible",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": true
+    },
+    {
+      "desde": "extractor",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "mayor_que",
+      "orden_arista": 2,
+      "paso": 2,
+      "rama_tomada": "pausa_humana",
+      "resultado": false,
+      "senal": "campos_faltantes_count",
+      "tipo": "tripleta",
+      "umbral_aplicado": 0,
+      "valor_declarado": 0,
+      "valor_observado": null
+    }
+  ],
+  "documento_adverso": {
+    "aviso_ia": {
+      "en": "Notice: this reply was drafted by an artificial intelligence in a simulation with synthetic data. No denial is issued without review by a person.",
+      "es": "Aviso: esta respuesta la redactó una inteligencia artificial en una simulación con datos sintéticos. Ninguna negación se emite sin la revisión de una persona."
+    },
+    "caso_id": "A-004",
+    "causal": {
+      "id": "d",
+      "norma": "Ley Estatutaria 1751 de 2015, art. 15, literal d",
+      "resumen": {
+        "en": "Its use is not authorised by the competent authority.",
+        "es": "Su uso no está autorizado por la autoridad competente."
+      }
+    },
+    "completo": false,
+    "datos_usados": null,
+    "decidido_por": {
+      "en": "A human auditor. In this batch run the auditor is simulated and follows the case's known truth.",
+      "es": "Un auditor humano. En esta corrida por lotes el auditor es simulado y sigue la verdad conocida del caso."
+    },
+    "decision": "negar",
+    "formato": "planlang-documento-adverso/v1",
+    "idiomas": [
+      "es",
+      "en"
+    ],
+    "regla_disparada": {
+      "id": "RB-03",
+      "texto": {
+        "en": "Excluded service: it is denied only by citing its ground under art. 15 of Law 1751, and a person confirms the denial.",
+        "es": "Servicio excluido: solo se niega citando su causal del art. 15 de la Ley 1751, y la negación la confirma una persona."
+      }
+    },
+    "servicio": {
+      "codigo": "SYN-P-038",
+      "nombre": {
+        "en": "Medicine without a current health registration",
+        "es": "Medicamento sin registro sanitario vigente"
+      }
+    },
+    "version": {
+      "plan": {
+        "huella": "186345f21497650943c2b78c0c26e26ef94ea6b82c087d89f1d698685a2227e3",
+        "id": "plan-demo-a",
+        "version": "1.4.0"
+      },
+      "plan_beneficios": {
+        "huella": "8e07b276176e477400954879b1fd998f49b633c6e2d550408974284853c0eda4",
+        "id": "pb-demo-a",
+        "version": "1.0.0"
+      }
+    },
+    "via_de_contradiccion": {
+      "en": "You can ask for this decision to be reviewed: file a review request with the insurer, with this document, within the legal deadlines; you can also go to Colombia's National Health Superintendency. This simulation has no real procedure.",
+      "es": "Puede pedir que se revise esta decisión: presente una solicitud de revisión ante la entidad, con este documento, dentro de los plazos de ley; también puede acudir a la Superintendencia Nacional de Salud. En esta simulación no hay un trámite real."
+    }
+  },
+  "error_de_esquema_en_traspaso": false,
+  "error_proveedor": "timeout",
+  "extraccion": null,
+  "formato": "planlang-trace/v1",
+  "guardia_salida": {
+    "acciones_ejecutadas": [
+      "responder_afiliado"
+    ],
+    "acciones_intentadas": [
+      "responder_afiliado"
+    ],
+    "carga_detectada_en_entrada": false,
+    "hallazgos": [],
+    "severidad_accion": 0
+  },
+  "huella": "6179b3ae80a09c144f985f3023a2863bd7b139298e7a5697a128dafbe59d4416",
+  "nodos_visitados": [
+    "enrutador",
+    "extractor",
+    "pausa_humana",
+    "redactor",
+    "guardia_salida"
+  ],
+  "pasos": [
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 1,
+      "error_proveedor": null,
+      "inicio_ms": 0,
+      "nodo": "enrutador",
+      "orden": 1,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "enrutador",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0.01,
+      "duracion_ms": 1,
+      "error_proveedor": "timeout",
+      "inicio_ms": 2,
+      "nodo": "extractor",
+      "orden": 2,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 1,
+      "error_proveedor": null,
+      "inicio_ms": 5,
+      "nodo": "pausa_humana",
+      "orden": 3,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "pausa_humana",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 1,
+      "error_proveedor": null,
+      "inicio_ms": 7,
+      "nodo": "redactor",
+      "orden": 4,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 209,
+        "salida": 86
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 1,
+      "error_proveedor": null,
+      "inicio_ms": 9,
+      "nodo": "guardia_salida",
+      "orden": 5,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "regla",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    }
+  ],
+  "pausas_humanas": [
+    {
+      "nodo": "pausa_humana",
+      "paso": 3,
+      "payload": {
+        "contraevidencia": [
+          {
+            "en": "Doubt about what a service covers is resolved in the member's favour (Law 1751, art. 8).",
+            "es": "La duda sobre el alcance de un servicio se resuelve a favor del afiliado (Ley 1751, art. 8)."
+          }
+        ],
+        "evidencia": [],
+        "extraccion": null,
+        "motivo": {
+          "desde": "extractor",
+          "en": "Edge 1 of extractor: proveedor_no_disponible (True) equal to True (True).",
+          "es": "Arista 1 de extractor: proveedor_no_disponible (True) igual a True (True).",
+          "orden_arista": 1
+        },
+        "senal": "proveedor_no_disponible",
+        "texto_original": {
+          "en": "Dear authorisations team: 58-year-old man. Diagnosis: Rheumatoid arthritis. Seen in the outpatient clinic last week. Request: Medicine without a current health registration. Estimated cost: 650 synthetic units. Sincerely, treating doctor.",
+          "es": "Respetado equipo de autorizaciones: Paciente hombre de 58 años. Diagnóstico: Artritis reumatoide. Valorado en consulta externa la semana pasada. Se solicita: Medicamento sin registro sanitario vigente. Costo estimado: 650 unidades sintéticas. Cordialmente, médico tratante."
+        },
+        "umbral": {
+          "aplicado": true,
+          "declarado": true
+        }
+      },
+      "respuesta_simulada": {
+        "decision": "negar",
+        "politica": "sigue_verdad_conocida"
+      },
+      "rol": "auditor"
+    }
+  ],
+  "resultado": "completo",
+  "salida_final": {
+    "aviso_ia": {
+      "en": "Notice: this reply was drafted by an artificial intelligence in a simulation with synthetic data. No denial is issued without review by a person.",
+      "es": "Aviso: esta respuesta la redactó una inteligencia artificial en una simulación con datos sintéticos. Ninguna negación se emite sin la revisión de una persona."
+    },
+    "en": "Your request was not approved because the service is excluded from the plan on a legal ground. You will receive a document explaining how to appeal.",
+    "es": "Su solicitud no fue aprobada porque el servicio está excluido del plan por una causa de ley. Recibirá un documento que explica cómo reclamar."
+  },
+  "senales": {
+    "campos_faltantes_count": null,
+    "ciclos_aclaracion": 0,
+    "contradiccion_orden_texto": null,
+    "costo_estimado": null,
+    "decision_final": "negar",
+    "error_proveedor": "timeout",
+    "latencia_total_s": 0.005,
+    "modo_texas": false,
+    "nodos_visitados": [
+      "enrutador",
+      "extractor",
+      "pausa_humana",
+      "redactor",
+      "guardia_salida"
+    ],
+    "pausa_humana": true,
+    "propuesta": null,
+    "proveedor_no_disponible": true,
+    "senal_confianza": null,
+    "servicio_exento": false,
+    "severidad_accion": 0,
+    "tipo_atencion": "ambulatoria",
+    "tokens": 295
+  },
+  "variante": "multiagente"
+}

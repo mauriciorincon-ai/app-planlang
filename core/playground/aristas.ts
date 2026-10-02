@@ -74,6 +74,9 @@ export function comparar(
 ): boolean {
   if (operador === "igual_a") return igual(observado, declarado);
   if (operador === "distinto_de") return !igual(observado, declarado);
+  // Una señal nula no se observó (el nodo no pudo medirla: sin proveedor, AU-9): no cumple ninguna comparación de
+  // orden. Ausente sigue siendo error, y cualquier otro valor que no sea número también.
+  if (observado === null && typeof declarado === "number") return false;
   if (typeof observado !== "number" || typeof declarado !== "number")
     throw new ErrorArista(
       `${operador} exige números: ${jcs(observado)} vs ${jcs(declarado)}`,

@@ -1,0 +1,239 @@
+{
+  "aclaraciones": [],
+  "caso_id": "A-001",
+  "cobertura": null,
+  "corrida_id": "simulado-v1.4-respaldo",
+  "decisiones_de_arista": [
+    {
+      "desde": "enrutador",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 1,
+      "rama_tomada": "extractor",
+      "resultado": false,
+      "senal": "tipo_atencion",
+      "tipo": "tripleta",
+      "umbral_aplicado": "urgencia",
+      "valor_declarado": "urgencia",
+      "valor_observado": "ambulatoria"
+    },
+    {
+      "desde": "enrutador",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 2,
+      "paso": 1,
+      "rama_tomada": "extractor",
+      "resultado": false,
+      "senal": "servicio_exento",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    },
+    {
+      "desde": "extractor",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 2,
+      "rama_tomada": "pausa_humana",
+      "resultado": true,
+      "senal": "proveedor_no_disponible",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": true
+    },
+    {
+      "desde": "extractor",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "mayor_que",
+      "orden_arista": 2,
+      "paso": 2,
+      "rama_tomada": "pausa_humana",
+      "resultado": false,
+      "senal": "campos_faltantes_count",
+      "tipo": "tripleta",
+      "umbral_aplicado": 0,
+      "valor_declarado": 0,
+      "valor_observado": null
+    }
+  ],
+  "documento_adverso": null,
+  "error_de_esquema_en_traspaso": false,
+  "error_proveedor": "otro",
+  "extraccion": null,
+  "formato": "planlang-trace/v1",
+  "guardia_salida": {
+    "acciones_ejecutadas": [
+      "responder_afiliado"
+    ],
+    "acciones_intentadas": [
+      "responder_afiliado"
+    ],
+    "carga_detectada_en_entrada": false,
+    "hallazgos": [],
+    "severidad_accion": 0
+  },
+  "huella": "dd0f00cd1d18ac34eb29778e00ee184b1c491cf4ebf3645c3bf30262d4b5ae85",
+  "nodos_visitados": [
+    "enrutador",
+    "extractor",
+    "pausa_humana",
+    "redactor",
+    "guardia_salida"
+  ],
+  "pasos": [
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 1,
+      "error_proveedor": null,
+      "inicio_ms": 0,
+      "nodo": "enrutador",
+      "orden": 1,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "enrutador",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0.01,
+      "duracion_ms": 1,
+      "error_proveedor": "otro",
+      "inicio_ms": 2,
+      "nodo": "extractor",
+      "orden": 2,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 1,
+      "error_proveedor": null,
+      "inicio_ms": 5,
+      "nodo": "pausa_humana",
+      "orden": 3,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "pausa_humana",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 1,
+      "error_proveedor": null,
+      "inicio_ms": 7,
+      "nodo": "redactor",
+      "orden": 4,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 171,
+        "salida": 49
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 1,
+      "error_proveedor": null,
+      "inicio_ms": 9,
+      "nodo": "guardia_salida",
+      "orden": 5,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "regla",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    }
+  ],
+  "pausas_humanas": [
+    {
+      "nodo": "pausa_humana",
+      "paso": 3,
+      "payload": {
+        "contraevidencia": [
+          {
+            "en": "Doubt about what a service covers is resolved in the member's favour (Law 1751, art. 8).",
+            "es": "La duda sobre el alcance de un servicio se resuelve a favor del afiliado (Ley 1751, art. 8)."
+          }
+        ],
+        "evidencia": [],
+        "extraccion": null,
+        "motivo": {
+          "desde": "extractor",
+          "en": "Edge 1 of extractor: proveedor_no_disponible (True) equal to True (True).",
+          "es": "Arista 1 de extractor: proveedor_no_disponible (True) igual a True (True).",
+          "orden_arista": 1
+        },
+        "senal": "proveedor_no_disponible",
+        "texto_original": {
+          "en": "Referral note. 45-year-old woman. Diagnosis: Carpal tunnel syndrome. No relevant history. Request: Electromyography. Estimated cost: 240 synthetic units. Sincerely, treating doctor.",
+          "es": "Nota de remisión. Paciente mujer de 45 años. Diagnóstico: Síndrome del túnel carpiano. Sin antecedentes relevantes. Se solicita: Electromiografía. Costo estimado: 240 unidades sintéticas. Cordialmente, médico tratante."
+        },
+        "umbral": {
+          "aplicado": true,
+          "declarado": true
+        }
+      },
+      "respuesta_simulada": {
+        "decision": "aprobar",
+        "politica": "sigue_verdad_conocida"
+      },
+      "rol": "auditor"
+    }
+  ],
+  "resultado": "completo",
+  "salida_final": {
+    "aviso_ia": {
+      "en": "Notice: this reply was drafted by an artificial intelligence in a simulation with synthetic data. No denial is issued without review by a person.",
+      "es": "Aviso: esta respuesta la redactó una inteligencia artificial en una simulación con datos sintéticos. Ninguna negación se emite sin la revisión de una persona."
+    },
+    "en": "Your request was approved. You can arrange the care with your provider.",
+    "es": "Su solicitud fue aprobada. Puede coordinar la atención con su prestador."
+  },
+  "senales": {
+    "campos_faltantes_count": null,
+    "ciclos_aclaracion": 0,
+    "contradiccion_orden_texto": null,
+    "costo_estimado": null,
+    "decision_final": "aprobar",
+    "error_proveedor": "otro",
+    "latencia_total_s": 0.005,
+    "modo_texas": false,
+    "nodos_visitados": [
+      "enrutador",
+      "extractor",
+      "pausa_humana",
+      "redactor",
+      "guardia_salida"
+    ],
+    "pausa_humana": true,
+    "propuesta": null,
+    "proveedor_no_disponible": true,
+    "senal_confianza": null,
+    "servicio_exento": false,
+    "severidad_accion": 0,
+    "tipo_atencion": "ambulatoria",
+    "tokens": 220
+  },
+  "variante": "multiagente"
+}

@@ -43,8 +43,21 @@ describe("comparar — operadores y empates", () => {
   });
 
   it("ordenar algo que no es número es error, no false", () => {
-    expect(() => comparar(null, "menor_que", 0.75, false)).toThrow(ErrorArista);
     expect(() => comparar("a", "mayor_que", 1, false)).toThrow(/exige números/);
+    expect(() => comparar(true, "menor_que", 1, false)).toThrow(ErrorArista);
+    expect(() => comparar(null, "mayor_que", "x", false)).toThrow(ErrorArista);
+  });
+
+  it("una señal nula no cumple ninguna comparación de orden (AU-9: no se observó)", () => {
+    for (const op of [
+      "menor_que",
+      "mayor_que",
+      "menor_o_igual_que",
+      "mayor_o_igual_que",
+    ] as const) {
+      expect(comparar(null, op, 0, false)).toBe(false);
+      expect(comparar(null, op, 0.75, true)).toBe(false);
+    }
   });
 });
 

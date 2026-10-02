@@ -10,11 +10,17 @@
  *   4. El paso 2 del flujo objetivo lo dice en ES y EN.
  * Con `--a 1.2`, la enmienda v1.1 → v1.2 (solo medición: R5, S1, S2; gate de la fase 4 del S1),
  * que parte del v1.1 aprobado y lo deja intacto. Con `--a 1.3`, la enmienda v1.2 → v1.3 del S2 (medición y redacción
- * bilingüe; umbrales y contrato de grafo intactos).
- * Uso: `pnpm tsx scripts/enmendar-plan-demo-a.ts [--a 1.2|1.3] --por <nombre> --el <YYYY-MM-DD>`
+ * bilingüe; umbrales y contrato de grafo intactos). Con `--a 1.4`, la enmienda v1.3 → v1.4 del S2 (AU-9: arista de
+ * respaldo a la pausa humana sin proveedor; cambia el contrato de grafo).
+ * Uso: `pnpm tsx scripts/enmendar-plan-demo-a.ts [--a 1.2|1.3|1.4] --por <nombre> --el <YYYY-MM-DD>`
  */
 import { aprobarPlan, cargarPlan } from "../core/plan";
-import { enmendar, enmendarAV12, enmendarAV13 } from "./enmienda-plan-demo-a";
+import {
+  enmendar,
+  enmendarAV12,
+  enmendarAV13,
+  enmendarAV14,
+} from "./enmienda-plan-demo-a";
 import { argumentos, escribirJson, leerJson } from "./_io";
 
 const ENMIENDAS = {
@@ -33,6 +39,11 @@ const ENMIENDAS = {
     salida: "plans/demo-a/v1.3.json",
     f: enmendarAV13,
   },
+  "1.4": {
+    entrada: "plans/demo-a/v1.3.json",
+    salida: "plans/demo-a/v1.4.json",
+    f: enmendarAV14,
+  },
 } as const;
 
 async function main(): Promise<number> {
@@ -41,7 +52,8 @@ async function main(): Promise<number> {
     console.error("uso: enmendar-plan-demo-a --por <nombre> --el <YYYY-MM-DD>");
     return 2;
   }
-  const a = args.a === "1.3" ? "1.3" : args.a === "1.2" ? "1.2" : "1.1";
+  const a =
+    args.a === "1.4" || args.a === "1.3" || args.a === "1.2" ? args.a : "1.1";
   const { entrada: ENTRADA, salida: SALIDA, f } = ENMIENDAS[a];
   const previo = await cargarPlan(leerJson(ENTRADA));
   if (!previo.ok) throw new Error(`${ENTRADA} no carga`);
