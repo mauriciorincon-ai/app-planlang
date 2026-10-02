@@ -622,6 +622,55 @@ la maqueta — y 6/6 interacciones que cambian algo. El arnés gana `pares` (un 
 matriz), `accion` (llegar al estado con el control, como quien lee) y 120 s por captura de página entera (Brecha a
 380 px pasa de 20.000 px).
 
+## Fase 4 — P7 Fichas · paquete · corridas de fondo · deuda (desde 2026-10-01)
+
+### Fichas y export (commit `1d4351e`)
+
+- **Contratos fijados** en `docs/contratos/hoja-de-vida/` con `CONTRATO.lock`:
+  - de hoja-de-vida: ficha técnica v1.3.1 (esquema, clave visual, plantilla);
+  - de la planeadora: el contrato del `brochure-export` 1.0.0.
+  - El lock guarda además la huella del código de hoja-de-vida cuyas reglas se reescriben en
+    `src/lib/fichas/contrato.ts`: el proceso BPMN, el total = suma de grupos, los enlaces en `null` y cero enlaces.
+  - `contratos-lock.test.ts` compara las copias con el origen cuando está en la máquina; rojo con un byte de más.
+- **`src/lib/fichas/`:**
+  - `armar.ts`: la ficha del agente A, el export, el complemento que planlang propone a la planeadora y la ficha de
+    la app tal como la armaría `armar.py` (réplica);
+  - `archivos.ts`: los 8 archivos, cada uno validado antes de escribirse;
+  - `src/lib/datos/repo.ts`: sprints cerrados, ADR, versión y el `_schema` del contrato.
+- **`pnpm fichas`** (`scripts/fichas.ts`, `--verificar` sale con 1 si algo cambiaría) escribe:
+  - `content/agentes/planlang-demo-a.ficha-tecnica.json` (ES, la que se copia a hoja-de-vida);
+  - `docs/brochure-export.json` (ES, lo lee la planeadora);
+  - `docs/fichas/` (las versiones EN, el complemento propuesto y la ficha de la app armada, ES/EN).
+- **Comprobación cruzada:** las 6 fichas y exports validan también con el propio Zod de hoja-de-vida (`tsx` desde su
+  repo, solo lectura; su `git status` quedó vacío).
+- **Pruebas:** `tests/unit/vitrina/fichas.test.ts` (11): frescura byte a byte; contratos ES/EN; reglas BPMN; límite del
+  esquema; cero enlaces; total del export; cifra destacada inexistente; cifras desde los datos; un bloque y un paso
+  por nodo del contrato. `textos.test.ts` suma `fichas` (850 textos).
+- **Rojos:** un byte alterado en la ficha entregada (test y `--verificar` → 1) · apagar la regla de etiqueta de las
+  decisiones · un byte de más en la copia fijada → los tres en rojo y verdes al revertir.
+
+### Punto de retoma (2026-10-01, compactación pedida por el usuario)
+
+Árbol limpio en `1d4351e` (sin push). Siguiente, en orden:
+1. **P7 Fichas** (`src/app/[idioma]/fichas/page.tsx`, hoy «en construcción»; maqueta `07-fichas.html`):
+   - portada; «Las fichas en una mirada» (Leer como, aviso, recibe → hace → entrega);
+   - § 1 reproducibilidad: extraer las filas de `vistaBrecha().ficha` a un módulo común + «Cómo repetirla»
+     (`REPRO.pasos`, experto);
+   - § 2 ficha de la app y § 3 ficha del agente en el marco CV Viva: Fraunces solo aquí, ya en
+     `src/app/fuentes/`; el proceso BPMN como lista por carril, sin dibujarlo;
+   - bajo cada ficha, la tabla campo · medida (es · en) · límite (de `limiteDe`) · estado (experto);
+   - vista, componentes, pruebas (forma invariante, inglés sin residuo), e2e y Lighthouse.
+2. **Paquete (ADR-009)**: `PLANLANG_PAQUETE=1` → `basePath /piezas/planlang`, `distDir` propio, build id
+   determinista. `scripts/paquete-vitrina.ts`:
+   - gate de publicación: M9 · RF-09.2 · diagrama = grafo · paridad · fichas al día;
+   - build sin DSN → `dist/paquete-hoja-de-vida/planlang/`;
+   - barridos y `manifiesto.json` SHA-256.
+
+   Además, el proyecto Playwright `paquete`.
+3. **Deuda S1:** AU-9, M-9, M-12, M-13, M-22, M-23.
+4. **Corridas de fondo:** preguntar al usuario antes de gastar cuota; comprobar `LANGSMITH_API_KEY` sin imprimirla.
+5. **Mirada 4** (arnés `p4`: maqueta 07 estado `fichas`) → job de calidad → push → `gh pr checks` → DETENERSE.
+
 ## Desviación del plan
 
 1. **El centinela «Worktrees prohibidos» no existe** en `ordenes/CLAUDE-md-para-app.md` (vive en el batch
@@ -718,6 +767,19 @@ matriz), `accion` (llegar al estado con el control, como quien lee) y 120 s por 
     palabras: sale del grafo, no de una copia.
 40. **Las capturas de la mirada 3 pesan 20 MB** (calidad 30; Brecha a 380 px pasa de 20.000 px): sigue las
     desviaciones 18 y 33.
+41. **Slug de la ficha del agente: `planlang-demo-a`** (el de `SPRINT_002.md` de la planeadora). La maqueta de P7
+    decía `planlang-agente-a`; se sigue al plan autoritativo y al nombre «demo A» de todo el producto.
+42. **Conteo de funcionalidades: 16 construidas** (3 · 4 · 4 · 1 · 1 · 3 en los seis grupos). La VISION dice «14 del
+    corte» pero lista 16 con la marca `[MVP]`; la maqueta contaba 25, porque sumaba las 9 del roadmap. Se cuenta lo
+    construido y se avisa a la planeadora de la cifra de la VISION.
+43. **El export nace antes del brochure:** la orden lo pide en el S2 y el brochure es del cierre del ciclo (S3), así
+    que `brochure_archivo` y `brochure_ruta_local` dicen «pendiente: … nace al cierre del ciclo H1 (sprint 3)» en vez
+    de una ruta que no existe (la regla del contrato pide producirlos juntos).
+44. **La ficha de la app la arma la planeadora**, no planlang:
+    - planlang entrega el export y **propone** su complemento (`docs/fichas/planlang.complemento-propuesto.json`:
+      titular, cifras destacadas, límites, nunca);
+    - P7 la pinta armada con esa propuesta;
+    - su `schema_version` es «1.1.0», el que emite hoy `armar.py`; la ficha del agente declara «1.3.1».
 
 ## Registro de miradas
 
