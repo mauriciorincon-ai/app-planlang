@@ -1,7 +1,7 @@
 /**
  * Escribe las fichas y el export que planlang entrega a hoja-de-vida (ver `src/lib/fichas/archivos.ts`): la ficha del
  * agente A, el `brochure-export.json`, sus versiones en inglés, el complemento propuesto y la ficha de la app como la
- * armaría la planeadora. Lee la corrida que declara el manifiesto, verificada entera; cada archivo pasa su contrato
+ * arma hoja-de-vida. Lee la corrida que declara el manifiesto, verificada entera; cada archivo pasa su contrato
  * antes de escribirse. Con `--verificar` no escribe: dice qué archivo cambiaría y sale con 1.
  *
  * Uso: `pnpm fichas` · `pnpm fichas --verificar`.

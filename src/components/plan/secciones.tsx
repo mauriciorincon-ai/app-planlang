@@ -45,6 +45,7 @@ import { LeerComo } from "../perfil/leer-como";
 import { Seccion } from "../seccion";
 import { VerMas } from "../ver-mas";
 import { FilaPlan } from "./fila";
+import { TituloNumerado } from "../titulo-numerado";
 
 const ICONO_PARTE: Record<VistaPlan["parteDe"][number]["clave"], LucideIcon> = {
   problema: Target,
@@ -56,16 +57,6 @@ const RELIGUITA =
   "font-mono text-dato leading-normal text-tinta-2 [overflow-wrap:anywhere]";
 
 /** Título de sección con su número, como en la maqueta (`.sec-num`). */
-function TituloNumerado({ n, titulo }: { n: number; titulo: string }) {
-  return (
-    <span className="inline-flex items-baseline gap-2.5">
-      <span className="font-mono text-dato leading-none font-medium text-tinta-2">
-        {n}
-      </span>
-      {titulo}
-    </span>
-  );
-}
 
 /** «El plan en una mirada»: perfil, para qué, parte de → hace → entrega, las cifras y la ficha técnica. */
 export function MiradaPlan({ v, idioma }: { v: VistaPlan; idioma: Idioma }) {

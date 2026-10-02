@@ -1,10 +1,10 @@
 /**
  * Los archivos que planlang entrega por las fichas, con su contenido exacto (JSON con sangría de 2 y salto final, como
- * `armar.py`). Antes de devolverlos, cada uno pasa su contrato: una ficha que hoja-de-vida rechazaría no se escribe.
+ * los de hoja-de-vida). Antes de devolverlos, cada uno pasa su contrato: una ficha que hoja-de-vida rechazaría no se escribe.
  * - `content/agentes/planlang-demo-a.ficha-tecnica.json`: la ficha del agente A, en español (la que se copia);
- * - `docs/brochure-export.json`: los hechos de la app, en español (los lee la planeadora);
- * - `docs/fichas/`: la versión en inglés de las dos, el complemento que planlang propone a la planeadora y la ficha de
- *   la app tal como ella la armaría (en los dos idiomas), para comparar.
+ * - `docs/brochure-export.json`: los hechos de la app, en español (hoja-de-vida lo copia a su `content/vitrina/`);
+ * - `docs/fichas/`: la versión en inglés de las dos, el complemento que planlang propone para la ficha de la app y la
+ *   ficha de la app tal como la arma hoja-de-vida (en los dos idiomas), para comparar.
  */
 import type { Idioma } from "@core/formatos/bilingue";
 import type { HechosDelRepo } from "@/lib/datos/repo";

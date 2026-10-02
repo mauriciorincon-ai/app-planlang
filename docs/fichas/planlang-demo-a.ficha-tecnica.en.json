@@ -7,7 +7,7 @@
     "frente": "agentes",
     "estado": "inicial",
     "ciclo": "H1",
-    "version": "plan v1.3",
+    "version": "1.3.0",
     "sellado_en": null,
     "sprints_cerrados": 1
   },
@@ -55,7 +55,7 @@
     {
       "clave": "latencia_mediana",
       "valor": 11.8,
-      "unidad": "s",
+      "unidad": "seconds",
       "etiqueta": "median per case, end to end",
       "fuente": "medido",
       "detalle": "The plan's criterion C7 over 20 cases: the median of the total latency recorded in each trace."
@@ -88,19 +88,19 @@
       "orden": 1,
       "nombre": "Router",
       "linea": "Separates emergencies and exempt services, authorized without a coverage check.",
-      "cuenta": 2
+      "cuenta": 0
     },
     {
       "orden": 2,
       "nombre": "Extractor",
       "linea": "Turns the physician's text into fields, with their confidence.",
-      "cuenta": 1
+      "cuenta": 0
     },
     {
       "orden": 3,
       "nombre": "Clarification",
       "linea": "Asks for what is missing, up to the maximum the plan sets.",
-      "cuenta": 1
+      "cuenta": 0
     },
     {
       "orden": 4,
@@ -112,7 +112,7 @@
       "orden": 5,
       "nombre": "Decision",
       "linea": "The rules written in the plan decide whether the case escalates.",
-      "cuenta": 5
+      "cuenta": 0
     },
     {
       "orden": 6,

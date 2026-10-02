@@ -649,7 +649,7 @@ matriz), `accion` (llegar al estado con el control, como quien lee) y 120 s por 
 - **Rojos:** un byte alterado en la ficha entregada (test y `--verificar` → 1) · apagar la regla de etiqueta de las
   decisiones · un byte de más en la copia fijada → los tres en rojo y verdes al revertir.
 
-### Punto de retoma (2026-10-01, compactación pedida por el usuario)
+### Punto de retoma (2026-10-01, compactación pedida por el usuario) — P7 cumplido, ver «P7 Fichas»
 
 Árbol limpio en `1d4351e` (sin push). Siguiente, en orden:
 1. **P7 Fichas** (`src/app/[idioma]/fichas/page.tsx`, hoy «en construcción»; maqueta `07-fichas.html`):
@@ -670,6 +670,80 @@ matriz), `accion` (llegar al estado con el control, como quien lee) y 120 s por 
 3. **Deuda S1:** AU-9, M-9, M-12, M-13, M-22, M-23.
 4. **Corridas de fondo:** preguntar al usuario antes de gastar cuota; comprobar `LANGSMITH_API_KEY` sin imprimirla.
 5. **Mirada 4** (arnés `p4`: maqueta 07 estado `fichas`) → job de calidad → push → `gh pr checks` → DETENERSE.
+
+### P7 Fichas (2026-10-01)
+
+- **Antes de la página, el armado de la ficha de la app se corrigió contra el consumidor real.** La ficha de una app
+  no la arma la planeadora (`armar.py`, 09-06), sino hoja-de-vida en su build (`armarFichaTecnica`, 09-09) con el
+  export de `content/vitrina/` y el complemento de su `data/fichas/<slug>.yaml`. `armarFichaApp` replica ahora ese
+  código:
+  - `schema_version` «1.3.1», no «1.1.0»;
+  - el hito `decisiones` es una clave que su componente traduce, no «decisiones registradas»;
+  - su huella entra al `CONTRATO.lock` (`reglas_en_codigo`).
+
+  Leer su componente destapó dos defectos de la ficha del agente, que allá se habrían visto:
+  - `pieza.version` «plan v1.3» se pintaba «vplan v1.3» (allá es `v{version}`): ahora «1.3.0»;
+  - `bloques[].cuenta` contaba las reglas del plan por nodo y allá se lee «N funcionalidades»: ahora 0, que allá se
+    calla.
+
+  Y la unidad de la latencia pasa a «segundos»/«seconds»: su componente calla la unidad que la etiqueta contiene, y
+  «s» está en casi toda etiqueta. Las seis fichas y exports validan otra vez con su Zod (solo lectura).
+- **Módulo común de la ficha de reproducibilidad** (`src/lib/vista/reproducibilidad.ts` + `src/textos/reproducibilidad.ts`):
+  Brecha § 9 y Fichas § 1 leen las mismas filas; Fichas suma «Entorno» (Python, paquetes, CLI, sistema) y dos rótulos
+  propios («Grafo compilado», «Huella del informe»). `numeroDato` pasa a `formato.ts`; `TituloNumerado` deja de estar
+  repetido en Plan y Brecha (`src/components/titulo-numerado.tsx`).
+- **La página** (`src/app/[idioma]/fichas/page.tsx`, vista `src/lib/vista/fichas.ts`, componentes
+  `src/components/fichas/{mirada,ficha-cv}.tsx`):
+  - portada; «Las fichas en una mirada» (Leer como, aviso, recibe → hace → entrega);
+  - § 1 la ficha de reproducibilidad y, para el experto, «Cómo repetirla, en orden» (5 comandos);
+  - § 2 y § 3 la ficha de la app y la del agente en el marco de CV Viva: los rótulos son los del componente real de
+    hoja-de-vida (desviación 46); el proceso del agente, por carril, con los 15 pasos numerados y la palabra del tipo
+    para el lector de pantalla;
+  - bajo cada ficha, para el experto: el archivo que se entrega, de dónde sale cada cifra (el `detalle` que allá va
+    en un `title`) y la tabla campo · medida (es · en) · límite (del esquema fijado, `limiteDe`) · estado.
+  - `EnConstruccion` se retira: ninguna página la usa y su comentario («llegan en las fases 2–4») caducó.
+- **La piel de CV Viva** (`src/styles/cv-viva.css`): la paleta de hoja-de-vida (sus tokens), papel claro en los dos
+  temas, sin su tinta 3 (no alcanza AA sobre el papel). **Fraunces** se declara en esa hoja con `@font-face`, no
+  con next/font, y entra después de la carga como la mono (`html[data-mono]`; antes, Georgia). Se probaron dos
+  caminos peores, medidos:
+  - con next/font importado solo en Fichas, su CSS venía en una hoja propia: +450 ms de FCP;
+  - con la tercera letra en `src/app/fuentes.ts`, Next separa las `@font-face` en otra hoja para todas las páginas.
+- **Pruebas:**
+  - `fichas-vista.test.ts` (8): la reproducibilidad = Brecha + entorno; lo que viaja; chips, hitos y
+    renumeración; cifras por idioma; carriles sin perder un paso; tabla; un lema de 81 caracteres en inglés → «No
+    cabe»;
+  - `fichas-componentes.test.tsx` (7): las dos fichas en su idioma; la letra de la piel solo dentro del marco;
+    fuente en palabra y color; carriles con la palabra del tipo; lo del experto en el árbol; inglés sin residuo;
+    forma invariante por perfil;
+  - `fuentes.test.ts`: Fraunces = los bytes de la maqueta, con su OFL, solo en `cv-viva.css` y solo `.cv-letra` en
+    `ficha-cv.tsx`;
+  - `tests/e2e/fichas.spec.ts` (26 en los dos proyectos): pestaña, 2 idiomas × 2 temas × 2 perfiles con axe, sin
+    desborde ni errores de consola; papel claro en el tema oscuro y Fraunces solo en el marco; movimiento reducido;
+  - `lighthouse-urls.json` suma `/es/fichas`.
+- **Lighthouse local** (mediana de 3, con la máquina cargada: promedio 4,6–5,3):
+  - `/es/fichas`: FCP 0,91 s, LCP 2,31 s, rendimiento 98;
+  - `/es/playground`: 2,61 s en la misma sesión; en la fase 3 midió 1,97 s y la CI lo pasó. El LCP simulado cuenta
+    los scripts cuando el trazo real pinta tarde, y con la máquina cargada pinta tarde. Decide el job `lighthouse`.
+- **Arnés:** mirada `p4` en `scripts/capturar-vitrina.mjs` (10 pares, 3/3 interacciones: experto → tabla, líder → se
+  oculta, English → `/en/fichas` con la ficha en inglés); `docs/fidelidad/p4/` (11 MB). Las capturas se leyeron
+  como imagen por tramos frente a la maqueta. Ajustes que salieron de esa lectura:
+  - nombres de archivo en texto plano;
+  - nombre y lema sin cortar;
+  - título del proceso como rótulo;
+  - hitos repartidos;
+  - el `detalle` de cada cifra fuera de la tarjeta, como hoja-de-vida.
+
+#### Demos en rojo de P7 (regla 15)
+
+| Gate | Cambio deliberado | Rojo | Al revertir |
+|---|---|---|---|
+| Tabla de campos contra el esquema | `cabe()` devuelve siempre verdadero | `fichas-vista.test.ts`: 1 falla (el lema de 81) | 8/8 |
+| Fraunces solo en la piel | `cv-letra` en el título de «Las fichas en una mirada» | `fuentes.test.ts` + `fichas-componentes.test.tsx`: 2 fallan | 16/16 |
+| Código de hoja-de-vida que se replica | una cifra de la huella de su `armar.ts` en el lock | `contratos-lock.test.ts`: 1 falla | 10/10 |
+| Contrato del diagramador adelantado en la planeadora | la versión declarada en `planeadora_adelante` pasa a 0.4.1 | `contratos-lock.test.ts`: 1 falla | 10/10 |
+
+La primera alarma fue real: el diagramador v0.4.0 se publicó en la planeadora a las 19:57 de hoy, y la guarda «la
+copia es la vigente» salió en rojo en el job de calidad (desviación 45).
 
 ## Desviación del plan
 
@@ -775,11 +849,29 @@ matriz), `accion` (llegar al estado con el control, como quien lee) y 120 s por 
 43. **El export nace antes del brochure:** la orden lo pide en el S2 y el brochure es del cierre del ciclo (S3), así
     que `brochure_archivo` y `brochure_ruta_local` dicen «pendiente: … nace al cierre del ciclo H1 (sprint 3)» en vez
     de una ruta que no existe (la regla del contrato pide producirlos juntos).
-44. **La ficha de la app la arma la planeadora**, no planlang:
+44. **La ficha de la app la arma hoja-de-vida**, no planlang (corregido el 2026-10-01 en la fase 4: decía «la
+    planeadora», por su `armar.py`; el consumidor real es `armarFichaTecnica` de hoja-de-vida, posterior):
     - planlang entrega el export y **propone** su complemento (`docs/fichas/planlang.complemento-propuesto.json`:
-      titular, cifras destacadas, límites, nunca);
-    - P7 la pinta armada con esa propuesta;
-    - su `schema_version` es «1.1.0», el que emite hoy `armar.py`; la ficha del agente declara «1.3.1».
+      titular, cifras destacadas, límites, nunca), que allá vive en `data/fichas/planlang.yaml`;
+    - P7 la pinta armada con esa propuesta, con `schema_version` «1.3.1» y los hitos como claves, como allá.
+45. **El contrato del diagramador v0.4.0** se publicó en la planeadora el 2026-10-01 (cierre del S1 de big-d: 44
+    enmiendas; «MINOR de datos»: ningún mapa 0.3.0 válido deja de serlo). La orden del S2 fija la 0.3.0 y el visor se
+    construyó y validó contra ella, así que la copia fijada sigue en 0.3.0 y el lock declara
+    `planeadora_adelante` con la versión y la huella vigentes allá. Un cambio sin declarar sigue en rojo. **Decisión
+    del usuario en el gate de la fase 4:** adoptarla en el S2 o en el S3. Con ella llegaron el kit v1.33.0, el
+    método v1.36.0 y los estándares v2.17.0 (LCP ≤ 3,0 s por ADR cuando G15 impone `display: block`; planlang sirve
+    Inter con `swap` y no lo necesita hoy); sus deltas entran con la orden del S3.
+46. **La piel de CV Viva usa los rótulos del componente real de hoja-de-vida, no los de la maqueta:** «Sin sellar»
+    (no «En construcción»), «Datos del …» (no «Anclada a la corrida del …»), migas «La vitrina · Ficha técnica» (sin
+    el frente) y el `detalle` de cada cifra fuera de la tarjeta (allá va en un `title`; aquí, en la lista del
+    experto). En vez del botón «Avísame cuando abra», una nota dice que allá va la lista de espera: un botón sin
+    acción rompería la regla 22. El hito `construccion` se lee «en construcción» y no «construcción cerrada», que
+    solo será cierto al cerrar la construcción del ciclo.
+47. **Bloques de la ficha del agente sin cuenta** (`cuenta: 0`): hoja-de-vida pinta `cuenta` como «N
+    funcionalidades» y un nodo del grafo no las tiene (la maqueta tampoco las mostraba). Y `pieza.version` va en
+    semver («1.3.0»): allá se pinta «v{version}».
+48. **Fraunces entra después de la carga** (`html[data-mono]`, como la mono): en la primera pintura de Fichas competía
+    con Inter. Hasta que entra, los titulares de la piel van en Georgia. La maqueta la servía con `block`.
 
 ## Registro de miradas
 

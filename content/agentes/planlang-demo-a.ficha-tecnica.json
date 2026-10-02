@@ -7,7 +7,7 @@
     "frente": "agentes",
     "estado": "inicial",
     "ciclo": "H1",
-    "version": "plan v1.3",
+    "version": "1.3.0",
     "sellado_en": null,
     "sprints_cerrados": 1
   },
@@ -55,7 +55,7 @@
     {
       "clave": "latencia_mediana",
       "valor": 11.8,
-      "unidad": "s",
+      "unidad": "segundos",
       "etiqueta": "mediana por caso, de punta a punta",
       "fuente": "medido",
       "detalle": "Criterio C7 del plan sobre 20 casos: la mediana de la latencia total registrada en cada traza."
@@ -88,19 +88,19 @@
       "orden": 1,
       "nombre": "Enrutador",
       "linea": "Separa urgencias y exentos, que se autorizan sin revisar cobertura.",
-      "cuenta": 2
+      "cuenta": 0
     },
     {
       "orden": 2,
       "nombre": "Extractor",
       "linea": "Convierte el texto del médico en campos, con su confianza.",
-      "cuenta": 1
+      "cuenta": 0
     },
     {
       "orden": 3,
       "nombre": "Aclaración",
       "linea": "Pide lo que falta, hasta el máximo que fija el plan.",
-      "cuenta": 1
+      "cuenta": 0
     },
     {
       "orden": 4,
@@ -112,7 +112,7 @@
       "orden": 5,
       "nombre": "Decisión",
       "linea": "Las reglas escritas en el plan deciden si el caso escala.",
-      "cuenta": 5
+      "cuenta": 0
     },
     {
       "orden": 6,

@@ -35,7 +35,7 @@ export const SCRIPT_PREVIO = [
   `d.setAttribute(${js(ATRIBUTO.perfil)},elige("perfil",${js(VALORES.perfil)},function(){return ${js(VALORES.perfil[0])}}));`,
   // Solo las páginas de un idioma lo recuerdan (`data-idioma`); la raíz `/` no lo pisa.
   `var i=d.getAttribute(${js(ATRIBUTO_IDIOMA)});if(i)guarda("idioma",i);`,
-  // La mono de datos entra después de la carga (ADR-008): el primer pintado no la necesita.
+  // La mono de datos y la Fraunces de Fichas entran después de la carga (ADR-008): el primer pintado no las necesita.
   `addEventListener("load",function(){d.setAttribute(${js(ATRIBUTO_MONO)},"")});`,
   "})();",
 ].join("");

@@ -14,7 +14,6 @@ import { LoQueNinguna } from "@/components/entrada/lo-que-ninguna";
 import { Portada } from "@/components/entrada/portada";
 import { Pregunta } from "@/components/entrada/pregunta";
 import { Marco } from "@/components/marco/marco";
-import { EnConstruccion } from "@/components/en-construccion";
 import { Veredicto, claseDeVeredicto } from "@/components/veredicto";
 import { datosDemo } from "@/lib/datos/vitrina";
 import { vistaEntrada, type VistaEntrada } from "@/lib/vista/entrada";
@@ -87,7 +86,11 @@ describe("veredicto y chip: forma + texto + color", () => {
 
 describe("marco: rótulo, barra y pie", () => {
   it("las siete pestañas, la actual marcada, y el idioma lleva a la misma pantalla", () => {
-    render(<EnConstruccion idioma="es" pagina="brecha" />);
+    render(
+      <Marco idioma="es" pagina="brecha">
+        <p>contenido</p>
+      </Marco>,
+    );
     const nav = screen.getByRole("navigation", { name: "Secciones" });
     const pestanas = within(nav).getAllByRole("link");
     expect(pestanas.map((a) => a.getAttribute("href"))).toEqual([
@@ -111,11 +114,14 @@ describe("marco: rótulo, barra y pie", () => {
         .getAttribute("aria-current"),
     ).toBe("true");
     expect(screen.getByText("Simulación · no operativo")).toBeInTheDocument();
-    expect(screen.getByText("En construcción")).toBeInTheDocument();
   });
 
   it("el conmutador de tema cambia el atributo y marca el botón pulsado", async () => {
-    render(<EnConstruccion idioma="en" pagina="plan" />);
+    render(
+      <Marco idioma="en" pagina="plan">
+        <p>content</p>
+      </Marco>,
+    );
     const claro = screen.getByRole("button", { name: "Light" });
     expect(claro.getAttribute("aria-pressed")).toBe("false");
     await act(async () => fireEvent.click(claro));

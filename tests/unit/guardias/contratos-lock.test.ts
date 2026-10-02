@@ -19,6 +19,12 @@ interface Lock {
   sha256: string;
   archivos: Record<string, string>;
   tabla_de_metricas?: Record<string, string>;
+  /**
+   * La planeadora publicó una versión más nueva y esta app sigue, a propósito, con la fijada (la orden del sprint la
+   * fija): se declara con la versión y el sha256 del CONTRATO.md vigente allá y la decisión. Un cambio que nadie
+   * declaró sigue fallando.
+   */
+  planeadora_adelante?: { version: string; sha256: string; decision: string };
 }
 
 const sha = (ruta: string) =>
@@ -64,8 +70,20 @@ describe.each(PAQUETES)("contrato fijado de %s", (paquete) => {
   });
 
   it.skipIf(!existsSync(join(PLANEADORA, paquete)))(
-    "la copia es byte a byte la versión vigente de la planeadora (solo con la planeadora en la máquina)",
+    "la copia es byte a byte la versión vigente de la planeadora, o la diferencia está declarada (solo con la planeadora en la máquina)",
     () => {
+      const vigente = join(PLANEADORA, paquete, "CONTRATO.md");
+      const adelante = lock.planeadora_adelante;
+      if (adelante) {
+        // Declarado: la planeadora va en esa versión, exactamente, y la decisión está escrita.
+        expect(sha(vigente)).toBe(adelante.sha256);
+        expect(
+          readFileSync(vigente, "utf8").match(/^version:\s*([0-9.]+)/m)?.[1],
+        ).toBe(adelante.version);
+        expect(adelante.version).not.toBe(lock.version);
+        expect(adelante.decision.length).toBeGreaterThan(20);
+        return;
+      }
       for (const ruta of Object.keys(lock.archivos))
         expect(sha(join(PLANEADORA, paquete, ruta)), ruta).toBe(
           lock.archivos[ruta],

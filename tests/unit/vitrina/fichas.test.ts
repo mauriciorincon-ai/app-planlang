@@ -146,11 +146,14 @@ describe("lo que dicen las fichas sale de los datos", () => {
     expect(f.cifras.every((c) => c.fuente)).toBe(true);
   });
 
-  it("un bloque por nodo del contrato, en su orden, y cada nodo hace un paso del proceso", () => {
+  it("un bloque por nodo del contrato, en su orden, sin cuenta de funcionalidades, y cada nodo hace un paso del proceso", () => {
     const nodos = d.plan.contrato_de_grafo.nodos_esperados.map((n) => n.id);
     const f = fichaAgente(d, repo, "en");
     expect(f.bloques.map((b) => b.orden)).toEqual(nodos.map((_, k) => k + 1));
-    expect(f.bloques.find((b) => b.nombre === "Decision")!.cuenta).toBe(5);
+    // hoja-de-vida pinta `cuenta` como «N funcionalidades»: un nodo no las tiene.
+    expect(f.bloques.every((b) => b.cuenta === 0)).toBe(true);
+    // Y pinta la versión como «v{version}»: semver, sin prefijo.
+    expect(f.pieza.version).toMatch(/^\d+\.\d+\.\d+$/);
     const conPaso = new Set(AGENTE.proceso.pasos.map((p) => p.nodo));
     expect(nodos.filter((n) => !conPaso.has(n))).toEqual([]);
   });

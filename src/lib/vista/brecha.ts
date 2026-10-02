@@ -27,7 +27,6 @@ import {
   EJEMPLARES,
   ESTADO_EVALUADOR,
   ETIQUETA_FILA,
-  FICHA,
   FRASE,
   IPO,
   LECTURA_BRECHA,
@@ -56,11 +55,13 @@ import {
 } from "@/components/veredicto";
 import type { Fila } from "./agente";
 import { pieDeCorrida } from "./caso";
+import { filasDeReproducibilidad } from "./reproducibilidad";
 import {
   decimal,
   deCada,
   entero,
   enumerar,
+  numeroDato,
   porcentaje,
   versionCorta,
 } from "./formato";
@@ -349,11 +350,6 @@ function cortarCorridas(ids: readonly string[]): (id: string) => string {
 
 function segundos(x: number, i: Idioma, d = 1): string {
   return `${decimal(x, d, i)} s`;
-}
-
-function numeroDato(x: number, i: Idioma): string {
-  if (Number.isInteger(x)) return String(x);
-  return decimal(x, 2, i);
 }
 
 function objetivoDe(c: ResultadoCriterio, i: Idioma): string {
@@ -1319,75 +1315,9 @@ export function vistaBrecha(d: DatosDemo, i: Idioma): VistaBrecha {
   };
 
   // --------------------------------------------------------------------- § 9 ficha
-  const f = inf.ficha_reproducibilidad;
-  const umbralesTexto = Object.entries(f.umbrales_aplicados)
-    .map(
-      ([k, v]) =>
-        `${k} ${typeof v === "boolean" ? X(v ? ENCENDIDO : APAGADO, i) : numeroDato(v, i)}`,
-    )
-    .join(" · ");
-  const igualesAlPlan =
-    JSON.stringify(f.umbrales_aplicados) ===
-    JSON.stringify(f.umbrales_del_plan);
   const ficha = {
     chip: X(IPO.chip(vCorrida), i),
-    filas: [
-      {
-        k: X(FICHA.plan, i),
-        v: `${f.plan.id} ${f.plan.version} · \`${f.plan.huella}\``,
-      },
-      ...(f.corrida.plan_de_ejecucion.huella !== f.plan.huella
-        ? [
-            {
-              k: i === "es" ? "Plan con que corrió" : "Plan it ran with",
-              v: `${f.plan.id} ${f.corrida.plan_de_ejecucion.version} · \`${f.corrida.plan_de_ejecucion.huella}\``,
-            },
-          ]
-        : []),
-      {
-        k: X(FICHA.casos, i),
-        v: `${f.casos.id} · ${X(FICHA.semilla, i)} ${f.casos.semilla} · n = ${f.casos.n_lote} · \`${f.casos.huella}\``,
-      },
-      {
-        k: X(FICHA.corrida, i),
-        v: `${f.corrida.id} · ${f.corrida.fecha} · ${f.corrida.proveedor === "suscripcion" ? X(FICHA.suscripcion, i) : f.corrida.proveedor} / ${f.corrida.modelo} · ${X(VARIANTE[f.corrida.variante] ?? { es: f.corrida.variante, en: f.corrida.variante }, i)} · \`${f.corrida.huella}\``,
-      },
-      { k: X(FICHA.grafo, i), v: `\`${f.corrida.version_grafo}\`` },
-      ...f.repeticiones.map((r) => ({
-        k: X(FICHA.repeticion, i),
-        v: `${r.corrida_id} · \`${r.huella}\``,
-      })),
-      ...(f.linea_base
-        ? [
-            {
-              k: X(FICHA.lineaBase, i),
-              v: `${f.linea_base.corrida_id} · \`${f.linea_base.huella}\``,
-            },
-          ]
-        : []),
-      {
-        k: X(FICHA.ejecucion, i),
-        v: X(
-          FICHA.ejecucionValor({
-            sesiones: f.corrida.sesiones,
-            casos: f.corrida.casos_ejecutados,
-            errores: f.corrida.casos_con_error,
-            limites: f.corrida.limites_alcanzados,
-          }),
-          i,
-        ),
-      },
-      {
-        k: X(FICHA.umbrales, i),
-        v: `${umbralesTexto} — ${X(igualesAlPlan ? FICHA.losDelPlan : FICHA.distintosDelPlan, i)}`,
-      },
-      { k: X(FICHA.revision, i), v: X(f.revisor_simulado, i) },
-      {
-        k: X(FICHA.verificador, i),
-        v: `${f.verificador.version} · ${f.verificador.formato}`,
-      },
-      { k: X(FICHA.huella, i), v: `\`${inf.huella}\`` },
-    ],
+    filas: filasDeReproducibilidad(d, i, "brecha"),
   };
 
   return {

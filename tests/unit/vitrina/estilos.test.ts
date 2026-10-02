@@ -54,7 +54,8 @@ describe("variables CSS declaradas", () => {
     const texto = readFileSync(f, "utf8");
     const leidas = [
       ...texto.matchAll(/var\(--([a-z0-9-]+)/g),
-      ...texto.matchAll(/-\(--([a-z0-9-]+)\)/g), // utilidades de Tailwind con variable: px-(--margen)
+      // Utilidades de Tailwind con variable, con o sin tipo: px-(--margen) · text-(color:--cv-tinta-0).
+      ...texto.matchAll(/-\((?:[a-z-]+:)?--([a-z0-9-]+)\)/g),
     ].map((m) => m[1]);
     // Una variable que el propio componente fija en `style` (p. ej. el reparto de columnas de las trazas).
     const locales = new Set(

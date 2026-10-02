@@ -271,7 +271,8 @@ export function ColumnaIpo({
 }: {
   icono: LucideIcon;
   titulo: string;
-  sub: string;
+  /** La cuenta a la derecha del título («20 casos · 62 decisiones»); P7 no la lleva. */
+  sub?: string;
   children: ReactNode;
 }) {
   return (
@@ -279,7 +280,9 @@ export function ColumnaIpo({
       <div className="flex items-center gap-2.5">
         <Baldosa icono={icono} chica />
         <h3 className="flex-1 text-sub font-semibold">{titulo}</h3>
-        <small className="text-right text-dato text-tinta-2">{sub}</small>
+        {sub ? (
+          <small className="text-right text-dato text-tinta-2">{sub}</small>
+        ) : null}
       </div>
       {children}
     </div>

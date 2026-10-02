@@ -16,5 +16,10 @@
   },
   "fijado": "2026-09-28",
   "consumidor": "planlang (segundo consumidor). Copia fijada en contrato/: el contrato, los dos esquemas y la gramática agentes-ia. El conversor grafo → mapa vive en core/visor (S2) y dibuja con el SVG propio de la vitrina.",
-  "enmiendas_propuestas": []
+  "enmiendas_propuestas": [],
+  "planeadora_adelante": {
+    "version": "0.4.0",
+    "sha256": "9b28d9ffe53d3f06766c31cb96849e434c3fe0ba8e64ac38c7c464699443f1fd",
+    "decision": "Visto el 2026-10-01 (fase 4 del S2): la planeadora publicó la v0.4.0, MINOR de datos (ningún mapa 0.3.0 válido deja de serlo). La orden del S2 fija la 0.3.0 y el visor se construyó y validó contra ella; la adopción se decide en el gate de la fase 4 (en este sprint o en el S3) y queda en la bitácora, desviación 45."
+  }
 }

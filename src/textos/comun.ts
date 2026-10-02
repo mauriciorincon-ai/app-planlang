@@ -77,19 +77,6 @@ export const PIE = {
   ),
 };
 
-/** Las pantallas que llegan en las fases siguientes del sprint 2 dicen que están en construcción, sin simular nada. */
-export const EN_CONSTRUCCION = {
-  titulo: tb(
-    "Esta pantalla se está construyendo",
-    "This screen is being built",
-  ),
-  texto: tb(
-    "Llega en este mismo sprint, después de la Entrada. Aquí no se muestra nada que no haya corrido.",
-    "It arrives in this same sprint, after Home. Nothing that did not run is shown here.",
-  ),
-  volver: tb("Volver a la Entrada", "Back to Home"),
-};
-
 /** `/`: la elección de idioma. Cada opción se escribe en SU idioma (se lee antes de elegir). */
 export const ELEGIR = {
   grupo: "Idioma / Language",

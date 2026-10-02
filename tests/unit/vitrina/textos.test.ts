@@ -69,6 +69,7 @@ const IGUALES = new Set([
   "Tokens",
   "No",
   "Apps",
+  "Stack",
   "Extractor",
   "Auditor",
   "Claude Code · sonnet",

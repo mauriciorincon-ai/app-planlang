@@ -1,6 +1,6 @@
 /**
  * La forma de lo que planlang entrega a hoja-de-vida: la ficha técnica (contrato v1.3.1, frente Agentes) y el
- * `brochure-export.json` (contrato 1.0.0, del que la planeadora arma la ficha de la app). Tipos escritos a mano
+ * `brochure-export.json` (contrato 1.0.0, del que hoja-de-vida arma la ficha de la app). Tipos escritos a mano
  * desde las copias fijadas en `docs/contratos/hoja-de-vida/`; `contrato.ts` valida contra esas copias.
  */
 export type Fuente = "medido" | "calculada" | "declarado" | "estimacion";

@@ -19,7 +19,8 @@
   "reglas_en_codigo": {
     "app-hoja-de-vida/src/lib/vitrina/ficha-tecnica/schema.ts": "06624045e99ac6e18d710d3c32f969308bfddc51111d6851cccb25336eb8ff62",
     "app-hoja-de-vida/src/lib/vitrina/schemas.ts": "3663f8a717e74c113f5edb65a2746b0b8f6c7004fc15bec3417385f3d2a3cb05",
-    "nota": "Las reglas que viven solo en el Zod del consumidor (el proceso BPMN de la ficha; el total = suma de los grupos y los enlaces en null del export) se reescriben en src/lib/fichas/contrato.ts. Estas huellas dicen contra qué versión de ese código se escribieron: si cambian, se relee y se ajusta."
+    "app-hoja-de-vida/src/lib/vitrina/ficha-tecnica/armar.ts": "98afa52de894df2659574c5a554cafeb4992c641ad1f6b927a50d03d4f93cb99",
+    "nota": "Las reglas que viven solo en el Zod del consumidor (el proceso BPMN de la ficha; el total = suma de los grupos y los enlaces en null del export) se reescriben en src/lib/fichas/contrato.ts, y el armado de la ficha de una app (export + complemento) en armarFichaApp de src/lib/fichas/armar.ts. Estas huellas dicen contra qué versión de ese código se escribieron: si cambian, se relee y se ajusta."
   },
   "fijado": "2026-10-01"
 }

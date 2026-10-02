@@ -179,7 +179,8 @@ async function interaccionMirada3({ page, probar }) {
     () => page.getByRole("button", { name: "Ver como experto" }).click(),
     () =>
       page.evaluate(
-        () => document.documentElement.getAttribute("data-perfil") === "experto",
+        () =>
+          document.documentElement.getAttribute("data-perfil") === "experto",
       ),
   );
   await probar(
@@ -215,6 +216,37 @@ async function interaccionMirada3({ page, probar }) {
           document
             .querySelector("#w-U4 [role=switch]")
             ?.getAttribute("aria-checked") === "true",
+      ),
+  );
+}
+
+/**
+ * Mirada 4: en Fichas, el experto ve la tabla de campos bajo cada ficha y los pasos para repetir la corrida; volver a
+ * líder la oculta; el idioma lleva a la misma pantalla en inglés, con la ficha del agente en inglés.
+ */
+async function interaccionMirada4({ page, probar }) {
+  await page.goto(`${V}/es/fichas?tema=oscuro&perfil=lider`);
+  await asentar(page);
+  await probar(
+    "Fichas: «Ver como experto» → la tabla de campos",
+    () => page.getByRole("button", { name: "Ver como experto" }).click(),
+    () => page.locator('[data-campo="proceso.carriles[]"]').isVisible(),
+  );
+  await probar(
+    "Fichas: «Volver a líder» → la tabla se oculta",
+    () => page.getByRole("button", { name: "Volver a líder" }).click(),
+    () => page.locator('[data-campo="proceso.carriles[]"]').isHidden(),
+  );
+  await probar(
+    "Fichas: «English» → la misma pantalla en inglés",
+    () => page.getByRole("link", { name: "English" }).click(),
+    () =>
+      page.evaluate(
+        () =>
+          location.pathname === "/en/fichas" &&
+          document
+            .querySelector('[data-ficha-cv="agente"]')
+            ?.getAttribute("lang") === "en",
       ),
   );
 }
@@ -545,6 +577,63 @@ const MIRADAS = {
       ],
     ],
   },
+};
+
+MIRADAS.p4 = {
+  titulo: {
+    es: "Mirada 4: P7 Fichas frente a su maqueta",
+    en: "Look 4: P7 Records against its mock-up",
+  },
+  pregunta: "¿Las fichas construidas se ven como la maqueta que aprobaste?",
+  pantallas: [
+    {
+      clave: "p7",
+      nombre: "P7 Fichas",
+      ruta: (idioma) => `/${idioma}/fichas`,
+      maqueta: "diseno/07-fichas.html",
+      estadoMaqueta: "fichas",
+      extra: EXPERTO,
+    },
+  ],
+  interaccion: interaccionMirada4,
+  matriz: [
+    [
+      "P7 Fichas",
+      "Arriba, «Las fichas en una mirada»",
+      "Lee la columna «Entrega».",
+      "Qué va a quién: la de reproducibilidad se queda en planlang; viajan brochure-export.json (los hechos de la app, de los que hoja-de-vida arma su ficha) y planlang-demo-a.ficha-tecnica.json, sin enlaces.",
+    ],
+    [
+      "P7 Fichas",
+      "1 · Ficha de reproducibilidad",
+      "Recórrela.",
+      "Plan v1.3 y el plan con que corrió (v1.2), casos con su semilla, corrida, grafo, repeticiones, línea base, entorno y la huella del informe: nada inventado.",
+    ],
+    [
+      "P7 Fichas",
+      "2 · La ficha de la app",
+      "Mírala como la vería un visitante de tu hoja de vida.",
+      "Papel y Fraunces, con los rótulos reales de hoja-de-vida («Sin sellar», «Datos del 2026-09-27»); cinco cifras con su fuente, seis grupos con 16 funcionalidades, límites, nunca y dónde está.",
+    ],
+    [
+      "P7 Fichas",
+      "3 · La ficha del agente A, «Cómo funciona»",
+      "Busca los carriles.",
+      "Médico, el agente, auditor y afiliado, con los 15 pasos numerados en su orden; la decisión con borde discontinuo. En hoja-de-vida los dibuja su motor BPMN.",
+    ],
+    [
+      "P7 Fichas",
+      "Pares «experto»",
+      "Baja a cada ficha.",
+      "Los pasos para repetir la corrida y, bajo cada ficha, la tabla de campos contra el contrato v1.3.1: todos «Cabe».",
+    ],
+    [
+      "P7 Fichas",
+      "Pares «claro» y «en»",
+      "Míralos junto a su maqueta.",
+      "El marco de CV Viva se queda en papel claro en los dos temas; en inglés, las dos fichas redactadas en inglés.",
+    ],
+  ],
 };
 
 const mirada = arg("mirada", "p1");

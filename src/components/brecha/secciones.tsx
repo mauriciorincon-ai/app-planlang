@@ -53,20 +53,10 @@ import { Seccion } from "../seccion";
 import { TablaF } from "../tabla-f";
 import { Veredicto } from "../veredicto";
 import { SinProbar } from "../sin-probar";
+import { TituloNumerado } from "../titulo-numerado";
 
 const MONO = "font-mono text-dato leading-normal [overflow-wrap:anywhere]";
 const LECTURA = "mb-6 max-w-[72ch] text-texto leading-[1.6]";
-
-function Titulo({ n, titulo }: { n: number; titulo: string }) {
-  return (
-    <span className="inline-flex items-baseline gap-2.5">
-      <span className="font-mono text-dato leading-none font-medium text-tinta-2">
-        {n}
-      </span>
-      {titulo}
-    </span>
-  );
-}
 
 function SeccionB({
   n,
@@ -83,7 +73,7 @@ function SeccionB({
   return (
     <Seccion
       id={id}
-      titulo={<Titulo n={n} titulo={SECCIONES[id][idioma]} />}
+      titulo={<TituloNumerado n={n} titulo={SECCIONES[id][idioma]} />}
       cabecera={chip ? <Chip procedencia="real">{chip}</Chip> : undefined}
       className="scroll-mt-6 [&>div:first-child>h2]:scroll-mt-6"
     >

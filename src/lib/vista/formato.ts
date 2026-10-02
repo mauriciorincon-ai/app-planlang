@@ -48,6 +48,12 @@ export function decimal(x: number, d: number, idioma: Idioma): string {
   return idioma === "es" ? s.replace(".", ",") : s;
 }
 
+/** Un dato del plan tal cual: entero sin decimales, si no con dos («0,75» · «0.75»). */
+export function numeroDato(x: number, idioma: Idioma): string {
+  if (Number.isInteger(x)) return String(x);
+  return decimal(x, 2, idioma);
+}
+
 /** 0,9333 con 1 decimal → «93,3 %» (es) · «93.3%» (en): para columnas que se leen alineadas (la curva). */
 export function porcentajeFijo(x: number, d: number, idioma: Idioma): string {
   const s = decimal(x * 100, d, idioma);

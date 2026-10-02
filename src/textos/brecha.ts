@@ -1074,37 +1074,4 @@ export const FICHA = {
     "Everything needed to obtain this same report again, byte for byte. No links: the fingerprints are enough to check it matches these traces.",
   ),
   titulo: tb("Ficha de reproducibilidad", "Reproducibility record"),
-  plan: tb("Plan", "Plan"),
-  casos: tb("Casos", "Cases"),
-  corrida: tb("Corrida", "Run"),
-  grafo: tb("Grafo", "Graph"),
-  repeticion: tb("Repetición", "Repetition"),
-  lineaBase: tb("Línea base", "Baseline"),
-  ejecucion: tb("Ejecución", "Execution"),
-  umbrales: tb("Umbrales aplicados", "Applied thresholds"),
-  revision: tb("Revisión humana", "Human review"),
-  verificador: tb("Verificador", "Verifier"),
-  huella: tb("Huella de este informe", "This report’s fingerprint"),
-  semilla: tb("semilla", "seed"),
-  suscripcion: tb("suscripción", "subscription"),
-  ejecucionValor: ((p: {
-    sesiones: number;
-    casos: number;
-    errores: number;
-    limites: number;
-  }) =>
-    tb(
-      `${p.sesiones} ${p.sesiones === 1 ? "sesión" : "sesiones"} · ${p.casos} casos · ${p.errores} errores del proveedor · ${p.limites} límites de uso`,
-      `${p.sesiones} ${p.sesiones === 1 ? "session" : "sessions"} · ${p.casos} cases · ${p.errores} provider errors · ${p.limites} usage limits`,
-    )) as Plantilla<{
-    sesiones: number;
-    casos: number;
-    errores: number;
-    limites: number;
-  }>,
-  losDelPlan: tb("los del plan", "the plan’s"),
-  distintosDelPlan: tb(
-    "distintos de los del plan",
-    "different from the plan’s",
-  ),
 };

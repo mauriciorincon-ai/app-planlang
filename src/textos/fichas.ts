@@ -1,8 +1,8 @@
 /**
  * Textos de P7 Fichas (maqueta `docs/diseno/07-fichas.html`, aprobada en la mirada 4 de la Etapa de Diseño) y el
  * contenido de lo que viaja a hoja-de-vida: la ficha del agente A (contrato ficha técnica v1.3.1, frente Agentes), el
- * `brochure-export.json` (contrato 1.0.0) y el complemento que planlang propone para la ficha de la app (la arma la
- * planeadora). Las cifras no viven aquí: las ponen `src/lib/fichas/` desde el informe, la corrida y el repositorio.
+ * `brochure-export.json` (contrato 1.0.0) y el complemento que planlang propone para la ficha de la app (la arma
+ * hoja-de-vida). Las cifras no viven aquí: las ponen `src/lib/fichas/` desde el informe, la corrida y el repositorio.
  */
 import { tb, type TextoBilingue } from "@core/formatos/bilingue";
 
@@ -39,8 +39,8 @@ export const MIRADA = {
     "You see the three records as each reader will.",
   ),
   avisoExperto: tb(
-    "Se suman los pasos para repetir la corrida y, bajo cada ficha de la vitrina, la comprobación de cada campo contra el contrato v1.3.1.",
-    "You also get the steps to repeat the run and, under each showcase record, the check of every field against the v1.3.1 contract.",
+    "Se suman los pasos para repetir la corrida y, bajo cada ficha de la vitrina, de dónde sale cada cifra y la comprobación de cada campo contra el contrato v1.3.1.",
+    "You also get the steps to repeat the run and, under each showcase record, where each figure comes from and the check of every field against the v1.3.1 contract.",
   ),
   recibe: tb("Recibe", "Takes"),
   hace: tb("Hace", "Does"),
@@ -99,8 +99,8 @@ export const MIRADA = {
       ),
     },
     export: tb(
-      "los hechos de la app, de los que la planeadora arma su ficha",
-      "the app's facts, from which the planning house builds its record",
+      "los hechos de la app, de los que hoja-de-vida arma su ficha",
+      "the app's facts, from which hoja-de-vida builds its record",
     ),
     agente: tb(
       "la ficha del agente A, para el frente Agentes",
@@ -126,6 +126,8 @@ export const REPRO = {
     "Ficha de reproducibilidad · demo A",
     "Reproducibility record · demo A",
   ),
+  chip: ((v: string) =>
+    tb(`real · corrida ${v}`, `real · run ${v}`)) as Plantilla<string>,
   repetir: tb("Cómo repetirla, en orden", "How to repeat it, in order"),
   pasos: [
     {
@@ -190,8 +192,8 @@ export const SECCION = {
     "technical-record contract v1.3.1",
   ),
   appArma: tb(
-    "La ficha de la app la arma la planeadora: los hechos salen de docs/brochure-export.json y la curación (titular, límites, nunca) de su complemento. Aquí se pinta con el complemento que planlang le propone.",
-    "The planning house builds the app's record: the facts come from docs/brochure-export.json and the curation (headline, limits, never) from its complement. Here it is painted with the complement planlang proposes.",
+    "La ficha de la app la arma hoja-de-vida al compilar: los hechos salen de docs/brochure-export.json y la curación (titular, cifras destacadas, límites, nunca) de su complemento. Aquí se pinta con el complemento que planlang propone.",
+    "hoja-de-vida builds the app's record when it compiles: the facts come from docs/brochure-export.json and the curation (headline, featured figures, limits, never) from its complement. Here it is painted with the complement planlang proposes.",
   ),
   sinProceso: tb(
     "«Cómo funciona» no aparece: la ficha de la app no trae proceso (es opcional en v1.3.1) y la sección se renumera. Los bloques siguen los seis grupos de la visión del producto.",
@@ -199,69 +201,76 @@ export const SECCION = {
   ),
 };
 
-/** Rótulos de la piel de CV Viva (los pone hoja-de-vida; aquí se reproducen para la vista previa). */
+/**
+ * Rótulos de la piel de CV Viva: los pone hoja-de-vida al pintar una ficha (su componente de ficha técnica); aquí se
+ * reproducen, con sus mismas palabras, para que la vista previa diga lo que dirá allá.
+ */
 export const CV = {
-  migas: ((frente: TextoBilingue) =>
-    tb(
-      `La vitrina · ${frente.es} · Ficha técnica`,
-      `The showcase · ${frente.en} · Technical record`,
-    )) as Plantilla<TextoBilingue>,
-  frente: {
-    apps: tb("Apps", "Apps"),
-    agentes: tb("Agentes", "Agents"),
+  migas: tb("La vitrina · Ficha técnica", "The showcase · Technical sheet"),
+  estado: {
+    inicial: tb("Sin sellar", "Unsealed"),
+    sellado: tb("Sellada", "Sealed"),
   } as Record<string, TextoBilingue>,
-  inicial: tb("En construcción", "In construction"),
-  ciclo: ((c: string) => tb(`Ciclo ${c}`, `Cycle ${c}`)) as Plantilla<string>,
   sprints: ((n: number) =>
     tb(
       n === 1 ? "1 sprint" : `${n} sprints`,
       n === 1 ? "1 sprint" : `${n} sprints`,
     )) as Plantilla<number>,
-  anclada: ((f: string) =>
-    tb(
-      `Anclada a la corrida del ${f}`,
-      `Anchored to the ${f} run`,
-    )) as Plantilla<string>,
+  datosDel: ((f: string) =>
+    tb(`Datos del ${f}`, `Data as of ${f}`)) as Plantilla<string>,
   titular: tb("Qué no hace nadie más", "What nobody else does"),
+  cifras: tb("Las cifras", "The numbers"),
   paraQuienT: tb(
     "Para quién, y qué resuelve",
-    "Who it is for, and what it solves",
+    "Who it's for, and what it solves",
   ),
   paraQuienSub: tb(
     "La persona antes que la tecnología.",
     "The person before the technology.",
   ),
-  paraQuien: tb("Para quién", "Who it is for"),
+  paraQuien: tb("Para quién", "Who it's for"),
   promesa: tb("La promesa", "The promise"),
   comoT: tb("Cómo funciona", "How it works"),
   comoSub: tb(
-    "El proceso en BPMN: un carril por actor.",
-    "The process in BPMN: one lane per actor.",
+    "El proceso en BPMN: un carril por actor, la decisión donde se decide, y el bucle a la vista.",
+    "The process in BPMN: one lane per actor, the decision where it is made, and the loop in plain sight.",
   ),
   comoNota: tb(
     "Aquí CV Viva dibuja el diagrama con su motor BPMN, a partir de estos pasos y flujos. Esta vista previa no lo dibuja: muestra lo que la ficha le entrega, carril por carril y en su orden de lectura.",
     "Here CV Viva draws the diagram with its BPMN engine, from these steps and flows. This preview does not draw it: it shows what the record hands over, lane by lane and in reading order.",
   ),
+  fin: tb("fin", "end"),
+  /** La palabra del tipo de paso para el lector de pantalla (la forma lo dice a la vista). */
+  tipoPaso: {
+    inicio: tb("inicio", "start"),
+    decision: tb("decisión", "decision"),
+  } as Record<string, TextoBilingue>,
+  paso: tb("paso", "step"),
+  stack: tb("Stack", "Stack"),
   procedencia: {
-    app: tb("Proceso declarado por la app", "Process declared by the app"),
-    "cv-viva": tb("Proceso derivado por CV Viva", "Process derived by CV Viva"),
+    app: tb(
+      "Proceso declarado por la propia app en su export.",
+      "Process declared by the app itself in its export.",
+    ),
+    "cv-viva": tb(
+      "Proceso declarado por CV Viva a partir del export de la app.",
+      "Process declared by Living CV from the app's export.",
+    ),
     planeadora: tb(
-      "Proceso curado por la planeadora",
-      "Process curated by the planning house",
+      "Proceso curado por la planeadora.",
+      "Process curated by the planning house.",
     ),
   } as Record<string, TextoBilingue>,
   tieneT: tb("Qué tiene", "What it has"),
-  tieneSub: ((n: number) =>
-    tb(`${n} bloques.`, `${n} blocks.`)) as Plantilla<number>,
+  tieneSub: ((p: { grupos: number; n: number }) =>
+    tb(
+      `${p.grupos === 1 ? "1 grupo" : `${p.grupos} grupos`}${p.n > 0 ? ` · ${p.n} funcionalidades` : ""}.`,
+      `${p.grupos === 1 ? "1 group" : `${p.grupos} groups`}${p.n > 0 ? ` · ${p.n} features` : ""}.`,
+    )) as Plantilla<{ grupos: number; n: number }>,
   funcionalidades: ((n: number) =>
     tb(
       n === 1 ? "1 funcionalidad" : `${n} funcionalidades`,
       n === 1 ? "1 feature" : `${n} features`,
-    )) as Plantilla<number>,
-  reglas: ((n: number) =>
-    tb(
-      n === 1 ? "1 regla del plan" : `${n} reglas del plan`,
-      n === 1 ? "1 plan rule" : `${n} plan rules`,
     )) as Plantilla<number>,
   limitesT: tb(
     "Límites, y lo que nunca hace",
@@ -269,32 +278,38 @@ export const CV = {
   ),
   limitesSub: tb(
     "Lo que decidió no ser vale tanto como lo que es.",
-    "What it chose not to be matters as much as what it is.",
+    "What it chose not to be counts as much as what it is.",
   ),
   limites: tb("Límites, a propósito", "Limits, on purpose"),
   nunca: tb("Nunca", "Never"),
   dondeT: tb("Dónde está", "Where it stands"),
   dondeSub: tb(
     "La versión anclada, no el tiempo real.",
-    "The anchored version, not real time.",
+    "The pinned version, not real time.",
   ),
-  espera: tb("Avísame cuando abra", "Tell me when it opens"),
-  esperaNota: tb(
-    "Aquí se muestra; no se entrega. La lista de espera no promete fecha.",
-    "It is shown here; it is not handed over. The waiting list promises no date.",
+  cierre: tb("Aquí se muestra; no se entrega.", "Shown here; not handed over."),
+  cierreApp: tb(
+    "En hoja-de-vida, aquí va la lista de espera de la app, que no promete fecha. Aquí se muestra; no se entrega.",
+    "In hoja-de-vida, the app's waiting list goes here, and it promises no date. Shown here; not handed over.",
   ),
   fuente: {
     medido: tb("medido", "measured"),
-    calculada: tb("calculada", "calculated"),
+    calculada: tb("calculada", "computed"),
     declarado: tb("declarado", "declared"),
     estimacion: tb("estimación", "estimate"),
   } as Record<string, TextoBilingue>,
+  /**
+   * Las claves de hito de la ficha de una app, como las traduce hoja-de-vida; `construccion` dice lo que es hoy (allá
+   * se lee «construcción cerrada», que solo será cierto al cerrar la construcción del ciclo). Una ficha que trae otro
+   * texto (la del agente) se pinta tal cual.
+   */
   hito: {
     ciclo: tb("ciclo", "cycle"),
     sprints: tb("sprints cerrados", "closed sprints"),
-    version: tb("versión", "version"),
-    decisiones: tb("decisiones registradas", "recorded decisions"),
+    sellada: tb("sellada (gate de pruebas)", "sealed (testing gate)"),
     construccion: tb("en construcción", "in construction"),
+    version: tb("versión del repo", "repo version"),
+    decisiones: tb("decisiones registradas", "recorded decisions"),
   } as Record<string, TextoBilingue>,
 };
 
@@ -305,6 +320,12 @@ export const TABLA = {
       `Comprobado contra el contrato ficha técnica v${p.version} de hoja-de-vida. Un archivo por idioma: el contrato recibe la ficha en un idioma; se entrega el español.`,
       `Checked against hoja-de-vida's technical-record contract v${p.version}. One file per language: the contract takes the record in one language; the Spanish one is delivered.`,
     )) as Plantilla<{ version: string }>,
+  comprobadoApp: ((p: { ficha: string; exportacion: string }) =>
+    tb(
+      `planlang entrega el export (contrato brochure-export ${p.exportacion}); con él y con el complemento, hoja-de-vida arma esta ficha, que aquí se comprueba contra el contrato ficha técnica v${p.ficha}. Un archivo por idioma; se entrega el español.`,
+      `planlang delivers the export (brochure-export contract ${p.exportacion}); with it and the complement, hoja-de-vida builds this record, checked here against technical-record contract v${p.ficha}. One file per language; the Spanish one is delivered.`,
+    )) as Plantilla<{ ficha: string; exportacion: string }>,
+  cifras: tb("De dónde sale cada cifra", "Where each figure comes from"),
   campo: tb("Campo", "Field"),
   medida: tb("Medida", "Measure"),
   limite: tb("Límite", "Limit"),
@@ -396,6 +417,8 @@ export const AGENTE = {
         "mediana por caso, de punta a punta",
         "median per case, end to end",
       ),
+      /** En palabras: hoja-de-vida calla la unidad que la etiqueta ya contiene, y «s» está en casi cualquier etiqueta. */
+      unidad: tb("segundos", "seconds"),
       detalle: ((p: { n: number }) =>
         tb(
           `Criterio C7 del plan sobre ${p.n} casos: la mediana de la latencia total registrada en cada traza.`,
@@ -730,7 +753,7 @@ export const APP = {
     "Observar trazas y evaluar respuestas ya lo hacen muchas herramientas. Lo que no hace nadie es exigir el plan antes y medir contra él después: el informe de brecha plan → resultado, con el análisis de riesgos previo, y los umbrales del plan jugables sobre las trazas reales.",
     "Observing traces and evaluating answers is done by many tools. What nobody does is demand the plan first and measure against it afterwards: the plan → result gap report, with the prior risk analysis, and the plan's thresholds playable over the real traces.",
   ),
-  /** El titular de valor que planlang propone para el complemento de la planeadora. */
+  /** El titular de valor que planlang propone en el complemento de su ficha. */
   titular: tb(
     "El plan de un agente se escribe como contrato, y un verificador sin IA publica, caso por caso, la brecha entre lo planeado y lo que el agente hizo, con sus fallas a la vista.",
     "An agent's plan is written as a contract, and a verifier with no AI publishes, case by case, the gap between what was planned and what the agent did, with its failures in view.",
@@ -794,6 +817,7 @@ export const APP = {
   /** Los seis grupos de la visión del producto con lo construido de cada uno (lo del roadmap no cuenta). */
   grupos: [
     {
+      id: "planear",
       nombre: tb("Planear", "Plan"),
       linea: tb(
         "El plan como contrato: plantillas, validador y contrato para el constructor.",
@@ -834,6 +858,7 @@ export const APP = {
       ],
     },
     {
+      id: "correr",
       nombre: tb("Correr", "Run"),
       linea: tb(
         "Casos con verdad conocida, el demo A y las corridas por lotes.",
@@ -895,6 +920,7 @@ export const APP = {
       ],
     },
     {
+      id: "medir",
       nombre: tb("Medir", "Measure"),
       linea: tb(
         "El verificador de brecha y los supuestos medidos de verdad.",
@@ -956,6 +982,7 @@ export const APP = {
       ],
     },
     {
+      id: "jugar",
       nombre: tb("Jugar", "Play"),
       linea: tb(
         "Mover los umbrales sobre las trazas reales.",
@@ -978,6 +1005,7 @@ export const APP = {
       ],
     },
     {
+      id: "entender",
       nombre: tb("Entender", "Understand"),
       linea: tb(
         "El grafo real, nodo por nodo, contra el plan.",
@@ -1000,6 +1028,7 @@ export const APP = {
       ],
     },
     {
+      id: "mostrar",
       nombre: tb("Mostrar", "Show"),
       linea: tb(
         "La vitrina bilingüe y sus fichas.",

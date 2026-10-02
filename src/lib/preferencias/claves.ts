@@ -15,7 +15,10 @@ export type Perfil = (typeof PERFILES)[number];
 export const ATRIBUTO = { tema: "data-theme", perfil: "data-perfil" } as const;
 /** Lo lleva el `<html>` de las páginas de un idioma (no el de `/`): el script previo lo recuerda. */
 export const ATRIBUTO_IDIOMA = "data-idioma";
-/** Lo pone el script previo al terminar la carga: activa la mono de datos (ADR-008). */
+/**
+ * Lo pone el script previo al terminar la carga: activa las letras que la primera pintura no necesita, la mono de
+ * datos y la Fraunces de la piel de CV Viva en Fichas (ADR-008).
+ */
 export const ATRIBUTO_MONO = "data-mono";
 export type Preferencia = keyof typeof ATRIBUTO;
 

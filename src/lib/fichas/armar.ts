@@ -2,9 +2,10 @@
  * Arma lo que planlang entrega a hoja-de-vida, desde los datos del demo y los hechos del repositorio:
  * - la ficha del agente A (contrato ficha técnica v1.3.1, frente Agentes): el texto redactado de `src/textos/fichas.ts`
  *   y las cifras del informe, la corrida y el plan;
- * - el `brochure-export.json` (contrato 1.0.0): los hechos de la app, de los que la planeadora arma su ficha;
- * - el complemento que planlang propone a la planeadora (titular, cifras destacadas, límites, nunca);
- * - y la ficha de la app tal como la armaría la planeadora: réplica de `armar.py` (export + complemento).
+ * - el `brochure-export.json` (contrato 1.0.0): los hechos de la app, de los que hoja-de-vida arma su ficha;
+ * - el complemento que planlang propone para la ficha de la app (titular, cifras destacadas, límites, nunca);
+ * - y la ficha de la app tal como la arma hoja-de-vida en su build: réplica de su `armarFichaTecnica`
+ *   (export + complemento; huella de ese código en `docs/contratos/hoja-de-vida/CONTRATO.lock`).
  * Un idioma por ficha, como pide el contrato; se entrega el español y el inglés queda para la vitrina.
  */
 import type { Idioma, TextoBilingue } from "@core/formatos/bilingue";
@@ -36,13 +37,9 @@ function costoDeLaCorrida(d: DatosDemo): number {
   return c;
 }
 
-/** Cada nodo del contrato del grafo en orden, con las reglas del plan que salen de él. */
-function nodosDelPlan(d: DatosDemo) {
-  const aristas = d.plan.contrato_de_grafo.aristas_condicionales;
-  return d.plan.contrato_de_grafo.nodos_esperados.map((n) => ({
-    id: n.id,
-    reglas: aristas.filter((a) => a.desde === n.id).length,
-  }));
+/** Los nodos del contrato del grafo, en el orden del plan. */
+function nodosDelPlan(d: DatosDemo): string[] {
+  return d.plan.contrato_de_grafo.nodos_esperados.map((n) => n.id);
 }
 
 // ------------------------------------------------------------------------------------------- agente A
@@ -80,7 +77,7 @@ export function fichaAgente(
     {
       clave: "latencia_mediana",
       valor: red(c7.valor_medido, 1),
-      unidad: "s",
+      unidad: X(C.latencia.unidad, i),
       etiqueta: X(C.latencia.etiqueta, i),
       fuente: "medido",
       detalle: X(C.latencia.detalle({ n: c7.n_poblacion }), i),
@@ -115,17 +112,18 @@ export function fichaAgente(
     },
   ];
   const nodos = nodosDelPlan(d);
-  const bloques = nodos.map((x, k) => {
-    const b = AGENTE.bloques[x.id];
+  // `cuenta` en 0: hoja-de-vida la pinta como «N funcionalidades» y un nodo del grafo no las tiene; con 0 la calla.
+  const bloques = nodos.map((id, k) => {
+    const b = AGENTE.bloques[id];
     if (!b)
       throw new Error(
-        `fichas: el nodo «${x.id}» del contrato no tiene su bloque en la ficha del agente (src/textos/fichas.ts).`,
+        `fichas: el nodo «${id}» del contrato no tiene su bloque en la ficha del agente (src/textos/fichas.ts).`,
       );
     return {
       orden: k + 1,
       nombre: X(b.nombre, i),
       linea: X(b.linea, i),
-      cuenta: x.reglas,
+      cuenta: 0,
     };
   });
   const P = AGENTE.proceso;
@@ -143,7 +141,8 @@ export function fichaAgente(
       frente: "agentes",
       estado: "inicial",
       ciclo: "H1",
-      version: `plan ${versionPlan}`,
+      // La versión del plan que gobierna al agente, en semver: hoja-de-vida la pinta como «v{version}».
+      version: inf.plan_en_breve.version,
       sellado_en: null,
       sprints_cerrados: repo.sprintsCerrados,
     },
@@ -398,7 +397,7 @@ export const CIFRAS_DESTACADAS = [
   "costo_de_una_corrida",
 ];
 
-/** El complemento que planlang propone a la planeadora (formato de `vitrina/apps/<slug>.complemento.json`). */
+/** El complemento que planlang propone para su ficha (en hoja-de-vida vive en `data/fichas/<slug>.yaml`). */
 export function complementoPropuesto(d: DatosDemo, i: Idioma): Complemento {
   return {
     schema_version: "1.0.0",
@@ -413,8 +412,9 @@ export function complementoPropuesto(d: DatosDemo, i: Idioma): Complemento {
 }
 
 /**
- * La ficha de la app como la armaría la planeadora: réplica de `vitrina/armar.py` (export + complemento → ficha),
- * con su misma `schema_version` y sus mismos hitos. Una cifra destacada que no exista en el export detiene el build.
+ * La ficha de la app como la arma hoja-de-vida: réplica de su `armarFichaTecnica` (export + complemento → ficha),
+ * con su misma `schema_version` y los hitos como claves que su componente traduce. Una cifra destacada que no exista
+ * en el export detiene el build.
  */
 export function armarFichaApp(
   exp: BrochureExport,
@@ -442,7 +442,7 @@ export function armarFichaApp(
   const a = exp.app;
   const dec = exp.metricas.find((m) => m.clave === "decisiones_registradas");
   return {
-    schema_version: "1.1.0",
+    schema_version: VERSION_FICHA,
     actualizado: exp.actualizado,
     pieza: {
       slug: a.slug,
@@ -478,7 +478,7 @@ export function armarFichaApp(
         : { valor: "—", etiqueta: "construccion" },
       { valor: `v${a.version_repo}`, etiqueta: "version" },
       ...(dec
-        ? [{ valor: String(dec.valor), etiqueta: "decisiones registradas" }]
+        ? [{ valor: String(dec.valor), etiqueta: "decisiones" }]
         : []),
     ],
   };
