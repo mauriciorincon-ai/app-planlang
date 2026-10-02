@@ -12,6 +12,12 @@ import {
   type InformeInstrumentos,
 } from "../../packages/instrumentos-de-plan/src";
 import { ErrorSintaxis, parsear, referencias } from "../brecha/condiciones";
+import {
+  CLAVES_DE_SESION,
+  FUNCIONES_DE_CONDICION,
+  VOCABULARIO,
+} from "../brecha/contexto";
+import { FUNCIONES } from "../playground/aristas";
 import type { TextoBilingue } from "../formatos/bilingue";
 import {
   esAristaTripleta,
@@ -38,6 +44,7 @@ export const CODIGOS = [
   "ORDEN_DE_ARISTAS",
   "UMBRAL_TIPO_INCOHERENTE",
   "HUELLA_AUSENTE",
+  "SENAL_NO_DECLARADA",
 ] as const;
 export type Codigo = (typeof CODIGOS)[number];
 
@@ -193,6 +200,31 @@ function validarContrato(
         );
       }
     } else {
+      // M-23: la función nombrada existe en el registro cerrado (el mismo que Python) y lee lo que el registro dice.
+      const registrada = Object.hasOwn(FUNCIONES, a.funcion.nombre)
+        ? FUNCIONES[a.funcion.nombre]
+        : undefined;
+      if (!registrada)
+        motivos.push(
+          motivo(
+            "REFERENCIA_ROTA",
+            el,
+            `La función «${a.funcion.nombre}» no está registrada: ni el grafo ni el playground sabrían evaluarla.`,
+            `Function “${a.funcion.nombre}” is not registered: neither the graph nor the playground could evaluate it.`,
+          ),
+        );
+      else if (
+        JSON.stringify(registrada.entradas) !==
+        JSON.stringify(a.funcion.entradas)
+      )
+        motivos.push(
+          motivo(
+            "REFERENCIA_ROTA",
+            el,
+            `La función «${a.funcion.nombre}» lee ${registrada.entradas.join(", ")}; el plan le da ${a.funcion.entradas.join(", ")}.`,
+            `Function “${a.funcion.nombre}” reads ${registrada.entradas.join(", ")}; the plan gives it ${a.funcion.entradas.join(", ")}.`,
+          ),
+        );
       for (const entrada of a.funcion.entradas) {
         if (!senales.has(entrada)) {
           motivos.push(
@@ -537,6 +569,67 @@ export function validarPlan(entrada: unknown): ResultadoValidacion {
           `evaluadores.${e.id}`,
           `El evaluador de regla ${e.id} no cubre ningún riesgo: sus fallas contarán como brechas no previstas.`,
           `Rule evaluator ${e.id} covers no risk: its failures will count as unforeseen gaps.`,
+        ),
+      );
+  }
+
+  // M-23: lo que lee cada condición existe. Una raíz que no es señal declarada ni clave del contexto es una
+  // advertencia (al aprobar, un motivo: `aprobarPlan`); una función que el contexto no registra, un motivo.
+  const conocidas = new Set<string>([
+    ...senales,
+    ...Object.keys(VOCABULARIO),
+    ...CLAVES_DE_SESION,
+  ]);
+  const funcionesConocidas = new Set<string>(FUNCIONES_DE_CONDICION);
+  const condiciones: [string, string | undefined][] = [
+    ...plan.criterios_aceptacion.flatMap(
+      (c): [string, string | undefined][] => [
+        [`${c.id}.poblacion`, c.regla_de_medicion.poblacion],
+        [`${c.id}.condicion`, c.regla_de_medicion.condicion ?? undefined],
+      ],
+    ),
+    ...plan.riesgos.flatMap((r): [string, string | undefined][] =>
+      r.detector_en_trazas
+        ? [
+            [`${r.id}.poblacion`, r.detector_en_trazas.poblacion],
+            [`${r.id}.condicion`, r.detector_en_trazas.condicion],
+          ]
+        : [],
+    ),
+    ...plan.supuestos.flatMap((s): [string, string | undefined][] =>
+      s.medible_en_trazas
+        ? [
+            [`${s.id}.poblacion`, s.medible_en_trazas.poblacion],
+            [`${s.id}.condicion`, s.medible_en_trazas.condicion ?? undefined],
+          ]
+        : [],
+    ),
+  ];
+  for (const [elemento, texto] of condiciones) {
+    if (!texto) continue;
+    let refs: { rutas: string[]; funciones: string[] };
+    try {
+      refs = referencias(parsear(texto));
+    } catch {
+      continue; // ya es CONDICION_NO_INTERPRETABLE
+    }
+    const raices = [...new Set(refs.rutas.map((r) => r.split(".")[0]!))];
+    for (const raiz of raices.filter((x) => !conocidas.has(x)))
+      advertencias.push(
+        motivo(
+          "SENAL_NO_DECLARADA",
+          elemento,
+          `La condición lee «${raiz}», que no está en senales_obligatorias_en_traza ni en el contexto del verificador: el agente no tiene por qué registrarla.`,
+          `The condition reads “${raiz}”, which is neither in senales_obligatorias_en_traza nor in the verifier's context: the agent has no reason to record it.`,
+        ),
+      );
+    for (const f of refs.funciones.filter((x) => !funcionesConocidas.has(x)))
+      motivos.push(
+        motivo(
+          "REFERENCIA_ROTA",
+          elemento,
+          `La condición llama a «${f}», que el verificador no registra.`,
+          `The condition calls “${f}”, which the verifier does not register.`,
         ),
       );
   }

@@ -243,6 +243,10 @@ class ChatClaudeCode(BaseChatModel):
             )
         except subprocess.TimeoutExpired as e:
             raise ErrorProveedor("timeout", f"{self.timeout_s}s") from e
+        except OSError as e:
+            # M-9: sin el binario o sin permiso para ejecutarlo, el caso falla clasificado: no tumba
+            # la sesión.
+            raise ErrorProveedor("otro", f"no se pudo ejecutar el CLI: {type(e).__name__}") from e
         latencia_ms = int((time.monotonic() - t0) * 1000)
         con_esquema = self.json_schema is not None
         if proc.returncode != 0:
@@ -438,6 +442,58 @@ def proveedor_activo() -> str:
     return valor
 
 
+def clasificar_excepcion(e: BaseException) -> ErrorProveedor:
+    """Un error del interruptor (API de Anthropic o Groq) con el vocabulario de la traza (M-9).
+
+    Solo el nombre de la clase y el código HTTP: el mensaje de un proveedor puede traer el contenido del caso.
+    """
+    nombre = type(e).__name__
+    estado = getattr(e, "status_code", None) or getattr(getattr(e, "response", None), "status_code", None)
+    if estado == 429 or "RateLimit" in nombre:
+        return ErrorProveedor("limite_de_uso", nombre)
+    if "Timeout" in nombre:
+        return ErrorProveedor("timeout", nombre)
+    return ErrorProveedor("otro", f"{nombre} {estado}" if estado else nombre)
+
+
+def _con_clasificacion(llamar: Callable[[], Any]) -> Any:
+    try:
+        return llamar()
+    except ErrorProveedor:
+        raise
+    except Exception as e:
+        raise clasificar_excepcion(e) from e
+
+
+class InterruptorClasificado(BaseChatModel):
+    """El modelo del interruptor con sus errores clasificados (M-9).
+
+    Un fallo de la API llega al lote como `ErrorProveedor` (traza parcial, o sesión detenida si es un
+    límite), no como una excepción que nadie esperaba. Delega todo lo demás en el modelo envuelto.
+    """
+
+    interno: Any
+
+    @property
+    def _llm_type(self) -> str:
+        return f"clasificado:{getattr(self.interno, '_llm_type', 'modelo')}"
+
+    def _generate(
+        self,
+        messages: list[BaseMessage],
+        stop: list[str] | None = None,
+        run_manager: CallbackManagerForLLMRun | None = None,
+        **kwargs: Any,
+    ) -> ChatResult:
+        return _con_clasificacion(
+            lambda: self.interno._generate(messages, stop=stop, run_manager=run_manager, **kwargs)
+        )
+
+    def with_structured_output(self, schema: Any, **kwargs: Any) -> Runnable:
+        estructurado = self.interno.with_structured_output(schema, **kwargs)
+        return RunnableLambda(lambda entrada: _con_clasificacion(lambda: estructurado.invoke(entrada)))
+
+
 def crear_modelo(
     proveedor: str | None = None,
     *,
@@ -456,15 +512,18 @@ def crear_modelo(
             from langchain_anthropic import ChatAnthropic  # extra opcional
         except ImportError as e:  # pragma: no cover - depende del entorno
             raise RuntimeError("instala el extra: pip install -e '.[anthropic]'") from e
-        return ChatAnthropic(
-            model=modelo or os.environ.get(VARIABLE_MODELO_INTERRUPTOR, MODELO_ANTHROPIC_POR_DEFECTO)
+        return InterruptorClasificado(
+            interno=ChatAnthropic(
+                model=modelo or os.environ.get(VARIABLE_MODELO_INTERRUPTOR, MODELO_ANTHROPIC_POR_DEFECTO)
+            )
         )
     if p == "groq":
         try:
             from langchain_groq import ChatGroq  # extra opcional
         except ImportError as e:  # pragma: no cover - depende del entorno
             raise RuntimeError("instala el extra: pip install -e '.[groq]'") from e
-        return ChatGroq(model=modelo or os.environ.get(VARIABLE_MODELO_INTERRUPTOR, MODELO_GROQ_POR_DEFECTO))
+        nombre = modelo or os.environ.get(VARIABLE_MODELO_INTERRUPTOR, MODELO_GROQ_POR_DEFECTO)
+        return InterruptorClasificado(interno=ChatGroq(model=nombre))
     raise ValueError(p)  # pragma: no cover - proveedor_activo ya valida
 
 
@@ -482,9 +541,11 @@ __all__: Sequence[str] = (
     "ChatClaudeCode",
     "ChatSimulado",
     "ErrorProveedor",
+    "InterruptorClasificado",
     "PROVEEDORES",
     "VARIABLES_PROHIBIDAS_EN_HIJO",
     "argv_claude",
+    "clasificar_excepcion",
     "turnos_maximos",
     "crear_modelo",
     "cwd_limpio",

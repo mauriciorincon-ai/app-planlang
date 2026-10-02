@@ -14,9 +14,21 @@ import {
 } from "../../../../core/plan";
 
 type Obj = Record<string, JsonValor>;
-const borrador = JSON.parse(
+const v0 = JSON.parse(
   readFileSync("plans/demo-a/v0-migrado.json", "utf8"),
-) as Obj;
+) as Obj & { contrato_de_grafo: { senales_obligatorias_en_traza: string[] } };
+// El borrador v0 lee `servicio_exento` en C4 y R6 sin declararla (M-23 lo advierte y no deja aprobarlo): la base de
+// estas pruebas la declara, como lo hizo la v1.1.
+const borrador = {
+  ...v0,
+  contrato_de_grafo: {
+    ...v0.contrato_de_grafo,
+    senales_obligatorias_en_traza: [
+      ...v0.contrato_de_grafo.senales_obligatorias_en_traza,
+      "servicio_exento",
+    ],
+  },
+} as Obj;
 const planValido = (): Plan => {
   const v = validarPlan(borrador);
   if (!v.ok) throw new Error("el plan base debe ser válido");
@@ -73,7 +85,7 @@ describe("contrato para el constructor", () => {
       enrutador: "extractor",
       extractor: "verificador_cobertura",
     });
-    expect(c.senales_obligatorias).toHaveLength(15);
+    expect(c.senales_obligatorias).toHaveLength(16); // las 15 del v0 + servicio_exento
     expect(
       contratoParaConstructor(plan, { U2: 500 }).umbrales_aplicados.U2,
     ).toBe(500);
@@ -101,6 +113,42 @@ describe("aprobar y cargar con huella (RF-01.7, RF-06.1)", () => {
     const c2 = await cargarPlan(alterado);
     expect(c2.ok).toBe(false);
     if (!c2.ok) expect(c2.motivos[0]?.mensaje.en).toContain("does not match");
+  });
+
+  it("M-22: un plan aprobado siempre carga, aunque el borrador omita lo que el esquema completa (depende_de)", async () => {
+    // El borrador sin `depende_de` en sus decisiones: Zod lo completa con []. Antes, la huella se calculaba sobre el
+    // borrador crudo y se verificaba sobre el plan parseado: el plan recién aprobado no cargaba.
+    const sinDepende = structuredClone(borrador) as Obj & {
+      decisiones: Record<string, JsonValor>[];
+    };
+    for (const d of sinDepende.decisiones) delete d.depende_de;
+    const r = await aprobarPlan(sinDepende, {
+      por: "prueba",
+      el: "2026-09-27",
+    });
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    // Lo que se escribe a disco es el plan canónico parseado, sellado: trae `depende_de: []`.
+    expect(r.plan.decisiones.every((d) => Array.isArray(d.depende_de))).toBe(
+      true,
+    );
+    const enDisco = JSON.parse(JSON.stringify(r.plan)) as Obj;
+    const c = await cargarPlan(enDisco);
+    expect(c.ok).toBe(true);
+    if (c.ok) expect(c.huella).toBe(r.plan.huella);
+  });
+
+  it("M-22: la huella se verifica sobre lo que hay en disco, no sobre lo que el esquema completa", async () => {
+    const r = await aprobarPlan(borrador, { por: "prueba", el: "2026-09-27" });
+    if (!r.ok) throw new Error("debía aprobar");
+    // Quitarle al archivo sellado un `depende_de: []` cambia lo que hay en disco: la huella ya no coincide, aunque
+    // el esquema vuelva a completarlo al parsear.
+    const tocado = structuredClone(r.plan) as unknown as Obj & {
+      decisiones: Record<string, JsonValor>[];
+    };
+    delete tocado.decisiones[0]!.depende_de;
+    const c = await cargarPlan(tocado);
+    expect(c.ok).toBe(false);
   });
 
   it("cargarPlan rechaza un borrador (sin huella que verificar) y un plan inválido", async () => {

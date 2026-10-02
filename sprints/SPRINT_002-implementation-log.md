@@ -793,6 +793,62 @@ copia es la vigente» salió en rojo en el job de calidad (desviación 45).
 | Espejo del complemento | `procedencia: "app"` de vuelta en `complementoPropuesto` | `fichas.test.ts` 3 fallan; `pnpm fichas` lanza «no cumple su contrato» | 12/12 |
 | Barridos | cada regla con su caso en rojo dentro de la prueba | 8 casos | — |
 
+### Deuda del S1 (2026-10-01)
+
+- **M-13 · NFC simétrica en JCS:**
+  - el fixture del contrato (`canonico.py`, `texto_fixture`) trae ahora cada valor `crudo`, tal como entró a Python
+    (claves y cadenas en NFD, `-0.0`), y un caso nuevo `cadena_nfd`;
+  - `core/formatos/jcs.ts` normaliza cadenas y claves a NFC; si dos claves coinciden, gana la última, como en el
+    `dict`;
+  - ninguna huella existente cambió (7 corridas verificadas, golden y planes intactos).
+- **M-22 · sellar el plan canónico:** `aprobarPlan` sella lo que el esquema parsea (`depende_de: []` incluido) y
+  `cargarPlan` verifica la huella sobre la entrada tal cual. Los planes aprobados v1–v1.3 verifican igual.
+- **M-23 · lo que leen las condiciones y las aristas:**
+  - una raíz que no es señal declarada ni clave del contexto (`VOCABULARIO`, `CLAVES_DE_SESION`) → advertencia
+    `SENAL_NO_DECLARADA`, y al aprobar, motivo;
+  - una función de condición sin registrar (`FUNCIONES_DE_CONDICION`) o una función de arista sin registrar o con
+    otras entradas que su registro (`FUNCIONES`) → `REFERENCIA_ROTA`;
+  - el v1 lo demuestra: lee `servicio_exento` en C4 y R6 sin declararla. El borrador base de las pruebas
+    (`v0-migrado`) tenía el mismo defecto, y la base de `contrato-y-carga.test.ts` ahora la declara.
+- **M-9 · las trazas a salvo:**
+  - `lotes.py` escribe la corrida en el camino normal y ante cualquier excepción: la sesión queda «detenida por
+    excepción», el caso en curso pendiente, y luego relanza;
+  - el adaptador convierte un `OSError` del CLI en `ErrorProveedor("otro")`;
+  - `InterruptorClasificado` envuelve los modelos de Anthropic y Groq: límite → `limite_de_uso`, tiempo →
+    `timeout`, lo demás → `otro`, con solo la clase y el código HTTP, nunca el mensaje.
+- **Pruebas:** `jcs-python-ts.test.ts` (desde el crudo, en los dos proyectos) · `test_canonico.py` (el crudo llega
+  sin normalizar) · `contrato-y-carga.test.ts` (2 de M-22) · `validador.test.ts` (5 de M-23) · `test_lotes.py`
+  (excepción no clasificada) · `test_adaptador_simulado.py` (interruptor y CLI ausente). Vitest 2092 · pytest 145
+  (96 % de cobertura) · ruff limpio.
+
+#### Demos en rojo de la deuda (regla 15)
+
+| Gate | Cambio deliberado | Rojo | Al revertir |
+|---|---|---|---|
+| M-13 contrato JCS desde el crudo | el fixture nuevo contra el `jcs.ts` sin NFC | 4 fallan (2 casos × 2 proyectos) | 110/110 |
+| M-22 sellar y verificar | las pruebas nuevas contra el `cargar.ts` anterior | 2 fallan | 9/9 |
+| M-23 señales no declaradas | las pruebas nuevas destaparon el mismo defecto en la base de las viejas | 5 fallan hasta declarar la señal | 64/64 |
+| M-9 trazas a salvo | sin `escribir()` en el `except` de `lotes.py` | 1 falla | 1/1 |
+
+### Punto de retoma (2026-10-01, compactación pedida por el usuario)
+
+Commit de la deuda hecho (ver `git log`), sin push. La rama lleva `239ebdf` (P7), `d283c0e` (paquete) y el de la
+deuda sin subir; el último push fue `defb8a7`. Siguiente, en orden:
+1. **M-12** (`constraints.txt` desde el venv validado + adenda al ADR-003 + la CI de Python instala con él).
+2. **AU-9:** no se construye sin decisión del usuario (desviación 50).
+3. **Corridas de fondo:** preguntar antes de gastar cuota; comprobar `LANGSMITH_API_KEY` sin imprimirla.
+4. **Mirada 4:** reconstruir y regenerar `docs/fidelidad/p4/`, porque las capturas son de antes del ADR-009 y dicen
+   «9 decisiones registradas» (ahora 10).
+5. **Job de calidad completo:**
+   - `pnpm test`, `typecheck`, `lint`, `build`, `verificar-export`, `diagrama:verificar` y `audit`;
+   - `test:e2e`, `paquete:vitrina` y `test:e2e:paquete`;
+   - `pytest`, ruff y `pip-audit`.
+6. Barrido de enlaces después del último `git add` → push → `gh pr checks 8` → DETENERSE con el gate de la fase 4.
+   Llevar al gate:
+   - la mirada 4 (primera línea: pregunta + ruta);
+   - las decisiones: AU-9 en el S2 o en el S3 (desviación 50), diagramador v0.4.0 ahora o en el S3
+     (desviación 45), y las corridas de fondo.
+
 ## Desviación del plan
 
 1. **El centinela «Worktrees prohibidos» no existe** en `ordenes/CLAUDE-md-para-app.md` (vive en el batch
@@ -925,6 +981,14 @@ copia es la vigente» salió en rojo en el job de calidad (desviación 45).
     como decía el plan: así el PR de contenido es una copia directa y el proyecto Playwright sirve `public/` igual que
     hoja-de-vida. El manifiesto va en la raíz del paquete. Las cargas RSC (`.txt`) no viajan (20 de 35 MB): la
     vitrina navega con `<a>` y el rastreo comprueba que ninguna página las pide.
+50. **AU-9 (sin proveedor, el caso va a una persona) no cabe sin cambiar el plan:** hoy un error del proveedor sale
+    del grafo (`_llamar` relanza) y el caso queda con traza parcial, sin decisión. Para que vaya a `pausa_humana` con
+    motivo `proveedor_no_disponible`, el grafo necesita una arista nueva, y por la regla 2 toda arista condicional se
+    declara en el plan: plan v1.4 (una regla sobre `error_proveedor`), nodos que atrapen el error y escriban la
+    señal, y el grafo compilado, el mapa y «diagrama = grafo» con otra forma. RF-09.2 sobre las corridas viejas no
+    cambiaría (la regla es falsa donde no hubo error). Es el mismo tipo de cambio que M-18, que se pasó al S3. Se
+    deja para la decisión del usuario en el gate de la fase 4: hacerlo en el S2, antes de las corridas de fondo, o
+    en el S3.
 
 ## Registro de miradas
 

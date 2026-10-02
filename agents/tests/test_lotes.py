@@ -121,6 +121,35 @@ def test_un_esquema_invalido_aislado_se_reintenta_y_queda_registrado(tmp_path: P
     assert extractor["reintentos_esquema"] == 1
 
 
+class _Excepcion(RespondedorSimulado):
+    """Una excepción que nadie clasificó (un fallo de red, un bug) en la llamada `en` de la sesión."""
+
+    llamadas = 0
+    en = 4
+
+    def __call__(self, peticion: dict[str, Any]) -> Any:
+        type(self).llamadas += 1
+        if type(self).llamadas == self.en:
+            raise ConnectionError("simulado")
+        return super().__call__(peticion)
+
+
+def test_una_excepcion_no_clasificada_no_se_lleva_las_trazas(tmp_path: Path, monkeypatch) -> None:
+    """M-9: el caso terminado queda escrito, la sesión «detenida por excepción», el en curso pendiente."""
+    monkeypatch.setattr(lotes, "RespondedorSimulado", type("E", (_Excepcion,), {"llamadas": 0}))
+    with pytest.raises(ConnectionError):
+        _lote(tmp_path, n=5)
+    m, _, trazas = leer_corrida(tmp_path / "c")
+    assert m["casos_ejecutados"] == ["A-001"]
+    assert m["sesiones"][0]["detenida_por"] == "excepcion"
+    assert list(trazas) == ["A-001"]
+    assert verificar_corrida(tmp_path / "c") == []
+    # La sesión siguiente retoma desde A-002 sin duplicar.
+    monkeypatch.setattr(lotes, "RespondedorSimulado", RespondedorSimulado)
+    r = _lote(tmp_path, n=1)
+    assert r.ejecutados == ["A-002"]
+
+
 def test_otro_error_no_se_reintenta_y_deja_traza_parcial(tmp_path: Path, monkeypatch) -> None:
     falla = type("F", (_Falla,), {"llamadas": 0, "tipo": "otro", "en": 1, "veces": 1})
     monkeypatch.setattr(lotes, "RespondedorSimulado", falla)

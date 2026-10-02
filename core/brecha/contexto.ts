@@ -144,6 +144,17 @@ export interface VistaEvaluable {
   ctx: Contexto;
 }
 
+/** Lo que el contexto de una sesión expone a los detectores de ámbito `sesion` (M-14). */
+export const CLAVES_DE_SESION = [
+  "todos",
+  "limites_alcanzados",
+  "detenida_por",
+  "casos_ejecutados",
+] as const;
+
+/** Las funciones que una condición puede llamar: las que `contextoDeObjeto` registra. */
+export const FUNCIONES_DE_CONDICION = ["identificador_sintetico"] as const;
+
 /**
  * Vistas de las sesiones de una corrida para los detectores de ámbito `sesion` (M-14): el id es `sesion-N` y el
  * contexto expone `todos` (como el de caso), `limites_alcanzados`, `detenida_por` y `casos_ejecutados` (cuántos
