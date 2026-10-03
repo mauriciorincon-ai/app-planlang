@@ -286,10 +286,15 @@ describe("cómo se lee cada estado que el verificador puede dar (no solo los de 
       texto: "Refuted",
       clase: "no-cumple",
     });
-    expect(m.estadoDeSupuesto("raro", "es")).toEqual({
-      texto: "Sin probar",
-      clase: "beta",
-    });
+    // Un estado que el vocabulario no conoce no se lee como «Sin probar» en silencio: detiene el build (AU-S2-16).
+    expect(m.estadoDeSupuesto(undefined, "es").texto).toBe("Sin probar");
+    expect(() => m.estadoDeSupuesto("raro", "es")).toThrow(
+      "«raro» no tiene su entrada en ESTADO_SUPUESTO",
+    );
+    expect(() => m.estadoDeRiesgo("raro", "es")).toThrow("ESTADO_RIESGO");
+    expect(() => m.estadoDeCriterio("raro", "es", "informe")).toThrow(
+      "ESTADO_CRITERIO",
+    );
     expect(m.estadoDeCriterio("incumple", "es")).toEqual({
       texto: "No cumplió",
       clase: "no-cumple",
@@ -311,6 +316,9 @@ describe("cómo se lee cada estado que el verificador puede dar (no solo los de 
     });
     expect(m.prioridad(r({}), "en")).toEqual({ barras: 2, texto: "AP medium" });
     expect(m.prioridad(undefined, "es")).toEqual({ barras: 0, texto: "" });
+    expect(() =>
+      m.prioridad(r({ prioridad_de_accion: "urgente" }), "es"),
+    ).toThrow("«urgente» no tiene su entrada en PRIORIDAD_ACCION");
     expect(m.rangoDePrioridad(r({ prioridad_de_accion: "baja" }))).toBe(1);
     expect(m.rangoDePrioridad(undefined)).toBe(0);
     expect(m.controlLegal(r({}), "es")).toBeNull();
@@ -327,5 +335,20 @@ describe("cómo se lee cada estado que el verificador puede dar (no solo los de 
         "en",
       ),
     ).toBe("legal control (table: low)");
+  });
+});
+
+describe("C-7: la vitrina dibuja una pausa humana; con más, se detiene nombrándolo", () => {
+  it("un plan con dos pausas no se publica mostrando solo la primera", async () => {
+    const d = await datosDemo();
+    const otro = { ...d, plan: structuredClone(d.plan) };
+    const cg = otro.plan.contrato_de_grafo;
+    cg.pausas_humanas = [...cg.pausas_humanas, { ...cg.pausas_humanas[0]! }];
+    expect(() => vistaPlan(otro, "es")).toThrow(
+      "el contrato de grafo del plan trae 2 pausas humanas y la página dibuja una",
+    );
+    const sin = { ...d, plan: structuredClone(d.plan) };
+    sin.plan.contrato_de_grafo.pausas_humanas = [];
+    expect(() => vistaPlan(sin, "es")).toThrow("no declara pausa humana");
   });
 });

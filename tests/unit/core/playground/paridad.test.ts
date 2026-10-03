@@ -16,6 +16,7 @@ import {
 } from "@core/playground/compactar";
 import type { Compacto } from "@core/playground/compacto";
 import {
+  casosQueReproducen,
   consecuencias,
   observados,
   umbralesDelPlan,
@@ -560,5 +561,23 @@ describe("AU-S2-B45: una propuesta adversa sin persona es un error, nunca una re
     const cambio = r.cambios.find((k) => k.id === negado.id);
     expect(cambio?.ahora).toBe("solo");
     expect(cambio?.efecto).toBe("error_introducido");
+  });
+});
+
+describe("C-2: la comprobación «N de N casos reproducen su camino» se calcula", () => {
+  it("con los umbrales del plan, los veinte reproducen el camino registrado", async () => {
+    const { c } = await base();
+    expect(casosQueReproducen(c)).toBe(c.casos.length);
+  });
+
+  it("un caso cuya rama registrada no es la que da la regla baja la cuenta", async () => {
+    const { c } = await base();
+    const otro = structuredClone(c);
+    const caso = otro.casos.find((k) =>
+      k.visitas.some((v) => otro.nodos_jugables.includes(v.desde)),
+    )!;
+    const v = caso.visitas.find((x) => otro.nodos_jugables.includes(x.desde))!;
+    v.rama = `${v.rama}-otra`;
+    expect(casosQueReproducen(otro)).toBe(c.casos.length - 1);
   });
 });

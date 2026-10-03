@@ -26,7 +26,11 @@ import {
   FICHA,
   PLAN_POR_NODO,
 } from "@/textos/agente";
-import { LECTURA_NOTA, PASO_FUERA } from "@/textos/brecha";
+import * as TEXTOS_BRECHA from "@/textos/brecha";
+import { LECTURA_NOTA, PASO_FUERA, RESUMEN, SECCIONES } from "@/textos/brecha";
+import { APP } from "@/textos/fichas";
+import { NUMERO_EN_PALABRAS } from "@/textos/plan-comun";
+import { PANTALLAS } from "@/lib/ruta";
 
 const DIR = "src/textos";
 
@@ -226,5 +230,34 @@ describe("4 · lo que la copia dice de la corrida de 200 es cierto (AU-S2-5)", (
     expect(inf.supuestos.find((s) => s.id === "S1")?.estado).toBe("confirmado");
     // «entra a la vitrina en el sprint 3»: la vitrina publica otra corrida.
     expect(d.manifiesto.corrida.ruta).not.toBe(RUTA);
+  });
+});
+
+describe("5 · los conteos que la copia escribe en palabras son los del dato (C-10)", () => {
+  it("«siete pantallas»: las pantallas de la vitrina", () => {
+    const papel = APP.stack.find((x) =>
+      x.nombre.es.startsWith("Next.js"),
+    )!.papel;
+    const n = NUMERO_EN_PALABRAS[PANTALLAS.length]!;
+    expect(papel.es).toContain(`${n.es} pantallas`);
+    expect(papel.en).toContain(`${n.en} screens`);
+  });
+
+  it("«las 9 secciones»: las secciones del informe que la página numera", () => {
+    const n = Object.keys(SECCIONES).length;
+    const citados = [
+      ...JSON.stringify(TEXTOS_BRECHA).matchAll(
+        /(?:las|the|report’s) (\d+) (?:secciones|sections)/gi,
+      ),
+    ].map((m) => Number(m[1]));
+    expect(citados.length).toBeGreaterThan(0);
+    for (const c of citados) expect(c).toBe(n);
+  });
+
+  it("«los tres criterios más relevantes»: los que el informe destaca", () => {
+    const w =
+      NUMERO_EN_PALABRAS[d.informe.resumen.criterios_destacados.length]!;
+    expect(RESUMEN.destacados.es).toContain(`Los ${w.es} criterios`);
+    expect(RESUMEN.destacados.en).toContain(`The ${w.en} most relevant`);
   });
 });

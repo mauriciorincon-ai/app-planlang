@@ -10,6 +10,7 @@ import { cx } from "../cx";
 import { Icono } from "../icono";
 import { VerMas } from "../ver-mas";
 import { Definiciones, RefNodo } from "./piezas";
+import { delVocabulario } from "@/lib/vista/vocabulario";
 
 /**
  * Cómo se reparte el ancho entre las tres columnas de cada nodo y cuáles van en la mono (tiempos, costos,
@@ -49,6 +50,8 @@ const PRESENTACION: Record<string, { cols: string; mono: number[] }> = {
     mono: [0, 2],
   },
 };
+
+const PRESENTACION_DONDE = "PRESENTACION (src/components/agente/trazas.tsx)";
 
 const MONO = "font-mono text-dato leading-[1.4] text-tinta-2";
 
@@ -123,7 +126,7 @@ function Fila({
   /** Los nombres de las columnas (caso, tipo y las del nodo): el lector los oye en cada celda (AU-S2-15). */
   columnas: readonly string[];
 }) {
-  const p = PRESENTACION[nodo] ?? { cols: "", mono: [] };
+  const p = delVocabulario(PRESENTACION, nodo, PRESENTACION_DONDE);
   // La fila es un `<summary>` desplegable: no admite roles de tabla, así que cada celda dice su columna al lector.
   const col = (k: number) => <span className="sr-only">{columnas[k]}: </span>;
   return (
@@ -198,7 +201,7 @@ export function TablaTrazas({
   chip: ReactNode;
 }) {
   const t = panel.trazas;
-  const p = PRESENTACION[panel.nombre] ?? { cols: "", mono: [] };
+  const p = delVocabulario(PRESENTACION, panel.nombre, PRESENTACION_DONDE);
   const vistas = t.filas.slice(0, t.visibles);
   const resto = t.filas.slice(t.visibles);
   const fila = (f: FilaTraza) => (

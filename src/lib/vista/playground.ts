@@ -203,7 +203,15 @@ export function vistaPlayground(d: DatosDemo, i: Idioma): VistaPlayground {
       throw new Error(
         `playground: el umbral booleano ${u.id} no tiene sus textos en INTERRUPTOR (src/textos/playground.ts).`,
       );
-  const decisiones = inf.contrato_de_grafo.rf_09_2[0]?.visitas ?? 0;
+  // Las decisiones de la corrida que el playground recalcula, buscada por su id y no por la posición (C-6).
+  const deLaCorrida = inf.contrato_de_grafo.rf_09_2.find(
+    (r) => r.corrida_id === inf.corrida_id,
+  );
+  if (!deLaCorrida)
+    throw new Error(
+      `playground: el informe no trae la prueba cruzada RF-09.2 de su propia corrida (${inf.corrida_id})`,
+    );
+  const decisiones = deLaCorrida.visitas;
   const v = versionCorta(
     inf.ficha_reproducibilidad.corrida.plan_de_ejecucion.version,
   );

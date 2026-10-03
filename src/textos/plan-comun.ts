@@ -2,9 +2,13 @@
  * Cómo nombra la vitrina los estados que calcula el verificador y los atributos del plan (P2 Plan, P3 Agente,
  * P4 Brecha). Sin símbolos de texto: la marca de cada estado se DIBUJA (`Veredicto`, design-system § 5).
  */
+import type { EstadoCriterio } from "@core/brecha/criterios";
+import type { EstadoRiesgo } from "@core/brecha/detectores";
+import type { EstadoSupuesto } from "@core/brecha/supuestos";
 import { tb, type TextoBilingue } from "@core/formatos/bilingue";
 
-export const ESTADO_CRITERIO: Record<string, TextoBilingue> = {
+/** Tipados por las uniones del núcleo: un estado nuevo del verificador sin su texto no compila (AU-S2-16). */
+export const ESTADO_CRITERIO: Record<EstadoCriterio, TextoBilingue> = {
   cumple: tb("Cumplió", "Met"),
   incumple: tb("No cumplió", "Not met"),
   incompleto: tb("Incompleto", "Incomplete"),
@@ -14,13 +18,13 @@ export const ESTADO_CRITERIO: Record<string, TextoBilingue> = {
 };
 
 /** En el informe (P4 Brecha) el criterio se lee en presente, como su veredicto: «Cumple», «No cumple». */
-export const ESTADO_CRITERIO_INFORME: Record<string, TextoBilingue> = {
+export const ESTADO_CRITERIO_INFORME: Record<EstadoCriterio, TextoBilingue> = {
   ...ESTADO_CRITERIO,
   cumple: tb("Cumple", "Meets"),
   incumple: tb("No cumple", "Does not meet"),
 };
 
-export const ESTADO_RIESGO: Record<string, TextoBilingue> = {
+export const ESTADO_RIESGO: Record<EstadoRiesgo, TextoBilingue> = {
   ocurrio: tb("Ocurrió", "Occurred"),
   no_ocurrio: tb("No ocurrió", "Did not occur"),
   indeterminado: tb("Indeterminado", "Undetermined"),
@@ -36,7 +40,7 @@ export const CRITICIDAD: Record<string, TextoBilingue> = {
   baja: tb("criticidad baja", "low criticality"),
 };
 
-export const ESTADO_SUPUESTO: Record<string, TextoBilingue> = {
+export const ESTADO_SUPUESTO: Record<EstadoSupuesto, TextoBilingue> = {
   confirmado: tb("Confirmado", "Confirmed"),
   refutado: tb("Refutado", "Refuted"),
   sin_probar: tb("Sin probar", "Untested"),

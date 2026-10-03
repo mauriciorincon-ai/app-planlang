@@ -10,6 +10,7 @@ import { APAGADO, ENCENDIDO } from "@/textos/plan-comun";
 import { REPRODUCIBILIDAD as R } from "@/textos/reproducibilidad";
 import type { Fila } from "./agente";
 import { numeroDato } from "./formato";
+import { delVocabulario } from "./vocabulario";
 
 /** Dónde se pinta: cambian dos rótulos y P7 suma el entorno. */
 export type DondeFicha = "brecha" | "fichas";
@@ -33,7 +34,11 @@ export function filasDeReproducibilidad(
   const igualesAlPlan =
     JSON.stringify(f.umbrales_aplicados) ===
     JSON.stringify(f.umbrales_del_plan);
-  const variante = VARIANTE[f.corrida.variante]?.[i] ?? f.corrida.variante;
+  const variante = delVocabulario(
+    VARIANTE,
+    f.corrida.variante,
+    "VARIANTE (src/textos/brecha.ts)",
+  )[i];
   const proveedor =
     f.corrida.proveedor === "suscripcion"
       ? R.suscripcion[i]

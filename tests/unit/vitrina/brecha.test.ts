@@ -209,3 +209,17 @@ describe("una lectura editorial que falta detiene el build", () => {
     );
   });
 });
+
+describe("AU-S2-16: el tope de aclaraciones sale de la regla del plan, nunca de un «0»", () => {
+  it("sin la regla que aplica el tope, la vista se detiene nombrándola", async () => {
+    const d = await datosDemo();
+    const otro = { ...d, plan: structuredClone(d.plan) };
+    otro.plan.contrato_de_grafo.aristas_condicionales =
+      otro.plan.contrato_de_grafo.aristas_condicionales.filter(
+        (a) => !("senal" in a && a.senal === "ciclos_aclaracion"),
+      );
+    expect(() => vistaBrecha(otro, "es")).toThrow(
+      "el plan no tiene una regla «tope» que lea un umbral declarado",
+    );
+  });
+});

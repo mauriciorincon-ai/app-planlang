@@ -9,6 +9,7 @@ import type { ResultadoCriterio } from "@core/brecha/criterios";
 import type { ResultadoRiesgo } from "@core/brecha/detectores";
 import type { BrechaNoPrevista } from "@core/brecha/brechas-no-previstas";
 import type { ResultadoSupuesto } from "@core/brecha/supuestos";
+import type { CategoriaBrecha } from "@core/brecha/brechas-no-previstas";
 import { SENAL_DE_CONFIANZA } from "@core/brecha/contexto";
 import { mediana, numCorto } from "@core/brecha/numeros";
 import { compactar } from "@core/playground/compactar";
@@ -17,6 +18,8 @@ import { consecuencias, umbralesDelPlan } from "@core/playground/consecuencias";
 import type { Plan } from "@core/plan/esquema";
 import type { DatosDemo } from "@/lib/datos/vitrina";
 import { ruta } from "@/lib/ruta";
+import { umbralDeCategoria } from "./motivo-pausa";
+import { delVocabulario } from "./vocabulario";
 import { conPlan } from "./plan-en-texto";
 import {
   BALANCE,
@@ -811,16 +814,9 @@ export function vistaBrecha(d: DatosDemo, i: Idioma): VistaBrecha {
           : {
               cifra: X(BALANCE.noPrevisto.fallas(brechas.length), i),
               ids: [...porCategoria.keys()]
-                .map((c) => {
-                  const t = (CATEGORIA_CORTA as Record<string, TextoBilingue>)[
-                    c
-                  ];
-                  if (!t)
-                    throw new Error(
-                      `vitrina: la categoría de brecha «${c}» no tiene nombre corto en src/textos/brecha.ts (CATEGORIA_CORTA)`,
-                    );
-                  return X(t, i);
-                })
+                // La categoría ya pasó por LECTURA_BRECHA, que detiene el build si no la conoce; el tipo de
+                // CATEGORIA_CORTA exige un nombre corto por cada categoría del núcleo.
+                .map((c) => X(CATEGORIA_CORTA[c as CategoriaBrecha], i))
                 .join(", "),
               href: "#f-np",
             },
@@ -1812,7 +1808,11 @@ function filaBrecha(
   ];
   const nodo =
     nodos.length === 1
-      ? (NODO_EN_FRASE[nodos[0]!] ?? { es: nodos[0]!, en: nodos[0]! })
+      ? delVocabulario(
+          NODO_EN_FRASE,
+          nodos[0]!,
+          "NODO_EN_FRASE (src/textos/brecha.ts)",
+        )
       : { es: nodos.join(", "), en: nodos.join(", ") };
   const deRegla = evaluadores.filter(
     (e) => e.tipo === "regla" && e.estado === "ejecutado",
@@ -2139,7 +2139,6 @@ function vistaSupuesto(
     throw new Error(
       `vitrina: el informe marca ${s.id} «${s.estado}» y Brecha no tiene su lectura (src/textos/brecha.ts, SUPUESTOS.dio).`,
     );
-  const u3 = plan.umbrales.find((u) => u.senal === "ciclos_aclaracion");
   let texto: TextoBilingue;
   let medidas: Fila[] = [];
   let grafico: SupuestoVista["grafico"] = null;
@@ -2287,10 +2286,12 @@ function vistaSupuesto(
       n: s.n,
     };
   } else {
-    texto = dio({
-      n: s.n,
-      u: typeof u3?.valor_en_plan === "number" ? u3.valor_en_plan : 0,
-    });
+    // El tope de aclaraciones lo dice la regla del plan que lo aplica; sin ella, la página no inventa un «0»
+    // (AU-S2-16).
+    const tope = umbralDeCategoria(plan, "tope");
+    // Un tope que no sea número no llega aquí: el intérprete de aristas lo rechaza al compactar las señales.
+    const topeValor = tope.valor_en_plan as number;
+    texto = dio({ n: s.n, u: topeValor });
     medidas = Object.entries(s.metricas).map(([k, v]) => ({
       k: k === "tasa" ? X(SUPUESTOS.tasa, i) : k,
       v: `${v === null ? "—" : numeroDato(v, i)} · n = ${s.n}`,
@@ -2310,12 +2311,7 @@ function vistaSupuesto(
             }),
             i,
           ),
-          texto: X(
-            SUPUESTOS.cerradosNota(
-              typeof u3?.valor_en_plan === "number" ? u3.valor_en_plan : 0,
-            ),
-            i,
-          ),
+          texto: X(SUPUESTOS.cerradosNota(topeValor), i),
         },
         { cifra: porcentaje(minimo, i), texto: X(SUPUESTOS.pideElPlan, i) },
       ],

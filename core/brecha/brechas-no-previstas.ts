@@ -7,6 +7,10 @@
  * Los evaluadores de tipo `regla` que el plan exige se implementan aquí como reglas del mismo
  * mini-lenguaje (registro cerrado, como las funciones de arista); un evaluador sin implementación o un
  * juez requerido que no corrió se reporta, no se omite.
+ *
+ * Límite conocido (auditoría del S2, C-12): el nodo al que se atribuye cada falla (`nodo`) nombra nodos del demo A.
+ * Sacarlo del núcleo exige que el plan declare el nodo responsable de cada evaluador (`evaluadores_requeridos`), un
+ * cambio de esquema del plan con su versión del verificador y sus goldens: deuda del S3, con el demo B.
  */
 import type { TextoBilingue } from "../formatos/bilingue";
 import type { Traza } from "../formatos/traza";

@@ -280,6 +280,17 @@ export function medirCriterio(
   };
 }
 
+/**
+ * Cuántos casos reproducen, con los umbrales del plan, el camino que registró el agente en los nodos que el
+ * playground recalcula: la comprobación que la vitrina afirma, calculada y no supuesta (C-2). Con el plan en sus
+ * valores todo caso debería reproducirse (RF-09.2); un caso que no lo hace baja la cuenta.
+ */
+export function casosQueReproducen(c: Compacto): number {
+  const delPlan = umbralesDelPlan(c);
+  return c.casos.filter((caso) => desvioDe(c, caso, delPlan, delPlan) === null)
+    .length;
+}
+
 export function consecuencias(c: Compacto, umbrales: Umbrales): Consecuencias {
   const delPlan = umbralesDelPlan(c);
   const movidos = c.umbrales

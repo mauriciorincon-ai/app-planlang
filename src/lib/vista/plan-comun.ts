@@ -14,6 +14,14 @@ import {
   PRIORIDAD_ACCION,
   TABLA,
 } from "@/textos/plan-comun";
+import { delVocabulario } from "./vocabulario";
+
+/**
+ * Renglones que se ven de entrada en cada lista larga (las secciones de P2, las trazas de cada nodo de P3); el resto
+ * va tras «Ver N más» (maqueta: 5 decisiones, 5 riesgos, 5 criterios, 5 trazas). Es un parámetro de lectura, no del
+ * dato: la lista muestra todos los que haya (C-4).
+ */
+export const VISIBLES = 5;
 
 export type ClaseDeEstado = "cumple" | "alerta" | "no-cumple" | "beta";
 export interface EstadoMedido {
@@ -38,8 +46,14 @@ export function prioridad(
   ri: RiesgoDelInforme | undefined,
   i: Idioma,
 ): { barras: number; texto: string } {
-  const p = ri?.prioridad_de_accion ?? "";
-  return { barras: BARRAS[p] ?? 0, texto: PRIORIDAD_ACCION[p]?.[i] ?? "" };
+  // Sin informe del riesgo no hay prioridad que dibujar; una prioridad que el vocabulario no conoce detiene el build.
+  if (!ri) return { barras: 0, texto: "" };
+  const p = ri.prioridad_de_accion;
+  const donde = "PRIORIDAD_ACCION (src/textos/plan-comun.ts)";
+  return {
+    barras: delVocabulario(BARRAS, p, donde),
+    texto: delVocabulario(PRIORIDAD_ACCION, p, donde)[i],
+  };
 }
 
 /** Orden de prioridad (mayor primero) para ordenar riesgos. */
@@ -57,10 +71,11 @@ export function controlLegal(
 ): string | null {
   if (!ri?.control_legal) return null;
   if (ri.prioridad_de_tabla === ri.prioridad_de_accion) return CONTROL_LEGAL[i];
-  const tabla = PRIORIDAD_ACCION[ri.prioridad_de_tabla]?.[i].replace(
-    /^AP /,
-    "",
-  );
+  const tabla = delVocabulario(
+    PRIORIDAD_ACCION,
+    ri.prioridad_de_tabla,
+    "PRIORIDAD_ACCION (src/textos/plan-comun.ts)",
+  )[i].replace(/^AP /, "");
   return `${CONTROL_LEGAL[i]} (${TABLA[i]}: ${tabla})`;
 }
 
@@ -69,7 +84,11 @@ export function estadoDeRiesgo(
   i: Idioma,
 ): EstadoMedido {
   return {
-    texto: (ESTADO_RIESGO[estado ?? ""] ?? ESTADO_RIESGO.indeterminado!)[i],
+    texto: delVocabulario(
+      ESTADO_RIESGO,
+      estado ?? "indeterminado",
+      "ESTADO_RIESGO (src/textos/plan-comun.ts)",
+    )[i],
     clase:
       estado === "no_ocurrio"
         ? "cumple"
@@ -84,7 +103,11 @@ export function estadoDeSupuesto(
   i: Idioma,
 ): EstadoMedido {
   return {
-    texto: (ESTADO_SUPUESTO[estado ?? ""] ?? ESTADO_SUPUESTO.sin_probar!)[i],
+    texto: delVocabulario(
+      ESTADO_SUPUESTO,
+      estado ?? "sin_probar",
+      "ESTADO_SUPUESTO (src/textos/plan-comun.ts)",
+    )[i],
     clase:
       estado === "confirmado"
         ? "cumple"
@@ -112,7 +135,11 @@ export function estadoDeCriterio(
 ): EstadoMedido {
   const m = voz === "informe" ? ESTADO_CRITERIO_INFORME : ESTADO_CRITERIO;
   return {
-    texto: (m[estado ?? ""] ?? m.indeterminado!)[i],
+    texto: delVocabulario(
+      m,
+      estado ?? "indeterminado",
+      "ESTADO_CRITERIO (src/textos/plan-comun.ts)",
+    )[i],
     clase:
       estado === "cumple"
         ? "cumple"
@@ -120,4 +147,29 @@ export function estadoDeCriterio(
           ? "no-cumple"
           : "alerta",
   };
+}
+
+/**
+ * La pausa humana que dibuja la vitrina: el plan declara una (el nodo `interrupt` del demo A) y cada caso pausa a lo
+ * sumo una vez. Con más de una, la página no muestra la primera y calla las demás: se detiene nombrándolo (C-7).
+ */
+export function pausaUnica<T>(
+  pausas: readonly T[],
+  donde: string,
+): T | undefined {
+  if (pausas.length > 1)
+    throw new Error(
+      `vitrina: ${donde} trae ${pausas.length} pausas humanas y la página dibuja una; hace falta su presentación.`,
+    );
+  return pausas[0];
+}
+
+/** La pausa del plan, que la regla dura 4 exige: sin ella, ni una página. */
+export function pausaDelPlan<T>(pausas: readonly T[]): T {
+  const p = pausaUnica(pausas, "el contrato de grafo del plan");
+  if (p === undefined)
+    throw new Error(
+      "vitrina: el contrato de grafo no declara pausa humana (regla dura 4): la vitrina no lo publica.",
+    );
+  return p;
 }

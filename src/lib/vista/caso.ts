@@ -39,6 +39,7 @@ import {
   PIE_CASO,
 } from "@/textos/caso";
 import { decimal, entero, enumerar } from "./formato";
+import { pausaUnica } from "./plan-comun";
 import {
   categoriaDeRegla,
   reglaDeLaPausa,
@@ -123,6 +124,13 @@ export interface VistaCaso {
 }
 
 const X = (t: TextoBilingue, i: Idioma) => t[i];
+
+/** Un nodo de la traza que no está en el grafo publicado ni trae su tipo: la página no lo dibuja sin glifo (AU-S2-16). */
+function sinTipo(nodo: string): never {
+  throw new Error(
+    `vitrina: el nodo «${nodo}» de la traza no está en el grafo de la corrida ni trae su tipo`,
+  );
+}
 
 /** El documento de decisión adversa como lo escribe el grafo (`planlang-documento-adverso/v1`). */
 const OPERADOR: Record<string, string> = {
@@ -351,7 +359,10 @@ export function vistaCaso(d: DatosDemo, id: string, i: Idioma): VistaCaso {
         hizo = X(
           HIZO.pausa(
             decisionTb(
-              String(t.pausas_humanas[0]?.respuesta_simulada.decision),
+              String(
+                pausaUnica(t.pausas_humanas, `el caso ${t.caso_id}`)
+                  ?.respuesta_simulada.decision,
+              ),
             ),
           ),
           i,
@@ -387,7 +398,7 @@ export function vistaCaso(d: DatosDemo, id: string, i: Idioma): VistaCaso {
     return {
       n: p.orden,
       nodo,
-      tipo: tipoDe.get(nodo) ?? p.tipo_nodo ?? "",
+      tipo: tipoDe.get(nodo) ?? p.tipo_nodo ?? sinTipo(nodo),
       medida:
         tokens > 0
           ? X(
@@ -417,7 +428,7 @@ export function vistaCaso(d: DatosDemo, id: string, i: Idioma): VistaCaso {
   });
 
   // ── el relato ────────────────────────────────────────────────────────────────────────────────────
-  const pausa = t.pausas_humanas[0];
+  const pausa = pausaUnica(t.pausas_humanas, `el caso ${t.caso_id}`);
   const motivoPausa = (): TextoBilingue =>
     textoDeCategoria(
       MOTIVO,
@@ -610,7 +621,7 @@ export function vistaCaso(d: DatosDemo, id: string, i: Idioma): VistaCaso {
       sub: X(HACE.pasos(t.pasos.length), i),
       nodos: t.nodos_visitados.map((n) => ({
         nombre: n,
-        tipo: tipoDe.get(n) ?? "",
+        tipo: tipoDe.get(n) ?? sinTipo(n),
       })),
       relato: relato.join(" "),
     },

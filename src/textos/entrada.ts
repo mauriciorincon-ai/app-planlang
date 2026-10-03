@@ -6,6 +6,8 @@
  */
 import { tb, type TextoBilingue } from "@core/formatos/bilingue";
 
+type Plantilla<P> = (p: P) => TextoBilingue;
+
 export const TITULO_PAGINA = tb(
   "planlang · Planeé, construí y medí la brecha",
   "planlang · I planned, I built, and I measured the gap",
@@ -329,4 +331,134 @@ export const SOSTIENE = {
       "LangChain, State of Agent Engineering (2025): 1,340 responses, Nov–Dec 2025; 89% have observability and 52% run evaluations. The survey does not ask whether what to evaluate was planned.",
     ),
   },
+};
+
+/** Formas en singular y plural de lo que la entrada cuenta («1 falla», «3 fallas»). */
+export const FORMAS = {
+  falla: { uno: tb("falla", "failure"), varios: tb("fallas", "failures") },
+  supuestoSinProbar: {
+    uno: tb("supuesto sin probar", "assumption untested"),
+    varios: tb("supuestos sin probar", "assumptions untested"),
+  },
+  corrida: { uno: tb("corrida", "run"), varios: tb("corridas", "runs") },
+  decision: {
+    uno: tb("decisión", "decision"),
+    varios: tb("decisiones", "decisions"),
+  },
+  diferencia: {
+    uno: tb("diferencia", "difference"),
+    varios: tb("diferencias", "differences"),
+  },
+};
+
+/**
+ * Las frases que la entrada arma con cifras del informe, redactadas enteras en cada idioma (AU-S2-B18): las cifras
+ * llegan ya con el formato del idioma de la página.
+ */
+export const ARMADO = {
+  agentePie: ((p: { sprint: number; piezas: string }) =>
+    tb(
+      `el agente del sprint ${p.sprint} · ${p.piezas} piezas`,
+      `the sprint ${p.sprint} agent · ${p.piezas} pieces`,
+    )) as Plantilla<{ sprint: number; piezas: string }>,
+  fallo: ((p: { id: string; texto: string }) =>
+    tb(
+      `Falló ${p.id}: ${p.texto}`,
+      `${p.id} failed: ${p.texto}`,
+    )) as Plantilla<{
+    id: string;
+    texto: string;
+  }>,
+  ocurrio: ((p: { id: string; texto: string }) =>
+    tb(
+      `Ocurrió ${p.id}: ${p.texto}`,
+      `${p.id} occurred: ${p.texto}`,
+    )) as Plantilla<{
+    id: string;
+    texto: string;
+  }>,
+  noPrevisto: ((texto: string) =>
+    tb(
+      `Falló lo no previsto: ${texto}`,
+      `The unforeseen failed: ${texto}`,
+    )) as Plantilla<string>,
+  sinProbar: ((p: { id: string; texto: string }) =>
+    tb(
+      `Sin probar ${p.id}: ${p.texto}`,
+      `${p.id} untested: ${p.texto}`,
+    )) as Plantilla<{
+    id: string;
+    texto: string;
+  }>,
+  corridaCorta: ((v: string) =>
+    tb(`corrida ${v}`, `run ${v}`)) as Plantilla<string>,
+  criteriosCumplen: ((c: string) =>
+    tb(`${c} criterios cumplen`, `${c} criteria met`)) as Plantilla<string>,
+  riesgosOcurrieron: ((c: string) =>
+    tb(`${c} riesgos ocurrieron`, `${c} risks occurred`)) as Plantilla<string>,
+  criterios: ((c: string) =>
+    tb(`${c} criterios`, `${c} criteria`)) as Plantilla<string>,
+  riesgos: ((c: string) =>
+    tb(`${c} riesgos`, `${c} risks`)) as Plantilla<string>,
+  planYCorrida: ((p: { plan: string; ejecucion: string }) =>
+    p.plan === p.ejecucion
+      ? tb(`plan ${p.plan}`, `plan ${p.plan}`)
+      : tb(
+          `plan ${p.plan} · corrida con ${p.ejecucion}`,
+          `plan ${p.plan} · run with ${p.ejecucion}`,
+        )) as Plantilla<{ plan: string; ejecucion: string }>,
+  casosPorCorridas: ((p: { casos: number; por: string; lineaBase: boolean }) =>
+    tb(
+      `${p.casos} casos${p.por}${p.lineaBase ? " + línea base" : ""}`,
+      `${p.casos} cases${p.por}${p.lineaBase ? " + baseline" : ""}`,
+    )) as Plantilla<{ casos: number; por: string; lineaBase: boolean }>,
+  modeloSuscripcion: ((p: { modelo: string; lote: number }) =>
+    tb(
+      `${p.modelo} por la suscripción de Claude Code del autor, en lotes de ${p.lote} fuera de CI, con interruptor a una API por clave`,
+      `${p.modelo} through the author’s Claude Code subscription, in batches of ${p.lote} outside CI, with a switch to a keyed API`,
+    )) as Plantilla<{ modelo: string; lote: number }>,
+  modeloProveedor: ((p: { modelo: string; proveedor: string; lote: number }) =>
+    tb(
+      `${p.modelo} por ${p.proveedor}, en lotes de ${p.lote} fuera de CI`,
+      `${p.modelo} through ${p.proveedor}, in batches of ${p.lote} outside CI`,
+    )) as Plantilla<{ modelo: string; proveedor: string; lote: number }>,
+  etiquetaCuadros: ((p: {
+    n: number;
+    cumplen: number;
+    incumplidos: string[];
+  }) =>
+    tb(
+      `${p.n} criterios: ${p.cumplen} cumplen${p.incumplidos.length ? `, ${p.incumplidos.length} no cumplen (${p.incumplidos.join(", ")})` : ""}`,
+      `${p.n} criteria: ${p.cumplen} met${p.incumplidos.length ? `, ${p.incumplidos.length} not met (${p.incumplidos.join(", ")})` : ""}`,
+    )) as Plantilla<{ n: number; cumplen: number; incumplidos: string[] }>,
+  piePrueba: ((p: { corrida: string; casos: number; por: string }) =>
+    tb(
+      `${p.corrida} · ${p.casos} casos${p.por}`,
+      `${p.corrida} · ${p.casos} cases${p.por}`,
+    )) as Plantilla<{ corrida: string; casos: number; por: string }>,
+  fallasALaVista: ((p: { n: number; conteo: string }) =>
+    p.n === 0
+      ? tb("Ninguna falla", "No failures")
+      : tb(`${p.conteo} a la vista`, `${p.conteo} in view`)) as Plantilla<{
+    n: number;
+    conteo: string;
+  }>,
+  casosPorCorrida: ((lineaBase: boolean) =>
+    tb(
+      `casos por corrida${lineaBase ? ", más una línea base de agente único" : ""}`,
+      `cases per run${lineaBase ? ", plus a single-agent baseline" : ""}`,
+    )) as Plantilla<boolean>,
+  cruzada: ((p: {
+    diferencias: string;
+    decisiones: string;
+    corridas: string;
+  }) =>
+    tb(
+      `RF-09.2: el grafo (Python) y el playground (TypeScript) evalúan la misma regla del plan; ${p.diferencias} en ${p.decisiones} de ${p.corridas}`,
+      `RF-09.2: the graph (Python) and the playground (TypeScript) evaluate the same plan rule; ${p.diferencias} in ${p.decisiones} across ${p.corridas}`,
+    )) as Plantilla<{
+    diferencias: string;
+    decisiones: string;
+    corridas: string;
+  }>,
 };

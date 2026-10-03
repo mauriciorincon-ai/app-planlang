@@ -25,6 +25,7 @@ import {
   FICHA,
   GRAFO,
   MARCA_CORRIO,
+  MODO_ARISTA,
   MOTIVO_PAUSA,
   NODOS,
   CRITERIOS_EN_LA_CORRIDA,
@@ -42,18 +43,23 @@ import {
   VALORES,
   frasesDeCriterios,
   type CifrasDeNodo,
+  type ClaveActividad,
+  type ClavePuede,
 } from "@/textos/agente";
+import { CHIP_CORRIDA, FRACCION } from "@/textos/comun";
 import {
   APAGADO,
   ENCENDIDO,
-  ESTADO_SUPUESTO,
   INCLUSIVO,
   REVERSIBILIDAD,
 } from "@/textos/plan-comun";
 import { decimal, entero, enumerar, versionCorta } from "./formato";
 import {
+  VISIBLES,
   controlLegal,
   estadoDeCriterio,
+  pausaDelPlan,
+  pausaUnica,
   estadoDeRiesgo,
   estadoDeSupuesto,
   prioridad,
@@ -61,6 +67,7 @@ import {
   type RiesgoDelInforme,
 } from "./plan-comun";
 import { conPlan } from "./plan-en-texto";
+import { delVocabulario } from "./vocabulario";
 import { GRAMATICA, grafoParaMapa, lienzo, type Lienzo } from "./visor";
 import {
   CATEGORIAS,
@@ -175,6 +182,8 @@ export interface PanelNodo {
 }
 export interface PanelArista {
   id: string;
+  /** El id del umbral que la regla lee (U1 en el plan v1.3): el panel lo dice con el del plan. */
+  umbralId: string;
   titulo: string;
   rol: string;
   chip: string;
@@ -238,6 +247,8 @@ export interface VistaAgente {
 }
 
 const X = (t: TextoBilingue, i: Idioma) => t[i];
+const T_NODOS = "NODOS (src/textos/agente.ts)";
+const T_NODO = "TRAZAS_DE_NODO (src/textos/agente.ts)";
 
 /** El valor de un umbral como lo lee una persona: decimales con coma en español, booleanos en palabras. */
 export function valorDeUmbral(v: unknown, i: Idioma): string {
@@ -263,7 +274,6 @@ function visitas(t: Traza, nodo: string) {
 }
 
 export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
-  const es = i === "es";
   const trazas = d.corrida.trazas;
   const n = trazas.length;
   const casoDe = new Map<string, Caso>(d.lote.casos.map((c) => [c.id, c]));
@@ -396,7 +406,7 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
       aciertos: medidosS1,
       sinProbar: s1?.estado === "sin_probar",
     },
-    s2: X(ESTADO_SUPUESTO[s2?.estado ?? "sin_probar"]!, i).toLowerCase(),
+    s2: estadoDeSupuesto(s2?.estado, i).texto.toLowerCase(),
   });
   const cifrasDe = Object.fromEntries(
     Object.keys(NODOS).map((k) => [
@@ -414,29 +424,38 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
   const decisionFinal = (t: Traza) => senal(t, "decision_final");
   const aprobadas = trazas.filter((t) => decisionFinal(t) === "aprobar").length;
   const negadas = trazas.filter((t) => decisionFinal(t) === "negar").length;
-  const campos =
-    d.plan.contrato_de_grafo.pausas_humanas[0]?.payload_minimo.length ?? 0;
-  const cifrasActividad: TextoBilingue[] = [
-    CIFRAS_ACTIVIDAD.casos({ n: con("enrutador").length, de: n }),
-    CIFRAS_ACTIVIDAD.urgenciasExentos({ u: cE.urgencias, e: cE.exentos }),
-    CIFRAS_ACTIVIDAD.casos({ n: con("extractor").length }),
-    CIFRAS_ACTIVIDAD.preguntas({ casos: acl.length, preguntas: cE.preguntas }),
-    CIFRAS_ACTIVIDAD.sinModelo(con("verificador_cobertura").length),
-    CIFRAS_ACTIVIDAD.aPersona({
+  const campos = pausaDelPlan(d.plan.contrato_de_grafo.pausas_humanas)
+    .payload_minimo.length;
+  // Cifra y «corrió» por clave de actividad, no por posición (C-3): el tipo exige una por cada clave.
+  const cifrasActividad: Record<ClaveActividad, TextoBilingue> = {
+    clasifica: CIFRAS_ACTIVIDAD.casos({ n: con("enrutador").length, de: n }),
+    autorizaUrgencia: CIFRAS_ACTIVIDAD.urgenciasExentos({
+      u: cE.urgencias,
+      e: cE.exentos,
+    }),
+    lee: CIFRAS_ACTIVIDAD.casos({ n: con("extractor").length }),
+    pregunta: CIFRAS_ACTIVIDAD.preguntas({
+      casos: acl.length,
+      preguntas: cE.preguntas,
+    }),
+    revisaCobertura: CIFRAS_ACTIVIDAD.sinModelo(
+      con("verificador_cobertura").length,
+    ),
+    decide: CIFRAS_ACTIVIDAD.aPersona({
       n: trazas.filter((t) => senal(t, "pausa_humana") === true).length,
       de: n,
     }),
-    CIFRAS_ACTIVIDAD.documentos(cE.negaciones),
-  ];
-  const corrioActividad = [
-    con("enrutador").length > 0,
-    cE.urgencias + cE.exentos > 0,
-    con("extractor").length > 0,
-    acl.length > 0,
-    con("verificador_cobertura").length > 0,
-    con("decision").length > 0 && pausas.length > 0,
-    cE.negaciones > 0 && con("guardia_salida").length > 0,
-  ];
+    responde: CIFRAS_ACTIVIDAD.documentos(cE.negaciones),
+  };
+  const corrioActividad: Record<ClaveActividad, boolean> = {
+    clasifica: con("enrutador").length > 0,
+    autorizaUrgencia: cE.urgencias + cE.exentos > 0,
+    lee: con("extractor").length > 0,
+    pregunta: acl.length > 0,
+    revisaCobertura: con("verificador_cobertura").length > 0,
+    decide: con("decision").length > 0 && pausas.length > 0,
+    responde: cE.negaciones > 0 && con("guardia_salida").length > 0,
+  };
   const latencias = trazas.map((t) => Number(senal(t, "latencia_total_s")));
   const tokens = trazas.map((t) => Number(senal(t, "tokens")));
   const costos = trazas.map((t) =>
@@ -465,6 +484,20 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
         .filter((c) => c.tipo === "adversario")
         .map((c) => c.id)
         .slice(0, 1);
+  const cifrasPuede: Record<ClavePuede, TextoBilingue> = {
+    lee: CIFRAS_PUEDE.lee({
+      casos: con("extractor").length,
+      reintentos: delVocabulario(cifrasDe, "extractor", "las cifras por nodo")
+        .reintentos,
+    }),
+    pregunta: CIFRAS_PUEDE.pregunta({
+      preguntas: cE.preguntas,
+      casos: acl.length,
+    }),
+    cobertura: CIFRAS_PUEDE.cobertura(con("verificador_cobertura").length),
+    pausas: CIFRAS_PUEDE.pausas(pausas.length),
+    inyeccion: CIFRAS_PUEDE.inyeccion(enumerar(adversarios, i)),
+  };
 
   const ficha: VistaAgente["ficha"] = {
     objetivo: X(FICHA.objetivo.texto, i),
@@ -503,11 +536,11 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
       sub: X(FICHA.hace.sub(ACTIVIDADES.length), i),
       items: ACTIVIDADES.map((a, k) => ({
         n: k + 1,
-        titulo: X(a.titulo, i),
-        detalle: X(cifrasActividad[k]!, i),
+        titulo: XP(a.titulo),
+        detalle: X(cifrasActividad[a.clave], i),
         nodos: [...a.nodos],
         flecha: a.flecha === true,
-        corrio: corrioActividad[k],
+        corrio: corrioActividad[a.clave],
       })),
     },
     entrega: [
@@ -544,18 +577,9 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
       },
     ],
     leyenda: X(FICHA.leyenda({ n: ACTIVIDADES.length, casos: n, sprint }), i),
-    puede: [
-      CIFRAS_PUEDE.lee({
-        casos: con("extractor").length,
-        reintentos: cifrasDe.extractor!.reintentos,
-      }),
-      CIFRAS_PUEDE.pregunta({ preguntas: cE.preguntas, casos: acl.length }),
-      CIFRAS_PUEDE.cobertura(con("verificador_cobertura").length),
-      CIFRAS_PUEDE.pausas(pausas.length),
-      CIFRAS_PUEDE.inyeccion(enumerar(adversarios, i)),
-    ].map((c, k) => ({
-      titulo: X(PUEDE[k]!.titulo, i),
-      detalle: X(c, i),
+    puede: PUEDE.map((p) => ({
+      titulo: X(p.titulo, i),
+      detalle: X(cifrasPuede[p.clave], i),
       corrio: true,
     })),
     nunca: {
@@ -575,7 +599,14 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
     participan: d.plan.actores.map((a) => ({
       id: a.id,
       titulo: a[i],
-      detalle: X(FICHA.participan.papel[a.id] ?? { es: "", en: "" }, i),
+      detalle: X(
+        delVocabulario(
+          FICHA.participan.papel,
+          a.id,
+          "FICHA.participan.papel (src/textos/agente.ts)",
+        ),
+        i,
+      ),
     })),
     capacidad: [
       {
@@ -616,7 +647,7 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
         ),
       },
       {
-        cifra: es ? `${aPersona} de ${n}` : `${aPersona} of ${n}`,
+        cifra: X(FRACCION({ a: aPersona, b: n }), i),
         texto: X(FICHA.capacidad.aPersona, i),
         detalle: X(
           FICHA.capacidad.minutos({
@@ -627,7 +658,7 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
         ),
       },
       {
-        cifra: es ? `${coinciden} de ${n}` : `${coinciden} of ${n}`,
+        cifra: X(FRACCION({ a: coinciden, b: n }), i),
         texto: X(FICHA.capacidad.caminos, i),
         detalle: X(FICHA.capacidad.caminosDetalle, i),
       },
@@ -655,7 +686,7 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
       }),
       i,
     ),
-    chip: es ? `real · corrida ${corrida}` : `real · run ${corrida}`,
+    chip: X(CHIP_CORRIDA(corrida), i),
     marca,
   };
 
@@ -678,12 +709,27 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
     d.plan.contrato_de_grafo.senales_obligatorias_en_traza,
   );
   const s3 = informe.supuestos.find((s) => s.id === "S3");
-  const pausaPlan = d.plan.contrato_de_grafo.pausas_humanas[0];
+  const pausaPlan = pausaDelPlan(d.plan.contrato_de_grafo.pausas_humanas);
   const ent = d.entorno;
   const pq = ent.paquetes as Record<string, string>;
   const conModelo = d.plan.contrato_de_grafo.nodos_esperados.filter(
     (x) => x.tipo === "modelo",
   ).length;
+  // El umbral de la señal de confianza y la regla que lo lee, por la señal y no por su id (AU-S2-2): su línea es la
+  // seleccionable del lienzo y su panel es el de la arista (RF-08.4 por arista condicional queda en el roadmap, C-1).
+  const u1 = d.plan.umbrales.find((u) => u.senal === SENAL_DE_CONFIANZA);
+  if (!u1)
+    throw new Error(
+      "vitrina: el plan no declara el umbral de la señal de confianza (panel de arista de P3)",
+    );
+  const reglaU1 = d.plan.contrato_de_grafo.aristas_condicionales.find(
+    (a) => esAristaTripleta(a) && a.valor === `umbral.${u1.id}`,
+  );
+  if (!reglaU1)
+    throw new Error(
+      `vitrina: ninguna regla del plan lee umbral.${u1.id} (panel de arista de P3)`,
+    );
+  const lineaU1 = `l-${idDeMapa(reglaU1.desde)}-a-${idDeMapa(reglaU1.si_verdadero)}`;
   const lienzoVista = lienzo(
     {
       grafo: grafoParaMapa(grafo),
@@ -705,9 +751,8 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
         reglas: d.plan.contrato_de_grafo.aristas_condicionales.length,
       }),
       descripcion: GRAFO.svgDescripcion,
-      lineasSeleccionables: [
-        `l-${idDeMapa("decision")}-a-${idDeMapa("pausa_humana")}`,
-      ],
+      // La línea que abre el panel es la de la regla que lee el umbral de confianza, no un par escrito (C-1).
+      lineasSeleccionables: [lineaU1],
     },
   );
   const comp = lienzoVista.comparacion;
@@ -929,7 +974,7 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
             lista(p.supuestos),
             lista(p.criterios),
             lista(umbrales),
-            es ? `${con(x.id).length} de ${n}` : `${con(x.id).length} of ${n}`,
+            X(FRACCION({ a: con(x.id).length, b: n }), i),
           ],
           corrio: con(x.id).length > 0,
         };
@@ -956,9 +1001,10 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
   const contrato: VistaAgente["contrato"] = {
     cifras: [
       {
-        cifra: es
-          ? `${comp.nodos.coinciden} de ${comp.nodos.contrato}`
-          : `${comp.nodos.coinciden} of ${comp.nodos.contrato}`,
+        cifra: X(
+          FRACCION({ a: comp.nodos.coinciden, b: comp.nodos.contrato }),
+          i,
+        ),
         texto: X(CONTRATO_CIFRAS.nodos, i),
         detalle: X(
           CONTRATO_CIFRAS.nodosDetalle({
@@ -969,9 +1015,10 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
         ),
       },
       {
-        cifra: es
-          ? `${comp.reglas.dibujadas} de ${comp.reglas.contrato}`
-          : `${comp.reglas.dibujadas} of ${comp.reglas.contrato}`,
+        cifra: X(
+          FRACCION({ a: comp.reglas.dibujadas, b: comp.reglas.contrato }),
+          i,
+        ),
         texto: X(CONTRATO_CIFRAS.reglas, i),
         detalle: X(CONTRATO_CIFRAS.reglasDetalle, i),
       },
@@ -999,7 +1046,13 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
   const banda = (tipo: string) =>
     capas.findIndex((b) => b.id === BANDA_DE_TIPO[idDeMapa(tipo)]);
   const bandaDe = (tipo: string): TextoBilingue =>
-    capas[banda(tipo)]?.nombre ?? { es: tipo, en: tipo };
+    delVocabulario(
+      Object.fromEntries(
+        capas.map((b, k) => [String(k), b.nombre as TextoBilingue]),
+      ),
+      String(banda(tipo)),
+      `las capas de la gramática agentes-ia (el tipo «${tipo}» no tiene capa)`,
+    );
   const refPlan = (id: string): RefPlan | null => {
     const p = d.plan;
     const dd = p.decisiones.find((x) => x.id === id);
@@ -1008,7 +1061,14 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
         id,
         texto: X(dd.pregunta, i),
         etiqueta: {
-          texto: X(REVERSIBILIDAD[dd.reversibilidad]!, i),
+          texto: X(
+            delVocabulario(
+              REVERSIBILIDAD,
+              dd.reversibilidad,
+              "REVERSIBILIDAD (src/textos/plan-comun.ts)",
+            ),
+            i,
+          ),
           unaVia: dd.reversibilidad === "una_via",
         },
       };
@@ -1070,7 +1130,7 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
       .replaceAll("{acciones}", acciones.map((a) => `\`${a}\``).join(", "));
   /** El grupo propio del nodo (por qué no usa modelo, su configuración, sus reglas o qué revisa). */
   const grupoModelo = (nodo: string): Grupo => {
-    const m = NODOS[nodo]!.modelo;
+    const m = delVocabulario(NODOS, nodo, T_NODOS).modelo;
     if (m.reglasDelPlan) {
       const reglas = d.plan.contrato_de_grafo.aristas_condicionales
         .filter((a) => a.desde === nodo)
@@ -1112,17 +1172,14 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
         : id;
   const pausasNodos = new Set(grafo.pausas_humanas.map((p) => p.nodo));
   const modo = (a: { source: string; conditional?: boolean }) =>
-    a.conditional
-      ? es
-        ? "condicional"
-        : "conditional"
-      : pausasNodos.has(a.source)
-        ? es
-          ? "reanudación"
-          : "resume"
-        : es
-          ? "secuencia"
-          : "sequence";
+    X(
+      a.conditional
+        ? MODO_ARISTA.condicional
+        : pausasNodos.has(a.source)
+          ? MODO_ARISTA.reanudacion
+          : MODO_ARISTA.secuencia,
+      i,
+    );
   const tiempoSalidaCosto = (t: Traza, nodo: string) => {
     const ps = t.pasos.filter((p) => p.nodo === nodo);
     const s = ps.reduce((a, p) => a + p.duracion_ms, 0) / 1000;
@@ -1145,7 +1202,7 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
         : X(PANEL.trazas_.porDefecto, i);
     const cob = cobertura(t);
     const ext = t.extraccion;
-    const pausa = t.pausas_humanas[0];
+    const pausa = pausaUnica(t.pausas_humanas, `el caso ${t.caso_id}`);
     const motivoPausa = () =>
       pausa
         ? X(
@@ -1159,7 +1216,9 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
         : "—";
     let celdas: string[] = [];
     let pares: Array<{ k: string; v: string }> = [];
-    const et = TRAZAS_DE_NODO[nodo]!.detalle.map((x) => X(x, i));
+    const et = delVocabulario(TRAZAS_DE_NODO, nodo, T_NODO).detalle.map((x) =>
+      X(x, i),
+    );
     switch (nodo) {
       case "enrutador":
         celdas = [
@@ -1268,11 +1327,22 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
         pares = [{ k: et[0]!, v: g?.acciones_intentadas.join(", ") || "—" }];
         break;
       }
+      default:
+        throw new Error(
+          `vitrina: el nodo «${nodo}» no tiene sus columnas de trazas en src/lib/vista/agente.ts (filaDeTraza)`,
+        );
     }
-    const u1 = d.plan.umbrales.find((u) => u.id === "U1");
+    const u1 = d.plan.umbrales.find((u) => u.senal === SENAL_DE_CONFIANZA);
     return {
       id: t.caso_id,
-      tipo: X(TIPO_DE_CASO[caso.tipo] ?? { es: caso.tipo, en: caso.tipo }, i),
+      tipo: X(
+        delVocabulario(
+          TIPO_DE_CASO,
+          caso.tipo,
+          "TIPO_DE_CASO (src/textos/agente.ts)",
+        ),
+        i,
+      ),
       celdas,
       barra:
         nodo === "extractor" && ext && typeof u1?.valor_en_plan === "number"
@@ -1294,7 +1364,7 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
     const N = NOTA_TRAZAS;
     switch (nodo) {
       case "extractor": {
-        const u1 = d.plan.umbrales.find((u) => u.id === "U1");
+        const u1 = d.plan.umbrales.find((u) => u.senal === SENAL_DE_CONFIANZA);
         return X(N.extractor(valorDeUmbral(u1?.valor_en_plan, i)), i);
       }
       case "aclaracion": {
@@ -1337,17 +1407,32 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
       case "decision":
         return X(N[nodo], i);
       default:
-        return "";
+        throw new Error(
+          `vitrina: el nodo «${nodo}» no tiene su nota de trazas en src/textos/agente.ts (NOTA_TRAZAS)`,
+        );
     }
   };
 
   const paneles: PanelNodo[] = d.plan.contrato_de_grafo.nodos_esperados.map(
     (x) => {
-      const t = NODOS[x.id]!;
-      const c = cifrasDe[x.id]!;
+      const t = delVocabulario(NODOS, x.id, T_NODOS);
+      const c = delVocabulario(
+        cifrasDe,
+        x.id,
+        "las cifras por nodo (src/lib/vista/agente.ts)",
+      );
+      const cod = delVocabulario(
+        d.codigo.nodos,
+        x.id,
+        "data/vitrina/demo-a/grafo-codigo.json (regenéralo con python -m app_agents.exportar_grafo)",
+      );
       const tipo = lienzoVista.lista
         .flatMap((l) => l.nodos)
         .find((nn) => nn.id === idDeMapa(x.id));
+      if (!tipo)
+        throw new Error(
+          `vitrina: el nodo «${x.id}» del contrato no está en la lista del lienzo de P3`,
+        );
       const entran = aristas.filter((a) => a.target === x.id);
       const salen = [
         ...new Set(
@@ -1392,16 +1477,16 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
       const bloques: BloqueCodigo[] = [
         {
           titulo: X(PANEL.codigo_.nodo, i),
-          archivo: d.codigo.nodos[x.id]!.archivo,
-          desde: d.codigo.nodos[x.id]!.desde,
+          archivo: cod.archivo,
+          desde: cod.desde,
           lineas: X(
             PANEL.codigo_.lineas({
-              desde: d.codigo.nodos[x.id]!.desde,
-              hasta: d.codigo.nodos[x.id]!.hasta,
+              desde: cod.desde,
+              hasta: cod.hasta,
             }),
             i,
           ),
-          codigo: d.codigo.nodos[x.id]!.codigo,
+          codigo: cod.codigo,
         },
       ];
       if (x.id === "decision")
@@ -1469,14 +1554,18 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
           rotulo: X(EXTRACTOR_S1.rotulo, i),
           texto: X(EXTRACTOR_S1.texto({ medidos: c.s1.medidos }), i),
         });
-      const columnas = TRAZAS_DE_NODO[x.id]!.columnas.map((col) => X(col, i));
+      const columnas = delVocabulario(
+        TRAZAS_DE_NODO,
+        x.id,
+        T_NODO,
+      ).columnas.map((col) => X(col, i));
       return {
         id: idDeMapa(x.id),
         nombre: x.id,
         tipo: idDeMapa(x.tipo),
-        codigo: tipo?.codigo ?? "",
+        codigo: tipo.codigo,
         rol: XP(t.rol),
-        chip: es ? `real · corrida ${corrida}` : `real · run ${corrida}`,
+        chip: X(CHIP_CORRIDA(corrida), i),
         lider: {
           recibe: { titulo: XP(t.recibe.titulo), sub: XP(t.recibe.sub) },
           entrega: { titulo: XP(t.entrega.titulo), sub: XP(t.entrega.sub) },
@@ -1500,7 +1589,7 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
               {
                 k: X(PANEL.experto_.escribe, i),
                 v: "",
-                codigos: d.codigo.nodos[x.id]!.escribe,
+                codigos: cod.escribe,
               },
               {
                 k: X(PANEL.experto_.entraDesde, i),
@@ -1533,7 +1622,7 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
             filas: [
               {
                 k: X(PANEL.experto_.casosVisitas, i),
-                v: `${es ? `${c.casos} de ${n}` : `${c.casos} of ${n}`} · ${c.visitas}`,
+                v: `${X(FRACCION({ a: c.casos, b: n }), i)} · ${c.visitas}`,
               },
               {
                 k: X(PANEL.experto_.modelo, i),
@@ -1564,7 +1653,7 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
         trazas: {
           columnas,
           filas: con(x.id).map((tr) => filaTraza(tr, x.id)),
-          visibles: 5,
+          visibles: VISIBLES,
           nota: notaTrazas(x.id),
         },
       };
@@ -1572,22 +1661,10 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
   );
 
   // ── arista U1 ───────────────────────────────────────────────────────────────────────────────────
-  // El umbral de la señal de confianza y la regla que lo lee, por la señal y no por su id (AU-S2-2).
-  const u1 = d.plan.umbrales.find((u) => u.senal === SENAL_DE_CONFIANZA);
-  if (!u1)
-    throw new Error(
-      "vitrina: el plan no declara el umbral de la señal de confianza (panel de arista de P3)",
-    );
+  // El umbral de la señal de confianza y la regla que lo lee (arriba, `deConfianza`), por la señal y no por su id.
   if (!("min" in u1.rango_jugable))
     throw new Error(`vitrina: ${u1.id} no tiene rango numérico en el plan`);
   const rangoU1 = u1.rango_jugable;
-  const reglaU1 = d.plan.contrato_de_grafo.aristas_condicionales.find(
-    (a) => esAristaTripleta(a) && a.valor === `umbral.${u1.id}`,
-  );
-  if (!reglaU1)
-    throw new Error(
-      `vitrina: ninguna regla del plan lee umbral.${u1.id} (panel de arista de P3)`,
-    );
   const desdeU1 = reglaU1.desde;
   const deNodo = d.plan.contrato_de_grafo.aristas_condicionales.filter(
     (a) => a.desde === desdeU1,
@@ -1603,7 +1680,8 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
     .sort((a, b) => a.valor - b.valor || (a.id < b.id ? -1 : 1));
   const bajo = puntos.filter((p) => p.aPersona);
   const arista: PanelArista = {
-    id: `l-${idDeMapa(desdeU1)}-a-${idDeMapa(reglaU1.si_verdadero)}`,
+    id: lineaU1,
+    umbralId: u1.id,
     titulo: X(ARISTA_U1.titulo({ umbral: u1.id, nodo: desdeU1 }), i),
     rol: X(
       ARISTA_U1.rol({
@@ -1612,7 +1690,7 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
       }),
       i,
     ),
-    chip: es ? `real · corrida ${corrida}` : `real · run ${corrida}`,
+    chip: X(CHIP_CORRIDA(corrida), i),
     filas: [
       {
         k: X(ARISTA_U1.regla, i),
@@ -1748,9 +1826,10 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
       ),
       cifras: [
         {
-          cifra: es
-            ? `${cs.nodos.coinciden} de ${cs.nodos.contrato}`
-            : `${cs.nodos.coinciden} of ${cs.nodos.contrato}`,
+          cifra: X(
+            FRACCION({ a: cs.nodos.coinciden, b: cs.nodos.contrato }),
+            i,
+          ),
           texto: X(SPIKE.nodos, i),
           detalle: X(
             SPIKE.faltaban(
@@ -1767,9 +1846,13 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
           ),
         },
         {
-          cifra: es
-            ? `${new Set(iguales.map((x) => x.plan)).size} de ${contratoG.aristas_condicionales.length}`
-            : `${new Set(iguales.map((x) => x.plan)).size} of ${contratoG.aristas_condicionales.length}`,
+          cifra: X(
+            FRACCION({
+              a: new Set(iguales.map((x) => x.plan)).size,
+              b: contratoG.aristas_condicionales.length,
+            }),
+            i,
+          ),
           texto: X(SPIKE.reglas, i),
           detalle: primera
             ? X(

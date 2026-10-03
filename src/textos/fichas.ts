@@ -739,6 +739,99 @@ export const AGENTE = {
 // ------------------------------------------------------------------- la app: export 1.0.0 y complemento propuesto
 
 /** La promesa de la app (VISION aprobada el 2026-09-26) y lo que la distingue. */
+/**
+ * Las métricas de la ficha de la app (`docs/brochure-export.json`): etiqueta, unidad y detalle, redactados enteros en
+ * cada idioma; las cifras las pone `src/lib/fichas/armar.ts` (AU-S2-B18).
+ */
+export const METRICAS_APP = {
+  criteriosCumplidos: {
+    etiqueta: ((n: number) =>
+      tb(
+        `criterios del plan cumplidos, de ${n}`,
+        `plan criteria met, of ${n}`,
+      )) as Plantilla<number>,
+    unidad: tb("criterios", "criteria"),
+    detalle: ((p: {
+      verificador: string;
+      corrida: string;
+      cumplen: number;
+      n: number;
+    }) =>
+      tb(
+        `Del informe del verificador ${p.verificador} sobre la corrida ${p.corrida}: ${p.cumplen} de ${p.n} criterios cumplidos.`,
+        `From verifier ${p.verificador}'s report on run ${p.corrida}: ${p.cumplen} of ${p.n} criteria met.`,
+      )) as Plantilla<{
+      verificador: string;
+      corrida: string;
+      cumplen: number;
+      n: number;
+    }>,
+  },
+  decisionesCruzadas: {
+    etiqueta: ((diferencias: number) =>
+      tb(
+        `decisiones rehechas en otro lenguaje, con ${diferencias} diferencias`,
+        `decisions redone in another language, with ${diferencias} differences`,
+      )) as Plantilla<number>,
+    unidad: tb("decisiones", "decisions"),
+    detalle: ((corridas: number) =>
+      tb(
+        `Prueba cruzada RF-09.2 sobre ${corridas} corridas: el intérprete de aristas de TypeScript rehace cada decisión que registró Python.`,
+        `RF-09.2 cross-check over ${corridas} runs: the TypeScript edge interpreter redoes every decision Python recorded.`,
+      )) as Plantilla<number>,
+  },
+  casosPorCorrida: {
+    etiqueta: ((corridas: number) =>
+      tb(
+        `casos por corrida, en ${corridas} corridas y una línea base`,
+        `cases per run, over ${corridas} runs and a baseline`,
+      )) as Plantilla<number>,
+    unidad: tb("casos", "cases"),
+    detalle: ((p: { corrida: string; repeticiones: number }) =>
+      tb(
+        `Corrida ${p.corrida} con sus ${p.repeticiones} repeticiones (pass^k) y la línea base de agente único a igual presupuesto.`,
+        `Run ${p.corrida} with its ${p.repeticiones} repetitions (pass^k) and the single-agent baseline at equal budget.`,
+      )) as Plantilla<{ corrida: string; repeticiones: number }>,
+  },
+  llamadasEnLaVitrina: {
+    etiqueta: tb(
+      "llamadas a modelos al visitar la vitrina",
+      "model calls when visiting the showcase",
+    ),
+    unidad: tb("llamadas", "calls"),
+    detalle: tb(
+      "Lo fija la arquitectura: la vitrina es un export estático con los datos precalculados; el paquete se prueba sin una sola solicitud fuera de su origen.",
+      "Set by the architecture: the showcase is a static export with precomputed data; the package is tested without a single request outside its origin.",
+    ),
+  },
+  costoDeUnaCorrida: {
+    etiqueta: ((n: number) =>
+      tb(
+        `costo nominal de una corrida de ${n} casos`,
+        `nominal cost of a ${n}-case run`,
+      )) as Plantilla<number>,
+    detalle: tb(
+      "Suma del costo nominal que el CLI declara por llamada, en las trazas de la corrida; por la suscripción no se pagó aparte.",
+      "Sum of the nominal cost the CLI declares per call, over the run's traces; through the subscription it was not paid separately.",
+    ),
+  },
+  funcionalidades: {
+    etiqueta: tb("funcionalidades construidas", "built features"),
+    unidad: tb("funcionalidades", "features"),
+    detalle: tb(
+      "Las de la visión del producto marcadas para el corte de dos semanas, contadas contra docs/MANUAL-DE-USO.md; las del roadmap no cuentan.",
+      "Those of the product vision marked for the two-week cut, counted against docs/MANUAL-DE-USO.md; roadmap ones do not count.",
+    ),
+  },
+  decisionesRegistradas: {
+    etiqueta: tb(
+      "decisiones de arquitectura registradas",
+      "recorded architecture decisions",
+    ),
+    detalle: tb("Archivos de decisions/.", "Files in decisions/."),
+  },
+};
+
 export const APP = {
   slug: "planlang",
   nombre: "planlang",

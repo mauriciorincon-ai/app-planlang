@@ -334,12 +334,24 @@ export const FICHA = {
 };
 
 /** Las siete actividades de «Hace», en el orden del flujo del plan; los nodos son los que las ejecutan. */
+/** Las actividades de la ficha, con su clave: la vista les pone cifra y «corrió» por clave, no por posición (C-3). */
+export type ClaveActividad =
+  | "clasifica"
+  | "autorizaUrgencia"
+  | "lee"
+  | "pregunta"
+  | "revisaCobertura"
+  | "decide"
+  | "responde";
+
 export const ACTIVIDADES: ReadonlyArray<{
+  clave: ClaveActividad;
   titulo: TextoBilingue;
   nodos: readonly string[];
   flecha?: boolean;
 }> = [
   {
+    clave: "clasifica",
     titulo: tb(
       "Clasifica la atención: ¿es urgencia o servicio exento?",
       "Classifies the care: an emergency or an exempt service?",
@@ -347,6 +359,7 @@ export const ACTIVIDADES: ReadonlyArray<{
     nodos: ["enrutador"],
   },
   {
+    clave: "autorizaUrgencia",
     titulo: tb(
       "Si lo es, la autoriza sin revisar cobertura",
       "If so, authorizes it without a coverage check",
@@ -356,6 +369,7 @@ export const ACTIVIDADES: ReadonlyArray<{
     flecha: true,
   },
   {
+    clave: "lee",
     titulo: tb(
       "Lee la solicitud y la vuelve datos, con su confianza",
       "Reads the request and turns it into data, with its confidence",
@@ -363,13 +377,15 @@ export const ACTIVIDADES: ReadonlyArray<{
     nodos: ["extractor"],
   },
   {
+    clave: "pregunta",
     titulo: tb(
-      "Si faltan datos, los pide al médico, hasta 2 veces",
-      "If data is missing, asks the physician, up to 2 times",
+      "Si faltan datos, los pide al médico, hasta {plan:U3} veces",
+      "If data is missing, asks the physician, up to {plan:U3} times",
     ),
     nodos: ["aclaracion"],
   },
   {
+    clave: "revisaCobertura",
     titulo: tb(
       "Revisa la cobertura con reglas fijas",
       "Checks coverage with fixed rules",
@@ -377,6 +393,7 @@ export const ACTIVIDADES: ReadonlyArray<{
     nodos: ["verificador_cobertura"],
   },
   {
+    clave: "decide",
     titulo: tb(
       "Decide: sigue solo o pasa al auditor",
       "Decides: go on alone or to the auditor",
@@ -384,6 +401,7 @@ export const ACTIVIDADES: ReadonlyArray<{
     nodos: ["decision", "pausa_humana"],
   },
   {
+    clave: "responde",
     titulo: tb(
       "Escribe la respuesta, la filtra y, si es adversa, emite su documento",
       "Writes the answer, filters it and, if adverse, issues its document",
@@ -430,32 +448,43 @@ export const CIFRAS_ACTIVIDAD = {
     )) as Plantilla<number>,
 };
 
-export const PUEDE: ReadonlyArray<{ titulo: TextoBilingue }> = [
+export type ClavePuede =
+  "lee" | "pregunta" | "cobertura" | "pausas" | "inyeccion";
+
+export const PUEDE: ReadonlyArray<{
+  clave: ClavePuede;
+  titulo: TextoBilingue;
+}> = [
   {
+    clave: "lee",
     titulo: tb(
       "Leer texto libre y volverlo datos en un formato fijo",
       "Read free text and turn it into data in a fixed format",
     ),
   },
   {
+    clave: "pregunta",
     titulo: tb(
       "Preguntar lo que falta y seguir con la respuesta",
       "Ask for what is missing and go on with the answer",
     ),
   },
   {
+    clave: "cobertura",
     titulo: tb(
       "Revisar la cobertura con reglas que cualquiera puede leer",
       "Check coverage with rules anyone can read",
     ),
   },
   {
+    clave: "pausas",
     titulo: tb(
       "Detenerse, esperar a una persona y retomar donde iba",
       "Stop, wait for a person and resume where it was",
     ),
   },
   {
+    clave: "inyeccion",
     titulo: tb(
       "Ignorar órdenes escondidas en la solicitud",
       "Ignore orders hidden in the request",
@@ -2173,4 +2202,11 @@ export const VALORES: Record<string, TextoBilingue> = {
   hospitalaria: tb("hospitalaria", "inpatient"),
   urgencia: tb("urgencia", "emergency"),
   causal: tb("causal", "cause"),
+};
+
+/** Cómo pasa el flujo por una arista del grafo compilado (columna «modo» del experto). */
+export const MODO_ARISTA = {
+  condicional: tb("condicional", "conditional"),
+  reanudacion: tb("reanudación", "resume"),
+  secuencia: tb("secuencia", "sequence"),
 };

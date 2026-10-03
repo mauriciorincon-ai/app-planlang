@@ -2,7 +2,7 @@
  * Textos que comparte toda la vitrina (rótulo, barra, pie, perfil, procedencia, veredictos). Nacen como
  * mapa `{ es, en }` y se redactan en los dos idiomas (regla 20): ninguno se traduce al pintar.
  */
-import { tb } from "@core/formatos/bilingue";
+import { tb, type TextoBilingue } from "@core/formatos/bilingue";
 import type { Pantalla } from "@/lib/ruta";
 
 export const MARCA = "planlang";
@@ -97,3 +97,13 @@ export const NO_ENCONTRADA = {
   ),
   volver: tb("Ir a la Entrada", "Go to Home"),
 };
+
+/** «3 de 20» · «3 of 20»: una cifra sobre su total, en las fichas y las cifras de cada pantalla (AU-S2-B18). */
+export const FRACCION = (p: {
+  a: number | string;
+  b: number | string;
+}): TextoBilingue => tb(`${p.a} de ${p.b}`, `${p.a} of ${p.b}`);
+
+/** El chip de procedencia de lo medido en una corrida: «real · corrida v1.2» · «real · run v1.2». */
+export const CHIP_CORRIDA = (corrida: string): TextoBilingue =>
+  tb(`real · corrida ${corrida}`, `real · run ${corrida}`);

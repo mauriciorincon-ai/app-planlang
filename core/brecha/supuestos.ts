@@ -9,7 +9,7 @@
  * - tasa de una condición sobre una población;
  * - comparación con la línea base de agente único (exactitud y latencia mediana, con el presupuesto).
  */
-import type { TextoBilingue } from "../formatos/bilingue";
+import { IDIOMAS, type TextoBilingue } from "../formatos/bilingue";
 import type { Traza } from "../formatos/traza";
 import type { Plan, Supuesto } from "../plan/esquema";
 import { esAristaTripleta } from "../plan/esquema";
@@ -372,7 +372,7 @@ function exactitudYLatencia(vistas: readonly VistaDeCaso[]): {
  */
 export function respuestaInservible(t: Traza): boolean {
   if (t.resultado === "error" || !t.salida_final) return false;
-  return (["es", "en"] as const).some((l) => {
+  return IDIOMAS.some((l) => {
     const texto = t.salida_final![l].trim();
     return (
       texto === "" ||

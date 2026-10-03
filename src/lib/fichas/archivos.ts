@@ -6,7 +6,7 @@
  * - `docs/fichas/`: la versión en inglés de las dos, el complemento que planlang propone para la ficha de la app y la
  *   ficha de la app tal como la arma hoja-de-vida (en los dos idiomas), para comparar.
  */
-import type { Idioma } from "@core/formatos/bilingue";
+import { IDIOMAS } from "@core/formatos/bilingue";
 import type { HechosDelRepo } from "@/lib/datos/repo";
 import type { DatosDemo } from "@/lib/datos/vitrina";
 import {
@@ -44,7 +44,7 @@ export function archivosDeFichas(
   repo: HechosDelRepo,
 ): Record<string, string> {
   const out: Record<string, string> = {};
-  for (const i of ["es", "en"] as Idioma[]) {
+  for (const i of IDIOMAS) {
     const sufijo = i === "es" ? "" : ".en";
     const agente = fichaAgente(d, repo, i);
     const exp = brochureExport(d, repo, i);

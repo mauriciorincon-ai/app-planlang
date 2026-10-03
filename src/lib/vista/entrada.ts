@@ -5,7 +5,12 @@
  */
 import type { Idioma } from "@core/formatos/bilingue";
 import type { DatosDemo } from "@/lib/datos/vitrina";
-import { CATEGORIA_DE_BRECHA, LECTURA_DE_SUPUESTO } from "@/textos/entrada";
+import {
+  ARMADO,
+  CATEGORIA_DE_BRECHA,
+  FORMAS,
+  LECTURA_DE_SUPUESTO,
+} from "@/textos/entrada";
 import {
   conteo,
   deCada,
@@ -14,7 +19,6 @@ import {
   versionCorta,
 } from "./formato";
 import { tipoDeNodo, type TipoDeNodo } from "./nodos";
-import { tb } from "@core/formatos/bilingue";
 
 export type ValorVeredicto = "cumple" | "cumple_con_alertas" | "no_cumple";
 export type EstadoCuadro = "cumple" | "no-cumple" | "sin-probar";
@@ -59,23 +63,6 @@ export interface VistaEntrada {
 
 const X = `${ESPACIO_DURO}×${ESPACIO_DURO}`;
 
-const FORMAS = {
-  falla: { uno: tb("falla", "failure"), varios: tb("fallas", "failures") },
-  supuestoSinProbar: {
-    uno: tb("supuesto sin probar", "assumption untested"),
-    varios: tb("supuestos sin probar", "assumptions untested"),
-  },
-  corrida: { uno: tb("corrida", "run"), varios: tb("corridas", "runs") },
-  decision: {
-    uno: tb("decisión", "decision"),
-    varios: tb("decisiones", "decisions"),
-  },
-  diferencia: {
-    uno: tb("diferencia", "difference"),
-    varios: tb("diferencias", "differences"),
-  },
-};
-
 function lecturaDeSupuesto(id: string, idioma: Idioma): string {
   const l = LECTURA_DE_SUPUESTO[id];
   if (!l)
@@ -101,7 +88,6 @@ function loNoPrevisto(categorias: string[], idioma: Idioma): string {
 
 export function vistaEntrada(datos: DatosDemo, idioma: Idioma): VistaEntrada {
   const { plan, informe, entorno, manifiesto } = datos;
-  const es = idioma === "es";
   const ficha = informe.ficha_reproducibilidad;
 
   // Cómo funciona · Planeé: las cinco partes del plan, con la barra relativa a la mayor.
@@ -128,9 +114,10 @@ export function vistaEntrada(datos: DatosDemo, idioma: Idioma): VistaEntrada {
   }));
   const enGrafo = nodos.filter((n) => n.enGrafo).length;
   const sprint = manifiesto.corrida.sprint;
-  const agentePie = es
-    ? `el agente del sprint ${sprint} · ${deCada(enGrafo, nodos.length, idioma)} piezas`
-    : `the sprint ${sprint} agent · ${deCada(enGrafo, nodos.length, idioma)} pieces`;
+  const agentePie = ARMADO.agentePie({
+    sprint,
+    piezas: deCada(enGrafo, nodos.length, idioma),
+  })[idioma];
 
   // Medí la brecha: un cuadro por criterio, la leyenda y lo que falló, nombrado.
   const cuadros = informe.criterios.map((c) => ({
@@ -153,43 +140,38 @@ export function vistaEntrada(datos: DatosDemo, idioma: Idioma): VistaEntrada {
   const fallas: Falla[] = [
     ...incumplidos.map((c) => ({
       tipo: "fallo" as const,
-      texto: es
-        ? `Falló ${c.id}: ${c.enunciado.es}`
-        : `${c.id} failed: ${c.enunciado.en}`,
+      texto: ARMADO.fallo({ id: c.id, texto: c.enunciado[idioma] })[idioma],
     })),
     ...ocurridos.map((r) => ({
       tipo: "fallo" as const,
-      texto: es
-        ? `Ocurrió ${r.id}: ${r.modo.es}`
-        : `${r.id} occurred: ${r.modo.en}`,
+      texto: ARMADO.ocurrio({ id: r.id, texto: r.modo[idioma] })[idioma],
     })),
     ...refutados.map((s) => ({
       tipo: "fallo" as const,
-      texto: es
-        ? `Falló ${s.id}: ${lecturaDeSupuesto(s.id, idioma)}`
-        : `${s.id} failed: ${lecturaDeSupuesto(s.id, idioma)}`,
+      texto: ARMADO.fallo({
+        id: s.id,
+        texto: lecturaDeSupuesto(s.id, idioma),
+      })[idioma],
     })),
     ...(brechas.length > 0
       ? [
           {
             tipo: "fallo" as const,
-            texto: es
-              ? `Falló lo no previsto: ${loNoPrevisto(
-                  brechas.map((b) => b.categoria),
-                  idioma,
-                )}`
-              : `The unforeseen failed: ${loNoPrevisto(
-                  brechas.map((b) => b.categoria),
-                  idioma,
-                )}`,
+            texto: ARMADO.noPrevisto(
+              loNoPrevisto(
+                brechas.map((b) => b.categoria),
+                idioma,
+              ),
+            )[idioma],
           },
         ]
       : []),
     ...sinProbar.map((s) => ({
       tipo: "sin-probar" as const,
-      texto: es
-        ? `Sin probar ${s.id}: ${lecturaDeSupuesto(s.id, idioma)}`
-        : `${s.id} untested: ${lecturaDeSupuesto(s.id, idioma)}`,
+      texto: ARMADO.sinProbar({
+        id: s.id,
+        texto: lecturaDeSupuesto(s.id, idioma),
+      })[idioma],
     })),
   ];
   const nFallas = fallas.filter((f) => f.tipo === "fallo").length;
@@ -199,7 +181,7 @@ export function vistaEntrada(datos: DatosDemo, idioma: Idioma): VistaEntrada {
   const nCorridas = 1 + ficha.repeticiones.length;
   const casos = ficha.corrida.casos_ejecutados;
   const casosPorCorridas = `${casos}${X}${nCorridas}`;
-  const corridaCorta = es ? `corrida ${vEjec}` : `run ${vEjec}`;
+  const corridaCorta = ARMADO.corridaCorta(vEjec)[idioma];
 
   // Capacidad y la prueba cruzada RF-09.2 (todas las corridas del informe: la principal, las repeticiones y la base).
   const rf = informe.contrato_de_grafo.rf_09_2;
@@ -207,21 +189,17 @@ export function vistaEntrada(datos: DatosDemo, idioma: Idioma): VistaEntrada {
   const diferencias = rf.reduce((s, c) => s + c.discrepancias, 0);
 
   const balanceCifra = `${deCada(cumplen, nCrit, idioma)} · ${deCada(ocurridos.length, nRiesgos, idioma)}`;
-  const leyendaCrit = es
-    ? `${deCada(cumplen, nCrit, idioma)} criterios cumplen`
-    : `${deCada(cumplen, nCrit, idioma)} criteria met`;
-  const leyendaRiesgos = es
-    ? `${deCada(ocurridos.length, nRiesgos, idioma)} riesgos ocurrieron`
-    : `${deCada(ocurridos.length, nRiesgos, idioma)} risks occurred`;
+  const leyendaCrit = ARMADO.criteriosCumplen(deCada(cumplen, nCrit, idioma))[
+    idioma
+  ];
+  const leyendaRiesgos = ARMADO.riesgosOcurrieron(
+    deCada(ocurridos.length, nRiesgos, idioma),
+  )[idioma];
 
   // Veredicto de la fila del demo: criterios, riesgos, fallas y supuestos sin probar.
   const detallePartes = [
-    es
-      ? `${deCada(cumplen, nCrit, idioma)} criterios`
-      : `${deCada(cumplen, nCrit, idioma)} criteria`,
-    es
-      ? `${deCada(ocurridos.length, nRiesgos, idioma)} riesgos`
-      : `${deCada(ocurridos.length, nRiesgos, idioma)} risks`,
+    ARMADO.criterios(deCada(cumplen, nCrit, idioma))[idioma],
+    ARMADO.riesgos(deCada(ocurridos.length, nRiesgos, idioma))[idioma],
   ];
   const cola = [
     ...(nFallas > 0 ? [conteo(nFallas, FORMAS.falla, idioma)] : []),
@@ -229,18 +207,14 @@ export function vistaEntrada(datos: DatosDemo, idioma: Idioma): VistaEntrada {
       ? [conteo(sinProbar.length, FORMAS.supuestoSinProbar, idioma)]
       : []),
   ];
-  if (cola.length > 0) detallePartes.push(cola.join(es ? " y " : " and "));
+  if (cola.length > 0) detallePartes.push(enumerar(cola, idioma));
 
   const lineaBase = ficha.linea_base !== null;
   const corridaTexto = [
-    vPlan === vEjec
-      ? `plan ${vPlan}`
-      : es
-        ? `plan ${vPlan} · corrida con ${vEjec}`
-        : `plan ${vPlan} · run with ${vEjec}`,
-    `${casos} ${es ? "casos" : "cases"}${X}${nCorridas}${
-      lineaBase ? (es ? " + línea base" : " + baseline") : ""
-    }`,
+    ARMADO.planYCorrida({ plan: vPlan, ejecucion: vEjec })[idioma],
+    ARMADO.casosPorCorridas({ casos, por: `${X}${nCorridas}`, lineaBase })[
+      idioma
+    ],
     ficha.corrida.fecha,
   ].join(" · ");
 
@@ -253,58 +227,52 @@ export function vistaEntrada(datos: DatosDemo, idioma: Idioma): VistaEntrada {
     `Claude Code ${version(entorno.claude_cli)}`,
   ].join(" · ");
 
-  const modelo =
+  const modelo = (
     ficha.corrida.proveedor === "suscripcion"
-      ? es
-        ? `${ficha.corrida.modelo} por la suscripción de Claude Code del autor, en lotes de ${ficha.casos.n_lote} fuera de CI, con interruptor a una API por clave`
-        : `${ficha.corrida.modelo} through the author’s Claude Code subscription, in batches of ${ficha.casos.n_lote} outside CI, with a switch to a keyed API`
-      : es
-        ? `${ficha.corrida.modelo} por ${ficha.corrida.proveedor}, en lotes de ${ficha.casos.n_lote} fuera de CI`
-        : `${ficha.corrida.modelo} through ${ficha.corrida.proveedor}, in batches of ${ficha.casos.n_lote} outside CI`;
+      ? ARMADO.modeloSuscripcion({
+          modelo: ficha.corrida.modelo,
+          lote: ficha.casos.n_lote,
+        })
+      : ARMADO.modeloProveedor({
+          modelo: ficha.corrida.modelo,
+          proveedor: ficha.corrida.proveedor,
+          lote: ficha.casos.n_lote,
+        })
+  )[idioma];
 
   return {
     plan: { partes },
     agente: { nodos, pie: agentePie },
     brecha: {
       cuadros,
-      etiquetaCuadros: es
-        ? `${nCrit} criterios: ${cumplen} cumplen${
-            incumplidos.length
-              ? `, ${incumplidos.length} no cumplen (${incumplidos.map((c) => c.id).join(", ")})`
-              : ""
-          }`
-        : `${nCrit} criteria: ${cumplen} met${
-            incumplidos.length
-              ? `, ${incumplidos.length} not met (${incumplidos.map((c) => c.id).join(", ")})`
-              : ""
-          }`,
+      etiquetaCuadros: ARMADO.etiquetaCuadros({
+        n: nCrit,
+        cumplen,
+        incumplidos: incumplidos.map((c) => c.id),
+      })[idioma],
       leyenda: {
         criteriosCumplen: leyendaCrit,
         riesgosOcurren: leyendaRiesgos,
       },
       fallas,
-      pie: es
-        ? `${corridaCorta} · ${casos} casos${X}${nCorridas}`
-        : `${corridaCorta} · ${casos} cases${X}${nCorridas}`,
+      pie: ARMADO.piePrueba({
+        corrida: corridaCorta,
+        casos,
+        por: `${X}${nCorridas}`,
+      })[idioma],
     },
     fallasALaVista: {
       n: nFallas,
-      texto:
-        nFallas === 0
-          ? es
-            ? "Ninguna falla"
-            : "No failures"
-          : es
-            ? `${conteo(nFallas, FORMAS.falla, idioma)} a la vista`
-            : `${conteo(nFallas, FORMAS.falla, idioma)} in view`,
+      texto: ARMADO.fallasALaVista({
+        n: nFallas,
+        conteo: conteo(nFallas, FORMAS.falla, idioma),
+      })[idioma],
     },
     capacidad: {
       casos: {
         cifra: casosPorCorridas,
-        texto: es
-          ? `casos por corrida${lineaBase ? ", más una línea base de agente único" : ""}`
-          : `cases per run${lineaBase ? ", plus a single-agent baseline" : ""}`,
-        chip: es ? `real · ${corridaCorta}` : `real · ${corridaCorta}`,
+        texto: ARMADO.casosPorCorrida(lineaBase)[idioma],
+        chip: `real · ${corridaCorta}`,
       },
       cruzada: {
         cifra: `${decisiones} · ${diferencias}`,
@@ -318,12 +286,14 @@ export function vistaEntrada(datos: DatosDemo, idioma: Idioma): VistaEntrada {
     },
     corrida: {
       texto: corridaTexto,
-      chip: es ? `real · sprint ${sprint}` : `real · sprint ${sprint}`,
+      chip: `real · sprint ${sprint}`,
     },
     experto: {
-      cruzada: es
-        ? `RF-09.2: el grafo (Python) y el playground (TypeScript) evalúan la misma regla del plan; ${conteo(diferencias, FORMAS.diferencia, idioma)} en ${conteo(decisiones, FORMAS.decision, idioma)} de ${conteo(rf.length, FORMAS.corrida, idioma)}`
-        : `RF-09.2: the graph (Python) and the playground (TypeScript) evaluate the same plan rule; ${conteo(diferencias, FORMAS.diferencia, idioma)} in ${conteo(decisiones, FORMAS.decision, idioma)} across ${conteo(rf.length, FORMAS.corrida, idioma)}`,
+      cruzada: ARMADO.cruzada({
+        diferencias: conteo(diferencias, FORMAS.diferencia, idioma),
+        decisiones: conteo(decisiones, FORMAS.decision, idioma),
+        corridas: conteo(rf.length, FORMAS.corrida, idioma),
+      })[idioma],
       modelo,
       pila,
     },

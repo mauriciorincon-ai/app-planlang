@@ -36,7 +36,7 @@ function Distribucion({ a, idioma }: { a: Panel; idioma: Idioma }) {
     <svg
       viewBox={`0 0 ${ANCHO} ${ALTO}`}
       role="img"
-      aria-label={`${ARISTA_U1.etiqueta[idioma]}; U1 = ${u}`}
+      aria-label={`${ARISTA_U1.etiqueta[idioma]}; ${a.umbralId} = ${u}`}
       className="block h-auto w-full"
     >
       <path
@@ -54,7 +54,7 @@ function Distribucion({ a, idioma }: { a: Panel; idioma: Idioma }) {
         y={22}
         className="fill-tinta-1 font-mono text-[10.5px] font-medium"
       >
-        U1 = {u}
+        {a.umbralId} = {u}
       </text>
       <text x={EJE.x0} y={22} className="fill-tinta-2 font-letra text-[11.5px]">
         {ARISTA_U1.aPersona[idioma]}

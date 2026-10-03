@@ -27,6 +27,7 @@ import type { JsonValor } from "@core/formatos/jcs";
 import type { RegistroDeArista, Umbrales } from "@core/playground/aristas";
 import type { Desenlace } from "@core/playground/compacto";
 import {
+  casosQueReproducen,
   consecuencias,
   observados,
   umbralesDelPlan,
@@ -689,6 +690,8 @@ export function Juego({ datos }: { datos: DatosIsla }) {
   const plan = useMemo(() => umbralesDelPlan(c), [c]);
   const [u, setU] = useState<Umbrales>(plan);
   const r = useMemo(() => consecuencias(c, u), [c, u]);
+  // La comprobación se calcula sobre lo que llegó al navegador, no se afirma (C-2).
+  const reproducen = useMemo(() => casosQueReproducen(c), [c]);
   const obs = useMemo(() => observados(c, u), [c, u]);
   const poner = (id: string, v: number | boolean) =>
     setU((x) => ({ ...x, [id]: v }));
@@ -993,7 +996,7 @@ export function Juego({ datos }: { datos: DatosIsla }) {
               <p className="solo-experto cambia-perfil mt-2 rounded-r-control border-l-2 border-l-tinta-2 bg-sup-2 px-2.5 py-1.5 text-dato text-tinta-2">
                 {
                   CAMBIOS.comprobacion({
-                    a: c.casos.length,
+                    a: reproducen,
                     b: c.casos.length,
                   })[i]
                 }

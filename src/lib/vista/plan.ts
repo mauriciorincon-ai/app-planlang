@@ -36,7 +36,9 @@ import { pieDeCorrida } from "./caso";
 import { entero, enumerar, porcentaje, versionCorta } from "./formato";
 import { conPlan } from "./plan-en-texto";
 import {
+  VISIBLES,
   controlLegal,
+  pausaDelPlan,
   criticidadEnTexto,
   estadoDeCriterio,
   estadoDeRiesgo,
@@ -47,11 +49,7 @@ import {
   type RiesgoDelInforme,
 } from "./plan-comun";
 
-/**
- * Renglones que se ven de entrada en cada sección; el resto va tras «Ver N más» (maqueta: 5 decisiones, 5 riesgos,
- * 5 criterios). Es un parámetro de lectura, no del dato: la sección muestra todos los que el plan traiga.
- */
-export const VISIBLES = 5;
+export { VISIBLES } from "./plan-comun";
 
 export type LadoFila =
   | { tipo: "decision"; texto: string; unaVia: boolean }
@@ -509,7 +507,7 @@ export function vistaPlan(d: DatosDemo, i: Idioma): VistaPlan {
     };
   });
   const rf = informe.contrato_de_grafo.rf_09_2;
-  const pausa = cg.pausas_humanas[0];
+  const pausa = pausaDelPlan(cg.pausas_humanas);
   const lineas = [
     `${X(CONTRATO.senales, i)}: ${cg.senales_obligatorias_en_traza.join(", ")}`,
     ...(pausa

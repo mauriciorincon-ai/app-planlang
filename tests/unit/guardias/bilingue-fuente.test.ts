@@ -24,7 +24,15 @@ function textos(n: ts.Node, sf: ts.SourceFile): string[] {
   return [];
 }
 
+/** `i === "es"`, `"en" !== idioma`, y también la bandera `es` / `!es` que algunas vistas sacan de ella. */
 function esPreguntaDeIdioma(c: ts.Expression): boolean {
+  if (ts.isParenthesizedExpression(c)) return esPreguntaDeIdioma(c.expression);
+  if (ts.isIdentifier(c)) return c.text === "es" || c.text === "en";
+  if (
+    ts.isPrefixUnaryExpression(c) &&
+    c.operator === ts.SyntaxKind.ExclamationToken
+  )
+    return esPreguntaDeIdioma(c.operand);
   if (!ts.isBinaryExpression(c)) return false;
   const op = c.operatorToken.kind;
   if (
@@ -89,9 +97,15 @@ describe("regla 20: sin ternarios de idioma con palabras (AU-S2-B17, B18)", () =
          const b = i === "es" ? "en" : "es";
          const c = idioma === "es" ? "true" : undefined;
          const d = i === "es" ? "" : ".en";
-         const e = i === "es" ? "," : ".";`,
+         const e = i === "es" ? "," : ".";
+         const f = es ? \`real · corrida \${v}\` : \`real · run \${v}\`;
+         const g = !es ? "cases" : "casos";`,
       ),
-    ).toEqual(["x.ts:1: «de» / «of»"]);
+    ).toEqual([
+      "x.ts:1: «de» / «of»",
+      "x.ts:6: «real · corrida» / «real · run»",
+      "x.ts:7: «cases» / «casos»",
+    ]);
   });
 
   it("src/ no elige palabras por idioma fuera de los textos", () => {

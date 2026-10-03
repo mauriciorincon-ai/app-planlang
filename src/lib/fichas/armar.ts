@@ -12,7 +12,7 @@ import type { Idioma, TextoBilingue } from "@core/formatos/bilingue";
 import type { DatosDemo } from "@/lib/datos/vitrina";
 import type { HechosDelRepo } from "@/lib/datos/repo";
 import { numeroTal, versionCorta } from "@/lib/vista/formato";
-import { AGENTE, APP } from "@/textos/fichas";
+import { AGENTE, APP, METRICAS_APP as M } from "@/textos/fichas";
 import { VERSION_EXPORT, VERSION_FICHA } from "./contrato";
 import type { BrochureExport, CifraFicha, FichaTecnica } from "./tipos";
 
@@ -249,7 +249,6 @@ export function brochureExport(
     })),
   }));
   const total = grupos.reduce((s, g) => s + g.features.length, 0);
-  const es = i === "es";
   const costo = costoDeLaCorrida(d);
   return {
     _schema: repo.bloqueSchema,
@@ -279,83 +278,73 @@ export function brochureExport(
     metricas: [
       {
         clave: "criterios_cumplidos",
-        etiqueta: es
-          ? `criterios del plan cumplidos, de ${inf.criterios.length}`
-          : `plan criteria met, of ${inf.criterios.length}`,
+        etiqueta: X(M.criteriosCumplidos.etiqueta(inf.criterios.length), i),
         valor: cumplen,
-        unidad: es ? "criterios" : "criteria",
+        unidad: X(M.criteriosCumplidos.unidad, i),
         fuente: "medido",
-        detalle: es
-          ? `Del informe del verificador ${inf.version_verificador} sobre la corrida ${inf.corrida_id}: ${cumplen} de ${inf.criterios.length} criterios cumplidos.`
-          : `From verifier ${inf.version_verificador}'s report on run ${inf.corrida_id}: ${cumplen} of ${inf.criterios.length} criteria met.`,
+        detalle: X(
+          M.criteriosCumplidos.detalle({
+            verificador: inf.version_verificador,
+            corrida: inf.corrida_id,
+            cumplen,
+            n: inf.criterios.length,
+          }),
+          i,
+        ),
       },
       {
         clave: "decisiones_cruzadas",
-        etiqueta: es
-          ? `decisiones rehechas en otro lenguaje, con ${diferencias} diferencias`
-          : `decisions redone in another language, with ${diferencias} differences`,
+        etiqueta: X(M.decisionesCruzadas.etiqueta(diferencias), i),
         valor: decisiones,
-        unidad: es ? "decisiones" : "decisions",
+        unidad: X(M.decisionesCruzadas.unidad, i),
         fuente: "medido",
-        detalle: es
-          ? `Prueba cruzada RF-09.2 sobre ${ct.rf_09_2.length} corridas: el intérprete de aristas de TypeScript rehace cada decisión que registró Python.`
-          : `RF-09.2 cross-check over ${ct.rf_09_2.length} runs: the TypeScript edge interpreter redoes every decision Python recorded.`,
+        detalle: X(M.decisionesCruzadas.detalle(ct.rf_09_2.length), i),
       },
       {
         clave: "casos_por_corrida",
-        etiqueta: es
-          ? `casos por corrida, en ${corridas} corridas y una línea base`
-          : `cases per run, over ${corridas} runs and a baseline`,
+        etiqueta: X(M.casosPorCorrida.etiqueta(corridas), i),
         valor: n,
-        unidad: es ? "casos" : "cases",
+        unidad: X(M.casosPorCorrida.unidad, i),
         fuente: "medido",
-        detalle: es
-          ? `Corrida ${rep.corrida.id} con sus ${rep.repeticiones.length} repeticiones (pass^k) y la línea base de agente único a igual presupuesto.`
-          : `Run ${rep.corrida.id} with its ${rep.repeticiones.length} repetitions (pass^k) and the single-agent baseline at equal budget.`,
+        detalle: X(
+          M.casosPorCorrida.detalle({
+            corrida: rep.corrida.id,
+            repeticiones: rep.repeticiones.length,
+          }),
+          i,
+        ),
       },
       {
         clave: "llamadas_a_modelos_en_la_vitrina",
-        etiqueta: es
-          ? "llamadas a modelos al visitar la vitrina"
-          : "model calls when visiting the showcase",
+        etiqueta: X(M.llamadasEnLaVitrina.etiqueta, i),
         valor: 0,
-        unidad: es ? "llamadas" : "calls",
+        unidad: X(M.llamadasEnLaVitrina.unidad, i),
         fuente: "declarado",
-        detalle: es
-          ? "Lo fija la arquitectura: la vitrina es un export estático con los datos precalculados; el paquete se prueba sin una sola solicitud fuera de su origen."
-          : "Set by the architecture: the showcase is a static export with precomputed data; the package is tested without a single request outside its origin.",
+        detalle: X(M.llamadasEnLaVitrina.detalle, i),
       },
       {
         clave: "costo_de_una_corrida",
-        etiqueta: es
-          ? `costo nominal de una corrida de ${n} casos`
-          : `nominal cost of a ${n}-case run`,
+        etiqueta: X(M.costoDeUnaCorrida.etiqueta(n), i),
         valor: costo,
         unidad: "US$",
         fuente: "calculada",
-        detalle: es
-          ? "Suma del costo nominal que el CLI declara por llamada, en las trazas de la corrida; por la suscripción no se pagó aparte."
-          : "Sum of the nominal cost the CLI declares per call, over the run's traces; through the subscription it was not paid separately.",
+        detalle: X(M.costoDeUnaCorrida.detalle, i),
       },
       {
         clave: "funcionalidades",
-        etiqueta: es ? "funcionalidades construidas" : "built features",
+        etiqueta: X(M.funcionalidades.etiqueta, i),
         valor: total,
-        unidad: es ? "funcionalidades" : "features",
+        unidad: X(M.funcionalidades.unidad, i),
         fuente: "medido",
-        detalle: es
-          ? "Las de la visión del producto marcadas para el corte de dos semanas, contadas contra docs/MANUAL-DE-USO.md; las del roadmap no cuentan."
-          : "Those of the product vision marked for the two-week cut, counted against docs/MANUAL-DE-USO.md; roadmap ones do not count.",
+        detalle: X(M.funcionalidades.detalle, i),
       },
       {
         clave: "decisiones_registradas",
-        etiqueta: es
-          ? "decisiones de arquitectura registradas"
-          : "recorded architecture decisions",
+        etiqueta: X(M.decisionesRegistradas.etiqueta, i),
         valor: repo.adrs,
         unidad: "ADR",
         fuente: "medido",
-        detalle: es ? "Archivos de decisions/." : "Files in decisions/.",
+        detalle: X(M.decisionesRegistradas.detalle, i),
       },
     ],
     stack: APP.stack.map((s) => ({

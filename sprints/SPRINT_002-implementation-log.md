@@ -1286,6 +1286,63 @@ summary como deuda con fecha.
 | B14 | guardias/lighthouse-urls.test (las 7 pantallas en español + /en y /en/playground) | lighthouse-urls.json de HEAD (sin inglés) → rojo «expected [ '/es', '/es/plan', …(5) ] to include '/en'» → verde con las dos URL nuevas |
 | B24 (enlace de salto) | componentes «lo primero del teclado salta al contenido» | quitar el enlace → rojo «expected '/en' to be '#contenido'» → verde al restaurar |
 
+#### Vocabulario con nombre, resto de B18 y C-1…C-12 (lote 2 de lo que faltaba)
+
+- **B18 (resto):** la guardia `bilingue-fuente` ve también la bandera `es ? … : …` (y `!es`); al ampliarla salieron
+  **58 sitios** en `entrada.ts`, `agente.ts` y `fichas/armar.ts` (el «+34» que el auditor resumió). Pasan a
+  plantillas completas: `ARMADO` y `FORMAS` (`src/textos/entrada.ts`), `METRICAS_APP` (`src/textos/fichas.ts`),
+  `FRACCION` y `CHIP_CORRIDA` (`src/textos/comun.ts`), `MODO_ARISTA` (`src/textos/agente.ts`). Las fichas salen byte
+  a byte iguales (su prueba de frescura lo confirma); los chips «real · sprint N» y «real · corrida» que eran iguales en
+  los dos idiomas dejan el ternario.
+- **AU-S2-16:** un solo ayudante, `delVocabulario` (`src/lib/vista/vocabulario.ts`), detiene el build nombrando la
+  clave y el archivo cuando un nodo, una señal, un tipo de caso o un estado no tienen su entrada: `NODOS`,
+  `TRAZAS_DE_NODO`, `TIPO_DE_CASO`, `FICHA.participan.papel` (C-11), `REVERSIBILIDAD`, `NODO_EN_FRASE`, las capas de la
+  gramática, `PRESENTACION` de las trazas, el código por nodo (`grafo-codigo.json`) y los estados de riesgo, supuesto y
+  criterio (tipados ahora por las uniones del núcleo: un estado nuevo del verificador sin texto no compila). Los dos
+  `switch` por nodo pasan de `default: ""` a un error con nombre; el tipo de un nodo sin glifo en P6 también. El tope
+  de aclaraciones de S2 sale de la regla «tope» del plan (`umbralDeCategoria`) en vez de `u3 … : 0`; las dos búsquedas
+  de «U1» por id que quedaban en P3 van por la señal de confianza.
+- **C-1:** la línea seleccionable del lienzo es la de la regla que lee el umbral de confianza (`lineaU1`), no el par
+  `decision → pausa_humana` escrito; el panel dice el id del plan (`umbralId`). El panel por cada arista condicional
+  (RF-08.4) no estaba en la orden del S2: **roadmap**, declarado.
+- **C-2:** «Comprobación: N de N casos reproducen el camino» se calcula en la isla (`casosQueReproducen`, en
+  `core/playground/consecuencias.ts`, con el mismo recálculo del playground).
+- **C-3:** cifras y «corrió» de la ficha de P3 por clave (`ClaveActividad`, `ClavePuede`), no por posición; la
+  actividad «hasta {plan:U3} veces» cita el plan.
+- **C-4:** `VISIBLES` vive en `plan-comun.ts` y lo usan P2 y las trazas de P3. **C-5:** `IDIOMAS` en lugar de
+  `["es", "en"]` (`fichas/archivos.ts`, `diagrama-igual-grafo.ts`, `core/brecha/supuestos.ts`). **C-6:** la prueba
+  cruzada del playground se busca por el id de la corrida. **C-7:** `pausaUnica` y `pausaDelPlan`: con más de una
+  pausa (o ninguna en el plan) la página se detiene nombrándolo en vez de mostrar la primera.
+- **C-8:** `TIPOS_DE_NODO` y `GLIFO_DE_TIPO` se cruzan con la gramática `agentes-ia` en una prueba
+  (`nodos-gramatica.test.ts`), con la única desviación declarada (regla → hexágono).
+- **C-10:** «siete pantallas», «las 9 secciones» y «los tres criterios más relevantes» se comprueban contra el dato
+  (`copia-contra-plan.test.ts` § 5) en lugar de reescribir la copia aprobada.
+- **C-12:** el id del demo del generador sintético se declara una vez (`DEMO_DEL_GENERADOR`). **Deuda S3:** los
+  evaluadores de regla del núcleo atribuyen sus fallas a nodos del demo A; sacarlos exige que el plan declare el nodo
+  de cada evaluador (cambio de esquema con versión del verificador y goldens), con el demo B. Anotado en el
+  encabezado de `core/brecha/brechas-no-previstas.ts`.
+- **C-9** y **C-11** ya estaban pagados (C-11 con `delVocabulario`).
+- **Errores con nombre que no pueden fallar, retirados (regla 15, tercera pregunta):** el nombre corto de una
+  categoría de brecha desconocida ya lo detiene `LECTURA_BRECHA` antes (y `CATEGORIA_CORTA` está tipado por la unión
+  del núcleo), y un tope de aclaraciones no numérico lo rechaza el intérprete de aristas al compactar. Sus `throw` se
+  retiraron, con la nota de quién los cubre. Los demás tienen prueba en `errores-con-nombre.test.ts` y
+  `reproducibilidad.test.ts` (que además pasó `VARIANTE` a `delVocabulario`: la variante cruda salía en `/en`).
+- **Cobertura:** los errores con nombre sumaron ramas; `src/lib/**` quedó en 79,45 % de ramas (umbral 80 %) hasta
+  probarlos. Con las pruebas nuevas, `pnpm test` pasa sus umbrales.
+
+| Gate | Prueba | Demo en rojo |
+|---|---|---|
+| B18 (resto) | guardia `bilingue-fuente` ampliada a la bandera `es ? … : …` | al ampliarla, rojo con 58 sitios en entrada.ts, agente.ts y fichas/armar.ts (el «+34» del auditor) → verde tras moverlos a ARMADO, METRICAS_APP, FRACCION, CHIP_CORRIDA y MODO_ARISTA; la prueba trae sus carnadas `es ?` y `!es ?` |
+| AU-S2-16 (estados) | plan.test «un estado desconocido detiene el build» | devolver el respaldo silencioso «Sin probar» → rojo «expected [Function] to throw an error» → verde con delVocabulario |
+| AU-S2-16 (vocabulario de nodos) | agente.test «un tipo de caso sin su nombre no se pinta con el código crudo» (y NODOS, TRAZAS_DE_NODO) | devolver el respaldo { es: caso.tipo, en: caso.tipo } → rojo «expected [Function] to throw an error» → verde con delVocabulario |
+| AU-S2-16 (u3) | brecha.test «sin la regla que aplica el tope, la vista se detiene» | devolver la búsqueda por la señal literal con respaldo 0 → rojo «expected [Function] to throw an error» → verde con umbralDeCategoria(plan, "tope") |
+| C-1 | agente.test «la línea que abre el panel es la de su regla» | una línea seleccionable escrita a mano que no es la de la regla de U1 (aclaracion → pausa_humana) → rojo «expected [ 'l-aclaracion-a-pausa-humana' ] to deeply equal [ 'l-decision-a-pausa-humana' ]» → verde con lineaU1 |
+| C-2 | paridad.test «la comprobación se calcula» | carnada dentro de la prueba: una rama registrada alterada → casosQueReproducen da 19 de 20; la isla ya no afirma «20 de 20» con c.casos.length |
+| C-3 | tipos: cifras y «corrió» por clave (Record<ClaveActividad, …>, Record<ClavePuede, …>) | quitar la cifra de «responde» → tsc «Property 'responde' is missing in type …» → compila al restaurar |
+| C-7 | plan.test «un plan con dos pausas no se publica mostrando solo la primera» (y sin pausa) | devolver pausas_humanas[0] → rojo «expected [Function] to throw an error» → verde con pausaDelPlan/pausaUnica |
+| C-8 | nodos-gramatica.test (tipos y glifos = gramática agentes-ia, salvo regla → hexágono declarado) | glifo de enrutador cambiado a «circulo» → rojo «enrutador: expected 'circulo' to be 'rombo'» → verde al restaurar |
+| C-10 | copia-contra-plan § 5 (pantallas, secciones y criterios destacados escritos en palabras = el dato) | «las 8 secciones» en la copia → rojo «expected 8 to be 9» → verde al restaurar |
+
 ### Punto de retoma (2026-10-02, compactación pedida por el usuario)
 
 - **Commits de la Fase 2 de la auditoría:** `2caa8cb` (los 3 Altos) · `60ac791` (lo que viaja y lo publicado) ·
@@ -1297,7 +1354,8 @@ summary como deuda con fecha.
   1. ~~accesibilidad: B20, B21, B22, B23, B24, B26, B27 (capa activa del lienzo), B29; bilingüe: B17, B18, B19, B44;
      gates: B14 (Lighthouse en `/en`), B15 (axe `moderate`), B28 (barrido de tintas)~~ — pagado, ver «Accesibilidad,
      bilingüe y gates»;
-  2. AU-S2-16 (errores con nombre en el vocabulario de nodos y señales; `u3` ausente) y C-1…C-12;
+  2. ~~AU-S2-16 (errores con nombre en el vocabulario de nodos y señales; `u3` ausente) y C-1…C-12~~ — pagado, ver
+     «Vocabulario con nombre, resto de B18 y C-1…C-12»;
   3. núcleo y gates: B7, B8, B9 (nota), B12, B13, B32, B33, B37, B41, B50, B51, B52, B53, B54, B56, B57; P-1…P-10,
      P-12;
   4. AU-S2-11: proyecto Playwright `paridad` (Firefox y WebKit) + corregir `vitest.config.ts` y `svg.test.ts`;

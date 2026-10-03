@@ -15,6 +15,7 @@
 import { existsSync, readFileSync, realpathSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { IDIOMAS } from "../core/formatos/bilingue";
 import type { AristaCondicional } from "../core/plan/esquema";
 import { condicionEnTexto } from "../core/visor/geometria";
 import { idDeMapa } from "../core/visor/ids";
@@ -221,7 +222,7 @@ export function principal(carpeta = "out"): number {
     const contrato = (
       leer(m.plan.archivo) as { contrato_de_grafo: ContratoPublicable }
     ).contrato_de_grafo;
-    for (const idioma of ["es", "en"]) {
+    for (const idioma of IDIOMAS) {
       const pagina = join(raiz, carpeta, idioma, "agente.html");
       if (!existsSync(pagina)) {
         console.error(

@@ -7,7 +7,12 @@
 import { beforeAll, describe, expect, it } from "vitest";
 import { datosDemo } from "@/lib/datos/vitrina";
 import { vistaAgente, type VistaAgente } from "@/lib/vista/agente";
-import { PLAN_POR_NODO } from "@/textos/agente";
+import {
+  NODOS,
+  PLAN_POR_NODO,
+  TIPO_DE_CASO,
+  TRAZAS_DE_NODO,
+} from "@/textos/agente";
 import { esAristaTripleta } from "@core/plan/esquema";
 
 let es: VistaAgente;
@@ -202,6 +207,14 @@ describe("AU-S2-2: el lote, el eje y el umbral de confianza salen del plan", () 
       if (esAristaTripleta(a) && a.valor === "umbral.U1") a.valor = "umbral.U9";
     const v = vistaAgente(otro, "es");
     expect(v.arista.titulo).toMatch(/U9/);
+    // El panel lo dice con el id del plan, y la línea que lo abre es la de su regla (C-1).
+    expect(v.arista.umbralId).toBe("U9");
+    const halos = [
+      ...v.lienzo.svg.matchAll(
+        /<g class="d-flujo"[^>]*id="agente-(l-[^"]+)"[^>]*>(?:(?!<\/g>)[\s\S])*?class="halo"/g,
+      ),
+    ].map((m) => m[1]);
+    expect(halos).toEqual([v.arista.id]);
     const sin = { ...d, plan: structuredClone(d.plan) };
     sin.plan.umbrales = sin.plan.umbrales.filter((x) => x.id !== "U1");
     expect(() => vistaAgente(sin, "es")).toThrow(/señal de confianza/);
@@ -219,6 +232,47 @@ describe("P-11: el lienzo del agente exige «diagrama = grafo» en el build", ()
     });
     expect(() => vistaAgente(otro, "es")).toThrow(
       /el lienzo «agente» no es el grafo:[\s\S]*enrutador#9/,
+    );
+  });
+});
+
+describe("AU-S2-16: un nodo, una señal o un tipo sin su vocabulario detienen el build, nombrados", () => {
+  /** Quita una entrada de un diccionario de textos mientras corre `f`, y la devuelve. */
+  function sin<T>(mapa: Record<string, T>, clave: string, f: () => void) {
+    const antes = mapa[clave];
+    delete mapa[clave];
+    try {
+      f();
+    } finally {
+      mapa[clave] = antes as T;
+    }
+  }
+
+  it("un nodo del contrato sin su presentación (NODOS) no sale en blanco", async () => {
+    const d = await datosDemo();
+    sin(NODOS as Record<string, unknown>, "redactor", () =>
+      expect(() => vistaAgente(d, "es")).toThrow(
+        "«redactor» no tiene su entrada en NODOS (src/textos/agente.ts)",
+      ),
+    );
+  });
+
+  it("un tipo de caso sin su nombre no se pinta con el código crudo", async () => {
+    const d = await datosDemo();
+    const tipo = d.lote.casos[0]!.tipo;
+    sin(TIPO_DE_CASO as Record<string, unknown>, tipo, () =>
+      expect(() => vistaAgente(d, "en")).toThrow(
+        `«${tipo}» no tiene su entrada en TIPO_DE_CASO`,
+      ),
+    );
+  });
+
+  it("un nodo sin sus columnas de trazas tampoco", async () => {
+    const d = await datosDemo();
+    sin(TRAZAS_DE_NODO as Record<string, unknown>, "guardia_salida", () =>
+      expect(() => vistaAgente(d, "es")).toThrow(
+        "«guardia_salida» no tiene su entrada en TRAZAS_DE_NODO",
+      ),
     );
   });
 });
