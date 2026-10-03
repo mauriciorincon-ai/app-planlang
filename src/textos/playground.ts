@@ -242,6 +242,11 @@ export const PORQUE = {
   ninguna: tb("ninguna regla lo detiene", "no rule stops it"),
 };
 
+/** Por qué una regla declarada como función nombrada manda el caso a otro lado (una entrada por función del plan). */
+export const PORQUE_FUNCION: Record<string, TextoBilingue> = {
+  texas_y_no_aprobar: PORQUE.texas,
+};
+
 export const DESTINO = {
   persona: tb("a una persona", "to a person"),
   solo: tb("solo", "alone"),
@@ -693,4 +698,15 @@ export const FICHA_TECNICA = {
       `los ${n}, con la regla y los umbrales del plan sobre el camino nuevo; un criterio que lee lo que pasa después del cambio (respuesta, documento, latencia) queda sin poder medirse en ese caso`,
       `all ${n}, with the plan’s rule and thresholds over the new path; a criterion that reads what happens after the change (reply, document, latency) cannot be measured on that case`,
     )) as Plantilla<number>,
+};
+
+/**
+ * Cómo se lee cada umbral booleano del plan (un interruptor): encendido, apagado y por qué encenderlo no cambia ningún
+ * caso cuando toda propuesta adversa ya pasaba por una persona. Un umbral booleano sin entrada detiene el build.
+ */
+export const INTERRUPTOR: Record<
+  string,
+  { on: TextoBilingue; off: TextoBilingue; sinCambio: TextoBilingue }
+> = {
+  U4: { on: ESTADO.texasOn, off: ESTADO.texasOff, sinCambio: CAMBIOS.texas },
 };

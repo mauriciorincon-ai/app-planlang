@@ -51,9 +51,11 @@ import {
   EFECTO,
   ESTADO,
   FRASE,
+  INTERRUPTOR,
   JUEGO,
   OPERADOR,
   PORQUE,
+  PORQUE_FUNCION,
   REGLA_VIVA,
   SENAL,
   SIMBOLO,
@@ -298,7 +300,7 @@ export function porque(x: CambioDeCaso, i: Idioma): string {
   if (x.ahora === "no_observado") return PORQUE.noObservado(x.rama_nueva)[i];
   const d: RegistroDeArista | null = x.ahora_decide;
   if (d) {
-    if (d.tipo === "funcion") return PORQUE.texas[i];
+    if (d.tipo === "funcion") return PORQUE_FUNCION[d.funcion ?? ""]![i];
     return PORQUE.ahora({
       senal: nombreSenal(d.senal, i),
       valor: valorRegistro(d.valor_observado, i),
@@ -693,10 +695,7 @@ export function Juego({ datos }: { datos: DatosIsla }) {
     const um = datos.umbrales.find((x) => x.id === id)!;
     const v = u[id] as number | boolean;
     if (typeof v === "boolean")
-      return {
-        es: (v ? ESTADO.texasOn : ESTADO.texasOff).es,
-        en: (v ? ESTADO.texasOn : ESTADO.texasOff).en,
-      };
+      return v ? INTERRUPTOR[id]!.on : INTERRUPTOR[id]!.off;
     return {
       es: `${id} ${decimal(v, um.decimales, "es")}`,
       en: `${id} ${decimal(v, um.decimales, "en")}`,
@@ -720,11 +719,18 @@ export function Juego({ datos }: { datos: DatosIsla }) {
         k.registrado === "persona",
     ),
   );
+  // Un solo interruptor encendido que no cambia ningún caso tiene su explicación propia (la del plan).
+  const interruptorSinCambio =
+    soloBooleano && adversasConPersona && r.movidos.length === 1
+      ? u[r.movidos[0]!] === true
+        ? INTERRUPTOR[r.movidos[0]!]!.sinCambio
+        : null
+      : null;
   const vacio =
     r.movidos.length === 0
       ? CAMBIOS.mueve[i]
-      : soloBooleano && adversasConPersona && u.U4 === true
-        ? CAMBIOS.texas[i]
+      : interruptorSinCambio
+        ? interruptorSinCambio[i]
         : CAMBIOS.ninguno[i];
   const curva = datos.curva;
   const u1 = curva ? (u[curva.umbral] as number) : null;

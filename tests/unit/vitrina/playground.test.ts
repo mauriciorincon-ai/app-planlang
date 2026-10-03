@@ -7,6 +7,7 @@ import { beforeAll, describe, expect, it } from "vitest";
 import { consecuencias, umbralesDelPlan } from "@core/playground/consecuencias";
 import { datosDemo, type DatosDemo } from "@/lib/datos/vitrina";
 import { vistaPlayground, type VistaPlayground } from "@/lib/vista/playground";
+import { INTERRUPTOR, PORQUE_FUNCION } from "@/textos/playground";
 
 let d: DatosDemo;
 let es: VistaPlayground;
@@ -165,5 +166,27 @@ describe("los datos de la isla", () => {
 
   it("viaja como datos puros: sobrevive a JSON sin perder nada", () => {
     expect(JSON.parse(JSON.stringify(es.isla))).toEqual(es.isla);
+  });
+});
+
+describe("AU-S2-1: la isla no narra una regla con el texto de otra", () => {
+  it("un umbral booleano sin sus textos detiene el build nombrándolo", () => {
+    const u4 = INTERRUPTOR.U4!;
+    delete INTERRUPTOR.U4;
+    try {
+      expect(() => vistaPlayground(d, "es")).toThrow(/umbral booleano U4/);
+    } finally {
+      INTERRUPTOR.U4 = u4;
+    }
+  });
+
+  it("una función nombrada sin su «por qué» detiene el build nombrándola", () => {
+    const t = PORQUE_FUNCION.texas_y_no_aprobar!;
+    delete PORQUE_FUNCION.texas_y_no_aprobar;
+    try {
+      expect(() => vistaPlayground(d, "en")).toThrow(/«texas_y_no_aprobar»/);
+    } finally {
+      PORQUE_FUNCION.texas_y_no_aprobar = t;
+    }
   });
 });

@@ -34,6 +34,7 @@ import { APAGADO, ENCENDIDO, REVERSIBILIDAD } from "@/textos/plan-comun";
 import type { Fila } from "./agente";
 import { pieDeCorrida } from "./caso";
 import { entero, enumerar, porcentaje, versionCorta } from "./formato";
+import { conPlan } from "./plan-en-texto";
 import {
   controlLegal,
   estadoDeCriterio,
@@ -342,7 +343,7 @@ export function vistaPlan(d: DatosDemo, i: Idioma): VistaPlan {
       typeof r.condicion === "string" ? r.condicion : String(r.metrica ?? "");
     return {
       id: c.id,
-      titulo: X(CRITERIO.lider[c.id] ?? c.enunciado, i),
+      titulo: conPlan(X(CRITERIO.lider[c.id] ?? c.enunciado, i), p, i),
       resumen: `${X(CRITERIO.objetivo, i)}: ${objetivo} · ${X(CRITERIO.origen[c.origen] ?? { es: c.origen, en: c.origen }, i)}`,
       tecnica: `${X(c.enunciado, i)} — ${r.poblacion} → ${lee} · ${r.agregacion}${typeof r.k === "number" ? ` · k = ${r.k}` : ""}`,
       lado: { tipo: "criterio", estado: estadoDeCriterio(ci?.estado, i) },

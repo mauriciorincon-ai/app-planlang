@@ -20,8 +20,10 @@ import {
   CURVA,
   EJEMPLO,
   FICHA_TECNICA,
+  INTERRUPTOR,
   IPO,
   LIMITES,
+  PORQUE_FUNCION,
   PORTADA,
   SENAL,
   SIMBOLO,
@@ -189,6 +191,17 @@ export function vistaPlayground(d: DatosDemo, i: Idioma): VistaPlayground {
   const c = compactar(d.plan, d.corrida, d.lote, inf);
   // Toda señal que decide tiene su nombre llano antes de que la isla las pinte (la isla no adivina uno).
   for (const s of senalesQueLeenLasAristas(c.aristas)) nombreLlano(s);
+  // Igual con las funciones nombradas y los interruptores: la isla no narra una con el texto de otra (AU-S2-1).
+  for (const a of c.aristas)
+    if (!esAristaTripleta(a) && !PORQUE_FUNCION[a.funcion.nombre])
+      throw new Error(
+        `playground: la función «${a.funcion.nombre}» del plan no tiene su «por qué» en PORQUE_FUNCION (src/textos/playground.ts).`,
+      );
+  for (const u of d.plan.umbrales)
+    if (typeof u.valor_en_plan === "boolean" && !INTERRUPTOR[u.id])
+      throw new Error(
+        `playground: el umbral booleano ${u.id} no tiene sus textos en INTERRUPTOR (src/textos/playground.ts).`,
+      );
   const decisiones = inf.contrato_de_grafo.rf_09_2[0]?.visitas ?? 0;
   const v = versionCorta(
     inf.ficha_reproducibilidad.corrida.plan_de_ejecucion.version,

@@ -31,6 +31,11 @@ import {
   PIE_CASO,
 } from "@/textos/caso";
 import { decimal, entero, enumerar } from "./formato";
+import {
+  categoriaDeRegla,
+  reglaDeLaPausa,
+  textoDeCategoria,
+} from "./motivo-pausa";
 import type { Fila } from "./agente";
 
 export interface ChipCaso {
@@ -169,17 +174,6 @@ function valorDeclarado(
         : String(aplicado)
     }`;
   return String(declarado);
-}
-
-type Categoria = keyof typeof MOTIVO;
-function categoria(senal: string | null, funcion: string | null): Categoria {
-  const s = senal ?? funcion ?? "";
-  if (s === "senal_confianza") return "confianza";
-  if (s === "costo_estimado") return "altoCosto";
-  if (s === "contradiccion_orden_texto") return "contradiccion";
-  if (s === "propuesta") return "negar";
-  if (s === "ciclos_aclaracion") return "tope";
-  return "texas";
 }
 
 /** Los 20 casos para el selector, en el orden de la corrida. */
@@ -339,14 +333,24 @@ export function vistaCaso(d: DatosDemo, id: string, i: Idioma): VistaCaso {
         break;
       case "extractor":
         hizo = X(
-          visitaExtractor++ === 0 ? HIZO.extractor : HIZO.extractorOtraVez,
+          p.error_proveedor !== null
+            ? HIZO.sinRespuesta(p.error_proveedor)
+            : visitaExtractor === 0
+              ? HIZO.extractor
+              : HIZO.extractorOtraVez,
           i,
         );
+        visitaExtractor++;
         break;
       case "aclaracion": {
         const a = t.aclaraciones[ciclo] as unknown as Aclaracion | undefined;
         ciclo++;
-        hizo = X(HIZO.aclaracion(a?.ciclo ?? ciclo), i);
+        hizo = X(
+          p.error_proveedor !== null
+            ? HIZO.sinRespuesta(p.error_proveedor)
+            : HIZO.aclaracion(a?.ciclo ?? ciclo),
+          i,
+        );
         if (a) dialogo.push({ pregunta: a.pregunta, respuesta: a.respuesta });
         break;
       }
@@ -390,16 +394,15 @@ export function vistaCaso(d: DatosDemo, id: string, i: Idioma): VistaCaso {
     if (dec.length) {
       const r = RAMA[nodo as keyof typeof RAMA] as
         Record<string, TextoBilingue> | undefined;
-      if (r) {
-        const clave = !decisora
-          ? "defecto"
-          : nodo === "enrutador"
-            ? String(decisora.senal)
-            : nodo === "decision"
-              ? categoria(decisora.senal, decisora.funcion)
-              : "regla";
-        rama = r[clave] ? X(r[clave]!, i) : null;
-      }
+      if (r)
+        rama = X(
+          textoDeCategoria(
+            r,
+            decisora ? categoriaDeRegla(decisora) : "defecto",
+            `RAMA.${nodo} (src/textos/caso.ts)`,
+          ),
+          i,
+        );
     }
     return {
       n: p.orden,
@@ -435,18 +438,18 @@ export function vistaCaso(d: DatosDemo, id: string, i: Idioma): VistaCaso {
 
   // ── el relato ────────────────────────────────────────────────────────────────────────────────────
   const pausa = t.pausas_humanas[0];
-  const motivoPausa = (): TextoBilingue => {
-    const m = pausa?.payload.motivo as
-      { desde?: string; orden_arista?: number } | undefined;
-    if (m?.desde === "aclaracion") return MOTIVO.tope!;
-    const x = t.decisiones_de_arista.find(
-      (y) =>
-        y.desde === m?.desde &&
-        y.orden_arista === m?.orden_arista &&
-        y.resultado,
+  const motivoPausa = (): TextoBilingue =>
+    textoDeCategoria(
+      MOTIVO,
+      categoriaDeRegla(
+        reglaDeLaPausa(
+          t.caso_id,
+          pausa?.payload.motivo,
+          t.decisiones_de_arista,
+        ),
+      ),
+      "MOTIVO (src/textos/caso.ts)",
     );
-    return MOTIVO[categoria(x?.senal ?? null, x?.funcion ?? null)]!;
-  };
   const visito = (n: string) => t.nodos_visitados.includes(n);
   const relato: string[] = [
     X(RELATO.pidio({ servicio, mujer, edad: e.afiliado.edad }), i),
@@ -599,7 +602,10 @@ export function vistaCaso(d: DatosDemo, id: string, i: Idioma): VistaCaso {
         umbral: { declarado: unknown; aplicado: unknown };
         evidencia: TextoBilingue[];
         contraevidencia: TextoBilingue[];
-        extraccion: { campos: Record<string, unknown>; confianza: number };
+        extraccion: {
+          campos: Record<string, unknown>;
+          confianza: number;
+        } | null;
       }
     | undefined;
   const g = t.guardia_salida;
@@ -660,11 +666,14 @@ export function vistaCaso(d: DatosDemo, id: string, i: Idioma): VistaCaso {
             contraevidencia: (payload.contraevidencia ?? []).map((x) =>
               X(x, i),
             ),
-            leyo: `${Object.entries(payload.extraccion?.campos ?? {})
-              .map(([k, x]) => `${k} ${valorLeido(x, i)}`)
-              .join(
-                " · ",
-              )} · ${X(PAUSA.confianza, i)} ${decimal(payload.extraccion?.confianza ?? 0, 2, i)}`,
+            // Sin extracción (el extractor no respondió) no hay campos ni confianza que mostrar: no se inventa un 0.
+            leyo: payload.extraccion
+              ? `${Object.entries(payload.extraccion.campos)
+                  .map(([k, x]) => `${k} ${valorLeido(x, i)}`)
+                  .join(
+                    " · ",
+                  )} · ${X(PAUSA.confianza, i)} ${decimal(payload.extraccion.confianza, 2, i)}`
+              : X(PAUSA.sinExtraccion, i),
             respuesta: valorLeido(pausa.respuesta_simulada.decision, i),
             nota: X(PAUSA.simulado(pausa.respuesta_simulada.politica), i),
           }

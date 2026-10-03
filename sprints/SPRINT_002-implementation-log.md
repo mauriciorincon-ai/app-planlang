@@ -12,10 +12,10 @@
 |---|---|---|
 | 0 · Setup, deltas, plan v1.3 y ⭐ del S1 | ✅ cerrada · paradas del S1 diferidas con nombre | «continúa» 2026-09-28 |
 | 1 · Fundación de UI + P1 → gate de FIDELIDAD | ✅ cerrada · **fidelidad aprobada** (`docs/fidelidad/p1/index.html`) | «lo abrí y lo apruebo» + «avancemos» 2026-09-29 |
-| 2 · P2 Plan · P3 Agente (visor) · P6 Caso | ✅ construida · **mirada 2 aprobada** (`docs/fidelidad/p2/index.html`) · ⏸ esperando el «continúa» de fase | «lo abrí y apruebo» 2026-09-30 |
+| 2 · P2 Plan · P3 Agente (visor) · P6 Caso | ✅ cerrada · **mirada 2 aprobada** (`docs/fidelidad/p2/index.html`) | «lo abrí y apruebo» + «continúa» 2026-09-30 |
 | 3 · P4 Brecha · P5 Playground | ✅ cerrada · **mirada 3 aprobada** (`docs/fidelidad/p3/index.html`) | «Esta bien continua» + «lo abrí y apruebo» 2026-10-01 |
-| 4 · P7 Fichas · paquete · corridas de fondo · deuda | 🔨 en construcción | «continúa» 2026-10-01 |
-| 5 · Cierre | ⏳ | |
+| 4 · P7 Fichas · paquete · corridas de fondo · deuda | ✅ cerrada · **mirada 4 aprobada** (`docs/fidelidad/p4/index.html`) | «1. lo abrí y apruebo 2. continúa» 2026-10-02 |
+| 5 · Cierre | 🔨 auditoría Fase 2: el usuario aprobó la Fase 1 y pidió ajustar **todos** los hallazgos (2026-10-02) | |
 
 ## Decisiones previas a construir
 
@@ -1044,6 +1044,60 @@ Arranca con «1. lo abrí y apruebo 2. continúa» (mirada 4 registrada arriba).
 
     Sin defectos de forma. Una frase a revisar en la auditoría: la curva del Playground dice «Con el lote de 200 tomará
     forma», y el lote existe desde esta fase, pero la vitrina sigue en la corrida de 20.
+
+### Auditoría — Fase 2 (desde 2026-10-02)
+
+La Fase 1 (`sprints/SPRINT_002-auditoria.md`, auditor independiente) dio «requiere ajustes»: 0 Crítico, 3 Alto,
+20 Medio y 82 Bajo. El usuario respondió «Aprobada la fase 1 de auditoria ajusta todos los hallazgos»: se pagan los
+105, no solo los Altos y los Medios baratos que proponía el plan del auditor. Cada pago sigue el ajuste ejecutable
+del informe; donde se aparta, se dice aquí.
+
+#### Los tres Altos
+
+- **AU-S2-1 · motivo de pausa por regla.** `src/lib/vista/motivo-pausa.ts` es la única lista cerrada de reglas de
+  la vitrina: la categoría de cada arista del plan por su señal o su función (10 categorías, entre ellas
+  `proveedor` del respaldo AU-9). Una regla desconocida detiene el build nombrándola; antes caía en «texas».
+  - P3 cuenta las pausas por la regla que registra su motivo (`porTope`, `porProveedor`) y la aclaración separa el
+    tope de U3 de la falta de respuesta del modelo; P6 resuelve el motivo y la rama de cada paso por la arista
+    registrada (`reglaDeLaPausa`), narra «llamó al modelo y no obtuvo respuesta» en el paso que falló y, sin
+    extracción, dice «nada: el extractor no respondió» en lugar de «confianza 0,00».
+  - El ajuste del informe solo cubría la rama de `decision`; las de `extractor` y `aclaracion` también narraban
+    con una clave fija («faltan datos», «llegó al tope») la regla 1 del respaldo. Ahora `RAMA` va por categoría en
+    los cuatro nodos.
+  - Playground: `PORQUE_FUNCION` (por función nombrada) e `INTERRUPTOR` (por umbral booleano) reemplazan
+    `PORQUE.texas` y `u.U4`; la vista falla si una función o un interruptor del plan no tiene sus textos. Los
+    nombres cortos del lienzo van por categoría y no por posición (paga **AU-S2-B48**).
+  - Prueba con las trazas reales del respaldo (`runs/demo-a/simulado-v1.4-respaldo`, plan v1.4):
+    `tests/unit/vitrina/motivo-pausa.test.ts` (7). Con la corrida publicada (v1.2) las frases no cambian.
+- **AU-S2-2 · lote, eje y umbral de confianza del plan.** La cifra del lote completo usa `lotes.completo` y su
+  texto es plantilla; el eje del panel de arista cubre el rango jugable y todo valor observado; el umbral y su
+  regla se buscan por la señal de confianza (`SENAL_DE_CONFIANZA`), con error nombrado si faltan. El costo humano
+  sale de `minutosPorPersona` del playground (paga **AU-S2-17**: una sola política, que falla si hay varios).
+  Pruebas nuevas en `agente.test.ts` (lote de 100, eje, U1 renumerado a U9).
+- **AU-S2-3 · la copia contra el plan.** `tests/unit/vitrina/copia-contra-plan.test.ts` (10) lee con el
+  analizador de TypeScript los literales de `src/textos/*.ts` (no los comentarios) y exige que todo id `U`/`C`/`R`/
+  `S`/`D` exista en el plan publicado; hoy son 236 citas y todas existen.
+  - Los valores del plan escritos en prosa pasan a plantillas `{plan:…}` (`src/lib/vista/plan-en-texto.ts`): U3,
+    el objetivo y las repeticiones de C5, el objetivo de C7, cuántas reglas tiene un nodo, su lista y sus destinos, y
+    el enunciado de S2. La prueba resuelve cada plantilla en los dos idiomas y comprueba que ninguna vista (Agente,
+    Plan y los 20 casos) sale con una sin resolver. Los textos publicados salen iguales salvo uno: «Assumption S2»
+    en inglés usa ahora el enunciado del plan («suffice» en lugar de «are enough»).
+  - `CRITERIOS_DE` pasa a `src/textos/agente.ts` como `CRITERIOS_EN_LA_CORRIDA`. **Decisión:** se conserva el
+    subconjunto (los criterios que se miden con lo que hizo ese nodo) y no la lista de `PLAN_POR_NODO` (los que el
+    nodo toca en el plan), para no cambiar la frase «En la corrida» aprobada en la mirada 2; el gate exige que cada
+    id exista y esté entre los del nodo. El informe dejaba la elección al usuario; si prefiere la lista completa, es
+    un cambio de una línea.
+  - `CRITERIOS_NUNCA` (las garantías «Nunca» de la ficha) va junto a sus textos y se exige absoluto y citado; las
+    anclas de la ficha técnica (C1 `todos_cumplen`, C5 `pass^k`, C7 latencia) y del informe (C7 mediana, C3 sobre
+    el alto costo) se comprueban contra el plan.
+
+| Gate | Cambio deliberado | Rojo | Al revertir |
+|---|---|---|---|
+| AU-S2-1 · motivo de pausa por regla | quitar `proveedor_no_disponible` de `POR_SENAL` en `src/lib/vista/motivo-pausa.ts` | 6 de 7 rojas en `motivo-pausa.test.ts`: «la regla «proveedor_no_disponible» no tiene categoría en src/lib/vista/motivo-pausa.ts» | 7/7 verdes al restaurar |
+| AU-S2-2 · lote del plan | volver a escribir `200` en la cifra del lote de `src/lib/vista/agente.ts` | `agente.test.ts` «la estimación del lote completo usa `lotes.completo`…» en rojo (esperaba la cifra de 100 casos) | 11/11 verdes al restaurar |
+| AU-S2-3 · ids de la copia contra el plan | escribir «(U9)» en el texto de C7 de `src/textos/plan.ts` | `copia-contra-plan.test.ts` rojo nombrando `src/textos/plan.ts:380 U9` | 10/10 verdes al restaurar |
+| AU-S2-3 · plantillas `{plan:…}` | escribir `{plan:U9}` en el mismo texto | 3 rojas: el id, la plantilla sin resolver y la vista que la publicaría (`ninguna vista sale con una plantilla sin resolver`) | 10/10 verdes al restaurar |
+| AU-S2-1 · interruptor y función con texto | borrar `INTERRUPTOR.U4` y `PORQUE_FUNCION.texas_y_no_aprobar` (dentro de `playground.test.ts`) | la vista falla nombrando «umbral booleano U4» y «texas_y_no_aprobar» | la prueba restaura la entrada; 15/15 |
 
 ## Desviación del plan
 

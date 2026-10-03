@@ -197,7 +197,7 @@ function clasificarClaves(
 }
 
 /** El costo humano por caso que el plan declara en sus umbrales; si declara varios, el playground no sabe a cuál atribuir. */
-function minutosPorPersona(plan: Plan): number {
+export function minutosPorPersona(plan: Plan): number {
   const costos = [
     ...new Set(plan.umbrales.map((u) => u.costo_humano_por_caso_min)),
   ].filter((c): c is number => typeof c === "number");

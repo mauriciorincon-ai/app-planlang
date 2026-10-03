@@ -55,3 +55,47 @@ export const REVERSIBILIDAD: Record<string, TextoBilingue> = {
   dos_vias: tb("Dos vías", "Two-way"),
   costosa: tb("Costosa", "Costly"),
 };
+
+/**
+ * Cómo se nombra cada regla del plan dentro de una frase, por su categoría (`src/lib/vista/motivo-pausa.ts`); `{u}`
+ * es el id del umbral que lee, si lee uno. Con estos nombres, `{plan:lista.<nodo>}` enumera las reglas de un nodo
+ * en el orden del plan (AU-S2-3).
+ */
+export const NOMBRE_DE_REGLA: Record<string, TextoBilingue> = {
+  urgencia: tb("urgencia", "emergency"),
+  exento: tb("servicio exento", "exempt service"),
+  faltantes: tb("faltan datos", "missing data"),
+  proveedor: tb("el modelo no respondió", "the model did not respond"),
+  tope: tb("tope de aclaraciones {u}", "clarification cap {u}"),
+  confianza: tb("confianza bajo {u}", "confidence below {u}"),
+  altoCosto: tb("costo sobre {u}", "cost above {u}"),
+  contradiccion: tb("contradicción", "contradiction"),
+  negar: tb("propuesta de negar", "a proposal to deny"),
+  texas: tb("modo Texas", "Texas mode"),
+};
+
+/** Los números pequeños en palabras, para las plantillas `{plan:…|palabra}` (más allá de diez, en cifras). */
+export const NUMERO_EN_PALABRAS: Readonly<Record<number, TextoBilingue>> = {
+  1: tb("una", "one"),
+  2: tb("dos", "two"),
+  3: tb("tres", "three"),
+  4: tb("cuatro", "four"),
+  5: tb("cinco", "five"),
+  6: tb("seis", "six"),
+  7: tb("siete", "seven"),
+  8: tb("ocho", "eight"),
+  9: tb("nueve", "nine"),
+  10: tb("diez", "ten"),
+};
+
+/** Cómo se nombra un nodo como destino de una regla dentro de una frase (`{plan:destinos.<nodo>}`). */
+export const NODO_EN_FRASE: Record<string, TextoBilingue> = {
+  enrutador: tb("enrutador", "router"),
+  extractor: tb("extractor", "extractor"),
+  aclaracion: tb("aclaración", "clarification"),
+  verificador_cobertura: tb("verificador de cobertura", "coverage checker"),
+  decision: tb("decisión", "decision"),
+  pausa_humana: tb("una persona", "a person"),
+  redactor: tb("redactor", "writer"),
+  guardia_salida: tb("guardia de salida", "output guard"),
+};

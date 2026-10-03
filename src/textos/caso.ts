@@ -297,6 +297,10 @@ export const MOTIVO: Record<string, TextoBilingue> = {
     "el médico no completó los datos dentro del tope de aclaraciones U3",
     "the doctor did not complete the data within the clarification cap U3",
   ),
+  proveedor: tb(
+    "el modelo no respondió al leer o al preguntar, y el plan manda el caso a una persona",
+    "the model did not respond while reading or asking, and the plan sends the case to a person",
+  ),
 };
 
 export const CIFRAS = {
@@ -420,6 +424,11 @@ export const HIZO = {
     "Volvió a leer el caso con la respuesta del médico.",
     "Read the case again with the doctor’s answer.",
   ),
+  sinRespuesta: ((error: string) =>
+    tb(
+      `Llamó al modelo y no obtuvo respuesta (${error}).`,
+      `Called the model and got no answer (${error}).`,
+    )) as Plantilla<string>,
   aclaracion: ((ciclo: number) =>
     tb(
       `Preguntó al médico (ciclo ${ciclo}).`,
@@ -472,11 +481,11 @@ export const RAMA = {
       "no es urgencia ni servicio exento: sigue al extractor",
       "neither an emergency nor an exempt service: on to the extractor",
     ),
-    tipo_atencion: tb(
+    urgencia: tb(
       "es una urgencia: va directo al redactor, sin revisar cobertura",
       "it is an emergency: straight to the writer, no coverage check",
     ),
-    servicio_exento: tb(
+    exento: tb(
       "es un servicio exento: va directo al redactor",
       "it is an exempt service: straight to the writer",
     ),
@@ -486,9 +495,13 @@ export const RAMA = {
       "no falta ningún dato: sigue al verificador de cobertura",
       "nothing missing: on to the coverage checker",
     ),
-    regla: tb(
+    faltantes: tb(
       "faltan datos: pregunta al médico",
       "data are missing: it asks the doctor",
+    ),
+    proveedor: tb(
+      "el modelo no respondió: pasa a una persona",
+      "the model did not respond: on to a person",
     ),
   },
   aclaracion: {
@@ -496,9 +509,13 @@ export const RAMA = {
       "vuelve al extractor con la respuesta",
       "back to the extractor with the answer",
     ),
-    regla: tb(
+    tope: tb(
       "llegó al tope de aclaraciones: pasa a una persona",
       "it reached the clarification cap: on to a person",
+    ),
+    proveedor: tb(
+      "el modelo no respondió: pasa a una persona",
+      "the model did not respond: on to a person",
     ),
   },
   decision: {
@@ -564,6 +581,10 @@ export const PAUSA = {
   contraevidencia: tb("Contraevidencia", "Counter-evidence"),
   leyo: tb("Lo que leyó el extractor", "What the extractor read"),
   confianza: tb("confianza", "confidence"),
+  sinExtraccion: tb(
+    "nada: el extractor no respondió",
+    "nothing: the extractor did not respond",
+  ),
   respondio: tb("Lo que respondió el auditor", "What the auditor answered"),
   simulado: ((politica: string) =>
     tb(

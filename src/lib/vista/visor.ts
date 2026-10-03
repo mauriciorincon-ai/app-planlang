@@ -8,11 +8,7 @@ import type { Idioma } from "@core/formatos/bilingue";
 import type { Grafo } from "@core/formatos/traza";
 import type { ContratoDeGrafo } from "@core/plan/esquema";
 import { esAristaTripleta } from "@core/plan/esquema";
-import {
-  geometria,
-  valorDeRegla,
-  type Geometria,
-} from "@core/visor/geometria";
+import { geometria, valorDeRegla, type Geometria } from "@core/visor/geometria";
 import { idDeCodigo, idDeMapa } from "@core/visor/ids";
 import {
   diagramaIgualGrafo,
@@ -36,6 +32,8 @@ import {
   NODOS_FUERA_DEL_CONTRATO,
   REGLA_CORTA,
 } from "@/textos/agente";
+import { categoriaDeRegla, reglaDelPlan } from "./motivo-pausa";
+import { conPlan } from "./plan-en-texto";
 
 export const GRAMATICA = gramaticaJson as unknown as Gramatica;
 
@@ -49,8 +47,16 @@ export function grafoParaMapa(g: Grafo): GrafoParaMapa {
   };
 }
 
-function textosDeNodos(ids: readonly string[]): Record<string, TextosDeNodo> {
+function textosDeNodos(
+  ids: readonly string[],
+  contrato: ContratoDeGrafo,
+): Record<string, TextosDeNodo> {
   const out: Record<string, TextosDeNodo> = {};
+  // Los textos citan el plan con `{plan:…}` (AU-S2-3); en el mapa se resuelven con el contrato del lienzo.
+  const p = (t: TextoIdioma): TextoIdioma => ({
+    es: conPlan(t.es, { contrato_de_grafo: contrato }, "es"),
+    en: conPlan(t.en, { contrato_de_grafo: contrato }, "en"),
+  });
   for (const id of ids) {
     const t = NODOS[id] ?? NODOS_FUERA_DEL_CONTRATO[id];
     if (!t)
@@ -58,9 +64,9 @@ function textosDeNodos(ids: readonly string[]): Record<string, TextosDeNodo> {
         `vitrina: faltan los textos del nodo «${id}» en src/textos/agente.ts`,
       );
     out[id] = {
-      lider: t.rol,
-      experto: t.como,
-      por_que_importa: t.paraQue,
+      lider: p(t.rol),
+      experto: p(t.como),
+      por_que_importa: p(t.paraQue),
       fuentes: t.fuentes,
     };
   }
@@ -87,7 +93,7 @@ export function mapaDe(e: EntradaLienzo): Mapa {
     gramatica: GRAMATICA,
     grafo: e.grafo,
     contrato: e.contrato,
-    textos: textosDeNodos(ids),
+    textos: textosDeNodos(ids, e.contrato),
     sujeto_id: e.sujeto.id,
     sujeto_nombre: e.sujeto.nombre,
     version: e.version,
@@ -137,7 +143,7 @@ function reglasCortas(e: EntradaLienzo): Record<string, TextoIdioma> {
       const u = a.valor.slice("umbral.".length);
       out[id] = { es: u, en: u };
     } else {
-      const corta = REGLA_CORTA[`${a.desde}#${a.orden}`];
+      const corta = REGLA_CORTA[categoriaDeRegla(reglaDelPlan(a))];
       if (corta) out[id] = corta;
     }
   }

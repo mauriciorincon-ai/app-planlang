@@ -6,6 +6,7 @@
  */
 import { tb, type TextoBilingue } from "@core/formatos/bilingue";
 import type { Fuente } from "@core/visor/tipos";
+import type { CategoriaRegla } from "@/lib/vista/motivo-pausa";
 
 type Plantilla<P> = (p: P) => TextoBilingue;
 
@@ -299,7 +300,11 @@ export const FICHA = {
       "misma decisión y misma pausa que la verdad del caso sintético",
       "same decision and same pause as the synthetic case's truth",
     ),
-    lote: tb("un lote de 200 casos", "a batch of 200 cases"),
+    lote: ((n: number) =>
+      tb(
+        `un lote de ${n} casos`,
+        `a batch of ${n} cases`,
+      )) as Plantilla<number>,
     loteDetalle: ((p: { promedio: string; usd: string }) =>
       tb(
         `en serie, con el promedio de esta corrida (${p.promedio} s por caso); ≈ ${p.usd} USD nominales`,
@@ -847,11 +852,15 @@ export const DETALLE_NODO = {
     )) as Plantilla<number>,
 };
 
-/** Nombre corto de cada regla en las líneas que agrupan tres o más (la de decision hacia la pausa). */
+/**
+ * Nombre corto de una regla sin umbral en las líneas que agrupan varias (la de decision hacia la pausa), por la
+ * categoría de la regla y no por su posición: si el plan reordena sus aristas, el nombre sigue a su regla (AU-S2-B48).
+ */
 export const REGLA_CORTA: Record<string, TextoBilingue> = {
-  "decision#3": tb("contradicción", "contradiction"),
-  "decision#4": tb("negar", "deny"),
-  "decision#5": tb("Texas", "Texas"),
+  contradiccion: tb("contradicción", "contradiction"),
+  negar: tb("negar", "deny"),
+  texas: tb("Texas", "Texas"),
+  proveedor: tb("sin respuesta", "no response"),
 };
 
 export const PANEL = {
@@ -1073,21 +1082,21 @@ export interface CifrasDeNodo {
   preguntas: number;
   resueltos: string[];
   tope: string[];
+  /** Casos que pasaron a una persona desde la aclaración porque el modelo no respondió (AU-9). */
+  sinModeloAcl: string[];
+  /** El tope de aclaraciones del plan: el valor del umbral que lee la regla de tope. */
+  topeAclaraciones: number;
   excluidos: number;
   altoCosto: number;
   contradicciones: number;
   solos: number;
   aPersona: number;
-  porRegla: {
-    negar: number;
-    altoCosto: number;
-    confianza: number;
-    contradiccion: number;
-    texas: number;
-  };
+  porRegla: Record<CategoriaRegla, number>;
   pausas: number;
   desdeDecision: number;
-  desdeAclaracion: number;
+  /** Pausas por el tope de aclaraciones y porque el modelo no respondió, según la regla que registra su motivo. */
+  porTope: number;
+  porProveedor: number;
   nego: number;
   aprobo: number;
   minutos: number;
@@ -1144,8 +1153,8 @@ export const NODOS: Record<
       "With fixed rules, no model: it reads the type of care from the attached order and looks the procedure up in the benefits plan's exempt list.",
     ),
     decide: tb(
-      "Dos reglas del plan, en orden: urgencia → redactor; servicio exento → redactor. Si ninguna se cumple, el caso sigue al extractor.",
-      "Two plan rules, in order: emergency → writer; exempt service → writer. If neither holds, the case goes on to the extractor.",
+      "{plan:reglas.enrutador|Palabra} reglas del plan, en orden: {plan:destinos.enrutador}. Si ninguna se cumple, el caso sigue al extractor.",
+      "{plan:reglas.enrutador|Palabra} plan rules, in order: {plan:destinos.enrutador}. If neither holds, the case goes on to the extractor.",
     ),
     siFalla: tb(
       "Pediría autorización para una urgencia o para un servicio exento (riesgo R6), o confundiría el papel de cada agente (R7).",
@@ -1217,8 +1226,8 @@ export const NODOS: Record<
       "It may claim certainty it lacks (risk R5) or obey an order hidden in the text (R3). Both are high priority.",
     ),
     seMide: tb(
-      "Acierto de 90 % o más en tres corridas seguidas (C5), instrucciones escondidas sin efecto (C6) y una confianza que corresponda a sus aciertos (supuesto S1).",
-      "90% accuracy or more across three runs in a row (C5), hidden instructions with no effect (C6) and a confidence that matches its hits (assumption S1).",
+      "Acierto de {plan:C5.objetivo|%} % o más en {plan:C5.k|palabra} corridas seguidas (C5), instrucciones escondidas sin efecto (C6) y una confianza que corresponda a sus aciertos (supuesto S1).",
+      "{plan:C5.objetivo|%}% accuracy or more across {plan:C5.k|palabra} runs in a row (C5), hidden instructions with no effect (C6) and a confidence that matches its hits (assumption S1).",
     ),
     enLaCorrida: (c) =>
       tb(
@@ -1267,8 +1276,8 @@ export const NODOS: Record<
         "A question to the physician and the answer, back to the extractor",
       ),
       sub: tb(
-        "tras 2 preguntas, pasa a una persona (U3)",
-        "after 2 questions, it goes to a person (U3)",
+        "tras {plan:U3} preguntas, pasa a una persona (U3)",
+        "after {plan:U3} questions, it goes to a person (U3)",
       ),
     },
     paraQue: tb(
@@ -1280,21 +1289,21 @@ export const NODOS: Record<
       "A language model drafts a short question about what is missing. In this demo, the physician's answer is simulated in the synthetic case.",
     ),
     decide: tb(
-      "Una regla: si ya van 2 preguntas (U3), el caso pasa a una persona; si no, pregunta y vuelve al extractor con la respuesta.",
-      "One rule: if 2 questions were already asked (U3), the case goes to a person; otherwise it asks and goes back to the extractor with the answer.",
+      "Una regla: si ya van {plan:U3} preguntas (U3), el caso pasa a una persona; si no, pregunta y vuelve al extractor con la respuesta.",
+      "One rule: if {plan:U3} questions were already asked (U3), the case goes to a person; otherwise it asks and goes back to the extractor with the answer.",
     ),
     siFalla: tb(
       "Podría quedarse preguntando sin fin (riesgo R4).",
       "It could keep asking forever (risk R4).",
     ),
     seMide: tb(
-      "El supuesto S2: dos ciclos de aclaración bastan en el 95 % de los casos incompletos.",
-      "Assumption S2: two clarification cycles are enough in 95% of incomplete cases.",
+      "El supuesto S2: {plan:S2.enunciado|minuscula}",
+      "Assumption S2: {plan:S2.enunciado|minuscula}",
     ),
     enLaCorrida: (c) =>
       tb(
-        `${c.casos} casos incompletos, ${c.preguntas} preguntas.${c.resueltos.length ? ` ${lista(c.resueltos, "y")} se ${c.resueltos.length === 1 ? "resolvió" : "resolvieron"} preguntando;` : ""}${c.tope.length ? ` ${lista(c.tope, "y")} ${c.tope.length === 1 ? "llegó" : "llegaron"} al tope de 2 y ${c.tope.length === 1 ? "pasó" : "pasaron"} a una persona.` : ""} S2 quedó ${c.s2}.`,
-        `${c.casos} incomplete cases, ${c.preguntas} questions.${c.resueltos.length ? ` ${lista(c.resueltos, "and")} ${c.resueltos.length === 1 ? "was" : "were"} resolved by asking;` : ""}${c.tope.length ? ` ${lista(c.tope, "and")} hit the cap of 2 and went to a person.` : ""} S2 was ${c.s2}.`,
+        `${c.casos} casos incompletos, ${c.preguntas} preguntas.${c.resueltos.length ? ` ${lista(c.resueltos, "y")} se ${c.resueltos.length === 1 ? "resolvió" : "resolvieron"} preguntando;` : ""}${c.tope.length ? ` ${lista(c.tope, "y")} ${c.tope.length === 1 ? "llegó" : "llegaron"} al tope de ${c.topeAclaraciones} y ${c.tope.length === 1 ? "pasó" : "pasaron"} a una persona.` : ""}${c.sinModeloAcl.length ? ` ${lista(c.sinModeloAcl, "y")} ${c.sinModeloAcl.length === 1 ? "pasó" : "pasaron"} a una persona porque el modelo no respondió.` : ""} S2 quedó ${c.s2}.`,
+        `${c.casos} incomplete cases, ${c.preguntas} questions.${c.resueltos.length ? ` ${lista(c.resueltos, "and")} ${c.resueltos.length === 1 ? "was" : "were"} resolved by asking;` : ""}${c.tope.length ? ` ${lista(c.tope, "and")} hit the cap of ${c.topeAclaraciones} and went to a person.` : ""}${c.sinModeloAcl.length ? ` ${lista(c.sinModeloAcl, "and")} went to a person because the model did not respond.` : ""} S2 was ${c.s2}.`,
       ),
     lee: tb(
       "los datos que faltan y las respuestas previas",
@@ -1381,7 +1390,10 @@ export const NODOS: Record<
             "excluded service: denied citing its art. 15 cause of Law 1751, confirmed by a person",
           ),
         ],
-        [tb("RB-04", "RB-04"), tb("alto costo: por encima de U2", "high cost: above U2")],
+        [
+          tb("RB-04", "RB-04"),
+          tb("alto costo: por encima de U2", "high cost: above U2"),
+        ],
         [
           tb("RB-05", "RB-05"),
           tb(
@@ -1389,7 +1401,10 @@ export const NODOS: Record<
             "contradiction between the code read and the order's",
           ),
         ],
-        [tb("RB-07", "RB-07"), tb("cubierto, sin observaciones", "covered, no remarks")],
+        [
+          tb("RB-07", "RB-07"),
+          tb("cubierto, sin observaciones", "covered, no remarks"),
+        ],
       ],
     },
     fuentes: [F_NODOS],
@@ -1424,8 +1439,8 @@ export const NODOS: Record<
       "It is where the plan places its thresholds: here it is decided what the agent resolves alone and what needs an auditor.",
     ),
     como: tb(
-      "Sin modelo: evalúa en orden las 5 reglas del plan (confianza bajo U1, costo sobre U2, contradicción, propuesta de negar y modo Texas). La primera que se cumple manda el caso a una persona.",
-      "No model: it evaluates the plan's 5 rules in order (confidence below U1, cost above U2, contradiction, a proposal to deny and Texas mode). The first that holds sends the case to a person.",
+      "Sin modelo: evalúa en orden las {plan:reglas.decision} reglas del plan ({plan:lista.decision}). La primera que se cumple manda el caso a una persona.",
+      "No model: it evaluates the plan's {plan:reglas.decision} rules in order ({plan:lista.decision}). The first that holds sends the case to a person.",
     ),
     siFalla: tb(
       "Emitiría una negación sin humano (riesgo R1) o dejaría pasar solo un caso dudoso (R5).",
@@ -1543,8 +1558,8 @@ export const NODOS: Record<
     },
     enLaCorrida: (c) =>
       tb(
-        `${c.pausas} pausas: ${c.desdeDecision} desde decision y ${c.desdeAclaracion} por el tope de aclaraciones. El auditor simulado negó ${c.nego} y aprobó ${c.aprobo}. Unos ${c.minutos} minutos de auditor: ${c.minutosPorCaso} por caso, según el plan.`,
-        `${c.pausas} pauses: ${c.desdeDecision} from decision and ${c.desdeAclaracion} from the clarification cap. The simulated auditor denied ${c.nego} and approved ${c.aprobo}. About ${c.minutos} auditor minutes: ${c.minutosPorCaso} per case, per the plan.`,
+        `${c.pausas} pausas: ${c.desdeDecision} desde decision y ${c.porTope} por el tope de aclaraciones${c.porProveedor ? `; ${c.porProveedor} porque el modelo no respondió` : ""}. El auditor simulado negó ${c.nego} y aprobó ${c.aprobo}. Unos ${c.minutos} minutos de auditor: ${c.minutosPorCaso} por caso, según el plan.`,
+        `${c.pausas} pauses: ${c.desdeDecision} from decision and ${c.porTope} from the clarification cap${c.porProveedor ? `; ${c.porProveedor} because the model did not respond` : ""}. The simulated auditor denied ${c.nego} and approved ${c.aprobo}. About ${c.minutos} auditor minutes: ${c.minutosPorCaso} per case, per the plan.`,
       ),
     lee: tb(
       "el motivo, la señal, el umbral, la extracción, el texto y la evidencia",
@@ -1695,7 +1710,10 @@ export const NODOS: Record<
     modelo: {
       rotulo: tb("Qué revisa", "What it checks"),
       filas: [
-        [tb("Acciones", "Actions"), tb("lista blanca: {acciones}", "allowlist: {acciones}")],
+        [
+          tb("Acciones", "Actions"),
+          tb("lista blanca: {acciones}", "allowlist: {acciones}"),
+        ],
         [
           tb("Datos sensibles", "Sensitive data"),
           tb(
@@ -1705,7 +1723,10 @@ export const NODOS: Record<
         ],
         [
           tb("Aviso de IA", "AI notice"),
-          tb("lo añade este nodo a toda salida", "this node adds it to every output"),
+          tb(
+            "lo añade este nodo a toda salida",
+            "this node adds it to every output",
+          ),
         ],
       ],
     },
@@ -1722,6 +1743,29 @@ export const EXTRACTOR_S1 = {
       `Whether its confidence can be trusted: it got all ${p.medidos} measured cases right and, without a single error, there is nothing to calibrate against. S1 remains untested.`,
     )) as Plantilla<{ medidos: number }>,
 };
+
+/**
+ * Los criterios que cuenta la línea «En la corrida» de cada nodo: los que se miden con lo que hizo ESE nodo. Es un
+ * subconjunto editorial de `PLAN_POR_NODO[nodo].criterios` (los que el nodo toca en el plan); `copia-contra-plan`
+ * lo comprueba (cada id existe en el plan y está entre los del nodo). Decisión registrada en la bitácora (AU-S2-3).
+ */
+export const CRITERIOS_EN_LA_CORRIDA: Record<string, string[]> = {
+  enrutador: ["C4"],
+  extractor: ["C5", "C6"],
+  aclaracion: [],
+  verificador_cobertura: [],
+  decision: ["C1", "C3"],
+  pausa_humana: [],
+  redactor: ["C8"],
+  guardia_salida: ["C2", "C6"],
+};
+
+/**
+ * Los criterios absolutos que respaldan las garantías «Nunca» de la ficha (`FICHA.nunca.items`): la nota dice
+ * cuáles se cumplieron en la corrida. `copia-contra-plan` comprueba que existen, que son absolutos y que cada uno
+ * aparece en las referencias de alguna garantía (AU-S2-3).
+ */
+export const CRITERIOS_NUNCA = ["C1", "C2", "C4", "C6"] as const;
 
 /**
  * La lectura del plan por nodo (matriz «Qué del plan toca a cada nodo» y «Lo que el plan le exige»). La hace el
@@ -1976,6 +2020,7 @@ export const MOTIVO_PAUSA: Record<string, TextoBilingue> = {
   ),
   texas: tb("modo Texas (U4)", "Texas mode (U4)"),
   tope: tb("tope de aclaraciones (U3)", "clarification cap (U3)"),
+  proveedor: tb("sin respuesta del modelo", "no model response"),
 };
 
 /** Columnas y rótulos de la tabla de trazas de cada nodo. */
@@ -2103,7 +2148,11 @@ export const NOTA_TRAZAS = {
       : tb(
           `${p.inyeccion} traía una instrucción escondida; ${p.dato} intentaba sacar un dato sensible. La guardia registró su efecto: está en la página Casos.`,
           `${p.inyeccion} carried a hidden instruction; ${p.dato} tried to extract sensitive data. The guard recorded their effect: it is on the Cases page.`,
-        )) as Plantilla<{ inyeccion: string; dato: string; sinEfecto: boolean }>,
+        )) as Plantilla<{
+    inyeccion: string;
+    dato: string;
+    sinEfecto: boolean;
+  }>,
 };
 
 export const UNIDADES = {

@@ -3,7 +3,9 @@
  * plan y el informe. Ninguna cifra se escribe a mano: todas se calculan aquí. Pura: los mismos datos dan la misma
  * vista en los dos idiomas (salvo el texto).
  */
+import { SENAL_DE_CONFIANZA } from "@core/brecha/contexto";
 import { mediana } from "@core/brecha/numeros";
+import { minutosPorPersona } from "@core/playground/compactar";
 import type { Idioma, TextoBilingue } from "@core/formatos/bilingue";
 import type { Traza } from "@core/formatos/traza";
 import { esAristaTripleta } from "@core/plan/esquema";
@@ -25,6 +27,8 @@ import {
   MARCA_CORRIO,
   MOTIVO_PAUSA,
   NODOS,
+  CRITERIOS_EN_LA_CORRIDA,
+  CRITERIOS_NUNCA,
   NOTA_TRAZAS,
   PANEL,
   PIE_AGENTE,
@@ -56,7 +60,16 @@ import {
   type ClaseDeEstado,
   type RiesgoDelInforme,
 } from "./plan-comun";
+import { conPlan } from "./plan-en-texto";
 import { GRAMATICA, grafoParaMapa, lienzo, type Lienzo } from "./visor";
+import {
+  CATEGORIAS,
+  categoriaDeRegla,
+  reglaDeLaPausa,
+  textoDeCategoria,
+  umbralDeCategoria,
+  type CategoriaRegla,
+} from "./motivo-pausa";
 
 export interface Item {
   titulo: string;
@@ -249,19 +262,6 @@ function visitas(t: Traza, nodo: string) {
     });
 }
 
-type Categoria = keyof CifrasDeNodo["porRegla"];
-function categoria(d: {
-  senal: string | null;
-  funcion: string | null;
-}): Categoria {
-  const s = d.senal ?? d.funcion ?? "";
-  if (s === "senal_confianza") return "confianza";
-  if (s === "costo_estimado") return "altoCosto";
-  if (s === "contradiccion_orden_texto") return "contradiccion";
-  if (s === "propuesta") return "negar";
-  return "texas";
-}
-
 export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
   const es = i === "es";
   const trazas = d.corrida.trazas;
@@ -282,10 +282,11 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
   const cobertura = (t: Traza) =>
     (t.cobertura ?? {}) as Record<string, unknown>;
   const senal = (t: Traza, k: string) => t.senales[k];
-  const costoHumano = Math.max(
-    ...d.plan.umbrales.map((u) => u.costo_humano_por_caso_min ?? 0),
-  );
+  // Una sola política para el costo humano: la del playground, que falla si el plan declara varios (AU-S2-17).
+  const costoHumano = minutosPorPersona(d.plan);
   const marca = MARCA_CORRIO(corrida)[i];
+  // Los textos de cada nodo citan el plan con `{plan:…}`: se resuelven contra el plan publicado (AU-S2-3).
+  const XP = (t: TextoBilingue) => conPlan(X(t, i), d.plan, i);
 
   // ── cifras por nodo ──────────────────────────────────────────────────────────────────────────────
   const enr = con("enrutador").map((t) => visitas(t, "enrutador")[0]!);
@@ -294,14 +295,29 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
   );
   const acl = con("aclaracion");
   const pausas = trazas.flatMap((t) => t.pausas_humanas.map((p) => ({ t, p })));
-  const porRegla = {
-    negar: 0,
-    altoCosto: 0,
-    confianza: 0,
-    contradiccion: 0,
-    texas: 0,
-  };
-  for (const { v } of dec) if (v.regla) porRegla[categoria(v.regla)]++;
+  const porRegla = Object.fromEntries(CATEGORIAS.map((c) => [c, 0])) as Record<
+    CategoriaRegla,
+    number
+  >;
+  for (const { v } of dec) if (v.regla) porRegla[categoriaDeRegla(v.regla)]++;
+  // La categoría de la regla que mandó cada pausa a una persona (la arista que registra su motivo).
+  const motivoDe = (t: Traza, p: Traza["pausas_humanas"][number]) =>
+    categoriaDeRegla(
+      reglaDeLaPausa(t.caso_id, p.payload.motivo, t.decisiones_de_arista),
+    );
+  const pausaPor = (c: CategoriaRegla) =>
+    pausas.filter(({ t, p }) => motivoDe(t, p) === c);
+  const aclaracionPor = (c: CategoriaRegla) =>
+    acl
+      .filter((t) =>
+        visitas(t, "aclaracion").some(
+          (v) =>
+            v.rama === "pausa_humana" &&
+            v.regla !== undefined &&
+            categoriaDeRegla(v.regla) === c,
+        ),
+      )
+      .map((t) => t.caso_id);
   const cargas = trazas
     .filter((t) => t.guardia_salida?.carga_detectada_en_entrada)
     .map((t) => t.caso_id);
@@ -325,11 +341,9 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
         visitas(t, "aclaracion").every((v) => v.rama !== "pausa_humana"),
       )
       .map((t) => t.caso_id),
-    tope: acl
-      .filter((t) =>
-        visitas(t, "aclaracion").some((v) => v.rama === "pausa_humana"),
-      )
-      .map((t) => t.caso_id),
+    tope: aclaracionPor("tope"),
+    topeAclaraciones: Number(umbralDeCategoria(d.plan, "tope").valor_en_plan),
+    sinModeloAcl: aclaracionPor("proveedor"),
     excluidos: con("verificador_cobertura").filter(
       (t) => cobertura(t).estado_servicio === "excluido",
     ).length,
@@ -348,11 +362,8 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
         (p.payload.motivo as { desde?: string } | undefined)?.desde ===
         "decision",
     ).length,
-    desdeAclaracion: pausas.filter(
-      ({ p }) =>
-        (p.payload.motivo as { desde?: string } | undefined)?.desde ===
-        "aclaracion",
-    ).length,
+    porTope: pausaPor("tope").length,
+    porProveedor: pausaPor("proveedor").length,
     nego: pausas.filter(({ p }) => p.respuesta_simulada.decision === "negar")
       .length,
     aprobo: pausas.filter(
@@ -387,18 +398,11 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
     },
     s2: X(ESTADO_SUPUESTO[s2?.estado ?? "sin_probar"]!, i).toLowerCase(),
   });
-  const CRITERIOS_DE: Record<string, string[]> = {
-    enrutador: ["C4"],
-    extractor: ["C5", "C6"],
-    aclaracion: [],
-    verificador_cobertura: [],
-    decision: ["C1", "C3"],
-    pausa_humana: [],
-    redactor: ["C8"],
-    guardia_salida: ["C2", "C6"],
-  };
   const cifrasDe = Object.fromEntries(
-    Object.keys(NODOS).map((k) => [k, cifras(k, CRITERIOS_DE[k] ?? [])]),
+    Object.keys(NODOS).map((k) => [
+      k,
+      cifras(k, CRITERIOS_EN_LA_CORRIDA[k] ?? []),
+    ]),
   ) as Record<string, CifrasDeNodo>;
 
   // ── ficha ───────────────────────────────────────────────────────────────────────────────────────
@@ -448,6 +452,8 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
     );
   }).length;
   const promedio = latencias.reduce((a, b) => a + b, 0) / n;
+  // El lote completo es el que declara el plan (`lotes.completo`), no un número de la página (AU-S2-2).
+  const loteCompleto = d.plan.lotes.completo;
   const c7 = criterio("C7") as
     { objetivo?: number; estado: string } | undefined;
   const aPersona = trazas.filter(
@@ -560,8 +566,8 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
       nota: X(
         FICHA.nunca.nota({
           corrida,
-          criterios: enumerar(["C1", "C2", "C4", "C6"].filter(cumple), i),
-          rotas: ["C1", "C2", "C4", "C6"].filter((c) => !cumple(c)).length,
+          criterios: enumerar(CRITERIOS_NUNCA.filter(cumple), i),
+          rotas: CRITERIOS_NUNCA.filter((c) => !cumple(c)).length,
         }),
         i,
       ),
@@ -626,12 +632,12 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
         detalle: X(FICHA.capacidad.caminosDetalle, i),
       },
       {
-        cifra: `≈ ${Math.round((promedio * 200) / 60)} min`,
-        texto: X(FICHA.capacidad.lote, i),
+        cifra: `≈ ${Math.round((promedio * loteCompleto) / 60)} min`,
+        texto: X(FICHA.capacidad.lote(loteCompleto), i),
         detalle: X(
           FICHA.capacidad.loteDetalle({
             promedio: decimal(promedio, 1, i),
-            usd: decimal((costoTotal / n) * 200, 1, i),
+            usd: decimal((costoTotal / n) * loteCompleto, 1, i),
           }),
           i,
         ),
@@ -1009,8 +1015,7 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
     const r = p.riesgos.find((x) => x.id === id);
     if (r) {
       const ri = informe.riesgos.find((x) => x.id === id) as
-        | RiesgoDelInforme
-        | undefined;
+        RiesgoDelInforme | undefined;
       const legal = controlLegal(ri, i);
       return {
         id,
@@ -1141,13 +1146,17 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
     const cob = cobertura(t);
     const ext = t.extraccion;
     const pausa = t.pausas_humanas[0];
-    const motivoPausa = () => {
-      if (!pausa) return "—";
-      const m = pausa.payload.motivo as { desde?: string } | undefined;
-      if (m?.desde === "aclaracion") return X(MOTIVO_PAUSA.tope!, i);
-      const v = visitas(t, "decision").find((x) => x.rama === "pausa_humana");
-      return v?.regla ? X(MOTIVO_PAUSA[categoria(v.regla)]!, i) : "—";
-    };
+    const motivoPausa = () =>
+      pausa
+        ? X(
+            textoDeCategoria(
+              MOTIVO_PAUSA,
+              motivoDe(t, pausa),
+              "MOTIVO_PAUSA (src/textos/agente.ts)",
+            ),
+            i,
+          )
+        : "—";
     let celdas: string[] = [];
     let pares: Array<{ k: string; v: string }> = [];
     const et = TRAZAS_DE_NODO[nodo]!.detalle.map((x) => X(x, i));
@@ -1298,9 +1307,7 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
       }
       case "pausa_humana":
         return X(
-          N.pausa_humana(
-            primeros(pausas.map(({ t }) => t.caso_id).sort()),
-          ),
+          N.pausa_humana(primeros(pausas.map(({ t }) => t.caso_id).sort())),
           i,
         );
       case "redactor":
@@ -1320,7 +1327,8 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
           N.guardia_salida({
             inyeccion: adversario("inyeccion"),
             dato: adversario("dato_sensible"),
-            sinEfecto: cifrasDe.guardia_salida!.severidadMax === 0 && cumple("C6"),
+            sinEfecto:
+              cifrasDe.guardia_salida!.severidadMax === 0 && cumple("C6"),
           }),
           i,
         );
@@ -1416,32 +1424,32 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
         {
           clave: "paraQue",
           rotulo: X(PANEL.campos.paraQue, i),
-          texto: X(t.paraQue, i),
+          texto: XP(t.paraQue),
         },
-        { clave: "como", rotulo: X(PANEL.campos.como, i), texto: X(t.como, i) },
+        { clave: "como", rotulo: X(PANEL.campos.como, i), texto: XP(t.como) },
       ];
       if (t.decide)
         campos.push({
           clave: "decide",
           rotulo: X(PANEL.campos.decide, i),
-          texto: X(t.decide, i),
+          texto: XP(t.decide),
         });
       if (t.extra?.falta)
         campos.push({
           clave: "falta",
-          rotulo: X(t.extra.rotulo, i),
-          texto: X(t.extra.texto, i),
+          rotulo: XP(t.extra.rotulo),
+          texto: XP(t.extra.texto),
         });
       campos.push(
         {
           clave: "siFalla",
           rotulo: X(PANEL.campos.siFalla, i),
-          texto: X(t.siFalla, i),
+          texto: XP(t.siFalla),
         },
         {
           clave: "seMide",
           rotulo: X(PANEL.campos.seMide, i),
-          texto: X(t.seMide, i),
+          texto: XP(t.seMide),
         },
         {
           clave: "enLaCorrida",
@@ -1452,8 +1460,8 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
       if (t.extra && !t.extra.falta)
         campos.push({
           clave: "garantia",
-          rotulo: X(t.extra.rotulo, i),
-          texto: X(t.extra.texto, i),
+          rotulo: XP(t.extra.rotulo),
+          texto: XP(t.extra.texto),
         });
       if (x.id === "extractor" && c.s1.sinProbar)
         campos.push({
@@ -1467,11 +1475,11 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
         nombre: x.id,
         tipo: idDeMapa(x.tipo),
         codigo: tipo?.codigo ?? "",
-        rol: X(t.rol, i),
+        rol: XP(t.rol),
         chip: es ? `real · corrida ${corrida}` : `real · run ${corrida}`,
         lider: {
-          recibe: { titulo: X(t.recibe.titulo, i), sub: X(t.recibe.sub, i) },
-          entrega: { titulo: X(t.entrega.titulo, i), sub: X(t.entrega.sub, i) },
+          recibe: { titulo: XP(t.recibe.titulo), sub: XP(t.recibe.sub) },
+          entrega: { titulo: XP(t.entrega.titulo), sub: XP(t.entrega.sub) },
           campos,
         },
         experto: {
@@ -1488,7 +1496,7 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
                   i,
                 )}`,
               },
-              { k: X(PANEL.experto_.lee, i), v: X(t.lee, i) },
+              { k: X(PANEL.experto_.lee, i), v: XP(t.lee) },
               {
                 k: X(PANEL.experto_.escribe, i),
                 v: "",
@@ -1505,7 +1513,9 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
               {
                 k: X(PANEL.experto_.saleHacia, i),
                 v: salen
-                  .map((s) => (aristas.some((a) => a.target === s) ? `\`${s}\`` : s))
+                  .map((s) =>
+                    aristas.some((a) => a.target === s) ? `\`${s}\`` : s,
+                  )
                   .join(" · "),
               },
               {
@@ -1562,20 +1572,29 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
   );
 
   // ── arista U1 ───────────────────────────────────────────────────────────────────────────────────
-  const u1 = d.plan.umbrales.find((u) => u.id === "U1")!;
+  // El umbral de la señal de confianza y la regla que lo lee, por la señal y no por su id (AU-S2-2).
+  const u1 = d.plan.umbrales.find((u) => u.senal === SENAL_DE_CONFIANZA);
+  if (!u1)
+    throw new Error(
+      "vitrina: el plan no declara el umbral de la señal de confianza (panel de arista de P3)",
+    );
   if (!("min" in u1.rango_jugable))
-    throw new Error("vitrina: U1 no tiene rango numérico en el plan");
+    throw new Error(`vitrina: ${u1.id} no tiene rango numérico en el plan`);
   const rangoU1 = u1.rango_jugable;
   const reglaU1 = d.plan.contrato_de_grafo.aristas_condicionales.find(
-    (a) => esAristaTripleta(a) && a.valor === "umbral.U1",
-  )!;
+    (a) => esAristaTripleta(a) && a.valor === `umbral.${u1.id}`,
+  );
+  if (!reglaU1)
+    throw new Error(
+      `vitrina: ninguna regla del plan lee umbral.${u1.id} (panel de arista de P3)`,
+    );
   const desdeU1 = reglaU1.desde;
   const deNodo = d.plan.contrato_de_grafo.aristas_condicionales.filter(
     (a) => a.desde === desdeU1,
   ).length;
   const puntos = con(desdeU1)
     .map((t) => {
-      const v = Number(t.extraccion?.confianza ?? senal(t, "senal_confianza"));
+      const v = Number(t.extraccion?.confianza ?? senal(t, SENAL_DE_CONFIANZA));
       const decidioU1 = visitas(t, desdeU1).some(
         (x) => x.regla?.orden_arista === reglaU1.orden,
       );
@@ -1585,7 +1604,7 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
   const bajo = puntos.filter((p) => p.aPersona);
   const arista: PanelArista = {
     id: `l-${idDeMapa(desdeU1)}-a-${idDeMapa(reglaU1.si_verdadero)}`,
-    titulo: X(ARISTA_U1.titulo({ umbral: "U1", nodo: desdeU1 }), i),
+    titulo: X(ARISTA_U1.titulo({ umbral: u1.id, nodo: desdeU1 }), i),
     rol: X(
       ARISTA_U1.rol({
         valor: decimal(u1.valor_en_plan as number, 2, i),
@@ -1595,7 +1614,10 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
     ),
     chip: es ? `real · corrida ${corrida}` : `real · run ${corrida}`,
     filas: [
-      { k: X(ARISTA_U1.regla, i), v: `${u1.senal} · ${u1.operador} · U1` },
+      {
+        k: X(ARISTA_U1.regla, i),
+        v: `${u1.senal} · ${u1.operador} · ${u1.id}`,
+      },
       {
         k: X(ARISTA_U1.valor, i),
         v: X(
@@ -1653,7 +1675,11 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
     playground: ruta(i, "playground"),
     puntos,
     umbral: u1.valor_en_plan as number,
-    eje: { min: 0.5, max: 1 },
+    // El eje cubre el rango jugable y todo valor observado: ningún punto se dibuja fuera (AU-S2-2).
+    eje: {
+      min: Math.min(rangoU1.min, ...puntos.map((p) => p.valor)),
+      max: Math.max(1, rangoU1.max, ...puntos.map((p) => p.valor)),
+    },
     nota: X(
       ARISTA_U1.distribucion({
         n: puntos.length,
@@ -1730,7 +1756,9 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
               enumerar(
                 contratoG.nodos_esperados
                   .map((x) => x.id)
-                  .filter((x) => cs.nodos.exigidosAusentes.includes(idDeMapa(x))),
+                  .filter((x) =>
+                    cs.nodos.exigidosAusentes.includes(idDeMapa(x)),
+                  ),
                 i,
               ),
             ),
