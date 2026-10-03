@@ -569,6 +569,7 @@ export const TABLA = {
   caso: tb("Caso", "Case"),
   tipo: tb("Tipo", "Type"),
   planAhora: tb("Plan → ahora", "Plan → now"),
+  cambia: tb("cambia con tus valores", "changes with your values"),
   si: tb("sí", "yes"),
   no: tb("no", "no"),
 };

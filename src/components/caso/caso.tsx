@@ -251,26 +251,39 @@ function TablaReglas({
     "block font-letra text-dato leading-[1.4] text-tinta-2 escritorio:hidden";
   const M = "font-mono text-dato leading-normal [overflow-wrap:anywhere]";
   return (
-    <div className="grid" style={{ "--cols": COLS_REGLAS } as CSSProperties}>
-      <div className="hidden gap-3 pb-1.5 text-dato text-tinta-2 escritorio:grid escritorio:grid-cols-[var(--cols)]">
+    <div
+      role="table"
+      className="grid"
+      style={{ "--cols": COLS_REGLAS } as CSSProperties}
+    >
+      <div
+        role="row"
+        className="hidden gap-3 pb-1.5 text-dato text-tinta-2 escritorio:grid escritorio:grid-cols-[var(--cols)]"
+      >
         {col.map((c) => (
-          <span key={c}>{c}</span>
+          <span key={c} role="columnheader">
+            {c}
+          </span>
         ))}
       </div>
       {reglas.map((r) => (
         <div
           key={r.n}
+          role="row"
           data-toma={r.rama !== null}
           className={cx(FILA, r.rama !== null && "bg-sup-1")}
         >
-          <span className={cx(M, "col-span-2 escritorio:col-span-1")}>
+          <span
+            role="cell"
+            className={cx(M, "col-span-2 escritorio:col-span-1")}
+          >
             {r.n}
           </span>
-          <span className={M}>
+          <span role="cell" className={M}>
             <span className={ET_M}>{col[1]}</span>
             <ConCortes texto={r.senal} />
           </span>
-          <span className={M}>
+          <span role="cell" className={M}>
             <span className={ET_M}>{col[2]}</span>
             {r.funcion ? (
               <span className="font-letra text-tinta-2">{r.regla}</span>
@@ -278,11 +291,11 @@ function TablaReglas({
               r.regla
             )}
           </span>
-          <span className={M}>
+          <span role="cell" className={M}>
             <span className={ET_M}>{col[3]}</span>
             {r.observado}
           </span>
-          <span>
+          <span role="cell">
             <span className={ET_M}>{col[4]}</span>
             <span
               className={cx(
@@ -294,7 +307,7 @@ function TablaReglas({
               {r.cumple ? SI_NO.si[idioma] : SI_NO.no[idioma]}
             </span>
           </span>
-          <span className={M}>
+          <span role="cell" className={M}>
             <span className={ET_M}>{col[5]}</span>
             {r.rama ? <ConCortes texto={r.rama} /> : "—"}
           </span>

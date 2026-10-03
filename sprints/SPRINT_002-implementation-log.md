@@ -1210,6 +1210,41 @@ summary como deuda con fecha.
 |---|---|---|---|
 | Avisos aceptados con razón y fecha | un GHSA ignorado sin registro y el registrado con la fecha vencida | `avisos-aceptados.test.ts` nombra los dos | 2/2 |
 
+#### Accesibilidad (en curso)
+
+- **AU-S2-14:** el foco con teclado del lienzo tiene forma propia: un anillo a 4 px de la caja del nodo (`rect.foco`)
+  y un halo bajo la línea (`path.halo`), sin cambiar el estilo de la línea (que dice su modo) ni confundirse con la
+  selección. Golden SVG regenerados. Prueba e2e nueva en `tests/e2e/agente.spec.ts` (**escrita, aún sin correr**).
+- **AU-S2-15:** semántica de tabla con roles ARIA en `TablaF`, en las tres tablas del playground y en la de reglas
+  de P6; en las trazas de P3 (filas `<summary>` desplegables, que no admiten roles de tabla) cada celda dice su
+  columna al lector. **AU-S2-B25:** «Ver el caso de punta a punta» lleva el id del caso para el lector. **AU-S2-B27
+  (parte):** la fila que cambia en la tabla de señales lo dice también al lector.
+
+### Punto de retoma (2026-10-02, compactación pedida por el usuario)
+
+- **Commits de la Fase 2 de la auditoría:** `2caa8cb` (los 3 Altos) · `60ac791` (lo que viaja y lo publicado) ·
+  `eea1e07` (núcleo, visor y lo que lee la vista) · `ab73806` (aviso `braces` aceptado; **subido**, CI del PR #8 en
+  curso al compactar) · el commit de accesibilidad de este punto (local, sin subir: falta correr el e2e del foco).
+- **Pagados:** AU-S2-1…10, 13, 14, 15, 17, 18, 19, 21, 22, 23 · B3, B10, B11, B16, B25, B30, B31, B34, B35, B36, B38,
+  B39, B40, B42, B43, B45, B46, B47, B48, B49, B55 · P-11, P-13 · C-9.
+- **Falta, en este orden:**
+  1. accesibilidad: B20, B21, B22, B23, B24, B26, B27 (capa activa del lienzo), B29; bilingüe: B17, B18, B19, B44;
+     gates: B14 (Lighthouse en `/en`), B15 (axe `moderate`), B28 (barrido de tintas);
+  2. AU-S2-16 (errores con nombre en el vocabulario de nodos y señales; `u3` ausente) y C-1…C-12;
+  3. núcleo y gates: B7, B8, B9 (nota), B12, B13, B32, B33, B37, B41, B50, B51, B52, B53, B54, B56, B57; P-1…P-10,
+     P-12;
+  4. AU-S2-11: proyecto Playwright `paridad` (Firefox y WebKit) + corregir `vitest.config.ts` y `svg.test.ts`;
+  5. documentos: AU-S2-20 (kit de prueba y razón de `b1` en la guía), B4 y B5 y AU-S2-11/B33 como desviaciones,
+     B2 (cuerpo del PR);
+  6. correr el e2e completo (incluye el foco de AU-S2-14), build, `verificar-export`, `diagrama:verificar`,
+     `paquete:vitrina` y `test:e2e:paquete`; subir y `gh pr checks 8`;
+  7. **AU-S2-12:** pasada de capturas de cierre con registro versionado (índice con huellas y los encuadres leídos
+     en resolución reducida) — sirve también de **mirada** de los cambios de forma de esta fase: lista «También en
+     construcción» en Entrada, rótulo bilingüe en `/` y en la 404, anillo de foco;
+  8. barrido de frases caducadas tras el último ajuste; `/deploy-check --python`; summary + `pnpm fichas` en el
+     mismo commit; cuerpo del PR; 4 checks `success`.
+- Las demos en rojo de cada lote están en sus tablas, arriba.
+
 ## Desviación del plan
 
 1. **El centinela «Worktrees prohibidos» no existe** en `ordenes/CLAUDE-md-para-app.md` (vive en el batch

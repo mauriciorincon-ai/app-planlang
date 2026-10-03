@@ -82,10 +82,15 @@ svg.visor text {
   stroke: var(--c);
   stroke-width: 2;
 }
-.visor .d-nodo:focus-visible .caja {
+/* Foco con anillo propio, a 4 px de la caja: no se confunde con la selección (que tiñe la caja) ni depende solo
+   del color (AU-S2-14, WCAG 2.4.7, regla dura 13). */
+.visor .foco {
+  fill: none;
+  stroke: none;
+}
+.visor .d-nodo:focus-visible .foco {
   stroke: var(--tinta-1);
   stroke-width: 2;
-  stroke-dasharray: none;
 }
 .visor .d-nodo[data-madurez="exigido"] .caja {
   fill: none;
@@ -123,16 +128,16 @@ svg.visor text {
 }
 
 /* Flujos: secuencia (sólida) · condicional (discontinua + cuadro) · reanudación (punteada). */
-.visor .d-flujo path {
+.visor .d-flujo path:not(.halo) {
   fill: none;
   stroke: var(--tinta-2);
   stroke-width: 1.5;
 }
-.visor .d-flujo[data-modo="condicional"] path {
+.visor .d-flujo[data-modo="condicional"] path:not(.halo) {
   stroke-dasharray: 6 4;
   stroke-linecap: butt;
 }
-.visor .d-flujo[data-modo="reanudacion"] path {
+.visor .d-flujo[data-modo="reanudacion"] path:not(.halo) {
   stroke-width: 2.2;
   stroke-dasharray: 0.1 4.5;
   stroke-linecap: round;
@@ -157,14 +162,26 @@ svg.visor text {
   cursor: pointer;
   outline: none;
 }
-.visor .d-flujo[data-sel="true"] path {
+.visor .d-flujo[data-sel="true"] path:not(.halo) {
   stroke: var(--tinta-1);
   stroke-width: 2.25;
 }
 .visor .d-flujo[data-sel="true"] text {
   font-weight: 600;
 }
-.visor .d-flujo[data-sel-id]:focus-visible path {
+/* El foco de una línea es un halo ancho bajo el trazo: no cambia su estilo (que dice el modo del flujo). */
+.visor .d-flujo .halo {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 10;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.visor .d-flujo[data-sel-id]:focus-visible .halo {
+  stroke: var(--tinta-1);
+  stroke-opacity: 0.3;
+}
+.visor .d-flujo[data-sel-id]:focus-visible path:not(.halo) {
   stroke: var(--tinta-1);
   stroke-width: 2.5;
 }
@@ -187,7 +204,7 @@ svg.visor text {
 
 @media (forced-colors: active) {
   .visor .d-nodo .caja,
-  .visor .d-flujo path,
+  .visor .d-flujo path:not(.halo),
   .visor .d-terminal circle {
     stroke: CanvasText;
   }

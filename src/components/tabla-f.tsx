@@ -29,25 +29,38 @@ export function TablaF({
   columnas,
   filas,
   className,
+  etiqueta,
 }: {
   columnas: readonly ColumnaF[];
   filas: readonly FilaF[];
   className?: string;
+  /** El nombre accesible de la tabla (el título de su sección). */
+  etiqueta?: string;
 }) {
   const cols = columnas.map((c) => c.ancho).join(" ");
+  // Semántica de tabla con roles ARIA (AU-S2-15, WCAG 1.3.1): en escritorio el lector asocia cada celda con su
+  // columna; en el teléfono la cabecera no se pinta y cada celda lleva su rótulo.
   return (
     <div
+      role="table"
+      aria-label={etiqueta}
       className={cx("grid", className)}
       style={{ "--cols": cols } as CSSProperties}
     >
-      <div className="hidden gap-3 pb-1.5 text-dato text-tinta-2 escritorio:grid escritorio:grid-cols-[var(--cols)]">
+      <div
+        role="row"
+        className="hidden gap-3 pb-1.5 text-dato text-tinta-2 escritorio:grid escritorio:grid-cols-[var(--cols)]"
+      >
         {columnas.map((c, k) => (
-          <span key={k}>{c.titulo}</span>
+          <span key={k} role="columnheader">
+            {c.titulo}
+          </span>
         ))}
       </div>
       {filas.map((f) => (
         <div
           key={f.clave}
+          role="row"
           {...f.atributos}
           className={cx(
             "grid grid-cols-2 items-start gap-x-3 gap-y-1.5 border-t border-linea py-3 escritorio:grid-cols-[var(--cols)] escritorio:items-center escritorio:py-2.25",
@@ -59,6 +72,7 @@ export function TablaF({
             return (
               <span
                 key={k}
+                role="cell"
                 className={cx(
                   "min-w-0 text-chico leading-normal",
                   c?.mono && MONO,

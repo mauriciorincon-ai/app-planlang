@@ -236,7 +236,15 @@ export function aSvg(geo: Geometria, g: Gramatica, op: OpcionesSvg): string {
       op.seleccionables &&
       l.reglas > 0 &&
       (op.lineasSeleccionables ?? [l.id]).includes(l.id);
-    let hijos = el("path", [
+    // Una línea que se puede enfocar lleva un halo (oculto hasta el foco): el foco se ve por su forma y no solo
+    // por el color del trazo, y no cambia el estilo de la línea, que dice su modo (regla dura 13; AU-S2-14).
+    let hijos = sel
+      ? el("path", [
+          ["class", "halo"],
+          ["d", trazado(l)],
+        ])
+      : "";
+    hijos += el("path", [
       ["d", trazado(l)],
       ["marker-end", `url(#${ns}-punta)`],
     ]);
@@ -367,7 +375,20 @@ function nodoSvg(n: NodoGeo, g: Gramatica, op: OpcionesSvg): string {
   const exigido = n.madurez === "exigido-por-el-plan";
   const forma = GLIFO_DE_TIPO_MAPA[n.tipo]!;
   const nombre = n.nombre.lineas[i].join("");
-  let hijos = el("rect", [
+  // El anillo de foco, a 4 px de la caja (oculto hasta el foco): distinto de la selección, que tiñe la caja
+  // (AU-S2-14).
+  let hijos =
+    op.seleccionables && !exigido
+      ? el("rect", [
+          ["class", "foco"],
+          ["x", c.x - 4],
+          ["y", c.y - 4],
+          ["width", c.w + 8],
+          ["height", c.h + 8],
+          ["rx", 9],
+        ])
+      : "";
+  hijos += el("rect", [
     ["class", "caja"],
     ["x", c.x],
     ["y", c.y],

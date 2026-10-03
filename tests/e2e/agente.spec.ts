@@ -165,3 +165,35 @@ test.describe("movimiento reducido", () => {
     await sinViolacionesSerias(page);
   });
 });
+
+test("AU-S2-14: el foco con teclado se ve con su anillo, distinto de la selección, en los dos temas", async ({
+  page,
+}) => {
+  for (const tema of ["oscuro", "claro"] as const) {
+    await page.goto(`/es/agente?tema=${tema}&perfil=lider`);
+    // Hasta el primer nodo del lienzo con Tab (el foco de teclado activa :focus-visible).
+    let enNodo = false;
+    for (let k = 0; k < 60 && !enNodo; k++) {
+      await page.keyboard.press("Tab");
+      enNodo = await page.evaluate(
+        () => !!document.activeElement?.matches(".d-nodo[data-sel-id]"),
+      );
+    }
+    expect(enNodo).toBe(true);
+    const anillo = await page.evaluate(() => {
+      const foco = document.activeElement!.querySelector(".foco")!;
+      const s = getComputedStyle(foco);
+      return { stroke: s.stroke, ancho: s.strokeWidth };
+    });
+    expect(anillo.stroke).not.toBe("none");
+    expect(anillo.ancho).toBe("2px");
+    // Un nodo sin foco no lo dibuja.
+    const otro = await page.evaluate(() => {
+      const n = [
+        ...document.querySelectorAll(".d-nodo[data-sel-id] .foco"),
+      ].find((x) => x.parentElement !== document.activeElement)!;
+      return getComputedStyle(n).stroke;
+    });
+    expect(otro).toBe("none");
+  }
+});

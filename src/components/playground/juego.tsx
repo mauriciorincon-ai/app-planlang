@@ -882,25 +882,47 @@ export function Juego({ datos }: { datos: DatosIsla }) {
                   {vacio}
                 </p>
               ) : (
-                <div id="cambios" className="grid">
-                  <div className="hidden gap-3 pb-1.5 text-dato text-tinta-2 escritorio:grid escritorio:grid-cols-[56px_minmax(0,1.1fr)_minmax(0,1.3fr)_minmax(0,1.4fr)_minmax(0,1.2fr)]">
-                    <span>{CAMBIOS.columnas.caso[i]}</span>
-                    <span>{CAMBIOS.columnas.tipo[i]}</span>
-                    <span>{CAMBIOS.columnas.antesAhora[i]}</span>
-                    <span>{CAMBIOS.columnas.porque[i]}</span>
-                    <span>{CAMBIOS.columnas.consecuencia[i]}</span>
+                <div
+                  id="cambios"
+                  role="table"
+                  aria-label={CAMBIOS.titulo[i]}
+                  className="grid"
+                >
+                  <div
+                    role="row"
+                    className="hidden gap-3 pb-1.5 text-dato text-tinta-2 escritorio:grid escritorio:grid-cols-[56px_minmax(0,1.1fr)_minmax(0,1.3fr)_minmax(0,1.4fr)_minmax(0,1.2fr)]"
+                  >
+                    <span role="columnheader">{CAMBIOS.columnas.caso[i]}</span>
+                    <span role="columnheader">{CAMBIOS.columnas.tipo[i]}</span>
+                    <span role="columnheader">
+                      {CAMBIOS.columnas.antesAhora[i]}
+                    </span>
+                    <span role="columnheader">
+                      {CAMBIOS.columnas.porque[i]}
+                    </span>
+                    <span role="columnheader">
+                      {CAMBIOS.columnas.consecuencia[i]}
+                    </span>
                   </div>
                   {r.cambios.map((x) => {
                     const caso = datos.casos.find((k) => k.id === x.id);
                     return (
                       <div
                         key={x.id}
+                        role="row"
                         data-caso={x.id}
                         className="grid grid-cols-[56px_minmax(0,1fr)] items-start gap-x-3 gap-y-1.5 border-t border-linea py-3 text-chico escritorio:grid-cols-[56px_minmax(0,1.1fr)_minmax(0,1.3fr)_minmax(0,1.4fr)_minmax(0,1.2fr)]"
                       >
-                        <span className="font-mono text-dato">{x.id}</span>
-                        <span className="text-tinta-2">{caso?.tipo}</span>
-                        <span className="col-start-2 flex flex-wrap items-center gap-1.5 escritorio:col-start-auto">
+                        <span role="cell" className="font-mono text-dato">
+                          {x.id}
+                        </span>
+                        <span role="cell" className="text-tinta-2">
+                          {caso?.tipo}
+                        </span>
+                        <span
+                          role="cell"
+                          className="col-start-2 flex flex-wrap items-center gap-1.5 escritorio:col-start-auto"
+                        >
                           <Destino d={x.antes} i={i} />
                           <Icono
                             de={ArrowRight}
@@ -909,7 +931,10 @@ export function Juego({ datos }: { datos: DatosIsla }) {
                           />
                           <Destino d={x.ahora} i={i} />
                         </span>
-                        <span className="col-start-2 escritorio:col-start-auto">
+                        <span
+                          role="cell"
+                          className="col-start-2 escritorio:col-start-auto"
+                        >
                           {porque(x, i)}
                           <span
                             className={cx(
@@ -922,7 +947,10 @@ export function Juego({ datos }: { datos: DatosIsla }) {
                           </span>
                         </span>
                         {/* En la columna angosta la marca de la consecuencia se parte en dos líneas, como en la maqueta. */}
-                        <span className="col-start-2 grid justify-items-start gap-1 escritorio:col-start-auto [&>span]:h-auto [&>span]:min-h-5 [&>span]:py-0.5 [&>span]:leading-[1.3] [&>span]:whitespace-normal">
+                        <span
+                          role="cell"
+                          className="col-start-2 grid justify-items-start gap-1 escritorio:col-start-auto [&>span]:h-auto [&>span]:min-h-5 [&>span]:py-0.5 [&>span]:leading-[1.3] [&>span]:whitespace-normal"
+                        >
                           <Efecto x={x} minutos={minutos} i={i} />
                           {caso ? (
                             <a
@@ -999,13 +1027,18 @@ export function Juego({ datos }: { datos: DatosIsla }) {
                 {CURVA.pie[i]}
               </figcaption>
             </figure>
-            <div className="grid">
-              <div className="grid grid-cols-[60px_minmax(0,1fr)_minmax(0,1.3fr)_minmax(0,0.8fr)_minmax(0,0.8fr)] gap-2 pb-1.5 text-dato text-tinta-2">
-                <span>{curva.umbral}</span>
-                <span>{CURVA.columnas.cobertura[i]}</span>
-                <span>{CURVA.columnas.escalamiento[i]}</span>
-                <span>{CURVA.columnas.riesgo[i]}</span>
-                <span>{CURVA.columnas.solos[i]}</span>
+            <div role="table" aria-label={CURVA.titulo[i]} className="grid">
+              <div
+                role="row"
+                className="grid grid-cols-[60px_minmax(0,1fr)_minmax(0,1.3fr)_minmax(0,0.8fr)_minmax(0,0.8fr)] gap-2 pb-1.5 text-dato text-tinta-2"
+              >
+                <span role="columnheader">{curva.umbral}</span>
+                <span role="columnheader">{CURVA.columnas.cobertura[i]}</span>
+                <span role="columnheader">
+                  {CURVA.columnas.escalamiento[i]}
+                </span>
+                <span role="columnheader">{CURVA.columnas.riesgo[i]}</span>
+                <span role="columnheader">{CURVA.columnas.solos[i]}</span>
               </div>
               {curva.puntos.map((p) => {
                 const esPlan = Math.abs(p.umbral - curva.plan) < 1e-9;
@@ -1013,6 +1046,7 @@ export function Juego({ datos }: { datos: DatosIsla }) {
                 return (
                   <div
                     key={p.umbral}
+                    role="row"
                     data-u={p.umbral}
                     data-actual={esActual}
                     data-plan={esPlan}
@@ -1021,7 +1055,10 @@ export function Juego({ datos }: { datos: DatosIsla }) {
                       esActual && "bg-sup-2",
                     )}
                   >
-                    <span className="inline-flex items-center gap-1">
+                    <span
+                      role="cell"
+                      className="inline-flex items-center gap-1"
+                    >
                       {esActual ? (
                         <span
                           aria-hidden="true"
@@ -1042,14 +1079,16 @@ export function Juego({ datos }: { datos: DatosIsla }) {
                         <span className="sr-only"> ({CURVA.srPlan[i]})</span>
                       ) : null}
                     </span>
-                    <span>{porcentajeFijo(p.cobertura, 1, i)}</span>
-                    <span>{porcentajeFijo(1 - p.cobertura, 1, i)}</span>
-                    <span>
+                    <span role="cell">{porcentajeFijo(p.cobertura, 1, i)}</span>
+                    <span role="cell">
+                      {porcentajeFijo(1 - p.cobertura, 1, i)}
+                    </span>
+                    <span role="cell">
                       {p.riesgo === null
                         ? CURVA.sinCaso[i]
                         : porcentaje(p.riesgo, i)}
                     </span>
-                    <span>{p.aceptados}</span>
+                    <span role="cell">{p.aceptados}</span>
                   </div>
                 );
               })}
@@ -1074,14 +1113,24 @@ function TablaDecisiones({
 }) {
   const cols = `56px minmax(0,1.3fr) ${d.columnas.map(() => "minmax(0,0.8fr)").join(" ")} minmax(0,1.1fr)`;
   return (
-    <div className="grid" style={{ "--cols": cols } as CSSProperties}>
-      <div className="hidden gap-2 pb-1.5 text-dato text-tinta-2 escritorio:grid escritorio:grid-cols-[var(--cols)]">
-        <span>{TABLA.caso[i]}</span>
-        <span>{TABLA.tipo[i]}</span>
+    <div
+      role="table"
+      aria-label={TABLA.titulo(d.compacto.casos.length)[i]}
+      className="grid"
+      style={{ "--cols": cols } as CSSProperties}
+    >
+      <div
+        role="row"
+        className="hidden gap-2 pb-1.5 text-dato text-tinta-2 escritorio:grid escritorio:grid-cols-[var(--cols)]"
+      >
+        <span role="columnheader">{TABLA.caso[i]}</span>
+        <span role="columnheader">{TABLA.tipo[i]}</span>
         {d.columnas.map((c) => (
-          <span key={c.senal}>{c.titulo}</span>
+          <span key={c.senal} role="columnheader">
+            {c.titulo}
+          </span>
         ))}
-        <span>{TABLA.planAhora[i]}</span>
+        <span role="columnheader">{TABLA.planAhora[i]}</span>
       </div>
       {d.compacto.casos.map((k) => {
         const dest = r.destinos.find((x) => x.id === k.id)!;
@@ -1090,6 +1139,7 @@ function TablaDecisiones({
         return (
           <div
             key={k.id}
+            role="row"
             data-caso={k.id}
             data-cambia={marcada}
             className={cx(
@@ -1097,7 +1147,7 @@ function TablaDecisiones({
               marcada && "bg-sup-1",
             )}
           >
-            <span className="font-mono">
+            <span role="cell" className="font-mono">
               {marcada ? (
                 <span
                   aria-hidden="true"
@@ -1105,8 +1155,11 @@ function TablaDecisiones({
                 />
               ) : null}
               {k.id}
+              {marcada ? (
+                <span className="sr-only"> ({TABLA.cambia[i]})</span>
+              ) : null}
             </span>
-            <span>{tipo}</span>
+            <span role="cell">{tipo}</span>
             {d.columnas.map((c) => {
               const vals = k.visitas
                 .filter((v) => v.desde === c.nodo && c.senal in v.senales)
@@ -1118,13 +1171,13 @@ function TablaDecisiones({
                     ? datoCorto(vals[0], i)
                     : vals.map((x) => datoCorto(x, i)).join("·");
               return (
-                <span key={c.senal} className="font-mono">
+                <span key={c.senal} role="cell" className="font-mono">
                   <span className={ET}>{c.titulo}</span>
                   {texto}
                 </span>
               );
             })}
-            <span className="col-span-2 escritorio:col-span-1">
+            <span role="cell" className="col-span-2 escritorio:col-span-1">
               <span className={ET}>{TABLA.planAhora[i]}</span>
               {DESTINO.corto[dest.antes]![i]} → {DESTINO.corto[dest.ahora]![i]}
             </span>

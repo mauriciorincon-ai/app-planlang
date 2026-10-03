@@ -114,13 +114,18 @@ function Fila({
   nodo,
   tipoDe,
   idioma,
+  columnas,
 }: {
   f: FilaTraza;
   nodo: string;
   tipoDe: Readonly<Record<string, string>>;
   idioma: Idioma;
+  /** Los nombres de las columnas (caso, tipo y las del nodo): el lector los oye en cada celda (AU-S2-15). */
+  columnas: readonly string[];
 }) {
   const p = PRESENTACION[nodo] ?? { cols: "", mono: [] };
+  // La fila es un `<summary>` desplegable: no admite roles de tabla, así que cada celda dice su columna al lector.
+  const col = (k: number) => <span className="sr-only">{columnas[k]}: </span>;
   return (
     <details className="group border-t border-linea">
       <summary className="grid cursor-pointer list-none grid-cols-[16px_52px_minmax(0,1fr)] items-center gap-x-2.5 gap-y-1.5 py-2.5 text-chico hover:bg-sup-1 focus-visible:rounded-chip escritorio:grid-cols-[16px_var(--cols)] escritorio:gap-3.5 [&::-webkit-details-marker]:hidden [&>:nth-child(n+4)]:col-start-3 escritorio:[&>:nth-child(n+4)]:col-start-auto">
@@ -129,20 +134,23 @@ function Fila({
           tam={14}
           className="text-tinta-2 transition-transform group-open:rotate-90"
         />
-        <span className="font-mono text-dato font-medium">{f.id}</span>
+        <span className="font-mono text-dato font-medium">
+          {col(0)}
+          {f.id}
+        </span>
         <span className="justify-self-start">
+          {col(1)}
           <Chip procedencia="declarado">{f.tipo}</Chip>
         </span>
         {f.celdas.map((c, k) =>
           k === 0 && f.barra ? (
-            <Senal
-              key={k}
-              texto={c}
-              valor={f.barra.valor}
-              umbral={f.barra.umbral}
-            />
+            <span key={k} className="min-w-0">
+              {col(k + 2)}
+              <Senal texto={c} valor={f.barra.valor} umbral={f.barra.umbral} />
+            </span>
           ) : (
             <span key={k} className={cx("min-w-0", p.mono.includes(k) && MONO)}>
+              {col(k + 2)}
               {p.mono.includes(k) ? c : <Valor v={c} tipoDe={tipoDe} />}
             </span>
           ),
@@ -162,6 +170,7 @@ function Fila({
               className="inline-flex items-center gap-1.5 text-dato text-tinta-1"
             >
               {PANEL.trazas_.verCaso[idioma]} →
+              <span className="sr-only"> {f.id}</span>
             </a>
           </p>
         </div>
@@ -199,6 +208,11 @@ export function TablaTrazas({
       nodo={panel.nombre}
       tipoDe={tipoDe}
       idioma={idioma}
+      columnas={[
+        PANEL.trazas_.caso[idioma],
+        PANEL.trazas_.tipo[idioma],
+        ...t.columnas,
+      ]}
     />
   );
   const rango =
@@ -226,7 +240,9 @@ export function TablaTrazas({
         {resto.length ? (
           <VerMas
             id={`mas-tr-${panel.id}`}
-            mas={PANEL.trazas_.verMas({ n: resto.length, casos: rango })[idioma]}
+            mas={
+              PANEL.trazas_.verMas({ n: resto.length, casos: rango })[idioma]
+            }
             menos={PANEL.trazas_.verMenos[idioma]}
           >
             {resto.map(fila)}
