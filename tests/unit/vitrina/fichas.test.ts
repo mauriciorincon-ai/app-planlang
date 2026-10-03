@@ -183,3 +183,36 @@ describe("lo que dicen las fichas sale de los datos", () => {
     expect(Object.keys(exp._schema)).toContain("_lee_esto_primero");
   });
 });
+
+/** Los encabezados `###` de una mitad del manual (ES o EN), sin el «· desde el sprint N» de su historia. */
+function seccionesDelManual(i: "es" | "en"): string[] {
+  const manual = readFileSync("docs/MANUAL-DE-USO.md", "utf8");
+  const [es, resto] = manual.split(/^## English$/m);
+  const en = resto!.split(/^## Historial/m)[0]!;
+  return [...(i === "es" ? es! : en).matchAll(/^### (.+)$/gm)].map((m) =>
+    m[1]!.split(" · ")[0]!.trim(),
+  );
+}
+
+describe("AU-S2-4: cada funcionalidad del export apunta a una sección real del manual", () => {
+  it("toda `seccion_manual` es un encabezado de su mitad del manual, en los dos idiomas", () => {
+    for (const i of ["es", "en"] as const) {
+      const secciones = seccionesDelManual(i);
+      const exp = brochureExport(d, repo, i);
+      expect(exp.funcionalidades.fuente_del_conteo).toBe(
+        "docs/MANUAL-DE-USO.md",
+      );
+      for (const g of exp.funcionalidades.grupos)
+        for (const f of g.features)
+          expect(secciones, `${i} ${f.id}: «${f.seccion_manual}»`).toContain(
+            f.seccion_manual,
+          );
+    }
+  });
+
+  it("el gate nombra la funcionalidad cuyo rótulo no existe (demo en rojo)", () => {
+    const secciones = seccionesDelManual("es");
+    expect(secciones).not.toContain("Correr un lote de 20");
+    expect(secciones).toContain("Correr un lote");
+  });
+});

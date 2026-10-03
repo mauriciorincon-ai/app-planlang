@@ -8,7 +8,7 @@
 
 The plan was met with alerts. 200 synthetic cases were measured. Criteria: 8 met, 0 failed and 1 still open, out of 9. Risks that occurred: none. Human decisions were simulated.
 
-**Recommendation:** You may go on, carefully: before the 200-case batch, review C5, S2.
+**Recommendation:** You may go on, carefully: this is already the full 200-case batch; before extending the agent, review C5, S2.
 
 **The three most relevant criteria**
 
@@ -190,4 +190,4 @@ Applied thresholds: U1 = 0.75 · U2 = 1000 · U3 = 2 · U4 = false · in the pla
 
 Human review: In batches, the simulated reviewer follows the case's known truth (DA-04); the showcase discloses it.
 
-Verifier 1.2.0 · planlang-informe/v1 · fingerprint of this report: `25b22279b3d05ced516860824be88fb3f5f5d6a92d72b42967fc988372af6334`
+Verifier 1.2.0 · planlang-informe/v1 · fingerprint of this report: `b28126a89bb5f6eeac90bcdfcce299415865af1b7c902b2f91772512322a0652`

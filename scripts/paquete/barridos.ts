@@ -100,7 +100,8 @@ export function barrerHtml(
     : a.ruta.startsWith("es")
       ? "es"
       : null;
-  const pagina = !a.ruta.startsWith("_") && !/^(404|_not-found)/.test(a.ruta);
+  // Toda página lleva el rótulo, también la 404 (AU-S2-13); solo los fragmentos de Next (`_…`) no son páginas.
+  const pagina = !a.ruta.startsWith("_");
   if (pagina) {
     const faltan = (idioma ? [ROTULO[idioma]] : [ROTULO.es, ROTULO.en]).filter(
       (r) => !a.texto.includes(r),

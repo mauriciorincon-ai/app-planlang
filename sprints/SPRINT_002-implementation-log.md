@@ -1099,6 +1099,54 @@ del informe; donde se aparta, se dice aquí.
 | AU-S2-3 · plantillas `{plan:…}` | escribir `{plan:U9}` en el mismo texto | 3 rojas: el id, la plantilla sin resolver y la vista que la publicaría (`ninguna vista sale con una plantilla sin resolver`) | 10/10 verdes al restaurar |
 | AU-S2-1 · interruptor y función con texto | borrar `INTERRUPTOR.U4` y `PORQUE_FUNCION.texas_y_no_aprobar` (dentro de `playground.test.ts`) | la vista falla nombrando «umbral booleano U4» y «texas_y_no_aprobar» | la prueba restaura la entrada; 15/15 |
 
+#### Lo que viaja a hoja-de-vida y lo que se publica
+
+- **AU-S2-4:** las `seccion_manual` del export y de la ficha son los encabezados del manual, sin la historia
+  («Correr un lote», «Abrir la vitrina», «Mover umbrales en el playground», «Entregar el paquete a hoja-de-vida»).
+  `fichas.test.ts` exige que cada una sea un `###` de su mitad del manual; con esa prueba, «contadas contra
+  docs/MANUAL-DE-USO.md» deja de ser una afirmación sin comprobar. **AU-S2-B42:** «tres trazas reales» pasa a «sus
+  trazas reales» (export, ficha y manual ES/EN).
+- **AU-S2-5:** las cuatro frases que anunciaban el lote de 200 en futuro hablan ahora de «esta corrida» y dicen lo
+  que es cierto: la corrida de 200 del plan v1.4 confirmó S1 y entra a la vitrina en el sprint 3. La de S3 no
+  menciona el lote. `copia-contra-plan.test.ts` (sección 4) comprueba lo que esas frases afirman: la corrida tiene
+  200 trazas y el plan v1.4, su informe dice S1 confirmado y la vitrina publica otra corrida. **AU-S2-B43:** la
+  recomendación del informe ya no dice «antes del lote de 200» cuando la corrida es el lote completo; se regeneró
+  solo el informe de la corrida de 200 (los demás tienen n < `lotes.completo` y no cambian). No se sube la versión
+  del verificador: la regla de medición no cambió, solo la frase del caso n ≥ completo.
+- **AU-S2-6:** la Entrada muestra, bajo el demo B, «También en construcción» con los cuatro ids estables del bloque
+  `roadmap:` de `SPRINT_002.md` (el entrevistador primero). Con eso la frase del complemento («el demo B y el
+  entrevistador dicen “en construcción”») pasa a ser cierta y no se toca. Es un cambio de FORMA en P1: va a la
+  mirada de cierre de esta fase. Prueba en `componentes.test.tsx` (5 «en construcción», en orden).
+- **AU-S2-7 y AU-S2-8 (ADR-009 § 6 y § 7, manual ES/EN):**
+  - `scripts/paquete/complemento.ts`: el YAML del complemento conserva el `roadmap:` de hoja-de-vida si existe
+    (`pnpm paquete:vitrina --hoja-de-vida <ruta>` lo lee, solo lee) y rechaza uno propuesto por planlang;
+  - `scripts/paquete/verificar.ts` + `pnpm paquete:verificar --en <carpeta>`: el manifiesto tiene lector (cada
+    archivo con su huella y nada de más en la carpeta de la vitrina); el propio script lo corre al final;
+  - el manifiesto lleva los pasos de entrega (regenerar desde `main` limpio, rastreo, **borrar antes de copiar**,
+    verificar y adjuntar). Las `descripcion` del roadmap se piden a la planeadora en el summary.
+- **AU-S2-B34:** `paquete-vitrina` sale con 1 si el árbol tiene cambios sin commit (`--permitir-arbol-sucio` para
+  probar). **AU-S2-B35:** ADR-009 corrige «los dos builds no se pisan». **AU-S2-B36:** `next.config.ts` exige
+  `PLANLANG_PAQUETE_MARCA` junto a `PLANLANG_PAQUETE=1`. **AU-S2-B38:** el manifiesto declara las cinco corridas
+  que alimentan la vitrina con su huella y su papel. **C-9:** las rutas de las fichas viven una vez en
+  `src/lib/fichas/rutas.ts`.
+- **AU-S2-13 y AU-S2-B16:** `RotuloBilingue` (simulación y divulgación, en los dos idiomas, con `data-rotulo`) en
+  la raíz y en la 404; los barridos del paquete ya no eximen la 404. **AU-S2-B30 y AU-S2-B31:**
+  `verificar-export.mjs` busca el rótulo como elemento pintado (fuera de los `<script>`) en toda página, y rechaza
+  `script`, `link` e `img` de afuera.
+- **AU-S2-B10:** el manual dice en los dos idiomas con qué plan y lote corre `pnpm lote:demo` sin `--plan`; una
+  prueba de pytest lo exige. **AU-S2-B11:** el título del ADR-004. **AU-S2-B39:** el README (la vitrina construida,
+  los 10 ADR, «Cómo se usa» sin «S1, sin pantalla», el plan v1.4). **AU-S2-B40:** adendas en ADR-001, 005 y 006.
+
+| Gate | Cambio deliberado | Rojo | Al revertir |
+|---|---|---|---|
+| AU-S2-4 · secciones del manual | volver a «Correr un lote de 20» en `src/textos/fichas.ts` | `fichas.test.ts` rojo: «es demo-a: «Correr un lote de 20»» no es un encabezado del manual | 14/14 verdes al restaurar y regenerar las fichas |
+| AU-S2-5 · frases sobre la corrida de 200 | volver a «With the 200-case run it will take shape» en `src/textos/playground.ts` | `copia-contra-plan.test.ts` rojo nombrando `src/textos/playground.ts:579` | 11/11 verdes al restaurar |
+| AU-S2-13 · B30 · B31 · export con rótulo pintado y nada de afuera | sobre una copia de `out/`: la 404 sin su franja, `es/plan.html` con el rótulo solo dentro de un `<script>` (como la carga RSC) y `en/fichas.html` con un script y una imagen de afuera | `verificar-export.mjs` en rojo con 5 fallas que nombran página e idioma | verde sobre `out/` (57 HTML) |
+| AU-S2-13 · barrido del paquete | `barrerHtml` sobre una `404.html` sin rótulo | 2 fallas (ES y EN); antes la 404 estaba exenta | `paquete-barridos.test.ts` 9/9 |
+| AU-S2-B36 · modo paquete con marca | `PLANLANG_PAQUETE=1` sin `PLANLANG_PAQUETE_MARCA` | `next.config.ts` se niega a cargar: «quítala (unset PLANLANG_PAQUETE)» | `next-config-paquete.test.ts` 3/3 |
+| AU-S2-7 · AU-S2-8 · entrega | un roadmap previo, uno propuesto; un archivo cambiado, uno que falta y uno que sobra | se conserva el previo, se rechaza el propuesto y las tres diferencias se nombran | `paquete-entrega.test.ts` 6/6 |
+| AU-S2-B10 · el manual dice el plan por defecto | quitar `plans/demo-a/v1.2.json` de la mitad en inglés del manual | `test_el_manual_dice_con_que_plan_y_lote_corre_lote_demo_por_defecto` en rojo | verde al restaurar |
+
 ## Desviación del plan
 
 1. **El centinela «Worktrees prohibidos» no existe** en `ordenes/CLAUDE-md-para-app.md` (vive en el batch

@@ -4,7 +4,7 @@ import type { Idioma } from "@core/formatos/bilingue";
 import { ruta } from "@/lib/ruta";
 import type { VistaEntrada } from "@/lib/vista/entrada";
 import { PESTANAS, VEREDICTOS } from "@/textos/comun";
-import { DEMOS, LIDER } from "@/textos/entrada";
+import { DEMOS, EN_CONSTRUCCION, LIDER } from "@/textos/entrada";
 import { Baldosa } from "../baldosa";
 import { BotonEnlace } from "../boton";
 import { Chip } from "../chip";
@@ -66,7 +66,10 @@ function NombreDemo({
   );
 }
 
-/** «Los demos»: el A con su veredicto y su corrida reales; el B, en construcción, sin nada simulado. */
+/**
+ * «Los demos»: el A con su veredicto y su corrida reales; el B, en construcción, sin nada simulado; y lo demás del
+ * roadmap (el entrevistador primero), también en construcción.
+ */
 export function Demos({
   vista,
   idioma,
@@ -176,6 +179,30 @@ export function Demos({
             <span className="text-chico text-tinta-2">—</span>
           </Celda>
         </div>
+      </div>
+      <div className="mt-2 border-t border-linea pt-4">
+        <h3 className="text-sub font-semibold text-tinta-2">
+          {EN_CONSTRUCCION.titulo[idioma]}
+        </h3>
+        <p className="mt-1 text-apoyo text-tinta-2">
+          {EN_CONSTRUCCION.nota[idioma]}
+        </p>
+        <ul className="mt-3 grid gap-2">
+          {EN_CONSTRUCCION.items.map((x) => (
+            <li
+              key={x.id}
+              data-roadmap={x.id}
+              className="flex flex-wrap items-center gap-x-3 gap-y-1.5"
+            >
+              <Veredicto clase="beta" chico>
+                {VEREDICTOS.en_construccion[idioma]}
+              </Veredicto>
+              <span className="text-apoyo text-tinta-2">
+                {x.titulo[idioma]}
+              </span>
+            </li>
+          ))}
+        </ul>
       </div>
     </Seccion>
   );

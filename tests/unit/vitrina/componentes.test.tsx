@@ -235,3 +235,25 @@ describe("regla 5-a: la forma no depende del perfil ni del cliente", () => {
     expect(forma(b.container)).toBe(formaLider);
   });
 });
+
+describe("AU-S2-6: el demo B, el entrevistador y lo demás del roadmap dicen «en construcción» (regla dura 15)", () => {
+  it.each(["es", "en"] as const)("en %s", (idioma) => {
+    const { container } = render(
+      <Demos vista={vistas[idioma]} idioma={idioma} />,
+    );
+    const beta = [...container.querySelectorAll('[data-v="beta"]')];
+    // El demo B en su fila y los cuatro del roadmap en la lista.
+    expect(beta).toHaveLength(5);
+    const ids = [...container.querySelectorAll("[data-roadmap]")].map(
+      (x) => (x as HTMLElement).dataset.roadmap,
+    );
+    expect(ids).toEqual([
+      "entrevistador-que-propone-el-plan",
+      "comparar-dos-corridas",
+      "calibracion-conformal",
+      "recorrido-animado-de-un-caso",
+    ]);
+    for (const li of container.querySelectorAll("[data-roadmap]"))
+      expect(li.querySelector('[data-v="beta"]')).not.toBeNull();
+  });
+});

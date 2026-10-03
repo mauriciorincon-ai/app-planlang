@@ -1,4 +1,4 @@
-# ADR-004 — Salida estructurada con `--max-turns 1`: `error_max_turns` se clasifica y se reintenta
+# ADR-004 — Salida estructurada: `error_max_turns` se clasifica y se reintenta (`--max-turns 2` con esquema desde el S2)
 
 **Summary (EN):** With `--json-schema` the CLI may stop with `error_max_turns`; the adapter classifies it as `esquema_invalido` and retries within §9.1 (one try plus two retries), declaring the retries and their cost in the trace. Amended in S2: rule 6 now gives `--max-turns 2` only when `--json-schema` is present, and 1 otherwise; measured over 466 calls of the S2 200-case run, 0 schema retries.
 

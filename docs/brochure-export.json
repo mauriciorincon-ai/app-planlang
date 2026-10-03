@@ -75,19 +75,19 @@
             "id": "demo-a",
             "nombre": "Demo A: autorizaciones médicas",
             "que_hace": "Un enrutador, un extractor, un verificador de cobertura por reglas y un redactor aprueban, niegan con causal o escalan a un auditor; ninguna negación sale sin una persona.",
-            "seccion_manual": "Correr un lote de 20"
+            "seccion_manual": "Correr un lote"
           },
           {
             "id": "documento-adverso",
             "nombre": "Documento de decisión adversa",
             "que_hace": "Toda negación produce, por código, un documento en español e inglés con la causal, la regla, los datos usados y la vía de contradicción.",
-            "seccion_manual": "Correr un lote de 20"
+            "seccion_manual": "Correr un lote"
           },
           {
             "id": "lotes",
             "nombre": "Corridas por lotes y exportación",
             "que_hace": "Lotes acumulables sin duplicar casos, con el modelo servido por la suscripción de Claude Code; las trazas se exportan a un formato propio y versionado.",
-            "seccion_manual": "Correr un lote de 20"
+            "seccion_manual": "Correr un lote"
           }
         ]
       },
@@ -133,7 +133,7 @@
             "id": "playground",
             "nombre": "Mover los umbrales del plan",
             "que_hace": "Deslizas la confianza mínima, el alto costo, el máximo de aclaraciones o el modo Texas y ves qué casos cambian de camino, qué errores aparecen, cuánto trabajo humano cuesta y la curva riesgo-cobertura.",
-            "seccion_manual": "Mover los umbrales"
+            "seccion_manual": "Mover umbrales en el playground"
           }
         ]
       },
@@ -146,8 +146,8 @@
           {
             "id": "visor",
             "nombre": "El grafo real desde el código",
-            "que_hace": "El diagrama se genera desde el grafo compilado; cada nodo muestra su explicación para líderes y expertos, su código y tres trazas reales, y el diagrama señala cualquier ausencia frente al plan.",
-            "seccion_manual": "Leer la vitrina"
+            "que_hace": "El diagrama se genera desde el grafo compilado; cada nodo muestra su explicación para líderes y expertos, su código y sus trazas reales, y el diagrama señala cualquier ausencia frente al plan.",
+            "seccion_manual": "Abrir la vitrina"
           }
         ]
       },
@@ -161,19 +161,19 @@
             "id": "entrada",
             "nombre": "Página de entrada",
             "que_hace": "La tesis en una pantalla para un visitante no técnico: todos observan, la mitad evalúa, casi nadie planeó qué evaluar.",
-            "seccion_manual": "Leer la vitrina"
+            "seccion_manual": "Abrir la vitrina"
           },
           {
             "id": "pestanas",
             "nombre": "Plan, Agente, Brecha y Casos",
             "que_hace": "En lenguaje llano con detalle para expertos, en español e inglés, en un teléfono de 380 px, con el rótulo «Simulación · no operativo» y la divulgación del revisor simulado.",
-            "seccion_manual": "Leer la vitrina"
+            "seccion_manual": "Abrir la vitrina"
           },
           {
             "id": "fichas",
             "nombre": "Fichas y paquete para la vitrina personal",
             "que_hace": "La ficha de reproducibilidad, la del agente A y estos hechos de la app, con el paquete estático que hoja-de-vida publica sin un solo enlace.",
-            "seccion_manual": "Entregar el paquete"
+            "seccion_manual": "Entregar el paquete a hoja-de-vida"
           }
         ]
       }

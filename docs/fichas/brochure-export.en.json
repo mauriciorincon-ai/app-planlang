@@ -75,19 +75,19 @@
             "id": "demo-a",
             "nombre": "Demo A: medical prior authorizations",
             "que_hace": "A router, an extractor, a rule-based coverage checker and a drafter approve, deny with a stated cause or escalate to an auditor; no denial goes out without a person.",
-            "seccion_manual": "Run a 20-case batch"
+            "seccion_manual": "Run a batch"
           },
           {
             "id": "documento-adverso",
             "nombre": "Adverse-decision document",
             "que_hace": "Every denial produces, by code, a document in Spanish and English with the cause, the rule, the data used and the way to contest it.",
-            "seccion_manual": "Run a 20-case batch"
+            "seccion_manual": "Run a batch"
           },
           {
             "id": "lotes",
             "nombre": "Batch runs and export",
             "que_hace": "Accumulable batches without duplicate cases, with the model served by the Claude Code subscription; traces are exported to an own, versioned format.",
-            "seccion_manual": "Run a 20-case batch"
+            "seccion_manual": "Run a batch"
           }
         ]
       },
@@ -133,7 +133,7 @@
             "id": "playground",
             "nombre": "Move the plan's thresholds",
             "que_hace": "You slide the minimum confidence, the high cost, the clarification maximum or Texas mode and see which cases change path, which errors appear, how much human work it costs and the risk-coverage curve.",
-            "seccion_manual": "Move the thresholds"
+            "seccion_manual": "Move thresholds in the playground"
           }
         ]
       },
@@ -146,8 +146,8 @@
           {
             "id": "visor",
             "nombre": "The real graph from the code",
-            "que_hace": "The diagram is generated from the compiled graph; each node shows its explanation for leaders and experts, its code and three real traces, and the diagram flags any absence against the plan.",
-            "seccion_manual": "Read the showcase"
+            "que_hace": "The diagram is generated from the compiled graph; each node shows its explanation for leaders and experts, its code and its real traces, and the diagram flags any absence against the plan.",
+            "seccion_manual": "Open the showcase"
           }
         ]
       },
@@ -161,19 +161,19 @@
             "id": "entrada",
             "nombre": "Home page",
             "que_hace": "The thesis on one screen for a non-technical visitor: everyone observes, half evaluate, almost nobody planned what to evaluate.",
-            "seccion_manual": "Read the showcase"
+            "seccion_manual": "Open the showcase"
           },
           {
             "id": "pestanas",
             "nombre": "Plan, Agent, Gap and Cases",
             "que_hace": "In plain language with detail for experts, in Spanish and English, on a 380 px phone, with the “Simulation · not operational” label and the simulated-reviewer disclosure.",
-            "seccion_manual": "Read the showcase"
+            "seccion_manual": "Open the showcase"
           },
           {
             "id": "fichas",
             "nombre": "Records and package for the personal showcase",
             "que_hace": "The reproducibility record, agent A's record and these app facts, with the static package hoja-de-vida publishes without a single link.",
-            "seccion_manual": "Deliver the package"
+            "seccion_manual": "Hand the package to hoja-de-vida"
           }
         ]
       }

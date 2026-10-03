@@ -200,3 +200,31 @@ describe("3 · los mapas editoriales citan criterios que existen y miden lo que 
     );
   });
 });
+
+describe("4 · lo que la copia dice de la corrida de 200 es cierto (AU-S2-5)", () => {
+  const RUTA = "runs/demo-a/suscripcion-planlang-a-001-200-v1.4";
+
+  it("los textos que la citan dicen lo que la corrida y el manifiesto sostienen", () => {
+    const citan = ls.filter((l) => /corrida de 200|200-case run/.test(l.texto));
+    expect(citan.length).toBeGreaterThanOrEqual(6);
+    for (const l of citan) {
+      // Ninguna la anuncia en futuro: la corrida existe.
+      expect(l.texto, `${l.archivo}:${l.linea}`).not.toMatch(
+        /tomará forma|will take shape|antes del lote|before the 200/,
+      );
+      expect(l.texto, `${l.archivo}:${l.linea}`).toMatch(/v1\.4/);
+    }
+    const corrida = JSON.parse(
+      readFileSync(join(RUTA, "corrida.json"), "utf8"),
+    ) as { plan: { archivo: string }; trazas: unknown[] };
+    expect(corrida.trazas).toHaveLength(200);
+    expect(corrida.plan.archivo).toBe("plans/demo-a/v1.4.json");
+    // «confirmó S1»
+    const inf = JSON.parse(
+      readFileSync(join(RUTA, "informe.json"), "utf8"),
+    ) as { supuestos: Array<{ id: string; estado: string }> };
+    expect(inf.supuestos.find((s) => s.id === "S1")?.estado).toBe("confirmado");
+    // «entra a la vitrina en el sprint 3»: la vitrina publica otra corrida.
+    expect(d.manifiesto.corrida.ruta).not.toBe(RUTA);
+  });
+});

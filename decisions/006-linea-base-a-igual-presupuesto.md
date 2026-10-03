@@ -48,3 +48,9 @@ presupuesto» sin dejarlo decidido en ningún lado.
 - El informe sigue calculando y mostrando el presupuesto de las dos variantes y los casos que difieren.
 - La regla por defecto con que el verificador decide S3 («no peor» en exactitud y latencia mediana,
   tolerancia cero) queda escrita en el motivo del informe (auditoría S1, M-6).
+
+## Adenda (2026-10-02, auditoría S2, AU-S2-B40)
+
+La propuesta A se aplicó en el plan v1.3 (S2, solo medición, con el gate del usuario en el plan del sprint): S3
+dice «a un presupuesto no mayor» y declara su tolerancia. La B no se hizo: pasó al S3 con M-18 (refactor del grafo
+con riesgo sobre RF-09.2; desviación 9 de la bitácora del S2).

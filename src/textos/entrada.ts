@@ -144,6 +144,49 @@ export const DEMOS = {
   chipInforme: tb("real · informe del verificador", "real · verifier’s report"),
 };
 
+/**
+ * Lo que sigue del roadmap, «en construcción» en la Entrada (regla dura 15: el entrevistador y lo demás del roadmap
+ * aparecen desde el primer día; AU-S2-6). Son los ids estables del bloque `roadmap:` de la ficha que define la
+ * planeadora (`SPRINT_002.md`), menos el demo B, que tiene su fila en la tabla. Ninguno se simula.
+ */
+export const EN_CONSTRUCCION = {
+  titulo: tb("También en construcción", "Also under construction"),
+  nota: tb(
+    "Del roadmap, desde el sprint 3 en adelante.",
+    "From the roadmap, from sprint 3 on.",
+  ),
+  items: [
+    {
+      id: "entrevistador-que-propone-el-plan",
+      titulo: tb(
+        "Entrevistador que propone el plan",
+        "Interviewer that drafts the plan",
+      ),
+    },
+    {
+      id: "comparar-dos-corridas",
+      titulo: tb(
+        "Comparar dos corridas lado a lado",
+        "Compare two runs side by side",
+      ),
+    },
+    {
+      id: "calibracion-conformal",
+      titulo: tb(
+        "Calibración conformal y cobertura conjunta",
+        "Conformal calibration and joint coverage",
+      ),
+    },
+    {
+      id: "recorrido-animado-de-un-caso",
+      titulo: tb(
+        "Recorrido animado de un caso por el grafo",
+        "Animated walk of one case through the graph",
+      ),
+    },
+  ],
+};
+
 export const PREGUNTA = {
   rotulo: tb(
     "La pregunta de entrevista de 2026",

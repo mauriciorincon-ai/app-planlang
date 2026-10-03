@@ -572,7 +572,7 @@
     }
   },
   "formato": "planlang-informe/v1",
-  "huella": "25b22279b3d05ced516860824be88fb3f5f5d6a92d72b42967fc988372af6334",
+  "huella": "b28126a89bb5f6eeac90bcdfcce299415865af1b7c902b2f91772512322a0652",
   "plan_en_breve": {
     "decisiones_una_via": [
       {
@@ -807,8 +807,8 @@
       "C2"
     ],
     "recomendacion": {
-      "en": "You may go on, carefully: before the 200-case batch, review C5, S2.",
-      "es": "Puede seguir, con cuidado: antes del lote de 200 casos, revise C5, S2."
+      "en": "You may go on, carefully: this is already the full 200-case batch; before extending the agent, review C5, S2.",
+      "es": "Puede seguir, con cuidado: este ya es el lote completo de 200 casos; antes de ampliar el agente, revise C5, S2."
     },
     "riesgos_ocurridos": [],
     "texto": {

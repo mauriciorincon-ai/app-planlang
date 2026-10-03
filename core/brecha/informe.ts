@@ -259,6 +259,8 @@ export function resumenDelInforme(
         : "the unforeseen gaps"
       : "";
   const completo = plan.lotes.completo;
+  // Si la corrida ya es el lote completo, la recomendación no lo anuncia como el paso siguiente (AU-S2-B43).
+  const yaEsElCompleto = n >= completo;
   const recomendacion: TextoBilingue =
     v.valor === "no_cumple"
       ? {
@@ -266,14 +268,24 @@ export function resumenDelInforme(
           en: `Do not extend the agent to more cases: first fix ${lista(p, "what is flagged")} and rerun the batch.`,
         }
       : v.valor === "cumple_con_alertas"
-        ? {
-            es: `Puede seguir, con cuidado: antes del lote de ${completo} casos, revise ${p.join(", ")}${extraEs}.`,
-            en: `You may go on, carefully: before the ${completo}-case batch, review ${p.join(", ")}${extraEn}.`,
-          }
-        : {
-            es: `El plan se cumplió en este lote: el siguiente paso es el lote de ${completo} casos.`,
-            en: `The plan was met in this batch: the next step is the ${completo}-case batch.`,
-          };
+        ? yaEsElCompleto
+          ? {
+              es: `Puede seguir, con cuidado: este ya es el lote completo de ${completo} casos; antes de ampliar el agente, revise ${p.join(", ")}${extraEs}.`,
+              en: `You may go on, carefully: this is already the full ${completo}-case batch; before extending the agent, review ${p.join(", ")}${extraEn}.`,
+            }
+          : {
+              es: `Puede seguir, con cuidado: antes del lote de ${completo} casos, revise ${p.join(", ")}${extraEs}.`,
+              en: `You may go on, carefully: before the ${completo}-case batch, review ${p.join(", ")}${extraEn}.`,
+            }
+        : yaEsElCompleto
+          ? {
+              es: `El plan se cumplió en el lote completo de ${completo} casos.`,
+              en: `The plan was met in the full ${completo}-case batch.`,
+            }
+          : {
+              es: `El plan se cumplió en este lote: el siguiente paso es el lote de ${completo} casos.`,
+              en: `The plan was met in this batch: the next step is the ${completo}-case batch.`,
+            };
   return {
     texto,
     criterios_destacados: criteriosDestacados(criterios),

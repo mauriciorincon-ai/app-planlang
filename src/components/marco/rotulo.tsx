@@ -23,3 +23,33 @@ export function Rotulo({ idioma }: { idioma: Idioma }) {
     </div>
   );
 }
+
+/**
+ * El rótulo en los dos idiomas a la vez, cada texto con su `lang`: para las páginas que no saben el idioma de quien
+ * llega (la raíz `/` que lo elige y la 404 global). Lleva lo mismo que `Rotulo`: simulación y divulgación
+ * (AU-S2-13, AU-S2-B16).
+ */
+export function RotuloBilingue() {
+  return (
+    <div className="border-b border-linea text-dato text-tinta-2" data-rotulo>
+      <div
+        className={cx(
+          CONT,
+          "flex flex-wrap justify-between gap-x-4 gap-y-0.5 py-1.75",
+        )}
+      >
+        <span className="inline-flex flex-wrap items-center gap-1.5 font-medium text-tinta-1">
+          <Icono de={FlaskConical} tam={14} />
+          <span lang="es">{ROTULO.simulacion.es}</span>
+          <span aria-hidden="true">/</span>
+          <span lang="en">{ROTULO.simulacion.en}</span>
+        </span>
+        <span>
+          <span lang="es">{ROTULO.divulgacion.es}</span>
+          <span aria-hidden="true"> / </span>
+          <span lang="en">{ROTULO.divulgacion.en}</span>
+        </span>
+      </div>
+    </div>
+  );
+}

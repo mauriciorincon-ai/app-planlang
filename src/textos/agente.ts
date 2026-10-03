@@ -1739,8 +1739,8 @@ export const EXTRACTOR_S1 = {
   rotulo: tb("Lo que aún no se sabe", "What is not known yet"),
   texto: ((p: { medidos: number }) =>
     tb(
-      `Si su confianza es confiable: acertó los ${p.medidos} casos medidos y, sin un solo error, no hay con qué calibrarla. S1 quedó sin probar.`,
-      `Whether its confidence can be trusted: it got all ${p.medidos} measured cases right and, without a single error, there is nothing to calibrate against. S1 remains untested.`,
+      `Si su confianza es confiable: en esta corrida acertó los ${p.medidos} casos medidos y, sin un solo error, no hay con qué calibrarla; aquí S1 quedó sin probar. La corrida de 200 del plan v1.4 lo confirmó y entra a la vitrina en el sprint 3.`,
+      `Whether its confidence can be trusted: in this run it got all ${p.medidos} measured cases right and, without a single error, there is nothing to calibrate against; here S1 stayed untested. The 200-case run of plan v1.4 confirmed it and joins the showcase in sprint 3.`,
     )) as Plantilla<{ medidos: number }>,
 };
 

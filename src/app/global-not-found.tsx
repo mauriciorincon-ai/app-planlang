@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { CONT, cx } from "@/components/cx";
 import { MarcaPlanlang } from "@/components/marcas";
+import { RotuloBilingue } from "@/components/marco/rotulo";
 import { SCRIPT_PREVIO } from "@/lib/preferencias/script-previo";
 import { NO_ENCONTRADA } from "@/textos/comun";
 import { inter, mono } from "./fuentes";
@@ -26,6 +27,7 @@ export default function NoEncontrada() {
         <script dangerouslySetInnerHTML={{ __html: SCRIPT_PREVIO }} />
       </head>
       <body>
+        <RotuloBilingue />
         <main className={cx(CONT, "grid justify-items-start gap-4 py-14")}>
           <p className="inline-flex items-center gap-2 text-sub font-semibold tracking-apretado">
             <MarcaPlanlang />

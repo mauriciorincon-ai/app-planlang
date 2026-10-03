@@ -149,8 +149,8 @@ export const LECTURA_SUPUESTO: Record<string, LecturaDeFalla> = {
       "Splitting the work between a router and three specialized agents does no worse than a single agent on no larger a budget.",
     ),
     significa: tb(
-      "La exactitud extra se paga en tiempo, y el plan solo tolera la misma demora que un agente único. Antes del lote de 200, o el plan acepta más demora, o el enrutador tiene que ser más rápido.",
-      "The extra accuracy is paid for in time, and the plan only tolerates the same delay as a single agent. Before the 200-case batch, either the plan accepts more delay or the router has to get faster.",
+      "La exactitud extra se paga en tiempo, y el plan solo tolera la misma demora que un agente único. Para que S3 se sostenga, o el plan acepta más demora, o el enrutador tiene que ser más rápido.",
+      "The extra accuracy is paid for in time, and the plan only tolerates the same delay as a single agent. For S3 to hold, either the plan accepts more delay or the router has to get faster.",
     ),
   },
   "S1:sin_probar": {
@@ -164,8 +164,8 @@ export const LECTURA_SUPUESTO: Record<string, LecturaDeFalla> = {
       "The confidence the model declares when extracting separates its hits from its errors. Threshold U1 relies on it to decide when to call a person.",
     ),
     significa: tb(
-      "El umbral U1 sigue sin respaldo medido. Hace falta un lote con casos difíciles, donde el modelo se equivoque.",
-      "Threshold U1 still has no measured backing. It needs a batch with hard cases, where the model gets things wrong.",
+      "En esta corrida el umbral U1 quedó sin respaldo medido: faltaron casos donde el modelo se equivocara. La corrida de 200 del plan v1.4 confirmó S1 y entra a la vitrina en el sprint 3.",
+      "In this run threshold U1 was left without measured backing: there were no cases where the model got things wrong. The 200-case run of plan v1.4 confirmed S1 and joins the showcase in sprint 3.",
     ),
   },
 };

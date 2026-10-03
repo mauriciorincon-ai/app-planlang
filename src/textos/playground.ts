@@ -575,8 +575,8 @@ export const CURVA = {
     tb(`real · S1, n = ${n}`, `real · S1, n = ${n}`)) as Plantilla<number>,
   lecturaSinRiesgo: ((n: number) =>
     tb(
-      `Subir la confianza mínima (U1) manda más casos a una persona: baja la cobertura. En esta corrida el riesgo quedó en 0 % en todo el rango, porque los ${n} casos medidos fueron aciertos: la curva no puede mostrar dónde se equilibra. Con el lote de 200 tomará forma.`,
-      `Raising the minimum confidence (U1) sends more cases to a person: coverage drops. In this run risk stayed at 0% across the whole range, because all ${n} measured cases were correct: the curve cannot show where it balances. With the 200-case batch it will take shape.`,
+      `Subir la confianza mínima (U1) manda más casos a una persona: baja la cobertura. En esta corrida el riesgo quedó en 0 % en todo el rango, porque los ${n} casos medidos fueron aciertos: la curva no puede mostrar dónde se equilibra. La corrida de 200 del plan v1.4 confirmó S1 y entra a la vitrina en el sprint 3.`,
+      `Raising the minimum confidence (U1) sends more cases to a person: coverage drops. In this run risk stayed at 0% across the whole range, because all ${n} measured cases were correct: the curve cannot show where it balances. The 200-case run of plan v1.4 confirmed S1 and joins the showcase in sprint 3.`,
     )) as Plantilla<number>,
   lectura: tb(
     "Subir la confianza mínima (U1) manda más casos a una persona: baja la cobertura y, si la confianza está calibrada, también el riesgo.",

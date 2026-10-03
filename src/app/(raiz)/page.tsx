@@ -1,9 +1,8 @@
-import { FlaskConical } from "lucide-react";
 import { CONT, cx } from "@/components/cx";
-import { Icono } from "@/components/icono";
 import { MarcaPlanlang } from "@/components/marcas";
+import { RotuloBilingue } from "@/components/marco/rotulo";
 import { SCRIPT_IDIOMA } from "@/lib/preferencias/script-idioma";
-import { ELEGIR, ROTULO } from "@/textos/comun";
+import { ELEGIR } from "@/textos/comun";
 import { PORTADA } from "@/textos/entrada";
 import { ruta } from "@/lib/ruta";
 
@@ -18,16 +17,7 @@ export default function Inicio() {
   return (
     <>
       <script dangerouslySetInnerHTML={{ __html: SCRIPT_IDIOMA }} />
-      <div className="border-b border-linea text-dato text-tinta-2">
-        <div className={cx(CONT, "flex flex-wrap gap-x-4 gap-y-0.5 py-1.75")}>
-          <span className="inline-flex items-center gap-1.5 font-medium text-tinta-1">
-            <Icono de={FlaskConical} tam={14} />
-            <span lang="es">{ROTULO.simulacion.es}</span>
-            <span aria-hidden="true">/</span>
-            <span lang="en">{ROTULO.simulacion.en}</span>
-          </span>
-        </div>
-      </div>
+      <RotuloBilingue />
       <main className={cx(CONT, "grid justify-items-start gap-6 py-14")}>
         <p className="inline-flex items-center gap-2 text-sub font-semibold tracking-apretado">
           <MarcaPlanlang />

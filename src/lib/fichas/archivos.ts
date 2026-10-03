@@ -21,9 +21,14 @@ import {
   problemasDeFicha,
 } from "./contrato";
 
-export const RUTA_FICHA_AGENTE =
-  "content/agentes/planlang-demo-a.ficha-tecnica.json";
-export const RUTA_EXPORT = "docs/brochure-export.json";
+import {
+  RUTA_COMPLEMENTO,
+  RUTA_EXPORT,
+  RUTA_FICHA_AGENTE,
+  RUTA_FICHA_AGENTE_EN,
+} from "./rutas";
+
+export { RUTA_EXPORT, RUTA_FICHA_AGENTE };
 
 const json = (x: unknown) => `${JSON.stringify(x, null, 2)}\n`;
 
@@ -45,17 +50,17 @@ export function archivosDeFichas(
     const exp = brochureExport(d, repo, i);
     const comp = complementoPropuesto(d, i);
     const app = armarFichaApp(exp, comp);
-    const rutaAgente =
-      i === "es"
-        ? RUTA_FICHA_AGENTE
-        : "docs/fichas/planlang-demo-a.ficha-tecnica.en.json";
+    const rutaAgente = i === "es" ? RUTA_FICHA_AGENTE : RUTA_FICHA_AGENTE_EN;
     const rutaExport =
       i === "es" ? RUTA_EXPORT : "docs/fichas/brochure-export.en.json";
     const rutaApp = `docs/fichas/planlang.ficha-tecnica${sufijo}.json`;
     exigir(rutaAgente, problemasDeFicha(agente));
     exigir(rutaExport, problemasDeExport(exp));
     exigir(rutaApp, problemasDeFicha(app));
-    const rutaComp = `docs/fichas/planlang.complemento-propuesto${sufijo}.json`;
+    const rutaComp =
+      i === "es"
+        ? RUTA_COMPLEMENTO
+        : RUTA_COMPLEMENTO.replace(/\.json$/, ".en.json");
     exigir(rutaComp, problemasDelComplemento(comp));
     out[rutaAgente] = json(agente);
     out[rutaExport] = json(exp);

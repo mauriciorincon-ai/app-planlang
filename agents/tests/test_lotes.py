@@ -276,3 +276,13 @@ def test_el_limite_de_uso_no_pasa_a_una_persona(tmp_path: Path) -> None:
     r, corrida = _respaldo(tmp_path, {"A-001": ("Extraccion", "limite_de_uso")}, 2)
     assert r.detenida_por == "limite_de_uso" and r.ejecutados == []
     assert not (corrida / "trazas" / "A-001.json").exists()
+
+
+def test_el_manual_dice_con_que_plan_y_lote_corre_lote_demo_por_defecto():
+    """AU-S2-B10: sin `--plan`, `pnpm lote:demo` corre con el plan y el lote por defecto, y el manual lo
+    dice en los dos idiomas (no es ni el plan publicado ni el último; quien quiera el v1.4 lo pide)."""
+    manual = (lotes.RAIZ_REPO / "docs" / "MANUAL-DE-USO.md").read_text(encoding="utf-8")
+    es, en = manual.split("## English", 1)
+    for mitad in (es, en):
+        assert f"`{lotes.PLAN_POR_DEFECTO}`" in mitad
+        assert f"`{lotes.CASOS_POR_DEFECTO}`" in mitad

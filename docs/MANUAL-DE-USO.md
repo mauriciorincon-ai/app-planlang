@@ -79,7 +79,9 @@ informes.
 - **Cómo se usa:**
   1. Revisa en tu cuenta de Claude cuánta cuota te queda.
   2. `pnpm lote:demo --corrida <nombre-nuevo> --fecha <AAAA-MM-DD>`: corre los 20 casos con tu
-     suscripción de Claude Code, con 2 segundos entre caso y caso. Tarda unos 5 minutos. Con la
+     suscripción de Claude Code, con 2 segundos entre caso y caso. Sin `--plan`, usa el plan
+     `plans/demo-a/v1.2.json` y el lote `data/casos/demo-a/planlang-a-001-20.json`: los de la corrida que
+     publica la vitrina (para el plan v1.4, el paso 5). Tarda unos 5 minutos. Con la
      suscripción, el comando se niega a correr más casos por sesión de los que fija el plan (20) o a
      correr sin pausa.
   3. `pnpm lote:base --corrida <nombre-nuevo>-base --fecha <AAAA-MM-DD>`: la misma prueba con un solo
@@ -136,7 +138,7 @@ data/casos/demo-a/planlang-a-001-200.json` y repite el comando hasta completar l
   - **Plan:** las decisiones, los riesgos con su prioridad (y cuáles son control legal), los supuestos con su
     estado, los criterios con su regla, los umbrales con su señal y el contrato del grafo.
   - **Agente:** primero la ficha del agente y después el diagrama dibujado desde el grafo que corrió. Al tocar
-    un nodo o una flecha ves qué hace, su código y tres casos reales que pasaron por ahí.
+    un nodo o una flecha ves qué hace, su código y los casos reales que pasaron por ahí.
   - **Brecha:** el informe completo, con lo que falló a la vista.
   - **Playground:** mover umbrales (abajo).
   - **Casos:** los 20 casos, uno por página, con su recorrido, las señales en cada flecha, la pausa con la
@@ -188,11 +190,18 @@ data/casos/demo-a/planlang-a-001-200.json` y repite el comando hasta completar l
   2. Luego la construye bajo `/piezas/planlang`, sin Sentry y sin enlaces a otro sitio.
   3. Por último barre cada dirección y escribe un manifiesto con la huella de cada archivo.
 - **Cómo se usa:**
-  1. `pnpm paquete:vitrina`. El resultado queda en `dist/paquete-hoja-de-vida/`, con la misma forma que el
-     repositorio de hoja-de-vida (`public/piezas/planlang/`, `content/`, `data/fichas/`).
-  2. Copia esas carpetas a hoja-de-vida en un PR de contenido de ese repositorio.
+  1. Desde `main`, sin cambios sin commit, corre `pnpm paquete:vitrina --hoja-de-vida <ruta de tu hoja-de-vida>`.
+     El resultado queda en `dist/paquete-hoja-de-vida/`, con la misma forma que el repositorio de hoja-de-vida
+     (`public/piezas/planlang/`, `content/`, `data/fichas/`). Con `--hoja-de-vida` el script lee (solo lee) la ficha
+     que ya tienes allá y conserva su roadmap.
+  2. Corre `pnpm test:e2e:paquete`: recorre todas las páginas del paquete como las serviría hoja-de-vida.
+  3. En hoja-de-vida, **borra `public/piezas/planlang/`** y luego copia las carpetas del paquete. Copiar encima de
+     una entrega anterior dejaría archivos viejos publicados.
+  4. Corre `pnpm paquete:verificar --en <ruta de tu hoja-de-vida>`: comprueba que cada archivo llegó con su huella y
+     que no sobra ninguno. Adjunta `dist/paquete-hoja-de-vida/manifiesto.json` a tu PR de contenido.
 - **Limitaciones:** hoja-de-vida decide en qué página se muestra; planlang no publica ninguna dirección de
-  producción.
+  producción. El script se niega a armar el paquete con cambios sin commit (`--permitir-arbol-sucio` lo arma para
+  probar, pero ese no se entrega).
 
 ### Preguntas frecuentes
 
@@ -273,7 +282,9 @@ producing reports.
 - **How to use it:**
   1. Check how much quota you have left in your Claude account.
   2. `pnpm lote:demo --corrida <new-name> --fecha <YYYY-MM-DD>`: runs the 20 cases with your Claude
-     Code subscription, leaving 2 seconds between cases. It takes about 5 minutes. With the
+     Code subscription, leaving 2 seconds between cases. Without `--plan`, it uses the plan
+     `plans/demo-a/v1.2.json` and the batch `data/casos/demo-a/planlang-a-001-20.json`: those of the run the
+     showcase publishes (for plan v1.4, step 5). It takes about 5 minutes. With the
      subscription, the command refuses to run more cases per session than the plan allows (20) or to
      run them back to back.
   3. `pnpm lote:base --corrida <new-name>-base --fecha <YYYY-MM-DD>`: the same test with a single agent,
@@ -332,7 +343,7 @@ data/casos/demo-a/planlang-a-001-200.json` and repeat the command until all 200 
     assumptions with their status, the criteria with their rule, the thresholds with their signal and the
     graph contract.
   - **Agent:** first the agent's record, then the diagram drawn from the graph that ran. Tap a node or an
-    arrow to see what it does, its code and three real cases that went through it.
+    arrow to see what it does, its code and the real cases that went through it.
   - **Gap:** the full report, with what failed in plain sight.
   - **Playground:** move thresholds (below).
   - **Cases:** the 20 cases, one per page, with their path, the signals on each arrow, the pause with the
@@ -384,10 +395,18 @@ data/casos/demo-a/planlang-a-001-200.json` and repeat the command until all 200 
   2. Then it builds it under `/piezas/planlang`, without Sentry and without links to any other site.
   3. Finally it sweeps every address and writes a manifest with each file's fingerprint.
 - **How to use it:**
-  1. `pnpm paquete:vitrina`. The result goes to `dist/paquete-hoja-de-vida/`, shaped like the hoja-de-vida
-     repository (`public/piezas/planlang/`, `content/`, `data/fichas/`).
-  2. Copy those folders into hoja-de-vida in a content PR on that repository.
-- **Limitations:** hoja-de-vida decides which page shows it; planlang publishes no production address.
+  1. From `main`, with nothing uncommitted, run `pnpm paquete:vitrina --hoja-de-vida <path to your hoja-de-vida>`.
+     The result goes to `dist/paquete-hoja-de-vida/`, shaped like the hoja-de-vida repository
+     (`public/piezas/planlang/`, `content/`, `data/fichas/`). With `--hoja-de-vida` the script reads (only reads)
+     the record you already have there and keeps its roadmap.
+  2. Run `pnpm test:e2e:paquete`: it walks every page of the package the way hoja-de-vida would serve it.
+  3. In hoja-de-vida, **delete `public/piezas/planlang/`** and then copy the package folders. Copying over an
+     earlier delivery would leave old files published.
+  4. Run `pnpm paquete:verificar --en <path to your hoja-de-vida>`: it checks every file arrived with its
+     fingerprint and none is left over. Attach `dist/paquete-hoja-de-vida/manifiesto.json` to your content PR.
+- **Limitations:** hoja-de-vida decides which page shows it; planlang publishes no production address. The script
+  refuses to build the package with uncommitted changes (`--permitir-arbol-sucio` builds it for testing, but that one
+  is not delivered).
 
 ### Frequently asked questions
 

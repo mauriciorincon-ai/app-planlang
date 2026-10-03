@@ -8,7 +8,7 @@
 
 El plan se cumplió con alertas. Se midieron 200 casos sintéticos. Criterios: 8 cumplidos, 0 fallidos y 1 sin cerrar, de 9. Riesgos ocurridos: ninguno. Las decisiones humanas se simularon.
 
-**Recomendación:** Puede seguir, con cuidado: antes del lote de 200 casos, revise C5, S2.
+**Recomendación:** Puede seguir, con cuidado: este ya es el lote completo de 200 casos; antes de ampliar el agente, revise C5, S2.
 
 **Los tres criterios más relevantes**
 
@@ -190,4 +190,4 @@ Umbrales aplicados: U1 = 0,75 · U2 = 1000 · U3 = 2 · U4 = false · en el plan
 
 Revisión humana: En lotes, el revisor simulado sigue la verdad conocida del caso (DA-04); la vitrina lo divulga.
 
-Verificador 1.2.0 · planlang-informe/v1 · huella de este informe: `25b22279b3d05ced516860824be88fb3f5f5d6a92d72b42967fc988372af6334`
+Verificador 1.2.0 · planlang-informe/v1 · huella de este informe: `b28126a89bb5f6eeac90bcdfcce299415865af1b7c902b2f91772512322a0652`

@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { MARCA_PAQUETE } from "./scripts/paquete/marca";
 
 /**
  * El paquete para hoja-de-vida (ADR-009) es este mismo export compilado con `PLANLANG_PAQUETE=1`: vive bajo
@@ -7,6 +8,12 @@ import type { NextConfig } from "next";
  * mismo árbol) y sin Sentry. Lo arma y lo comprueba `scripts/paquete-vitrina.ts`.
  */
 const PAQUETE = process.env.PLANLANG_PAQUETE === "1";
+// Solo `pnpm paquete:vitrina` arma el paquete: la variable sola (olvidada en el entorno) haría que `pnpm build`
+// exportara a `.next-paquete/` y que `pnpm start` y el e2e sirvieran un `out/` viejo, en verde (AU-S2-B36).
+if (PAQUETE && process.env.PLANLANG_PAQUETE_MARCA !== MARCA_PAQUETE)
+  throw new Error(
+    "next.config: PLANLANG_PAQUETE=1 sin la marca de `pnpm paquete:vitrina`. Si quedó en tu entorno, quítala (unset PLANLANG_PAQUETE); el paquete se arma con `pnpm paquete:vitrina`.",
+  );
 export const BASE_PAQUETE = "/piezas/planlang";
 
 const nextConfig: NextConfig = {

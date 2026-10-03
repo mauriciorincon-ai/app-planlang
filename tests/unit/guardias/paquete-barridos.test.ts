@@ -80,6 +80,18 @@ describe("barrerHtml", () => {
       barrerHtml({ ruta: "index.html", texto: `<p>${ROT_ES}</p>` }, existe),
     ).toEqual(["index.html: falta el rótulo «Simulation · not operational»"]);
   });
+
+  it("rojo: la 404 también lleva el rótulo, en los dos idiomas (AU-S2-13; antes estaba exenta)", () => {
+    expect(
+      barrerHtml({ ruta: "404.html", texto: "<p>no existe</p>" }, existe),
+    ).toEqual([
+      "404.html: falta el rótulo «Simulación · no operativo»",
+      "404.html: falta el rótulo «Simulation · not operational»",
+    ]);
+    expect(
+      barrerHtml({ ruta: "_not-found.html", texto: "<p>x</p>" }, existe),
+    ).toEqual([]);
+  });
 });
 
 describe("barrerCss, barrerTexto y barrerLista", () => {

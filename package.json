@@ -25,6 +25,7 @@
     "diagrama:verificar": "tsx scripts/diagrama-igual-grafo.ts",
     "fichas": "tsx --conditions=react-server scripts/fichas.ts",
     "paquete:vitrina": "tsx scripts/paquete-vitrina.ts",
+    "paquete:verificar": "tsx scripts/paquete-verificar.ts",
     "test:e2e:paquete": "playwright test -c playwright.paquete.config.ts",
     "tokens": "node scripts/paleta/generar-tokens.mjs",
     "visor:metricas": "tsx scripts/visor/metricas.ts",
