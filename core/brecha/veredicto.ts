@@ -36,6 +36,12 @@ export function veredicto(
     id: string;
     riesgos: readonly ResultadoRiesgo[];
   }[] = [],
+  /**
+   * Criterios absolutos y riesgos que dejaron casos fuera de su población porque el modelo no respondió y la señal
+   * que la define quedó nula (AU-9): lo que miden no se verificó en esos casos, y eso es una alerta, no un silencio
+   * (AU-S2-B50). Los nulos legítimos (una urgencia que no pasa por el extractor) no cuentan aquí.
+   */
+  fueraPorProveedor: readonly { id: string; n: number }[] = [],
 ): ResultadoVeredicto {
   const bloqueantes: TextoBilingue[] = [];
   const alertas: TextoBilingue[] = [];
@@ -72,6 +78,11 @@ export function veredicto(
         en: `${c.id}: its measurement rule is malformed.`,
       });
   }
+  for (const f of fueraPorProveedor)
+    alertas.push({
+      es: `${f.id}: ${f.n} caso(s) quedaron fuera de su población porque el modelo no respondió; ahí no se verificó.`,
+      en: `${f.id}: ${f.n} case(s) fell outside its population because the model did not respond; it went unverified there.`,
+    });
   for (const r of riesgos) {
     if (r.estado === "ocurrio" && r.severidad >= SEVERIDAD_BLOQUEANTE)
       bloqueantes.push({

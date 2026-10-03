@@ -575,37 +575,44 @@ export function validarPlan(entrada: unknown): ResultadoValidacion {
 
   // M-23: lo que lee cada condición existe. Una raíz que no es señal declarada ni clave del contexto es una
   // advertencia (al aprobar, un motivo: `aprobarPlan`); una función que el contexto no registra, un motivo.
-  const conocidas = new Set<string>([
-    ...senales,
-    ...Object.keys(VOCABULARIO),
-    ...CLAVES_DE_SESION,
-  ]);
+  // Por ámbito (AU-S2-B54): una condición de caso lee señales y el contexto del caso; un detector de sesión, las
+  // claves de la sesión. Antes se unían las tres listas y una condición de caso que leía `limites_alcanzados` pasaba
+  // (en ejecución quedaba «indeterminado»). La métrica de un criterio también se valida.
+  const conocidas: Record<"caso" | "sesion", Set<string>> = {
+    caso: new Set<string>([...senales, ...Object.keys(VOCABULARIO), "todos"]),
+    sesion: new Set<string>([...CLAVES_DE_SESION, "umbral"]),
+  };
   const funcionesConocidas = new Set<string>(FUNCIONES_DE_CONDICION);
-  const condiciones: [string, string | undefined][] = [
-    ...plan.criterios_aceptacion.flatMap(
-      (c): [string, string | undefined][] => [
-        [`${c.id}.poblacion`, c.regla_de_medicion.poblacion],
-        [`${c.id}.condicion`, c.regla_de_medicion.condicion ?? undefined],
-      ],
-    ),
-    ...plan.riesgos.flatMap((r): [string, string | undefined][] =>
-      r.detector_en_trazas
-        ? [
-            [`${r.id}.poblacion`, r.detector_en_trazas.poblacion],
-            [`${r.id}.condicion`, r.detector_en_trazas.condicion],
-          ]
-        : [],
-    ),
-    ...plan.supuestos.flatMap((s): [string, string | undefined][] =>
+  type Condicion = [string, string | undefined, "caso" | "sesion"];
+  const condiciones: Condicion[] = [
+    ...plan.criterios_aceptacion.flatMap((c): Condicion[] => [
+      [`${c.id}.poblacion`, c.regla_de_medicion.poblacion, "caso"],
+      [`${c.id}.condicion`, c.regla_de_medicion.condicion ?? undefined, "caso"],
+      [`${c.id}.metrica`, c.regla_de_medicion.metrica ?? undefined, "caso"],
+    ]),
+    ...plan.riesgos.flatMap((r): Condicion[] => {
+      const d = r.detector_en_trazas;
+      if (!d) return [];
+      const ambito = d.ambito === "sesion" ? "sesion" : "caso";
+      return [
+        [`${r.id}.poblacion`, d.poblacion, ambito],
+        [`${r.id}.condicion`, d.condicion, ambito],
+      ];
+    }),
+    ...plan.supuestos.flatMap((s): Condicion[] =>
       s.medible_en_trazas
         ? [
-            [`${s.id}.poblacion`, s.medible_en_trazas.poblacion],
-            [`${s.id}.condicion`, s.medible_en_trazas.condicion ?? undefined],
+            [`${s.id}.poblacion`, s.medible_en_trazas.poblacion, "caso"],
+            [
+              `${s.id}.condicion`,
+              s.medible_en_trazas.condicion ?? undefined,
+              "caso",
+            ],
           ]
         : [],
     ),
   ];
-  for (const [elemento, texto] of condiciones) {
+  for (const [elemento, texto, ambito] of condiciones) {
     if (!texto) continue;
     let refs: { rutas: string[]; funciones: string[] };
     try {
@@ -614,14 +621,21 @@ export function validarPlan(entrada: unknown): ResultadoValidacion {
       continue; // ya es CONDICION_NO_INTERPRETABLE
     }
     const raices = [...new Set(refs.rutas.map((r) => r.split(".")[0]!))];
-    for (const raiz of raices.filter((x) => !conocidas.has(x)))
+    for (const raiz of raices.filter((x) => !conocidas[ambito].has(x)))
       advertencias.push(
-        motivo(
-          "SENAL_NO_DECLARADA",
-          elemento,
-          `La condición lee «${raiz}», que no está en senales_obligatorias_en_traza ni en el contexto del verificador: el agente no tiene por qué registrarla.`,
-          `The condition reads “${raiz}”, which is neither in senales_obligatorias_en_traza nor in the verifier's context: the agent has no reason to record it.`,
-        ),
+        ambito === "sesion"
+          ? motivo(
+              "SENAL_NO_DECLARADA",
+              elemento,
+              `El detector es de sesión y lee «${raiz}», que no es una clave de la sesión (${CLAVES_DE_SESION.join(", ")}).`,
+              `The detector is session-scoped and reads “${raiz}”, which is not a session key (${CLAVES_DE_SESION.join(", ")}).`,
+            )
+          : motivo(
+              "SENAL_NO_DECLARADA",
+              elemento,
+              `La condición lee «${raiz}», que no está en senales_obligatorias_en_traza ni en el contexto del caso: el agente no tiene por qué registrarla.`,
+              `The condition reads “${raiz}”, which is neither in senales_obligatorias_en_traza nor in the case context: the agent has no reason to record it.`,
+            ),
       );
     for (const f of refs.funciones.filter((x) => !funcionesConocidas.has(x)))
       motivos.push(

@@ -148,9 +148,7 @@ export function Definiciones({
             ) : (
               <ConCodigo texto={f.v} />
             )}
-            {f.nota ? (
-              <span className="text-tinta-2"> ({f.nota})</span>
-            ) : null}
+            {f.nota ? <span className="text-tinta-2"> ({f.nota})</span> : null}
           </dd>
         </div>
       ))}
@@ -180,11 +178,14 @@ export function TarjetaNodo({
   codigo,
   nombre,
   seleccionada = false,
+  exigido = null,
 }: {
   tipo: string;
   codigo: string;
   nombre: string;
   seleccionada?: boolean;
+  /** Exigido por el plan y ausente del grafo: borde punteado, glifo hueco y la marca, como en el lienzo (G10). */
+  exigido?: { marca: string; lector: string } | null;
 }) {
   return (
     <div
@@ -195,15 +196,24 @@ export function TarjetaNodo({
         seleccionada
           ? "border-c bg-ct shadow-[0_0_0_1px_var(--c)]"
           : "border-linea bg-sup-1",
+        exigido && "border-dashed border-tinta-2",
       )}
     >
       <Glifo
         forma={formaDeTipo(tipo)}
         tam={14}
+        hueco={exigido !== null}
         className="row-span-2 text-c"
       />
       <span className="font-mono text-micro leading-[1.3] font-medium tracking-[0.02em] text-tinta-2">
         {codigo}
+        {exigido ? (
+          <>
+            {" · "}
+            <span aria-hidden="true">{exigido.marca}</span>
+            <span className="sr-only">{exigido.lector}</span>
+          </>
+        ) : null}
       </span>
       <span className="text-chico leading-[1.35] font-medium [overflow-wrap:anywhere]">
         {nombre}
@@ -297,4 +307,3 @@ export function FlechaIpo() {
     </span>
   );
 }
-

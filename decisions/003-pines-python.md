@@ -1,6 +1,6 @@
 # ADR-003 — Pines de Python para `agents/` (LangChain 1.x, LangGraph 1.x, LangSmith SDK, canonicalización)
 
-**Summary (EN):** Python pins for `agents/`: langchain >=1.4,<2 · langgraph >=1.2,<1.3 · langchain-core <2 · langsmith <1 · langgraph-checkpoint-sqlite >=3.1,<4 · pydantic >=2,<3 · rfc8785 >=0.1,<1. Pins move only by ADR inside a sprint (there is no Dependabot for pip). Addendum 2026-10-01 (S2, M-12): `agents/constraints.txt` locks the exact versions of the validated venv; CI installs with `-c constraints.txt` and a test checks the installed environment is the lock.
+**Summary (EN):** Python pins for `agents/`: langchain >=1.4,<2 · langgraph >=1.2,<1.3 · langchain-core <2 · langsmith <1 · langgraph-checkpoint-sqlite >=3.1,<4 · pydantic >=2,<3 · rfc8785 >=0.1,<1. Pins move only by ADR inside a sprint (there is no Dependabot for pip). Addendum 2026-10-01 (S2, M-12): `agents/constraints.txt` locks the exact versions of the validated venv; CI installs with `-c constraints.txt` and a test checks the installed environment is the lock. Addendum 2026-10-02 (S2, AU-S2-B9): the JCS NFC step stays; a test requires every versioned JSON string to be NFC already and free of lone surrogates, so the engine's Unicode version cannot move a fingerprint.
 
 **Estado:** aceptado · **Fecha:** 2026-09-27 · **Sprint:** S1 «El contrato y la corrida»
 **Cítese por tema:** «ADR de pines de Python».
@@ -62,3 +62,17 @@ corrida lo último dentro de los rangos, y `grafo.json` depende de la forma inte
 
 **Para subir algo:** ADR en sprint, venv nuevo validado (pytest y corrida simulada) y el `pip freeze` pegado
 debajo del encabezado del lock, sin tocarlo a mano. Demo en rojo en la bitácora del S2 («M-12»).
+
+## Adenda 2026-10-02 (S2, AU-S2-B9 de la auditoría del S2): el NFC del JCS entre motores
+
+**Problema.** `core/formatos/jcs.ts` normaliza cada cadena y cada clave a NFC antes de serializar (M-13, igual que
+`canonico.py`). `String.prototype.normalize` depende de la versión de Unicode que trae el motor: en teoría, un
+carácter nuevo podría normalizarse distinto en un navegador viejo y cambiar una huella. Y una cadena con un
+sustituto suelto (`\uD800` sin pareja) pasa en TypeScript, mientras Python la rechaza al codificarla.
+
+**Decisión.** Se mantiene la normalización (la semántica coincide con `canonico.py:57-67`) y se cierra el riesgo por
+el lado de los datos: `tests/unit/guardias/texto-canonico.test.ts` recorre cada JSON versionado y exige que todo
+texto ya esté en NFC y sin sustitutos sueltos. Así la normalización no cambia nada en lo publicado y la versión de
+Unicode del motor no puede mover una huella. La única excepción es la carnada del contrato
+(`tests/contrato/jcs-valores-tramposos.json`), que lleva texto sin normalizar a propósito para probar que las dos
+orillas lo normalizan igual. Al cierre del S2 había 0 cadenas fuera de NFC en los JSON versionados.

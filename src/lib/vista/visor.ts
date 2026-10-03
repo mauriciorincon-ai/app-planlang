@@ -27,6 +27,7 @@ import { validarMapa, erroresDe } from "@core/visor/validar";
 import gramaticaJson from "../../../packages/diagramador/contrato/gramaticas/agentes-ia.json";
 import {
   DETALLE_NODO,
+  EXIGIDO_EN_LISTA,
   GRAFO,
   NODOS,
   NODOS_FUERA_DEL_CONTRATO,
@@ -187,7 +188,8 @@ export interface CapaDeLista {
     codigo: string;
     nombre: string;
     flujos: string[];
-    exigido: boolean;
+    /** Exigido por el plan y ausente del grafo: la marca y lo que oye el lector (G10, AU-S2-P-1). */
+    exigido: { marca: string; lector: string } | null;
   }>;
   /** Líneas sin nodo: los terminales de la entrada y la salida, o que la capa está vacía. */
   notas: string[];
@@ -195,7 +197,6 @@ export interface CapaDeLista {
 
 export interface Lienzo {
   svg: string;
-  ancho: number;
   columnas: Array<{ numero: string; x: number }>;
   lista: CapaDeLista[];
   comparacion: ComparacionDiagrama;
@@ -295,7 +296,13 @@ export function lienzo(
           codigo: n.codigo.lineas[i].join(" "),
           nombre: n.nombre.lineas[i].join(""),
           flujos,
-          exigido: n.madurez === "exigido-por-el-plan",
+          exigido:
+            n.madurez === "exigido-por-el-plan"
+              ? {
+                  marca: EXIGIDO_EN_LISTA.marca[i],
+                  lector: EXIGIDO_EN_LISTA.lector[i],
+                }
+              : null,
         };
       });
     const notas: string[] = [];
@@ -320,7 +327,6 @@ export function lienzo(
   });
   return {
     svg,
-    ancho: geo.ancho,
     columnas: geo.bandas.map((b) => ({ numero: b.numero, x: b.x })),
     lista,
     comparacion,

@@ -3,7 +3,7 @@
  * (nadie los edita a mano); cada uno pasa su contrato; las reglas que hoja-de-vida tiene solo en su Zod (el proceso
  * BPMN, el total del export, los enlaces) se cumplen y fallan cuando deben; y las cifras salen de los datos.
  */
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { beforeAll, describe, expect, it } from "vitest";
 import { hechosDelRepo, type HechosDelRepo } from "@/lib/datos/repo";
 import { datosDemo, type DatosDemo } from "@/lib/datos/vitrina";
@@ -214,5 +214,35 @@ describe("AU-S2-4: cada funcionalidad del export apunta a una sección real del 
     const secciones = seccionesDelManual("es");
     expect(secciones).not.toContain("Correr un lote de 20");
     expect(secciones).toContain("Correr un lote");
+  });
+});
+
+describe("«actualizado» es la fecha más reciente de lo que la ficha cuenta (AU-S2-B41)", () => {
+  it("el export no es anterior a ningún ADR que cuenta, ni a la corrida, ni al plan", () => {
+    const e = brochureExport(d, repo, "es");
+    const adrs = readdirSync("decisions")
+      .filter((f) => /^\d{3}-.+\.md$/.test(f))
+      .map(
+        (f) =>
+          /\*\*Fecha:\*\*\s*(\d{4}-\d{2}-\d{2})/.exec(
+            readFileSync(`decisions/${f}`, "utf8"),
+          )?.[1],
+      )
+      .filter((x): x is string => !!x);
+    expect(adrs.length).toBe(repo.adrs);
+    for (const f of [
+      ...adrs,
+      d.plan.aprobado_el,
+      d.informe.ficha_reproducibilidad.corrida.fecha,
+    ])
+      expect(e.actualizado >= f!, `${e.actualizado} frente a ${f}`).toBe(true);
+  });
+
+  it("la del agente no es anterior a la corrida ni a la aprobación del plan", () => {
+    const f = fichaAgente(d, repo, "es");
+    expect(f.actualizado >= d.plan.aprobado_el!).toBe(true);
+    expect(
+      f.actualizado >= d.informe.ficha_reproducibilidad.corrida.fecha,
+    ).toBe(true);
   });
 });

@@ -24,7 +24,10 @@ export interface Archivo {
   texto: string;
 }
 
-/** Los valores de los atributos que piden algo: `href`, `src`, `srcset` (cada candidato), `action`, `poster`. */
+/**
+ * Los valores de los atributos que piden algo: `href`, `xlink:href`, `src`, `srcset` e `imagesrcset` (cada candidato),
+ * `action`, `poster` y la dirección de un `<meta http-equiv="refresh">` (AU-S2-B32).
+ */
 export function direcciones(
   html: string,
 ): { atributo: string; valor: string; etiqueta: string }[] {
@@ -33,18 +36,23 @@ export function direcciones(
     /<([a-zA-Z][\w-]*)\b([^>]*)>/g,
   ))
     for (const [, atributo, valor] of (attrs ?? "").matchAll(
-      /\s(href|src|srcset|action|poster)="([^"]*)"/g,
+      /\s(href|xlink:href|src|srcset|imagesrcset|action|poster)="([^"]*)"/g,
     )) {
-      const valores =
-        atributo === "srcset"
-          ? valor!.split(",").map((c) => c.trim().split(/\s+/)[0]!)
-          : [valor!];
+      const valores = atributo!.endsWith("srcset")
+        ? valor!.split(",").map((c) => c.trim().split(/\s+/)[0]!)
+        : [valor!];
       for (const v of valores)
         out.push({
           atributo: atributo!,
           valor: v,
           etiqueta: etiqueta!.toLowerCase(),
         });
+    }
+  for (const [, attrs] of html.matchAll(/<meta\b([^>]*)>/gi))
+    if (/http-equiv="refresh"/i.test(attrs!)) {
+      const url = /content="[^"]*?url=([^"]*)"/i.exec(attrs!)?.[1];
+      if (url !== undefined)
+        out.push({ atributo: "refresh", valor: url.trim(), etiqueta: "meta" });
     }
   return out;
 }
@@ -94,6 +102,17 @@ export function barrerHtml(
         `${a.ruta}: ${d.etiqueta}[${d.atributo}] pide «${v}», que no está en el paquete`,
       );
   }
+  // El CSS escrito dentro de la página (`<style>` y `style=""`) sigue las reglas de una hoja (AU-S2-B32).
+  const enLinea = [
+    ...[...a.texto.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)].map(
+      (m) => m[1]!,
+    ),
+    ...[...a.texto.matchAll(/\sstyle="([^"]*)"/gi)].map((m) =>
+      m[1]!.replaceAll("&quot;", '"').replaceAll("&#x27;", "'"),
+    ),
+  ];
+  if (enLinea.length)
+    fallas.push(...barrerCss({ ruta: a.ruta, texto: enLinea.join("\n") }));
   // El rótulo de la simulación, en el idioma de la página (la raíz los lleva los dos).
   const idioma = a.ruta.startsWith("en")
     ? "en"
@@ -121,6 +140,38 @@ export function barrerCss(a: Archivo): string[] {
       fallas.push(`${a.ruta}: url() sale del paquete («${v}»)`);
     else if (v.startsWith("/") && !v.startsWith(`${BASE}/`))
       fallas.push(`${a.ruta}: url() sin la base ${BASE} («${v}»)`);
+  }
+  return fallas;
+}
+
+/**
+ * Los hosts que el JavaScript del framework nombra sin pedirlos: espacios de nombres de SVG y XHTML, las páginas de sus
+ * mensajes de error, la licencia de core-js y los hosts de prueba con que detecta funciones (`new URL("https://a…")`).
+ * Un host nuevo en el JS falla hasta que alguien lo mira y lo anota aquí (AU-S2-B32); en ejecución, el e2e del paquete
+ * comprueba además que ninguna solicitud sale del origen.
+ */
+export const HOSTS_DEL_FRAMEWORK: ReadonlySet<string> = new Set([
+  "www.w3.org",
+  "nextjs.org",
+  "react.dev",
+  "github.com",
+  "a",
+  "b",
+  "n",
+  "x",
+]);
+
+/** Las URL completas que nombra un archivo de JavaScript del paquete, fuera de la lista blanca. */
+export function barrerJs(a: Archivo): string[] {
+  const fallas: string[] = [];
+  const vistos = new Set<string>();
+  for (const [, host] of a.texto.matchAll(/https?:\/\/([a-z0-9.-]+)/gi)) {
+    const h = host!.toLowerCase();
+    if (HOSTS_DEL_FRAMEWORK.has(h) || vistos.has(h)) continue;
+    vistos.add(h);
+    fallas.push(
+      `${a.ruta}: el JavaScript nombra el host «${h}», fuera de la lista blanca`,
+    );
   }
   return fallas;
 }

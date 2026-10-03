@@ -34,6 +34,7 @@ import { APAGADO, ENCENDIDO, REVERSIBILIDAD } from "@/textos/plan-comun";
 import type { Fila } from "./agente";
 import { pieDeCorrida } from "./caso";
 import { entero, enumerar, porcentaje, versionCorta } from "./formato";
+import { compararCadenas } from "@core/playground/aristas";
 import { conPlan } from "./plan-en-texto";
 import {
   VISIBLES,
@@ -243,7 +244,7 @@ export function vistaPlan(d: DatosDemo, i: Idioma): VistaPlan {
         b.severidad - a.severidad ||
         b.ocurrencia - a.ocurrencia ||
         b.deteccion - a.deteccion ||
-        a.id.localeCompare(b.id),
+        compararCadenas(a.id, b.id),
     )
     .map((r) => {
       const ri = riesgoDe(r.id);

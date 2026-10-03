@@ -25,6 +25,8 @@ The plan was not met. 8 synthetic cases were measured. Criteria: 6 met, 2 failed
 - Blocks: C8: absolute criterion not met.
 - Alert: C3: no case in the batch put it to the test.
 - Alert: C5: criterion not met.
+- Alert: C3: 3 case(s) fell outside its population because the model did not respond; it went unverified there.
+- Alert: R5: 2 case(s) fell outside its population because the model did not respond; it went unverified there.
 - Alert: R5: the risk occurred.
 - Alert: R7: the risk occurred.
 - Alert: R9: the risk occurred.
@@ -198,4 +200,4 @@ Applied thresholds: U1 = 0.75 · U2 = 1000 · U3 = 2 · U4 = false · in the pla
 
 Human review: In batches, the simulated reviewer follows the case's known truth (DA-04); the showcase discloses it.
 
-Verifier 1.2.0 · planlang-informe/v1 · fingerprint of this report: `0276d412297c741c6cc6950f1df033c75ba8c59d9f22c147ec026c81e6900624`
+Verifier 1.2.0 · planlang-informe/v1 · fingerprint of this report: `0625a77b4f3b66fdc620e63021badd53b390150ded4898f5e2be027253cf5e2b`

@@ -52,6 +52,7 @@ import {
   BASE,
   barrerCss,
   barrerHtml,
+  barrerJs,
   barrerLista,
   barrerTexto,
   type Archivo,
@@ -228,6 +229,7 @@ async function main() {
     if (r.endsWith(".html"))
       fallas.push(...barrerHtml(a, (x) => presentes.has(x)));
     if (r.endsWith(".css")) fallas.push(...barrerCss(a));
+    if (r.endsWith(".js")) fallas.push(...barrerJs(a));
   }
   for (const r of archivos(DESTINO)
     .map((f) => relative(DESTINO, f))

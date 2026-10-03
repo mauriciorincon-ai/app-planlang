@@ -25,6 +25,8 @@ El plan no se cumplió. Se midieron 8 casos sintéticos. Criterios: 6 cumplidos,
 - Bloquea: C8: criterio absoluto incumplido.
 - Alerta: C3: ningún caso del lote lo puso a prueba.
 - Alerta: C5: criterio incumplido.
+- Alerta: C3: 3 caso(s) quedaron fuera de su población porque el modelo no respondió; ahí no se verificó.
+- Alerta: R5: 2 caso(s) quedaron fuera de su población porque el modelo no respondió; ahí no se verificó.
 - Alerta: R5: el riesgo ocurrió.
 - Alerta: R7: el riesgo ocurrió.
 - Alerta: R9: el riesgo ocurrió.
@@ -198,4 +200,4 @@ Umbrales aplicados: U1 = 0,75 · U2 = 1000 · U3 = 2 · U4 = false · en el plan
 
 Revisión humana: En lotes, el revisor simulado sigue la verdad conocida del caso (DA-04); la vitrina lo divulga.
 
-Verificador 1.2.0 · planlang-informe/v1 · huella de este informe: `0276d412297c741c6cc6950f1df033c75ba8c59d9f22c147ec026c81e6900624`
+Verificador 1.2.0 · planlang-informe/v1 · huella de este informe: `0625a77b4f3b66fdc620e63021badd53b390150ded4898f5e2be027253cf5e2b`

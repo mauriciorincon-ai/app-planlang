@@ -18,6 +18,17 @@ import type { BrochureExport, CifraFicha, FichaTecnica } from "./tipos";
 
 const X = (t: TextoBilingue, i: Idioma) => t[i];
 
+/**
+ * «Actualizado»: la fecha más reciente de lo que la ficha cuenta (la corrida, la aprobación del plan y, en la de la
+ * app, los ADR y los summaries), no solo la de la corrida (AU-S2-B41). Fechas ISO: se comparan como texto.
+ */
+function masReciente(...fechas: (string | null | undefined)[]): string {
+  return fechas
+    .filter((f): f is string => typeof f === "string" && f !== "")
+    .sort()
+    .at(-1)!;
+}
+
 /** Redondeo para mostrar una cifra en la ficha (la fuente exacta queda en `detalle`). */
 const red = (x: number, d: number) => Math.round(x * 10 ** d) / 10 ** d;
 
@@ -134,7 +145,7 @@ export function fichaAgente(
   const mm = (v: string) => v.split(".").slice(0, 2).join(".");
   return {
     schema_version: VERSION_FICHA,
-    actualizado: rep.corrida.fecha,
+    actualizado: masReciente(rep.corrida.fecha, d.plan.aprobado_el),
     pieza: {
       slug: AGENTE.slug,
       nombre: X(AGENTE.nombre, i),
@@ -253,7 +264,11 @@ export function brochureExport(
   return {
     _schema: repo.bloqueSchema,
     schema_version: VERSION_EXPORT,
-    actualizado: rep.corrida.fecha,
+    actualizado: masReciente(
+      rep.corrida.fecha,
+      d.plan.aprobado_el,
+      repo.ultimaFecha,
+    ),
     app: {
       slug: APP.slug,
       nombre: APP.nombre,

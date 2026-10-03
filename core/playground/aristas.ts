@@ -66,16 +66,28 @@ function igual(a: JsonValor, b: JsonValor): boolean {
   return a === b;
 }
 
+const DE_ORDEN: readonly string[] = [
+  "menor_que",
+  "mayor_que",
+  "menor_o_igual_que",
+  "mayor_o_igual_que",
+];
+
 export function comparar(
   observado: JsonValor,
   operador: Operador,
   declarado: JsonValor,
   inclusivo: boolean,
 ): boolean {
+  // Una señal nula no se observó (el nodo no pudo medirla: sin proveedor, AU-9): no cumple ninguna comparación, ni de
+  // igualdad ni de orden — «distinto de» tampoco (AU-S2-B51, igual en reglas_arista.py). Ausente sigue siendo error.
   if (operador === "igual_a") return igual(observado, declarado);
-  if (operador === "distinto_de") return !igual(observado, declarado);
-  // Una señal nula no se observó (el nodo no pudo medirla: sin proveedor, AU-9): no cumple ninguna comparación de
-  // orden. Ausente sigue siendo error, y cualquier otro valor que no sea número también.
+  if (operador === "distinto_de")
+    return observado !== null && !igual(observado, declarado);
+  // En el navegador no hay Zod que filtre el plan: un operador desconocido falla con nombre, como en Python, y no cae
+  // a la rama por defecto (AU-S2-B52).
+  if (!DE_ORDEN.includes(operador))
+    throw new ErrorArista(`operador desconocido: ${operador}`);
   if (observado === null && typeof declarado === "number") return false;
   if (typeof observado !== "number" || typeof declarado !== "number")
     throw new ErrorArista(

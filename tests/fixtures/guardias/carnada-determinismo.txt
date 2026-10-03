@@ -1,11 +1,19 @@
+// const comentado = Date.now();
 const t = Date.now();
 const d = new Date();
+const d2 = new Date;
+const d3 = Date();
+const partido = Date
+  .now();
 const r = Math.random();
 const f = new Intl.NumberFormat("es");
 const s = (1234.5).toLocaleString();
 const p = performance.now();
 const h = process.hrtime();
+const e = process.env.HOME;
 const u = crypto.randomUUID();
 const g = crypto.getRandomValues(new Uint8Array(4));
 import { readFileSync } from "node:fs";
+import { join } from "path";
+const din = await import("node:os");
 const m = require("fs");

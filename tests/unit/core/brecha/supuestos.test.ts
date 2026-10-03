@@ -329,6 +329,9 @@ describe("comparación con la línea base (S3)", () => {
     expect(rara?.limitaciones.map((l) => l.es).join(" ")).toMatch(
       /claves de tolerancia que la comparación no conoce y no aplica: latencia_max/,
     );
+    // Con solo claves desconocidas rige la regla por defecto, y el motivo no dice «declarada» (AU-S2-B56).
+    expect(rara?.motivo.es).toMatch(/Regla por defecto/);
+    expect(rara?.motivo.es).not.toMatch(/Tolerancia declarada en el plan/);
   });
   it("una base con error del proveedor lo declara; toda muestra < 30 lleva su nota", () => {
     const base = [

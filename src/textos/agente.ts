@@ -2204,6 +2204,15 @@ export const VALORES: Record<string, TextoBilingue> = {
   causal: tb("causal", "cause"),
 };
 
+/** La marca de una pieza que el plan exige y el grafo no tiene, en la lista por capa (G10, como en el lienzo). */
+export const EXIGIDO_EN_LISTA = {
+  marca: tb("exigido", "required"),
+  lector: tb(
+    "exigido por el plan, ausente del grafo",
+    "required by the plan, missing from the graph",
+  ),
+};
+
 /** Cómo pasa el flujo por una arista del grafo compilado (columna «modo» del experto). */
 export const MODO_ARISTA = {
   condicional: tb("condicional", "conditional"),

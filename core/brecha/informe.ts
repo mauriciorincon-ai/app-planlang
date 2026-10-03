@@ -8,6 +8,7 @@ import { conHuella } from "../formatos/huella";
 import type { JsonValor } from "../formatos/jcs";
 import { ligadurasDeUmbrales } from "../plan/contrato-constructor";
 import { esAristaTripleta, type Plan } from "../plan/esquema";
+import { evaluarRegla } from "./reglas";
 import {
   ErrorArista,
   recalcular,
@@ -533,6 +534,47 @@ function umbralesDelPlan(plan: Plan): Umbrales {
 }
 
 /** Verifica una corrida contra su plan y produce el informe (lanza `ErrorDeLectura` si algo no cuadra). */
+/**
+ * Cuántos casos dejó fuera de cada criterio absoluto y de cada riesgo de caso una señal nula porque el modelo no
+ * respondió (el error del proveedor queda en la traza o en un paso): AU-S2-B50.
+ */
+export function fueraPorElProveedor(
+  plan: Plan,
+  vistas: readonly VistaDeCaso[],
+): { id: string; n: number }[] {
+  const conFallo = new Set(
+    vistas
+      .filter(
+        (v) =>
+          v.traza.error_proveedor !== null ||
+          v.traza.pasos.some((p) => p.error_proveedor !== null),
+      )
+      .map((v) => v.caso_id),
+  );
+  if (conFallo.size === 0) return [];
+  const out: { id: string; n: number }[] = [];
+  const contar = (id: string, poblacion: string, condicion?: string) => {
+    const n = evaluarRegla(
+      poblacion,
+      condicion,
+      vistas,
+    ).fuera_por_senal_nula.filter((x) => conFallo.has(x)).length;
+    if (n > 0) out.push({ id, n });
+  };
+  for (const c of plan.criterios_aceptacion)
+    if (c.tipo === "absoluto")
+      contar(
+        c.id,
+        c.regla_de_medicion.poblacion,
+        c.regla_de_medicion.condicion,
+      );
+  for (const r of plan.riesgos) {
+    const d = r.detector_en_trazas;
+    if (d && d.ambito !== "sesion") contar(r.id, d.poblacion, d.condicion);
+  }
+  return out;
+}
+
 export async function generarInforme(
   entrada: EntradaVerificador,
 ): Promise<Informe> {
@@ -594,6 +636,7 @@ export async function generarInforme(
     contrato,
     brechas,
     deRepeticiones.map(({ id, riesgos: rs }) => ({ id, riesgos: rs })),
+    fueraPorElProveedor(plan, vistas),
   );
 
   const informe = {

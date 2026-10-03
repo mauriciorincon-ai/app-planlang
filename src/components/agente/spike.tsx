@@ -1,10 +1,11 @@
 import { CircleAlert, Route, Workflow } from "lucide-react";
 import type { Idioma } from "@core/formatos/bilingue";
 import type { VistaSpike } from "@/lib/vista/agente";
-import { SPIKE } from "@/textos/agente";
+import { GRAFO, SPIKE } from "@/textos/agente";
 import { Chip } from "../chip";
 import { Seccion } from "../seccion";
 import { CifrasContrato } from "./contrato";
+import { ListaPorCapa } from "./grafo";
 import { Lienzo } from "./lienzo";
 
 /**
@@ -40,6 +41,14 @@ export function SeccionSpike({
           seleccionable={false}
           conIndice={false}
         />
+        {/* El lienzo del spike también tiene su texto: la lista por capa, con lo exigido y ausente dicho, para el
+            lector de pantalla (AU-S2-P-1; en P3 la lista es la otra vista del grafo). */}
+        <section
+          aria-label={`${SPIKE.titulo[idioma]} · ${GRAFO.lista[idioma]}`}
+          className="sr-only"
+        >
+          <ListaPorCapa capas={spike.lienzo.lista} seleccionables={new Set()} />
+        </section>
       </div>
     </Seccion>
   );

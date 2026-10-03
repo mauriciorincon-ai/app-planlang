@@ -144,3 +144,30 @@ describe("contratos fijados de hoja-de-vida", () => {
     },
   );
 });
+
+/**
+ * Las enmiendas que el S2 propone al contrato del diagramador (ADR-010 § 2, desviación 4, nota G15) viven en el lock,
+ * no solo en el ADR: la planeadora las lee de ahí al subir la versión (AU-S2-B13).
+ */
+describe("enmiendas propuestas al diagramador", () => {
+  it("el lock lista las del ADR-010 y la desviación 4", () => {
+    const lock = JSON.parse(
+      readFileSync("packages/diagramador/CONTRATO.lock", "utf8"),
+    ) as {
+      enmiendas_propuestas: { id: string; que: string; fuente: string }[];
+    };
+    const ids = lock.enmiendas_propuestas.map((e) => e.id);
+    for (const id of [
+      "terminal",
+      "condicion.funcion",
+      "condicion.por_defecto",
+      "fuente.tipo-codigo",
+      "glifo-regla-hexagono",
+    ])
+      expect(ids, id).toContain(id);
+    for (const e of lock.enmiendas_propuestas) {
+      expect(e.que.length, e.id).toBeGreaterThan(10);
+      expect(e.fuente.length, e.id).toBeGreaterThan(3);
+    }
+  });
+});

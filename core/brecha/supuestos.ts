@@ -451,7 +451,11 @@ function comparacion(
     casos_distintos,
   };
   const umbral = s.medible_en_trazas?.umbral_confirmacion ?? {};
-  const declarada = Object.keys(umbral).length > 0;
+  // «Declarada» solo si el plan trae al menos una clave que la comparación conoce y aplica: con solo claves
+  // desconocidas rige la regla por defecto, y el motivo lo dice así (AU-S2-B56).
+  const declarada = Object.keys(umbral).some((k) =>
+    (TOLERANCIA as readonly string[]).includes(k),
+  );
   const dif = umbral.exactitud_dif_min ?? 0;
   const razon = umbral.latencia_mediana_razon_max ?? 1;
   const noPeorExactitud = redondear(multi.exactitud - unico.exactitud) >= dif;

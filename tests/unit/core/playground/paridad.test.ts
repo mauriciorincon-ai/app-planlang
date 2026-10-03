@@ -81,12 +81,17 @@ async function verificadorEnElCamino(plan: Plan, c: Compacto, u: Umbrales) {
 
 describe("paridad del playground con el informe y con RF-09.2", () => {
   it("con los umbrales del plan ningún caso cambia y los minutos son los de las pausas registradas", async () => {
-    const { c, informe } = await base();
+    const { c, informe, plan } = await base();
     const r = consecuencias(c, umbralesDelPlan(c));
     expect(r.movidos).toEqual([]);
     expect(r.cambios).toEqual([]);
     expect(r.personas).toBe(informe.contrato_de_grafo.pausas.casos_con_pausa);
-    expect(r.minutos).toBe(r.personas * c.minutos_por_persona);
+    // Oráculo fuera del código bajo prueba (AU-S2-B57): las pausas que cuenta el informe por el costo humano que
+    // declara el plan, y la cifra fija de la corrida publicada.
+    const minutosDelPlan = plan.umbrales[0]!.costo_humano_por_caso_min!;
+    expect(r.minutos).toBe(
+      informe.contrato_de_grafo.pausas.casos_con_pausa * minutosDelPlan,
+    );
     expect(r.minutos).toBe(96);
   });
 
@@ -164,6 +169,27 @@ describe("paridad del playground con el informe y con RF-09.2", () => {
       const antes = ramas(delPlan);
       const despues = ramas({ ...delPlan, [u.id]: !u.valor_en_plan });
       const n = antes.filter((r, i) => r !== despues[i]).length;
+      // Oráculo sin `recalcular` (AU-S2-B57): encender Texas solo puede cambiar una visita de decisión que salió
+      // sin persona con una propuesta que no es «aprobar»; las que dicen «negar» ya iban a una persona por su regla.
+      const independientes = corrida.trazas.flatMap((t) => {
+        const porPaso = new Map<number, typeof t.decisiones_de_arista>();
+        for (const x of t.decisiones_de_arista.filter(
+          (x) => x.desde === "decision",
+        ))
+          porPaso.set(x.paso, [...(porPaso.get(x.paso) ?? []), x]);
+        return [...porPaso.values()].filter((xs) => {
+          const propuesta = xs.find(
+            (x) => x.senal === "propuesta",
+          )?.valor_observado;
+          return (
+            xs.every((x) => x.resultado === false) &&
+            propuesta !== "aprobar" &&
+            propuesta !== "negar"
+          );
+        });
+      }).length;
+      expect(n, u.id).toBe(independientes);
+      expect([n, antes.length], u.id).toEqual([0, 62]);
       expect(
         informe.playground.limites.some(
           (l) =>
@@ -209,6 +235,47 @@ describe("al mover un umbral, el compacto mide igual que el verificador", () => 
       }
     }
   });
+});
+
+describe("al mover un umbral, un oráculo sacado de las señales crudas de la traza (AU-S2-B57)", () => {
+  /** Las visitas de decisión de cada caso que salieron sin persona (ninguna regla verdadera) y su señal observada. */
+  async function soloConSenal(senal: string) {
+    const { corrida } = await base();
+    return corrida.trazas.flatMap((t) => {
+      const xs = t.decisiones_de_arista.filter((x) => x.desde === "decision");
+      if (xs.length === 0 || xs.some((x) => x.resultado)) return [];
+      const v = xs.find((x) => x.senal === senal)?.valor_observado;
+      return typeof v === "number" ? [{ id: t.caso_id, v }] : [];
+    });
+  }
+
+  it.each([0.8, 0.85, 0.9, 0.95])(
+    "subir U1 a %s manda a una persona exactamente los casos que salieron solos con menos confianza",
+    async (U1) => {
+      const { c } = await base();
+      const esperados = (await soloConSenal("senal_confianza"))
+        .filter((x) => x.v < U1)
+        .map((x) => x.id)
+        .sort();
+      const r = consecuencias(c, { ...umbralesDelPlan(c), U1 });
+      expect(r.cambios.map((x) => x.id).sort()).toEqual(esperados);
+      for (const x of r.cambios) expect(x.ahora, x.id).toBe("persona");
+    },
+  );
+
+  it.each([900, 500, 200])(
+    "bajar U2 a %s manda a una persona exactamente los casos que salieron solos con más costo",
+    async (U2) => {
+      const { c } = await base();
+      const esperados = (await soloConSenal("costo_estimado"))
+        .filter((x) => x.v > U2)
+        .map((x) => x.id)
+        .sort();
+      const r = consecuencias(c, { ...umbralesDelPlan(c), U2 });
+      expect(r.cambios.map((x) => x.id).sort()).toEqual(esperados);
+      for (const x of r.cambios) expect(x.ahora, x.id).toBe("persona");
+    },
+  );
 });
 
 describe("los ejemplos de la maqueta, medidos", () => {
@@ -336,6 +403,12 @@ describe("con otras reglas de medición, el compacto mide igual que el verificad
       "C7 sobre una población vacía",
       "C7",
       (c) => (c.regla_de_medicion.poblacion = "tipo == 'ninguno'"),
+    ],
+    [
+      // AU-S2-B53: la métrica se agrega sobre toda la población, cumpla o no la condición (como `porMetrica`).
+      "C7 con una condición que algunos casos no cumplen",
+      "C7",
+      (c) => (c.regla_de_medicion.condicion = "pausa_humana == true"),
     ],
     [
       "C3 como tasa ≥ 0,9",

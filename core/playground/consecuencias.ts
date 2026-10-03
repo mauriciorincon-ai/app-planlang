@@ -5,8 +5,10 @@
  * minutos de auditor suma o ahorra y cómo quedan los criterios medidos con la regla del plan.
  *
  * No vuelve a llamar a ningún modelo ni inventa lo que la traza no registró: un camino que llega a otro nodo que
- * decide queda «no observado», y un criterio que lee lo que pasa después de un cambio queda «indeterminado» en ese
- * caso. Con los umbrales del plan, nada cambia y cada criterio dice lo mismo que el informe (paridad en la CI).
+ * decide queda «no observado», y un criterio que lee lo que pasa después de un cambio no se puede evaluar en ese
+ * caso. Lo que eso le hace al criterio es lo mismo que en el verificador: un «todos cumplen» queda «indeterminado»;
+ * una tasa lo cuenta como un caso que no cumple; una métrica se agrega sin él (AU-S2-B53). Con los umbrales del plan,
+ * nada cambia y cada criterio dice lo mismo que el informe (paridad en la CI).
  */
 import type { EstadoCriterio } from "../brecha/criterios";
 import { maximo, mediana, promedio, redondear } from "../brecha/numeros";
@@ -217,9 +219,7 @@ export function medirCriterio(
   }
 
   if (c.con_metrica) {
-    const conValor = dentro.filter(
-      (x) => x.e.r === "v" && typeof x.e.m === "number",
-    );
+    const conValor = dentro.filter((x) => typeof x.e.m === "number");
     const xs = conValor.map((x) => x.e.m as number);
     const agregado =
       c.agregacion === "mediana"
@@ -261,6 +261,8 @@ export function medirCriterio(
     salida.casos_que_incumplen = dentro
       .filter((x) => x.e.r !== "v")
       .map((x) => x.id);
+    // Una tasa cuenta el caso que no se pudo evaluar como uno que no cumple, igual que el verificador
+    // (`criterios.ts`): la paridad lo exige (AU-S2-B53; la prueba de variantes de `paridad.test.ts` lo cruza).
     return {
       ...salida,
       estado: valor >= Number(c.objetivo) ? "cumple" : "incumple",

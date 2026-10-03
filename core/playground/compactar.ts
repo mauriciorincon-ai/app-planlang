@@ -140,7 +140,10 @@ function evaluar(
     if (ev.mal_formada) return { r: "ne" };
     const resultado = resultadoDe(ev, r.condicion !== undefined);
     if (!r.metrica) return { r: resultado };
-    if (resultado !== "v") return { r: resultado, m: null };
+    // Como el verificador (`porMetrica`), la métrica se toma de todo caso de la población, cumpla o no la condición
+    // y aunque no se pueda evaluar: solo queda fuera lo que está fuera de la población (AU-S2-B53).
+    if (resultado === "fuera" || resultado === "nulo")
+      return { r: resultado, m: null };
     const { valores } = valoresDeMetrica(r.metrica, ev.poblacion, [vista]);
     return { r: resultado, m: valores[0]?.valor ?? null };
   });

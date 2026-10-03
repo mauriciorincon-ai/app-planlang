@@ -91,12 +91,14 @@ export function NodoDeLista({
   codigo,
   nombre,
   seleccionable,
+  exigido = null,
 }: {
   id: string;
   tipo: string;
   codigo: string;
   nombre: string;
   seleccionable: boolean;
+  exigido?: { marca: string; lector: string } | null;
 }) {
   const s = useSeleccionOpcional();
   const tarjeta = (
@@ -104,6 +106,7 @@ export function NodoDeLista({
       tipo={tipo}
       codigo={codigo}
       nombre={nombre}
+      exigido={exigido}
       seleccionada={seleccionable && s?.actual === id}
     />
   );

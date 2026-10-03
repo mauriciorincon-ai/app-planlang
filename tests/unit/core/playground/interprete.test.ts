@@ -59,6 +59,19 @@ describe("comparar — operadores y empates", () => {
       expect(comparar(null, op, 0.75, true)).toBe(false);
     }
   });
+
+  it("ni de igualdad: con señal nula, «distinto de» también es falso (AU-S2-B51, igual que Python)", () => {
+    expect(comparar(null, "distinto_de", "urgencia", false)).toBe(false);
+    expect(comparar(null, "igual_a", "urgencia", false)).toBe(false);
+  });
+
+  it("un operador desconocido falla con nombre, aun con señal nula (AU-S2-B52, igual que Python)", () => {
+    const op = "parecido_a" as unknown as Parameters<typeof comparar>[1];
+    expect(() => comparar(0.5, op, 0.75, false)).toThrow(
+      "operador desconocido: parecido_a",
+    );
+    expect(() => comparar(null, op, 0.75, false)).toThrow(ErrorArista);
+  });
 });
 
 const tripleta = (

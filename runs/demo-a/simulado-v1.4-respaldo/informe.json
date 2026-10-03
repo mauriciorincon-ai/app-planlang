@@ -526,7 +526,7 @@
     }
   },
   "formato": "planlang-informe/v1",
-  "huella": "0276d412297c741c6cc6950f1df033c75ba8c59d9f22c147ec026c81e6900624",
+  "huella": "0625a77b4f3b66fdc620e63021badd53b390150ded4898f5e2be027253cf5e2b",
   "plan_en_breve": {
     "decisiones_una_via": [
       {
@@ -1132,6 +1132,14 @@
       {
         "en": "C5: criterion not met.",
         "es": "C5: criterio incumplido."
+      },
+      {
+        "en": "C3: 3 case(s) fell outside its population because the model did not respond; it went unverified there.",
+        "es": "C3: 3 caso(s) quedaron fuera de su población porque el modelo no respondió; ahí no se verificó."
+      },
+      {
+        "en": "R5: 2 case(s) fell outside its population because the model did not respond; it went unverified there.",
+        "es": "R5: 2 caso(s) quedaron fuera de su población porque el modelo no respondió; ahí no se verificó."
       },
       {
         "en": "R5: the risk occurred.",

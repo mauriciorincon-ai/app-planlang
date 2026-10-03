@@ -118,6 +118,7 @@ export function ListaPorCapa({
                       tipo={n.tipo}
                       codigo={n.codigo}
                       nombre={n.nombre}
+                      exigido={n.exigido}
                       seleccionable={seleccionables.has(n.id)}
                     />
                     {n.flujos.map((f) => (

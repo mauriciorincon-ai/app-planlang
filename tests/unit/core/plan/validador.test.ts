@@ -229,14 +229,38 @@ describe("validador — lo que leen las condiciones y las aristas (M-23)", () =>
       );
   });
 
-  it("las claves del contexto (verdad_conocida, extraccion, umbral…) y las de sesión no se advierten", () => {
+  it("las claves del contexto del caso (verdad_conocida, extraccion, umbral…) no se advierten", () => {
     const p = JSON.parse(JSON.stringify(v13)) as Obj;
     const c = arr(p, "criterios_aceptacion")[0] as Obj;
     (c.regla_de_medicion as Obj).poblacion =
-      "verdad_conocida.presente AND extraccion.confianza > umbral.U1 AND limites_alcanzados == 0";
+      "verdad_conocida.presente AND extraccion.confianza > umbral.U1";
     const v = validarPlan(p);
     expect(
       v.advertencias.filter((m) => m.codigo === "SENAL_NO_DECLARADA"),
+    ).toEqual([]);
+  });
+
+  it("por ámbito (AU-S2-B54): una condición de caso no lee claves de sesión, un detector de sesión no lee señales del caso, y la métrica también se valida", () => {
+    const p = JSON.parse(JSON.stringify(v13)) as Obj;
+    const c = arr(p, "criterios_aceptacion")[0] as Obj;
+    (c.regla_de_medicion as Obj).poblacion = "limites_alcanzados == 0";
+    const c7 = arr(p, "criterios_aceptacion").find(
+      (x) => (x as Obj).id === "C7",
+    ) as Obj;
+    (c7.regla_de_medicion as Obj).metrica = "latencia_inventada_s";
+    const r8 = arr(p, "riesgos").find((x) => (x as Obj).id === "R8") as Obj;
+    (r8.detector_en_trazas as Obj).condicion = "decision_final == 'negar'";
+    const avisos = validarPlan(p)
+      .advertencias.filter((m) => m.codigo === "SENAL_NO_DECLARADA")
+      .map((m) => m.elemento);
+    expect(avisos).toEqual(
+      expect.arrayContaining(["C1.poblacion", "C7.metrica", "R8.condicion"]),
+    );
+    // R8 tal como está en el plan (sesión, `limites_alcanzados`) no se advierte.
+    expect(
+      validarPlan(v13).advertencias.filter(
+        (m) => m.codigo === "SENAL_NO_DECLARADA",
+      ),
     ).toEqual([]);
   });
 

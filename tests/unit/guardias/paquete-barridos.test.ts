@@ -9,6 +9,7 @@ import {
   archivoDe,
   barrerCss,
   barrerHtml,
+  barrerJs,
   barrerLista,
   barrerTexto,
   direcciones,
@@ -158,6 +159,51 @@ describe("barrerCss, barrerTexto y barrerLista", () => {
       "diseno/01.html: la maqueta y los documentos no viajan",
       "LEEME.md: la maqueta y los documentos no viajan",
       "_next/a.js.map: un mapa de fuente no viaja",
+    ]);
+  });
+});
+
+describe("los huecos que la auditoría encontró (AU-S2-B32)", () => {
+  it("rojo: imagesrcset, xlink:href y meta refresh que salen del paquete", () => {
+    const f = barrerHtml(
+      pagina(
+        `<link rel="preload" as="image" imagesrcset="https://cdn.invalid/a.png 1x, ${B}/icon.svg 2x"><svg><use xlink:href="//otro.invalid/s.svg#i"></use></svg><meta http-equiv="refresh" content="0; url=https://fuera.invalid/">`,
+      ),
+      existe,
+    ).join("\n");
+    expect(f).toMatch(/link\[imagesrcset\] sale del paquete/);
+    expect(f).toMatch(/use\[xlink:href\] sale del paquete/);
+    expect(f).toMatch(/meta\[refresh\] sale del paquete/);
+  });
+
+  it('rojo: url() de afuera o sin base dentro de <style> y de style=""', () => {
+    const f = barrerHtml(
+      pagina(
+        `<style>.x{background:url(https://fuera.invalid/f.png)}</style><div style="background:url(&quot;/sin-base.png&quot;)"></div><div style="background:url(${B}/icon.svg)"></div>`,
+      ),
+      existe,
+    ).join("\n");
+    expect(f).toMatch(/url\(\) sale del paquete/);
+    expect(f).toMatch(/url\(\) sin la base/);
+    expect(f.split("\n")).toHaveLength(2);
+  });
+
+  it("el JavaScript solo nombra hosts de la lista blanca del framework", () => {
+    expect(
+      barrerJs({
+        ruta: "_next/static/chunks/a.js",
+        texto:
+          'x="http://www.w3.org/2000/svg";y="https://react.dev/errors/418";new URL("https://a@b")',
+      }),
+    ).toEqual([]);
+    expect(
+      barrerJs({
+        ruta: "_next/static/chunks/a.js",
+        texto:
+          'fetch("https://telemetria.invalid/x");fetch("https://telemetria.invalid/y")',
+      }),
+    ).toEqual([
+      "_next/static/chunks/a.js: el JavaScript nombra el host «telemetria.invalid», fuera de la lista blanca",
     ]);
   });
 });

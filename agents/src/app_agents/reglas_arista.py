@@ -67,10 +67,12 @@ def _igual(a: Any, b: Any) -> bool:
 
 
 def comparar(observado: Any, operador: str, declarado: Any, inclusivo: bool) -> bool:
+    # Una señal nula no se observó: no cumple ninguna comparación, ni de igualdad ni de orden;
+    # «distinto de» tampoco (AU-S2-B51, igual en core/playground/aristas.ts).
     if operador == "igual_a":
         return _igual(observado, declarado)
     if operador == "distinto_de":
-        return not _igual(observado, declarado)
+        return observado is not None and not _igual(observado, declarado)
     if operador not in OPERADORES:
         raise ErrorArista(f"operador desconocido: {operador}")
     if observado is None and _es_numero(declarado):

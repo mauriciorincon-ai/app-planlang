@@ -1343,6 +1343,92 @@ summary como deuda con fecha.
 | C-8 | nodos-gramatica.test (tipos y glifos = gramática agentes-ia, salvo regla → hexágono declarado) | glifo de enrutador cambiado a «circulo» → rojo «enrutador: expected 'circulo' to be 'rombo'» → verde al restaurar |
 | C-10 | copia-contra-plan § 5 (pantallas, secciones y criterios destacados escritos en palabras = el dato) | «las 8 secciones» en la copia → rojo «expected 8 to be 9» → verde al restaurar |
 
+#### Núcleo y gates (lote 3 de lo que faltaba; en curso al compactar)
+
+- **B51 · B52:** con señal nula, «distinto de» también es falso en los dos intérpretes (TS y Python), y un operador
+  desconocido falla con nombre en TypeScript como ya fallaba en Python. RF-09.2 no se mueve (el plan no usa
+  `distinto_de`); `trazas:verificar` sigue verde.
+- **B7 · B8:** `localeCompare` sale de `src/lib/vista/plan.ts` (`compararCadenas`). La guardia de determinismo lee el
+  árbol de sintaxis: ve `new Date` sin paréntesis, `Date()`, `process.env`, `from "fs"` sin `node:`, el
+  `import("node:…")` dinámico y un token partido en dos líneas, e ignora los comentarios. G2 cubre todo lo que corre
+  en el navegador (el cierre de imports del playground y del visor), donde cazó `10 ** decimales` en
+  `core/brecha/numeros.ts` (ahora una multiplicación exacta). Y `src/lib` no usa `Intl`, `toLocale*` ni
+  `localeCompare`.
+- **B9:** adenda del ADR-003 y guardia `texto-canonico.test.ts`: todo JSON versionado ya está en NFC y sin sustitutos
+  sueltos (salvo la carnada del contrato JCS, exenta por nombre), así que la versión de Unicode del motor no mueve
+  una huella.
+- **B12:** el hook PreToolUse de secretos falla **cerrado** sin gitleaks o jq (como el pre-commit;
+  `KIT_SIN_GITLEAKS=1` lo salta a sabiendas). Prueba que corre el comando real del hook. Propuesta al kit para el
+  summary.
+- **B13:** las seis enmiendas propuestas al diagramador viven en `CONTRATO.lock` (`enmiendas_propuestas`), con prueba.
+- **B32:** los barridos del paquete ven `imagesrcset`, `xlink:href`, `meta refresh` y el `url()` de `<style>` y
+  `style=""`; el JavaScript solo nombra hosts de una lista blanca del framework (`HOSTS_DEL_FRAMEWORK`); el paquete
+  real pasa (83 archivos, 0 fallas). El e2e del paquete suma una pasada de interacción (tema, perfil, umbral, idioma,
+  nodo del lienzo) sin salir del origen: **escrita, aún sin correr** (corre con `test:e2e:paquete`).
+- **B37:** `verificar-dependencias` exporta `revisar` (probada): compara cada línea mayor, una entrada permitida que ya
+  no aplica falla, y en CI una base ilegible falla. **Consecuencia:** tras el merge de este PR, el primer PR siguiente
+  debe borrar las dos entradas de `scripts/degradaciones-permitidas.json` (ya no aplicarán).
+- **B41:** `actualizado` es la fecha más reciente de lo que cuenta cada ficha (export: 2026-10-01, por el ADR-009;
+  agente: 2026-09-28, por la aprobación del plan); `HechosDelRepo.ultimaFecha` sale de los ADR y los summaries.
+  Fichas regeneradas.
+- **B50:** el veredicto alerta cuando un criterio absoluto o un riesgo de caso dejó casos fuera por una señal nula
+  porque el modelo no respondió (`fueraPorElProveedor`). Solo cambia el informe de la corrida simulada de respaldo
+  (C3 y R5; sigue `no_cumple`), regenerado; los nulos legítimos de la corrida de 200 no alertan.
+- **B53:** la métrica de un criterio se toma de toda la población también en el compacto (era una divergencia real
+  con el verificador, que la variante nueva de `paridad.test.ts` cazó); la tasa cuenta el «ne» como falla, igual que
+  el verificador, y la cabecera de `consecuencias.ts` ya no promete «indeterminado».
+- **B54:** el validador revisa por ámbito (caso / sesión) y valida la métrica; la prueba vieja afirmaba el defecto y se
+  rehízo.
+- **B56:** «tolerancia declarada» solo con claves conocidas.
+- **B57:** oráculos de las señales crudas al mover U1 y U2, conteo de U4 sin `recalcular`, la línea tautológica fuera.
+  El golden SVG queda como regresión por diseño (su oráculo es humano: la fidelidad, más «diagrama = grafo»).
+- **P-1 (en curso):** `Lienzo.ancho` fuera; `exigido` llega a la lista por capa (borde punteado, glifo hueco y la
+  marca, como en el lienzo); el spike lleva su lista por capa en `sr-only`. Sin efecto visible en P3 (el demo A no
+  tiene nodos exigidos y ausentes).
+
+| Gate | Prueba | Demo en rojo |
+|---|---|---|
+| B51 | interprete.test (TS) y test_reglas_arista.py: con señal nula «distinto de» es falso | devolver `!igual(…)` / `not _igual(…)` → rojo en las dos orillas («expected true to be false» · «assert True is False») → verde al restaurar |
+| B52 | interprete.test: operador desconocido falla con nombre, aun con señal nula | quitar la comprobación de operador → rojo «expected [Function] to throw an error» → verde al restaurar |
+| B8 | determinismo.test sobre el árbol de sintaxis (+ `new Date`, `Date()`, `process.env`, `from "fs"`, `import("node:…")`, token partido) y G2 sobre el cierre del navegador | al ampliarla, rojo sobre el defecto real «core/brecha/numeros.ts:8 **» (el playground lo corre en el navegador) → verde con la potencia por multiplicación; la carnada nueva dispara las 14 reglas y no el comentario |
+| B7 | determinismo.test «src/lib no usa Intl, toLocale* ni localeCompare» | devolver `a.id.localeCompare(b.id)` → rojo «src/lib/vista/plan.ts:247 localeCompare» → verde con compararCadenas |
+| B9 | guardias/texto-canonico.test (todo JSON versionado en NFC y sin sustitutos sueltos: el NFC del JCS no cambia nada entre motores) | al nacer, rojo sobre la carnada del contrato JCS («jcs-valores-tramposos.json … no está en NFC», a propósito) → exenta por nombre → verde; la prueba trae sus carnadas («e\u0301», «\uD800») |
+| B12 | guardias/hook-secretos.test (corre el comando real del hook) | el hook de HEAD, que falla abierto → rojo «expected 0 to be 2» sin gitleaks ni jq → verde con el hook que falla cerrado; la carnada canónica (armada partida) sigue bloqueada |
+| B13 | contratos-lock.test «el lock lista las enmiendas del ADR-010 y la desviación 4» | el lock de HEAD (enmiendas_propuestas: []) → rojo «terminal: expected [] to include 'terminal'» → verde con las seis listadas |
+| B37 | guardias/verificar-dependencias.test (líneas mayores, entrada sin uso, base ilegible en CI) | el script de HEAD con CI=true y una base inexistente sale con 0 («se omite»); la prueba contra él cae (no exporta revisar) → verde con el nuevo, que sale con 1 y lo nombra |
+| B41 | fichas.test «actualizado es la fecha más reciente de lo que la ficha cuenta» | devolver la fecha de la corrida al export → rojo «2026-09-27 frente a 2026-09-28» → verde con masReciente (export 2026-10-01, agente 2026-09-28; fichas regeneradas) |
+| B50 | brechas-y-veredicto.test «lo que el modelo dejó sin medir es una alerta» (corrida de respaldo: C3 y R5; la de 200 con nulos legítimos, no) | el veredicto sin fueraPorElProveedor → rojo «expected [ … ] to include 'C3: 3 caso(s) quedaron fuera…'» → verde; informe de la corrida de respaldo regenerado (sigue no_cumple, dos alertas nuevas) |
+| B53 | paridad.test, variante «C7 con una condición que algunos casos no cumplen» (y «C3 como tasa» con U3 = 0 para el «ne») | el compacto viejo (métrica solo en los casos «v») → rojo «C7 con {}: expected 'indeterminado' to be 'cumple'»: era una divergencia real con el verificador → verde con la métrica sobre toda la población; la cabecera de consecuencias.ts dice ahora lo que hace una tasa con un «ne» |
+| B54 | validador.test «por ámbito: caso sin claves de sesión, sesión sin señales del caso, y la métrica» | el validador de HEAD (las tres listas unidas, sin métrica) → rojo «expected [ … ] to deeply equal ArrayContaining […]» → verde; la prueba vieja afirmaba el defecto (una población de caso con limites_alcanzados sin aviso) y se rehízo |
+| B56 | supuestos.test «con solo claves desconocidas rige la regla por defecto y el motivo no dice declarada» | devolver  → rojo «expected '…Tolerancia declarada…' to match /Regla por defecto/» → verde contando solo claves conocidas (sin efecto en la v1.3/v1.4: los informes no cambian) |
+| B56 | supuestos.test «con solo claves desconocidas rige la regla por defecto y el motivo no dice declarada» | devolver `Object.keys(umbral).length > 0` → rojo «expected 'El multiagente rinde peor…' to match /Regla por defecto/» → verde contando solo claves conocidas (sin efecto en la v1.3/v1.4: ningún informe cambia) |
+| B57 | paridad.test: oráculos de las señales crudas al mover U1 (0,80…0,95) y U2 (900, 500, 200), conteo de U4 sin `recalcular` y minutos del plan × pausas del informe (la línea tautológica sale) | un recálculo que ignora U1 movido → rojo «expected [] to deeply equal [ 'A-008' ]» en el oráculo de U1 → verde al restaurar. El golden SVG del visor sigue siendo una regresión autogenerada por diseño: su oráculo es humano (la fidelidad) y el gate «diagrama = grafo» sobre lo publicado |
+
+### Punto de retoma (2026-10-02, segunda compactación del día, pedida por el usuario)
+
+- **Commits:** `64e8ce6` (foco y tablas) · `a12fe25` (accesibilidad, bilingüe y gates) · `1bcdbd7` (vocabulario con
+  nombre, B18 y C-1…C-12) — **subidos**, CI del PR #8 con los 4 checks `success` en `1bcdbd7` (Lighthouse midió `/en`
+  por primera vez: sin histórico) · el commit de este punto (lote 3, local, sin subir).
+- **Falta, en este orden:**
+  1. P-1 a medias (falta solo la prueba de la marca «exigido» en la lista); P-2…P-10 y P-12 (campos sin lector:
+     `mirada.entrega[].archivo`, `COLOR_DE_TIPO` y `_paraPruebas`, compacto `formato`/`corrida_id`/`operador`/
+     `inclusivo`/`tipo`, `Consecuencias` sobrantes, `opcion_elegida`, manifiesto `nota`/`origen`/repeticiones,
+     `LecturaSpike` `nota`/`fecha`/`citas`, `grafo-codigo.demo_id`, `PlanBeneficiosMinimo`, `Geometria.cabecera` y
+     `ladoOrigen`/`ladoDestino`): a cada uno, un lector o fuera;
+  2. AU-S2-11: proyecto Playwright `paridad` (Firefox y WebKit) + corregir los comentarios de `vitest.config.ts` y
+     `svg.test.ts`;
+  3. documentos: AU-S2-20 (kit de prueba y razón de `b1` en la guía), B4, B5, AU-S2-11 y B33 (los recorridos del
+     mapa) como desviaciones, B2 (cuerpo del PR);
+  4. build, e2e completo, `verificar-export`, `diagrama:verificar`, `paquete:vitrina` y `test:e2e:paquete` (corre por
+     primera vez la pasada de interacción del paquete); subir y `gh pr checks 8`;
+  5. **AU-S2-12:** pasada de capturas de cierre con registro versionado; es también la **mirada** de los cambios de
+     forma de la fase: lista «También en construcción» en Entrada, rótulo bilingüe en `/` y en la 404, anillo de
+     foco del lienzo, enlace «Saltar al contenido», capa activa subrayada, botón deshabilitado punteado;
+  6. barrido de frases caducadas; `/deploy-check --python`; summary + `pnpm fichas` en el mismo commit (con: la
+     deuda nueva de `render-md.ts`/`m9.ts` y de los evaluadores con nodos del demo A, la propuesta al kit del hook que
+     falla cerrado, las entradas de `degradaciones-permitidas.json` que el PR siguiente debe borrar); cuerpo del PR;
+     4 checks `success`.
+
 ### Punto de retoma (2026-10-02, compactación pedida por el usuario)
 
 - **Commits de la Fase 2 de la auditoría:** `2caa8cb` (los 3 Altos) · `60ac791` (lo que viaja y lo publicado) ·
@@ -1356,8 +1442,8 @@ summary como deuda con fecha.
      bilingüe y gates»;
   2. ~~AU-S2-16 (errores con nombre en el vocabulario de nodos y señales; `u3` ausente) y C-1…C-12~~ — pagado, ver
      «Vocabulario con nombre, resto de B18 y C-1…C-12»;
-  3. núcleo y gates: B7, B8, B9 (nota), B12, B13, B32, B33, B37, B41, B50, B51, B52, B53, B54, B56, B57; P-1…P-10,
-     P-12;
+  3. ~~núcleo y gates: B7, B8, B9 (nota), B12, B13, B32, B37, B41, B50, B51, B52, B53, B54, B56, B57~~ — pagado, ver
+     «Núcleo y gates»; P-1…P-10, P-12 y B33 siguen en el punto de retoma siguiente;
   4. AU-S2-11: proyecto Playwright `paridad` (Firefox y WebKit) + corregir `vitest.config.ts` y `svg.test.ts`;
   5. documentos: AU-S2-20 (kit de prueba y razón de `b1` en la guía), B4 y B5 y AU-S2-11/B33 como desviaciones,
      B2 (cuerpo del PR);

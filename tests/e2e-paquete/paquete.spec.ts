@@ -69,3 +69,37 @@ test.describe("la raíz elige el idioma dentro del paquete", () => {
     expect(fallas).toEqual([]);
   });
 });
+
+/**
+ * Una pasada de INTERACCIÓN dentro del paquete (AU-S2-B32, regla 22 b): el rastreo solo carga páginas. Aquí cada
+ * control de la isla y del marco hace algo — tema, perfil, idioma, un umbral del playground, un nodo del lienzo — y
+ * ninguna acción pide nada fuera del origen ni falla.
+ */
+test("los controles funcionan dentro del paquete sin salir del origen", async ({
+  page,
+}) => {
+  const fallas = vigilar(page);
+  await page.goto(`${BASE}/es/playground.html`);
+  const html = page.locator("html");
+
+  await page.getByRole("button", { name: "Claro" }).click();
+  await expect(html).toHaveAttribute("data-theme", "claro");
+  await page.getByRole("button", { name: "Experto" }).first().click();
+  await expect(html).toHaveAttribute("data-perfil", "experto");
+
+  const u1 = page.getByRole("slider", { name: /Confianza mínima/ });
+  await u1.focus();
+  for (let k = 0; k < 3; k++) await page.keyboard.press("ArrowRight");
+  await expect(page.locator("#cambios [data-caso]")).toHaveCount(1);
+
+  await page.getByRole("link", { name: "English" }).click();
+  await expect(page).toHaveURL(new RegExp(`${BASE}/en/playground\\.html$`));
+
+  await page.goto(`${BASE}/es/agente.html`);
+  const extractor = page.locator('[data-sel-id="extractor"]');
+  await extractor.focus();
+  await page.keyboard.press("Enter");
+  await expect(extractor).toHaveAttribute("data-sel", "true");
+
+  expect(fallas).toEqual([]);
+});
