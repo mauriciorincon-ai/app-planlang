@@ -448,7 +448,13 @@ export function umbralQueLoRompe(
 export function vistaBrecha(d: DatosDemo, i: Idioma): VistaBrecha {
   const inf = d.informe;
   const plan = d.plan;
-  const compacto = compactar(plan, d.corrida, d.lote, inf);
+  const compacto = compactar(
+    plan,
+    d.corrida,
+    d.lote,
+    inf,
+    d.manifiesto.playground,
+  );
   const idsCriterios = inf.criterios.map((c) => c.id);
   const corridaId = inf.corrida_id;
   const corridas = [
@@ -827,7 +833,8 @@ export function vistaBrecha(d: DatosDemo, i: Idioma): VistaBrecha {
 
   // --------------------------------------------------------------------- lo que falló / sin probar / con nota
   const fallos: FilaFallo[] = [];
-  for (const s of supRefutados) fallos.push(filaSupuesto(s, "fallo", plan, vCorrida, i));
+  for (const s of supRefutados)
+    fallos.push(filaSupuesto(s, "fallo", plan, vCorrida, i));
   for (const c of criteriosFallan) fallos.push(filaCriterioFallido(c, i));
   for (const r of riesgosOcurridos) fallos.push(filaRiesgoOcurrido(r, plan, i));
   for (const [cat, bs] of porCategoria)
@@ -907,7 +914,10 @@ export function vistaBrecha(d: DatosDemo, i: Idioma): VistaBrecha {
       codigo: s.id,
       texto: X(s.enunciado, i),
       experto: `${Object.entries(s.metricas)
-        .map(([k, v]) => `${nombreMetrica(k, i)} ${v === null ? "—" : valorMetrica(v, i)}`)
+        .map(
+          ([k, v]) =>
+            `${nombreMetrica(k, i)} ${v === null ? "—" : valorMetrica(v, i)}`,
+        )
         .join(" · ")} · n = ${s.n} · ${s.estado}`,
       valor: X(CUMPLIDO.casos({ a: s.n, b: s.n }), i),
       clase: "cumple" as ClaseDeEstado,
@@ -1390,7 +1400,9 @@ function valorMetrica(v: number, i: Idioma): string {
 /** Una cifra que el informe debe traer para pintar esa parte: si falta, la vista lo dice en vez de pintar «NaN». */
 function cifra(x: number | null, que: string): number {
   if (x === null)
-    throw new Error(`vitrina: el informe no trae ${que}; Brecha no la puede pintar.`);
+    throw new Error(
+      `vitrina: el informe no trae ${que}; Brecha no la puede pintar.`,
+    );
   return x;
 }
 
@@ -1403,7 +1415,14 @@ function detalleExpertoSupuesto(s: ResultadoSupuesto, i: Idioma): string {
   if (s.estado === "refutado" && s.comparacion) {
     const c = s.comparacion;
     const peorLatencia =
-      cifra(c.latencia_mediana_s.multiagente, "la latencia mediana del multiagente") > cifra(c.latencia_mediana_s.agente_unico, "la latencia mediana de la línea base");
+      cifra(
+        c.latencia_mediana_s.multiagente,
+        "la latencia mediana del multiagente",
+      ) >
+      cifra(
+        c.latencia_mediana_s.agente_unico,
+        "la latencia mediana de la línea base",
+      );
     return peorLatencia
       ? `: ${i === "es" ? "latencia mediana" : "median latency"} ${decimal(cifra(c.latencia_mediana_s.multiagente, "la latencia mediana del multiagente"), 3, i)} s > ${decimal(cifra(c.latencia_mediana_s.agente_unico, "la latencia mediana de la línea base"), 3, i)} s ${i === "es" ? "de la línea base" : "of the baseline"}`
       : `: ${i === "es" ? "exactitud" : "accuracy"} ${numeroDato(c.exactitud.multiagente, i)} < ${numeroDato(c.exactitud.agente_unico, i)}`;
@@ -1448,13 +1467,38 @@ function filaSupuesto(
             : c.exactitud.multiagente < c.exactitud.agente_unico
               ? "menos"
               : "igual",
-        latencia: segundos(cifra(c.latencia_mediana_s.multiagente, "la latencia mediana del multiagente"), i),
-        latenciaBase: segundos(cifra(c.latencia_mediana_s.agente_unico, "la latencia mediana de la línea base"), i),
+        latencia: segundos(
+          cifra(
+            c.latencia_mediana_s.multiagente,
+            "la latencia mediana del multiagente",
+          ),
+          i,
+        ),
+        latenciaBase: segundos(
+          cifra(
+            c.latencia_mediana_s.agente_unico,
+            "la latencia mediana de la línea base",
+          ),
+          i,
+        ),
         tardo:
-          cifra(c.latencia_mediana_s.multiagente, "la latencia mediana del multiagente") > cifra(c.latencia_mediana_s.agente_unico, "la latencia mediana de la línea base")
+          cifra(
+            c.latencia_mediana_s.multiagente,
+            "la latencia mediana del multiagente",
+          ) >
+          cifra(
+            c.latencia_mediana_s.agente_unico,
+            "la latencia mediana de la línea base",
+          )
             ? "mas"
-            : cifra(c.latencia_mediana_s.multiagente, "la latencia mediana del multiagente") <
-                cifra(c.latencia_mediana_s.agente_unico, "la latencia mediana de la línea base")
+            : cifra(
+                  c.latencia_mediana_s.multiagente,
+                  "la latencia mediana del multiagente",
+                ) <
+                cifra(
+                  c.latencia_mediana_s.agente_unico,
+                  "la latencia mediana de la línea base",
+                )
               ? "menos"
               : "igual",
         llamadas: c.presupuesto.multiagente.llamadas_al_modelo,
@@ -1737,9 +1781,13 @@ function filaConNota(
             .map((id) => {
               const x = compacto.casos.find((k) => k.id === id)
                 ?.senales_de_umbral[rompe.umbral];
-              return typeof x === "number" ? `${id} (${u.senal} ${numeroDato(x, i)})` : id;
+              return typeof x === "number"
+                ? `${id} (${u.senal} ${numeroDato(x, i)})`
+                : id;
             })
-            .join(", ")} ${i === "es" ? `iría sin persona → ${c.id} no cumple` : `would go without a person → ${c.id} fails`}`
+            .join(
+              ", ",
+            )} ${i === "es" ? `iría sin persona → ${c.id} no cumple` : `would go without a person → ${c.id} fails`}`
         : c.nota
           ? `${i === "es" ? "nota del verificador" : "verifier note"}: ${X(c.nota, i)}`
           : "—",
@@ -1912,8 +1960,20 @@ function vistaSupuesto(
     texto = dio({
       exactitud: porcentaje(c.exactitud.multiagente, i),
       exactitudBase: porcentaje(c.exactitud.agente_unico, i),
-      latencia: segundos(cifra(c.latencia_mediana_s.multiagente, "la latencia mediana del multiagente"), i),
-      latenciaBase: segundos(cifra(c.latencia_mediana_s.agente_unico, "la latencia mediana de la línea base"), i),
+      latencia: segundos(
+        cifra(
+          c.latencia_mediana_s.multiagente,
+          "la latencia mediana del multiagente",
+        ),
+        i,
+      ),
+      latenciaBase: segundos(
+        cifra(
+          c.latencia_mediana_s.agente_unico,
+          "la latencia mediana de la línea base",
+        ),
+        i,
+      ),
     });
     const fr = X(SUPUESTOS.frente, i);
     medidas = [
@@ -1950,8 +2010,14 @@ function vistaSupuesto(
           t: X(F.latencia.t, i),
           n: X(F.latencia.n, i),
           ...barra(
-            cifra(c.latencia_mediana_s.multiagente, "la latencia mediana del multiagente"),
-            cifra(c.latencia_mediana_s.agente_unico, "la latencia mediana de la línea base"),
+            cifra(
+              c.latencia_mediana_s.multiagente,
+              "la latencia mediana del multiagente",
+            ),
+            cifra(
+              c.latencia_mediana_s.agente_unico,
+              "la latencia mediana de la línea base",
+            ),
             (x) => segundos(x, i),
           ),
         },

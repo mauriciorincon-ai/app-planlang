@@ -4,6 +4,14 @@
  * tomó cada rama se arman con las plantillas de `src/textos/caso.ts`: nada de un caso se escribe a mano. Pura.
  */
 import type { Idioma, TextoBilingue } from "@core/formatos/bilingue";
+import { z } from "zod";
+import {
+  AclaracionTrazaSchema,
+  CasosEjemplaresSchema,
+  DocumentoAdversoVistaSchema,
+  leerParaVista,
+  PayloadPausaSchema,
+} from "@/lib/datos/esquemas";
 import type { DatosDemo } from "@/lib/datos/vitrina";
 import { ruta } from "@/lib/ruta";
 import { VALORES } from "@/textos/agente";
@@ -117,27 +125,6 @@ export interface VistaCaso {
 const X = (t: TextoBilingue, i: Idioma) => t[i];
 
 /** El documento de decisión adversa como lo escribe el grafo (`planlang-documento-adverso/v1`). */
-interface DocumentoAdverso {
-  formato: string;
-  completo: boolean;
-  idiomas: string[];
-  servicio: { codigo: string; nombre: TextoBilingue };
-  causal: { id: string; norma: string; resumen: TextoBilingue };
-  regla_disparada: { id: string; texto: TextoBilingue };
-  datos_usados: Array<{ campo: string; valor: unknown }>;
-  version: {
-    plan: { id: string; version: string; huella: string };
-    plan_beneficios: { id: string; version: string; huella: string };
-  };
-  decidido_por: TextoBilingue;
-  via_de_contradiccion: TextoBilingue;
-  aviso_ia: TextoBilingue;
-}
-interface Aclaracion {
-  ciclo: number;
-  pregunta: string;
-  respuesta: string;
-}
 const OPERADOR: Record<string, string> = {
   menor_que: "<",
   menor_o_igual_que: "≤",
@@ -233,9 +220,7 @@ export function vistaCaso(d: DatosDemo, id: string, i: Idioma): VistaCaso {
   const persona = s.pausa_humana === true;
   const v = c.verdad_conocida;
   const coincide = final === v.decision && persona === v.debe_escalar;
-  const pb = d.planBeneficios as unknown as {
-    procedimientos: Array<{ codigo: string; nombre: TextoBilingue }>;
-  };
+  const pb = d.planBeneficios;
   const tipoDe = new Map(
     d.plan.contrato_de_grafo.nodos_esperados.map(
       (n) => [n.id, n.tipo] as const,
@@ -246,15 +231,7 @@ export function vistaCaso(d: DatosDemo, id: string, i: Idioma): VistaCaso {
   const ex = t.extraccion;
   const conf = ex ? decimal(ex.confianza, 2, i) : "—";
   const cob = (t.cobertura ?? {}) as Record<string, unknown>;
-  const e = c.entrada as unknown as {
-    texto_medico: TextoBilingue;
-    orden_adjunta: {
-      codigo_procedimiento: string;
-      tipo_atencion: string;
-      observaciones: TextoBilingue;
-    };
-    afiliado: { edad: number; sexo: string };
-  };
+  const e = c.entrada;
   const mujer = e.afiliado.sexo === "F";
   const servicio = pb.procedimientos.find(
     (p) => p.codigo === e.orden_adjunta.codigo_procedimiento,
@@ -265,20 +242,18 @@ export function vistaCaso(d: DatosDemo, id: string, i: Idioma): VistaCaso {
 
   // ── ejemplar del informe ──────────────────────────────────────────────────────────────────────────
   const ejemplares =
-    (
-      d.informe as unknown as {
-        casos_ejemplares?: Record<string, { caso_id: string } | null>;
-      }
-    ).casos_ejemplares ?? {};
+    leerParaVista(
+      CasosEjemplaresSchema,
+      (d.informe as { casos_ejemplares?: unknown }).casos_ejemplares,
+      "casos_ejemplares del informe",
+    ) ?? {};
   const ejemplar = Object.entries(ejemplares).find(
     ([, x]) => x?.caso_id === id,
   )?.[0];
 
   // ── la instrucción escondida, marcada ───────────────────────────────────────────────────────────
   const texto = e.texto_medico[i];
-  const carga = (
-    c as unknown as { adversario?: { carga?: TextoBilingue } | null }
-  ).adversario?.carga?.[i];
+  const carga = c.adversario?.carga[i];
   const partes =
     carga && texto.includes(carga)
       ? [
@@ -295,6 +270,11 @@ export function vistaCaso(d: DatosDemo, id: string, i: Idioma): VistaCaso {
     ).length;
   let visitaExtractor = 0;
   let ciclo = 0;
+  const aclaraciones = leerParaVista(
+    z.array(AclaracionTrazaSchema),
+    t.aclaraciones,
+    `las aclaraciones de ${id}`,
+  );
   const pasos: PasoCaso[] = t.pasos.map((p) => {
     const tokens = p.tokens.entrada + p.tokens.salida;
     const dec = t.decisiones_de_arista
@@ -343,7 +323,7 @@ export function vistaCaso(d: DatosDemo, id: string, i: Idioma): VistaCaso {
         visitaExtractor++;
         break;
       case "aclaracion": {
-        const a = t.aclaraciones[ciclo] as unknown as Aclaracion | undefined;
+        const a = aclaraciones[ciclo];
         ciclo++;
         hizo = X(
           p.error_proveedor !== null
@@ -460,10 +440,9 @@ export function vistaCaso(d: DatosDemo, id: string, i: Idioma): VistaCaso {
     );
   else {
     const faltanAlInicio = t.aclaraciones.length > 0;
-    const ausentes = (
-      (c as unknown as { simulacion?: { campos_ausentes_en_texto?: string[] } })
-        .simulacion?.campos_ausentes_en_texto ?? []
-    ).map((k) => CAMPO[k] ?? { es: k, en: k });
+    const ausentes = c.simulacion.campos_ausentes_en_texto.map(
+      (k) => CAMPO[k] ?? { es: k, en: k },
+    );
     // En negación: «no decía el diagnóstico ni el costo» · «did not state the diagnosis or the cost».
     const juntos = (l: TextoBilingue[]): TextoBilingue => ({
       es: enumerar(
@@ -595,21 +574,21 @@ export function vistaCaso(d: DatosDemo, id: string, i: Idioma): VistaCaso {
   ];
 
   // ── pausa, salida, documento, señales ───────────────────────────────────────────────────────────
-  const payload = pausa?.payload as
-    | {
-        motivo: TextoBilingue;
-        senal: string;
-        umbral: { declarado: unknown; aplicado: unknown };
-        evidencia: TextoBilingue[];
-        contraevidencia: TextoBilingue[];
-        extraccion: {
-          campos: Record<string, unknown>;
-          confianza: number;
-        } | null;
-      }
-    | undefined;
+  const payload = pausa
+    ? leerParaVista(
+        PayloadPausaSchema,
+        pausa.payload,
+        `el payload de la pausa de ${id}`,
+      )
+    : undefined;
   const g = t.guardia_salida;
-  const doc = t.documento_adverso as unknown as DocumentoAdverso | null;
+  const doc = t.documento_adverso
+    ? leerParaVista(
+        DocumentoAdversoVistaSchema,
+        t.documento_adverso,
+        `el documento adverso de ${id}`,
+      )
+    : null;
   const vista: VistaCaso = {
     id,
     descriptor: X(SUBTIPO[c.subtipo] ?? { es: c.subtipo, en: c.subtipo }, i),
@@ -620,7 +599,7 @@ export function vistaCaso(d: DatosDemo, id: string, i: Idioma): VistaCaso {
     personaTexto: X(persona ? CABECERA.conPersona : CABECERA.sinPersona, i),
     coincide,
     coincideTexto: X(coincide ? CABECERA.coincide : CABECERA.noCoincide, i),
-    debia: X((c as unknown as { esperado: TextoBilingue }).esperado, i),
+    debia: X(c.esperado, i),
     paso: X(CABECERA.pasoTexto({ decision: decisionTb(final), persona }), i),
     recibe: {
       texto: partes,
@@ -679,15 +658,8 @@ export function vistaCaso(d: DatosDemo, id: string, i: Idioma): VistaCaso {
           }
         : null,
     salida: {
-      respuesta: t.salida_final
-        ? X(t.salida_final as unknown as TextoBilingue, i)
-        : "—",
-      aviso: t.salida_final
-        ? X(
-            (t.salida_final as unknown as { aviso_ia: TextoBilingue }).aviso_ia,
-            i,
-          )
-        : "",
+      respuesta: t.salida_final ? X(t.salida_final, i) : "—",
+      aviso: t.salida_final ? X(t.salida_final.aviso_ia, i) : "",
       guardia: [
         {
           k: X(SALIDA.intentadas, i),
@@ -731,8 +703,10 @@ export function vistaCaso(d: DatosDemo, id: string, i: Idioma): VistaCaso {
             {
               k: X(DOCUMENTO.datos, i),
               v: doc.datos_usados
-                .map((x) => `${x.campo} ${String(x.valor)}`)
-                .join(" · "),
+                ? doc.datos_usados
+                    .map((x) => `${x.campo} ${String(x.valor)}`)
+                    .join(" · ")
+                : X(DOCUMENTO.sinDatos, i),
             },
             {
               k: X(DOCUMENTO.version, i),

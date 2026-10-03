@@ -233,9 +233,19 @@ export function lienzo(
     descripcion: TextoIdioma;
     lineasSeleccionables?: string[];
     seleccionables?: boolean;
+    /**
+     * El lienzo del agente que corrió exige «diagrama = grafo»: si el dibujo no es el grafo, el build se detiene
+     * con las fallas (P-11). El del spike se compara contra un contrato que no es el suyo y solo publica la cuenta.
+     */
+    exigirIgualdad?: boolean;
   },
 ): Lienzo {
   const { mapa, geo } = dibujo(e, clave);
+  const comparacion = diagramaIgualGrafo(mapa, e.grafo, e.contrato);
+  if ((op.exigirIgualdad ?? true) && !comparacion.ok)
+    throw new Error(
+      `vitrina: el lienzo «${op.ns}» no es el grafo:\n  - ${comparacion.fallas.join("\n  - ")}`,
+    );
   const svg = aSvg(geo, GRAMATICA, {
     idioma: i,
     ns: op.ns,
@@ -313,6 +323,6 @@ export function lienzo(
     ancho: geo.ancho,
     columnas: geo.bandas.map((b) => ({ numero: b.numero, x: b.x })),
     lista,
-    comparacion: diagramaIgualGrafo(mapa, e.grafo, e.contrato),
+    comparacion,
   };
 }

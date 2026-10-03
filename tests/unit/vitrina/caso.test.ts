@@ -212,3 +212,49 @@ describe("el lector del spike exige que la lectura cubra el grafo", () => {
     expect(() => grafoDelSpike(exportado, inventada)).toThrow(/declara a → zz/);
   });
 });
+
+describe("AU-S2-21: P6 valida lo que lee de la traza", () => {
+  it("el documento adverso del respaldo AU-9 (sin datos usados) se pinta y dice por qué", async () => {
+    const { datosConRespaldo } = await import("./_respaldo-v14");
+    const { DOCUMENTO } = await import("@/textos/caso");
+    const r = await datosConRespaldo();
+    for (const i of ["es", "en"] as const) {
+      const v = vistaCaso(r, "A-004", i);
+      const datos = v.documento!.filas.find((f) => f.k === DOCUMENTO.datos[i])!;
+      expect(datos.v).toBe(DOCUMENTO.sinDatos[i]);
+    }
+  });
+
+  it("un payload de pausa sin `texto_original` detiene el build nombrando el caso y el campo", () => {
+    const t = d.corrida.trazas.find((x) => x.pausas_humanas.length > 0)!;
+    const otra = structuredClone(t);
+    delete (otra.pausas_humanas[0]!.payload as Record<string, unknown>)
+      .texto_original;
+    const dd = {
+      ...d,
+      corrida: {
+        ...d.corrida,
+        trazas: d.corrida.trazas.map((x) => (x === t ? otra : x)),
+      },
+    };
+    expect(() => vistaCaso(dd, t.caso_id, "es")).toThrow(
+      new RegExp(`el payload de la pausa de ${t.caso_id}.*texto_original`),
+    );
+  });
+
+  it("una aclaración sin `pregunta` también se nombra", () => {
+    const t = d.corrida.trazas.find((x) => x.aclaraciones.length > 0)!;
+    const otra = structuredClone(t);
+    delete (otra.aclaraciones[0] as Record<string, unknown>).pregunta;
+    const dd = {
+      ...d,
+      corrida: {
+        ...d.corrida,
+        trazas: d.corrida.trazas.map((x) => (x === t ? otra : x)),
+      },
+    };
+    expect(() => vistaCaso(dd, t.caso_id, "en")).toThrow(
+      new RegExp(`las aclaraciones de ${t.caso_id}.*pregunta`),
+    );
+  });
+});

@@ -366,10 +366,12 @@ function exactitudYLatencia(vistas: readonly VistaDeCaso[]): {
 
 /**
  * Una respuesta al afiliado inservible: vacía, JSON crudo o texto de relleno en algún idioma. Las trazas que
- * terminaron con error del proveedor se cuentan aparte (no tienen respuesta que juzgar).
+ * terminaron en error se cuentan aparte (no tienen respuesta que juzgar). Desde AU-9, `error_proveedor` dice el
+ * primer paso que falló aunque el caso haya terminado `completo` por el respaldo: esa respuesta sí se juzga
+ * (AU-S2-10).
  */
 export function respuestaInservible(t: Traza): boolean {
-  if (t.error_proveedor || !t.salida_final) return false;
+  if (t.resultado === "error" || !t.salida_final) return false;
   return (["es", "en"] as const).some((l) => {
     const texto = t.salida_final![l].trim();
     return (

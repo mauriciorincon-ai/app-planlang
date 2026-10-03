@@ -84,6 +84,20 @@ export interface CriterioCompacto {
   valor_informe: number | boolean | null;
 }
 
+/**
+ * Lo que el playground necesita saber de un demo y no dicen ni el plan ni el formato de traza. Lo declara el
+ * manifiesto de la vitrina por demo (`data/vitrina/manifiesto.json`, `playground`): el núcleo no conoce nombres de
+ * ningún demo (RNF-06, AU-S2-18).
+ */
+export interface OpcionesDeDemo {
+  /** La señal con la propuesta del agente: si el caso sigue solo, es su decisión final. */
+  senal_propuesta: string;
+  /** El valor favorable de la propuesta; cualquier otro es adverso (negar, rechazar) y exige una persona. */
+  valor_favorable: string;
+  /** Claves que se conocen al decidir además de las señales que leen las aristas (las escribe un nodo escritor). */
+  claves_previas: string[];
+}
+
 export interface Compacto {
   formato: typeof FORMATO_COMPACTO;
   corrida_id: string;
@@ -97,6 +111,8 @@ export interface Compacto {
   desenlace_de_rama: Record<string, Desenlace>;
   /** Minutos de una persona por caso que pasa por la pausa (costo humano que el plan declara en sus umbrales). */
   minutos_por_persona: number;
+  /** La señal de la propuesta del agente y su valor favorable (del manifiesto del demo). */
+  propuesta: { senal: string; favorable: string };
   casos: CasoCompacto[];
   criterios: CriterioCompacto[];
 }

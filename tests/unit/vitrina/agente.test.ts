@@ -186,15 +186,39 @@ describe("AU-S2-2: el lote, el eje y el umbral de confianza salen del plan", () 
 
   it("el umbral se busca por la señal de confianza: renumerarlo no rompe el panel", async () => {
     const d = await datosDemo();
-    const otro = { ...d, plan: structuredClone(d.plan) };
+    // El umbral cambia de id en el plan y en el grafo de la corrida (si no, el lienzo ya no sería el grafo).
+    const otro = {
+      ...d,
+      plan: structuredClone(d.plan),
+      corrida: { ...d.corrida, grafo: structuredClone(d.corrida.grafo) },
+    };
+    otro.plan.huella = "plan-con-U9";
     const u = otro.plan.umbrales.find((x) => x.id === "U1")!;
     u.id = "U9";
-    for (const a of otro.plan.contrato_de_grafo.aristas_condicionales)
+    for (const a of [
+      ...otro.plan.contrato_de_grafo.aristas_condicionales,
+      ...otro.corrida.grafo.aristas_condicionales,
+    ])
       if (esAristaTripleta(a) && a.valor === "umbral.U1") a.valor = "umbral.U9";
     const v = vistaAgente(otro, "es");
     expect(v.arista.titulo).toMatch(/U9/);
     const sin = { ...d, plan: structuredClone(d.plan) };
     sin.plan.umbrales = sin.plan.umbrales.filter((x) => x.id !== "U1");
     expect(() => vistaAgente(sin, "es")).toThrow(/señal de confianza/);
+  });
+});
+
+describe("P-11: el lienzo del agente exige «diagrama = grafo» en el build", () => {
+  it("si el contrato pide una regla que el grafo no dibuja, la vista se detiene con la falla", async () => {
+    const d = await datosDemo();
+    const otro = { ...d, plan: structuredClone(d.plan) };
+    otro.plan.huella = "otra-huella-para-no-usar-el-dibujo-en-memoria";
+    otro.plan.contrato_de_grafo.aristas_condicionales.push({
+      ...otro.plan.contrato_de_grafo.aristas_condicionales[0]!,
+      orden: 9,
+    });
+    expect(() => vistaAgente(otro, "es")).toThrow(
+      /el lienzo «agente» no es el grafo:[\s\S]*enrutador#9/,
+    );
   });
 });

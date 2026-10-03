@@ -251,6 +251,15 @@ def test_una_negacion_sin_proveedor_la_decide_la_persona_con_su_documento(tmp_pa
     assert t["senales"]["decision_final"] == "negar" and t["senales"]["pausa_humana"] is True
     assert t["pausas_humanas"][0]["respuesta_simulada"]["decision"] == "negar"
     assert t["documento_adverso"] is not None
+    # AU-S2-9: sin extracción, el documento no está completo (C8 lo reporta) y la persona no decide con una
+    # evidencia vacía: el payload le dice qué falló y que decide con el texto original.
+    assert t["documento_adverso"]["completo"] is False
+    payload = t["pausas_humanas"][0]["payload"]
+    assert payload["extraccion"] is None and payload["texto_original"]
+    assert [e["es"] for e in payload["evidencia"]] == [
+        "El modelo no respondió (timeout): el caso llega sin la lectura que faltaba y se decide con el texto "
+        "original."
+    ]
     # Los casos sin falla de la misma sesión no cambian: A-001 aprueba sin pasar por la persona.
     a1 = leer_verificando(corrida / "trazas" / "A-001.json")
     assert a1["senales"]["proveedor_no_disponible"] is False and a1["senales"]["pausa_humana"] is False

@@ -1147,6 +1147,54 @@ del informe; donde se aparta, se dice aquí.
 | AU-S2-7 · AU-S2-8 · entrega | un roadmap previo, uno propuesto; un archivo cambiado, uno que falta y uno que sobra | se conserva el previo, se rechaza el propuesto y las tres diferencias se nombran | `paquete-entrega.test.ts` 6/6 |
 | AU-S2-B10 · el manual dice el plan por defecto | quitar `plans/demo-a/v1.2.json` de la mitad en inglés del manual | `test_el_manual_dice_con_que_plan_y_lote_corre_lote_demo_por_defecto` en rojo | verde al restaurar |
 
+#### El núcleo, el visor y lo que la vista lee
+
+- **AU-S2-9:** en el respaldo AU-9 la persona ya no recibe una evidencia vacía sin explicación: el payload dice qué
+  falló y que se decide con el texto original (que va completo). La corrida simulada `simulado-v1.4-respaldo` se
+  regeneró con su emisor (solo cambian las trazas A-001, A-004 y A-008 y su `corrida.json`; se regeneró en una
+  carpeta aparte porque el runner acumula sobre la corrida existente) y su informe. `test_lotes.py` afirma además
+  que el documento de A-004 queda incompleto (C8 lo cuenta). **P-13:** con esto, `Estado.error_proveedor` tiene
+  lector. El código de los nodos cambió de líneas: `grafo-codigo.json` regenerado.
+- **AU-S2-10:** `respuestaInservible` decide por `resultado === "error"`; una respuesta vacía tras el respaldo se
+  juzga. Los informes versionados no cambian.
+- **AU-S2-22:** los minutos del playground se comparan sobre la misma población (el caso «no observado» sale de los
+  dos lados) y la frase lo dice; con U3 = 3 el delta es 0.
+- **AU-S2-23, AU-S2-B47, AU-S2-B55:** el SVG publica por línea `data-origen`, `data-destino` y `data-condiciones`;
+  `scripts/diagrama-igual-grafo.ts` recorre líneas y flujos en los dos sentidos, compara la condición de cada regla
+  con la del plan, se reconoce como programa por la ruta real y sale con 1 si no verificó ningún demo. Las líneas
+  con id compuesto repetido detienen el lienzo, e `inicio` y `fin` quedan reservados. Golden SVG regenerados (solo
+  atributos); `pnpm diagrama:verificar` verde sobre `out/`.
+- **AU-S2-B49:** la igualdad del mapa compara el orden de cada regla y las ramas por defecto; un valor literal con
+  forma de umbral se rechaza. **P-11:** el lienzo del agente detiene el build si no es el grafo (el del spike
+  solo publica su cuenta).
+- **AU-S2-B46:** un auto-lazo se dibuja a la derecha de su caja en lugar de tumbar el ruteo.
+- **AU-S2-18 y AU-S2-B45:** el núcleo del playground recibe lo que necesita del demo (`OpcionesDeDemo`: la señal de
+  la propuesta, su valor favorable y las claves previas) desde el manifiesto de la vitrina; `nucleo-sin-demo.test.ts`
+  lo vigila. Una propuesta adversa que saliera sin persona se lee como error, no como revisión ahorrada.
+- **AU-S2-19:** un segundo demo en el manifiesto detiene el build con su nombre (las páginas no tienen `[demo]`), y
+  una corrida sin plan de beneficios se nombra.
+- **AU-S2-21:** P6 valida con Zod el payload de la pausa, las aclaraciones, el documento adverso y los casos
+  ejemplares (`src/lib/datos/esquemas.ts`), y lee tipados los campos del caso que ya validaba el lote. La prueba con
+  la corrida del respaldo destapó un defecto latente más: sin extracción, `datos_usados` llega nulo y la vista
+  caía con `TypeError`; ahora dice «ninguno: el extractor no respondió».
+
+| Gate | Cambio deliberado | Rojo | Al revertir |
+|---|---|---|---|
+| AU-S2-9 · evidencia explícita en el respaldo | desactivar la evidencia «el modelo no respondió» en `nodos.py` | `test_una_negacion_sin_proveedor_la_decide_la_persona_con_su_documento` y `test_la_corrida_con_respaldo_se_regenera_identica` en rojo | verdes al restaurar |
+| AU-S2-10 · respuesta inservible tras el respaldo | volver a `if (t.error_proveedor || …)` en `core/brecha/supuestos.ts` | `supuestos.test.ts` rojo: «un caso completo por el respaldo… cuenta como inservible» | 19/19 verdes al restaurar; los informes versionados no cambian |
+| AU-S2-22 · minutos sobre la misma población | volver a contar en `personas_plan` todo caso registrado con persona | `paridad.test.ts` «U3 = 3…» en rojo: delta −12 (el caso no observado como ahorro) | verde al restaurar (delta 0) |
+| AU-S2-23 · diagrama = grafo en los dos sentidos | una línea inventada a mano (`decision → aclaracion`) en el SVG golden | 2 fallas: «línea dibujada que no es una arista del grafo» y «flujo dibujado que el grafo y el plan no tienen» | `diagrama-igual-grafo.test.ts` 8/8; `pnpm diagrama:verificar` verde sobre `out/` |
+| AU-S2-23 · condición publicada | `campos-faltantes-count > 0` → `> 1` en `data-condiciones` (un paquete viejo con otro umbral) | «condición distinta en extractor-a-aclaracion-r1» | ídem |
+| AU-S2-B55 · ¿es el programa? | ruta distinta o ausente | `esElPrograma` da falso; con 0 demos verificados el script sale con 1 | ídem |
+| AU-S2-B49 · orden y ramas por defecto en el mapa | intercambiar las condiciones de `decision#1` y `#2`; quitar un «si no» e inventar otro | `igualdad.test.ts`: «regla del plan sin su flujo: decision#1/#2», «rama por defecto sin su flujo», «flujo «si no» que el grafo no tiene»; el valor literal «U1» se rechaza | 8/8 |
+| P-11 · el build exige la igualdad | una regla del contrato (`enrutador#9`) que el grafo no dibuja | `vistaAgente` se detiene: «el lienzo «agente» no es el grafo» | `agente.test.ts` 12/12 |
+| AU-S2-B46 · auto-lazo | quitar la ruta fija del lazo en `core/visor/ruteo.ts` | «visor: no hay ruta de extractor a extractor» | `casos-limite.test.ts` 9/9 |
+| AU-S2-B47 · ids únicos | `x_a → y` y `x → a_y`; un nodo llamado `inicio` | «dos líneas del lienzo dan el mismo id «x-a-a-y»»; «reservado» | ídem |
+| AU-S2-B45 · propuesta adversa sola | volver a decidir el efecto solo por `debe_escalar` | `paridad.test.ts`: la negación sin persona se leía «revision_ahorrada» | 60/60 al restaurar |
+| AU-S2-18 · núcleo sin nombres de demo | el `compactar.ts` de HEAD bajo la guardia nueva | «extraccion» (l. 72) y «.propuesta» (l. 176-177) nombrados; un literal falso también | `nucleo-sin-demo.test.ts` 2/2 sobre el núcleo de hoy |
+| AU-S2-19 · un solo demo y plan de beneficios con nombre | quitar la comprobación del plan de beneficios en `cargarDemo` | `datos.test.ts`: «Cannot read properties of undefined (reading archivo)» en lugar del error con nombre; un `demo-b` en el manifiesto se detiene nombrándolo | 9/9 al restaurar |
+| AU-S2-21 · P6 valida la traza | `leerParaVista` sin validar | `caso.test.ts`: el payload sin `texto_original` y la aclaración sin `pregunta` pasan en silencio | 14/14 al restaurar; el documento AU-9 sin `datos_usados` se pinta con «ninguno: el extractor no respondió» (antes, `TypeError`) |
+
 ## Desviación del plan
 
 1. **El centinela «Worktrees prohibidos» no existe** en `ordenes/CLAUDE-md-para-app.md` (vive en el batch

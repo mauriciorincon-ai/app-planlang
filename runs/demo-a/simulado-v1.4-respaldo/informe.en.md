@@ -189,7 +189,7 @@ Measures (n = 1): rate = 0.
 | --- | --- | --- |
 | Plan | plan-demo-a 1.4.0 (`plans/demo-a/v1.4.json`) | `186345f21497650943c2b78c0c26e26ef94ea6b82c087d89f1d698685a2227e3` |
 | Cases | planlang-a-001-200 · seed planlang-a-001 · n = 200 · generated with plan 1.4.0 | `1ea71b9c29a1fbafb625b3fa6858fe236e5765c61a355546d2a87eff2e0369dd` |
-| Run | simulado-v1.4-respaldo · 2026-10-01 · simulado/simulado · multi-agent · run with plan 1.4.0 | `a2e45c68acce19973b5f1ce0376bc89ceb97df9fdde582bb582220b3a954b6ba` |
+| Run | simulado-v1.4-respaldo · 2026-10-01 · simulado/simulado · multi-agent · run with plan 1.4.0 | `d4bee109eba9753dabd7a6dd75dfda678a3a2e807fffb81038586a86789efc8a` |
 | Graph | exported graph version | `07b0e36434997a416ce9d371bb9ad44a81028e7838d6c4bd4ae7a091e06339c6` |
 
 Sessions: 1 · cases run: 8 · with a provider error: 0 · usage limits reached: 0.
@@ -198,4 +198,4 @@ Applied thresholds: U1 = 0.75 · U2 = 1000 · U3 = 2 · U4 = false · in the pla
 
 Human review: In batches, the simulated reviewer follows the case's known truth (DA-04); the showcase discloses it.
 
-Verifier 1.2.0 · planlang-informe/v1 · fingerprint of this report: `d4e2930cfdfe4a90efe45dad673f8704aa8182d6f4e0e7393883e6f80343c44d`
+Verifier 1.2.0 · planlang-informe/v1 · fingerprint of this report: `0276d412297c741c6cc6950f1df033c75ba8c59d9f22c147ec026c81e6900624`

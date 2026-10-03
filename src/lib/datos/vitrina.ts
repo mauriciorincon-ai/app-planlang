@@ -76,7 +76,9 @@ export function grafoDelSpike(
     .map((n) => {
       const tipo = lectura.tipos[n.id];
       if (!tipo)
-        throw new Error(`vitrina: la lectura del spike no da tipo a «${n.id}».`);
+        throw new Error(
+          `vitrina: la lectura del spike no da tipo a «${n.id}».`,
+        );
       return { id: n.id, tipo };
     });
   const condicionales = exportado.edges.filter((e) => e.conditional);
@@ -151,6 +153,15 @@ export async function cargarDemo(
   const manifiesto = ManifiestoVitrinaSchema.parse(
     leer("data/vitrina/manifiesto.json"),
   );
+  // Las páginas no llevan segmento `[demo]`: todas pintan el demo A. Un segundo demo en el manifiesto se detiene
+  // aquí con su nombre, en lugar de no aparecer o de caer más adelante con un error sin nombre (AU-S2-19).
+  const otros = Object.keys(manifiesto.demos).filter(
+    (x) => x !== DEMO_PUBLICADO,
+  );
+  if (otros.length)
+    throw new Error(
+      `vitrina: el manifiesto declara ${otros.map((x) => `«${x}»`).join(", ")}, pero la vitrina solo pinta «${DEMO_PUBLICADO}»; un demo nuevo exige rutas por demo (segmento [demo]) antes de entrar al manifiesto.`,
+    );
   const demo = manifiesto.demos[id];
   if (!demo) throw new Error(`vitrina: el manifiesto no declara «${id}».`);
 
@@ -183,8 +194,13 @@ export async function cargarDemo(
   const m = archivos.corrida as {
     plan: { archivo: string };
     casos: { archivo: string };
-    plan_beneficios: { archivo: string; huella: string };
+    plan_beneficios?: { archivo: string; huella: string };
   };
+  if (!m.plan_beneficios)
+    throw new Error(
+      `vitrina: la corrida de «${id}» (${demo.corrida.ruta}) no declara su plan de beneficios; la vitrina lo necesita para P3 y P6.`,
+    );
+  const planBeneficiosRef = m.plan_beneficios;
   const planCorrida = leer(m.plan.archivo);
   const casos = leer(m.casos.archivo);
   const corrida = await leerCorridaVerificada(
@@ -204,11 +220,11 @@ export async function cargarDemo(
     );
   const codigo = GrafoCodigoSchema.parse(codigoCrudo);
 
-  const pbCrudo = leer(m.plan_beneficios.archivo);
+  const pbCrudo = leer(planBeneficiosRef.archivo);
   await conHuellaDeclarada(
-    m.plan_beneficios.archivo,
+    planBeneficiosRef.archivo,
     pbCrudo,
-    m.plan_beneficios.huella,
+    planBeneficiosRef.huella,
   );
   const planBeneficios = PlanBeneficiosMinimoSchema.parse(pbCrudo);
 
@@ -216,7 +232,11 @@ export async function cargarDemo(
   if (demo.spike) {
     const exportado = GrafoLangGraphSchema.parse(
       JSON.parse(
-        await conSha256(raiz, demo.spike.grafo.archivo, demo.spike.grafo.sha256),
+        await conSha256(
+          raiz,
+          demo.spike.grafo.archivo,
+          demo.spike.grafo.sha256,
+        ),
       ),
     );
     const lectura = LecturaSpikeSchema.parse(
@@ -290,10 +310,13 @@ function planDelLote(
   return null;
 }
 
+/** El único demo que la vitrina pinta hoy (las páginas no llevan segmento `[demo]`). */
+export const DEMO_PUBLICADO = "demo-a";
+
 const memoria = new Map<string, Promise<DatosDemo>>();
 
 /** Los datos de un demo, una sola lectura por build aunque los pidan varias páginas. */
-export function datosDemo(id = "demo-a"): Promise<DatosDemo> {
+export function datosDemo(id = DEMO_PUBLICADO): Promise<DatosDemo> {
   let p = memoria.get(id);
   if (!p) {
     p = cargarDemo(id);

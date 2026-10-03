@@ -29,12 +29,13 @@ import {
 import type { Caso, Lote } from "../sintetico/esquema";
 import { agruparVisitas, senalesDeVisita } from "./interprete";
 import {
-  FORMATO_COMPACTO,
   type CasoCompacto,
   type Compacto,
   type CriterioCompacto,
   type Desenlace,
   type Evaluacion,
+  FORMATO_COMPACTO,
+  type OpcionesDeDemo,
   type Resultado,
   type VisitaCompacta,
 } from "./compacto";
@@ -64,12 +65,6 @@ export const CLAVES_DEL_DESENLACE = [
   "documento_adverso",
   "interrupt_payload",
 ] as const;
-
-/**
- * Claves que se conocen al decidir además de las señales que leen las aristas: la extracción la escribe un nodo
- * escritor (el extractor decide si pide aclaración), así que en la última visita escritora ya está completa.
- */
-export const CLAVES_PREVIAS_FIJAS = ["extraccion"] as const;
 
 /** Las señales que leen las aristas del plan: por la regla dura 3, están en el estado ANTES de enrutar. */
 export function senalesQueLeenLasAristas(
@@ -159,6 +154,7 @@ export function objetoEnOtroCamino(
   i: number,
   desenlace: Desenlace,
   previas: ReadonlySet<string>,
+  senalPropuesta: string,
 ): Record<string, JsonValor> {
   const objeto: Record<string, JsonValor> = {};
   for (const k of CLAVES_DEL_CASO) objeto[k] = registrado[k] as JsonValor;
@@ -173,8 +169,8 @@ export function objetoEnOtroCamino(
     objeto.decision_final = caso.verdad_conocida.decision;
   } else if (desenlace === "solo") {
     objeto.pausa_humana = false;
-    if (typeof objeto.propuesta === "string")
-      objeto.decision_final = objeto.propuesta;
+    const propuesta = objeto[senalPropuesta];
+    if (typeof propuesta === "string") objeto.decision_final = propuesta;
   }
   return objeto;
 }
@@ -213,6 +209,7 @@ export function compactar(
   corrida: CorridaLeida,
   lote: Lote,
   informe: Informe,
+  demo: OpcionesDeDemo,
 ): Compacto {
   const grafo = corrida.grafo;
   const ligaduras = ligadurasDeUmbrales(plan);
@@ -221,7 +218,7 @@ export function compactar(
   const jugables = nodosJugables(aristas, ligaduras);
   const previas = new Set<string>([
     ...senalesQueLeenLasAristas(aristas),
-    ...CLAVES_PREVIAS_FIJAS,
+    ...demo.claves_previas,
   ]);
   const escritores = new Set<string>([
     ...Object.keys(grafo.ramas_por_defecto),
@@ -278,7 +275,15 @@ export function compactar(
         caminos[`${i}:${d}`] = evaluar(
           plan,
           caso,
-          objetoEnOtroCamino(objeto, caso, visitas, i, d, previas),
+          objetoEnOtroCamino(
+            objeto,
+            caso,
+            visitas,
+            i,
+            d,
+            previas,
+            demo.senal_propuesta,
+          ),
         );
     });
     const senales_de_umbral: Record<string, JsonValor> = {};
@@ -336,6 +341,7 @@ export function compactar(
     nodos_jugables: jugables,
     desenlace_de_rama,
     minutos_por_persona: minutosPorPersona(plan),
+    propuesta: { senal: demo.senal_propuesta, favorable: demo.valor_favorable },
     casos,
     criterios,
   };

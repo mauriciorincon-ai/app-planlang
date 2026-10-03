@@ -13,7 +13,6 @@ import {
   compactar,
   objetoEnOtroCamino,
   senalesQueLeenLasAristas,
-  CLAVES_PREVIAS_FIJAS,
 } from "@core/playground/compactar";
 import type { Compacto } from "@core/playground/compacto";
 import {
@@ -32,7 +31,13 @@ import { datosDemo } from "@/lib/datos/vitrina";
 
 async function base() {
   const d = await datosDemo();
-  const c = compactar(d.plan, d.corrida, d.lote, d.informe);
+  const c = compactar(
+    d.plan,
+    d.corrida,
+    d.lote,
+    d.informe,
+    d.manifiesto.playground,
+  );
   return { ...d, c };
 }
 
@@ -42,7 +47,7 @@ async function verificadorEnElCamino(plan: Plan, c: Compacto, u: Umbrales) {
   const r = consecuencias(c, u);
   const previas = new Set<string>([
     ...senalesQueLeenLasAristas(c.aristas),
-    ...CLAVES_PREVIAS_FIJAS,
+    ...d.manifiesto.playground.claves_previas,
   ]);
   const lote = new Map(d.lote.casos.map((k) => [k.id, k]));
   const vistas = d.corrida.trazas.map((traza) => {
@@ -60,6 +65,7 @@ async function verificadorEnElCamino(plan: Plan, c: Compacto, u: Umbrales) {
           ),
           cambio.ahora,
           previas,
+          d.manifiesto.playground.senal_propuesta,
         )
       : registrado;
     return {
@@ -249,6 +255,9 @@ describe("los ejemplos de la maqueta, medidos", () => {
       ["A-007", "no_observado"],
     ]);
     expect(r.no_observados).toEqual(["A-007"]);
+    // AU-S2-22: los minutos se comparan sobre la misma población; el caso que nadie midió no cuenta como ahorro.
+    expect(r.minutos - r.minutos_plan).toBe(0);
+    expect(r.personas_plan).toBe(r.personas);
   });
 
   it("U3 = 1: A-007 llega a una persona con una aclaración menos; A-008 pasa a una persona", async () => {
@@ -275,7 +284,13 @@ describe("el compacto se niega a adivinar", () => {
       i === 0 ? { ...t, senales: { ...t.senales, senal_nueva: 1 } } : t,
     );
     expect(() =>
-      compactar(d.plan, { ...d.corrida, trazas }, d.lote, d.informe),
+      compactar(
+        d.plan,
+        { ...d.corrida, trazas },
+        d.lote,
+        d.informe,
+        d.manifiesto.playground,
+      ),
     ).toThrow(/senal_nueva/);
   });
 
@@ -357,8 +372,16 @@ describe("con otras reglas de medición, el compacto mide igual que el verificad
     // El informe de esa regla: el verificador sobre lo que se registró (el playground parte de ahí).
     const enPlan = await verificadorEnElCamino(
       plan,
-      compactar(d.plan, d.corrida, d.lote, d.informe),
-      umbralesDelPlan(compactar(d.plan, d.corrida, d.lote, d.informe)),
+      compactar(d.plan, d.corrida, d.lote, d.informe, d.manifiesto.playground),
+      umbralesDelPlan(
+        compactar(
+          d.plan,
+          d.corrida,
+          d.lote,
+          d.informe,
+          d.manifiesto.playground,
+        ),
+      ),
     );
     const informe = {
       ...d.informe,
@@ -366,7 +389,13 @@ describe("con otras reglas de medición, el compacto mide igual que el verificad
         x.id === id ? enPlan.verificador.find((v) => v.id === id)! : x,
       ),
     };
-    const c = compactar(plan, d.corrida, d.lote, informe);
+    const c = compactar(
+      plan,
+      d.corrida,
+      d.lote,
+      informe,
+      d.manifiesto.playground,
+    );
     for (const m of MOVIDOS) {
       const u = { ...umbralesDelPlan(c), ...m } as Umbrales;
       const { r, verificador } = await verificadorEnElCamino(plan, c, u);
@@ -425,15 +454,15 @@ describe("el compacto se niega a adivinar (las entradas)", () => {
     const d = await datosDemo();
     const plan = structuredClone(d.plan) as Plan;
     plan.umbrales[1]!.costo_humano_por_caso_min = 15;
-    expect(() => compactar(plan, d.corrida, d.lote, d.informe)).toThrow(
-      /varios costo humano/,
-    );
+    expect(() =>
+      compactar(plan, d.corrida, d.lote, d.informe, d.manifiesto.playground),
+    ).toThrow(/varios costo humano/);
     for (const u of plan.umbrales)
       delete (u as { costo_humano_por_caso_min?: number })
         .costo_humano_por_caso_min;
-    expect(() => compactar(plan, d.corrida, d.lote, d.informe)).toThrow(
-      /ningún costo humano/,
-    );
+    expect(() =>
+      compactar(plan, d.corrida, d.lote, d.informe, d.manifiesto.playground),
+    ).toThrow(/ningún costo humano/);
   });
   it("un informe sin un criterio del plan, o una traza sin su caso en el lote, se nombran", async () => {
     const d = await datosDemo();
@@ -441,16 +470,16 @@ describe("el compacto se niega a adivinar (las entradas)", () => {
       ...d.informe,
       criterios: d.informe.criterios.filter((x) => x.id !== "C9"),
     };
-    expect(() => compactar(d.plan, d.corrida, d.lote, informe)).toThrow(
-      /no trae el criterio C9/,
-    );
+    expect(() =>
+      compactar(d.plan, d.corrida, d.lote, informe, d.manifiesto.playground),
+    ).toThrow(/no trae el criterio C9/);
     const lote = {
       ...d.lote,
       casos: d.lote.casos.filter((k) => k.id !== "A-001"),
     };
-    expect(() => compactar(d.plan, d.corrida, lote, d.informe)).toThrow(
-      /A-001 no está en el lote/,
-    );
+    expect(() =>
+      compactar(d.plan, d.corrida, lote, d.informe, d.manifiesto.playground),
+    ).toThrow(/A-001 no está en el lote/);
   });
   it("un camino sin su evaluación precalculada no se inventa", async () => {
     const { c } = await base();
@@ -508,5 +537,28 @@ describe("tiempos (en el navegador, sin modelo)", () => {
         30,
       ),
     ).toBeLessThan(16);
+  });
+});
+
+describe("AU-S2-B45: una propuesta adversa sin persona es un error, nunca una revisión ahorrada", () => {
+  it("si el plan dejara salir solo un caso con propuesta de negar, el efecto es «error_introducido» aunque la verdad no pida escalar", async () => {
+    const { c } = await base();
+    const x = structuredClone(c);
+    // Sin la regla literal «propuesta = negar», una negación iría sola por la rama por defecto.
+    x.aristas = x.aristas.filter(
+      (a) => !("senal" in a) || a.senal !== x.propuesta.senal,
+    );
+    const negado = x.casos.find((k) =>
+      k.visitas.some(
+        (v) =>
+          v.senales[x.propuesta.senal] !== undefined &&
+          v.senales[x.propuesta.senal] !== x.propuesta.favorable,
+      ),
+    )!;
+    negado.debe_escalar = false;
+    const r = consecuencias(x, umbralesDelPlan(x));
+    const cambio = r.cambios.find((k) => k.id === negado.id);
+    expect(cambio?.ahora).toBe("solo");
+    expect(cambio?.efecto).toBe("error_introducido");
   });
 });

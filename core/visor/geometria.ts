@@ -91,6 +91,16 @@ export interface LineaGeo {
   etiqueta?: EtiquetaGeo;
   /** Conteo de reglas del plan que lleva (0 en secuencia, reanudación y «si no»). */
   reglas: number;
+  /**
+   * La condición de cada flujo, en el orden de `flujos` (`señal operador valor`; vacía si el flujo no tiene). El
+   * SVG la publica para que el gate «diagrama = grafo» compare la regla y no solo su id (AU-S2-23).
+   */
+  condiciones: string[];
+}
+
+/** Una condición del mapa como texto estable: `señal operador valor` (sin formato de idioma). */
+export function condicionEnTexto(c: Condicion): string {
+  return `${c.senal} ${c.operador} ${String(c.valor)}`;
 }
 
 export interface Geometria {
@@ -397,6 +407,16 @@ export function geometria(
         flujos: [],
         modo: "secuencia",
       });
+  // Ids compuestos únicos: `x_a → y` y `x → a_y` darían los dos `x-a-a-y`; una línea no puede tapar a otra
+  // (AU-S2-B47).
+  const vistos = new Set<string>();
+  for (const p of pendientes) {
+    if (vistos.has(p.id))
+      throw new Error(
+        `visor: dos líneas del lienzo dan el mismo id «${p.id}»; renombra un nodo para que los ids sean únicos`,
+      );
+    vistos.add(p.id);
+  }
   const centro = (k: string): Punto => {
     const r = cajas.get(k)!;
     return [r.x + r.w / 2, r.y + r.h / 2];
@@ -463,9 +483,13 @@ export function geometria(
     const reglas = p.flujos.filter(
       (f) => f.condicion && f.condicion.senal !== SENAL_POR_DEFECTO,
     ).length;
+    const ordenados = [...p.flujos].sort((a, b) => cmp(a.id, b.id));
     const l: LineaGeo = {
       id: `l-${p.id}`,
-      flujos: p.flujos.map((f) => f.id).sort(cmp),
+      flujos: ordenados.map((f) => f.id),
+      condiciones: ordenados.map((f) =>
+        f.condicion ? condicionEnTexto(f.condicion) : "",
+      ),
       modo: p.modo,
       origen: p.origen,
       destino: p.destino,

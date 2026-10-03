@@ -483,7 +483,7 @@
       "casos_con_error": 0,
       "casos_ejecutados": 8,
       "fecha": "2026-10-01",
-      "huella": "a2e45c68acce19973b5f1ce0376bc89ceb97df9fdde582bb582220b3a954b6ba",
+      "huella": "d4bee109eba9753dabd7a6dd75dfda678a3a2e807fffb81038586a86789efc8a",
       "id": "simulado-v1.4-respaldo",
       "limites_alcanzados": 0,
       "modelo": "simulado",
@@ -526,7 +526,7 @@
     }
   },
   "formato": "planlang-informe/v1",
-  "huella": "d4e2930cfdfe4a90efe45dad673f8704aa8182d6f4e0e7393883e6f80343c44d",
+  "huella": "0276d412297c741c6cc6950f1df033c75ba8c59d9f22c147ec026c81e6900624",
   "plan_en_breve": {
     "decisiones_una_via": [
       {

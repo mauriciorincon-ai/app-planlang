@@ -188,7 +188,7 @@ function ordenDeEvaluacion(c: Compacto, nodos: string[]): string {
 
 export function vistaPlayground(d: DatosDemo, i: Idioma): VistaPlayground {
   const inf = d.informe;
-  const c = compactar(d.plan, d.corrida, d.lote, inf);
+  const c = compactar(d.plan, d.corrida, d.lote, inf, d.manifiesto.playground);
   // Toda señal que decide tiene su nombre llano antes de que la isla las pinte (la isla no adivina uno).
   for (const s of senalesQueLeenLasAristas(c.aristas)) nombreLlano(s);
   // Igual con las funciones nombradas y los interruptores: la isla no narra una con el texto de otra (AU-S2-1).

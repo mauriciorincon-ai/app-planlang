@@ -275,7 +275,15 @@ export function aSvg(geo: Geometria, g: Gramatica, op: OpcionesSvg): string {
           ["class", "d-flujo"],
           ["id", `${ns}-${l.id}`],
           ["data-modo", l.modo],
+          ["data-origen", l.origen],
+          ["data-destino", l.destino],
           ["data-flujos", l.flujos.join(" ") || undefined],
+          [
+            "data-condiciones",
+            l.condiciones.some((c) => c !== "")
+              ? l.condiciones.join("|")
+              : undefined,
+          ],
           ["data-sel-id", sel ? l.id : undefined],
           ["tabindex", sel ? "0" : undefined],
           ["role", sel ? "button" : undefined],

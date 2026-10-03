@@ -4,6 +4,7 @@ import {
   acotadaPorElGrafo,
   evaluarSupuestos,
   presupuestoDe,
+  respuestaInservible,
 } from "../../../../core/brecha/supuestos";
 import type { Paso, Traza } from "../../../../core/formatos/traza";
 import { planV11, supuesto, vista } from "../../../helpers/vistas";
@@ -418,5 +419,45 @@ describe("comparación con la línea base (S3)", () => {
         { pasos: [paso(0, 0), paso(10, 0, 2)] } as unknown as Traza,
       ]),
     ).toEqual({ llamadas_al_modelo: 3, tokens: 10, costo_nominal_usd: 0 });
+  });
+});
+
+describe("AU-S2-10: una respuesta inservible tras el respaldo AU-9 se juzga", () => {
+  const traza = (t: Partial<Traza>) =>
+    ({
+      resultado: "completo",
+      error_proveedor: null,
+      salida_final: { es: "Su solicitud fue aprobada.", en: "Approved." },
+      ...t,
+    }) as unknown as Traza;
+  const vacia = {
+    es: "",
+    en: "",
+    aviso_ia: { es: "aviso", en: "notice" },
+  } as Traza["salida_final"];
+
+  it("un caso completo por el respaldo (con `error_proveedor`) y respuesta vacía cuenta como inservible", () => {
+    expect(
+      respuestaInservible(
+        traza({ error_proveedor: "timeout", salida_final: vacia }),
+      ),
+    ).toBe(true);
+  });
+
+  it("un caso que terminó en error no tiene respuesta que juzgar", () => {
+    expect(
+      respuestaInservible(
+        traza({
+          resultado: "error",
+          error_proveedor: "otro",
+          salida_final: vacia,
+        }),
+      ),
+    ).toBe(false);
+    expect(respuestaInservible(traza({ salida_final: null }))).toBe(false);
+  });
+
+  it("una respuesta útil no es inservible aunque un paso previo haya fallado", () => {
+    expect(respuestaInservible(traza({ error_proveedor: "otro" }))).toBe(false);
   });
 });

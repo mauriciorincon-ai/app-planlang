@@ -4,12 +4,17 @@
  *
  * - NODOS: todo nodo del plan está en el mapa (implementado si está en el grafo; «exigido por el plan» si no) y
  *   todo nodo del grafo está en el mapa (con la marca «fuera del contrato» si el plan no lo declara);
- * - REGLAS: cada arista condicional del plan cuyo nodo existe es un flujo del mapa con su condición, y ningún
- *   flujo condicional del mapa es una regla que el plan no declara;
+ * - REGLAS: cada arista condicional del plan cuyo nodo existe es un flujo del mapa con su condición y su ORDEN
+ *   (la precedencia: el flujo `…-r<orden>`), y ningún flujo condicional del mapa es una regla que el plan no
+ *   declara (AU-S2-B49);
+ * - RAMAS POR DEFECTO: cada «si no» del grafo (o el `si_falso` de una regla) es un flujo `…-defecto`, y no hay
+ *   otro;
  * - ARISTAS: cada arista de LangGraph entre nodos es al menos un flujo del mapa y cada flujo del mapa es una
  *   arista de LangGraph (las de `__start__` y `__end__` son los terminales del dibujo).
  *
- * Las ausencias se reportan por nombre; nada se completa por inferencia (G14).
+ * Las ausencias se reportan por nombre; nada se completa por inferencia (G14). Las entradas de una función nombrada
+ * no viajan en el mapa (su condición es `<funcion> = true`): las compara el contrato de grafo del verificador
+ * (`core/brecha/contrato-grafo.ts`), que sí lee la traza.
  */
 import type { ContratoDeGrafo } from "../plan/esquema";
 import { idDeMapa } from "./ids";
@@ -100,6 +105,7 @@ export function diagramaIgualGrafo(
     const f = reglasMapa.find(
       (x) =>
         !usados.has(x.id) &&
+        x.id === `${desde}-a-${hacia}-r${r.orden}` &&
         x.origen === desde &&
         x.destino === hacia &&
         x.condicion!.senal === c.senal &&
@@ -115,6 +121,32 @@ export function diagramaIgualGrafo(
   for (const f of reglasMapa)
     if (!usados.has(f.id))
       fallas.push(`flujo con una regla que el plan no declara: ${f.id}`);
+
+  // Ramas por defecto del grafo ↔ flujos «si no».
+  const defectosMapa = new Set(
+    mapa.flujos
+      .filter((f) => f.condicion?.senal === SENAL_POR_DEFECTO)
+      .map((f) => f.id),
+  );
+  const defectosGrafo = new Set<string>();
+  for (const o of new Set([
+    ...contrato.aristas_condicionales.map((r) => r.desde),
+    ...Object.keys(grafo.ramas_por_defecto),
+  ])) {
+    const d =
+      grafo.ramas_por_defecto[o] ??
+      contrato.aristas_condicionales.find(
+        (r) => r.desde === o && r.si_falso !== undefined,
+      )?.si_falso;
+    if (d && enGrafo.has(idDeMapa(o)) && enGrafo.has(idDeMapa(d)))
+      defectosGrafo.add(`${idDeMapa(o)}-a-${idDeMapa(d)}-defecto`);
+  }
+  for (const id of [...defectosGrafo].sort(cmp))
+    if (!defectosMapa.has(id))
+      fallas.push(`rama por defecto sin su flujo en el dibujo: ${id}`);
+  for (const id of [...defectosMapa].sort(cmp))
+    if (!defectosGrafo.has(id))
+      fallas.push(`flujo «si no» que el grafo no tiene: ${id}`);
 
   // Aristas de LangGraph ↔ pares de flujos.
   const pares = new Set(mapa.flujos.map((f) => `${f.origen}>${f.destino}`));

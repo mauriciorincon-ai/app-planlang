@@ -30,6 +30,11 @@
         "archivo": "data/vitrina/demo-a/suscripcion-planlang-a-001-20-v1.2/informe.json",
         "huella": "ca000282398e1e248b5f8ce86c99206e7c1fdedb99742169164bebf3126fdd9f"
       },
+      "playground": {
+        "senal_propuesta": "propuesta",
+        "valor_favorable": "aprobar",
+        "claves_previas": ["extraccion"]
+      },
       "spike": {
         "fecha": "2026-09-26",
         "grafo": {

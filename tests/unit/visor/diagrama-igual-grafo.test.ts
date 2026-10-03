@@ -20,7 +20,10 @@ function sinNodo(s: string, nodo: string): string {
   return s
     .replace(`data-nodo-id="${nodo}"`, "")
     .replace(
-      new RegExp(`<g class="d-flujo" id="[^"]*-l-[^"]*${nodo}[^"]*"[\\s\\S]*?</g>\\n`, "g"),
+      new RegExp(
+        `<g class="d-flujo" id="[^"]*-l-[^"]*${nodo}[^"]*"[\\s\\S]*?</g>\\n`,
+        "g",
+      ),
       "",
     );
 }
@@ -63,5 +66,54 @@ describe("diagrama = grafo, sobre la página", () => {
   it("encuentra el lienzo dentro de la página y falla si no está", () => {
     expect(svgDeLaPagina(`<main>${svg}</main>`, "visor-a")).toBe(svg.trim());
     expect(() => svgDeLaPagina("<main></main>")).toThrow(/no lleva el lienzo/);
+  });
+});
+
+describe("AU-S2-23: en los dos sentidos y con la condición", () => {
+  const ns = leerSvg(svg).ns;
+
+  it("rojo con una línea inventada a mano (no es arista del grafo) y su flujo", () => {
+    const inventada = svg.replace(
+      '<g class="d-flujo"',
+      `<g class="d-flujo" id="${ns}-l-decision-a-aclaracion" data-origen="decision" data-destino="aclaracion" data-flujos="decision-a-aclaracion-r9" data-condiciones="senal-x = 1"></g><g class="d-flujo"`,
+    );
+    expect(compararPagina(inventada, GRAFO, CONTRATO)).toEqual([
+      "línea dibujada que no es una arista del grafo: decision-a-aclaracion (decision → aclaracion)",
+      "flujo dibujado que el grafo y el plan no tienen: decision-a-aclaracion-r9",
+    ]);
+  });
+
+  it("rojo si la condición publicada de una regla no es la del plan (un paquete viejo con otro umbral)", () => {
+    const cambiada = svg.replace(
+      'data-condiciones="campos-faltantes-count &gt; 0"',
+      'data-condiciones="campos-faltantes-count &gt; 1"',
+    );
+    expect(cambiada).not.toBe(svg);
+    expect(compararPagina(cambiada, GRAFO, CONTRATO)).toEqual([
+      "condición distinta en extractor-a-aclaracion-r1: el dibujo dice «campos-faltantes-count > 1» y el plan «campos-faltantes-count > 0»",
+    ]);
+  });
+
+  it("las líneas se leen por su origen y destino, no por el id compuesto", () => {
+    const l = leerSvg(svg).lineas;
+    for (const x of l.values()) {
+      expect(x.origen).not.toBe("");
+      expect(x.destino).not.toBe("");
+    }
+  });
+});
+
+describe("AU-S2-B55: el script sabe cuándo es el programa", () => {
+  it("compara rutas reales: la misma ruta sí, otra no, ninguna no", async () => {
+    const { esElPrograma } =
+      await import("../../../scripts/diagrama-igual-grafo");
+    const { pathToFileURL } = await import("node:url");
+    const { resolve } = await import("node:path");
+    const ruta = resolve("scripts/diagrama-igual-grafo.ts");
+    expect(esElPrograma(pathToFileURL(ruta).href, ruta)).toBe(true);
+    expect(
+      esElPrograma(pathToFileURL(ruta).href, resolve("scripts/_io.ts")),
+    ).toBe(false);
+    expect(esElPrograma(pathToFileURL(ruta).href, undefined)).toBe(false);
   });
 });

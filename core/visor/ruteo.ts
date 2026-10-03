@@ -602,7 +602,45 @@ function construirOrden(
   return orden;
 }
 
-export function rutear(e: Escenario, pedidos: readonly Pedido[]): Ruta[] {
+/** Separación del auto-lazo respecto de su caja. */
+const LAZO = 18;
+
+/**
+ * Un auto-lazo (X → X, p. ej. un nodo que se reintenta a sí mismo) no tiene ruta en la rejilla: todo extremo es a la
+ * vez inicio y meta. Se dibuja fijo, a la derecha de la caja, de su tercio superior a su tercio inferior (AU-S2-B46).
+ */
+function rutaDeLazo(e: Escenario, p: Pedido): Ruta {
+  const r = e.cajas.get(p.origen);
+  if (!r) throw new Error(`visor: caja desconocida «${p.origen}»`);
+  const x = r.x + r.w;
+  const y1 = r.y + r.h / 3;
+  const y2 = r.y + (2 * r.h) / 3;
+  return {
+    id: p.id,
+    puntos: [
+      [x, y1],
+      [x + LAZO, y1],
+      [x + LAZO, y2],
+      [x, y2],
+    ],
+    ladoOrigen: "derecha",
+    ladoDestino: "derecha",
+  };
+}
+
+export function rutear(
+  e: Escenario,
+  todosLosPedidos: readonly Pedido[],
+): Ruta[] {
+  const lazos = todosLosPedidos.filter((p) => p.origen === p.destino);
+  const pedidos = todosLosPedidos.filter((p) => p.origen !== p.destino);
+  const conLazos = (rutas: Ruta[]): Ruta[] => {
+    const de = new Map(
+      [...rutas, ...lazos.map((p) => rutaDeLazo(e, p))].map((r) => [r.id, r]),
+    );
+    return todosLosPedidos.map((p) => de.get(p.id) as Ruta);
+  };
+  if (pedidos.length === 0) return conLazos([]);
   // Pasada 1: lados, con candidatos de puerto en cada lado.
   const todos = [...e.cajas.keys()]
     .sort(cmp)
@@ -680,7 +718,7 @@ export function rutear(e: Escenario, pedidos: readonly Pedido[]): Ruta[] {
     [...a.orden.keys()].sort(cmp),
     mejor,
   );
-  return (final ?? mejor).rutas;
+  return conLazos((final ?? mejor).rutas);
 }
 
 /**

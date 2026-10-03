@@ -134,3 +134,79 @@ describe("entradas límite", () => {
     ).toThrow(/no trae/);
   });
 });
+
+describe("AU-S2-B46: un auto-lazo se dibuja (antes tumbaba el build)", () => {
+  it("un nodo que se reintenta a sí mismo da una línea propia a la derecha de su caja", () => {
+    const g: GrafoParaMapa = {
+      ...SPIKE,
+      aristas: [
+        ...SPIKE.aristas,
+        { source: "extractor", target: "extractor", conditional: true },
+      ],
+      aristas_condicionales: [
+        ...SPIKE.aristas_condicionales,
+        {
+          desde: "extractor",
+          orden: 1,
+          senal: "campos_faltantes_count",
+          operador: "mayor_que",
+          valor: 0,
+          inclusivo: false,
+          si_verdadero: "extractor",
+        },
+      ],
+    };
+    const geo = geometria(mapaDemo(g), GRAMATICA, {
+      ...OPCIONES,
+      terminales: terminales(g),
+      detalleNodo: {},
+      reglasCortas: {},
+    });
+    const lazo = geo.lineas.find(
+      (l) => l.origen === "extractor" && l.destino === "extractor",
+    );
+    expect(lazo).toBeDefined();
+    const caja = geo.nodos.find((n) => n.id === "extractor")!;
+    expect(lazo!.puntos[0]![0]).toBe(caja.caja.x + caja.caja.w);
+    expect(lazo!.puntos.length).toBeGreaterThanOrEqual(3);
+  });
+});
+
+describe("AU-S2-B47: ids compuestos únicos y terminales reservados", () => {
+  it("un nodo no puede llamarse como un terminal del lienzo", async () => {
+    const { idDeMapa } = await import("@core/visor/ids");
+    expect(() => idDeMapa("inicio")).toThrow(/reservado/);
+    expect(() => idDeMapa("fin")).toThrow(/reservado/);
+    expect(idDeMapa("fin_de_caso")).toBe("fin-de-caso");
+  });
+
+  it("`x_a → y` y `x → a_y` darían la misma línea: el lienzo se niega a dibujar una encima de otra", () => {
+    const g: GrafoParaMapa = {
+      nodos: [
+        { id: "x_a", tipo: "regla" },
+        { id: "y", tipo: "regla" },
+        { id: "x", tipo: "regla" },
+        { id: "a_y", tipo: "regla" },
+      ],
+      aristas: [
+        { source: "__start__", target: "x" },
+        { source: "x", target: "x_a" },
+        { source: "x_a", target: "y" },
+        { source: "x", target: "a_y" },
+        { source: "y", target: "__end__" },
+        { source: "a_y", target: "__end__" },
+      ],
+      aristas_condicionales: [],
+      ramas_por_defecto: {},
+      pausas_humanas: [],
+    };
+    expect(() =>
+      geometria(mapaDemo(g), GRAMATICA, {
+        ...OPCIONES,
+        terminales: terminales(g),
+        detalleNodo: {},
+        reglasCortas: {},
+      }),
+    ).toThrow(/dos líneas del lienzo dan el mismo id «x-a-a-y»/);
+  });
+});

@@ -614,6 +614,10 @@ export const SALIDA = {
 };
 
 export const DOCUMENTO = {
+  sinDatos: tb(
+    "ninguno: el extractor no respondió y el documento queda incompleto",
+    "none: the extractor did not respond and the document is incomplete",
+  ),
   titulo: tb(
     "El documento de decisión adversa",
     "The adverse decision document",

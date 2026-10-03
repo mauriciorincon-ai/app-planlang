@@ -7,7 +7,7 @@
     "hasta": 52
   },
   "formato": "planlang-grafo-codigo/v1",
-  "huella": "bdea0a56597dea20998470e68f4bfd04bf46dee2ae4c37c133777c75a228b4e7",
+  "huella": "5cc4d08417a84a4f0a7b28e590fa6fb6ada8c6ae3e692297b71d579132333cda",
   "nodos": {
     "aclaracion": {
       "archivo": "agents/src/app_agents/demo_a/nodos.py",
@@ -66,19 +66,19 @@
     "guardia_salida": {
       "archivo": "agents/src/app_agents/demo_a/nodos.py",
       "codigo": "def guardia_salida(self, estado: Estado, runtime: Runtime[ContextoCaso]) -> dict[str, Any]:\n    reloj = runtime.context.reloj\n    inicio = reloj.ahora_ms()\n    borrador = estado[\"borrador\"] or {\"es\": \"\", \"en\": \"\", \"acciones\": []}\n    r = revisar_salida(\n        {\"es\": borrador[\"es\"], \"en\": borrador[\"en\"]},\n        list(borrador.get(\"acciones\") or []),\n        estado[\"entrada\"],\n        estado.get(\"extraccion\"),\n    )\n    return {\n        \"salida_final\": {**r[\"salida\"], \"aviso_ia\": AVISO_IA},\n        \"guardia_salida\": {k: v for k, v in r.items() if k != \"salida\"},\n        \"severidad_accion\": r[\"severidad_accion\"],\n        \"pasos\": [self._paso(estado, \"guardia_salida\", inicio, reloj.ahora_ms())],\n    }",
-      "desde": 514,
+      "desde": 527,
       "escribe": [
         "guardia_salida",
         "pasos",
         "salida_final",
         "severidad_accion"
       ],
-      "hasta": 529
+      "hasta": 542
     },
     "pausa_humana": {
       "archivo": "agents/src/app_agents/demo_a/nodos.py",
       "codigo": "def pausa_humana(self, estado: Estado, runtime: Runtime[ContextoCaso]) -> dict[str, Any]:\n    reloj = runtime.context.reloj\n    inicio = reloj.ahora_ms()\n    ultimo = max(d[\"paso\"] for d in estado[\"decisiones_de_arista\"])\n    disparo = next(d for d in estado[\"decisiones_de_arista\"] if d[\"paso\"] == ultimo and d[\"resultado\"])\n    evidencia, contraevidencia = self._evidencias(estado)\n    payload = {\n        \"motivo\": self._motivo(disparo),\n        \"senal\": disparo[\"senal\"] or disparo[\"funcion\"],\n        \"umbral\": {\"declarado\": disparo[\"valor_declarado\"], \"aplicado\": disparo[\"umbral_aplicado\"]},\n        \"extraccion\": estado.get(\"extraccion\"),\n        \"texto_original\": estado[\"entrada\"][\"texto_medico\"],\n        \"evidencia\": evidencia,\n        \"contraevidencia\": contraevidencia,\n    }\n    respuesta = interrupt(payload)\n    paso = len(estado[\"pasos\"]) + 1\n    pausa = self.plan.contrato[\"pausas_humanas\"][0]\n    return {\n        \"pausa_humana\": True,\n        \"decision_final\": respuesta[\"decision\"],\n        \"revision\": respuesta,\n        \"pausas\": [\n            {\n                \"paso\": paso,\n                \"nodo\": \"pausa_humana\",\n                \"rol\": pausa[\"rol\"],\n                \"payload\": payload,\n                \"respuesta_simulada\": {\n                    \"decision\": respuesta[\"decision\"],\n                    \"politica\": respuesta[\"politica\"],\n                },\n            }\n        ],\n        \"pasos\": [self._paso(estado, \"pausa_humana\", inicio, reloj.ahora_ms())],\n    }",
-      "desde": 436,
+      "desde": 449,
       "escribe": [
         "decision_final",
         "pasos",
@@ -86,19 +86,19 @@
         "pausas",
         "revision"
       ],
-      "hasta": 471
+      "hasta": 484
     },
     "redactor": {
       "archivo": "agents/src/app_agents/demo_a/nodos.py",
       "codigo": "def redactor(self, estado: Estado, runtime: Runtime[ContextoCaso]) -> dict[str, Any]:\n    ctx = runtime.context\n    inicio = ctx.reloj.ahora_ms()\n    decision = estado.get(\"decision_final\") or estado.get(\"propuesta\") or \"aprobar\"\n    exigir_pausa_en_negacion(decision, estado)\n    extraccion = estado.get(\"extraccion\")\n    codigo = (extraccion or {}).get(\"campos\", {}).get(\"procedimiento\") or estado[\"entrada\"][\n        \"orden_adjunta\"\n    ][\"codigo_procedimiento\"]\n    proc = self.pb.procedimiento(codigo)\n    causal_id = (estado.get(\"revision\") or {}).get(\"causal\") or (estado.get(\"cobertura\") or {}).get(\n        \"causal\"\n    )\n    causal = self.pb.causal(causal_id) if causal_id else None\n    lineas = [\n        f\"Decisión: {decision}\",\n        f\"Procedimiento: {proc['nombre']['es'] if proc else codigo} ({codigo})\",\n        f\"Revisada por una persona: {'sí' if estado.get('pausa_humana') else 'no'}\",\n    ]\n    if decision == \"negar\" and causal:\n        lineas.append(f\"Causa de la negación: {causal['resumen']['es']} ({causal['norma']})\")\n    parsed, raw = self._llamar(ctx, Carta, prompts.REDACTOR, \"\\n\".join(lineas), \"redactor\")\n    carta = _json(parsed)\n    doc = None\n    if decision == \"negar\":\n        doc = documento_adverso(\n            caso_id=estado[\"caso_id\"],\n            procedimiento=proc,\n            causal=causal,\n            regla=self.pb.regla(\"RB-03\"),\n            extraccion=extraccion,\n            plan={\"id\": self.plan.id, \"version\": self.plan.version, \"huella\": self.plan.huella},\n            plan_beneficios=self.pb.referencia(),\n        )\n    return {\n        \"decision_final\": decision,\n        \"borrador\": carta,\n        \"documento_adverso\": doc,\n        \"pasos\": [self._paso(estado, \"redactor\", inicio, ctx.reloj.ahora_ms(), raw)],\n    }",
-      "desde": 473,
+      "desde": 486,
       "escribe": [
         "borrador",
         "decision_final",
         "documento_adverso",
         "pasos"
       ],
-      "hasta": 512
+      "hasta": 525
     },
     "verificador_cobertura": {
       "archivo": "agents/src/app_agents/demo_a/nodos.py",

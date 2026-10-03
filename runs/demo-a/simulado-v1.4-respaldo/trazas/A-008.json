@@ -131,7 +131,7 @@
     "hallazgos": [],
     "severidad_accion": 0
   },
-  "huella": "da01becb3b078e705cf54f5409462a4cef7ce653ad61a1bb178de9768c663281",
+  "huella": "fc77fc1c256096906ec6a14d0b082921738c6ec88827ba4cde40a5d35ee6dc11",
   "nodos_visitados": [
     "enrutador",
     "extractor",
@@ -238,6 +238,10 @@
           }
         ],
         "evidencia": [
+          {
+            "en": "The model did not respond (esquema_invalido): the case arrives without the missing reading and is decided from the original text.",
+            "es": "El modelo no respondió (esquema_invalido): el caso llega sin la lectura que faltaba y se decide con el texto original."
+          },
           {
             "en": "Details still missing (diagnostico, costo_estimado) after 0 clarifications.",
             "es": "Siguen faltando datos (diagnostico, costo_estimado) tras 0 aclaraciones."

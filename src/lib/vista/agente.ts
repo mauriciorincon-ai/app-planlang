@@ -1711,6 +1711,7 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
         titulo: SPIKE.svgTitulo,
         descripcion: SPIKE.svgDescripcion,
         seleccionables: false,
+        exigirIgualdad: false,
       },
     );
     const cs = lz.comparacion;

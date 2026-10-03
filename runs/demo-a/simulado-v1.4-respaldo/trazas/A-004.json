@@ -141,7 +141,7 @@
     "hallazgos": [],
     "severidad_accion": 0
   },
-  "huella": "6179b3ae80a09c144f985f3023a2863bd7b139298e7a5697a128dafbe59d4416",
+  "huella": "b772b732eaa0433bb4eb694d897871f412201998d7cc3d842cc19e16c19d30fe",
   "nodos_visitados": [
     "enrutador",
     "extractor",
@@ -232,7 +232,12 @@
             "es": "La duda sobre el alcance de un servicio se resuelve a favor del afiliado (Ley 1751, art. 8)."
           }
         ],
-        "evidencia": [],
+        "evidencia": [
+          {
+            "en": "The model did not respond (timeout): the case arrives without the missing reading and is decided from the original text.",
+            "es": "El modelo no respondió (timeout): el caso llega sin la lectura que faltaba y se decide con el texto original."
+          }
+        ],
         "extraccion": null,
         "motivo": {
           "desde": "extractor",

@@ -85,10 +85,18 @@ const OPERADORES: Readonly<Record<string, readonly [Operador, Operador]>> = {
   distinto_de: ["!=", "!="],
 };
 
-/** `umbral.U3` → `U3` (el valor del plan, por referencia: el playground lo mueve). */
+/**
+ * `umbral.U3` → `U3` (el valor del plan, por referencia: el playground lo mueve). Un literal con forma de id de
+ * umbral (`"U3"`) se confundiría con la referencia en el mapa: se rechaza para que la conversión sea inyectiva
+ * (AU-S2-B49).
+ */
 export function valorDeCondicion(valor: unknown): number | string | boolean {
   if (typeof valor === "string" && valor.startsWith("umbral."))
     return valor.slice("umbral.".length);
+  if (typeof valor === "string" && /^U\d+$/.test(valor))
+    throw new Error(
+      `visor: el valor literal «${valor}» se confundiría con el umbral ${valor} en el mapa; usa «umbral.${valor}» o renombra el valor`,
+    );
   if (
     typeof valor === "number" ||
     typeof valor === "string" ||

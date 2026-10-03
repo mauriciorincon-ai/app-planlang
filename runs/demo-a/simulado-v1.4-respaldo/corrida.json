@@ -35,7 +35,7 @@
     }
   },
   "formato": "planlang-trace/v1",
-  "huella": "a2e45c68acce19973b5f1ce0376bc89ceb97df9fdde582bb582220b3a954b6ba",
+  "huella": "d4bee109eba9753dabd7a6dd75dfda678a3a2e807fffb81038586a86789efc8a",
   "modelo": "simulado",
   "plan": {
     "archivo": "plans/demo-a/v1.4.json",
@@ -81,7 +81,7 @@
     {
       "archivo": "trazas/A-001.json",
       "caso_id": "A-001",
-      "huella": "dd0f00cd1d18ac34eb29778e00ee184b1c491cf4ebf3645c3bf30262d4b5ae85",
+      "huella": "2ba2495e6a204ec89c863b8f69bcfe7cca911b27091e99d1b5e0d785a65e6613",
       "resultado": "completo"
     },
     {
@@ -99,7 +99,7 @@
     {
       "archivo": "trazas/A-004.json",
       "caso_id": "A-004",
-      "huella": "6179b3ae80a09c144f985f3023a2863bd7b139298e7a5697a128dafbe59d4416",
+      "huella": "b772b732eaa0433bb4eb694d897871f412201998d7cc3d842cc19e16c19d30fe",
       "resultado": "completo"
     },
     {
@@ -123,7 +123,7 @@
     {
       "archivo": "trazas/A-008.json",
       "caso_id": "A-008",
-      "huella": "da01becb3b078e705cf54f5409462a4cef7ce653ad61a1bb178de9768c663281",
+      "huella": "fc77fc1c256096906ec6a14d0b082921738c6ec88827ba4cde40a5d35ee6dc11",
       "resultado": "completo"
     }
   ],

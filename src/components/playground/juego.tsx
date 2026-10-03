@@ -711,11 +711,13 @@ export function Juego({ datos }: { datos: DatosIsla }) {
   // ya pasaba por una persona.
   const soloBooleano =
     r.movidos.length > 0 && r.movidos.every((id) => typeof u[id] === "boolean");
+  // La señal de la propuesta y su valor favorable vienen del demo (manifiesto), no escritos aquí (AU-S2-18).
+  const { senal: propuesta, favorable } = c.propuesta;
   const adversasConPersona = c.casos.every((k) =>
     k.visitas.every(
       (v) =>
-        !("propuesta" in v.senales) ||
-        v.senales.propuesta === "aprobar" ||
+        !(propuesta in v.senales) ||
+        v.senales[propuesta] === favorable ||
         k.registrado === "persona",
     ),
   );

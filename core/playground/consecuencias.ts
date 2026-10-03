@@ -87,8 +87,10 @@ export interface Consecuencias {
   evitados: string[];
   no_observados: string[];
   personas: number;
+  /** Los casos que el plan registró con persona, sin los que con estos umbrales quedan «no observados». */
   personas_plan: number;
   minutos: number;
+  /** Los minutos del plan sobre la misma población que `minutos` (AU-S2-22). */
   minutos_plan: number;
   criterios: CriterioRecalculado[];
   cumplen: number;
@@ -170,10 +172,16 @@ function efectoDe(
   antes: "persona" | "solo",
   ahora: Desenlace,
   debeEscalar: boolean,
+  propuestaAdversa: boolean,
 ): Efecto {
   if (ahora === "no_observado") return "no_observado";
   if (ahora === antes) return "mismo_destino";
-  if (ahora === "solo") return debeEscalar ? "error_introducido" : "revision_ahorrada";
+  // Una propuesta adversa que sale sin persona es una infracción (regla dura 4) aunque la verdad conocida no pida
+  // escalar: jamás se lee como «revisión ahorrada» (AU-S2-B45).
+  if (ahora === "solo")
+    return debeEscalar || propuestaAdversa
+      ? "error_introducido"
+      : "revision_ahorrada";
   return debeEscalar ? "error_evitado" : "revision_de_mas";
 }
 
@@ -272,10 +280,7 @@ export function medirCriterio(
   };
 }
 
-export function consecuencias(
-  c: Compacto,
-  umbrales: Umbrales,
-): Consecuencias {
+export function consecuencias(c: Compacto, umbrales: Umbrales): Consecuencias {
   const delPlan = umbralesDelPlan(c);
   const movidos = c.umbrales
     .filter((u) => umbrales[u.id] !== u.valor_en_plan)
@@ -287,7 +292,11 @@ export function consecuencias(
   for (const caso of c.casos) {
     const d = desvioDe(c, caso, umbrales, delPlan);
     if (!d) {
-      destinos.push({ id: caso.id, antes: caso.registrado, ahora: caso.registrado });
+      destinos.push({
+        id: caso.id,
+        antes: caso.registrado,
+        ahora: caso.registrado,
+      });
       evaluaciones.push(caso.evaluaciones.registrado);
       continue;
     }
@@ -318,7 +327,13 @@ export function consecuencias(
         ahoraDecide === null && ordenPlan !== undefined
           ? (d.registros.find((r) => r.orden_arista === ordenPlan) ?? null)
           : null,
-      efecto: efectoDe(caso.registrado, ahora, caso.debe_escalar),
+      efecto: efectoDe(
+        caso.registrado,
+        ahora,
+        caso.debe_escalar,
+        Object.hasOwn(v.senales, c.propuesta.senal) &&
+          v.senales[c.propuesta.senal] !== c.propuesta.favorable,
+      ),
       visitas_ahorradas: caso.visitas
         .slice(d.i + 1)
         .filter((x) => x.desde === v.desde).length,
@@ -339,8 +354,15 @@ export function consecuencias(
     };
   });
 
+  // Los minutos se comparan sobre la misma población (AU-S2-22): un caso que con estos umbrales queda «no
+  // observado» sale de los dos lados. Si no, el delta contaría como ahorro una revisión que nadie midió.
+  const sinObservar = new Set(
+    destinos.filter((x) => x.ahora === "no_observado").map((x) => x.id),
+  );
   const personas = destinos.filter((x) => x.ahora === "persona").length;
-  const personas_plan = c.casos.filter((k) => k.registrado === "persona").length;
+  const personas_plan = c.casos.filter(
+    (k) => k.registrado === "persona" && !sinObservar.has(k.id),
+  ).length;
   return {
     umbrales,
     movidos,
@@ -349,7 +371,9 @@ export function consecuencias(
     introducidos: cambios
       .filter((x) => x.efecto === "error_introducido")
       .map((x) => x.id),
-    evitados: cambios.filter((x) => x.efecto === "error_evitado").map((x) => x.id),
+    evitados: cambios
+      .filter((x) => x.efecto === "error_evitado")
+      .map((x) => x.id),
     no_observados: cambios
       .filter((x) => x.efecto === "no_observado")
       .map((x) => x.id),

@@ -427,11 +427,15 @@ export const FRASE = {
   minutos: ((p: { minutos: number; delta: number; sinContar: number }) =>
     tb(
       p.delta === 0
-        ? "Los minutos de auditor no cambian."
-        : `Minutos de auditor: ${p.minutos} (${p.delta > 0 ? "+" : "−"}${Math.abs(p.delta)} frente al plan${p.sinContar ? `, sin contar ${p.sinContar === 1 ? "el caso no observado" : "los casos no observados"}` : ""}).`,
+        ? p.sinContar
+          ? `Los minutos de auditor no cambian en los casos observados; ${p.sinContar === 1 ? "el no observado queda" : "los no observados quedan"} fuera de la cuenta, en los dos lados.`
+          : "Los minutos de auditor no cambian."
+        : `Minutos de auditor: ${p.minutos} (${p.delta > 0 ? "+" : "−"}${Math.abs(p.delta)} frente al plan${p.sinContar ? `; ${p.sinContar === 1 ? "el caso no observado queda" : "los casos no observados quedan"} fuera de la cuenta, en los dos lados` : ""}).`,
       p.delta === 0
-        ? "Auditor minutes do not change."
-        : `Auditor minutes: ${p.minutos} (${p.delta > 0 ? "+" : "−"}${Math.abs(p.delta)} against the plan${p.sinContar ? `, not counting the unobserved ${p.sinContar === 1 ? "case" : "cases"}` : ""}).`,
+        ? p.sinContar
+          ? `Auditor minutes do not change in the observed cases; the unobserved ${p.sinContar === 1 ? "case is" : "cases are"} left out of the count on both sides.`
+          : "Auditor minutes do not change."
+        : `Auditor minutes: ${p.minutos} (${p.delta > 0 ? "+" : "−"}${Math.abs(p.delta)} against the plan${p.sinContar ? `; the unobserved ${p.sinContar === 1 ? "case is" : "cases are"} left out of the count on both sides` : ""}).`,
     )) as Plantilla<{ minutos: number; delta: number; sinContar: number }>,
   dejan: ((p: { n: number; ids: string; idsEn: string }) =>
     tb(

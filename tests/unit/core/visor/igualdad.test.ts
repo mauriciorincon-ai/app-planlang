@@ -108,3 +108,46 @@ describe("diagrama = grafo", () => {
     ]);
   });
 });
+
+describe("AU-S2-B49: orden, ramas por defecto y valores literales", () => {
+  it("rojo si dos reglas cambian de orden (la precedencia es parte de la regla)", () => {
+    const m = copia();
+    const r1 = m.flujos.find((f) => f.id === "decision-a-pausa-humana-r1")!;
+    const r2 = m.flujos.find((f) => f.id === "decision-a-pausa-humana-r2")!;
+    [r1.condicion, r2.condicion] = [r2.condicion, r1.condicion];
+    const c = diagramaIgualGrafo(m, GRAFO, CONTRATO);
+    expect(c.fallas).toEqual(
+      expect.arrayContaining([
+        "regla del plan sin su flujo en el dibujo: decision#1",
+        "regla del plan sin su flujo en el dibujo: decision#2",
+      ]),
+    );
+  });
+
+  it("rojo si se pierde un «si no» o aparece uno que el grafo no tiene", () => {
+    const m = copia();
+    m.flujos = m.flujos.filter((f) => f.id !== "decision-a-redactor-defecto");
+    m.flujos.push({
+      ...m.flujos.find((f) => f.id === "enrutador-a-extractor-defecto")!,
+      id: "extractor-a-redactor-defecto",
+      origen: "extractor",
+      destino: "redactor",
+    });
+    const c = diagramaIgualGrafo(m, GRAFO, CONTRATO);
+    expect(c.fallas).toEqual(
+      expect.arrayContaining([
+        "rama por defecto sin su flujo en el dibujo: decision-a-redactor-defecto",
+        "flujo «si no» que el grafo no tiene: extractor-a-redactor-defecto",
+      ]),
+    );
+  });
+
+  it("un valor literal con forma de umbral no entra al mapa (se confundiría con la referencia)", async () => {
+    const { valorDeCondicion } = await import("@core/visor/mapa");
+    expect(valorDeCondicion("umbral.U1")).toBe("U1");
+    expect(() => valorDeCondicion("U1")).toThrow(
+      /se confundiría con el umbral U1/,
+    );
+    expect(valorDeCondicion("negar")).toBe("negar");
+  });
+});

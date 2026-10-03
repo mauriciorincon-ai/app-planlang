@@ -375,6 +375,19 @@ class NodosDemoA:
         umbrales = estado["umbrales_aplicados"]
         evidencia: list[dict[str, str]] = []
         contra: list[dict[str, str]] = [DUDA_A_FAVOR]
+        if estado.get("proveedor_no_disponible"):
+            # Respaldo AU-9: la persona no recibe una lista vacía sin explicación. Se le dice qué falló y
+            # con qué decide (el texto original va completo en el payload); C9 no se cumple «en blanco»
+            # (AU-S2-9).
+            tipo = estado.get("error_proveedor") or "desconocido"
+            evidencia.append(
+                {
+                    "es": f"El modelo no respondió ({tipo}): el caso llega sin la lectura que faltaba y se "
+                    "decide con el texto original.",
+                    "en": f"The model did not respond ({tipo}): the case arrives without the missing reading "
+                    "and is decided from the original text.",
+                }
+            )
         codigo = cob.get("codigo_extraido")
         if cob.get("estado_servicio") == "excluido":
             c = self.pb.causal(cob["causal"])

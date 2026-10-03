@@ -71,7 +71,13 @@ describe("las fallas a la vista (regla dura 9)", () => {
     const c3 = es.conNota.find((f) => f.codigo === "C3")!;
     expect(c3.lider.join(" ")).toContain("con U2 en 1500");
     expect(c3.enlaces.map((e) => e.href)).toContain("/es/playground");
-    const c = compactar(d.plan, d.corrida, d.lote, d.informe);
+    const c = compactar(
+      d.plan,
+      d.corrida,
+      d.lote,
+      d.informe,
+      d.manifiesto.playground,
+    );
     expect(umbralQueLoRompe(c, "C3")).toEqual({
       umbral: "U2",
       valor: 1500,
@@ -83,7 +89,13 @@ describe("las fallas a la vista (regla dura 9)", () => {
   });
 
   it("un criterio que ningún umbral rompe no recibe una nota inventada", () => {
-    const c = compactar(d.plan, d.corrida, d.lote, d.informe);
+    const c = compactar(
+      d.plan,
+      d.corrida,
+      d.lote,
+      d.informe,
+      d.manifiesto.playground,
+    );
     expect(umbralQueLoRompe(c, "C4")).toBeNull();
   });
 
