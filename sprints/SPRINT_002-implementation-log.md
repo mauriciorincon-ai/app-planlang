@@ -1195,6 +1195,21 @@ del informe; donde se aparta, se dice aquí.
 | AU-S2-19 · un solo demo y plan de beneficios con nombre | quitar la comprobación del plan de beneficios en `cargarDemo` | `datos.test.ts`: «Cannot read properties of undefined (reading archivo)» en lugar del error con nombre; un `demo-b` en el manifiesto se detiene nombrándolo | 9/9 al restaurar |
 | AU-S2-21 · P6 valida la traza | `leerParaVista` sin validar | `caso.test.ts`: el payload sin `texto_original` y la aclaración sin `pregunta` pasan en silencio | 14/14 al restaurar; el documento AU-9 sin `datos_usados` se pinta con «ninguno: el extractor no respondió» (antes, `TypeError`) |
 
+#### Un aviso de seguridad por calendario (2026-10-02, no es un hallazgo de la auditoría)
+
+Al correr el job de calidad en local antes de subir, `pnpm audit --audit-level high` dio un aviso alto nuevo sin que
+cambiara ninguna dependencia: `braces` ≤ 3.0.3 (GHSA-vfj7-8cjw-p6xm), que entra solo por el lint
+(`eslint-config-next > … > micromatch > braces`). Se siguió el orden de `/deploy-check` § 5: el parche que pide el
+aviso (≥ 3.0.4) **no está publicado** (la última versión en el registro es 3.0.3) y `pnpm update braces` no tiene a
+dónde subir. Se acepta a sabiendas, acotado a ese GHSA: `auditConfig.ignoreGhsas` en `pnpm-workspace.yaml` y su
+registro con razón y fecha de revisión (2026-11-02) en `scripts/avisos-aceptados.json`;
+`tests/unit/guardias/avisos-aceptados.test.ts` exige que los dos coincidan y falla cuando la fecha vence. Va al
+summary como deuda con fecha.
+
+| Gate | Cambio deliberado | Rojo | Al revertir |
+|---|---|---|---|
+| Avisos aceptados con razón y fecha | un GHSA ignorado sin registro y el registrado con la fecha vencida | `avisos-aceptados.test.ts` nombra los dos | 2/2 |
+
 ## Desviación del plan
 
 1. **El centinela «Worktrees prohibidos» no existe** en `ordenes/CLAUDE-md-para-app.md` (vive en el batch

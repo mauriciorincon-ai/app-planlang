@@ -13,3 +13,8 @@ onlyBuiltDependencies:
   - '@tailwindcss/oxide'
 ignoredBuiltDependencies:
   - '@sentry/cli'
+# Avisos de seguridad aceptados a sabiendas: cada uno con su razón y su fecha de revisión en
+# scripts/avisos-aceptados.json (tests/unit/guardias/avisos-aceptados.test.ts exige que coincidan y que no caduquen).
+auditConfig:
+  ignoreGhsas:
+    - GHSA-vfj7-8cjw-p6xm
