@@ -11,7 +11,8 @@
         },
         "evaluador": null,
         "nodo": "extractor",
-        "paso": 2
+        "paso": 2,
+        "reintentos": 1
       },
       {
         "caso_id": "A-006",
@@ -23,7 +24,8 @@
         },
         "evaluador": null,
         "nodo": "extractor",
-        "paso": 2
+        "paso": 2,
+        "reintentos": 2
       },
       {
         "caso_id": "A-017",
@@ -35,7 +37,8 @@
         },
         "evaluador": null,
         "nodo": "extractor",
-        "paso": 2
+        "paso": 2,
+        "reintentos": 1
       },
       {
         "caso_id": "A-016",
@@ -47,7 +50,8 @@
         },
         "evaluador": null,
         "nodo": "extractor",
-        "paso": 2
+        "paso": 2,
+        "reintentos": 1
       },
       {
         "caso_id": "A-017",
@@ -59,7 +63,8 @@
         },
         "evaluador": null,
         "nodo": "extractor",
-        "paso": 2
+        "paso": 2,
+        "reintentos": 2
       }
     ],
     "evaluadores": [
@@ -556,6 +561,10 @@
       "id": "suscripcion-planlang-a-001-20-v1.2",
       "limites_alcanzados": 0,
       "modelo": "sonnet",
+      "plan_de_ejecucion": {
+        "huella": "9add6e5ad5515a03e9efb8c1c691e0c6b38d414622ae028dd5f7bb8b529592c2",
+        "version": "1.2.0"
+      },
       "proveedor": "suscripcion",
       "sesiones": 1,
       "variante": "multiagente",
@@ -599,11 +608,11 @@
     },
     "verificador": {
       "formato": "planlang-informe/v1",
-      "version": "1.0.0"
+      "version": "1.2.0"
     }
   },
   "formato": "planlang-informe/v1",
-  "huella": "691e0e370bd0550588340c715062fc90d9c192d88261f4857695428269445553",
+  "huella": "e5d68065f343c4dc95824c06c481577e36f49da98323d62eb3fec455c0585f0b",
   "plan_en_breve": {
     "decisiones_una_via": [
       {
@@ -612,7 +621,10 @@
           "en": "Legal minimization and a trivial output guard.",
           "es": "Minimización legal (Ley 1581 arts. 3–6, RGPD 9) y guardia de salida trivial."
         },
-        "opcion_elegida": "solo edad, sexo, procedimiento, diagnóstico y texto del médico; nombre e identificación enmascarados antes del modelo",
+        "opcion_elegida": {
+          "en": "solo edad, sexo, procedimiento, diagnóstico y texto del médico; nombre e identificación enmascarados antes del modelo",
+          "es": "solo edad, sexo, procedimiento, diagnóstico y texto del médico; nombre e identificación enmascarados antes del modelo"
+        },
         "pregunta": {
           "en": "Which member data reach the model?",
           "es": "¿Qué datos del afiliado llegan al modelo?"
@@ -624,7 +636,10 @@
           "en": "State law and AI Act art. 14; app hard rule.",
           "es": "CA SB 1120, TX SB 815, AI Act art. 14; regla dura de la app."
         },
-        "opcion_elegida": "solo aprobar; negar y escalar exigen pausa humana",
+        "opcion_elegida": {
+          "en": "solo aprobar; negar y escalar exigen pausa humana",
+          "es": "solo aprobar; negar y escalar exigen pausa humana"
+        },
         "pregunta": {
           "en": "Which decisions may the agent take without a human?",
           "es": "¿Qué decisiones puede tomar el agente sin humano?"
@@ -809,7 +824,9 @@
   },
   "riesgos": [
     {
+      "ambito": "caso",
       "casos": [],
+      "control_legal": false,
       "decision_id": "D2",
       "deteccion": 3,
       "estado": "no_ocurrio",
@@ -826,13 +843,16 @@
       "ocurre_si": "> 0",
       "ocurrencia": 3,
       "prioridad_de_accion": "baja",
+      "prioridad_de_tabla": "baja",
       "rpn": 81,
       "severidad": 9,
       "tipo_detector": "conteo",
       "valor": 0
     },
     {
+      "ambito": "caso",
       "casos": [],
+      "control_legal": false,
       "decision_id": "D1",
       "deteccion": 4,
       "estado": "no_ocurrio",
@@ -849,13 +869,16 @@
       "ocurre_si": "> 0",
       "ocurrencia": 4,
       "prioridad_de_accion": "alta",
+      "prioridad_de_tabla": "alta",
       "rpn": 160,
       "severidad": 10,
       "tipo_detector": "conteo",
       "valor": 0
     },
     {
+      "ambito": "caso",
       "casos": [],
+      "control_legal": false,
       "decision_id": null,
       "deteccion": 4,
       "estado": "no_ocurrio",
@@ -872,13 +895,16 @@
       "ocurre_si": "> 0",
       "ocurrencia": 5,
       "prioridad_de_accion": "alta",
+      "prioridad_de_tabla": "alta",
       "rpn": 180,
       "severidad": 9,
       "tipo_detector": "conteo",
       "valor": 0
     },
     {
+      "ambito": "caso",
       "casos": [],
+      "control_legal": false,
       "decision_id": "D5",
       "deteccion": 2,
       "estado": "no_ocurrio",
@@ -895,13 +921,16 @@
       "ocurre_si": "> 0",
       "ocurrencia": 4,
       "prioridad_de_accion": "baja",
+      "prioridad_de_tabla": "baja",
       "rpn": 40,
       "severidad": 5,
       "tipo_detector": "conteo",
       "valor": 0
     },
     {
+      "ambito": "caso",
       "casos": [],
+      "control_legal": false,
       "decision_id": "D3",
       "deteccion": 5,
       "estado": "no_ocurrio",
@@ -918,13 +947,16 @@
       "ocurre_si": "> 0.10",
       "ocurrencia": 6,
       "prioridad_de_accion": "alta",
+      "prioridad_de_tabla": "alta",
       "rpn": 210,
       "severidad": 7,
       "tipo_detector": "tasa",
       "valor": 0
     },
     {
+      "ambito": "caso",
       "casos": [],
+      "control_legal": false,
       "decision_id": null,
       "deteccion": 2,
       "estado": "no_ocurrio",
@@ -941,13 +973,16 @@
       "ocurre_si": "> 0",
       "ocurrencia": 3,
       "prioridad_de_accion": "baja",
+      "prioridad_de_tabla": "baja",
       "rpn": 48,
       "severidad": 8,
       "tipo_detector": "conteo",
       "valor": 0
     },
     {
+      "ambito": "caso",
       "casos": [],
+      "control_legal": false,
       "decision_id": "D4",
       "deteccion": 4,
       "estado": "no_ocurrio",
@@ -964,13 +999,16 @@
       "ocurre_si": "> 0",
       "ocurrencia": 4,
       "prioridad_de_accion": "baja",
+      "prioridad_de_tabla": "baja",
       "rpn": 96,
       "severidad": 6,
       "tipo_detector": "conteo",
       "valor": 0
     },
     {
+      "ambito": "caso",
       "casos": [],
+      "control_legal": false,
       "decision_id": "D6",
       "deteccion": 2,
       "estado": "no_ocurrio",
@@ -987,6 +1025,7 @@
       "ocurre_si": "> 0",
       "ocurrencia": 5,
       "prioridad_de_accion": "baja",
+      "prioridad_de_tabla": "baja",
       "rpn": 40,
       "severidad": 4,
       "tipo_detector": "conteo",
@@ -1197,5 +1236,5 @@
     "bloqueantes": [],
     "valor": "cumple_con_alertas"
   },
-  "version_verificador": "1.0.0"
+  "version_verificador": "1.2.0"
 }

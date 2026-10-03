@@ -12,8 +12,10 @@ import { describe, expect, it } from "vitest";
 import { contraste } from "../../scripts/paleta/color.mjs";
 import {
   aCss,
+  aCssVitrina,
   generar,
   RUTA_CSS,
+  RUTA_CSS_VITRINA,
   RUTA_JSON,
   UMBRALES,
 } from "../../scripts/paleta/generar-tokens.mjs";
@@ -28,6 +30,28 @@ describe("diseno-tokens · sin deriva entre generador y archivos", () => {
   });
   it("tokens.css es lo que el generador produce", () => {
     expect(readFileSync(RUTA_CSS, "utf8")).toBe(aCss(tokens));
+  });
+  it("src/styles/tokens.css (vitrina, S2) es lo que el generador produce", () => {
+    expect(readFileSync(RUTA_CSS_VITRINA, "utf8")).toBe(aCssVitrina(tokens));
+  });
+  it("la vitrina y la maqueta declaran los mismos colores por tema", () => {
+    const vars = (css: string, sel: string) => {
+      const i = css.indexOf(sel);
+      const bloque = css.slice(i, css.indexOf("}", i));
+      return Object.fromEntries(
+        [...bloque.matchAll(/--([a-z0-9-]+): (#[0-9a-f]{6});/g)].map((m) => [m[1], m[2]]),
+      );
+    };
+    const maqueta = readFileSync(RUTA_CSS, "utf8");
+    const vitrina = readFileSync(RUTA_CSS_VITRINA, "utf8");
+    for (const sel of ['[data-theme="oscuro"]', '[data-theme="claro"] {']) {
+      expect(vars(vitrina, sel), sel).toEqual(vars(maqueta, sel));
+      expect(Object.keys(vars(vitrina, sel)).length, sel).toBe(23);
+    }
+    // Sin JS, el bloque de `prefers-color-scheme: light` repite exactamente el claro.
+    expect(vars(vitrina, ":root:not([data-theme])")).toEqual(
+      vars(maqueta, '[data-theme="claro"] {'),
+    );
   });
 });
 

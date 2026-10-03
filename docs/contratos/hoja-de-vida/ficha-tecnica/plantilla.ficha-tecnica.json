@@ -1,0 +1,166 @@
+{
+  "_plantilla": "Contrato «ficha técnica» v1.3.1. Reemplaza cada <marcador> y BORRA esta clave. Opcionales: proceso, procedencia_proceso, conclusiones, galeria (el proceso y su procedencia van juntos o no van). Las cifras llevan SIEMPRE su fuente, y no se escribe ni un enlace ni un DOI.",
+  "schema_version": "1.3.1",
+  "actualizado": "AAAA-MM-DD",
+  "pieza": {
+    "slug": "<kebab-case · máx 60>",
+    "nombre": "<texto · 1–60 caracteres>",
+    "frente": "<uno de: apps | agentes | investigaciones | tableros>",
+    "estado": "<uno de: inicial | sellado>",
+    "ciclo": "<texto · 1–16 caracteres>",
+    "version": "<texto · 1–20 caracteres>",
+    "sellado_en": "AAAA-MM-DD · o null",
+    "sprints_cerrados": 0
+  },
+  "promesa": {
+    "tagline": "<texto · 1–80 caracteres>",
+    "intro": "<texto · 1–400 caracteres>",
+    "para_quien": "<texto · 1–400 caracteres>"
+  },
+  "titular": "<texto · 1–240 caracteres>",
+  "stack": [
+    {
+      "nombre": "<texto · 1–40 caracteres>",
+      "papel": "<texto · 1–160 caracteres>"
+    }
+  ],
+  "cifras": [
+    {
+      "clave": "<texto · 1–60 caracteres>",
+      "valor": 1,
+      "unidad": "<texto · 1–40 caracteres>",
+      "etiqueta": "<texto · 1–60 caracteres>",
+      "fuente": "<uno de: medido | calculada | declarado | estimacion>",
+      "detalle": "<texto · 1–400 caracteres>"
+    },
+    {
+      "clave": "<texto · 1–60 caracteres>",
+      "valor": 1,
+      "unidad": "<texto · 1–40 caracteres>",
+      "etiqueta": "<texto · 1–60 caracteres>",
+      "fuente": "<uno de: medido | calculada | declarado | estimacion>",
+      "detalle": "<texto · 1–400 caracteres>"
+    },
+    {
+      "clave": "<texto · 1–60 caracteres>",
+      "valor": 1,
+      "unidad": "<texto · 1–40 caracteres>",
+      "etiqueta": "<texto · 1–60 caracteres>",
+      "fuente": "<uno de: medido | calculada | declarado | estimacion>",
+      "detalle": "<texto · 1–400 caracteres>"
+    }
+  ],
+  "bloques": [
+    {
+      "orden": 1,
+      "nombre": "<texto · 1–40 caracteres>",
+      "linea": "<texto · 1–120 caracteres>",
+      "cuenta": 0
+    },
+    {
+      "orden": 1,
+      "nombre": "<texto · 1–40 caracteres>",
+      "linea": "<texto · 1–120 caracteres>",
+      "cuenta": 0
+    }
+  ],
+  "proceso": {
+    "titulo": "<texto · 3–80 caracteres>",
+    "carriles": [
+      {
+        "id": "<kebab-case · máx 60>",
+        "nombre": "<texto · 1–40 caracteres>"
+      }
+    ],
+    "pasos": [
+      {
+        "id": "<kebab-case · máx 60>",
+        "tipo": "<uno de: inicio | tarea | decision | fin>",
+        "carril": "<kebab-case · máx 60>",
+        "texto": "<texto · 1–60 caracteres>"
+      },
+      {
+        "id": "<kebab-case · máx 60>",
+        "tipo": "<uno de: inicio | tarea | decision | fin>",
+        "carril": "<kebab-case · máx 60>",
+        "texto": "<texto · 1–60 caracteres>"
+      },
+      {
+        "id": "<kebab-case · máx 60>",
+        "tipo": "<uno de: inicio | tarea | decision | fin>",
+        "carril": "<kebab-case · máx 60>",
+        "texto": "<texto · 1–60 caracteres>"
+      }
+    ],
+    "flujos": [
+      {
+        "de": "<kebab-case · máx 60>",
+        "a": "<kebab-case · máx 60>",
+        "etiqueta": "<texto · 1–24 caracteres>"
+      },
+      {
+        "de": "<kebab-case · máx 60>",
+        "a": "<kebab-case · máx 60>",
+        "etiqueta": "<texto · 1–24 caracteres>"
+      }
+    ],
+    "anotaciones": [
+      {
+        "paso": "<kebab-case · máx 60>",
+        "texto": "<texto · 1–140 caracteres>"
+      }
+    ]
+  },
+  "procedencia_proceso": "<uno de: app | cv-viva | planeadora>",
+  "limites": [
+    "<texto · 1–160 caracteres>",
+    "<texto · 1–160 caracteres>"
+  ],
+  "nunca": [
+    "<texto · 1–160 caracteres>",
+    "<texto · 1–160 caracteres>"
+  ],
+  "hitos": [
+    {
+      "valor": "<texto · 1–24 caracteres>",
+      "etiqueta": "<texto · 1–40 caracteres>"
+    },
+    {
+      "valor": "<texto · 1–24 caracteres>",
+      "etiqueta": "<texto · 1–40 caracteres>"
+    },
+    {
+      "valor": "<texto · 1–24 caracteres>",
+      "etiqueta": "<texto · 1–40 caracteres>"
+    }
+  ],
+  "conclusiones": [
+    {
+      "cifra": "<texto · 1–16 caracteres>",
+      "unidad": "<texto · 1–24 caracteres>",
+      "titulo": "<texto · 1–60 caracteres>",
+      "texto": "<texto · 1–240 caracteres>",
+      "fuente": "<uno de: medido | calculada | declarado | estimacion>"
+    },
+    {
+      "cifra": "<texto · 1–16 caracteres>",
+      "unidad": "<texto · 1–24 caracteres>",
+      "titulo": "<texto · 1–60 caracteres>",
+      "texto": "<texto · 1–240 caracteres>",
+      "fuente": "<uno de: medido | calculada | declarado | estimacion>"
+    },
+    {
+      "cifra": "<texto · 1–16 caracteres>",
+      "unidad": "<texto · 1–24 caracteres>",
+      "titulo": "<texto · 1–60 caracteres>",
+      "texto": "<texto · 1–240 caracteres>",
+      "fuente": "<uno de: medido | calculada | declarado | estimacion>"
+    }
+  ],
+  "galeria": [
+    {
+      "archivo": "<texto · 1–120 caracteres>",
+      "pie": "<texto · 1–80 caracteres>"
+    }
+  ]
+}

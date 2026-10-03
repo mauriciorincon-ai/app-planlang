@@ -26,7 +26,7 @@ describe("render del informe", () => {
       expect(md).not.toMatch(/undefined|NaN|\[object Object\]/);
       expect(md.endsWith("\n")).toBe(true);
       expect(md).toMatch(
-        i === "es" ? /⚠ CUMPLE CON ALERTAS/ : /⚠ MET WITH ALERTS/,
+        i === "es" ? /⚠ CUMPLE CON ALERTAS/ : /⚠ MEETS WITH WARNINGS/,
       );
       expect(md).toMatch(
         i === "es"
@@ -54,11 +54,31 @@ describe("render del informe", () => {
         (s) => s.id === "dato_sensible_en_salida",
       )!.aplicar(entradaSimulada());
       const md = renderizarInforme(await generarInforme(e), i);
-      expect(md).toMatch(i === "es" ? /✗ NO CUMPLE/ : /✗ NOT MET/);
+      expect(md).toMatch(i === "es" ? /✗ NO CUMPLE/ : /✗ DOES NOT MEET/);
       expect(md).toMatch(i === "es" ? /- Bloquea: C2/ : /- Blocks: C2/);
       expect(md).toMatch(/R2 \(/);
     },
   );
+  it("M-24: cada brecha dice su categoría y sus reintentos; los evaluadores, sus no evaluables", async () => {
+    const inf = await generarInforme(entradaReal());
+    const es = renderizarInforme(inf, "es");
+    const en = renderizarInforme(inf, "en");
+    expect(es).toContain("| Fallas | No evaluables | Riesgos que cubre |");
+    expect(en).toContain("| Failures | Not evaluable | Risks it covers |");
+    const conReintento = inf.brechas_no_previstas.brechas.filter(
+      (b) => b.categoria === "reintento_de_esquema",
+    );
+    expect(conReintento.length).toBeGreaterThan(0);
+    for (const b of conReintento) {
+      expect(b.reintentos).toBeGreaterThan(0);
+      expect(es).toMatch(
+        new RegExp(
+          `\\*\\*${b.caso_id}\\*\\* · reintento de salida estructurada .* · ${b.reintentos} reintentos?:`,
+        ),
+      );
+    }
+    expect(en).toMatch(/· structured-output retry ·/);
+  });
   it("hallazgos del contrato y repeticiones en la ficha", async () => {
     const e = entradaSimulada();
     const inf = await generarInforme({

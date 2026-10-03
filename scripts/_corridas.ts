@@ -73,6 +73,8 @@ export function entradaDesdeDisco(
     base?: string | null;
     repeticiones?: string[];
     raiz?: string;
+    /** Verificar contra OTRO plan que el de la corrida (ADR-005): el verificador exige la misma verdad. */
+    plan?: string;
   } = {},
 ): EntradaVerificador {
   const raiz = opciones.raiz ?? ".";
@@ -81,13 +83,22 @@ export function entradaDesdeDisco(
     plan: { archivo: string };
     casos: { archivo: string };
   };
-  const planArchivo = join(raiz, m.plan.archivo);
+  const planDeLaCorridaArchivo = join(raiz, m.plan.archivo);
+  const planArchivo = opciones.plan
+    ? join(raiz, opciones.plan)
+    : planDeLaCorridaArchivo;
   const plan = json(planArchivo);
   const casos = json(join(raiz, m.casos.archivo));
   return {
     plan,
     casos,
     planDelLote: planDelLote(planArchivo, plan, casos),
+    ...(opciones.plan
+      ? {
+          planDeLaCorrida: json(planDeLaCorridaArchivo),
+          archivoPlan: opciones.plan,
+        }
+      : {}),
     corrida,
     repeticiones: (opciones.repeticiones ?? []).map(archivosDeCorrida),
     base: opciones.base ? archivosDeCorrida(opciones.base) : null,

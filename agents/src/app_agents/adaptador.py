@@ -88,9 +88,16 @@ class ErrorProveedor(RuntimeError):
         super().__init__(f"{tipo}: {detalle}" if detalle else tipo)
 
 
-def argv_claude(
-    modelo: str, system_prompt: str, json_schema: dict[str, Any] | None = None, max_turns: int = 1
-) -> list[str]:
+def turnos_maximos(json_schema: dict[str, Any] | None) -> int:
+    """Regla 6 (constitución S2, ADR-004 enmendado): `--max-turns 2` ÚNICAMENTE cuando va `--json-schema`.
+
+    Con un solo turno el CLI corta con `error_max_turns` hasta el 56 % de las llamadas estructuradas (S1).
+    No es configurable a propósito: la regla fija el número, no quien llama.
+    """
+    return 2 if json_schema is not None else 1
+
+
+def argv_claude(modelo: str, system_prompt: str, json_schema: dict[str, Any] | None = None) -> list[str]:
     """La línea de comando EXACTA de la regla 6. Un test la compara literalmente (gate 7-S)."""
     cmd = [
         CLAUDE_BIN,
@@ -100,7 +107,7 @@ def argv_claude(
         "--model",
         modelo,
         "--max-turns",
-        str(max_turns),
+        str(turnos_maximos(json_schema)),
         "--no-session-persistence",
         "--strict-mcp-config",
         "--mcp-config",
@@ -151,9 +158,9 @@ def _es_limite(texto: str) -> bool:
 def _clasificar_is_error(data: dict[str, Any], con_esquema: bool) -> ErrorProveedor:
     """El CLI reporta el fallo en su JSON (`is_error` + `subtype`), a veces con rc = 1 y stderr vacío.
 
-    Con `--json-schema` y `--max-turns 1`, el modelo a veces necesita un segundo turno para entregar la
-    salida estructurada y el CLI corta con `error_max_turns` (hallazgo de la corrida real del S1): es una
-    salida estructurada que no llegó, así que cuenta como `esquema_invalido` y se reintenta (§ 9.1).
+    Con `--json-schema`, el modelo a veces necesita más turnos de los que tiene y el CLI corta con
+    `error_max_turns` (S1, con 1 turno: entre el 6 % y el 56 % de las llamadas; desde el S2 van 2, regla 6):
+    es una salida estructurada que no llegó, así que cuenta como `esquema_invalido` y se reintenta (§ 9.1).
     """
     subtipo = str(data.get("subtype") or "")
     costo = float(data.get("total_cost_usd") or 0.0)
@@ -192,7 +199,6 @@ class ChatClaudeCode(BaseChatModel):
 
     modelo: str = MODELO_POR_DEFECTO
     json_schema: dict[str, Any] | None = None
-    max_turns: int = 1
     timeout_s: int = 180
     cwd: str | None = None  # se crea perezosamente; siempre temporal y limpio
     ejecutar: Callable[..., subprocess.CompletedProcess[str]] = Field(default=subprocess.run, exclude=True)
@@ -205,7 +211,7 @@ class ChatClaudeCode(BaseChatModel):
     def _identifying_params(self) -> dict[str, Any]:
         return {
             "modelo": self.modelo,
-            "max_turns": self.max_turns,
+            "max_turns": turnos_maximos(self.json_schema),
             "json_schema": self.json_schema is not None,
         }
 
@@ -223,7 +229,7 @@ class ChatClaudeCode(BaseChatModel):
     ) -> ChatResult:
         system = "\n".join(str(m.content) for m in messages if isinstance(m, SystemMessage))
         prompt = "\n\n".join(str(m.content) for m in messages if not isinstance(m, SystemMessage))
-        cmd = argv_claude(self.modelo, system, self.json_schema, self.max_turns)
+        cmd = argv_claude(self.modelo, system, self.json_schema)
         t0 = time.monotonic()
         try:
             proc = self.ejecutar(
@@ -237,6 +243,10 @@ class ChatClaudeCode(BaseChatModel):
             )
         except subprocess.TimeoutExpired as e:
             raise ErrorProveedor("timeout", f"{self.timeout_s}s") from e
+        except OSError as e:
+            # M-9: sin el binario o sin permiso para ejecutarlo, el caso falla clasificado: no tumba
+            # la sesión.
+            raise ErrorProveedor("otro", f"no se pudo ejecutar el CLI: {type(e).__name__}") from e
         latencia_ms = int((time.monotonic() - t0) * 1000)
         con_esquema = self.json_schema is not None
         if proc.returncode != 0:
@@ -432,6 +442,58 @@ def proveedor_activo() -> str:
     return valor
 
 
+def clasificar_excepcion(e: BaseException) -> ErrorProveedor:
+    """Un error del interruptor (API de Anthropic o Groq) con el vocabulario de la traza (M-9).
+
+    Solo el nombre de la clase y el código HTTP: el mensaje de un proveedor puede traer el contenido del caso.
+    """
+    nombre = type(e).__name__
+    estado = getattr(e, "status_code", None) or getattr(getattr(e, "response", None), "status_code", None)
+    if estado == 429 or "RateLimit" in nombre:
+        return ErrorProveedor("limite_de_uso", nombre)
+    if "Timeout" in nombre:
+        return ErrorProveedor("timeout", nombre)
+    return ErrorProveedor("otro", f"{nombre} {estado}" if estado else nombre)
+
+
+def _con_clasificacion(llamar: Callable[[], Any]) -> Any:
+    try:
+        return llamar()
+    except ErrorProveedor:
+        raise
+    except Exception as e:
+        raise clasificar_excepcion(e) from e
+
+
+class InterruptorClasificado(BaseChatModel):
+    """El modelo del interruptor con sus errores clasificados (M-9).
+
+    Un fallo de la API llega al lote como `ErrorProveedor` (traza parcial, o sesión detenida si es un
+    límite), no como una excepción que nadie esperaba. Delega todo lo demás en el modelo envuelto.
+    """
+
+    interno: Any
+
+    @property
+    def _llm_type(self) -> str:
+        return f"clasificado:{getattr(self.interno, '_llm_type', 'modelo')}"
+
+    def _generate(
+        self,
+        messages: list[BaseMessage],
+        stop: list[str] | None = None,
+        run_manager: CallbackManagerForLLMRun | None = None,
+        **kwargs: Any,
+    ) -> ChatResult:
+        return _con_clasificacion(
+            lambda: self.interno._generate(messages, stop=stop, run_manager=run_manager, **kwargs)
+        )
+
+    def with_structured_output(self, schema: Any, **kwargs: Any) -> Runnable:
+        estructurado = self.interno.with_structured_output(schema, **kwargs)
+        return RunnableLambda(lambda entrada: _con_clasificacion(lambda: estructurado.invoke(entrada)))
+
+
 def crear_modelo(
     proveedor: str | None = None,
     *,
@@ -450,15 +512,18 @@ def crear_modelo(
             from langchain_anthropic import ChatAnthropic  # extra opcional
         except ImportError as e:  # pragma: no cover - depende del entorno
             raise RuntimeError("instala el extra: pip install -e '.[anthropic]'") from e
-        return ChatAnthropic(
-            model=modelo or os.environ.get(VARIABLE_MODELO_INTERRUPTOR, MODELO_ANTHROPIC_POR_DEFECTO)
+        return InterruptorClasificado(
+            interno=ChatAnthropic(
+                model=modelo or os.environ.get(VARIABLE_MODELO_INTERRUPTOR, MODELO_ANTHROPIC_POR_DEFECTO)
+            )
         )
     if p == "groq":
         try:
             from langchain_groq import ChatGroq  # extra opcional
         except ImportError as e:  # pragma: no cover - depende del entorno
             raise RuntimeError("instala el extra: pip install -e '.[groq]'") from e
-        return ChatGroq(model=modelo or os.environ.get(VARIABLE_MODELO_INTERRUPTOR, MODELO_GROQ_POR_DEFECTO))
+        nombre = modelo or os.environ.get(VARIABLE_MODELO_INTERRUPTOR, MODELO_GROQ_POR_DEFECTO)
+        return InterruptorClasificado(interno=ChatGroq(model=nombre))
     raise ValueError(p)  # pragma: no cover - proveedor_activo ya valida
 
 
@@ -476,9 +541,12 @@ __all__: Sequence[str] = (
     "ChatClaudeCode",
     "ChatSimulado",
     "ErrorProveedor",
+    "InterruptorClasificado",
     "PROVEEDORES",
     "VARIABLES_PROHIBIDAS_EN_HIJO",
     "argv_claude",
+    "clasificar_excepcion",
+    "turnos_maximos",
     "crear_modelo",
     "cwd_limpio",
     "entorno_hijo",

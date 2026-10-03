@@ -23,11 +23,20 @@ jobs:
         with: { node-version: 22, cache: pnpm }
       - run: pnpm install --frozen-lockfile
       - run: pnpm peers check     # unico gate que ve un peer insatisfecho (kit v1.24.0 — caso @supabase/ssr)
+      - name: Regla 18 — ningun paquete por debajo de main (kit v1.32.0)
+        if: github.event_name == 'pull_request'
+        run: |
+          git fetch origin main --depth=1
+          node scripts/verificar-dependencias.mjs origin/main
       - run: pnpm typecheck
       - run: pnpm lint
       - run: pnpm test            # vitest run --coverage (umbral 70% en vitest.config)
       - run: pnpm trazas:verificar # corridas versionadas: huellas, umbrales del plan, RF-09.2 y barrido de credenciales (S1)
       - run: pnpm build
+      - name: Export de la vitrina — sin localhost, recursos y enlaces que existen, rótulo, sin maqueta (S2)
+        run: node scripts/verificar-export.mjs
+      - name: Diagrama = grafo sobre lo publicado — el lienzo de out/ dibuja el grafo de la corrida (S2)
+        run: pnpm diagrama:verificar
       - run: pnpm audit --audit-level high
 
   e2e:
@@ -41,6 +50,10 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm test:e2e        # incluye scans axe (@axe-core/playwright)
+      # ADR-009: el paquete para hoja-de-vida — gate de publicación, build bajo /piezas/planlang, barridos y
+      # manifiesto; luego se sirve como lo serviría hoja-de-vida (sin URL limpias) y se rastrean todos los enlaces.
+      - run: pnpm paquete:vitrina
+      - run: pnpm test:e2e:paquete
       # El primer reintento graba trace (playwright.config `trace: on-first-retry`) con
       # consola, errores y DOM — se sube SOLO cuando algo falla (kit v1.26.0).
       - uses: actions/upload-artifact@v7

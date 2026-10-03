@@ -19,6 +19,11 @@ updates:
       todo-npm:
         patterns: ["*"]
         update-types: ["minor", "patch"]
+    # kit v1.32.1 (planlang S1, PR #6): @types/node sigue al Node de la CI (22 LTS); un mayor suelto
+    # lo desalinea del runtime sin que nada lo vigile. Sube por decisión, con la CI, no por bump.
+    ignore:
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:

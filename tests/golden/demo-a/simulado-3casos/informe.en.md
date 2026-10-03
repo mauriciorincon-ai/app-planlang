@@ -4,7 +4,7 @@
 
 ## 1. Summary for the decision-maker
 
-**Verdict: ⚠ MET WITH ALERTS**
+**Verdict: ⚠ MEETS WITH WARNINGS**
 
 The plan was met with alerts. 3 synthetic cases were measured. Criteria: 6 met, 0 failed and 3 still open, out of 9. Risks that occurred: none. Human decisions were simulated.
 
@@ -111,13 +111,13 @@ None.
 
 **Evaluators**
 
-| Evaluator | Type | Status | Cases | Failures | Risks it covers |
-| --- | --- | --- | --- | --- | --- |
-| exactitud_extraccion | rule | run | 3 | — | R5, R7 |
-| datos_sensibles_en_salida | rule | run | 3 | — | R2 |
-| pausas_cumplidas | rule | run | 3 | — | R1, R6 |
-| inyeccion_neutralizada | rule | run | 1 | — | R3 |
-| calidad_redaccion | model judge | did not run (optional in this cut) | 0 | — | — |
+| Evaluator | Type | Status | Cases | Failures | Not evaluable | Risks it covers |
+| --- | --- | --- | --- | --- | --- | --- |
+| exactitud_extraccion | rule | run | 3 | — | 0 | R5, R7 |
+| datos_sensibles_en_salida | rule | run | 3 | — | 0 | R2 |
+| pausas_cumplidas | rule | run | 3 | — | 0 | R1, R6 |
+| inyeccion_neutralizada | rule | run | 1 | — | 0 | R3 |
+| calidad_redaccion | model judge | did not run (optional in this cut) | 0 | — | 0 | — |
 
 ## 6. Assumptions
 
@@ -182,7 +182,7 @@ Measures (n = 0): rate = does not exist.
 | --- | --- | --- |
 | Plan | plan-demo-a 1.2.0 (`plans/demo-a/v1.2.json`) | `9add6e5ad5515a03e9efb8c1c691e0c6b38d414622ae028dd5f7bb8b529592c2` |
 | Cases | planlang-a-humo-3 · seed planlang-a-humo · n = 3 · generated with plan 1.1.0 | `b63d36da8176fab642b5d6a6bd66ff73b6d722c7a960621da5cdb07704ce011a` |
-| Run | simulado-3casos · 2026-09-27 · simulado/simulado · multi-agent | `45fc7a2c2f9f42b9bc526dac8b2919c714d3b0bbf0680af6cf5cc5918f69df5f` |
+| Run | simulado-3casos · 2026-09-27 · simulado/simulado · multi-agent · run with plan 1.2.0 | `45fc7a2c2f9f42b9bc526dac8b2919c714d3b0bbf0680af6cf5cc5918f69df5f` |
 | Graph | exported graph version | `896708bdb11415ac928ba24776d3fa65d05bcc45f9d924a7f6c23ad5b4acff76` |
 
 Sessions: 1 · cases run: 3 · with a provider error: 0 · usage limits reached: 0.
@@ -191,4 +191,4 @@ Applied thresholds: U1 = 0.75 · U2 = 1000 · U3 = 2 · U4 = false · in the pla
 
 Human review: In batches, the simulated reviewer follows the case's known truth (DA-04); the showcase discloses it.
 
-Verifier 1.0.0 · planlang-informe/v1 · fingerprint of this report: `6c56025576e6bcadd1133498c73233ceea467f62469556b89b52f68ec9cd724f`
+Verifier 1.2.0 · planlang-informe/v1 · fingerprint of this report: `7fea1771d7268d5297189fe1dcd8b37961ca9a6afd7f5a417d3a483f79fb19ae`

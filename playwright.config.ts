@@ -17,14 +17,19 @@ export default defineConfig({
     baseURL: "http://localhost:3000",
     trace: "on-first-retry",
   },
+  // S2: el teléfono se mide a 380 px (design-system § 2.4 y la orden); el Pixel 7 de Playwright mide 412, así
+  // que se conserva el dispositivo (táctil, escala) y se fuerza el ancho.
   projects: [
     {
-      name: "mobile-chromium",
-      use: { ...devices["Pixel 7"] },
+      name: "telefono",
+      use: { ...devices["Pixel 7"], viewport: { width: 380, height: 800 } },
     },
     {
-      name: "desktop-chromium",
-      use: { ...devices["Desktop Chrome"] },
+      name: "escritorio",
+      use: {
+        ...devices["Desktop Chrome"],
+        viewport: { width: 1280, height: 800 },
+      },
     },
   ],
   webServer: {

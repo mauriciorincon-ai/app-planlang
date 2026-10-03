@@ -5,6 +5,9 @@
  *  - claves ordenadas por unidades de código UTF-16 (el `sort()` por defecto de JavaScript);
  *  - números en el formato ES6 `Number.prototype.toString` (lo que hace `JSON.stringify`); `-0` → `0`;
  *  - cadenas con el escape mínimo de JSON (control < 0x20 como `\u00xx` en minúscula, `"` y `\`);
+ *  - cadenas y claves en NFC, como el lado Python (`unicodedata.normalize("NFC")`): dos textos que se ven igual dan
+ *    la misma huella aunque lleguen compuestos de otra forma; si dos claves coinciden tras normalizar, gana la
+ *    última, como en el `dict` de Python (M-13);
  *  - sin espacios en blanco. `NaN`, `Infinity`, `undefined`, funciones y símbolos son errores:
  *    un valor no representable jamás entra a un artefacto con huella.
  *
@@ -34,7 +37,7 @@ export function jcs(valor: unknown, ruta = "$"): string {
         throw new ErrorNoCanonico(`${ruta}: número no finito`);
       return JSON.stringify(Object.is(valor, -0) ? 0 : valor);
     case "string":
-      return JSON.stringify(valor);
+      return JSON.stringify(valor.normalize("NFC"));
     case "object":
       break;
     default:
@@ -46,12 +49,15 @@ export function jcs(valor: unknown, ruta = "$"): string {
     return "[" + valor.map((v, i) => jcs(v, `${ruta}[${i}]`)).join(",") + "]";
   }
   const objeto = valor as Record<string, unknown>;
-  const claves = Object.keys(objeto)
-    .filter((k) => objeto[k] !== undefined)
-    .sort();
+  const normalizado = new Map<string, unknown>();
+  for (const k of Object.keys(objeto))
+    if (objeto[k] !== undefined) normalizado.set(k.normalize("NFC"), objeto[k]);
+  const claves = [...normalizado.keys()].sort();
   const partes: string[] = [];
   for (const k of claves) {
-    partes.push(JSON.stringify(k) + ":" + jcs(objeto[k], `${ruta}.${k}`));
+    partes.push(
+      JSON.stringify(k) + ":" + jcs(normalizado.get(k), `${ruta}.${k}`),
+    );
   }
   return "{" + partes.join(",") + "}";
 }

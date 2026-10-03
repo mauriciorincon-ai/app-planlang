@@ -88,3 +88,53 @@ describe("guardia de determinismo del núcleo", () => {
     expect(todos).toEqual([]);
   });
 });
+
+/**
+ * G2 del diagramador, además de lo anterior, para `core/visor`: sin funciones inexactas (su resultado puede
+ * cambiar entre motores), sin `**`, sin `localeCompare` y sin medir texto en el DOM (G15: la tabla mide).
+ * Demo en rojo (bitácora S2): un `Math.cos` en `core/visor/geometria.ts`.
+ */
+const REGLAS_G2: ReadonlyArray<{ nombre: string; patron: RegExp }> = [
+  {
+    nombre: "Math inexacta",
+    patron:
+      /\bMath\.(sin|cos|tan|asin|acos|atan2?|exp|expm1|log\w*|pow|cbrt|hypot|sinh|cosh|tanh)\b/,
+  },
+  { nombre: "**", patron: /[\w)\]]\s*\*\*\s*[\w(]/ },
+  { nombre: "localeCompare", patron: /\blocaleCompare\b/ },
+  {
+    nombre: "medición del DOM",
+    patron: /\b(getBBox|getComputedTextLength|measureText)\b/,
+  },
+];
+
+function hallazgosG2(texto: string, archivo: string): string[] {
+  const out: string[] = [];
+  texto.split("\n").forEach((linea, i) => {
+    const t = linea.trimStart();
+    if (t.startsWith("//") || t.startsWith("*")) return;
+    for (const r of REGLAS_G2)
+      if (r.patron.test(linea)) out.push(`${archivo}:${i + 1} ${r.nombre}`);
+  });
+  return out;
+}
+
+describe("guardia G2 del visor", () => {
+  it("la carnada dispara cada regla (el gate puede fallar)", () => {
+    const h = hallazgosG2(
+      readFileSync("tests/fixtures/guardias/carnada-visor-g2.txt", "utf8"),
+      "carnada",
+    );
+    expect(h).toHaveLength(13);
+    for (const r of REGLAS_G2)
+      expect(h.some((x) => x.endsWith(r.nombre))).toBe(true);
+  });
+
+  it("core/visor no usa funciones inexactas, `**`, localeCompare ni medición del DOM", () => {
+    const archivos = archivosTs("core/visor");
+    expect(archivos.length).toBeGreaterThan(5);
+    expect(
+      archivos.flatMap((a) => hallazgosG2(readFileSync(a, "utf8"), a)),
+    ).toEqual([]);
+  });
+});

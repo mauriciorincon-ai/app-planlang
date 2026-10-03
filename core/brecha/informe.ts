@@ -3,7 +3,7 @@
  * del que salen los Markdown en español y en inglés (`render-md.ts`). Dos ejecuciones sobre los mismos
  * archivos dan los mismos bytes: no hay reloj (la fecha es la de la corrida), ni azar, ni `Intl`.
  */
-import type { TextoBilingue } from "../formatos/bilingue";
+import { comoBilingue, type TextoBilingue } from "../formatos/bilingue";
 import { conHuella } from "../formatos/huella";
 import type { JsonValor } from "../formatos/jcs";
 import { ligadurasDeUmbrales } from "../plan/contrato-constructor";
@@ -18,7 +18,11 @@ import {
   type BrechaNoPrevista,
   type ResultadoEvaluador,
 } from "./brechas-no-previstas";
-import { vistasDeCorrida, type VistaDeCaso } from "./contexto";
+import {
+  vistasDeCorrida,
+  vistasDeSesiones,
+  type VistaDeCaso,
+} from "./contexto";
 import { verificarContrato, type ResultadoContrato } from "./contrato-grafo";
 import { evaluarCriterios, type ResultadoCriterio } from "./criterios";
 import { evaluarRiesgos, type ResultadoRiesgo } from "./detectores";
@@ -36,7 +40,13 @@ import {
 } from "./veredicto";
 
 export const FORMATO_INFORME = "planlang-informe/v1";
-export const VERSION_VERIFICADOR = "1.0.0";
+/**
+ * 1.1.0 (S2): cada riesgo trae la prioridad de tabla y el control legal junto a la efectiva (instrumentos-de-plan
+ * v0.2.0, G8); `opcion_elegida` de las decisiones de una vía es bilingüe (M-25).
+ * 1.2.0 (S2, fase 3): cada brecha no prevista trae `reintentos` (M-24); un criterio con métrica cuya población no
+ * tiene un solo valor medido queda `indeterminado`, no `sin_poblacion`, y su nota dice el sentido del objetivo (M-26).
+ */
+export const VERSION_VERIFICADOR = "1.2.0";
 
 export interface CasoEjemplar {
   caso_id: string;
@@ -87,7 +97,7 @@ export interface Informe {
     decisiones_una_via: {
       id: string;
       pregunta: TextoBilingue;
-      opcion_elegida: string | null;
+      opcion_elegida: TextoBilingue | null;
       justificacion: TextoBilingue | null;
     }[];
   };
@@ -129,6 +139,8 @@ export interface Informe {
       casos_ejecutados: number;
       casos_con_error: number;
       limites_alcanzados: number;
+      /** El plan con que se ejecutó (puede ser anterior al verificado si solo cambió la medición, ADR-005). */
+      plan_de_ejecucion: { version: string; huella: string };
     };
     repeticiones: { corrida_id: string; huella: string }[];
     linea_base: { corrida_id: string; huella: string } | null;
@@ -247,6 +259,8 @@ export function resumenDelInforme(
         : "the unforeseen gaps"
       : "";
   const completo = plan.lotes.completo;
+  // Si la corrida ya es el lote completo, la recomendación no lo anuncia como el paso siguiente (AU-S2-B43).
+  const yaEsElCompleto = n >= completo;
   const recomendacion: TextoBilingue =
     v.valor === "no_cumple"
       ? {
@@ -254,14 +268,24 @@ export function resumenDelInforme(
           en: `Do not extend the agent to more cases: first fix ${lista(p, "what is flagged")} and rerun the batch.`,
         }
       : v.valor === "cumple_con_alertas"
-        ? {
-            es: `Puede seguir, con cuidado: antes del lote de ${completo} casos, revise ${p.join(", ")}${extraEs}.`,
-            en: `You may go on, carefully: before the ${completo}-case batch, review ${p.join(", ")}${extraEn}.`,
-          }
-        : {
-            es: `El plan se cumplió en este lote: el siguiente paso es el lote de ${completo} casos.`,
-            en: `The plan was met in this batch: the next step is the ${completo}-case batch.`,
-          };
+        ? yaEsElCompleto
+          ? {
+              es: `Puede seguir, con cuidado: este ya es el lote completo de ${completo} casos; antes de ampliar el agente, revise ${p.join(", ")}${extraEs}.`,
+              en: `You may go on, carefully: this is already the full ${completo}-case batch; before extending the agent, review ${p.join(", ")}${extraEn}.`,
+            }
+          : {
+              es: `Puede seguir, con cuidado: antes del lote de ${completo} casos, revise ${p.join(", ")}${extraEs}.`,
+              en: `You may go on, carefully: before the ${completo}-case batch, review ${p.join(", ")}${extraEn}.`,
+            }
+        : yaEsElCompleto
+          ? {
+              es: `El plan se cumplió en el lote completo de ${completo} casos.`,
+              en: `The plan was met in the full ${completo}-case batch.`,
+            }
+          : {
+              es: `El plan se cumplió en este lote: el siguiente paso es el lote de ${completo} casos.`,
+              en: `The plan was met in this batch: the next step is the ${completo}-case batch.`,
+            };
   return {
     texto,
     criterios_destacados: criteriosDestacados(criterios),
@@ -529,7 +553,7 @@ export async function generarInforme(
     vistas,
     e.repeticiones.map(vistasDe),
   );
-  const riesgos = evaluarRiesgos(plan, vistas);
+  const riesgos = evaluarRiesgos(plan, vistas, vistasDeSesiones(m.sesiones));
   const supuestos = evaluarSupuestos(
     plan,
     vistas,
@@ -546,7 +570,11 @@ export async function generarInforme(
   // Las repeticiones que cierran pass^k también se miran: sus riesgos y sus brechas se reportan (AU-2).
   const deRepeticiones = e.repeticiones.map((r) => {
     const vs = vistasDe(r);
-    const rs = evaluarRiesgos(plan, vs);
+    const rs = evaluarRiesgos(
+      plan,
+      vs,
+      vistasDeSesiones(r.manifiesto.sesiones),
+    );
     return {
       id: r.manifiesto.corrida_id,
       riesgos: rs,
@@ -597,7 +625,9 @@ export async function generarInforme(
         .map((d) => ({
           id: d.id,
           pregunta: d.pregunta,
-          opcion_elegida: d.opcion_elegida ?? null,
+          opcion_elegida: d.opcion_elegida
+            ? comoBilingue(d.opcion_elegida)
+            : null,
           justificacion: d.justificacion ?? null,
         })),
     },
@@ -612,7 +642,7 @@ export async function generarInforme(
       plan: {
         id: plan.id,
         version: plan.version,
-        archivo: m.plan.archivo,
+        archivo: entrada.archivoPlan ?? m.plan.archivo,
         huella: e.huellaPlan,
       },
       casos: {
@@ -641,6 +671,7 @@ export async function generarInforme(
           (n, s) => n + s.limites_alcanzados,
           0,
         ),
+        plan_de_ejecucion: e.planCorrida,
       },
       repeticiones: e.repeticiones.map((r) => ({
         corrida_id: r.manifiesto.corrida_id,

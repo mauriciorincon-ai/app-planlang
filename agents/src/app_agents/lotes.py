@@ -255,122 +255,140 @@ def ejecutar_lote(
         detalle=f"espejo_langsmith={'si' if _espejo_langsmith() else 'no'}",
     )
 
-    for i, caso in enumerate(a_correr):
-        entorno = EntornoSimulado(caso)
-        llm = crear_modelo("simulado", respondedor=RespondedorSimulado(entorno)) if simulado else modelo_real
-        ctx = ContextoCaso(caso["id"], llm, entorno, RelojFijo() if reloj == "fijo" else RelojReal())
-        config = {
-            "configurable": {"thread_id": f"{corrida_id}:{caso['id']}:s{sesion_n}"},
-            "run_name": f"demo-a:{caso['id']}",
-            "tags": [corrida_id, variante],
-            "metadata": {"caso_id": caso["id"], "corrida_id": corrida_id, "plan_version": plan.version},
-        }
-        error = None
-        try:
-            final = ejecutar_caso(app, caso, ctx, config, umbrales)
-        except ErrorProveedor as e:
-            if e.tipo == "limite_de_uso":
-                resumen.limites_alcanzados += 1
-                resumen.detenida_por = "limite_de_uso"
-                registrar("limite_de_uso", corrida_id=corrida_id, caso_id=caso["id"], error_proveedor=e.tipo)
-                break
-            error = {
-                "costo_usd": round(e.costo_usd, 6),
-                "nodo": getattr(e, "nodo", "desconocido"),
-                "tipo": e.tipo,
+    def escribir() -> None:
+        """Escribe la sesión y las trazas obtenidas: en el camino normal y ante cualquier excepción (M-9)."""
+        resumen.pendientes = len(pendientes) - len(resumen.ejecutados)
+        sesiones = list(previo["sesiones"]) if previo else []
+        sesiones.append(
+            {
+                "casos_ejecutados": resumen.ejecutados,
+                "detenida_por": resumen.detenida_por,
+                "fecha": fecha,
+                "limites_alcanzados": resumen.limites_alcanzados,
+                "numero": sesion_n,
             }
-            # Solo al log local (stderr), truncado: el detalle del CLI jamás entra a la traza.
+        )
+        if not trazas:
+            return
+        grafo = grafo_json(
+            app,
+            demo_id="demo-a",
+            variante=variante,
+            contrato=plan.contrato,
+            aristas=contrato.aristas,
+            ramas_por_defecto=contrato.ramas_resueltas(),
+            tipos=contrato.tipos,
+        )
+        ejecutados = [c for c in orden_lote if c in trazas]
+        manifiesto = {
+            "formato": FORMATO_TRAZA,
+            "tipo": "corrida",
+            "corrida_id": corrida_id,
+            "demo_id": "demo-a",
+            "variante": variante,
+            "fecha": previo["fecha"] if previo else fecha,
+            "plan": plan.referencia(),
+            "plan_beneficios": {**pb.referencia(), "archivo": _relativa(_ruta(beneficios_ruta))},
+            "casos": {
+                "archivo": _relativa(lote_ruta),
+                "huella": lote["huella"],
+                "id": lote["id"],
+                "n_lote": lote["n"],
+                "semilla": lote["semilla"],
+            },
+            "proveedor": proveedor,
+            "modelo": modelo_nombre,
+            "umbrales_aplicados": umbrales,
+            "revisor_simulado": plan.contrato["pausas_humanas"][0]["politica_simulada"],
+            "sesiones": sesiones,
+            "casos_ejecutados": ejecutados,
+            "casos_con_error": [c for c in ejecutados if trazas[c]["resultado"] == "error"],
+            "ficha": _ficha(variante, proveedor, modelo_nombre, lote),
+        }
+        escribir_corrida(
+            directorio,
+            manifiesto=manifiesto,
+            grafo=grafo,
+            trazas=trazas,
+            entorno=None if simulado else _entorno(proveedor),
+        )
+
+    try:
+        for i, caso in enumerate(a_correr):
+            entorno = EntornoSimulado(caso)
+            llm = (
+                crear_modelo("simulado", respondedor=RespondedorSimulado(entorno))
+                if simulado
+                else modelo_real
+            )
+            ctx = ContextoCaso(caso["id"], llm, entorno, RelojFijo() if reloj == "fijo" else RelojReal())
+            config = {
+                "configurable": {"thread_id": f"{corrida_id}:{caso['id']}:s{sesion_n}"},
+                "run_name": f"demo-a:{caso['id']}",
+                "tags": [corrida_id, variante],
+                "metadata": {"caso_id": caso["id"], "corrida_id": corrida_id, "plan_version": plan.version},
+            }
+            error = None
+            try:
+                final = ejecutar_caso(app, caso, ctx, config, umbrales)
+            except ErrorProveedor as e:
+                if e.tipo == "limite_de_uso":
+                    resumen.limites_alcanzados += 1
+                    resumen.detenida_por = "limite_de_uso"
+                    registrar(
+                        "limite_de_uso", corrida_id=corrida_id, caso_id=caso["id"], error_proveedor=e.tipo
+                    )
+                    break
+                error = {
+                    "costo_usd": round(e.costo_usd, 6),
+                    "nodo": getattr(e, "nodo", "desconocido"),
+                    "tipo": e.tipo,
+                }
+                # Solo al log local (stderr), truncado: el detalle del CLI jamás entra a la traza.
+                registrar(
+                    "error_proveedor",
+                    corrida_id=corrida_id,
+                    caso_id=caso["id"],
+                    nodo=error["nodo"],
+                    error_proveedor=e.tipo,
+                    detalle=str(e.detalle)[:200],
+                )
+                final = dict(app.get_state(config).values) or estado_inicial(caso, umbrales)
+            traza = traza_de_estado(
+                final,
+                corrida_id=corrida_id,
+                variante=variante,
+                senales_obligatorias=plan.senales_obligatorias(),
+                error=error,
+                tipo_de_nodo=contrato.tipo_de_nodo,
+            )
+            trazas[caso["id"]] = traza
+            resumen.ejecutados.append(caso["id"])
+            if error:
+                resumen.con_error.append(caso["id"])
+            s = traza["senales"]
             registrar(
-                "error_proveedor",
+                "caso_terminado",
                 corrida_id=corrida_id,
                 caso_id=caso["id"],
-                nodo=error["nodo"],
-                error_proveedor=e.tipo,
-                detalle=str(e.detalle)[:200],
+                rama=str(s.get("decision_final")),
+                latencia_ms=int(round(float(s["latencia_total_s"]) * 1000)),
+                tokens_entrada=sum(p["tokens"]["entrada"] for p in traza["pasos"]),
+                tokens_salida=sum(p["tokens"]["salida"] for p in traza["pasos"]),
+                costo_nominal_usd=round(sum(p["costo_nominal_usd"] for p in traza["pasos"]), 6),
+                error_proveedor=s.get("error_proveedor"),
             )
-            final = dict(app.get_state(config).values) or estado_inicial(caso, umbrales)
-        traza = traza_de_estado(
-            final,
-            corrida_id=corrida_id,
-            variante=variante,
-            senales_obligatorias=plan.senales_obligatorias(),
-            error=error,
-            tipo_de_nodo=contrato.tipo_de_nodo,
-        )
-        trazas[caso["id"]] = traza
-        resumen.ejecutados.append(caso["id"])
-        if error:
-            resumen.con_error.append(caso["id"])
-        s = traza["senales"]
-        registrar(
-            "caso_terminado",
-            corrida_id=corrida_id,
-            caso_id=caso["id"],
-            rama=str(s.get("decision_final")),
-            latencia_ms=int(round(float(s["latencia_total_s"]) * 1000)),
-            tokens_entrada=sum(p["tokens"]["entrada"] for p in traza["pasos"]),
-            tokens_salida=sum(p["tokens"]["salida"] for p in traza["pasos"]),
-            costo_nominal_usd=round(sum(p["costo_nominal_usd"] for p in traza["pasos"]), 6),
-            error_proveedor=s.get("error_proveedor"),
-        )
-        if pausa_s > 0 and i < len(a_correr) - 1:
-            time.sleep(pausa_s)
-
-    resumen.pendientes = len(pendientes) - len(resumen.ejecutados)
-    sesiones = list(previo["sesiones"]) if previo else []
-    sesiones.append(
-        {
-            "casos_ejecutados": resumen.ejecutados,
-            "detenida_por": resumen.detenida_por,
-            "fecha": fecha,
-            "limites_alcanzados": resumen.limites_alcanzados,
-            "numero": sesion_n,
-        }
-    )
-    if not trazas:
-        return resumen
-    grafo = grafo_json(
-        app,
-        demo_id="demo-a",
-        variante=variante,
-        contrato=plan.contrato,
-        aristas=contrato.aristas,
-        ramas_por_defecto=contrato.ramas_resueltas(),
-        tipos=contrato.tipos,
-    )
-    ejecutados = [c for c in orden_lote if c in trazas]
-    manifiesto = {
-        "formato": FORMATO_TRAZA,
-        "tipo": "corrida",
-        "corrida_id": corrida_id,
-        "demo_id": "demo-a",
-        "variante": variante,
-        "fecha": previo["fecha"] if previo else fecha,
-        "plan": plan.referencia(),
-        "plan_beneficios": {**pb.referencia(), "archivo": _relativa(_ruta(beneficios_ruta))},
-        "casos": {
-            "archivo": _relativa(lote_ruta),
-            "huella": lote["huella"],
-            "id": lote["id"],
-            "n_lote": lote["n"],
-            "semilla": lote["semilla"],
-        },
-        "proveedor": proveedor,
-        "modelo": modelo_nombre,
-        "umbrales_aplicados": umbrales,
-        "revisor_simulado": plan.contrato["pausas_humanas"][0]["politica_simulada"],
-        "sesiones": sesiones,
-        "casos_ejecutados": ejecutados,
-        "casos_con_error": [c for c in ejecutados if trazas[c]["resultado"] == "error"],
-        "ficha": _ficha(variante, proveedor, modelo_nombre, lote),
-    }
-    escribir_corrida(
-        directorio,
-        manifiesto=manifiesto,
-        grafo=grafo,
-        trazas=trazas,
-        entorno=None if simulado else _entorno(proveedor),
-    )
+            if pausa_s > 0 and i < len(a_correr) - 1:
+                time.sleep(pausa_s)
+    except BaseException as e:
+        # M-9: una excepción no clasificada (o Ctrl-C) no se lleva las trazas ya obtenidas: se escriben
+        # los casos terminados, la sesión queda «detenida por excepción» y el caso en curso sigue
+        # pendiente; luego se relanza.
+        resumen.detenida_por = resumen.detenida_por or "excepcion"
+        registrar("excepcion_no_clasificada", corrida_id=corrida_id, detalle=type(e).__name__)
+        escribir()
+        raise
+    escribir()
     return resumen
 
 

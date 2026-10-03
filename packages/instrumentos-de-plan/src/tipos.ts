@@ -1,5 +1,5 @@
 /**
- * Tipos mínimos del reusable «instrumentos de plan» (contrato v0.1.0 § 1). Son ESTRUCTURALES: la app
+ * Tipos mínimos del reusable «instrumentos de plan» (contrato v0.2.0 § 1). Son ESTRUCTURALES: la app
  * consumidora pasa sus objetos (que pueden llevar más campos) y el paquete solo lee lo que declara aquí.
  * El paquete no conoce ningún dominio (G6) ni importa nada de la app.
  */
@@ -8,10 +8,20 @@ export type Reversibilidad = "una_via" | "costosa" | "dos_vias";
 export type PrioridadDeAccion = "alta" | "media" | "baja";
 export type Criticidad = "alta" | "media" | "baja";
 
+export type TextoOMapa = string | { es: string; en: string };
+
+/** Opción de una decisión (§ 1.1): `pros`/`contras` son opcionales desde v0.2.0 (F-002). */
+export interface OpcionMinima {
+  nombre: TextoOMapa;
+  pros?: unknown;
+  contras?: unknown;
+}
+
 export interface DecisionMinima {
   id: string;
   reversibilidad: Reversibilidad;
   depende_de?: readonly string[];
+  opciones?: readonly OpcionMinima[];
 }
 
 export interface ModoDeFallaMinimo {
@@ -20,9 +30,9 @@ export interface ModoDeFallaMinimo {
   ocurrencia: number;
   deteccion: number;
   mitigaciones?: readonly unknown[];
+  /** v0.2.0 (F-003, G8): el modo protege una obligación legal ⇒ prioridad efectiva `alta` y exige mitigación. */
+  control_legal?: boolean;
 }
-
-export type TextoOMapa = string | { es: string; en: string };
 
 export interface SupuestoMinimo {
   id: string;

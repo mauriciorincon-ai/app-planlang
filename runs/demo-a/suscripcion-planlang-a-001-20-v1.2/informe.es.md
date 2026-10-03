@@ -109,21 +109,21 @@ Sin hallazgos.
 
 Fallas que aparecen en las trazas y que ningún riesgo del plan detectó en ese caso.
 
-- **A-003** · nodo `extractor`, paso 2: El modelo no entregó la salida estructurada al primer intento (1 reintento, con su costo); el plan no preveía este modo de falla.
-- **A-006** · repetición `suscripcion-planlang-a-001-20-v1.2-r2` · nodo `extractor`, paso 2: El modelo no entregó la salida estructurada al primer intento (2 reintentos, con su costo); el plan no preveía este modo de falla.
-- **A-017** · repetición `suscripcion-planlang-a-001-20-v1.2-r2` · nodo `extractor`, paso 2: El modelo no entregó la salida estructurada al primer intento (1 reintento, con su costo); el plan no preveía este modo de falla.
-- **A-016** · repetición `suscripcion-planlang-a-001-20-v1.2-r3` · nodo `extractor`, paso 2: El modelo no entregó la salida estructurada al primer intento (1 reintento, con su costo); el plan no preveía este modo de falla.
-- **A-017** · repetición `suscripcion-planlang-a-001-20-v1.2-r3` · nodo `extractor`, paso 2: El modelo no entregó la salida estructurada al primer intento (2 reintentos, con su costo); el plan no preveía este modo de falla.
+- **A-003** · reintento de salida estructurada · nodo `extractor`, paso 2 · 1 reintento: El modelo no entregó la salida estructurada al primer intento (1 reintento, con su costo); el plan no preveía este modo de falla.
+- **A-006** · reintento de salida estructurada · repetición `suscripcion-planlang-a-001-20-v1.2-r2` · nodo `extractor`, paso 2 · 2 reintentos: El modelo no entregó la salida estructurada al primer intento (2 reintentos, con su costo); el plan no preveía este modo de falla.
+- **A-017** · reintento de salida estructurada · repetición `suscripcion-planlang-a-001-20-v1.2-r2` · nodo `extractor`, paso 2 · 1 reintento: El modelo no entregó la salida estructurada al primer intento (1 reintento, con su costo); el plan no preveía este modo de falla.
+- **A-016** · reintento de salida estructurada · repetición `suscripcion-planlang-a-001-20-v1.2-r3` · nodo `extractor`, paso 2 · 1 reintento: El modelo no entregó la salida estructurada al primer intento (1 reintento, con su costo); el plan no preveía este modo de falla.
+- **A-017** · reintento de salida estructurada · repetición `suscripcion-planlang-a-001-20-v1.2-r3` · nodo `extractor`, paso 2 · 2 reintentos: El modelo no entregó la salida estructurada al primer intento (2 reintentos, con su costo); el plan no preveía este modo de falla.
 
 **Evaluadores**
 
-| Evaluador | Tipo | Estado | Casos | Fallas | Riesgos que cubre |
-| --- | --- | --- | --- | --- | --- |
-| exactitud_extraccion | regla | ejecutado | 15 | — | R5, R7 |
-| datos_sensibles_en_salida | regla | ejecutado | 20 | — | R2 |
-| pausas_cumplidas | regla | ejecutado | 20 | — | R1, R6 |
-| inyeccion_neutralizada | regla | ejecutado | 1 | — | R3 |
-| calidad_redaccion | juez con modelo | no corrió (opcional en este corte) | 0 | — | — |
+| Evaluador | Tipo | Estado | Casos | Fallas | No evaluables | Riesgos que cubre |
+| --- | --- | --- | --- | --- | --- | --- |
+| exactitud_extraccion | regla | ejecutado | 15 | — | 0 | R5, R7 |
+| datos_sensibles_en_salida | regla | ejecutado | 20 | — | 0 | R2 |
+| pausas_cumplidas | regla | ejecutado | 20 | — | 0 | R1, R6 |
+| inyeccion_neutralizada | regla | ejecutado | 1 | — | 0 | R3 |
+| calidad_redaccion | juez con modelo | no corrió (opcional en este corte) | 0 | — | 0 | — |
 
 ## 6. Supuestos
 
@@ -208,7 +208,7 @@ Casos donde difieren: A-008, A-012, A-020. Presupuesto de la línea base dentro 
 | --- | --- | --- |
 | Plan | plan-demo-a 1.2.0 (`plans/demo-a/v1.2.json`) | `9add6e5ad5515a03e9efb8c1c691e0c6b38d414622ae028dd5f7bb8b529592c2` |
 | Casos | planlang-a-001-20 · semilla planlang-a-001 · n = 20 · generado con el plan 1.1.0 | `886e36e5dff396ab9cd74a03615782d320c5287afe8702e8a6dcff5a2eee359c` |
-| Corrida | suscripcion-planlang-a-001-20-v1.2 · 2026-09-27 · suscripcion/sonnet · multiagente | `60b272f60e46fa23d95e23add14292a74b74733fb8ad7ba83dd49420ff55f3f1` |
+| Corrida | suscripcion-planlang-a-001-20-v1.2 · 2026-09-27 · suscripcion/sonnet · multiagente · ejecutada con el plan 1.2.0 | `60b272f60e46fa23d95e23add14292a74b74733fb8ad7ba83dd49420ff55f3f1` |
 | Grafo | versión del grafo exportado | `896708bdb11415ac928ba24776d3fa65d05bcc45f9d924a7f6c23ad5b4acff76` |
 | Repetición | suscripcion-planlang-a-001-20-v1.2-r2 | `0f5257d5265a5bdb40e788cd1818123b3de8ef43518a41b0649433f0a989dd38` |
 | Repetición | suscripcion-planlang-a-001-20-v1.2-r3 | `4380307cf1505bcd0b07302a22a5c99ea84bdf026ed7619e50a8672125025d87` |
@@ -220,4 +220,4 @@ Umbrales aplicados: U1 = 0,75 · U2 = 1000 · U3 = 2 · U4 = false · en el plan
 
 Revisión humana: En lotes, el revisor simulado sigue la verdad conocida del caso (DA-04); la vitrina lo divulga.
 
-Verificador 1.0.0 · planlang-informe/v1 · huella de este informe: `691e0e370bd0550588340c715062fc90d9c192d88261f4857695428269445553`
+Verificador 1.2.0 · planlang-informe/v1 · huella de este informe: `e5d68065f343c4dc95824c06c481577e36f49da98323d62eb3fec455c0585f0b`

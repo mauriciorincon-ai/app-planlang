@@ -24,7 +24,9 @@ import {
   rutaDeLote,
 } from "../../scripts/lotes-versionados";
 
-const plan = JSON.parse(readFileSync(PLAN_DEMO_A, "utf8")) as Plan;
+const leerPlan = (ruta: string) =>
+  JSON.parse(readFileSync(ruta, "utf8")) as Plan;
+const plan = leerPlan(PLAN_DEMO_A);
 const planBeneficios = PlanBeneficiosSchema.parse(
   JSON.parse(readFileSync(PLAN_BENEFICIOS_DEMO_A, "utf8")),
 );
@@ -34,9 +36,9 @@ describe("lotes versionados de data/casos/demo-a", () => {
 
   it.each(LOTES_VERSIONADOS)(
     "$semilla-$n se regenera con los mismos bytes",
-    async ({ semilla, n, receta }) => {
+    async ({ semilla, n, receta, plan: rutaPlan }) => {
       const lote = await generarLote({
-        plan,
+        plan: leerPlan(rutaPlan),
         planBeneficios,
         semilla,
         n,
@@ -63,6 +65,13 @@ describe("lotes versionados de data/casos/demo-a", () => {
       n: 200,
     });
     expect(a.huella).toBe(b.huella);
+  });
+
+  it("el lote de 20 es el primer bloque del de 200 aunque los planes difieran", () => {
+    const [l20, l200] = generados.filter((l) => l.semilla === "planlang-a-001");
+    expect(l200?.casos.slice(0, 20)).toEqual(l20?.casos);
+    expect(l20?.plan.version).toBe("1.1.0");
+    expect(l200?.plan.version).toBe("1.4.0");
   });
 
   it("la afirmación de privacidad en Markdown está al día con los lotes", () => {

@@ -21,6 +21,7 @@ import { esAristaTripleta, type Plan } from "../plan/esquema";
 import * as D from "./diccionarios";
 import {
   CAMPOS_ACLARABLES,
+  DEMO_DEL_GENERADOR,
   LoteSchema,
   SUBTIPOS,
   TIPOS_CASO,
@@ -722,7 +723,7 @@ export function generarCaso(ctx: Contexto, subtipo: Subtipo, id: string): Caso {
           : "inyeccion";
   return {
     id,
-    demo_id: "demo-a",
+    demo_id: DEMO_DEL_GENERADOR,
     tipo,
     subtipo,
     adversario_detalle: adversarioDetalle,
@@ -855,7 +856,7 @@ export async function generarLote(op: OpcionesLote): Promise<Lote> {
   const lote: Omit<Lote, "huella"> = {
     formato: "planlang-casos/v1",
     id: `${op.semilla}-${op.n}`,
-    demo_id: "demo-a",
+    demo_id: DEMO_DEL_GENERADOR,
     semilla: op.semilla,
     receta,
     n: op.n,

@@ -81,7 +81,7 @@ def test_argv_es_exactamente_el_de_la_regla_6() -> None:
         "--model",
         "sonnet",
         "--max-turns",
-        "1",
+        "2",
         "--no-session-persistence",
         "--strict-mcp-config",
         "--mcp-config",
@@ -97,6 +97,10 @@ def test_argv_es_exactamente_el_de_la_regla_6() -> None:
     ]
     assert argv_claude("sonnet", "SP", {"type": "object"}) == esperado
     assert "--bare" not in argv_claude("sonnet", "SP")  # --bare desactiva la suscripción (spike, hallazgo 1)
+    # Regla 6 (S2): `--max-turns 2` ÚNICAMENTE con `--json-schema`; sin esquema, 1 turno y sin la bandera.
+    sin_esquema = argv_claude("sonnet", "SP")
+    assert sin_esquema[sin_esquema.index("--max-turns") + 1] == "1"
+    assert "--json-schema" not in sin_esquema
 
 
 def test_env_del_hijo_no_lleva_claves_ni_anidamiento(monkeypatch: pytest.MonkeyPatch) -> None:

@@ -1,0 +1,100 @@
+{
+  "nodes": [
+    {
+      "id": "__start__",
+      "type": "runnable",
+      "data": {
+        "id": [
+          "langgraph",
+          "_internal",
+          "_runnable",
+          "RunnableCallable"
+        ],
+        "name": "__start__"
+      }
+    },
+    {
+      "id": "extractor",
+      "type": "runnable",
+      "data": {
+        "id": [
+          "langgraph",
+          "_internal",
+          "_runnable",
+          "RunnableCallable"
+        ],
+        "name": "extractor"
+      }
+    },
+    {
+      "id": "enrutador",
+      "type": "runnable",
+      "data": {
+        "id": [
+          "langgraph",
+          "_internal",
+          "_runnable",
+          "RunnableCallable"
+        ],
+        "name": "enrutador"
+      }
+    },
+    {
+      "id": "pausa_humana",
+      "type": "runnable",
+      "data": {
+        "id": [
+          "langgraph",
+          "_internal",
+          "_runnable",
+          "RunnableCallable"
+        ],
+        "name": "pausa_humana"
+      }
+    },
+    {
+      "id": "aprobar",
+      "type": "runnable",
+      "data": {
+        "id": [
+          "langgraph",
+          "_internal",
+          "_runnable",
+          "RunnableCallable"
+        ],
+        "name": "aprobar"
+      }
+    },
+    {
+      "id": "__end__"
+    }
+  ],
+  "edges": [
+    {
+      "source": "__start__",
+      "target": "extractor"
+    },
+    {
+      "source": "enrutador",
+      "target": "aprobar",
+      "conditional": true
+    },
+    {
+      "source": "enrutador",
+      "target": "pausa_humana",
+      "conditional": true
+    },
+    {
+      "source": "extractor",
+      "target": "enrutador"
+    },
+    {
+      "source": "aprobar",
+      "target": "__end__"
+    },
+    {
+      "source": "pausa_humana",
+      "target": "__end__"
+    }
+  ]
+}

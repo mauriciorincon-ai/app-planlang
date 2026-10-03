@@ -1,11 +1,13 @@
 /**
  * Ramas del validador que los planes sembrados no cubren: referencias rotas de distinto tipo, criterios
  * de latencia/pass^k, umbrales con tipo incoherente, aristas con función, orden de aristas, ambigüedad
- * de rama por defecto, advertencias y huella ausente en plan aprobado.
+ * de rama por defecto, advertencias y huella ausente en plan aprobado. Y M-23 (S2): lo que leen las condiciones y
+ * las aristas existe — una señal no declarada se advierte y detiene la aprobación; una función no registrada es una
+ * referencia rota.
  */
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { validarPlan, type Codigo } from "../../../../core/plan";
+import { aprobarPlan, validarPlan, type Codigo } from "../../../../core/plan";
 
 type Obj = Record<string, unknown>;
 const base = JSON.parse(
@@ -53,7 +55,8 @@ describe("validador — referencias rotas", () => {
     const f = aristas.find((a) => "funcion" in a) as Obj;
     (f.funcion as Obj).entradas = ["modo_texas", "no_es_senal"];
     const c = codigos(p).map(([k]) => k);
-    expect(c.filter((k) => k === "REFERENCIA_ROTA")).toHaveLength(2);
+    // Nodo, umbral y (M-23) la función con entradas distintas de las de su registro.
+    expect(c.filter((k) => k === "REFERENCIA_ROTA")).toHaveLength(3);
     expect(c.filter((k) => k === "UMBRAL_SIN_SENAL")).toHaveLength(2);
   });
 
@@ -81,6 +84,24 @@ describe("validador — referencias rotas", () => {
     const c = codigos(p);
     expect(c).toContainEqual(["REFERENCIA_ROTA", "ramas_por_defecto.decision"]);
     expect(c).toContainEqual(["REFERENCIA_ROTA", "ramas_por_defecto.redactor"]);
+  });
+});
+
+describe("validador — combinaciones de medición sin sentido (M-26)", () => {
+  it("una métrica en un criterio que no la agrega, o una condición en uno que solo agrega la métrica, se rechazan", () => {
+    const p = clon();
+    const criterios = arr(p, "criterios_aceptacion");
+    const c5 = criterios.find((c) => c.id === "C5") as Obj;
+    (c5.regla_de_medicion as Obj).metrica = "latencia_total_s";
+    const c7 = criterios.find((c) => c.id === "C7") as Obj;
+    (c7.regla_de_medicion as Obj).condicion = "pausa_humana == true";
+    const c = codigos(p);
+    expect(c).toContainEqual(["CRITERIO_SIN_REGLA", "C5"]);
+    expect(c).toContainEqual(["CRITERIO_SIN_REGLA", "C7"]);
+    // El plan sembrado, sin tocar, no las tiene.
+    expect(codigos(clon()).filter(([k]) => k === "CRITERIO_SIN_REGLA")).toEqual(
+      [],
+    );
   });
 });
 
@@ -176,5 +197,79 @@ describe("validador — criterios, umbrales y contrato", () => {
         codigo: "ESQUEMA",
         elemento: "version",
       });
+  });
+});
+
+describe("validador — lo que leen las condiciones y las aristas (M-23)", () => {
+  const v1 = JSON.parse(readFileSync("plans/demo-a/v1.json", "utf8")) as Obj;
+  const v13 = JSON.parse(readFileSync("plans/demo-a/v1.3.json", "utf8")) as Obj;
+
+  it("una condición que lee una señal no declarada se advierte (el v1 lee servicio_exento sin declararla)", () => {
+    const v = validarPlan(v1);
+    expect(v.ok).toBe(true);
+    const adv = v.advertencias.filter((m) => m.codigo === "SENAL_NO_DECLARADA");
+    expect(adv.map((m) => m.elemento)).toContain("C4.poblacion");
+    expect(adv.every((m) => m.mensaje.es.includes("servicio_exento"))).toBe(
+      true,
+    );
+    // El plan vigente la declara: ninguna advertencia.
+    const actual = validarPlan(v13);
+    expect(
+      actual.advertencias.filter((m) => m.codigo === "SENAL_NO_DECLARADA"),
+    ).toEqual([]);
+  });
+
+  it("y al aprobar es un motivo: el plan no se aprueba", async () => {
+    const borrador = { ...v1, estado_aprobacion: "borrador", huella: null };
+    const r = await aprobarPlan(borrador, { por: "prueba", el: "2026-10-01" });
+    expect(r.ok).toBe(false);
+    if (!r.ok)
+      expect(new Set(r.motivos.map((m) => m.codigo))).toEqual(
+        new Set(["SENAL_NO_DECLARADA"]),
+      );
+  });
+
+  it("las claves del contexto (verdad_conocida, extraccion, umbral…) y las de sesión no se advierten", () => {
+    const p = JSON.parse(JSON.stringify(v13)) as Obj;
+    const c = arr(p, "criterios_aceptacion")[0] as Obj;
+    (c.regla_de_medicion as Obj).poblacion =
+      "verdad_conocida.presente AND extraccion.confianza > umbral.U1 AND limites_alcanzados == 0";
+    const v = validarPlan(p);
+    expect(
+      v.advertencias.filter((m) => m.codigo === "SENAL_NO_DECLARADA"),
+    ).toEqual([]);
+  });
+
+  it("una función de arista no registrada, o con otras entradas, es una referencia rota", () => {
+    const conFuncion = (f: Obj) => {
+      const p = JSON.parse(JSON.stringify(v13)) as Obj;
+      const a = (contrato(p).aristas_condicionales as Obj[]).find(
+        (x) => x.funcion !== undefined,
+      )!;
+      a.funcion = f;
+      return codigos(p);
+    };
+    expect(
+      conFuncion({
+        nombre: "otra_funcion",
+        entradas: ["modo_texas", "propuesta"],
+      }),
+    ).toContainEqual(["REFERENCIA_ROTA", expect.stringContaining("decision")]);
+    expect(
+      conFuncion({
+        nombre: "texas_y_no_aprobar",
+        entradas: ["propuesta", "modo_texas"],
+      }),
+    ).toContainEqual(["REFERENCIA_ROTA", expect.stringContaining("decision")]);
+  });
+
+  it("una condición que llama a una función que el verificador no registra es una referencia rota", () => {
+    const p = JSON.parse(JSON.stringify(v13)) as Obj;
+    const r = arr(p, "riesgos").find((x) => x.detector_en_trazas)!;
+    (r.detector_en_trazas as Obj).condicion = "dato_inventado(caso) == 1";
+    expect(codigos(p)).toContainEqual([
+      "REFERENCIA_ROTA",
+      `${r.id as string}.condicion`,
+    ]);
   });
 });

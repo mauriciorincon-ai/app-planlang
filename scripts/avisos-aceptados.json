@@ -1,0 +1,14 @@
+{
+  "nota": "Avisos de seguridad que `pnpm audit` ignora a sabiendas (pnpm-workspace.yaml, auditConfig.ignoreGhsas). Cada uno lleva su razón y una fecha de revisión; tests/unit/guardias/avisos-aceptados.test.ts exige que la lista coincida con la del workspace y falla cuando una fecha vence.",
+  "avisos": [
+    {
+      "ghsa": "GHSA-vfj7-8cjw-p6xm",
+      "paquete": "braces",
+      "vulnerable": "<=3.0.3",
+      "ruta": "eslint-config-next > @next/eslint-plugin-next > fast-glob > micromatch > braces",
+      "razon": "Sin versión corregida publicada (el aviso pide >=3.0.4; la última en el registro es 3.0.3) y solo entra por el lint: no viaja al export ni al paquete. Apareció en el calendario el 2026-10-02 sin cambio de dependencias.",
+      "aceptado": "2026-10-02",
+      "revisar_antes": "2026-11-02"
+    }
+  ]
+}

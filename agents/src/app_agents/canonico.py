@@ -147,14 +147,32 @@ VALORES_TRAMPOSOS: list[tuple[str, Any]] = [
     ("anidado", {"b": [1, {"y": None, "x": [True, False]}], "a": {"c": "é"}}),
     ("booleanos_y_nulo", [True, False, None]),
     ("cadena_con_unicode", "español ¿qué? — \U0001f600"),
+    # M-13: una cadena en NFD (e + acento combinante) que los dos lados deben normalizar a NFC.
+    ("cadena_nfd", "cafe\u0301 y pin\u0303a"),
 ]
+
+
+def texto_fixture(fixture: dict[str, Any]) -> str:
+    """El fixture del gate de contrato tal cual, sin `normalizar`.
+
+    Su `crudo` debe llegar al lado TS como entró (M-13).
+    """
+    return json.dumps(fixture, indent=2, sort_keys=True, ensure_ascii=False) + "\n"
 
 
 def fixture_tramposo() -> dict[str, Any]:
     casos = []
     for nombre, valor in VALORES_TRAMPOSOS:
+        # `crudo` es el valor tal como entra (claves NFD, -0.0, 1.0); `valor`, ya normalizado. El lado TS
+        # debe dar el mismo JCS y la misma huella desde los dos (M-13: antes solo recibía el normalizado).
         casos.append(
-            {"nombre": nombre, "valor": normalizar(valor), "jcs": jcs_texto(valor), "huella": huella(valor)}
+            {
+                "nombre": nombre,
+                "crudo": valor,
+                "valor": normalizar(valor),
+                "jcs": jcs_texto(valor),
+                "huella": huella(valor),
+            }
         )
     return {"formato": "planlang-contrato-jcs/v1", "casos": casos}
 
@@ -166,7 +184,9 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--verificar", metavar="RUTA", help="verifica la huella declarada del archivo")
     args = p.parse_args(argv)
     if args.escribir_fixture:
-        escribir_bonito(args.escribir_fixture, fixture_tramposo())
+        destino = Path(args.escribir_fixture)
+        destino.parent.mkdir(parents=True, exist_ok=True)
+        destino.write_text(texto_fixture(fixture_tramposo()), encoding="utf-8")
         print(f"fixture escrito: {args.escribir_fixture}")
     if args.huella:
         print(huella(leer_json(args.huella)))

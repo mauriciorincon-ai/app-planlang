@@ -4,7 +4,7 @@
 
 ## 1. Summary for the decision-maker
 
-**Verdict: ⚠ MET WITH ALERTS**
+**Verdict: ⚠ MEETS WITH WARNINGS**
 
 The plan was met with alerts. 20 synthetic cases were measured. Criteria: 8 met, 0 failed and 1 still open, out of 9. Risks that occurred: none. Human decisions were simulated.
 
@@ -111,19 +111,19 @@ No findings.
 
 Failures that appear in the traces and that no risk in the plan detected in that case.
 
-- **A-008** · node `extractor`, step 4: The model did not return the structured output on the first try (1 retry, with its cost); the plan did not foresee this failure mode.
-- **A-013** · node `extractor`, step 2: The model did not return the structured output on the first try (1 retry, with its cost); the plan did not foresee this failure mode.
-- **A-017** · node `extractor`, step 2: The model did not return the structured output on the first try (1 retry, with its cost); the plan did not foresee this failure mode.
+- **A-008** · structured-output retry · node `extractor`, step 4 · 1 retry: The model did not return the structured output on the first try (1 retry, with its cost); the plan did not foresee this failure mode.
+- **A-013** · structured-output retry · node `extractor`, step 2 · 1 retry: The model did not return the structured output on the first try (1 retry, with its cost); the plan did not foresee this failure mode.
+- **A-017** · structured-output retry · node `extractor`, step 2 · 1 retry: The model did not return the structured output on the first try (1 retry, with its cost); the plan did not foresee this failure mode.
 
 **Evaluators**
 
-| Evaluator | Type | Status | Cases | Failures | Risks it covers |
-| --- | --- | --- | --- | --- | --- |
-| exactitud_extraccion | rule | run | 15 | — | R5, R7 |
-| datos_sensibles_en_salida | rule | run | 20 | — | R2 |
-| pausas_cumplidas | rule | run | 20 | — | R1, R6 |
-| inyeccion_neutralizada | rule | run | 1 | — | R3 |
-| calidad_redaccion | model judge | did not run (optional in this cut) | 0 | — | — |
+| Evaluator | Type | Status | Cases | Failures | Not evaluable | Risks it covers |
+| --- | --- | --- | --- | --- | --- | --- |
+| exactitud_extraccion | rule | run | 15 | — | 0 | R5, R7 |
+| datos_sensibles_en_salida | rule | run | 20 | — | 0 | R2 |
+| pausas_cumplidas | rule | run | 20 | — | 0 | R1, R6 |
+| inyeccion_neutralizada | rule | run | 1 | — | 0 | R3 |
+| calidad_redaccion | model judge | did not run (optional in this cut) | 0 | — | 0 | — |
 
 ## 6. Assumptions
 
@@ -204,7 +204,7 @@ Cases where they differ: A-008, A-020. Baseline budget within the multi-agent on
 | --- | --- | --- |
 | Plan | plan-demo-a 1.1.0 (`plans/demo-a/v1.1.json`) | `2e3763849ee4fc56f7fd6ff0c7c1c3093adf002db1ff2aa552266e99bb4cf6f3` |
 | Cases | planlang-a-001-20 · seed planlang-a-001 · n = 20 · generated with plan 1.1.0 | `886e36e5dff396ab9cd74a03615782d320c5287afe8702e8a6dcff5a2eee359c` |
-| Run | suscripcion-planlang-a-001-20 · 2026-09-27 · suscripcion/sonnet · multi-agent | `2a267cf54794cfdcbd73e1d05b5fda6c9b08e54e174c063a0f2711dc8dd1859c` |
+| Run | suscripcion-planlang-a-001-20 · 2026-09-27 · suscripcion/sonnet · multi-agent · run with plan 1.1.0 | `2a267cf54794cfdcbd73e1d05b5fda6c9b08e54e174c063a0f2711dc8dd1859c` |
 | Graph | exported graph version | `896708bdb11415ac928ba24776d3fa65d05bcc45f9d924a7f6c23ad5b4acff76` |
 | Baseline | suscripcion-planlang-a-001-20-base | `d59580df70e6e6370c3bb17a4b5543a613a93989e8354b7bfa30dcd80cc21cdb` |
 
@@ -214,4 +214,4 @@ Applied thresholds: U1 = 0.75 · U2 = 1000 · U3 = 2 · U4 = false · in the pla
 
 Human review: In batches, the simulated reviewer follows the case's known truth (DA-04); the showcase discloses it.
 
-Verifier 1.0.0 · planlang-informe/v1 · fingerprint of this report: `efc638eb392282511f36f15da54bf83278fa461758562919837784b79cbdc7b5`
+Verifier 1.2.0 · planlang-informe/v1 · fingerprint of this report: `73c30c4921bde6be1139263cbb94cf75531655645da793c4ee160d3195b18a38`

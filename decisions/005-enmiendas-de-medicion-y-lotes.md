@@ -1,5 +1,7 @@
 # ADR-005 — Enmiendas de solo medición: el lote vale si el plan conserva su verdad
 
+**Summary (EN):** A batch generated with plan A is valid for plan B when B keeps exactly the same thresholds, graph contract and benefits plan (compared as canonical JSON), because each case's known truth derives from them. Measurement-only amendments (criteria, risks, assumptions) do not invalidate the cases; both the runner and the verifier enforce it.
+
 **Estado:** aceptado · **Fecha:** 2026-09-27 · **Sprint:** S1 «El contrato y la corrida»
 **Cítese por tema:** «ADR de enmiendas de medición y lotes».
 
@@ -51,3 +53,10 @@ La verdad conocida del lote también se deriva del **plan de beneficios**, y has
 cotejaba. Desde el cierre del S1 los dos lados lo exigen: `lotes.py` rechaza con `CorridaIncompatible` un
 plan de beneficios distinto del que declara el lote (y al reanudar una corrida), y el lector del
 verificador rechaza con `HUELLA_NO_COINCIDE` una corrida cuyo plan de beneficios no es el del lote.
+
+## Adenda (2026-10-02, auditoría S2, AU-S2-B40)
+
+El punto 3 dejó de valer para un lote: el plan v1.4 (AU-9) cambia el contrato de grafo, así que el lote de 200
+se regeneró con la v1.4 (los mismos casos y la misma verdad; `scripts/lotes-versionados.ts` declara el plan de
+cada lote). El de 20 y el de humo siguen con la v1.1. El plan por defecto de `pnpm lote:demo` sigue siendo la
+v1.2 (punto 4), y el manual lo dice en los dos idiomas (AU-S2-B10).

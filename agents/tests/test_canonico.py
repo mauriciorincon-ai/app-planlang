@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import json
 import math
+import unicodedata
 from pathlib import Path
 
 import pytest
@@ -19,6 +21,7 @@ from app_agents.canonico import (
     main,
     normalizar,
     texto_bonito,
+    texto_fixture,
 )
 
 RAIZ = Path(__file__).resolve().parents[2]
@@ -66,7 +69,16 @@ def test_fixture_comprometido_es_fresco() -> None:
     assert FIXTURE.exists(), (
         "genera el fixture: python -m app_agents.canonico --escribir-fixture tests/contrato/…"
     )
-    assert FIXTURE.read_text(encoding="utf-8") == texto_bonito(fixture_tramposo())
+    assert FIXTURE.read_text(encoding="utf-8") == texto_fixture(fixture_tramposo())
+
+
+def test_fixture_lleva_el_crudo_sin_normalizar() -> None:
+    """M-13: el lado TS recibe el valor tal como entró; normalizado, la NFC asimétrica no se vería."""
+    casos = {c["nombre"]: c for c in json.loads(FIXTURE.read_text(encoding="utf-8"))["casos"]}
+    crudo = casos["cadena_nfd"]["crudo"]
+    assert crudo != unicodedata.normalize("NFC", crudo)
+    assert casos["cadena_nfd"]["valor"] == unicodedata.normalize("NFC", crudo)
+    assert len(casos["nfc_y_nfd_como_claves"]["crudo"]) == 2
 
 
 def test_cli(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:

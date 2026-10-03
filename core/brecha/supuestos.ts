@@ -9,7 +9,7 @@
  * - tasa de una condición sobre una población;
  * - comparación con la línea base de agente único (exactitud y latencia mediana, con el presupuesto).
  */
-import type { TextoBilingue } from "../formatos/bilingue";
+import { IDIOMAS, type TextoBilingue } from "../formatos/bilingue";
 import type { Traza } from "../formatos/traza";
 import type { Plan, Supuesto } from "../plan/esquema";
 import { esAristaTripleta } from "../plan/esquema";
@@ -28,7 +28,7 @@ import {
   type Umbrales,
   type VistaDeCaso,
 } from "./contexto";
-import { mediana, redondear } from "./numeros";
+import { mediana, numCorto, pct, redondear } from "./numeros";
 import { evaluarRegla } from "./reglas";
 
 /** Qué cuenta como extracción correcta para la calibración (la misma regla que el criterio de exactitud). */
@@ -366,11 +366,13 @@ function exactitudYLatencia(vistas: readonly VistaDeCaso[]): {
 
 /**
  * Una respuesta al afiliado inservible: vacía, JSON crudo o texto de relleno en algún idioma. Las trazas que
- * terminaron con error del proveedor se cuentan aparte (no tienen respuesta que juzgar).
+ * terminaron en error se cuentan aparte (no tienen respuesta que juzgar). Desde AU-9, `error_proveedor` dice el
+ * primer paso que falló aunque el caso haya terminado `completo` por el respaldo: esa respuesta sí se juzga
+ * (AU-S2-10).
  */
 export function respuestaInservible(t: Traza): boolean {
-  if (t.error_proveedor || !t.salida_final) return false;
-  return (["es", "en"] as const).some((l) => {
+  if (t.resultado === "error" || !t.salida_final) return false;
+  return IDIOMAS.some((l) => {
     const texto = t.salida_final![l].trim();
     return (
       texto === "" ||
@@ -379,6 +381,23 @@ export function respuestaInservible(t: Traza): boolean {
       texto.toLowerCase().includes("placeholder")
     );
   });
+}
+
+/**
+ * Tolerancia de la comparación con la línea base (plan v1.3, S3): `exactitud_dif_min` = cuánto puede quedar la
+ * exactitud del multiagente por debajo (negativo) o por encima (positivo) de la base; `latencia_mediana_razon_max`
+ * = cuántas veces la latencia mediana de la base se tolera. Sin claves declaradas rige la regla por defecto
+ * («no peor»: 0 y 1), y el informe lo dice.
+ */
+const TOLERANCIA = ["exactitud_dif_min", "latencia_mediana_razon_max"] as const;
+
+function reglaDeclarada(dif: number, razon: number): TextoBilingue {
+  const margen = (i: "es" | "en") =>
+    dif === 0 ? "" : ` ${dif > 0 ? "+" : "−"} ${pct(Math.abs(dif), i)}`;
+  return {
+    es: ` Tolerancia declarada en el plan: exactitud del multiagente ≥ la de la línea base${margen("es")} y latencia mediana ≤ ${numCorto(razon, "es")} × la de la línea base.`,
+    en: ` Tolerance declared in the plan: multi-agent accuracy ≥ the baseline's${margen("en")} and median latency ≤ ${numCorto(razon, "en")} × the baseline's.`,
+  };
 }
 
 const REGLA_POR_DEFECTO: TextoBilingue = {
@@ -431,8 +450,20 @@ function comparacion(
       pu.costo_nominal_usd <= pm.costo_nominal_usd,
     casos_distintos,
   };
-  const noPeorExactitud = multi.exactitud >= unico.exactitud;
+  const umbral = s.medible_en_trazas?.umbral_confirmacion ?? {};
+  const declarada = Object.keys(umbral).length > 0;
+  const dif = umbral.exactitud_dif_min ?? 0;
+  const razon = umbral.latencia_mediana_razon_max ?? 1;
+  const noPeorExactitud = redondear(multi.exactitud - unico.exactitud) >= dif;
   const limitaciones: TextoBilingue[] = [];
+  const desconocidas = Object.keys(umbral)
+    .filter((k) => !(TOLERANCIA as readonly string[]).includes(k))
+    .sort();
+  if (desconocidas.length > 0)
+    limitaciones.push({
+      es: `El plan declara claves de tolerancia que la comparación no conoce y no aplica: ${desconocidas.join(", ")}.`,
+      en: `The plan declares tolerance keys the comparison does not know and does not apply: ${desconocidas.join(", ")}.`,
+    });
   const idsMulti = new Set(vistas.map((v) => v.caso_id));
   const idsBase = new Set(base.vistas.map((v) => v.caso_id));
   const soloUno = [...ids]
@@ -491,7 +522,7 @@ function comparacion(
       comparacion: comp,
       limitaciones,
     };
-  const noPeorLatencia = multi.latencia <= unico.latencia;
+  const noPeorLatencia = multi.latencia <= unico.latencia * razon;
   const confirmado = noPeorExactitud && noPeorLatencia;
   const motivo: TextoBilingue = confirmado
     ? {
@@ -505,8 +536,8 @@ function comparacion(
   return {
     estado: confirmado ? "confirmado" : "refutado",
     motivo: {
-      es: `${motivo.es}${REGLA_POR_DEFECTO.es}`,
-      en: `${motivo.en}${REGLA_POR_DEFECTO.en}`,
+      es: `${motivo.es}${(declarada ? reglaDeclarada(dif, razon) : REGLA_POR_DEFECTO).es}`,
+      en: `${motivo.en}${(declarada ? reglaDeclarada(dif, razon) : REGLA_POR_DEFECTO).en}`,
     },
     n: vistas.length,
     metricas,

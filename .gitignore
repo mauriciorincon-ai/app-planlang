@@ -41,3 +41,7 @@ runs/**/checkpoints.sqlite
 runs/**/*.sqlite-journal
 runs/**/*.sqlite-wal
 runs/**/*.sqlite-shm
+
+# Paquete de la vitrina para hoja-de-vida (ADR-009): build propio y la carpeta que se copia; se regeneran.
+/.next-paquete/
+/dist/

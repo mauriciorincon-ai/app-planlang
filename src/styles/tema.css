@@ -1,0 +1,119 @@
+/* Tema de Tailwind v4 de la vitrina (ADR-008): SOLO los tokens de design-system.md 1.0.0.
+   Se borran la paleta, las sombras, los radios, las letras, los tamaños y los cortes por defecto de
+   Tailwind: una clase como `text-red-500`, `shadow-md` o `rounded-2xl` no existe aquí, y un valor fuera
+   del sistema tiene que escribirse a propósito. Los colores son variables de `tokens.css` (generado):
+   `@theme inline` hace que cada utilidad lea la variable, así el tema cambia por `html[data-theme]`
+   sin variantes `dark:`. */
+@theme {
+  --color-*: initial;
+  --shadow-*: initial;
+  --inset-shadow-*: initial;
+  --drop-shadow-*: initial;
+  --text-shadow-*: initial;
+  --radius-*: initial;
+  --text-*: initial;
+  --font-*: initial;
+  --breakpoint-*: initial;
+  --container-*: initial;
+
+  /* Cortes (design-system § 2.4): el móvil es la base; 721 px cambia tipografía y márgenes, 861 px abre
+     las rejillas (bajo ese ancho todo va en una columna). */
+  --breakpoint-tableta: 721px;
+  --breakpoint-escritorio: 861px;
+  /* Cortes secundarios de la maqueta aprobada de P3 (ficha y paneles del agente): desde 561 px las cifras y
+     las definiciones van en dos columnas; desde 1001 px la ficha abre recibe → hace → entrega en fila. */
+  --breakpoint-chico: 561px;
+  --breakpoint-amplio: 1001px;
+
+  --container-ancho: 1120px;
+  /* Medidas de lectura: la entradilla (60 caracteres), la respuesta de la pregunta (62) y el objetivo (76). */
+  --container-guia: 60ch;
+  --container-lectura: 62ch;
+  --container-objetivo: 76ch;
+
+  --tracking-titulo: -0.022em;
+  --tracking-cifra: -0.02em;
+  --tracking-cita: -0.012em;
+  --tracking-apretado: -0.01em;
+
+  --radius-barra: 2px;
+  --radius-mini: 3px;
+  --radius-chip: 4px;
+  --radius-control: 6px;
+  --radius-baldosa: 8px;
+
+  --ease-planlang: cubic-bezier(0.2, 0, 0, 1);
+  --default-transition-duration: 150ms;
+  --default-transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+@theme inline {
+  --color-transparent: transparent;
+  --color-current: currentColor;
+  --color-fondo: var(--fondo);
+  --color-sup-1: var(--sup-1);
+  --color-sup-2: var(--sup-2);
+  --color-linea: var(--linea);
+  --color-tinta-1: var(--tinta-1);
+  --color-tinta-2: var(--tinta-2);
+  --color-tinta-3: var(--tinta-3);
+  --color-tipo-1: var(--tipo-1);
+  --color-tipo-2: var(--tipo-2);
+  --color-tipo-3: var(--tipo-3);
+  --color-tipo-4: var(--tipo-4);
+  --color-tipo-5: var(--tipo-5);
+  --color-cumple: var(--cumple);
+  --color-alerta: var(--alerta);
+  --color-no-cumple: var(--no-cumple);
+  --color-tipo-1-tinte: var(--tipo-1-tinte);
+  --color-tipo-2-tinte: var(--tipo-2-tinte);
+  --color-tipo-3-tinte: var(--tipo-3-tinte);
+  --color-tipo-4-tinte: var(--tipo-4-tinte);
+  --color-tipo-5-tinte: var(--tipo-5-tinte);
+  --color-cumple-tinte: var(--cumple-tinte);
+  --color-alerta-tinte: var(--alerta-tinte);
+  --color-no-cumple-tinte: var(--no-cumple-tinte);
+  /* El color del veredicto o del tipo de nodo que un componente fija con `--v` / `--c`. */
+  --color-v: var(--v);
+  --color-vt: var(--vt);
+  --color-c: var(--c);
+  --color-ct: var(--ct);
+
+  --font-letra: var(--fuente-letra), system-ui, sans-serif;
+  --font-mono: var(--mono-activa, ui-monospace, monospace);
+
+  /* Escala tipográfica (design-system § 2.3). Título, guía y cifra cambian bajo 721 px (base.css). */
+  --text-titulo: var(--t-titulo);
+  --text-titulo--line-height: 1.15;
+  --text-titulo--letter-spacing: -0.022em;
+  --text-titulo--font-weight: 600;
+  --text-seccion: 20px;
+  --text-seccion--line-height: 1.3;
+  --text-seccion--letter-spacing: -0.01em;
+  --text-seccion--font-weight: 600;
+  --text-sub: 15px;
+  --text-sub--line-height: 1.4;
+  --text-texto: 15px;
+  --text-texto--line-height: 1.6;
+  --text-guia: var(--t-guia);
+  --text-guia--line-height: 1.55;
+  /* La maqueta solo fija el tamaño de estos dos y hereda la interlínea 1,6 del cuerpo; donde declara otra
+     (1,5 en avisos y definiciones, 1 en chips y controles), el componente la pone explícita. */
+  --text-chico: 13px;
+  --text-chico--line-height: 1.6;
+  --text-dato: 12px;
+  --text-dato--line-height: 1.6;
+  --text-cifra: var(--t-cifra);
+  --text-cifra--line-height: 1;
+  /* Tamaños de apoyo que la maqueta aprobada usa fuera de la tabla del § 2.3 (ADR-008): 14 px en
+     pestañas, botones y párrafos secundarios de un bloque; 22 px en la cifra de capacidad y la cita
+     de la pregunta (19 px en teléfono); 11 px en códigos dentro de miniaturas y ejes. */
+  --text-apoyo: 14px;
+  --text-apoyo--line-height: 1.6;
+  --text-cifra-chica: 22px;
+  --text-cifra-chica--line-height: 1;
+  --text-cita: var(--t-cita);
+  --text-cita--line-height: 1.35;
+  --text-micro: 11px;
+  --text-micro--line-height: 1;
+}

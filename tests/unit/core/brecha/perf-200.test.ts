@@ -21,9 +21,18 @@ export const PRESUPUESTO_MS = 2000;
 
 async function corridaDe200() {
   const e = entradaReal();
-  const lote200 = JSON.parse(
-    readFileSync("data/casos/demo-a/planlang-a-001-200.json", "utf8"),
-  ) as O;
+  // Desde el S2 el lote de 200 se genera con la v1.4 (AU-9), cuyo contrato de grafo la corrida del S1 no corrió. Sus
+  // casos son los mismos que con la v1.1 (el de 20 es su primer bloque), así que aquí se re-sella con la referencia al
+  // plan del lote de 20: el verificador los lee como el lote de la corrida que replica.
+  const lote20 = e.casos as O;
+  const lote200 = await conHuella(
+    sinHuella({
+      ...(JSON.parse(
+        readFileSync("data/casos/demo-a/planlang-a-001-200.json", "utf8"),
+      ) as O),
+      plan: lote20["plan"] as JsonValor,
+    }),
+  );
   const c = copia(e.corrida);
   const m = c.corrida as O & { trazas: O[]; casos: O };
   const originales = m.trazas.map((d) => c.trazas[d["archivo"] as string] as O);

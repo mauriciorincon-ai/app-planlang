@@ -57,6 +57,8 @@ def traza_de_estado(
             }
         )
     nodos = [p["nodo"] for p in pasos]
+    # El primer paso que falló: el error que cortó el caso o el que el plan pasó a una persona (AU-9).
+    primer_error = next((p["error_proveedor"] for p in pasos if p["error_proveedor"]), None)
     finales = {
         "tipo_atencion": estado.get("tipo_atencion"),
         "servicio_exento": estado.get("servicio_exento"),
@@ -73,7 +75,8 @@ def traza_de_estado(
         "severidad_accion": estado.get("severidad_accion"),
         "latencia_total_s": round(sum(int(p["duracion_ms"]) for p in pasos) / 1000, 3),
         "tokens": _suma_tokens(pasos),
-        "error_proveedor": error["tipo"] if error else None,
+        "error_proveedor": primer_error,
+        "proveedor_no_disponible": bool(estado.get("proveedor_no_disponible", False)),
     }
     traza = {
         "formato": FORMATO_TRAZA,
@@ -94,8 +97,8 @@ def traza_de_estado(
         "salida_final": estado.get("salida_final") if error is None else None,
         "documento_adverso": estado.get("documento_adverso") if error is None else None,
         "guardia_salida": estado.get("guardia_salida") if error is None else None,
-        "error_proveedor": error["tipo"] if error else None,
-        "error_de_esquema_en_traspaso": bool(error and error["tipo"] == "esquema_invalido"),
+        "error_proveedor": primer_error,
+        "error_de_esquema_en_traspaso": any(p["error_proveedor"] == "esquema_invalido" for p in pasos),
     }
     return con_huella(traza)
 

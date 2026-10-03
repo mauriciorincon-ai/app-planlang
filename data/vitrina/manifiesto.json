@@ -1,0 +1,52 @@
+{
+  "formato": "planlang-vitrina/v1",
+  "nota": "Editado a mano: declara qué muestra la vitrina (`sprint`: el sprint en que se construyó el agente y corrió el lote). tests/integration/manifiesto-vitrina.test.ts verifica cada huella y regenera el informe; src/lib/datos/vitrina.ts lo valida al compilar.",
+  "demos": {
+    "demo-a": {
+      "plan": {
+        "archivo": "plans/demo-a/v1.3.json",
+        "huella": "bbe1b9c4e3241c58c6245c1eeb7b04488058e8553ac318b51c5e5059c8386e92"
+      },
+      "corrida": {
+        "ruta": "runs/demo-a/suscripcion-planlang-a-001-20-v1.2",
+        "huella": "60b272f60e46fa23d95e23add14292a74b74733fb8ad7ba83dd49420ff55f3f1",
+        "sprint": 1
+      },
+      "repeticiones": [
+        {
+          "ruta": "runs/demo-a/suscripcion-planlang-a-001-20-v1.2-r2",
+          "huella": "0f5257d5265a5bdb40e788cd1818123b3de8ef43518a41b0649433f0a989dd38"
+        },
+        {
+          "ruta": "runs/demo-a/suscripcion-planlang-a-001-20-v1.2-r3",
+          "huella": "4380307cf1505bcd0b07302a22a5c99ea84bdf026ed7619e50a8672125025d87"
+        }
+      ],
+      "linea_base": {
+        "ruta": "runs/demo-a/suscripcion-planlang-a-001-20-v1.2-base",
+        "huella": "c280b82a4c12874d8e43f9ccf39c72d506174a49c6f8bbe21a1827b8e68e3491"
+      },
+      "informe": {
+        "archivo": "data/vitrina/demo-a/suscripcion-planlang-a-001-20-v1.2/informe.json",
+        "huella": "ca000282398e1e248b5f8ce86c99206e7c1fdedb99742169164bebf3126fdd9f"
+      },
+      "playground": {
+        "senal_propuesta": "propuesta",
+        "valor_favorable": "aprobar",
+        "claves_previas": ["extraccion"]
+      },
+      "spike": {
+        "fecha": "2026-09-26",
+        "grafo": {
+          "archivo": "data/vitrina/demo-a/spike-2026-09-26/grafo.json",
+          "sha256": "bfabad3ed6f7c7da3785cc3f8a16827b3f0cab8c1acfc8ecbfb9c7c17b28897f",
+          "origen": "planeadora: portafolio/planlang/investigacion/spike-adaptador-claude-code/salidas/grafo.json (copia fijada, byte a byte)"
+        },
+        "lectura": {
+          "archivo": "data/vitrina/demo-a/spike-2026-09-26/lectura.json",
+          "sha256": "b138df37c5d1987cbeac89657059fa2e60cf51d2040a502b64ae630dd6205527"
+        }
+      }
+    }
+  }
+}
