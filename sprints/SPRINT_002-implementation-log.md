@@ -1028,8 +1028,22 @@ Arranca con «1. lo abrí y apruebo 2. continúa» (mirada 4 registrada arriba).
 - **e2e de movimiento reducido:** 14 pruebas (7 pantallas × teléfono y escritorio, `reducedMotion: "reduce"`), verdes
   en la CI del PR #8 sobre `03f94ae`.
 - **Pasada de capturas de cierre:** `scripts/capturar-vitrina.mjs --destino` (opción nueva) escribe fuera de
-  `docs/fidelidad/` para no pisar los registros de las miradas aprobadas ni sumar unos 50 MB al repo. El resultado se
-  registra abajo.
+  `docs/fidelidad/` para no pisar los registros de las miradas aprobadas ni sumar unos 50 MB al repo.
+  - **Corrida el 2026-10-02** sobre el build de `4164785`: las cuatro miradas (p1–p4) cubren las 7 pantallas en 380
+    y 1280 px, los dos temas, los dos idiomas y el perfil experto.
+    - 73 pares (146 encuadres, 66 MB en el scratchpad de la sesión, sin versionar) y 73 mediciones sin
+      desplazamiento lateral.
+    - **23/23 interacciones**: tema, perfil, idioma, pestaña, índice del plan, «Ver 3 más», renglón, nodo del lienzo,
+      pestaña «Código», selector de casos, balance de Brecha, U2 con el teclado, «Volver al plan», modo Texas y las tres
+      de Fichas.
+  - **Leídos como imagen**, 8 encuadres de esta pasada más los 3 de Fichas de la mirada 4 (el mismo build de la
+    vitrina):
+    - escritorio: Agente oscuro ES, Plan claro EN, Caso A-006 experto oscuro ES, Brecha claro EN y Playground con U2 en
+      1.600 oscuro ES (1 caso cambia: A-010, con su error y su enlace);
+    - teléfono: Entrada oscuro ES, Agente claro EN y Caso oscuro ES.
+
+    Sin defectos de forma. Una frase a revisar en la auditoría: la curva del Playground dice «Con el lote de 200 tomará
+    forma», y el lote existe desde esta fase, pero la vitrina sigue en la corrida de 20.
 
 ## Desviación del plan
 
