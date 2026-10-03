@@ -13,7 +13,12 @@ export const ROTULO = {
     "Datos 100 % sintéticos · las decisiones humanas de este demo se simularon en lote",
     "100% synthetic data · this demo’s human decisions were simulated in batch",
   ),
+  /** El nombre de su región: el rótulo vive dentro de un landmark (AU-S2-B24). */
+  region: tb("Aviso de simulación", "Simulation notice"),
 };
+
+/** El enlace para saltar la barra con el teclado (AU-S2-B24, WCAG 2.4.1). */
+export const SALTO = tb("Saltar al contenido", "Skip to content");
 
 export const PESTANAS: Record<Pantalla, ReturnType<typeof tb>> = {
   entrada: tb("Entrada", "Home"),

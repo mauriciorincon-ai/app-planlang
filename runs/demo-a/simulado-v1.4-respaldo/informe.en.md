@@ -4,7 +4,7 @@
 
 ## 1. Summary for the decision-maker
 
-**Verdict: ✗ NOT MET**
+**Verdict: ✗ DOES NOT MEET**
 
 The plan was not met. 8 synthetic cases were measured. Criteria: 6 met, 2 failed and 1 still open, out of 9. Risks that occurred: R5, R7, R9. Human decisions were simulated.
 

@@ -4,10 +4,13 @@
  * con nota y su porqué medido en el playground. Una lectura editorial que falte no se suple con un genérico: el build
  * se detiene nombrándola.
  */
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { beforeAll, describe, expect, it } from "vitest";
 import { compactar } from "@core/playground/compactar";
 import { consecuencias, umbralesDelPlan } from "@core/playground/consecuencias";
 import { datosDemo, type DatosDemo } from "@/lib/datos/vitrina";
+import { VEREDICTOS } from "@/textos/comun";
 import { noCumple } from "./_brecha-no-cumple";
 import {
   umbralQueLoRompe,
@@ -34,6 +37,21 @@ describe("el veredicto y el balance", () => {
     expect(es.veredicto.experto).toContain(
       "RF-09.2: 0 diferencias en 233 decisiones",
     );
+  });
+
+  it("el informe en Markdown que se publica dice el veredicto con las mismas palabras que la pantalla (AU-S2-B44)", () => {
+    const valor = d.informe.veredicto.valor as keyof typeof VEREDICTOS;
+    for (const i of ["es", "en"] as const) {
+      const md = readFileSync(
+        join(
+          process.cwd(),
+          d.manifiesto.corrida.ruta.replace(/^runs\//, "data/vitrina/"),
+          `informe.${i}.md`,
+        ),
+        "utf8",
+      );
+      expect(md).toContain(VEREDICTOS[valor][i].toUpperCase());
+    }
   });
 
   it("seis renglones; en supuestos, S2 cumplió, S3 falló y S1 quedó sin probar", () => {

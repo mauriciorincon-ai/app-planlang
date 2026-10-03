@@ -113,6 +113,16 @@ describe("inglés", () => {
       "criterios",
       "sesión",
       "Supuestos",
+      // Estados, criticidad y conectores que se colaban crudos en las líneas del experto (AU-S2-B18, B19).
+      "refutado",
+      "confirmado",
+      "sin_probar",
+      "cumple_con_alertas",
+      "criticidad",
+      "frente a",
+      "indefinid",
+      "corridas",
+      "reintentos",
     ])
       expect(texto, residuo).not.toContain(residuo);
   });

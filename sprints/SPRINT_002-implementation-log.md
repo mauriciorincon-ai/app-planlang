@@ -1210,15 +1210,81 @@ summary como deuda con fecha.
 |---|---|---|---|
 | Avisos aceptados con razón y fecha | un GHSA ignorado sin registro y el registrado con la fecha vencida | `avisos-aceptados.test.ts` nombra los dos | 2/2 |
 
-#### Accesibilidad (en curso)
+#### Accesibilidad
 
 - **AU-S2-14:** el foco con teclado del lienzo tiene forma propia: un anillo a 4 px de la caja del nodo (`rect.foco`)
   y un halo bajo la línea (`path.halo`), sin cambiar el estilo de la línea (que dice su modo) ni confundirse con la
-  selección. Golden SVG regenerados. Prueba e2e nueva en `tests/e2e/agente.spec.ts` (**escrita, aún sin correr**).
+  selección. Golden SVG regenerados. Prueba e2e nueva en `tests/e2e/agente.spec.ts`: corrió verde en teléfono y
+  escritorio dentro del e2e completo de este lote (146 pasan, 2 saltadas por proyecto, 0 reintentos).
 - **AU-S2-15:** semántica de tabla con roles ARIA en `TablaF`, en las tres tablas del playground y en la de reglas
   de P6; en las trazas de P3 (filas `<summary>` desplegables, que no admiten roles de tabla) cada celda dice su
   columna al lector. **AU-S2-B25:** «Ver el caso de punta a punta» lleva el id del caso para el lector. **AU-S2-B27
   (parte):** la fila que cambia en la tabla de señales lo dice también al lector.
+
+#### Accesibilidad, bilingüe y gates (lote 1 de lo que faltaba)
+
+- **B20:** «Moverlo» va dentro del nombre accesible («Moverlo: U1 en el playground»); gate nuevo en
+  `plan-componentes.test.tsx`: en P2, todo `aria-label` de enlace o botón contiene su etiqueta visible (WCAG 2.5.3).
+- **B21:** el `<output>` del deslizador va con `aria-live="off"`: el valor lo dice el `aria-valuetext`, una vez.
+- **B29:** la línea de estado del playground lee también las cuatro cifras (`ESTADO.cifras`, en `sr-only` dentro del
+  `role="status"`), plantilla completa por idioma con singular y plural.
+- **B22 · B26:** la cadena de nodos de la brecha es `role="group"`; el `pre` del código es `role="region"` con la ruta
+  entera en su nombre; la ruta del archivo, el papel de cada pieza del stack y el detalle de cada cifra de la ficha
+  CV dejan el `title` y van en `sr-only`. Guardia nueva `tests/unit/guardias/a11y-fuente.test.ts` sobre el árbol de
+  sintaxis de cada `.tsx`: ningún `title` y ningún `aria-label` en un genérico sin `role`.
+- **B23:** el botón deshabilitado se distingue sin depender del color: borde punteado, tinta 2, sin relleno, cursor
+  `not-allowed` (como la maqueta, `.boton[aria-disabled]`). Prueba e2e con el estilo calculado.
+- **B24:** enlace «Saltar al contenido» como primer elemento enfocable (visible solo con foco) y `main` con
+  `tabIndex=-1`; el rótulo vive en una región con nombre (`<section aria-label>`, «Aviso de simulación»), también el
+  bilingüe de `/` y la 404. Es un cambio de forma visible con el teclado: entra a la mirada de cierre.
+- **B27:** la capa activa del índice del lienzo lleva subrayado (como la pestaña actual), no solo más luminancia;
+  prueba e2e. La fila «cambia» de la tabla de señales ya tenía su glifo (el cuadro) y desde `64e8ce6` el texto para
+  el lector: sin cambio. El subrayado es cambio de forma: mirada de cierre.
+- **B17 · B18 · B19:** las líneas del experto de P4 se redactan enteras por idioma (`EXPERTO` en
+  `src/textos/brecha.ts`, ~30 plantillas: veredicto, criterios, brechas, RF-09.2, comparación con la línea base,
+  curva, regla del supuesto, evaluadores, «con U2 = …, A-010 iría sin persona»); los estados, el veredicto y la
+  criticidad salen traducidos (`criticidadEnTexto` con error con nombre, `textoDeVeredicto`); los ternarios de JSX
+  (secciones de la brecha, punto «actual» de la curva, comillas de la pregunta) pasan a diccionarios. La curva del
+  supuesto toma el id de su umbral del plan (`umbralDeLaCurva`, error con nombre), sin «U1» literal, y la lectura
+  de S1 cita el valor con `{plan:U1}` en lugar de un `.replace` sobre la copia. Guardia nueva
+  `tests/unit/guardias/bilingue-fuente.test.ts`: ningún ternario de idioma elige palabras en `src/` fuera de
+  `src/textos/` (exentos: códigos de idioma, valores de atributo, rutas y `formato.ts`, que da formato a números y
+  listas). Al nacer encontró **cinco** que la auditoría no listaba (comillas de la pregunta, «de/of» de la ficha
+  del agente, categoría corta de las brechas, nombre del criterio más exigente y una ruta, que se exime): pagados
+  con mapas por id y error con nombre (`CATEGORIA_CORTA` tipado por la unión del núcleo, `CRITERIO_EXIGENTE`).
+  La prueba de «español residual» de P4 suma estados, criticidad y conectores. «todos →» se queda: es la palabra
+  del lenguaje de reglas del plan, como `IMPLICA` (código), y el valor por defecto de un detector sin población usa
+  la misma palabra.
+- **Deuda nueva, encontrada por la guardia:** `core/brecha/render-md.ts` (76 ternarios) y `core/brecha/m9.ts` (6)
+  arman el informe Markdown con el mismo patrón de fragmentos. Reescribirlo cambia los bytes de todos los informes
+  publicados y está fuera de lo que la auditoría listó: **S3**, con la guardia lista para extenderse a `core/`.
+- **B44:** el informe Markdown dice el veredicto con las palabras de la pantalla y de la maqueta aprobada
+  («⚠ MEETS WITH WARNINGS», «✓ MEETS», «✗ DOES NOT MEET»); la línea se cambió en los seis `informe.en.md` derivados
+  (cinco corridas y el golden) y las pruebas de frescura confirman que coinciden con lo que genera el verificador.
+- **B14:** `lighthouse-urls.json` suma `/en` y `/en/playground` (la pantalla más pesada); guardia
+  `tests/unit/guardias/lighthouse-urls.test.ts`. El job lo medirá en el próximo push (primera vez en inglés).
+- **B15:** axe falla también con las violaciones **moderadas** (`IMPACTOS_QUE_FALLAN` en `tests/e2e/_comun.ts`; el
+  helper pasa a llamarse `sinViolacionesAxe` y el smoke lo usa). Las menores quedan fuera, dicho en el código. El e2e
+  completo pasó con el umbral nuevo: 146 de 146 (2 saltadas por diseño de proyecto).
+- **B28:** el barrido de tintas vetadas ve también `text-(--tinta-3)`, `text-[var(--tinta-3)]`, `text-tinta-3!`,
+  `[color:var(--tinta-3)]`, `[fill:var(--tinta-3)]` (ESLint y `estilos.test.ts`) y `fill:` en el CSS.
+
+| Gate | Prueba | Demo en rojo |
+|---|---|---|
+| B20 | gate «nombre accesible contiene la etiqueta visible» (plan-componentes) | etiqueta vieja «Mover U1 en el playground» → rojo «expected 'Mover U1 en el playground' to contain 'Moverlo'» → verde al revertir |
+| B21 | «el valor del deslizador se dice una vez» (playground-componentes) | quitar aria-live="off" del <output> → rojo «expected null to be 'off'» → verde al revertir |
+| B29 | «la línea de estado lee las cifras» (playground-componentes) | cifra congelada en 0 → rojo «expected 'Movido: U2 1600…' to contain 'De 20 casos, 1 cambia de camino…'» → verde al revertir |
+| B22 | guardia `a11y-fuente` (aria-label en genérico exige role) | quitar role="group" de la cadena de la brecha → rojo «src/components/brecha/secciones.tsx:761: <span aria-label> sin role» → verde al revertir |
+| B26 | guardia `a11y-fuente` (sin `title`) | devolver title={s.papel} al chip de la ficha CV → rojo «ficha-cv.tsx:201: <span title>» → verde al revertir |
+| B23 | e2e playground «Volver al plan» deshabilitado con borde punteado | build sin las clases `disabled:` → rojo en los 4 (es/en × teléfono/escritorio) «Expected: "dashed" Received: "solid"» → verde al restaurar |
+| B24/B15 | componentes «lo primero del teclado salta al contenido; rótulo en región» + axe `moderate` en e2e | build con el rótulo en un <div> sin landmark → e2e Entrada rojo «[["region","moderate",[["div[data-rotulo=\"true\"]"]]]]» (con el umbral viejo, solo críticas y serias, pasaba) → verde con <section aria-label> |
+| B27 | e2e agente teléfono «capa activa subrayada» | build sin el subrayado → rojo «Expected: "underline" Received: "none"» → verde al restaurar |
+| B44 | brecha.test «el informe en Markdown dice el veredicto con las palabras de la pantalla» | devolver «MET WITH ALERTS» al informe.en.md publicado → rojo «expected '# Gap report…' to contain 'MEETS WITH WARNINGS'» → verde al revertir |
+| B17/B18 | guardia `bilingue-fuente` (sin ternarios de idioma con palabras en src/) | devolver el ternario «la exactitud de extracción»/«extraction accuracy» a brecha.ts → rojo «src/lib/vista/brecha.ts:1153: «la exactitud de extracción» / «extraction accuracy»» → verde al revertir. Al nacer encontró 5 más que la auditoría no listaba (pregunta.tsx, armar.ts, brecha.ts ×2, una ruta) — pagados. |
+| B19 | brecha-componentes «sin español residual» ampliada (estados, criticidad, conectores) | escrita antes del último arreglo: rojo sobre el defecto real «confirmado: expected 'The report at a glance…' not to contain 'confirmado'» (estado crudo en «Además») → verde con el arreglo |
+| B28 | ESLint `no-restricted-syntax` + estilos.test ampliados | carnada temporal con text-(--tinta-3), [color:var(--tinta-3)], text-tinta-3!, text-[var(--linea)] → 4 errores en 1:37…4:37 (la sombra legítima pasa) → verde al borrar la carnada; estilos.test lleva sus carnadas dentro de la prueba |
+| B14 | guardias/lighthouse-urls.test (las 7 pantallas en español + /en y /en/playground) | lighthouse-urls.json de HEAD (sin inglés) → rojo «expected [ '/es', '/es/plan', …(5) ] to include '/en'» → verde con las dos URL nuevas |
+| B24 (enlace de salto) | componentes «lo primero del teclado salta al contenido» | quitar el enlace → rojo «expected '/en' to be '#contenido'» → verde al restaurar |
 
 ### Punto de retoma (2026-10-02, compactación pedida por el usuario)
 
@@ -1228,8 +1294,9 @@ summary como deuda con fecha.
 - **Pagados:** AU-S2-1…10, 13, 14, 15, 17, 18, 19, 21, 22, 23 · B3, B10, B11, B16, B25, B30, B31, B34, B35, B36, B38,
   B39, B40, B42, B43, B45, B46, B47, B48, B49, B55 · P-11, P-13 · C-9.
 - **Falta, en este orden:**
-  1. accesibilidad: B20, B21, B22, B23, B24, B26, B27 (capa activa del lienzo), B29; bilingüe: B17, B18, B19, B44;
-     gates: B14 (Lighthouse en `/en`), B15 (axe `moderate`), B28 (barrido de tintas);
+  1. ~~accesibilidad: B20, B21, B22, B23, B24, B26, B27 (capa activa del lienzo), B29; bilingüe: B17, B18, B19, B44;
+     gates: B14 (Lighthouse en `/en`), B15 (axe `moderate`), B28 (barrido de tintas)~~ — pagado, ver «Accesibilidad,
+     bilingüe y gates»;
   2. AU-S2-16 (errores con nombre en el vocabulario de nodos y señales; `u3` ausente) y C-1…C-12;
   3. núcleo y gates: B7, B8, B9 (nota), B12, B13, B32, B33, B37, B41, B50, B51, B52, B53, B54, B56, B57; P-1…P-10,
      P-12;

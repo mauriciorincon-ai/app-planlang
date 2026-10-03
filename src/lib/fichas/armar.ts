@@ -11,7 +11,7 @@
 import type { Idioma, TextoBilingue } from "@core/formatos/bilingue";
 import type { DatosDemo } from "@/lib/datos/vitrina";
 import type { HechosDelRepo } from "@/lib/datos/repo";
-import { versionCorta } from "@/lib/vista/formato";
+import { numeroTal, versionCorta } from "@/lib/vista/formato";
 import { AGENTE, APP } from "@/textos/fichas";
 import { VERSION_EXPORT, VERSION_FICHA } from "./contrato";
 import type { BrochureExport, CifraFicha, FichaTecnica } from "./tipos";
@@ -104,7 +104,7 @@ export function fichaAgente(
       fuente: "calculada",
       detalle: X(
         C.costo.detalle({
-          total: i === "es" ? String(costo).replace(".", ",") : String(costo),
+          total: numeroTal(costo, i),
           n,
         }),
         i,
@@ -206,10 +206,13 @@ export function fichaAgente(
       { valor: versionPlan, etiqueta: X(AGENTE.hitos.plan, i) },
       { valor: rep.corrida.fecha, etiqueta: X(AGENTE.hitos.corrida, i) },
       {
-        valor:
-          i === "es"
-            ? `${ct.nodos.filter((x) => x.en_grafo).length} de ${ct.nodos.length}`
-            : `${ct.nodos.filter((x) => x.en_grafo).length} of ${ct.nodos.length}`,
+        valor: X(
+          AGENTE.hitos.piezasValor({
+            a: ct.nodos.filter((x) => x.en_grafo).length,
+            b: ct.nodos.length,
+          }),
+          i,
+        ),
         etiqueta: X(AGENTE.hitos.piezas, i),
       },
       { valor: String(decisiones), etiqueta: X(AGENTE.hitos.decisiones, i) },

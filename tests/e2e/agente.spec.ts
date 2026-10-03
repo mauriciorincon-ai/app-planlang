@@ -1,9 +1,9 @@
 import { expect, test, type Page } from "@playwright/test";
-import { consolaLimpia, desbordeLateral, sinViolacionesSerias } from "./_comun";
+import { consolaLimpia, desbordeLateral, sinViolacionesAxe } from "./_comun";
 
 /**
  * P3 Agente en el export servido (S2 fase 2): se lee entera en los dos idiomas, temas y perfiles sin desplazar
- * la página de lado y sin violaciones serias de axe; cada control hace algo (regla 22 b): elegir un nodo en el
+ * la página de lado y sin violaciones de axe (críticas, serias ni moderadas); cada control hace algo (regla 22 b): elegir un nodo en el
  * lienzo y con el teclado, la regla U1, las pestañas del panel, «Ver N más», el conmutador lienzo · lista y el
  * índice de capas en el teléfono; y con movimiento reducido lo del experto se ve de verdad.
  */
@@ -43,7 +43,7 @@ for (const idioma of ["es", "en"] as const) {
   const t = T[idioma];
 
   test.describe(`P3 Agente (${idioma})`, () => {
-    test("se lee completa en los dos temas y perfiles: sin desplazamiento de lado ni violaciones serias", async ({
+    test("se lee completa en los dos temas y perfiles: sin desplazamiento de lado ni violaciones de axe", async ({
       page,
     }) => {
       const errores = consolaLimpia(page);
@@ -68,7 +68,7 @@ for (const idioma of ["es", "en"] as const) {
             await desbordeLateral(page),
             `${tema}/${perfil}`,
           ).toBeLessThanOrEqual(0);
-          await sinViolacionesSerias(page);
+          await sinViolacionesAxe(page);
         }
       expect(errores).toEqual([]);
     });
@@ -136,10 +136,19 @@ test("en el teléfono el lienzo se desliza dentro de su marco y el índice lo ll
   await expect
     .poll(() => region.evaluate((r) => r.scrollLeft))
     .toBeGreaterThan(0);
-  await expect(page.getByRole("button", { name: T.es.capa })).toHaveAttribute(
-    "aria-current",
-    "true",
-  );
+  const activa = page.getByRole("button", { name: T.es.capa });
+  await expect(activa).toHaveAttribute("aria-current", "true");
+  // La capa activa no se distingue solo por la luminancia: subrayada, y las demás no (AU-S2-B27).
+  expect(
+    await activa.evaluate((b) => getComputedStyle(b).textDecorationLine),
+  ).toBe("underline");
+  expect(
+    await page
+      .getByRole("group", { name: "Ir a la capa" })
+      .locator("button:not([aria-current])")
+      .first()
+      .evaluate((b) => getComputedStyle(b).textDecorationLine),
+  ).toBe("none");
 });
 
 test.describe("movimiento reducido", () => {
@@ -162,7 +171,7 @@ test.describe("movimiento reducido", () => {
       };
     });
     expect(estado).toEqual({ opacidad: 1, animaciones: 0 });
-    await sinViolacionesSerias(page);
+    await sinViolacionesAxe(page);
   });
 });
 

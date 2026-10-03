@@ -26,7 +26,7 @@ describe("render del informe", () => {
       expect(md).not.toMatch(/undefined|NaN|\[object Object\]/);
       expect(md.endsWith("\n")).toBe(true);
       expect(md).toMatch(
-        i === "es" ? /⚠ CUMPLE CON ALERTAS/ : /⚠ MET WITH ALERTS/,
+        i === "es" ? /⚠ CUMPLE CON ALERTAS/ : /⚠ MEETS WITH WARNINGS/,
       );
       expect(md).toMatch(
         i === "es"
@@ -54,7 +54,7 @@ describe("render del informe", () => {
         (s) => s.id === "dato_sensible_en_salida",
       )!.aplicar(entradaSimulada());
       const md = renderizarInforme(await generarInforme(e), i);
-      expect(md).toMatch(i === "es" ? /✗ NO CUMPLE/ : /✗ NOT MET/);
+      expect(md).toMatch(i === "es" ? /✗ NO CUMPLE/ : /✗ DOES NOT MEET/);
       expect(md).toMatch(i === "es" ? /- Bloquea: C2/ : /- Blocks: C2/);
       expect(md).toMatch(/R2 \(/);
     },

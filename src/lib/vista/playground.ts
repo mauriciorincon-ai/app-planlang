@@ -20,6 +20,7 @@ import {
   CURVA,
   EJEMPLO,
   FICHA_TECNICA,
+  FUNCION_NOMBRADA,
   INTERRUPTOR,
   IPO,
   LIMITES,
@@ -236,7 +237,8 @@ export function vistaPlayground(d: DatosDemo, i: Idioma): VistaPlayground {
       const f = (a as { funcion: { nombre: string; entradas: string[] } })
         .funcion;
       const u = d.plan.umbrales.find((x) => f.entradas.includes(x.senal));
-      return `${u ? (i === "es" ? `${u.id} es la función nombrada ` : `${u.id} is the named function `) : ""}${f.nombre}(${f.entradas.join(", ")})`;
+      const firma = `${f.nombre}(${f.entradas.join(", ")})`;
+      return u ? X(FUNCION_NOMBRADA({ umbral: u.id, firma }), i) : firma;
     })
     .join("; ");
   const minutos = c.minutos_por_persona;

@@ -1,10 +1,10 @@
 import { expect, test } from "@playwright/test";
-import { consolaLimpia, sinViolacionesSerias } from "./_comun";
+import { consolaLimpia, sinViolacionesAxe } from "./_comun";
 
 /**
  * P1 Entrada en el export servido (S2 fase 1). Se entra por el ÍNDICE (`/`), como un visitante; se recorre en
  * los dos idiomas, los dos temas y los dos perfiles; cada control se pulsa y cambia algo (regla 22 b); axe
- * sin violaciones serias; sin desplazamiento de lado a 380 px; consola limpia (sin #418 de hidratación); y con
+ * sin violaciones de axe; sin desplazamiento de lado a 380 px; consola limpia (sin #418 de hidratación); y con
  * movimiento reducido lo que aparece se ve de verdad.
  */
 
@@ -64,7 +64,7 @@ for (const idioma of ["es", "en"] as const) {
         };
 
   test.describe(`P1 Entrada (${idioma})`, () => {
-    test("se lee completa, sin desplazamiento de lado y sin violaciones serias en los dos temas y perfiles", async ({
+    test("se lee completa, sin desplazamiento de lado y sin violaciones de axe en los dos temas y perfiles", async ({
       page,
     }) => {
       const errores = consolaLimpia(page);
@@ -93,7 +93,7 @@ for (const idioma of ["es", "en"] as const) {
             lado,
             `${tema}/${perfil}: la página se desplaza de lado`,
           ).toBeLessThanOrEqual(0);
-          await sinViolacionesSerias(page);
+          await sinViolacionesAxe(page);
         }
       expect(errores).toEqual([]);
     });
@@ -189,7 +189,7 @@ test.describe("movimiento reducido", () => {
       alto: expect.any(Number),
     });
     expect(estado.alto).toBeGreaterThan(100);
-    await sinViolacionesSerias(page);
+    await sinViolacionesAxe(page);
   });
 });
 

@@ -548,6 +548,11 @@ export const AGENTE = {
     plan: tb("versión del plan", "plan version"),
     corrida: tb("primera corrida real", "first real run"),
     piezas: tb("piezas del contrato", "contract pieces"),
+    piezasValor: ((p: { a: number; b: number }) =>
+      tb(`${p.a} de ${p.b}`, `${p.a} of ${p.b}`)) as Plantilla<{
+      a: number;
+      b: number;
+    }>,
     decisiones: tb("decisiones verificadas", "verified decisions"),
   },
   proceso: {

@@ -129,8 +129,11 @@ function Deslizador({
           </span>
           {u.nombre}
         </label>
+        {/* El valor ya lo anuncia el deslizador (`aria-valuetext`): el `<output>` callado evita decirlo dos veces
+            en cada paso (AU-S2-B21). */}
         <output
           htmlFor={id}
+          aria-live="off"
           className="text-cifra-chica font-semibold tabular-nums"
         >
           {fmt(v)}
@@ -856,6 +859,21 @@ export function Juego({ datos }: { datos: DatosIsla }) {
                         en: movidosTexto.map((m) => m.en).join(" · "),
                       })[i]
                     : ESTADO.enPlan(c.casos.length)[i]}
+                  {/* Las cifras de arriba cambian en silencio; la línea de estado las lee con ella (AU-S2-B29). */}
+                  <span className="sr-only">
+                    {" "}
+                    {
+                      ESTADO.cifras({
+                        casos: c.casos.length,
+                        cambian: r.cambios.length,
+                        introducidos: r.introducidos.length,
+                        evitados: r.evitados.length,
+                        minutos: r.minutos,
+                        cumplen: r.cumplen,
+                        criterios: r.criterios.length,
+                      })[i]
+                    }
+                  </span>
                 </p>
                 <button
                   type="button"
@@ -1020,7 +1038,11 @@ export function Juego({ datos }: { datos: DatosIsla }) {
                   grupo: (us) =>
                     `${curva.umbral} ${decimal(us[0]!, umbralCurva.decimales, i)}`,
                   actual: (v, cob) =>
-                    `${i === "es" ? "actual" : "current"} · ${curva.umbral} ${decimal(v, umbralCurva.decimales, i)} · ${porcentaje(Math.round(cob * 100) / 100, i)}`,
+                    CURVA.actual({
+                      umbral: curva.umbral,
+                      valor: decimal(v, umbralCurva.decimales, i),
+                      cobertura: porcentaje(Math.round(cob * 100) / 100, i),
+                    })[i],
                 }}
               />
               <figcaption className="mt-2 text-dato text-tinta-2">

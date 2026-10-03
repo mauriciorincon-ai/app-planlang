@@ -65,17 +65,21 @@ describe("las fichas en la piel de CV Viva", () => {
   it("cada cifra lleva su fuente en palabra y color, y la ficha de la app no dibuja proceso", () => {
     const { container } = render(<Pagina idioma="es" />);
     const app = container.querySelector('[data-ficha-cv="app"]')!;
+    // Lo que se ve de cada píldora (el detalle va para el lector, no en un `title`: AU-S2-B26).
     const fuentes = [...app.querySelectorAll("[data-fuente]")].map((x) => [
       x.getAttribute("data-fuente"),
-      x.textContent,
+      x.firstChild?.textContent,
+      x.querySelector(".sr-only")?.textContent?.trim().length ?? 0,
     ]);
-    expect(fuentes).toEqual([
+    expect(fuentes.map(([f, t]) => [f, t])).toEqual([
       ["medido", "medido"],
       ["medido", "medido"],
       ["medido", "medido"],
       ["declarado", "declarado"],
       ["calculada", "calculada"],
     ]);
+    for (const [, , detalle] of fuentes)
+      expect(detalle as number).toBeGreaterThan(2);
     expect(app.querySelector("[data-carril]")).toBeNull();
     expect(app.textContent).not.toContain("Cómo funciona");
   });

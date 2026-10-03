@@ -108,6 +108,25 @@ describe("mover los umbrales", () => {
     expect(container.textContent).toContain("Deja de cumplirse C3.");
   });
 
+  it("lo que oye un lector: la línea de estado lee las cifras y el valor del deslizador se dice una vez (AU-S2-B21, B29)", async () => {
+    const { container } = render(<Pagina idioma="es" />);
+    const viva = container.querySelector(
+      '[role="status"][aria-live="polite"]',
+    )!;
+    expect(viva.textContent).toContain(
+      "De 20 casos, 0 cambian de camino; 0 errores introducidos y 0 evitados;",
+    );
+    const u2 = screen.getByRole("slider", { name: /Alto costo/ });
+    await act(async () => fireEvent.change(u2, { target: { value: "1600" } }));
+    expect(viva.textContent).toContain(
+      "De 20 casos, 1 cambia de camino; 1 error introducido y 0 evitados;",
+    );
+    expect(viva.textContent).toMatch(/de \d+ criterios cumplen\.$/);
+    const salidas = [...container.querySelectorAll("output")];
+    expect(salidas.length).toBeGreaterThan(0);
+    for (const o of salidas) expect(o.getAttribute("aria-live")).toBe("off");
+  });
+
   it("el modo Texas es un interruptor: encenderlo no cambia ningún caso, y lo dice", async () => {
     const { container } = render(<Pagina idioma="es" />);
     const t = screen.getByRole("switch", { name: /Modo Texas/ });

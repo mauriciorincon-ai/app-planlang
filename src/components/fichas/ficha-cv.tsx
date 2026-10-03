@@ -198,8 +198,10 @@ function Cv({ f, idioma }: { f: FichaCv; idioma: Idioma }) {
         >
           {f.stack.map((s) => (
             <li key={s.nombre}>
-              <span className={CHIP} title={s.papel}>
+              <span className={CHIP}>
                 {s.nombre}
+                {/* El papel de cada pieza no vive solo en un `title` (AU-S2-B26). */}
+                <span className="sr-only">: {s.papel}</span>
               </span>
             </li>
           ))}
@@ -247,12 +249,9 @@ function Cv({ f, idioma }: { f: FichaCv; idioma: Idioma }) {
             >
               {c.etiqueta}
             </p>
-            <span
-              data-fuente={c.fuente}
-              title={c.detalle}
-              className={cx(PILDORA, "mt-2")}
-            >
+            <span data-fuente={c.fuente} className={cx(PILDORA, "mt-2")}>
               {c.fuenteTexto}
+              <span className="sr-only"> ({c.detalle})</span>
             </span>
           </li>
         ))}

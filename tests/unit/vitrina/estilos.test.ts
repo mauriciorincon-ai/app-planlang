@@ -24,9 +24,11 @@ function archivos(dir: string, ext: RegExp): string[] {
 const fuentes = archivos("src", /\.(tsx?|css)$/);
 const css = fuentes.filter((f) => f.endsWith(".css"));
 
+// La clase, la variable de Tailwind v4, el valor y la propiedad arbitrarios, con o sin `!` (AU-S2-B28).
 const CLASE_VETADA =
-  /(^|[\s"'`:])(text|placeholder|decoration|caret|fill)-(tinta-3|linea)(?=[\s"'`/]|$)/;
-const COLOR_VETADO = /(^|[\s;{])color:\s*var\(--(tinta-3|linea)\)/;
+  /(^|[\s"'`:])(text|placeholder|decoration|caret|fill)-(tinta-3|linea|\(--(tinta-3|linea)\)|\[var\(--(tinta-3|linea)\)\])(?=[\s"'`/!]|$)|\[(color|fill):var\(--(tinta-3|linea)\)\]/;
+// En el CSS: `color:` y también `fill:` (el texto de un SVG se pinta con `fill`).
+const COLOR_VETADO = /(^|[\s;{])(color|fill):\s*var\(--(tinta-3|linea)\)/;
 
 describe("tintas vetadas como texto", () => {
   it("el barrido encuentra lo que debe (demo en rojo dentro de la prueba)", () => {
@@ -35,6 +37,18 @@ describe("tintas vetadas como texto", () => {
     expect(CLASE_VETADA.test("border-tinta-3 text-tinta-2")).toBe(false);
     expect(COLOR_VETADO.test(".x{color: var(--tinta-3)}")).toBe(true);
     expect(COLOR_VETADO.test(".x{border-color: var(--tinta-3)}")).toBe(false);
+    // Las formas que el barrido no veía (AU-S2-B28).
+    expect(CLASE_VETADA.test("text-(--tinta-3)")).toBe(true);
+    expect(CLASE_VETADA.test('"[color:var(--tinta-3)]"')).toBe(true);
+    expect(CLASE_VETADA.test('"[fill:var(--linea)]"')).toBe(true);
+    expect(CLASE_VETADA.test('"text-tinta-3!"')).toBe(true);
+    expect(CLASE_VETADA.test("text-[var(--tinta-3)]")).toBe(true);
+    expect(CLASE_VETADA.test("shadow-[inset_0_0_0_1px_var(--tinta-3)]")).toBe(
+      false,
+    );
+    expect(CLASE_VETADA.test('trazo="var(--tinta-3)"')).toBe(false);
+    expect(COLOR_VETADO.test(".d-texto{fill: var(--tinta-3)}")).toBe(true);
+    expect(COLOR_VETADO.test(".guia{stroke: var(--tinta-3)}")).toBe(false);
   });
 
   it.each(fuentes)("%s no pinta texto con tinta-3 ni linea", (f) => {

@@ -139,8 +139,10 @@ export function Lienzo({
             }
             className={cx(
               "h-7 min-w-7.5 cursor-pointer rounded-chip border bg-transparent font-mono text-dato leading-none font-medium",
+              // La capa activa no se distingue solo por la luminancia: lleva subrayado, como la pestaña actual
+              // (AU-S2-B27, regla 13).
               k === activa
-                ? "border-tinta-1 text-tinta-1"
+                ? "border-tinta-1 text-tinta-1 underline decoration-2 underline-offset-[3px]"
                 : "border-tinta-3 text-tinta-2",
             )}
           >

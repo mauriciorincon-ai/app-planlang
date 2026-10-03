@@ -116,6 +116,22 @@ describe("marco: rótulo, barra y pie", () => {
     expect(screen.getByText("Simulación · no operativo")).toBeInTheDocument();
   });
 
+  it("lo primero del teclado salta al contenido y el rótulo vive en una región con nombre (AU-S2-B24)", () => {
+    const { container } = render(
+      <Marco idioma="en" pagina="plan">
+        <p>content</p>
+      </Marco>,
+    );
+    const primero = container.querySelector<HTMLElement>(
+      "a[href], button, input, [tabindex]:not([tabindex='-1'])",
+    )!;
+    expect(primero.getAttribute("href")).toBe("#contenido");
+    expect(primero.textContent).toBe("Skip to content");
+    expect(container.querySelector("main#contenido")).not.toBeNull();
+    const region = screen.getByRole("region", { name: "Simulation notice" });
+    expect(region.textContent).toContain("Simulation · not operational");
+  });
+
   it("el conmutador de tema cambia el atributo y marca el botón pulsado", async () => {
     render(
       <Marco idioma="en" pagina="plan">

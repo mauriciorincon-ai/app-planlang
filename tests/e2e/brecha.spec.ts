@@ -1,9 +1,9 @@
 import { expect, test } from "@playwright/test";
-import { consolaLimpia, desbordeLateral, sinViolacionesSerias } from "./_comun";
+import { consolaLimpia, desbordeLateral, sinViolacionesAxe } from "./_comun";
 
 /**
  * P4 Brecha en el export servido (S2 fase 3): se llega por su pestaña y se lee en los dos idiomas, temas y perfiles
- * sin desplazar la página de lado y sin violaciones serias de axe; lo que falló y lo sin probar están al frente y el
+ * sin desplazar la página de lado y sin violaciones de axe (críticas, serias ni moderadas); lo que falló y lo sin probar están al frente y el
  * balance lleva a cada uno; las nueve secciones del informe tienen su ancla; el informe abre el playground; y con
  * movimiento reducido lo del experto aparece visible.
  */
@@ -53,7 +53,7 @@ for (const idioma of ["es", "en"] as const) {
           for (let n = 1; n <= 9; n++)
             await expect(page.locator(`h2#b${n}`)).toBeVisible();
           expect(await desbordeLateral(page)).toBeLessThanOrEqual(0);
-          await sinViolacionesSerias(page);
+          await sinViolacionesAxe(page);
           expect(errores).toEqual([]);
         });
 
@@ -89,6 +89,6 @@ test.describe("movimiento reducido", () => {
       animaciones: document.getAnimations().length,
     }));
     expect(est).toEqual({ opacidad: 1, animaciones: 0 });
-    await sinViolacionesSerias(page);
+    await sinViolacionesAxe(page);
   });
 });

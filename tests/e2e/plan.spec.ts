@@ -1,9 +1,9 @@
 import { expect, test } from "@playwright/test";
-import { consolaLimpia, desbordeLateral, sinViolacionesSerias } from "./_comun";
+import { consolaLimpia, desbordeLateral, sinViolacionesAxe } from "./_comun";
 
 /**
  * P2 Plan en el export servido (S2 fase 2): se lee entera en los dos idiomas, temas y perfiles sin desplazar la
- * página de lado y sin violaciones serias de axe; cada control hace algo (regla 22 b): el índice lleva a su sección,
+ * página de lado y sin violaciones de axe (críticas, serias ni moderadas); cada control hace algo (regla 22 b): el índice lleva a su sección,
  * «Ver N más» abre el resto, cada renglón se abre y «Moverlo» lleva al playground; y con movimiento reducido lo del
  * experto se ve de verdad.
  */
@@ -19,7 +19,7 @@ const T = {
     r4: "Bucle de aclaraciones",
     abrir: "Qué pasaría y qué se hizo",
     siPasa: "Si pasa",
-    mover: "Mover U1 en el playground",
+    mover: "Moverlo: U1 en el playground",
   },
   en: {
     pestana: "Plan",
@@ -31,7 +31,7 @@ const T = {
     r4: "Clarification loop",
     abrir: "What would happen and what was done",
     siPasa: "If it happens",
-    mover: "Move U1 in the playground",
+    mover: "Move it: U1 in the playground",
   },
 } as const;
 
@@ -39,7 +39,7 @@ for (const idioma of ["es", "en"] as const) {
   const t = T[idioma];
 
   test.describe(`P2 Plan (${idioma})`, () => {
-    test("se lee completa en los dos temas y perfiles: sin desplazamiento de lado ni violaciones serias", async ({
+    test("se lee completa en los dos temas y perfiles: sin desplazamiento de lado ni violaciones de axe", async ({
       page,
     }) => {
       const errores = consolaLimpia(page);
@@ -63,7 +63,7 @@ for (const idioma of ["es", "en"] as const) {
             await desbordeLateral(page),
             `${tema}/${perfil}`,
           ).toBeLessThanOrEqual(0);
-          await sinViolacionesSerias(page);
+          await sinViolacionesAxe(page);
         }
       expect(errores).toEqual([]);
     });
@@ -122,6 +122,6 @@ test.describe("movimiento reducido", () => {
       animaciones: document.getAnimations().length,
     }));
     expect(estado).toEqual({ opacidad: 1, animaciones: 0 });
-    await sinViolacionesSerias(page);
+    await sinViolacionesAxe(page);
   });
 });

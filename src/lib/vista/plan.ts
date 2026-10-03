@@ -37,6 +37,7 @@ import { entero, enumerar, porcentaje, versionCorta } from "./formato";
 import { conPlan } from "./plan-en-texto";
 import {
   controlLegal,
+  criticidadEnTexto,
   estadoDeCriterio,
   estadoDeRiesgo,
   estadoDeSupuesto,
@@ -299,7 +300,7 @@ export function vistaPlan(d: DatosDemo, i: Idioma): VistaPlan {
     return {
       id: s.id,
       titulo: X(s.enunciado, i),
-      chips: [X(SUPUESTO.criticidad[s.criticidad]!, i)],
+      chips: [criticidadEnTexto(s.criticidad, i)],
       tecnica,
       abrir: {
         rotulo: X(SUPUESTO.abrir, i),

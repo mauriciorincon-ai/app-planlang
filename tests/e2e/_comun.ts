@@ -11,19 +11,26 @@ export function consolaLimpia(page: Page): string[] {
   return errores;
 }
 
-/** axe sin violaciones críticas ni serias, con la página quieta. */
-export async function sinViolacionesSerias(page: Page) {
+/**
+ * axe sin violaciones críticas, serias ni moderadas, con la página quieta (AU-S2-B15: «axe verde» incluye las
+ * moderadas; solo las menores quedan fuera, y se dice).
+ */
+export const IMPACTOS_QUE_FALLAN = ["critical", "serious", "moderate"] as const;
+
+export async function sinViolacionesAxe(page: Page) {
   // axe mide colores: una transición a medias (150 ms) daría un contraste que nadie ve quieto.
   await page.waitForFunction(() =>
     document.getAnimations().every((a) => a.playState !== "running"),
   );
   const scan = await new AxeBuilder({ page }).analyze();
-  const serias = scan.violations.filter(
-    (v) => v.impact === "critical" || v.impact === "serious",
+  const fallan = scan.violations.filter((v) =>
+    (IMPACTOS_QUE_FALLAN as readonly string[]).includes(v.impact ?? ""),
   );
   expect(
-    serias,
-    JSON.stringify(serias.map((v) => [v.id, v.nodes.map((n) => n.target)])),
+    fallan,
+    JSON.stringify(
+      fallan.map((v) => [v.id, v.impact, v.nodes.map((n) => n.target)]),
+    ),
   ).toEqual([]);
 }
 

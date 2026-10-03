@@ -11,16 +11,17 @@ export function BloqueCodigo({ bloque }: { bloque: Bloque }) {
     <figure className="m-0 grid min-w-0 gap-2">
       <figcaption className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 text-chico font-medium">
         <span>{bloque.titulo}</span>
-        <span
-          className="font-mono text-dato leading-[1.4] font-normal text-tinta-2"
-          title={bloque.archivo}
-        >
+        <span className="font-mono text-dato leading-[1.4] font-normal text-tinta-2">
           {archivo} · {bloque.lineas}
+          {/* La ruta entera no vive solo en un `title`, que no llega con teclado ni en táctil (AU-S2-B26). */}
+          <span className="sr-only"> ({bloque.archivo})</span>
         </span>
       </figcaption>
+      {/* Enfocable para desplazarlo con el teclado; como región con nombre, el lector dice qué es (AU-S2-B22). */}
       <pre
         tabIndex={0}
-        aria-label={`${archivo} · ${bloque.lineas}`}
+        role="region"
+        aria-label={`${bloque.archivo} · ${bloque.lineas}`}
         className="m-0 overflow-x-auto rounded-control border border-linea bg-sup-1 px-4 py-3.5 font-mono text-[12.5px] leading-[1.65] text-tinta-1"
       >
         {lineas.map((l, k) => (

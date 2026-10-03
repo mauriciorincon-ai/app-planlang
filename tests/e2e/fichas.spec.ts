@@ -1,9 +1,9 @@
 import { expect, test } from "@playwright/test";
-import { consolaLimpia, desbordeLateral, sinViolacionesSerias } from "./_comun";
+import { consolaLimpia, desbordeLateral, sinViolacionesAxe } from "./_comun";
 
 /**
  * P7 Fichas en el export servido (S2 fase 4): se llega por su pestaña y se lee en los dos idiomas, temas y perfiles
- * sin desplazar la página de lado, sin violaciones serias de axe y sin errores de hidratación; las dos fichas de la
+ * sin desplazar la página de lado, sin violaciones de axe (críticas, serias ni moderadas) y sin errores de hidratación; las dos fichas de la
  * vitrina se pintan en la piel de CV Viva (papel claro también en el tema oscuro, Fraunces solo dentro del marco); el
  * experto ve la tabla de campos bajo cada ficha y el líder no; y con movimiento reducido aparece sin animación.
  */
@@ -67,7 +67,7 @@ for (const idioma of ["es", "en"] as const) {
             page.locator('[data-campo="proceso.carriles[]"]'),
           ).toBeVisible({ visible: perfil === "experto" });
           expect(await desbordeLateral(page)).toBeLessThanOrEqual(0);
-          await sinViolacionesSerias(page);
+          await sinViolacionesAxe(page);
           expect(errores).toEqual([]);
         });
 
@@ -113,6 +113,6 @@ test.describe("movimiento reducido", () => {
       animaciones: document.getAnimations().length,
     }));
     expect(est).toEqual({ opacidad: 1, animaciones: 0 });
-    await sinViolacionesSerias(page);
+    await sinViolacionesAxe(page);
   });
 });

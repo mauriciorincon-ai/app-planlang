@@ -243,6 +243,13 @@ export const PORQUE = {
 };
 
 /** Por qué una regla declarada como función nombrada manda el caso a otro lado (una entrada por función del plan). */
+/** «U4 es la función nombrada texas_y_no_aprobar(…)»: la regla que no cabe en la tripleta (ficha técnica). */
+export const FUNCION_NOMBRADA = ((p: { umbral: string; firma: string }) =>
+  tb(
+    `${p.umbral} es la función nombrada ${p.firma}`,
+    `${p.umbral} is the named function ${p.firma}`,
+  )) as Plantilla<{ umbral: string; firma: string }>;
+
 export const PORQUE_FUNCION: Record<string, TextoBilingue> = {
   texas_y_no_aprobar: PORQUE.texas,
 };
@@ -508,6 +515,28 @@ export const ESTADO = {
       `En los valores del plan: el recálculo reproduce el camino de los ${n} casos.`,
       `At the plan values: the recalculation reproduces the path of all ${n} cases.`,
     )) as Plantilla<number>,
+  /** Lo que la línea de estado lee en voz alta tras cada movimiento: las cuatro cifras (AU-S2-B29). */
+  cifras: ((p: {
+    casos: number;
+    cambian: number;
+    introducidos: number;
+    evitados: number;
+    minutos: number;
+    cumplen: number;
+    criterios: number;
+  }) =>
+    tb(
+      `De ${p.casos} casos, ${p.cambian === 1 ? "1 cambia" : `${p.cambian} cambian`} de camino; ${p.introducidos === 1 ? "1 error introducido" : `${p.introducidos} errores introducidos`} y ${p.evitados === 1 ? "1 evitado" : `${p.evitados} evitados`}; ${p.minutos} minutos de auditor; ${p.cumplen} de ${p.criterios} criterios cumplen.`,
+      `Of ${p.casos} cases, ${p.cambian} ${p.cambian === 1 ? "changes" : "change"} path; ${p.introducidos} ${p.introducidos === 1 ? "error" : "errors"} introduced and ${p.evitados} avoided; ${p.minutos} auditor minutes; ${p.cumplen} of ${p.criterios} criteria met.`,
+    )) as Plantilla<{
+    casos: number;
+    cambian: number;
+    introducidos: number;
+    evitados: number;
+    minutos: number;
+    cumplen: number;
+    criterios: number;
+  }>,
   volver: tb("Volver al plan", "Back to the plan"),
   texasOn: tb("modo Texas encendido", "Texas mode on"),
   texasOff: tb("modo Texas apagado", "Texas mode off"),
@@ -576,6 +605,12 @@ export const TABLA = {
 
 export const CURVA = {
   titulo: tb("La curva riesgo-cobertura", "The risk-coverage curve"),
+  /** La marca del punto donde está el deslizador (AU-S2-B17: sin ternarios en el JSX). */
+  actual: ((p: { umbral: string; valor: string; cobertura: string }) =>
+    tb(
+      `actual · ${p.umbral} ${p.valor} · ${p.cobertura}`,
+      `current · ${p.umbral} ${p.valor} · ${p.cobertura}`,
+    )) as Plantilla<{ umbral: string; valor: string; cobertura: string }>,
   chip: ((n: number) =>
     tb(`real · S1, n = ${n}`, `real · S1, n = ${n}`)) as Plantilla<number>,
   lecturaSinRiesgo: ((n: number) =>

@@ -48,6 +48,11 @@ export function decimal(x: number, d: number, idioma: Idioma): string {
   return idioma === "es" ? s.replace(".", ",") : s;
 }
 
+/** Un número con todas sus cifras, con la coma o el punto decimal del idioma: «0,0123» · «0.0123». */
+export function numeroTal(x: number, idioma: Idioma): string {
+  return idioma === "es" ? String(x).replace(".", ",") : String(x);
+}
+
 /** Un dato del plan tal cual: entero sin decimales, si no con dos («0,75» · «0.75»). */
 export function numeroDato(x: number, idioma: Idioma): string {
   if (Number.isInteger(x)) return String(x);

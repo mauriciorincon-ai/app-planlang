@@ -17,6 +17,7 @@ import { consecuencias, umbralesDelPlan } from "@core/playground/consecuencias";
 import type { Plan } from "@core/plan/esquema";
 import type { DatosDemo } from "@/lib/datos/vitrina";
 import { ruta } from "@/lib/ruta";
+import { conPlan } from "./plan-en-texto";
 import {
   BALANCE,
   BRECHAS,
@@ -24,8 +25,11 @@ import {
   COLUMNAS,
   CRITERIOS,
   CUMPLIDO,
+  CATEGORIA_CORTA,
+  CRITERIO_EXIGENTE,
   EJEMPLARES,
   ESTADO_EVALUADOR,
+  EXPERTO,
   ETIQUETA_FILA,
   FRASE,
   IPO,
@@ -48,7 +52,7 @@ import {
 import { CRITERIO } from "@/textos/plan";
 import { SUBTIPO } from "@/textos/caso";
 import { VEREDICTOS } from "@/textos/comun";
-import { APAGADO, ENCENDIDO, INCLUSIVO } from "@/textos/plan-comun";
+import { APAGADO, ENCENDIDO } from "@/textos/plan-comun";
 import {
   claseDeVeredicto,
   type ClaseDeVeredicto,
@@ -67,6 +71,7 @@ import {
 } from "./formato";
 import {
   controlLegal,
+  criticidadEnTexto,
   estadoDeCriterio,
   estadoDeRiesgo,
   estadoDeSupuesto,
@@ -76,6 +81,41 @@ import {
 } from "./plan-comun";
 
 const X = (t: TextoBilingue, i: Idioma) => t[i];
+
+/**
+ * Un detector sin población cubre todos los casos; se escribe con la palabra del lenguaje de reglas del plan, como
+ * `IMPLICA`: es código, igual en los dos idiomas.
+ */
+const TODOS_EN_EL_PLAN = "todos";
+
+/** El veredicto en palabras, en minúscula para la línea del experto; uno sin nombre detiene el build. */
+function textoDeVeredicto(valor: string, i: Idioma): string {
+  const t = (VEREDICTOS as Record<string, TextoBilingue>)[valor];
+  if (!t)
+    throw new Error(
+      `vitrina: el veredicto «${valor}» no tiene nombre en src/textos/comun.ts`,
+    );
+  return t[i].toLowerCase();
+}
+
+function criterioExigente(id: string): TextoBilingue {
+  const t = CRITERIO_EXIGENTE[id];
+  if (!t)
+    throw new Error(
+      `vitrina: el criterio «${id}» es el más exigente (pass^k) y no tiene su nombre corto en src/textos/brecha.ts (CRITERIO_EXIGENTE)`,
+    );
+  return t;
+}
+
+/** El umbral sobre el que corre la curva riesgo-cobertura de un supuesto: el de la señal de confianza del plan. */
+function umbralDeLaCurva(plan: Plan, supuesto: string) {
+  const u = plan.umbrales.find((x) => x.senal === SENAL_DE_CONFIANZA);
+  if (!u)
+    throw new Error(
+      `vitrina: el supuesto «${supuesto}» trae curva riesgo-cobertura, pero el plan no tiene un umbral sobre «${SENAL_DE_CONFIANZA}»`,
+    );
+  return u;
+}
 
 // ------------------------------------------------------------------------------------------------ tipos
 
@@ -157,6 +197,8 @@ export interface SupuestoVista {
   grafico:
     | {
         tipo: "curva";
+        /** El id del umbral sobre el que corre la curva (el de la señal de confianza del plan). */
+        umbral: string;
         puntos: PuntoCurva[];
         plan: number;
         pie: string;
@@ -579,18 +621,34 @@ export function vistaBrecha(d: DatosDemo, i: Idioma): VistaBrecha {
   }
   const totalReintentos = brechas.reduce((n, b) => n + (b.reintentos ?? 0), 0);
   const experto = [
-    `${i === "es" ? "veredicto" : "verdict"} ${inf.veredicto.valor}`,
-    `${i === "es" ? "criterios" : "criteria"} ${criteriosCumplen.length}/${inf.criterios.length}`,
-    `${i === "es" ? "riesgos ocurridos" : "risks occurred"} ${riesgosOcurridos.length}/${inf.riesgos.length}`,
+    X(EXPERTO.veredicto(textoDeVeredicto(inf.veredicto.valor, i)), i),
+    X(
+      EXPERTO.criterios({
+        a: criteriosCumplen.length,
+        b: inf.criterios.length,
+      }),
+      i,
+    ),
+    X(
+      EXPERTO.riesgosOcurridos({
+        a: riesgosOcurridos.length,
+        b: inf.riesgos.length,
+      }),
+      i,
+    ),
     ...inf.supuestos.map(
-      (s) => `${s.id} ${s.estado}${detalleExpertoSupuesto(s, i)}`,
+      (s) =>
+        `${s.id} ${estadoDeSupuesto(s.estado, i).texto.toLowerCase()}${detalleExpertoSupuesto(s, i)}`,
     ),
     ...(brechas.length > 0
       ? [
-          `${brechas.length} ${i === "es" ? "brechas no previstas" : "unforeseen gaps"}${totalReintentos > 0 ? `: ${i === "es" ? "salida estructurada" : "structured output"}, ${totalReintentos} ${i === "es" ? "reintentos" : "retries"}` : ""}`,
+          X(
+            EXPERTO.brechas({ n: brechas.length, reintentos: totalReintentos }),
+            i,
+          ),
         ]
       : []),
-    `RF-09.2: ${diferencias} ${i === "es" ? "diferencias en" : "differences in"} ${decisiones} ${i === "es" ? "decisiones" : "decisions"}`,
+    X(EXPERTO.cruzada({ diferencias, decisiones }), i),
   ].join(" · ");
   const clase = claseDeVeredicto(inf.veredicto.valor);
   const veredicto = {
@@ -642,8 +700,7 @@ export function vistaBrecha(d: DatosDemo, i: Idioma): VistaBrecha {
     .map((s) => {
       const m = s.medible_en_trazas;
       if (!m) return s.id;
-      if (m.comparacion)
-        return `${s.id} ${i === "es" ? "frente a la línea base" : "against the baseline"}`;
+      if (m.comparacion) return X(EXPERTO.frenteABase(s.id), i);
       const u = m.umbral_confirmacion ?? {};
       const partes = Object.entries(u).map(([k, v]) => {
         const nombre = k.replace(/_(min|max)$/, "");
@@ -754,13 +811,16 @@ export function vistaBrecha(d: DatosDemo, i: Idioma): VistaBrecha {
           : {
               cifra: X(BALANCE.noPrevisto.fallas(brechas.length), i),
               ids: [...porCategoria.keys()]
-                .map((c) =>
-                  c === "reintento_de_esquema"
-                    ? i === "es"
-                      ? "formato"
-                      : "format"
-                    : c,
-                )
+                .map((c) => {
+                  const t = (CATEGORIA_CORTA as Record<string, TextoBilingue>)[
+                    c
+                  ];
+                  if (!t)
+                    throw new Error(
+                      `vitrina: la categoría de brecha «${c}» no tiene nombre corto en src/textos/brecha.ts (CATEGORIA_CORTA)`,
+                    );
+                  return X(t, i);
+                })
                 .join(", "),
               href: "#f-np",
             },
@@ -895,10 +955,16 @@ export function vistaBrecha(d: DatosDemo, i: Idioma): VistaBrecha {
     return {
       codigo: r.id,
       texto: X(r.modo, i),
-      experto: `${det?.poblacion ?? "todos"} → ${det?.condicion ?? "—"} · ${prioridad(r, i).texto} · S${r.severidad}·O${r.ocurrencia}·D${r.deteccion}`,
+      experto: `${det?.poblacion ?? TODOS_EN_EL_PLAN} → ${det?.condicion ?? "—"} · ${prioridad(r, i).texto} · S${r.severidad}·O${r.ocurrencia}·D${r.deteccion}`,
       valor:
         r.tipo_detector === "tasa" && typeof r.valor === "number"
-          ? `${porcentaje(r.valor, i)} ${i === "es" ? "de" : "of"} ${r.n_poblacion}`
+          ? X(
+              EXPERTO.deTotal({
+                valor: porcentaje(r.valor, i),
+                n: r.n_poblacion,
+              }),
+              i,
+            )
           : X(
               (r.ambito === "sesion" ? CUMPLIDO.sesiones : CUMPLIDO.casos)({
                 a: typeof r.valor === "number" ? r.valor : 0,
@@ -918,16 +984,26 @@ export function vistaBrecha(d: DatosDemo, i: Idioma): VistaBrecha {
           ([k, v]) =>
             `${nombreMetrica(k, i)} ${v === null ? "—" : valorMetrica(v, i)}`,
         )
-        .join(" · ")} · n = ${s.n} · ${s.estado}`,
+        .join(
+          " · ",
+        )} · n = ${s.n} · ${estadoDeSupuesto(s.estado, i).texto.toLowerCase()}`,
       valor: X(CUMPLIDO.casos({ a: s.n, b: s.n }), i),
       clase: "cumple" as ClaseDeEstado,
     })),
     ...(grafoBien
       ? [
           {
-            codigo: i === "es" ? "grafo" : "graph",
+            codigo: X(EXPERTO.codigoGrafo, i),
             texto: X(CUMPLIDO.grafo, i),
-            experto: `${ct.nodos.length} ${i === "es" ? "nodos" : "nodes"} · ${ct.senales.length} ${i === "es" ? "señales" : "signals"} · ${ct.pausas.pausas_registradas} ${i === "es" ? "pausas registradas, rol" : "pauses recorded, role"} ${ct.pausas.rol}`,
+            experto: X(
+              EXPERTO.grafo({
+                nodos: ct.nodos.length,
+                senales: ct.senales.length,
+                pausas: ct.pausas.pausas_registradas,
+                rol: ct.pausas.rol,
+              }),
+              i,
+            ),
             valor: deCada(nodosEnGrafo, ct.nodos.length, i),
             clase: "cumple" as ClaseDeEstado,
           },
@@ -938,7 +1014,7 @@ export function vistaBrecha(d: DatosDemo, i: Idioma): VistaBrecha {
           {
             codigo: "RF",
             texto: X(CUMPLIDO.cruzada, i),
-            experto: `RF-09.2 · ${ct.rf_09_2.length} ${i === "es" ? "corridas" : "runs"} · 0 ${i === "es" ? "diferencias" : "differences"}`,
+            experto: X(EXPERTO.cruzadaCumplida(ct.rf_09_2.length), i),
             valor: deCada(decisiones, decisiones, i),
             clase: "cumple" as ClaseDeEstado,
           },
@@ -1025,7 +1101,13 @@ export function vistaBrecha(d: DatosDemo, i: Idioma): VistaBrecha {
         criterio: X(c.enunciado, i),
         medido:
           typeof c.valor_medido === "boolean"
-            ? `${X(c.valor_medido ? RESUMEN.si : RESUMEN.no, i)} · ${c.n_poblacion} ${i === "es" ? "casos" : "cases"}`
+            ? X(
+                EXPERTO.respuestaEnCasos({
+                  respuesta: X(c.valor_medido ? RESUMEN.si : RESUMEN.no, i),
+                  n: c.n_poblacion,
+                }),
+                i,
+              )
             : valorDe(c, i),
         estado: estadoDeCriterio(c.estado, i, "informe"),
       })),
@@ -1076,11 +1158,7 @@ export function vistaBrecha(d: DatosDemo, i: Idioma): VistaBrecha {
       CRITERIOS.lectura({
         n: inf.criterios.length,
         cumplen: criteriosCumplen.length,
-        exigente: exigente
-          ? i === "es"
-            ? "la exactitud de extracción"
-            : "extraction accuracy"
-          : null,
+        exigente: exigente ? X(criterioExigente(exigente.id), i) : null,
         k: exigente?.k?.requerido ?? 1,
       }),
       i,
@@ -1295,8 +1373,19 @@ export function vistaBrecha(d: DatosDemo, i: Idioma): VistaBrecha {
           : numeroDato(u.valor_en_plan, i);
       const regla =
         typeof u.valor_en_plan === "boolean"
-          ? `${u.senal} · ${u.operador} · ${i === "es" ? "verdadero" : "true"}`
-          : `${u.senal} · ${u.operador} · ${valor} · ${u.inclusivo ? X(INCLUSIVO, i) : i === "es" ? "no inclusivo" : "not inclusive"}`;
+          ? X(
+              EXPERTO.reglaBooleana({ senal: u.senal, operador: u.operador }),
+              i,
+            )
+          : X(
+              EXPERTO.reglaNumerica({
+                senal: u.senal,
+                operador: u.operador,
+                valor,
+                inclusivo: u.inclusivo,
+              }),
+              i,
+            );
       const o = u.observados;
       return {
         id: u.id,
@@ -1424,8 +1513,34 @@ function detalleExpertoSupuesto(s: ResultadoSupuesto, i: Idioma): string {
         "la latencia mediana de la línea base",
       );
     return peorLatencia
-      ? `: ${i === "es" ? "latencia mediana" : "median latency"} ${decimal(cifra(c.latencia_mediana_s.multiagente, "la latencia mediana del multiagente"), 3, i)} s > ${decimal(cifra(c.latencia_mediana_s.agente_unico, "la latencia mediana de la línea base"), 3, i)} s ${i === "es" ? "de la línea base" : "of the baseline"}`
-      : `: ${i === "es" ? "exactitud" : "accuracy"} ${numeroDato(c.exactitud.multiagente, i)} < ${numeroDato(c.exactitud.agente_unico, i)}`;
+      ? X(
+          EXPERTO.peorLatencia({
+            multi: decimal(
+              cifra(
+                c.latencia_mediana_s.multiagente,
+                "la latencia mediana del multiagente",
+              ),
+              3,
+              i,
+            ),
+            base: decimal(
+              cifra(
+                c.latencia_mediana_s.agente_unico,
+                "la latencia mediana de la línea base",
+              ),
+              3,
+              i,
+            ),
+          }),
+          i,
+        )
+      : X(
+          EXPERTO.peorExactitud({
+            multi: numeroDato(c.exactitud.multiagente, i),
+            base: numeroDato(c.exactitud.agente_unico, i),
+          }),
+          i,
+        );
   }
   if (s.estado === "sin_probar") {
     const nulas = Object.entries(s.metricas)
@@ -1435,7 +1550,7 @@ function detalleExpertoSupuesto(s: ResultadoSupuesto, i: Idioma): string {
       typeof s.metricas.exactitud === "number" ? s.metricas.exactitud : null;
     const errores =
       exactitud === null ? null : Math.round(s.n * (1 - exactitud));
-    return `: ${nulas.length ? `${nulas.join(", ")} ${i === "es" ? "indefinido" : "not defined"}` : ""}${errores !== null ? `, ${errores} ${i === "es" ? "errores en" : "errors in"} n = ${s.n}` : ""}`;
+    return X(EXPERTO.sinProbar({ nulas, errores, n: s.n }), i);
   }
   return "";
 }
@@ -1449,7 +1564,6 @@ function filaSupuesto(
 ): FilaFallo {
   const l = lecturaSupuesto(s);
   const p = plan.supuestos.find((x) => x.id === s.id);
-  const u1 = plan.umbrales.find((u) => u.senal === SENAL_DE_CONFIANZA);
   let paso = "";
   let medido = "";
   let evidencia = "";
@@ -1506,28 +1620,50 @@ function filaSupuesto(
       }),
       i,
     );
-    const fr = i === "es" ? "frente a" : "against";
-    medido = [
-      `${i === "es" ? "exactitud" : "accuracy"} ${numeroDato(c.exactitud.multiagente, i)} ${fr} ${numeroDato(c.exactitud.agente_unico, i)}`,
-      `${i === "es" ? "latencia mediana" : "median latency"} ${decimal(cifra(c.latencia_mediana_s.multiagente, "la latencia mediana del multiagente"), 3, i)} s ${fr} ${decimal(cifra(c.latencia_mediana_s.agente_unico, "la latencia mediana de la línea base"), 3, i)} s`,
-      `${i === "es" ? "llamadas" : "calls"} ${c.presupuesto.multiagente.llamadas_al_modelo} ${fr} ${c.presupuesto.agente_unico.llamadas_al_modelo}`,
-      `tokens ${entero(c.presupuesto.multiagente.tokens, i)} ${fr} ${entero(c.presupuesto.agente_unico.tokens, i)}`,
-      `${i === "es" ? "costo nominal" : "nominal cost"} US$ ${decimal(c.presupuesto.multiagente.costo_nominal_usd, 4, i)} ${fr} ${decimal(c.presupuesto.agente_unico.costo_nominal_usd, 4, i)}`,
-    ].join(" · ");
-    evidencia = [
-      i === "es"
-        ? `corridas ${vCorrida} (multiagente) y ${c.corrida_base.endsWith("-base") ? `${vCorrida}-base` : c.corrida_base} (agente único)`
-        : `runs ${vCorrida} (multi-agent) and ${c.corrida_base.endsWith("-base") ? `${vCorrida}-base` : c.corrida_base} (single agent)`,
-      `n = ${s.n}`,
-      c.presupuesto_respetado
-        ? i === "es"
-          ? "presupuesto respetado"
-          : "budget respected"
-        : i === "es"
-          ? "presupuesto excedido"
-          : "budget exceeded",
-      `${i === "es" ? "difieren en" : "they differ in"} ${enumerar(c.casos_distintos, i)}`,
-    ].join(" · ");
+    medido = X(
+      EXPERTO.comparacionMedido({
+        exactitud: numeroDato(c.exactitud.multiagente, i),
+        exactitudBase: numeroDato(c.exactitud.agente_unico, i),
+        latencia: decimal(
+          cifra(
+            c.latencia_mediana_s.multiagente,
+            "la latencia mediana del multiagente",
+          ),
+          3,
+          i,
+        ),
+        latenciaBase: decimal(
+          cifra(
+            c.latencia_mediana_s.agente_unico,
+            "la latencia mediana de la línea base",
+          ),
+          3,
+          i,
+        ),
+        llamadas: c.presupuesto.multiagente.llamadas_al_modelo,
+        llamadasBase: c.presupuesto.agente_unico.llamadas_al_modelo,
+        tokens: entero(c.presupuesto.multiagente.tokens, i),
+        tokensBase: entero(c.presupuesto.agente_unico.tokens, i),
+        costo: decimal(c.presupuesto.multiagente.costo_nominal_usd, 4, i),
+        costoBase: decimal(c.presupuesto.agente_unico.costo_nominal_usd, 4, i),
+      }),
+      i,
+    );
+    evidencia = X(
+      EXPERTO.comparacionEvidencia({
+        corrida: vCorrida,
+        base: c.corrida_base.endsWith("-base")
+          ? `${vCorrida}-base`
+          : c.corrida_base,
+        n: s.n,
+        respetado: c.presupuesto_respetado,
+        distintos: {
+          es: enumerar(c.casos_distintos, "es"),
+          en: enumerar(c.casos_distintos, "en"),
+        },
+      }),
+      i,
+    );
     regla = X(s.motivo, i);
     casos = c.casos_distintos;
   } else {
@@ -1536,38 +1672,51 @@ function filaSupuesto(
       typeof s.metricas.exactitud === "number" ? s.metricas.exactitud : null;
     paso = exactitud === 1 ? X(PASO.sinErrores(n), i) : X(s.motivo, i);
     medido = `${Object.entries(s.metricas)
-      .map(
-        ([k, v]) =>
-          `${nombreMetrica(k, i)} ${v === null ? (i === "es" ? "indefinido" : "not defined") : valorMetrica(v, i)}`,
+      .map(([k, v]) =>
+        X(
+          EXPERTO.metrica({
+            nombre: nombreMetrica(k, i),
+            valor: v === null ? null : valorMetrica(v, i),
+          }),
+          i,
+        ),
       )
       .join(" · ")} · n = ${n}`;
     const curva = s.curva;
+    const estadoTexto = estadoDeSupuesto(s.estado, i).texto.toLowerCase();
     evidencia =
       curva && curva.length
-        ? `${i === "es" ? "curva riesgo-cobertura" : "risk-coverage curve"}: ${i === "es" ? "riesgo" : "risk"} ${porcentaje(Math.max(...curva.map((p) => p.riesgo ?? 0)), i)} ${i === "es" ? "de" : "from"} U1 ${decimal(curva[0]!.umbral, 2, i)} ${i === "es" ? "a" : "to"} ${decimal(curva[curva.length - 1]!.umbral, 2, i)} · ${i === "es" ? "estado" : "status"} ${s.estado}`
-        : `${i === "es" ? "estado" : "status"} ${s.estado}`;
+        ? X(
+            EXPERTO.curva({
+              riesgo: porcentaje(
+                Math.max(...curva.map((p) => p.riesgo ?? 0)),
+                i,
+              ),
+              umbral: umbralDeLaCurva(plan, s.id).id,
+              desde: decimal(curva[0]!.umbral, 2, i),
+              hasta: decimal(curva[curva.length - 1]!.umbral, 2, i),
+              estado: estadoTexto,
+            }),
+            i,
+          )
+        : X(EXPERTO.estado(estadoTexto), i);
     const u = p?.medible_en_trazas?.umbral_confirmacion ?? {};
-    regla = `${Object.entries(u)
-      .map(
-        ([k, v]) =>
-          `${nombreMetrica(k.replace(/_(min|max)$/, ""), i)} ${k.endsWith("_max") ? "≤" : "≥"} ${decimal(Number(v), 2, i)}`,
-      )
-      .join(
-        " ∧ ",
-      )}${p?.medible_en_trazas?.poblacion ? ` ${i === "es" ? "sobre" : "on"} ${p.medible_en_trazas.poblacion}` : ""} · ${i === "es" ? "criticidad" : "criticality"} ${s.criticidad}`;
+    regla = X(
+      EXPERTO.reglaSupuesto({
+        condiciones: Object.entries(u)
+          .map(
+            ([k, v]) =>
+              `${nombreMetrica(k.replace(/_(min|max)$/, ""), i)} ${k.endsWith("_max") ? "≤" : "≥"} ${decimal(Number(v), 2, i)}`,
+          )
+          .join(" ∧ "),
+        poblacion: p?.medible_en_trazas?.poblacion ?? null,
+        criticidad: criticidadEnTexto(s.criticidad, i),
+      }),
+      i,
+    );
   }
-  const planeo =
-    s.id === "S1" && u1 && typeof u1.valor_en_plan === "number"
-      ? X(l.planeo, i)
-          .replace(
-            "umbral U1",
-            `umbral U1 (${decimal(u1.valor_en_plan, 2, i)})`,
-          )
-          .replace(
-            "Threshold U1",
-            `Threshold U1 (${decimal(u1.valor_en_plan, 2, i)})`,
-          )
-      : X(l.planeo, i);
+  // El valor del umbral que la lectura cita sale del plan, no de la copia (AU-S2-3).
+  const planeo = conPlan(X(l.planeo, i), plan, i);
   const estado = estadoDeSupuesto(s.estado, i);
   return {
     ancla: `f-${s.id}`,
@@ -1627,11 +1776,14 @@ function filaRiesgoOcurrido(
     titulo: X(r.modo, i),
     lider: [
       p ? X(p.efecto, i) : X(r.modo, i),
-      `${r.valor ?? "—"} ${i === "es" ? "de" : "of"} ${r.n_poblacion}`,
+      X(
+        EXPERTO.deTotal({ valor: String(r.valor ?? "—"), n: r.n_poblacion }),
+        i,
+      ),
       p ? X(p.causa, i) : "",
     ],
     experto: [
-      `${det?.poblacion ?? "todos"} → ${det?.condicion ?? "—"}`,
+      `${det?.poblacion ?? TODOS_EN_EL_PLAN} → ${det?.condicion ?? "—"}`,
       `${r.valor ?? "—"} · ${r.ocurre_si ?? ""}`,
       r.casos.join(", "),
     ],
@@ -1698,11 +1850,30 @@ function filaBrecha(
       X(l.significa, i),
     ],
     experto: [
-      i === "es"
-        ? "sin detector en el plan · evento: salida estructurada inválida al primer intento → reintento del nodo"
-        : "no detector in the plan · event: invalid structured output on the first try → node retry",
-      `${bs.map((b) => `${b.caso_id ?? "—"} (${corta(b.corrida_id)}, ${b.reintentos ?? "—"})`).join(" · ")} · ${nodos.join(", ")}${bs[0]?.paso ? `, ${i === "es" ? "paso" : "step"} ${bs[0].paso}` : ""} · ${reintentos} ${i === "es" ? "reintentos" : "retries"}`,
-      `${nCorridas} ${i === "es" ? "corridas" : "runs"} · ${deRegla.length} ${i === "es" ? "evaluadores de regla ejecutados" : "rule evaluators run"}, ${fallasRegla} ${i === "es" ? "fallas" : "failures"}${juezSinCorrer ? ` · ${i === "es" ? "el juez con modelo no corrió (opcional en este corte)" : "the model judge did not run (optional in this cut)"}` : ""}`,
+      X(EXPERTO.sinDetector, i),
+      X(
+        EXPERTO.brechaCasos({
+          lista: bs
+            .map(
+              (b) =>
+                `${b.caso_id ?? "—"} (${corta(b.corrida_id)}, ${b.reintentos ?? "—"})`,
+            )
+            .join(" · "),
+          nodos: nodos.join(", "),
+          paso: bs[0]?.paso ?? null,
+          reintentos,
+        }),
+        i,
+      ),
+      X(
+        EXPERTO.evaluadores({
+          corridas: nCorridas,
+          ejecutados: deRegla.length,
+          fallas: fallasRegla,
+          juezSinCorrer,
+        }),
+        i,
+      ),
     ],
     casos: casos.map((id) => ({ id, href: ruta(i, "caso", id) })),
     enlaces: [{ href: "#b5", texto: `§ 5 ${X(SECCIONES.b5, i)}` }],
@@ -1754,7 +1925,17 @@ function filaConNota(
       }),
       i,
     );
-    medido = `${deCada(c.n_poblacion - c.casos_que_incumplen.length, c.n_poblacion, i)} · ${i === "es" ? "fuera por señal nula" : "out by a null signal"}: ${c.fuera_por_senal_nula}`;
+    medido = X(
+      EXPERTO.fueraPorNula({
+        cumplen: deCada(
+          c.n_poblacion - c.casos_que_incumplen.length,
+          c.n_poblacion,
+          i,
+        ),
+        fuera: c.fuera_por_senal_nula,
+      }),
+      i,
+    );
   }
   const lectura = LECTURA_NOTA[c.id]?.(c.n_poblacion);
   const significa = [
@@ -1777,19 +1958,26 @@ function filaConNota(
         : `${c.poblacion} → ${c.condicion ?? ""}`,
       medido,
       rompe && u
-        ? `${i === "es" ? "con" : "with"} ${rompe.umbral} = ${numeroDato(rompe.valor, i)}, ${rompe.casos
-            .map((id) => {
-              const x = compacto.casos.find((k) => k.id === id)
-                ?.senales_de_umbral[rompe.umbral];
-              return typeof x === "number"
-                ? `${id} (${u.senal} ${numeroDato(x, i)})`
-                : id;
-            })
-            .join(
-              ", ",
-            )} ${i === "es" ? `iría sin persona → ${c.id} no cumple` : `would go without a person → ${c.id} fails`}`
+        ? X(
+            EXPERTO.rompe({
+              umbral: rompe.umbral,
+              valor: numeroDato(rompe.valor, i),
+              casos: rompe.casos
+                .map((id) => {
+                  const x = compacto.casos.find((k) => k.id === id)
+                    ?.senales_de_umbral[rompe.umbral];
+                  return typeof x === "number"
+                    ? `${id} (${u.senal} ${numeroDato(x, i)})`
+                    : id;
+                })
+                .join(", "),
+              n: rompe.casos.length,
+              criterio: c.id,
+            }),
+            i,
+          )
         : c.nota
-          ? `${i === "es" ? "nota del verificador" : "verifier note"}: ${X(c.nota, i)}`
+          ? X(EXPERTO.notaVerificador(X(c.nota, i)), i)
           : "—",
     ],
     casos: casosEnlazados(c.casos_que_incumplen, i),
@@ -1917,13 +2105,13 @@ function filaRiesgo(r: ResultadoRiesgo, plan: Plan, i: Idioma): FilaRiesgo {
     : "";
   const medida =
     typeof r.valor === "number"
-      ? `${tasa ? `${porcentaje(r.valor, i)} ${i === "es" ? "de" : "of"} ${r.n_poblacion} ${i === "es" ? "casos" : "cases"}` : X((r.ambito === "sesion" ? CUMPLIDO.sesiones : CUMPLIDO.casos)({ a: r.valor, b: r.n_poblacion }), i)} · ${X(RIESGOS.ocurreSi, i)} ${disparo}`
+      ? `${tasa ? X(EXPERTO.deCasos({ valor: porcentaje(r.valor, i), n: r.n_poblacion }), i) : X((r.ambito === "sesion" ? CUMPLIDO.sesiones : CUMPLIDO.casos)({ a: r.valor, b: r.n_poblacion }), i)} · ${X(RIESGOS.ocurreSi, i)} ${disparo}`
       : "—";
   return {
     id: r.id,
     modo: X(r.modo, i),
     medida,
-    detector: `${det?.poblacion ?? "todos"} → ${det?.condicion ?? "—"}`,
+    detector: `${det?.poblacion ?? TODOS_EN_EL_PLAN} → ${det?.condicion ?? "—"}`,
     efecto: p ? X(p.efecto, i) : "",
     causa: p ? X(p.causa, i) : "",
     ap: prioridad(r, i),
@@ -2082,13 +2270,15 @@ function vistaSupuesto(
       };
     });
     const conRiesgo = s.curva.some((x) => (x.riesgo ?? 0) > 0);
-    const planU1 = plan.umbrales.find(
-      (u) => u.senal === SENAL_DE_CONFIANZA,
-    )?.valor_en_plan;
+    const deLaCurva = umbralDeLaCurva(plan, s.id);
     grafico = {
       tipo: "curva",
+      umbral: deLaCurva.id,
       puntos: s.curva.map((x) => ({ ...x })),
-      plan: typeof planU1 === "number" ? planU1 : s.curva[0]!.umbral,
+      plan:
+        typeof deLaCurva.valor_en_plan === "number"
+          ? deLaCurva.valor_en_plan
+          : s.curva[0]!.umbral,
       pie: X(
         conRiesgo ? SUPUESTOS.curvaPieConRiesgo(s.n) : SUPUESTOS.curvaPie(s.n),
         i,
@@ -2135,10 +2325,7 @@ function vistaSupuesto(
     id: s.id,
     enunciado: X(s.enunciado, i),
     estado,
-    criticidad:
-      i === "es"
-        ? `criticidad ${s.criticidad}`
-        : `${s.criticidad === "alta" ? "high" : s.criticidad === "media" ? "medium" : "low"} criticality`,
+    criticidad: criticidadEnTexto(s.criticidad, i),
     dio: X(texto, i),
     reglita: X(s.motivo, i),
     medidas,

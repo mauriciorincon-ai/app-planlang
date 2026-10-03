@@ -3,6 +3,12 @@ import type { Idioma } from "@core/formatos/bilingue";
 import { LIDER, PREGUNTA } from "@/textos/entrada";
 import { Baldosa } from "../baldosa";
 
+/** Las comillas de cada idioma: angulares en español, inglesas en inglés (tipografía, no texto). */
+const COMILLAS: Record<Idioma, string> = {
+  es: "[quotes:'«'_'»']",
+  en: "[quotes:'“'_'”']",
+};
+
 /** La pregunta de entrevista de 2026 y la respuesta de planlang. */
 export function Pregunta({ idioma }: { idioma: Idioma }) {
   return (
@@ -19,11 +25,7 @@ export function Pregunta({ idioma }: { idioma: Idioma }) {
       </p>
       <div className="escritorio:col-span-8 escritorio:col-start-5">
         <q
-          className={
-            idioma === "es"
-              ? "block text-cita font-medium tracking-cita [quotes:'«'_'»']"
-              : "block text-cita font-medium tracking-cita [quotes:'“'_'”']"
-          }
+          className={`block text-cita font-medium tracking-cita ${COMILLAS[idioma]}`}
         >
           {PREGUNTA.cita[idioma]}
         </q>

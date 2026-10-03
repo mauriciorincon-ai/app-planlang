@@ -6,7 +6,13 @@
 import type { Idioma } from "@core/formatos/bilingue";
 import type { DatosDemo } from "@/lib/datos/vitrina";
 import { CATEGORIA_DE_BRECHA, LECTURA_DE_SUPUESTO } from "@/textos/entrada";
-import { conteo, deCada, ESPACIO_DURO, versionCorta } from "./formato";
+import {
+  conteo,
+  deCada,
+  enumerar,
+  ESPACIO_DURO,
+  versionCorta,
+} from "./formato";
 import { tipoDeNodo, type TipoDeNodo } from "./nodos";
 import { tb } from "@core/formatos/bilingue";
 
@@ -90,8 +96,7 @@ function loNoPrevisto(categorias: string[], idioma: Idioma): string {
       );
     return conteo(n, forma, idioma);
   });
-  const y = idioma === "es" ? " y " : " and ";
-  return partes.join(y);
+  return enumerar(partes, idioma);
 }
 
 export function vistaEntrada(datos: DatosDemo, idioma: Idioma): VistaEntrada {

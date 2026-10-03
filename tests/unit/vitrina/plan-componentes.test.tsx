@@ -73,8 +73,23 @@ describe("navegar el plan", () => {
 
   it("umbrales: «Moverlo» lleva al playground y dice cuál", () => {
     render(<Pagina idioma="en" />);
-    const u1 = screen.getByRole("link", { name: "Move U1 in the playground" });
+    const u1 = screen.getByRole("link", {
+      name: "Move it: U1 in the playground",
+    });
     expect(u1.getAttribute("href")).toBe("/en/playground");
+  });
+
+  it("todo nombre accesible contiene la etiqueta que se ve (WCAG 2.5.3, AU-S2-B20)", () => {
+    for (const idioma of ["es", "en"] as const) {
+      const { container, unmount } = render(<Pagina idioma={idioma} />);
+      for (const el of container.querySelectorAll(
+        "a[aria-label], button[aria-label]",
+      )) {
+        const visible = (el.textContent ?? "").replace(/\s+/g, " ").trim();
+        if (visible) expect(el.getAttribute("aria-label")).toContain(visible);
+      }
+      unmount();
+    }
   });
 });
 

@@ -24,8 +24,10 @@ import type { SupuestoVista, VistaBrecha } from "@/lib/vista/brecha";
 import {
   BRECHAS,
   CRITERIOS,
+  CURVA_SUPUESTO,
   EJEMPLARES,
   FICHA,
+  MARCAS,
   PLAN_EN_BREVE,
   PLAYGROUND,
   RESUMEN,
@@ -178,7 +180,7 @@ export function PlanEnBreve({ v, idioma }: { v: VistaBrecha; idioma: Idioma }) {
                     {k + 1}
                   </span>
                 }
-                fin={<MarcaCorrio texto={idioma === "es" ? "hecho" : "done"} />}
+                fin={<MarcaCorrio texto={MARCAS.hecho[idioma]} />}
                 titulo={paso}
               />
             ))}
@@ -397,12 +399,10 @@ export function Riesgos({ v, idioma }: { v: VistaBrecha; idioma: Idioma }) {
                 </span>
                 <b className="text-right font-mono text-dato">{n.visitas}</b>
                 {n.en_grafo ? (
-                  <MarcaCorrio
-                    texto={idioma === "es" ? "en el grafo" : "in the graph"}
-                  />
+                  <MarcaCorrio texto={MARCAS.enGrafo[idioma]} />
                 ) : (
                   <Veredicto clase="no-cumple" chico>
-                    {idioma === "es" ? "falta" : "missing"}
+                    {MARCAS.falta[idioma]}
                   </Veredicto>
                 )}
               </li>
@@ -560,22 +560,17 @@ function GraficoSupuesto({ s, idioma }: { s: SupuestoVista; idioma: Idioma }) {
           puntos={g.puntos}
           plan={g.plan}
           textos={{
-            titulo:
-              idioma === "es"
-                ? `Curva riesgo-cobertura de ${s.id}, ${g.n} casos medidos`
-                : `${s.id} risk-coverage curve, ${g.n} measured cases`,
-            ejeCobertura:
-              idioma === "es"
-                ? "cobertura: casos que resuelve solo →"
-                : "coverage: cases it resolves alone →",
-            ejeRiesgo:
-              idioma === "es"
-                ? "riesgo: errores entre esos casos"
-                : "risk: errors among those cases",
+            titulo: CURVA_SUPUESTO.titulo({ id: s.id, n: g.n })[idioma],
+            ejeCobertura: CURVA_SUPUESTO.ejeCobertura[idioma],
+            ejeRiesgo: CURVA_SUPUESTO.ejeRiesgo[idioma],
             pct: (x) => porcentaje(Math.round(x * 100) / 100, idioma),
             plan: (us, c) =>
-              `plan · U1 ${rango(us, idioma)} · ${porcentaje(Math.round(c * 100) / 100, idioma)}`,
-            grupo: (us) => `U1 ${rango(us, idioma)}`,
+              CURVA_SUPUESTO.plan({
+                umbral: g.umbral,
+                rango: rango(us, idioma),
+                cobertura: porcentaje(Math.round(c * 100) / 100, idioma),
+              })[idioma],
+            grupo: (us) => `${g.umbral} ${rango(us, idioma)}`,
           }}
         />
         <figcaption className="mt-2 flex flex-wrap items-center gap-2 text-dato text-tinta-2">
@@ -759,6 +754,7 @@ export function Ejemplares({ v, idioma }: { v: VistaBrecha; idioma: Idioma }) {
             <p className="text-chico leading-normal">{e.texto}</p>
             {e.cadena.length > 0 ? (
               <span
+                role="group"
                 aria-label={e.etiquetaCadena}
                 className="flex flex-wrap items-center gap-x-1.5 gap-y-1"
               >

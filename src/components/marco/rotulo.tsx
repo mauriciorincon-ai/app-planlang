@@ -7,7 +7,11 @@ import { Icono } from "../icono";
 /** Rótulo: primera franja de TODA pantalla (regla dura 14): simulación, no operativo, datos sintéticos. */
 export function Rotulo({ idioma }: { idioma: Idioma }) {
   return (
-    <div className="border-b border-linea text-dato text-tinta-2" data-rotulo>
+    <section
+      aria-label={ROTULO.region[idioma]}
+      className="border-b border-linea text-dato text-tinta-2"
+      data-rotulo
+    >
       <div
         className={cx(
           CONT,
@@ -20,7 +24,7 @@ export function Rotulo({ idioma }: { idioma: Idioma }) {
         </span>
         <span>{ROTULO.divulgacion[idioma]}</span>
       </div>
-    </div>
+    </section>
   );
 }
 
@@ -31,7 +35,11 @@ export function Rotulo({ idioma }: { idioma: Idioma }) {
  */
 export function RotuloBilingue() {
   return (
-    <div className="border-b border-linea text-dato text-tinta-2" data-rotulo>
+    <section
+      aria-label={`${ROTULO.region.es} / ${ROTULO.region.en}`}
+      className="border-b border-linea text-dato text-tinta-2"
+      data-rotulo
+    >
       <div
         className={cx(
           CONT,
@@ -50,6 +58,6 @@ export function RotuloBilingue() {
           <span lang="en">{ROTULO.divulgacion.en}</span>
         </span>
       </div>
-    </div>
+    </section>
   );
 }

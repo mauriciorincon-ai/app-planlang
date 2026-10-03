@@ -327,11 +327,6 @@ export const SUPUESTO = {
   abrir: tb("Cómo se prueba y qué dio", "How it is tested and what it gave"),
   prueba: tb("La prueba barata", "The cheap test"),
   dio: tb("Qué dio", "What it gave"),
-  criticidad: {
-    alta: tb("criticidad alta", "high criticality"),
-    media: tb("criticidad media", "medium criticality"),
-    baja: tb("criticidad baja", "low criticality"),
-  } as Record<string, TextoBilingue>,
   enElPlan: ((estado: TextoBilingue) =>
     tb(
       `en el plan: ${estado.es.toLowerCase()}`,
@@ -395,8 +390,8 @@ export const UMBRAL = {
   mover: tb("Moverlo", "Move it"),
   moverEtiqueta: ((id: string) =>
     tb(
-      `Mover ${id} en el playground`,
-      `Move ${id} in the playground`,
+      `Moverlo: ${id} en el playground`,
+      `Move it: ${id} in the playground`,
     )) as Plantilla<string>,
   noInclusivo: tb("no inclusivo", "not inclusive"),
   rango: tb("rango", "range"),

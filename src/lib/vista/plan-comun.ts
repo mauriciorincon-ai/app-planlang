@@ -6,6 +6,7 @@
 import type { Idioma } from "@core/formatos/bilingue";
 import {
   CONTROL_LEGAL,
+  CRITICIDAD,
   ESTADO_CRITERIO,
   ESTADO_CRITERIO_INFORME,
   ESTADO_RIESGO,
@@ -91,6 +92,16 @@ export function estadoDeSupuesto(
           ? "no-cumple"
           : "beta",
   };
+}
+
+/** «criticidad alta» / «high criticality»; una criticidad sin su nombre detiene el build. */
+export function criticidadEnTexto(criticidad: string, i: Idioma): string {
+  const t = CRITICIDAD[criticidad];
+  if (!t)
+    throw new Error(
+      `vitrina: la criticidad «${criticidad}» no tiene nombre en src/textos/plan-comun.ts`,
+    );
+  return t[i];
 }
 
 export function estadoDeCriterio(

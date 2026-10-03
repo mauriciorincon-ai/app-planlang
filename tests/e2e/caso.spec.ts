@@ -1,9 +1,9 @@
 import { expect, test } from "@playwright/test";
-import { consolaLimpia, desbordeLateral, sinViolacionesSerias } from "./_comun";
+import { consolaLimpia, desbordeLateral, sinViolacionesAxe } from "./_comun";
 
 /**
  * P6 Casos en el export servido (S2 fase 2): el índice y la página de cada caso se leen en los dos idiomas, temas y
- * perfiles sin desplazar la página de lado y sin violaciones serias de axe; el selector lleva a cada caso y marca el
+ * perfiles sin desplazar la página de lado y sin violaciones de axe (críticas, serias ni moderadas); el selector lleva a cada caso y marca el
  * actual; un caso con pausa humana y documento adverso (A-004) los muestra y uno que no los tuvo (A-001) no los
  * inventa; el cambio de idioma conserva el caso; la marca de inyección (A-006) y el diálogo de aclaración (A-008) se
  * ven; y con movimiento reducido lo del experto aparece visible.
@@ -61,7 +61,7 @@ for (const idioma of ["es", "en"] as const) {
       await expect(selector.getByRole("link")).toHaveCount(20);
       await expect(selector.locator("[aria-current]")).toHaveCount(0);
       expect(await desbordeLateral(page)).toBeLessThanOrEqual(0);
-      await sinViolacionesSerias(page);
+      await sinViolacionesAxe(page);
 
       await selector.getByRole("link", { name: /^A-004/ }).click();
       await expect(page).toHaveURL(new RegExp(`/${idioma}/caso/A-004$`));
@@ -100,7 +100,7 @@ for (const idioma of ["es", "en"] as const) {
             await desbordeLateral(page),
             `${tema}/${perfil}`,
           ).toBeLessThanOrEqual(0);
-          await sinViolacionesSerias(page);
+          await sinViolacionesAxe(page);
         }
       expect(errores).toEqual([]);
     });
@@ -118,7 +118,7 @@ for (const idioma of ["es", "en"] as const) {
         page.getByRole("heading", { name: t.documento }),
       ).toHaveCount(0);
       expect(await desbordeLateral(page)).toBeLessThanOrEqual(0);
-      await sinViolacionesSerias(page);
+      await sinViolacionesAxe(page);
     });
 
     test("A-006 marca la instrucción escondida y A-008 muestra el diálogo de aclaración", async ({
@@ -160,6 +160,6 @@ test.describe("movimiento reducido", () => {
       animaciones: document.getAnimations().length,
     }));
     expect(estado).toEqual({ opacidad: 1, animaciones: 0 });
-    await sinViolacionesSerias(page);
+    await sinViolacionesAxe(page);
   });
 });

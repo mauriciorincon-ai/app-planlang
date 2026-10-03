@@ -2,8 +2,11 @@ import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
 
+// Las formas que pintan texto con una tinta vetada: la clase (`text-tinta-3`, `text-tinta-3!`), la variable de
+// Tailwind v4 (`text-(--tinta-3)`), el valor arbitrario (`text-[var(--tinta-3)]`) y la propiedad arbitraria
+// (`[color:var(--tinta-3)]`, `[fill:var(--tinta-3)]`): AU-S2-B28.
 const TINTA_VETADA =
-  "/(^|[\\s:])(text|placeholder|decoration|caret|fill)-(tinta-3|linea)(\\s|\\/|$)/";
+  "/(^|[\\s:])(text|placeholder|decoration|caret|fill)-(tinta-3|linea|\\(--(tinta-3|linea)\\)|\\[var\\(--(tinta-3|linea)\\)\\])(\\s|\\/|!|$)|\\[(color|fill):var\\(--(tinta-3|linea)\\)\\]/";
 const MENSAJE_TINTA =
   "tinta-3 y linea están vetadas como texto (design-system § 2.1, regla 5-b): usa tinta-2, o `trazo` si es una guía gráfica.";
 

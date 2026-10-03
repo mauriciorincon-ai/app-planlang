@@ -4,6 +4,7 @@
  * maqueta escribió a mano por elemento («qué significa» un supuesto refutado o una brecha) vive aquí ligado a su id y
  * su estado: la vista falla, nombrándolo, si el informe trae un elemento que no tiene su lectura.
  */
+import type { CategoriaBrecha } from "@core/brecha/brechas-no-previstas";
 import { tb, type TextoBilingue } from "@core/formatos/bilingue";
 
 type Plantilla<P> = (p: P) => TextoBilingue;
@@ -160,8 +161,8 @@ export const LECTURA_SUPUESTO: Record<string, LecturaDeFalla> = {
     ),
     titulo: tb("La confianza del modelo", "The model’s confidence"),
     planeo: tb(
-      "La confianza que el modelo declara al extraer separa sus aciertos de sus errores. En ella se apoya el umbral U1 para decidir cuándo llamar a una persona.",
-      "The confidence the model declares when extracting separates its hits from its errors. Threshold U1 relies on it to decide when to call a person.",
+      "La confianza que el modelo declara al extraer separa sus aciertos de sus errores. En ella se apoya el umbral U1 ({plan:U1}) para decidir cuándo llamar a una persona.",
+      "The confidence the model declares when extracting separates its hits from its errors. Threshold U1 ({plan:U1}) relies on it to decide when to call a person.",
     ),
     significa: tb(
       "En esta corrida el umbral U1 quedó sin respaldo medido: faltaron casos donde el modelo se equivocara. La corrida de 200 del plan v1.4 confirmó S1 y entra a la vitrina en el sprint 3.",
@@ -878,6 +879,19 @@ export const BRECHAS = {
 };
 
 /** La lectura de una categoría de brecha para la frase de § 5 (la misma de la frase del veredicto, sin la cifra). */
+/** El nombre corto de cada categoría de brecha en el balance (P4 § 1). */
+export const CATEGORIA_CORTA: Record<CategoriaBrecha, TextoBilingue> = {
+  reintento_de_esquema: tb("formato", "format"),
+  error_proveedor: tb("proveedor", "provider"),
+  evaluador: tb("evaluador", "evaluator"),
+  evaluador_no_ejecutado: tb("evaluador sin correr", "evaluator not run"),
+};
+
+/** El nombre corto del criterio más exigente (el de `pass^k`), en la lectura de § 3. */
+export const CRITERIO_EXIGENTE: Record<string, TextoBilingue> = {
+  C5: tb("la exactitud de extracción", "extraction accuracy"),
+};
+
 export const CATEGORIA_LECTURA: Record<string, TextoBilingue> = {
   reintento_de_esquema: tb(
     "el modelo no devolvió el formato pedido a la primera y hubo que repetir la llamada",
@@ -1074,4 +1088,281 @@ export const FICHA = {
     "Everything needed to obtain this same report again, byte for byte. No links: the fingerprints are enough to check it matches these traces.",
   ),
   titulo: tb("Ficha de reproducibilidad", "Reproducibility record"),
+};
+
+/**
+ * Las líneas del experto: técnicas, pero redactadas enteras en cada idioma, nunca armadas con palabras sueltas
+ * («de»/«from», «frente a»/«against») alrededor de los datos (AU-S2-B18, regla 20). Los estados y la criticidad
+ * llegan ya en el idioma de la página (AU-S2-B19).
+ */
+export const EXPERTO = {
+  veredicto: ((v: string) =>
+    tb(`veredicto: ${v}`, `verdict: ${v}`)) as Plantilla<string>,
+  criterios: ((p: { a: number; b: number }) =>
+    tb(`criterios ${p.a}/${p.b}`, `criteria ${p.a}/${p.b}`)) as Plantilla<{
+    a: number;
+    b: number;
+  }>,
+  riesgosOcurridos: ((p: { a: number; b: number }) =>
+    tb(
+      `riesgos ocurridos ${p.a}/${p.b}`,
+      `risks occurred ${p.a}/${p.b}`,
+    )) as Plantilla<{ a: number; b: number }>,
+  brechas: ((p: { n: number; reintentos: number }) =>
+    tb(
+      `${p.n === 1 ? "1 brecha no prevista" : `${p.n} brechas no previstas`}${p.reintentos > 0 ? `: salida estructurada, ${p.reintentos} ${p.reintentos === 1 ? "reintento" : "reintentos"}` : ""}`,
+      `${p.n} unforeseen ${p.n === 1 ? "gap" : "gaps"}${p.reintentos > 0 ? `: structured output, ${p.reintentos} ${p.reintentos === 1 ? "retry" : "retries"}` : ""}`,
+    )) as Plantilla<{ n: number; reintentos: number }>,
+  cruzada: ((p: { diferencias: number; decisiones: number }) =>
+    tb(
+      `RF-09.2: ${p.diferencias} diferencias en ${p.decisiones} decisiones`,
+      `RF-09.2: ${p.diferencias} differences in ${p.decisiones} decisions`,
+    )) as Plantilla<{ diferencias: number; decisiones: number }>,
+  cruzadaCumplida: ((corridas: number) =>
+    tb(
+      `RF-09.2 · ${corridas} corridas · 0 diferencias`,
+      `RF-09.2 · ${corridas} runs · 0 differences`,
+    )) as Plantilla<number>,
+  frenteABase: ((id: string) =>
+    tb(
+      `${id} frente a la línea base`,
+      `${id} against the baseline`,
+    )) as Plantilla<string>,
+  /** «12 % de 20», «3 de 20»: un valor sobre su población. */
+  deTotal: ((p: { valor: string; n: number }) =>
+    tb(`${p.valor} de ${p.n}`, `${p.valor} of ${p.n}`)) as Plantilla<{
+    valor: string;
+    n: number;
+  }>,
+  deCasos: ((p: { valor: string; n: number }) =>
+    tb(
+      `${p.valor} de ${p.n} casos`,
+      `${p.valor} of ${p.n} cases`,
+    )) as Plantilla<{ valor: string; n: number }>,
+  respuestaEnCasos: ((p: { respuesta: string; n: number }) =>
+    tb(
+      `${p.respuesta} · ${p.n} casos`,
+      `${p.respuesta} · ${p.n} cases`,
+    )) as Plantilla<{ respuesta: string; n: number }>,
+  codigoGrafo: tb("grafo", "graph"),
+  grafo: ((p: {
+    nodos: number;
+    senales: number;
+    pausas: number;
+    rol: string;
+  }) =>
+    tb(
+      `${p.nodos} nodos · ${p.senales} señales · ${p.pausas} pausas registradas, rol ${p.rol}`,
+      `${p.nodos} nodes · ${p.senales} signals · ${p.pausas} pauses recorded, role ${p.rol}`,
+    )) as Plantilla<{
+    nodos: number;
+    senales: number;
+    pausas: number;
+    rol: string;
+  }>,
+  reglaBooleana: ((p: { senal: string; operador: string }) =>
+    tb(
+      `${p.senal} · ${p.operador} · verdadero`,
+      `${p.senal} · ${p.operador} · true`,
+    )) as Plantilla<{ senal: string; operador: string }>,
+  reglaNumerica: ((p: {
+    senal: string;
+    operador: string;
+    valor: string;
+    inclusivo: boolean;
+  }) =>
+    tb(
+      `${p.senal} · ${p.operador} · ${p.valor} · ${p.inclusivo ? "inclusivo" : "no inclusivo"}`,
+      `${p.senal} · ${p.operador} · ${p.valor} · ${p.inclusivo ? "inclusive" : "not inclusive"}`,
+    )) as Plantilla<{
+    senal: string;
+    operador: string;
+    valor: string;
+    inclusivo: boolean;
+  }>,
+  peorLatencia: ((p: { multi: string; base: string }) =>
+    tb(
+      `: latencia mediana ${p.multi} s > ${p.base} s de la línea base`,
+      `: median latency ${p.multi} s > the baseline’s ${p.base} s`,
+    )) as Plantilla<{ multi: string; base: string }>,
+  peorExactitud: ((p: { multi: string; base: string }) =>
+    tb(
+      `: exactitud ${p.multi} < ${p.base}`,
+      `: accuracy ${p.multi} < ${p.base}`,
+    )) as Plantilla<{ multi: string; base: string }>,
+  sinProbar: ((p: { nulas: string[]; errores: number | null; n: number }) =>
+    tb(
+      `: ${p.nulas.length ? `${p.nulas.join(", ")} ${p.nulas.length === 1 ? "indefinida" : "indefinidas"}` : ""}${p.errores !== null ? `, ${p.errores} ${p.errores === 1 ? "error" : "errores"} en n = ${p.n}` : ""}`,
+      `: ${p.nulas.length ? `${p.nulas.join(", ")} not defined` : ""}${p.errores !== null ? `, ${p.errores} ${p.errores === 1 ? "error" : "errors"} in n = ${p.n}` : ""}`,
+    )) as Plantilla<{ nulas: string[]; errores: number | null; n: number }>,
+  comparacionMedido: ((p: {
+    exactitud: string;
+    exactitudBase: string;
+    latencia: string;
+    latenciaBase: string;
+    llamadas: number;
+    llamadasBase: number;
+    tokens: string;
+    tokensBase: string;
+    costo: string;
+    costoBase: string;
+  }) =>
+    tb(
+      `exactitud ${p.exactitud} frente a ${p.exactitudBase} · latencia mediana ${p.latencia} s frente a ${p.latenciaBase} s · llamadas ${p.llamadas} frente a ${p.llamadasBase} · tokens ${p.tokens} frente a ${p.tokensBase} · costo nominal US$ ${p.costo} frente a ${p.costoBase}`,
+      `accuracy ${p.exactitud} against ${p.exactitudBase} · median latency ${p.latencia} s against ${p.latenciaBase} s · calls ${p.llamadas} against ${p.llamadasBase} · tokens ${p.tokens} against ${p.tokensBase} · nominal cost US$ ${p.costo} against ${p.costoBase}`,
+    )) as Plantilla<{
+    exactitud: string;
+    exactitudBase: string;
+    latencia: string;
+    latenciaBase: string;
+    llamadas: number;
+    llamadasBase: number;
+    tokens: string;
+    tokensBase: string;
+    costo: string;
+    costoBase: string;
+  }>,
+  comparacionEvidencia: ((p: {
+    corrida: string;
+    base: string;
+    n: number;
+    respetado: boolean;
+    distintos: { es: string; en: string };
+  }) =>
+    tb(
+      `corridas ${p.corrida} (multiagente) y ${p.base} (agente único) · n = ${p.n} · presupuesto ${p.respetado ? "respetado" : "excedido"} · difieren en ${p.distintos.es}`,
+      `runs ${p.corrida} (multi-agent) and ${p.base} (single agent) · n = ${p.n} · budget ${p.respetado ? "respected" : "exceeded"} · they differ in ${p.distintos.en}`,
+    )) as Plantilla<{
+    corrida: string;
+    base: string;
+    n: number;
+    respetado: boolean;
+    distintos: { es: string; en: string };
+  }>,
+  metrica: ((p: { nombre: string; valor: string | null }) =>
+    tb(
+      `${p.nombre} ${p.valor ?? "indefinida"}`,
+      `${p.nombre} ${p.valor ?? "not defined"}`,
+    )) as Plantilla<{ nombre: string; valor: string | null }>,
+  curva: ((p: {
+    riesgo: string;
+    umbral: string;
+    desde: string;
+    hasta: string;
+    estado: string;
+  }) =>
+    tb(
+      `curva riesgo-cobertura: riesgo máximo ${p.riesgo} con ${p.umbral} entre ${p.desde} y ${p.hasta} · estado: ${p.estado}`,
+      `risk-coverage curve: maximum risk ${p.riesgo} with ${p.umbral} between ${p.desde} and ${p.hasta} · status: ${p.estado}`,
+    )) as Plantilla<{
+    riesgo: string;
+    umbral: string;
+    desde: string;
+    hasta: string;
+    estado: string;
+  }>,
+  estado: ((e: string) =>
+    tb(`estado: ${e}`, `status: ${e}`)) as Plantilla<string>,
+  reglaSupuesto: ((p: {
+    condiciones: string;
+    poblacion: string | null;
+    criticidad: string;
+  }) =>
+    tb(
+      `${p.condiciones}${p.poblacion ? ` sobre ${p.poblacion}` : ""} · ${p.criticidad}`,
+      `${p.condiciones}${p.poblacion ? ` on ${p.poblacion}` : ""} · ${p.criticidad}`,
+    )) as Plantilla<{
+    condiciones: string;
+    poblacion: string | null;
+    criticidad: string;
+  }>,
+  sinDetector: tb(
+    "sin detector en el plan · evento: salida estructurada inválida al primer intento → reintento del nodo",
+    "no detector in the plan · event: invalid structured output on the first try → node retry",
+  ),
+  brechaCasos: ((p: {
+    lista: string;
+    nodos: string;
+    paso: number | null;
+    reintentos: number;
+  }) =>
+    tb(
+      `${p.lista} · ${p.nodos}${p.paso ? `, paso ${p.paso}` : ""} · ${p.reintentos} ${p.reintentos === 1 ? "reintento" : "reintentos"}`,
+      `${p.lista} · ${p.nodos}${p.paso ? `, step ${p.paso}` : ""} · ${p.reintentos} ${p.reintentos === 1 ? "retry" : "retries"}`,
+    )) as Plantilla<{
+    lista: string;
+    nodos: string;
+    paso: number | null;
+    reintentos: number;
+  }>,
+  evaluadores: ((p: {
+    corridas: number;
+    ejecutados: number;
+    fallas: number;
+    juezSinCorrer: boolean;
+  }) =>
+    tb(
+      `${p.corridas} corridas · ${p.ejecutados} evaluadores de regla ejecutados, ${p.fallas} ${p.fallas === 1 ? "falla" : "fallas"}${p.juezSinCorrer ? " · el juez con modelo no corrió (opcional en este corte)" : ""}`,
+      `${p.corridas} runs · ${p.ejecutados} rule evaluators run, ${p.fallas} ${p.fallas === 1 ? "failure" : "failures"}${p.juezSinCorrer ? " · the model judge did not run (optional in this cut)" : ""}`,
+    )) as Plantilla<{
+    corridas: number;
+    ejecutados: number;
+    fallas: number;
+    juezSinCorrer: boolean;
+  }>,
+  fueraPorNula: ((p: { cumplen: string; fuera: number }) =>
+    tb(
+      `${p.cumplen} · fuera por señal nula: ${p.fuera}`,
+      `${p.cumplen} · out by a null signal: ${p.fuera}`,
+    )) as Plantilla<{ cumplen: string; fuera: number }>,
+  rompe: ((p: {
+    umbral: string;
+    valor: string;
+    casos: string;
+    n: number;
+    criterio: string;
+  }) =>
+    tb(
+      `con ${p.umbral} = ${p.valor}, ${p.casos} ${p.n === 1 ? "iría" : "irían"} sin persona → ${p.criterio} no cumple`,
+      `with ${p.umbral} = ${p.valor}, ${p.casos} would go without a person → ${p.criterio} fails`,
+    )) as Plantilla<{
+    umbral: string;
+    valor: string;
+    casos: string;
+    n: number;
+    criterio: string;
+  }>,
+  notaVerificador: ((nota: string) =>
+    tb(
+      `nota del verificador: ${nota}`,
+      `verifier note: ${nota}`,
+    )) as Plantilla<string>,
+};
+
+/** Lo que dice la curva de un supuesto en § 6 y las marcas de las listas (AU-S2-B17: sin ternarios en el JSX). */
+export const CURVA_SUPUESTO = {
+  titulo: ((p: { id: string; n: number }) =>
+    tb(
+      `Curva riesgo-cobertura de ${p.id}, ${p.n} casos medidos`,
+      `${p.id} risk-coverage curve, ${p.n} measured cases`,
+    )) as Plantilla<{ id: string; n: number }>,
+  ejeCobertura: tb(
+    "cobertura: casos que resuelve solo →",
+    "coverage: cases it resolves alone →",
+  ),
+  ejeRiesgo: tb(
+    "riesgo: errores entre esos casos",
+    "risk: errors among those cases",
+  ),
+  plan: ((p: { umbral: string; rango: string; cobertura: string }) =>
+    tb(
+      `plan · ${p.umbral} ${p.rango} · ${p.cobertura}`,
+      `plan · ${p.umbral} ${p.rango} · ${p.cobertura}`,
+    )) as Plantilla<{ umbral: string; rango: string; cobertura: string }>,
+};
+
+export const MARCAS = {
+  hecho: tb("hecho", "done"),
+  enGrafo: tb("en el grafo", "in the graph"),
+  falta: tb("falta", "missing"),
 };

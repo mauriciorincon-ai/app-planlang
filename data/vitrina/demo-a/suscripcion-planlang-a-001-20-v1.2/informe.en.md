@@ -4,7 +4,7 @@
 
 ## 1. Summary for the decision-maker
 
-**Verdict: ⚠ MET WITH ALERTS**
+**Verdict: ⚠ MEETS WITH WARNINGS**
 
 The plan was met with alerts. 20 synthetic cases were measured. Criteria: 9 met, 0 failed and 0 still open, out of 9. Risks that occurred: none. Human decisions were simulated.
 

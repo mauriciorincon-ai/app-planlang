@@ -29,6 +29,13 @@ export const ESTADO_RIESGO: Record<string, TextoBilingue> = {
   mal_formado: tb("Detector mal formado", "Malformed detector"),
 };
 
+/** La criticidad de un supuesto, en una sola palabra con su nombre (P2 Plan y P4 Brecha). */
+export const CRITICIDAD: Record<string, TextoBilingue> = {
+  alta: tb("criticidad alta", "high criticality"),
+  media: tb("criticidad media", "medium criticality"),
+  baja: tb("criticidad baja", "low criticality"),
+};
+
 export const ESTADO_SUPUESTO: Record<string, TextoBilingue> = {
   confirmado: tb("Confirmado", "Confirmed"),
   refutado: tb("Refutado", "Refuted"),

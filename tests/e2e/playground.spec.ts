@@ -1,9 +1,9 @@
 import { expect, test, type Page } from "@playwright/test";
-import { consolaLimpia, desbordeLateral, sinViolacionesSerias } from "./_comun";
+import { consolaLimpia, desbordeLateral, sinViolacionesAxe } from "./_comun";
 
 /**
  * P5 Playground en el export servido (S2 fase 3): se llega por su pestaña y se lee en los dos idiomas, temas y
- * perfiles sin desplazar la página de lado, sin violaciones serias de axe y sin errores de hidratación; los
+ * perfiles sin desplazar la página de lado, sin violaciones de axe (críticas, serias ni moderadas) y sin errores de hidratación; los
  * deslizadores se mueven con el teclado y recalculan en el navegador (U1 a 0,90 manda A-008 a una persona; U2 a 1600
  * introduce el error de A-010); el modo Texas es un interruptor que no cambia ningún caso y lo dice; «Volver al plan»
  * deshace; y con movimiento reducido lo del experto aparece visible.
@@ -83,7 +83,7 @@ for (const idioma of ["es", "en"] as const) {
           ).toBeVisible({ visible: perfil === "experto" });
           await expect(estado(page)).toContainText(t.enPlan);
           expect(await desbordeLateral(page)).toBeLessThanOrEqual(0);
-          await sinViolacionesSerias(page);
+          await sinViolacionesAxe(page);
           expect(errores).toEqual([]);
         });
 
@@ -92,14 +92,22 @@ for (const idioma of ["es", "en"] as const) {
     }) => {
       await page.goto(`/${idioma}/playground`);
       const u1 = page.getByRole("slider", { name: t.u1 });
+      // Deshabilitado no se lee igual que habilitado, y no solo por el color: el borde cambia (AU-S2-B23).
+      const volver = page.getByRole("button", { name: t.volver });
+      const borde = () =>
+        volver.evaluate((b) => getComputedStyle(b).borderTopStyle);
+      await expect(volver).toBeDisabled();
+      expect(await borde()).toBe("dashed");
       await u1.focus();
       for (let k = 0; k < 3; k++) await page.keyboard.press("ArrowRight");
+      await expect(volver).toBeEnabled();
+      expect(await borde()).toBe("solid");
       await expect(u1).toHaveValue("0.9");
       await expect(cambios(page)).toHaveCount(1);
       await expect(cambios(page).first()).toHaveAttribute("data-caso", "A-008");
       await expect(estado(page)).toContainText(t.movidoU1);
       expect(await desbordeLateral(page)).toBeLessThanOrEqual(0);
-      await sinViolacionesSerias(page);
+      await sinViolacionesAxe(page);
       await page.getByRole("button", { name: t.volver }).click();
       await expect(cambios(page)).toHaveCount(0);
       await expect(u1).toHaveValue("0.75");
@@ -117,7 +125,7 @@ for (const idioma of ["es", "en"] as const) {
       const fila = page.locator('#cambios [data-caso="A-010"]');
       await expect(fila).toContainText(t.error);
       expect(await desbordeLateral(page)).toBeLessThanOrEqual(0);
-      await sinViolacionesSerias(page);
+      await sinViolacionesAxe(page);
       await fila.getByRole("link").click();
       await expect(page).toHaveURL(new RegExp(`/${idioma}/caso/A-010$`));
     });
@@ -158,6 +166,6 @@ test.describe("movimiento reducido", () => {
       animaciones: document.getAnimations().length,
     }));
     expect(est).toEqual({ opacidad: 1, animaciones: 0 });
-    await sinViolacionesSerias(page);
+    await sinViolacionesAxe(page);
   });
 });

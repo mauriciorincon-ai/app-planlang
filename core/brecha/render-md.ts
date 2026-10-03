@@ -38,10 +38,11 @@ const ESTADO_SUPUESTO: Record<ResultadoSupuesto["estado"], Tb> = {
   sin_probar: tb("◌ sin probar", "◌ untested"),
 };
 
+/** Las mismas palabras que la vitrina y la maqueta aprobada («Meets with warnings»): AU-S2-B44. */
 const VEREDICTO: Record<Informe["veredicto"]["valor"], Tb> = {
-  cumple: tb("✓ CUMPLE", "✓ MET"),
-  cumple_con_alertas: tb("⚠ CUMPLE CON ALERTAS", "⚠ MET WITH ALERTS"),
-  no_cumple: tb("✗ NO CUMPLE", "✗ NOT MET"),
+  cumple: tb("✓ CUMPLE", "✓ MEETS"),
+  cumple_con_alertas: tb("⚠ CUMPLE CON ALERTAS", "⚠ MEETS WITH WARNINGS"),
+  no_cumple: tb("✗ NO CUMPLE", "✗ DOES NOT MEET"),
 };
 
 const PRIORIDAD: Record<string, Tb> = {
