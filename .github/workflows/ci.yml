@@ -48,8 +48,9 @@ jobs:
       - uses: actions/setup-node@v7
         with: { node-version: 22, cache: pnpm }
       - run: pnpm install --frozen-lockfile
-      - run: pnpm exec playwright install --with-deps chromium
-      - run: pnpm test:e2e        # incluye scans axe (@axe-core/playwright)
+      # Firefox y WebKit solo para la paridad del playground entre motores (regla dura 1, AU-S2-11).
+      - run: pnpm exec playwright install --with-deps chromium firefox webkit
+      - run: pnpm test:e2e        # incluye scans axe (@axe-core/playwright) y la paridad en los tres motores
       # ADR-009: el paquete para hoja-de-vida — gate de publicación, build bajo /piezas/planlang, barridos y
       # manifiesto; luego se sirve como lo serviría hoja-de-vida (sin URL limpias) y se rastrean todos los enlaces.
       - run: pnpm paquete:vitrina

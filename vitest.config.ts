@@ -7,8 +7,10 @@ import { defineConfig } from "vitest/config";
 //   - `core`        → entorno node: unitarias, integración y contratos del núcleo.
 //   - `core-jsdom`  → los MISMOS tests que producen bytes, bajo jsdom (jsdom 30 no trae
 //                     `crypto.subtle`: el setup lo toma de `node:crypto`, solo para el arnés).
-//                     Igualdad con el golden en ambos proyectos = paridad Node/jsdom. La paridad
-//                     con Chromium/Firefox/WebKit reales llega en S2 con la vitrina.
+//                     Igualdad con el golden en ambos proyectos = paridad Node/jsdom (el mismo V8:
+//                     no prueba un motor de navegador). Lo que corre en el navegador del visitante es
+//                     el playground: su paridad con Chromium, Firefox y WebKit reales la mide
+//                     `tests/e2e/paridad.spec.ts` contra el golden que escribe Node (AU-S2-11).
 //   - `vitrina`     → el arnés original del kit (jsdom + Testing Library) para `src/`.
 // La cobertura vive en la raíz y se aplica SOLO con `--coverage` en el script `test` (K7 ds S1).
 // `server-only` lanza fuera de un componente de servidor: en vitest se sustituye por un módulo vacío (el

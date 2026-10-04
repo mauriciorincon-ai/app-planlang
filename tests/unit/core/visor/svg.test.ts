@@ -1,6 +1,8 @@
 /**
  * Serializador del lienzo (D8, D9, G1): golden files ES/EN del grafo real del demo A, en `core` (Node) y en
- * `core-jsdom` — igualdad con el golden en los dos = mismos bytes en Node y en el navegador.
+ * `core-jsdom`. El SVG se genera al compilar, en Node: el navegador lo recibe hecho y no lo recalcula, así que la
+ * igualdad en los dos proyectos (el mismo V8) no prueba un motor de navegador ni le hace falta. Lo que sí se calcula
+ * en el navegador es el playground, y su paridad entre motores la mide `tests/e2e/paridad.spec.ts` (AU-S2-11).
  * Regenerar (tras un cambio deliberado del motor o de los datos): `VISOR_GOLDEN=escribir pnpm vitest run
  * tests/unit/core/visor/svg.test.ts --project core`.
  */

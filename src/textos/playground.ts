@@ -718,8 +718,8 @@ export const FICHA_TECNICA = {
     )) as Plantilla<{ dif: number; d: number; c: number }>,
   determinismo: tb("Determinismo", "Determinism"),
   determinismoValor: tb(
-    "mismos bytes en Node y en el navegador; sin reloj ni azar",
-    "same bytes in Node and in the browser; no clock, no randomness",
+    "mismos bytes en Node, Chromium, Firefox y WebKit; sin reloj ni azar",
+    "same bytes in Node, Chromium, Firefox and WebKit; no clock, no randomness",
   ),
   noObservado: tb("No observado", "Not observed"),
   noObservadoValor: tb(

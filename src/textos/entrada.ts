@@ -297,8 +297,8 @@ export const SOSTIENE = {
   nucleo: {
     dt: tb("Núcleo sin IA", "AI-free core"),
     dd: tb(
-      "planeador, verificador y playground no llaman a ningún modelo; dan los mismos bytes en Node y en el navegador (JSON canónico RFC 8785 + SHA-256, sin reloj ni azar)",
-      "planner, verifier and playground call no model; they give the same bytes in Node and in the browser (canonical JSON RFC 8785 + SHA-256, no clock, no randomness)",
+      "planeador, verificador y playground no llaman a ningún modelo ni leen reloj ni azar (JSON canónico RFC 8785 + SHA-256); el playground, que corre en tu navegador, da los mismos bytes en Node, Chromium, Firefox y WebKit",
+      "planner, verifier and playground call no model and read no clock or randomness (canonical JSON RFC 8785 + SHA-256); the playground, which runs in your browser, gives the same bytes in Node, Chromium, Firefox and WebKit",
     ),
   },
   trazas: {

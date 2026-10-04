@@ -1453,6 +1453,32 @@ Regla de la casilla 5 de la auditoría: cada campo, un lector fuera de su constr
 | P-8 | datos.test «la lectura del spike es de otra fecha» · agente.test (citas ES/EN, cita sin `archivo:línea`, parte sin nombre) · agente-componentes.test (el experto ve las 5 referencias en `<code>`) | quitar la comprobación de fecha y el `<code>` → rojo en las dos → verde al restaurar |
 | P-9 · P-10 | datos.test «el código por nodo es de otro demo» · «el plan de beneficios no es el que nombra la corrida» | quitar las dos comprobaciones → rojo en las dos → verde al restaurar |
 
+#### Paridad entre motores y documentos (lote 5: AU-S2-11, AU-S2-20, B4, B5, B33, 2026-10-03)
+
+- **AU-S2-11 (pagado en el S2, no diferido):** lo que corre en el navegador del visitante es el playground. Una huella
+  de la isla (el texto de sus dos secciones, con lo del lector de pantalla y los dos perfiles, más la geometría de la
+  curva) se toma tras cada paso de cada deslizador y el interruptor: 66 encuadres por idioma. Node (jsdom) la escribe
+  como golden (`tests/golden/playground/isla.{es,en}.json`, `tests/unit/vitrina/playground-paridad.test.tsx`) y
+  `tests/e2e/paridad.spec.ts` la exige byte a byte en Chromium (`escritorio`), Firefox y WebKit (proyectos
+  `paridad-firefox` y `paridad-webkit`; la CI instala los dos motores). Las funciones que leen el DOM
+  (`tests/e2e/_paridad.ts`) son las mismas en los dos lados. **Corrió verde en los tres motores** a la primera.
+  Comentarios corregidos: `vitest.config.ts` y `svg.test.ts` ya no prometen la paridad con navegadores ni la afirman
+  para el SVG (se genera al compilar, en Node). Las dos frases públicas («mismos bytes en Node y en el navegador») dicen
+  ahora lo medido: el playground, en Node, Chromium, Firefox y WebKit; planeador y verificador, sin reloj ni azar.
+- **Puerto del e2e:** `PLANLANG_E2E_PUERTO` (3000 por defecto). Otra app de la máquina (`app-ds`, `pnpm start`) ocupó
+  el 3000 dos veces en el cierre; sin reuso del servidor el suite no arrancaba.
+- **AU-S2-20:** el bloque B de la guía apunta al informe que publica la vitrina (plan 1.3.0; encabezado y fila nueva
+  de la sección 4 con R1/R6 «alta · control legal» y R8 por sesión, comprobadas contra el informe); `b1` pasa a
+  «Mejorado en S2» y el historial lo cuenta (6 mejoradas). Así la razón de dejar `b1` fuera del ⭐⭐ («es el mismo
+  informe que muestra la pantalla Brecha») es cierta. El kit de prueba pasa al S2: los planes v1.3 y v1.4, los lotes
+  de 20 y 200, el informe de la vitrina, el de 200, el del respaldo sin proveedor (3 fallas inyectadas de 8, R9, «no
+  cumple») y cómo reproducir el de la vitrina con `--plan`.
+- **B4, B5, B33:** desviaciones 55, 56 y 57.
+
+| Gate | Prueba | Demo en rojo |
+|---|---|---|
+| AU-S2-11 | paridad.spec.ts en `escritorio`, `paridad-firefox` y `paridad-webkit` contra el golden de Node | un carácter de más en la línea de estado de la isla **solo en Firefox** (`/Firefox/.test(navigator.userAgent)`) → rojo solo en `paridad-firefox` (es y en), nombrando cada encuadre movido («U1=0.5», «U1=0.55»…); Chromium y WebKit verdes → verde al restaurar |
+
 ### Punto de retoma (2026-10-02, segunda compactación del día, pedida por el usuario)
 
 - **Commits:** `64e8ce6` (foco y tablas) · `a12fe25` (accesibilidad, bilingüe y gates) · `1bcdbd7` (vocabulario con
@@ -1464,10 +1490,10 @@ Regla de la casilla 5 de la auditoría: cada campo, un lector fuera de su constr
      `inclusivo`/`tipo`, `Consecuencias` sobrantes, `opcion_elegida`, manifiesto `nota`/`origen`/repeticiones,
      `LecturaSpike` `nota`/`fecha`/`citas`, `grafo-codigo.demo_id`, `PlanBeneficiosMinimo`, `Geometria.cabecera` y
      `ladoOrigen`/`ladoDestino`): a cada uno, un lector o fuera~~ — pagado, ver «Campos sin lector (lote 4)»;
-  2. AU-S2-11: proyecto Playwright `paridad` (Firefox y WebKit) + corregir los comentarios de `vitest.config.ts` y
-     `svg.test.ts`;
-  3. documentos: AU-S2-20 (kit de prueba y razón de `b1` en la guía), B4, B5, AU-S2-11 y B33 (los recorridos del
-     mapa) como desviaciones, B2 (cuerpo del PR);
+  2. ~~AU-S2-11: proyecto Playwright `paridad` (Firefox y WebKit) + corregir los comentarios de `vitest.config.ts` y
+     `svg.test.ts`~~ — pagado, ver «lote 5»;
+  3. ~~documentos: AU-S2-20 (kit de prueba y razón de `b1` en la guía), B4, B5, AU-S2-11 y B33 (los recorridos del
+     mapa) como desviaciones~~ — pagado (AU-S2-11 no es desviación: se hizo); B2 (cuerpo del PR) va al cierre;
   4. build, e2e completo, `verificar-export`, `diagrama:verificar`, `paquete:vitrina` y `test:e2e:paquete` (corre por
      primera vez la pasada de interacción del paquete); subir y `gh pr checks 8`;
   5. **AU-S2-12:** pasada de capturas de cierre con registro versionado; es también la **mirada** de los cambios de
@@ -1657,6 +1683,19 @@ Regla de la casilla 5 de la auditoría: cada campo, un lector fuera de su constr
     de 20 en vez de 9).
 54. **LangSmith sin aprovisionar** (precondición de las corridas de fondo en la orden): corren sin espejo, con las
     trazas propias completas (regla 8). Queda en la tabla de aprovisionamiento pendiente del PR y como deuda.
+55. **Las capturas de la mirada 4 pesan 11 MB** (`docs/fidelidad/p4`, 21 archivos; AU-S2-B4): sigue las desviaciones
+    18, 33 y 40. En total, `docs/fidelidad/` suma 52 MB de JPEG en un repo público. Son el registro de cada mirada
+    (lo que el usuario aprobó, encuadre por encuadre) y por eso no se recomprimen después de aprobadas; en el S3 se
+    propone a la planeadora un techo por mirada o sacar las de miradas cerradas del árbol de trabajo.
+56. **El lote de 200 del S1 se regeneró** con la v1.4 (AU-S2-B5; ver «AU-9»): su huella pasa de `1573f66f…` a
+    `1ea71b9c…`. Solo cambió la referencia al plan; los 200 casos y su verdad conocida son idénticos (el generador no
+    lee las aristas). `AFIRMACION-DE-PRIVACIDAD.md` lista la huella nueva y ningún archivo cita la vieja
+    (`git grep 1573f66f` vacío fuera de las bitácoras).
+57. **El mapa del visor no lleva `recorridos`** (`core/visor/mapa.ts`, `recorridos: []`; AU-S2-B33): la regla dura 11
+    dice que las trazas de casos entran como recorridos del mapa. En la vitrina, las trazas por nodo viven en los
+    paneles de P3 (tres trazas reales por nodo, cada una enlazada a su caso) y el recorrido entero en P6, que se
+    genera de la traza y no del mapa. Llenar `recorridos` sirve al día en que el diagramador dibuje un recorrido
+    sobre el lienzo; se propone para el S3 junto con las enmiendas del ADR-010.
 
 
 ## Registro de miradas
