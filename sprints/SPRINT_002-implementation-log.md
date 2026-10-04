@@ -15,7 +15,7 @@
 | 2 · P2 Plan · P3 Agente (visor) · P6 Caso | ✅ cerrada · **mirada 2 aprobada** (`docs/fidelidad/p2/index.html`) | «lo abrí y apruebo» + «continúa» 2026-09-30 |
 | 3 · P4 Brecha · P5 Playground | ✅ cerrada · **mirada 3 aprobada** (`docs/fidelidad/p3/index.html`) | «Esta bien continua» + «lo abrí y apruebo» 2026-10-01 |
 | 4 · P7 Fichas · paquete · corridas de fondo · deuda | ✅ cerrada · **mirada 4 aprobada** (`docs/fidelidad/p4/index.html`) | «1. lo abrí y apruebo 2. continúa» 2026-10-02 |
-| 5 · Cierre | 🔨 auditoría Fase 2: el usuario aprobó la Fase 1 y pidió ajustar **todos** los hallazgos (2026-10-02) | |
+| 5 · Cierre | ✅ auditoría (todos los hallazgos pagados) · pasada de cierre y mirada de los cambios aprobada · deploy-check · summary | «lo abri y lo apruebo, sigamos» 2026-10-03 |
 
 ## Decisiones previas a construir
 
@@ -1491,6 +1491,32 @@ en la corrida siguiente; y el primer e2e completo dio 2 rojos de axe en Agente a
 una aisladas, al límite de 30 s bajo esa carga). Los 4 rojos del playground de esa corrida eran reales: el spec esperaba
 la URL del caso sin `#paso-N` (P-5) y se ajustó para comprobar que el paso queda a la vista.
 
+#### `/deploy-check --python`, summary y fichas (2026-10-03)
+
+- **Pasa:**
+  - tests: vitest 2544 con los umbrales de cobertura, Playwright 152 + paquete 3, sin fallas ni reintentos;
+  - typecheck y lint: limpios, sin `@ts-ignore` nuevos;
+  - Python: `ruff check`, `ruff format --check`, `pytest` 159 (96,39 %) y `pip-audit --skip-editable`;
+  - build, `export:verificar`, `diagrama:verificar` y `paquete:vitrina`;
+  - seguridad: `pnpm audit` con el aviso `braces` aceptado (revisar antes del 2026-11-02), sin overrides (no hay
+    ninguno, ni en `package.json` ni en `pnpm-workspace.yaml`), gitleaks sobre `origin/main..HEAD` sin hallazgos;
+  - variable nueva solo de pruebas (`PLANLANG_E2E_PUERTO`) documentada en `.env.example`;
+  - observabilidad: sin endpoints ni runtime;
+  - accesibilidad: axe en cada pantalla, en los dos idiomas, temas y perfiles; teclado probado;
+  - performance: Lighthouse en 9 URL (mediana de 3); playground con sus tiempos;
+  - cero enlaces: barrido sin coincidencias; el homepage del repo apunta al repo;
+  - frases caducadas: el barrido por promesa aplazada después del último ajuste deja frases ciertas hoy (demo B,
+    entrevistador y la corrida de 200 en la vitrina son del S3);
+  - manual ES/EN con las mejoras de la auditoría (el caso abre en su paso, la paridad entre motores, la opción
+    elegida en el informe);
+  - ADR al día;
+  - disco en runtime: la vitrina no escribe nada; `checkpoints.sqlite` nace 600 e ignorado; los arneses declaran sus
+    árboles y abortan fuera de ellos.
+- **Aviso:** el LCP de `/en/playground` vive en el borde (deuda S3, decidida por el usuario).
+- **Summary:** `sprints/SPRINT_002-summary.md`, con la auditoría, sus pagos y la deuda. `pnpm fichas` en el mismo
+  commit (AU-S2-B6): `sprints_cerrados` 2 y `actualizado` 2026-10-03 (la fecha más reciente que cuenta el export es
+  la del summary). `fichas-vista.test.ts` espera esa fecha.
+
 #### Lighthouse de `/en/playground` en el borde (2026-10-03)
 
 - CI de `8048989`: `lighthouse` en **rojo** por una sola aserción: LCP de `/en/playground` = **2.638 ms** (las tres
@@ -1503,8 +1529,10 @@ la URL del caso sin `#paso-N` (P-5) y se ajustó para comprobar que el paso qued
   descarga. El playground es la página con más JavaScript propio (la isla, ~22 KB comprimidos sobre ~156 KB que de
   verdad se descargan; el trozo de 39 KB es el de polyfills `noModule`, que un navegador moderno no pide), y queda a
   ±150 ms del límite según la máquina de la CI.
-- **Decisión pendiente del usuario** (se le presenta con la mirada): darle margen ya (partir los textos de la isla
-  por idioma o aligerar su DOM) o declararlo deuda del S3 con su riesgo: un PR puede salir rojo sin cambiar nada.
+- **Decisión:** se le presentaron al usuario las dos salidas con la mirada (darle margen ya, o deuda del S3 con su
+  riesgo) y la recomendación de dejarla para el S3; respondió «sigamos» y queda como **deuda del S3**: un PR puede
+  salir rojo en Lighthouse sin cambiar nada hasta que el playground tenga margen (partir los textos de la isla por
+  idioma o aligerar su DOM).
 
 #### Pasada de capturas de cierre, versionada (AU-S2-12, 2026-10-03)
 
@@ -1524,7 +1552,7 @@ la URL del caso sin `#paso-N` (P-5) y se ajustó para comprobar que el paso qued
   claro EN, Agente 1280 oscuro ES experto, Fichas 1280 claro ES). Sin defectos de forma. Una cosa para tu juicio, dicha
   en la matriz: «Saltar al contenido», mientras tiene el foco, tapa el principio del rótulo (el patrón habitual de ese
   enlace; al seguir con Tab el rótulo vuelve entero).
-- **Pendiente:** tu mirada (forma: abre parada). Se registra abajo, en «Registro de miradas», antes de seguir.
+- **Mirada:** aprobada el 2026-10-03 («lo abri y lo apruebo, sigamos»), registrada abajo en «Registro de miradas».
 
 ### Punto de retoma (2026-10-02, segunda compactación del día, pedida por el usuario)
 
@@ -1546,7 +1574,7 @@ la URL del caso sin `#paso-N` (P-5) y se ajustó para comprobar que el paso qued
   5. ~~**AU-S2-12:** pasada de capturas de cierre con registro versionado~~ (hecha; falta el veredicto de la mirada); es también la **mirada** de los cambios de
      forma de la fase: lista «También en construcción» en Entrada, rótulo bilingüe en `/` y en la 404, anillo de
      foco del lienzo, enlace «Saltar al contenido», capa activa subrayada, botón deshabilitado punteado;
-  6. barrido de frases caducadas; `/deploy-check --python`; summary + `pnpm fichas` en el mismo commit (con: la
+  6. ~~barrido de frases caducadas; `/deploy-check --python`; summary + `pnpm fichas` en el mismo commit~~ — hecho (con: la
      deuda nueva de `render-md.ts`/`m9.ts` y de los evaluadores con nodos del demo A, la propuesta al kit del hook que
      falla cerrado, las entradas de `degradaciones-permitidas.json` que el PR siguiente debe borrar); cuerpo del PR;
      4 checks `success`.
@@ -1753,7 +1781,7 @@ la URL del caso sin `#paso-N` (P-5) y se ajustó para comprobar que el paso qued
 | 2026-09-30 | Mirada 2: P2 Plan · P3 Agente · P6 Caso (presentada el 2026-09-29; matriz de 16 filas) | `docs/fidelidad/p2/index.html` (capturas de `c8db3b3`: 30 pares, 7/7 interacciones) | «lo abrí y apruebo» | fase 3: P4 Brecha · P5 Playground (arranca con el «continúa» de fase) |
 | 2026-10-01 | Mirada 3: P4 Brecha · P5 Playground (presentada el 2026-09-30; matriz de 13 filas) | `docs/fidelidad/p3/index.html` (capturas de `defb8a7`: 23 pares, 6/6 interacciones; CI del PR #8 en verde) | «continúa» → se repreguntó «¿qué viste al abrirlo?» → «Esta bien continua» → se pidió la constancia → «lo abrí y apruebo» | fase 4: P7 Fichas · paquete · corridas de fondo · deuda |
 | 2026-10-02 | Mirada 4: P7 Fichas (presentada el 2026-10-01; matriz de 6 filas) | `docs/fidelidad/p4/index.html` (capturas de `84207d1`: 10 pares, 3/3 interacciones; CI del PR #8 en verde sobre `3449bfd` y `03f94ae`) | «lo abrí y apruebo» (con «continúa»); sin objeción a que la vitrina siga en la corrida de 20 y la de 200 quede para el S3 | fase 5: cierre |
-| 2026-10-03 | Cambios de forma de la Fase 2 de la auditoría (presentada el 2026-10-03; matriz de 13 filas) | `docs/fidelidad/cierre/index.html` (recortes y pasada de cierre del build de `32fbbe8`: 73 pares, 23/23 interacciones) | *(pendiente)* | — (el summary y el PR esperan este veredicto) |
+| 2026-10-03 | Cambios de forma de la Fase 2 de la auditoría (presentada el 2026-10-03; matriz de 13 filas) | `docs/fidelidad/cierre/index.html` (recortes y pasada de cierre del build de `32fbbe8`: 73 pares, 23/23 interacciones) | «lo abri y lo apruebo, sigamos» (2026-10-03). Con eso queda aceptado «Saltar al contenido» tal como está (tapa el principio del rótulo solo mientras tiene el foco) | `/deploy-check --python`, summary y PR |
 
 ## Bugs y fricciones
 

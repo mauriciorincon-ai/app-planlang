@@ -113,6 +113,8 @@ data/casos/demo-a/planlang-a-001-200.json` y repite el comando hasta completar l
 - **Cómo leer los estados:** ✓ cumple · ✗ incumple · ◐ incompleto (faltan corridas) · ? indeterminado
   (hubo casos que no se pudieron evaluar) · — sin casos que lo prueben · ⚠ regla mal formada (el
   problema está en el plan, no en el agente).
+- **Las decisiones que no se pueden deshacer** dicen en el informe qué se eligió, si el plan escribió la opción en
+  los dos idiomas (los planes v1.1 y v1.2 la escribieron solo en español: ahí el informe no la inventa en inglés).
 - **Limitaciones:** el informe solo lee trazas cuyas huellas coinciden; si algo se alteró, se niega a
   medir y dice qué archivo falla.
 
@@ -154,13 +156,14 @@ data/casos/demo-a/planlang-a-001-200.json` y repite el comando hasta completar l
 - **Qué hace:** te deja cambiar los umbrales del plan sobre las señales reales de la corrida y ver qué habría
   pasado: qué casos cambian de camino, cuántos errores se evitan o se introducen, cuántos minutos más o menos
   de revisión humana y qué criterios pasarían o fallarían. Con los valores del plan reproduce exactamente el
-  informe.
+  informe. El cálculo corre en tu navegador, sin llamar a ningún modelo, y da el mismo resultado en los motores
+  de Chrome, Firefox y Safari.
 - **Cómo se usa:**
   1. Abre «Playground».
   2. Mueve la confianza mínima de extracción (U1, de 0,50 a 0,95), el umbral de alto costo (U2, de 200 a
      5.000) o el máximo de aclaraciones (U3, de 0 a 4).
-  3. Lee los casos que cambian y abre cualquiera para ver su recorrido. La curva riesgo-cobertura marca dónde
-     está el plan.
+  3. Lee los casos que cambian y abre cualquiera con «ver su traza»: el caso se abre en el paso donde su camino
+     se separa del que tomó el agente. La curva riesgo-cobertura marca dónde está el plan.
 - **El modo Texas (U4)** obliga a que ninguna determinación adversa sea automática. En esta corrida
   encenderlo no cambia ningún caso, porque toda propuesta adversa ya pasaba por una persona, y la pantalla
   lo explica.
@@ -317,6 +320,8 @@ data/casos/demo-a/planlang-a-001-200.json` and repeat the command until all 200 
 - **How to read the statuses:** ✓ met · ✗ not met · ◐ incomplete (runs missing) · ? undetermined (some
   cases could not be evaluated) · — no case tests it · ⚠ malformed rule (the problem is in the plan,
   not in the agent).
+- **One-way decisions** state in the report what was chosen, if the plan wrote the option in both languages
+  (plans v1.1 and v1.2 wrote it only in Spanish: there the report does not make up an English one).
 - **Limitations:** the report only reads traces whose fingerprints match; if something was altered, it
   refuses to measure and names the failing file.
 
@@ -359,13 +364,14 @@ data/casos/demo-a/planlang-a-001-200.json` and repeat the command until all 200 
 - **What it does:** lets you change the plan's thresholds over the run's real signals and see what would
   have happened: which cases change path, how many errors are avoided or introduced, how many minutes more
   or less of human review and which criteria would pass or fail. With the plan's values it reproduces the
-  report exactly.
+  report exactly. The calculation runs in your browser, without calling any model, and gives the same result in
+  the Chrome, Firefox and Safari engines.
 - **How to use it:**
   1. Open "Playground".
   2. Move the minimum extraction confidence (U1, 0.50 to 0.95), the high-cost threshold (U2, 200 to 5,000)
      or the clarification limit (U3, 0 to 4).
-  3. Read the cases that change and open any of them to see its path. The risk-coverage curve marks where the
-     plan sits.
+  3. Read the cases that change and open any of them with "see its trace": the case opens at the step where its
+     path splits from the one the agent took. The risk-coverage curve marks where the plan sits.
 - **Texas mode (U4)** makes sure no adverse determination is automatic. In this run, turning it on changes no
   case, because every adverse proposal already went to a person, and the screen explains it.
 - **Limitations:** outside the range seen in the run, the result is marked "not observed". Criteria that

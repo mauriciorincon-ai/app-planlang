@@ -9,7 +9,7 @@
     "ciclo": "H1",
     "version": "1.3.0",
     "sellado_en": null,
-    "sprints_cerrados": 1
+    "sprints_cerrados": 2
   },
   "promesa": {
     "tagline": "Approves, denies with a stated cause or escalates; never denies alone.",

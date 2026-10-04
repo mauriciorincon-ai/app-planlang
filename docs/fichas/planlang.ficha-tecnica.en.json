@@ -1,6 +1,6 @@
 {
   "schema_version": "1.3.1",
-  "actualizado": "2026-10-01",
+  "actualizado": "2026-10-03",
   "pieza": {
     "slug": "planlang",
     "nombre": "planlang",
@@ -9,7 +9,7 @@
     "ciclo": "H1",
     "version": "0.1.0",
     "sellado_en": null,
-    "sprints_cerrados": 1
+    "sprints_cerrados": 2
   },
   "promesa": {
     "tagline": "I planned, built and measured the gap.",
@@ -140,7 +140,7 @@
       "etiqueta": "ciclo"
     },
     {
-      "valor": "1",
+      "valor": "2",
       "etiqueta": "sprints"
     },
     {

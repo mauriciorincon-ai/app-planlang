@@ -78,7 +78,7 @@ describe("cada ficha, como la pinta hoja-de-vida", () => {
       "H1",
       `${repo.sprintsCerrados} sprint${repo.sprintsCerrados === 1 ? "" : "s"}`,
       `v${repo.version}`,
-      "Datos del 2026-10-01",
+      "Datos del 2026-10-03",
     ]);
     expect(es.app.proceso).toBeNull();
     expect(es.app.num).toEqual({
