@@ -11,8 +11,9 @@
  * Con `--a 1.2`, la enmienda v1.1 → v1.2 (solo medición: R5, S1, S2; gate de la fase 4 del S1),
  * que parte del v1.1 aprobado y lo deja intacto. Con `--a 1.3`, la enmienda v1.2 → v1.3 del S2 (medición y redacción
  * bilingüe; umbrales y contrato de grafo intactos). Con `--a 1.4`, la enmienda v1.3 → v1.4 del S2 (AU-9: arista de
- * respaldo a la pausa humana sin proveedor; cambia el contrato de grafo).
- * Uso: `pnpm tsx scripts/enmendar-plan-demo-a.ts [--a 1.2|1.3|1.4] --por <nombre> --el <YYYY-MM-DD>`
+ * respaldo a la pausa humana sin proveedor; cambia el contrato de grafo). Con `--a 1.5`, la enmienda v1.4 → v1.5 del
+ * S3 (aprobación parcial y modo Texas, M-16, M-8, unidad de U2; cambia el contrato de grafo).
+ * Uso: `pnpm tsx scripts/enmendar-plan-demo-a.ts [--a 1.2|1.3|1.4|1.5] --por <nombre> --el <YYYY-MM-DD>`
  */
 import { aprobarPlan, cargarPlan } from "../core/plan";
 import {
@@ -20,6 +21,7 @@ import {
   enmendarAV12,
   enmendarAV13,
   enmendarAV14,
+  enmendarAV15,
 } from "./enmienda-plan-demo-a";
 import { argumentos, escribirJson, leerJson } from "./_io";
 
@@ -44,6 +46,11 @@ const ENMIENDAS = {
     salida: "plans/demo-a/v1.4.json",
     f: enmendarAV14,
   },
+  "1.5": {
+    entrada: "plans/demo-a/v1.4.json",
+    salida: "plans/demo-a/v1.5.json",
+    f: enmendarAV15,
+  },
 } as const;
 
 async function main(): Promise<number> {
@@ -53,7 +60,9 @@ async function main(): Promise<number> {
     return 2;
   }
   const a =
-    args.a === "1.4" || args.a === "1.3" || args.a === "1.2" ? args.a : "1.1";
+    args.a === "1.5" || args.a === "1.4" || args.a === "1.3" || args.a === "1.2"
+      ? args.a
+      : "1.1";
   const { entrada: ENTRADA, salida: SALIDA, f } = ENMIENDAS[a];
   const previo = await cargarPlan(leerJson(ENTRADA));
   if (!previo.ok) throw new Error(`${ENTRADA} no carga`);

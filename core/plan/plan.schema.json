@@ -831,6 +831,11 @@
         "tope_alto_costo": {
           "minLength": 1,
           "type": "string"
+        },
+        "topes_de_cobertura": {
+          "maximum": 9007199254740991,
+          "minimum": 0,
+          "type": "integer"
         }
       },
       "required": [

@@ -330,6 +330,8 @@ export const PlanBeneficiosSinteticoSchema = z
     exentos_de_autorizacion: z.number().int().nonnegative(),
     exclusiones_con_causal: z.number().int().nonnegative(),
     tope_alto_costo: z.string().min(1),
+    /** Servicios con tope de cobertura (plan de beneficios v2, aprobación parcial RB-08; plan v1.5 del A). */
+    topes_de_cobertura: z.number().int().nonnegative().optional(),
   })
   .strict();
 

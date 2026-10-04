@@ -68,7 +68,9 @@ async function main(): Promise<number> {
     const lotes: Lote[] = [];
     for (const l of LOTES_VERSIONADOS) {
       const propio =
-        l.plan === rutaPlan ? base : await entradas(l.plan, rutaBeneficios);
+        l.plan === rutaPlan && l.beneficios === rutaBeneficios
+          ? base
+          : await entradas(l.plan, l.beneficios);
       const lote = await generarLote({
         ...propio,
         semilla: l.semilla,

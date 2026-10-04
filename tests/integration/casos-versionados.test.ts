@@ -27,19 +27,19 @@ import {
 const leerPlan = (ruta: string) =>
   JSON.parse(readFileSync(ruta, "utf8")) as Plan;
 const plan = leerPlan(PLAN_DEMO_A);
-const planBeneficios = PlanBeneficiosSchema.parse(
-  JSON.parse(readFileSync(PLAN_BENEFICIOS_DEMO_A, "utf8")),
-);
+const leerBeneficios = (ruta: string) =>
+  PlanBeneficiosSchema.parse(JSON.parse(readFileSync(ruta, "utf8")));
+const planBeneficios = leerBeneficios(PLAN_BENEFICIOS_DEMO_A);
 
 describe("lotes versionados de data/casos/demo-a", () => {
   const generados: Lote[] = [];
 
   it.each(LOTES_VERSIONADOS)(
     "$semilla-$n se regenera con los mismos bytes",
-    async ({ semilla, n, receta, plan: rutaPlan }) => {
+    async ({ semilla, n, receta, plan: rutaPlan, beneficios }) => {
       const lote = await generarLote({
         plan: leerPlan(rutaPlan),
-        planBeneficios,
+        planBeneficios: leerBeneficios(beneficios),
         semilla,
         n,
         receta,

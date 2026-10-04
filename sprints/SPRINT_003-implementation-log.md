@@ -265,6 +265,42 @@ cambió ningún presupuesto.
 | M-18, tope de alto costo leído | la condición de `exigirTopeAltoCosto` pasa a `if (false)` | «M-18: el tope de alto costo… tiene que ser el umbral del costo (U2)» | 6/6 |
 | Motivo `modo_texas` | `if (false && umbrales.U4)` | «siembra aprobaciones parciales que solo escalan con el modo Texas» | 6/6 |
 
+#### 5.2 · Plan v1.5 del A y su lote de 200
+
+- **`plans/demo-a/v1.5.json`** (huella `b6bf051f…`, aprobada por Mauricio Rincón el 2026-10-04 en el G-Plan).
+  Sale de `enmendarAV15` (`scripts/enmienda-plan-demo-a.ts`; CLI `--a 1.5`) y M1 la valida. Trae:
+  - **la aprobación parcial**:
+    - D2 refina su opción elegida («aprobar y aprobar en parte; negar y escalar exigen pausa humana; con el modo
+      Texas, también la aprobación en parte»), con una justificación que cita TX SB 815;
+    - **R10** (con Texas, una negación parcial sin humano; S9 · O2 · D3, control legal) y **C10** (con Texas,
+      ninguna negación ni parcial sin pausa) la vigilan;
+    - la nota de la función `texas_y_no_aprobar` nombra «negar o aprobar en parte»;
+    - C1 queda igual: la negación completa siempre pasa por una persona;
+  - **M-16:** `carga_detectada → pausa_humana` es la arista 1 de `decision`, y las demás bajan un lugar (Texas queda
+    en la 6). La señal es obligatoria en la traza y es una mitigación nueva de R3;
+  - **M-8:** `payload_minimo` de la pausa suma `orden_adjunta`, `aclaraciones` y `cobertura`;
+  - **U2 con su unidad en ES y EN**; los demás umbrales no cambian;
+  - el flujo objetivo cuenta la guardia de entrada, el tope y la decisión de cuatro salidas;
+    `plan_beneficios_sintetico.topes_de_cobertura: 6`.
+- Las calificaciones S/O/D de R10 las propone el builder, copiando las de R1 (mismo daño, parcial), y se declaran
+  aquí: son del FMEA, no umbrales de comportamiento.
+- **Lote `planlang-a-002-200`** (`data/casos/demo-a/`): plan v1.5 y plan de beneficios v2, generador 1.1.0, huella
+  `5e17647d…`. Trae 169 aprobar, 22 negar y **9 aprobar en parte**; con el modo Texas apagado (el valor del plan)
+  ninguna de las 9 escala. La semilla es otra (`002`) porque el subtipo nuevo cambia la mezcla.
+  `lotes-versionados.ts` lleva el plan de beneficios de cada lote, y la afirmación de privacidad suma su fila.
+- `core/plan/esquema.ts`: `topes_de_cobertura` es opcional, y `plan.schema.json` se regeneró.
+
+**Demo que no podía fallar.** La primera demo en rojo de la v1.5 cambió un dato del archivo y dejó la huella vieja,
+y **pasó en verde**. Las pruebas de enmienda (de la v1.1 a la v1.4) comparaban huellas, no contenido, y ninguna
+verificaba la huella de un plan. Se reparó de dos formas:
+- `enmienda-v1-5.test.ts` compara el archivo entero;
+- la guarda nueva `huellas-de-planes.test.ts` verifica la huella de todo plan versionado (los 7).
+
+| Gate | Mutación | Rojo (a quién nombró) | Verde al restaurar |
+|---|---|---|---|
+| Plan v1.5 = su enmienda | `"topes_de_cobertura": 6` → `7` en el archivo | primero **verde** (demo fallida); con la guarda: «plans/demo-a/v1.5.json: si lleva huella, es la de su contenido» y «se reproduce desde el v1.4…» | 82/82 |
+| Huellas de los planes (`huellas-de-planes.test.ts`) | U2 `1000` → `1100` en la v1.2 | «plans/demo-a/v1.2.json: si lleva huella, es la de su contenido» | 9/9 |
+
 ## Desviación del plan
 
 1. **Rutas de la orden** (`SPRINT_003-orden.md:65`): `audita-sprint` y `plan-sprint` viven en

@@ -2,7 +2,7 @@
  * La enmienda v1 → v1.1 del plan del demo A como función pura (la usa el CLI
  * `enmendar-plan-demo-a.ts` y el test que prueba que `plans/demo-a/v1.1.json` sale de aquí).
  */
-import type { Plan } from "../core/plan";
+import { esAristaTripleta, type Plan } from "../core/plan";
 
 export function enmendar(v1: Plan): Record<string, unknown> {
   const contrato = v1.contrato_de_grafo;
@@ -432,6 +432,206 @@ export function enmendarAV14(v13: Plan): Record<string, unknown> {
       evaluadores_requeridos: contrato.evaluadores_requeridos.map((e) =>
         e.id === "exactitud_extraccion"
           ? { ...e, riesgos_cubiertos: [...e.riesgos_cubiertos, "R9"] }
+          : e,
+      ),
+    },
+  };
+  delete borrador.aprobado_por;
+  delete borrador.aprobado_el;
+  return borrador;
+}
+
+/** La arista de M-16: con una carga detectada por la guardia de entrada (sin modelo), la decisión va a una persona. */
+const CARGA = {
+  desde: "decision",
+  orden: 1,
+  senal: "carga_detectada",
+  operador: "igual_a" as const,
+  valor: true,
+  inclusivo: false,
+  si_verdadero: "pausa_humana",
+};
+
+/**
+ * La enmienda v1.4 → v1.5 del S3 (G-Plan aprobado el 2026-10-04; el usuario eligió «Tope por servicio» para la
+ * aprobación parcial el mismo día):
+ *   1. U4 mueve casos. La propuesta puede ser `aprobar_parcial` (RB-08 del plan de beneficios v2: el costo pasa el tope
+ *      del servicio; se aprueba hasta el tope y se niega el excedente). Sin el modo Texas sale sola; con él, la función
+ *      `texas_y_no_aprobar` la manda a una persona. D2 lo dice en su opción elegida, R10 es su modo de falla (con
+ *      Texas, una negación parcial sin humano) y C10 su criterio. La negación completa sigue siempre con una persona
+ *      (C1, regla dura 4).
+ *   2. M-16: `carga_detectada` (la guardia de entrada, sin modelo) es la primera arista de `decision`, hacia la pausa
+ *      humana; las demás bajan un lugar. Es señal obligatoria en la traza y una mitigación de R3.
+ *   3. M-8: la pausa humana recibe además la orden adjunta, las aclaraciones y la cobertura (`payload_minimo`).
+ *   4. La unidad de U2 en los dos idiomas (M-25).
+ *   5. El flujo objetivo y el resumen del plan de beneficios lo dicen.
+ * Umbrales intactos; el contrato de grafo cambia: lote nuevo de 200 con el plan de beneficios v2.
+ */
+export function enmendarAV15(v14: Plan): Record<string, unknown> {
+  const contrato = v14.contrato_de_grafo;
+  const aristas = [
+    CARGA,
+    ...contrato.aristas_condicionales.map((a) => {
+      if (a.desde !== "decision") return a;
+      const movida: Record<string, unknown> = { ...a, orden: a.orden + 1 };
+      if (!esAristaTripleta(a) && a.funcion.nombre === "texas_y_no_aprobar")
+        movida.nota = tb(
+          "Modo Texas: si está encendido y la propuesta no es aprobar (negar o aprobar en parte), la determinación adversa pasa por una persona (TX SB 815).",
+          "Texas mode: when it is on and the proposal is not approve (deny or approve in part), the adverse determination goes to a person (TX SB 815).",
+        );
+      return movida;
+    }),
+  ];
+  const senales = [...contrato.senales_obligatorias_en_traza];
+  senales.splice(senales.indexOf("servicio_exento") + 1, 0, "carga_detectada");
+  const decisiones = v14.decisiones.map((d) => {
+    if (d.id !== "D2") return d;
+    const elegida = tb(
+      "aprobar y aprobar en parte; negar y escalar exigen pausa humana; con el modo Texas, también la aprobación en parte",
+      "approve and approve in part; deny and escalate require a human pause; with Texas mode, approving in part does too",
+    );
+    return {
+      ...d,
+      opciones: [...d.opciones, { nombre: elegida }],
+      opcion_elegida: elegida,
+      justificacion: tb(
+        "CA SB 1120, TX SB 815, AI Act art. 14; regla dura de la app. Aprobar en parte (hasta el tope del servicio, RB-08) es una determinación adversa parcial: Texas la prohíbe automática, así que el modo Texas la manda a una persona; sin él sale sola. Negar del todo siempre pasa por una persona.",
+        "CA SB 1120, TX SB 815, AI Act art. 14; the app's hard rule. Approving in part (up to the service's cap, RB-08) is a partial adverse determination: Texas forbids it automated, so Texas mode sends it to a person; without it, it goes out on its own. A full denial always goes to a person.",
+      ),
+      riesgos_asociados: [...d.riesgos_asociados, "R10"],
+    };
+  });
+  const riesgos = v14.riesgos.map((r) =>
+    r.id !== "R3"
+      ? r
+      : {
+          ...r,
+          mitigaciones: [
+            ...r.mitigaciones,
+            {
+              accion: tb(
+                "señal `carga_detectada` de la guardia de entrada (reglas fijas, sin modelo): si la solicitud trae instrucciones escondidas, la decisión pasa a una persona aunque el modelo declare otra cosa (M-16)",
+                "`carga_detectada` signal from the input guard (fixed rules, no model): if the request carries hidden instructions, the decision goes to a person whatever the model declares (M-16)",
+              ),
+              momento: tb("S3", "S3"),
+              efecto_esperado: tb("ocurrencia → 1", "occurrence → 1"),
+            },
+          ],
+        },
+  );
+  const r10 = {
+    id: "R10",
+    modo: tb(
+      "Negación parcial emitida sin humano con el modo Texas encendido",
+      "Partial denial issued without a human while Texas mode is on",
+    ),
+    efecto: tb(
+      "Daño a una persona; sanción en Texas",
+      "Harm to a person; sanction in Texas",
+    ),
+    causa: tb(
+      "Falta la arista del modo Texas o la propuesta parcial no llega a la decisión",
+      "The Texas-mode edge is missing or the partial proposal does not reach the decision",
+    ),
+    severidad: 9,
+    ocurrencia: 2,
+    deteccion: 3,
+    control_legal: true,
+    decision_id: "D2",
+    detector_en_trazas: {
+      tipo: "conteo",
+      poblacion: "todos",
+      condicion:
+        "modo_texas == true AND decision_final == 'aprobar_parcial' AND pausa_humana == false",
+      ocurre_si: "> 0",
+    },
+    mitigaciones: [
+      {
+        accion: tb(
+          "función `texas_y_no_aprobar` en el contrato de grafo: con el modo Texas, toda propuesta distinta de aprobar va a una persona",
+          "`texas_y_no_aprobar` function in the graph contract: with Texas mode, every proposal other than approve goes to a person",
+        ),
+        momento: tb("S3", "S3"),
+        efecto_esperado: tb("ocurrencia → 1", "occurrence → 1"),
+      },
+    ],
+  };
+  const c10 = {
+    id: "C10",
+    enunciado: tb(
+      "Con el modo Texas, ninguna negación, ni siquiera parcial, sin pausa humana.",
+      "With Texas mode on, no denial, not even a partial one, without a human pause.",
+    ),
+    origen: "usuario",
+    tipo: "absoluto",
+    valor_objetivo: true,
+    regla_de_medicion: {
+      poblacion: "todos",
+      condicion:
+        "(modo_texas == true AND decision_final IN ['negar', 'aprobar_parcial']) IMPLICA pausa_humana == true",
+      agregacion: "todos_cumplen",
+    },
+  };
+  const flujo = v14.flujo_objetivo.map((p) => {
+    if (p.es.startsWith("El verificador de cobertura aplica reglas"))
+      return tb(
+        "El verificador de cobertura aplica reglas: exentos, exclusiones con causal, alto costo, tope de cobertura del servicio y contradicción orden/texto.",
+        "The coverage checker applies rules: exempt services, exclusions with a ground, high cost, the service's coverage cap and order/text contradiction.",
+      );
+    if (p.es.startsWith("Decisión de tres caminos"))
+      return tb(
+        "Decisión: aprobar, aprobar hasta el tope del servicio (con el modo Texas, con humano), negar (siempre con humano) o escalar al auditor.",
+        "Decision: approve, approve up to the service's cap (with Texas mode, with a human), deny (always with a human) or escalate to the auditor.",
+      );
+    return p;
+  });
+  if (flujo.filter((p, i) => p !== v14.flujo_objetivo[i]).length !== 2)
+    throw new Error(
+      "v1.5: el flujo objetivo cambió de forma; revisa los pasos",
+    );
+  flujo.splice(
+    1,
+    0,
+    tb(
+      "La guardia de entrada busca instrucciones escondidas en la solicitud; si las encuentra, la decisión pasa a una persona.",
+      "The input guard looks for hidden instructions in the request; if it finds any, the decision goes to a person.",
+    ),
+  );
+  const umbrales = v14.umbrales.map((u) =>
+    u.id === "U2"
+      ? { ...u, unidad: tb("unidades sintéticas", "synthetic units") }
+      : u,
+  );
+  const borrador: Record<string, unknown> = {
+    ...v14,
+    version: "1.5.0",
+    estado_aprobacion: "borrador",
+    huella: null,
+    flujo_objetivo: flujo,
+    decisiones,
+    riesgos: [...riesgos, r10],
+    criterios_aceptacion: [...v14.criterios_aceptacion, c10],
+    umbrales,
+    plan_beneficios_sintetico: {
+      ...v14.plan_beneficios_sintetico,
+      topes_de_cobertura: 6,
+    },
+    contrato_de_grafo: {
+      ...contrato,
+      aristas_condicionales: aristas,
+      senales_obligatorias_en_traza: senales,
+      pausas_humanas: contrato.pausas_humanas.map((p) => ({
+        ...p,
+        payload_minimo: [
+          ...p.payload_minimo,
+          "orden_adjunta",
+          "aclaraciones",
+          "cobertura",
+        ],
+      })),
+      evaluadores_requeridos: contrato.evaluadores_requeridos.map((e) =>
+        e.id === "pausas_cumplidas"
+          ? { ...e, riesgos_cubiertos: [...e.riesgos_cubiertos, "R10"] }
           : e,
       ),
     },
