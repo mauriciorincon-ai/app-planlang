@@ -1,52 +1,39 @@
 /**
  * Vista de P6 Caso: un caso de punta a punta desde su traza (`planlang-trace/v1`, verificada con la corrida), su
- * caso sintético (texto, orden, afiliado, verdad conocida) y el plan. El relato, lo que hizo cada nodo y por qué
- * tomó cada rama se arman con las plantillas de `src/textos/caso.ts`: nada de un caso se escribe a mano. Pura.
+ * caso sintético y el plan. El esqueleto es común a los dos demos (la cabecera, el recorrido con la tabla de aristas
+ * de cada decisión, las cifras, la ficha, la pausa, la salida y las señales); lo que recibió, qué hizo cada nodo, el
+ * relato, el documento adverso y el expediente los aporta el perfil del demo (`caso-a.ts`, `caso-b.ts`) con las
+ * plantillas de `src/textos/`: nada de un caso se escribe a mano. Pura.
  */
 import type { Idioma, TextoBilingue } from "@core/formatos/bilingue";
-import { extraccionA } from "@core/formatos/traza";
-import { z } from "zod";
-import {
-  AclaracionTrazaSchema,
-  CasosEjemplaresSchema,
-  DocumentoAdversoVistaSchema,
-  leerParaVista,
-  PayloadPausaSchema,
-} from "@/lib/datos/esquemas";
+import type { Traza } from "@core/formatos/traza";
+import { CasosEjemplaresSchema, leerParaVista } from "@/lib/datos/esquemas";
 import type { DatosDemo } from "@/lib/datos/vitrina";
+import type { IdDemo } from "@/lib/demos";
 import { DEMO_TEXTO } from "@/textos/demo";
 import { ruta } from "@/lib/ruta";
-import { VALORES } from "@/textos/agente";
 import {
   CABECERA,
-  CAMPO,
   CIFRAS,
-  DOCUMENTO,
   EJEMPLAR,
   ENTREGA,
   FICHA,
   HACE,
-  HIZO,
-  MOTIVO,
   PAUSA,
   PORTADA,
-  RAMA,
-  RECIBE,
   RECORRIDO,
-  RELATO,
   SALIDA,
   SENALES,
-  SI_NO,
   SUBTIPO,
   PIE_CASO,
 } from "@/textos/caso";
-import { decimal, entero, enumerar } from "./formato";
+import { SUBTIPO_B } from "@/textos/demo-b/caso";
+import { perfilCasoA } from "./caso-a";
+import { perfilCasoB } from "./caso-b";
+import { sinTipo, valorLeido, type PerfilCaso } from "./caso-comun";
+import { decimal, entero } from "./formato";
+import { categoriaDeRegla, textoDeCategoria } from "./motivo-pausa";
 import { pausaUnica } from "./plan-comun";
-import {
-  categoriaDeRegla,
-  reglaDeLaPausa,
-  textoDeCategoria,
-} from "./motivo-pausa";
 import type { Fila } from "./agente";
 
 export interface ChipCaso {
@@ -90,10 +77,14 @@ export interface VistaCaso {
   debia: string;
   paso: string;
   recibe: {
-    /** El texto del médico partido para marcar la instrucción escondida (índices impares). */
-    texto: string[];
-    orden: string;
-    afiliado: string;
+    /** Lo que el agente leyó como texto, cada uno partido para marcar la instrucción escondida (índices impares). */
+    documentos: Array<{ titulo: string; partes: string[] }>;
+    /** Lo que acompaña la solicitud (la orden, el afiliado, la solicitud), con su ícono. */
+    datos: Array<{
+      icono: "orden" | "persona";
+      titulo: string;
+      detalle: string;
+    }>;
   };
   hace: {
     sub: string;
@@ -118,21 +109,46 @@ export interface VistaCaso {
   documento: {
     encabezado: string;
     filas: Array<Fila & { nota?: string }>;
-    aviso: string;
+    /** El aviso de IA del documento; `null` si el documento no lo trae (la vista no lo inventa). */
+    aviso: string | null;
     completo: string;
   } | null;
   senales: Fila[];
   senalesTitulo: string;
+  /** El expediente con la cita de cada conclusión (demo B, RF-04b.7); `null` si el demo no escribe expediente. */
+  expediente: {
+    titulo: string;
+    chip: string;
+    lectura: string;
+    cabecera: string;
+    encabezado: string;
+    conclusiones: Array<{
+      id: string;
+      texto: string;
+      cita: string;
+      citada: boolean;
+    }>;
+    cuenta: string;
+  } | null;
+  /** Los rótulos de sección que dependen del dominio (quién revisa, a quién se responde, qué documento). */
+  textos: {
+    pausaTitulo: string;
+    pausaLectura: string;
+    pausaRespondio: string;
+    salidaRecibe: string;
+    documentoTitulo: string;
+    documentoLectura: string;
+    documentoCabecera: string;
+  };
 }
 
 const X = (t: TextoBilingue, i: Idioma) => t[i];
 
-/** Un nodo de la traza que no está en el grafo publicado ni trae su tipo: la página no lo dibuja sin glifo (AU-S2-16). */
-function sinTipo(nodo: string): never {
-  throw new Error(
-    `vitrina: el nodo «${nodo}» de la traza no está en el grafo de la corrida ni trae su tipo`,
-  );
-}
+/** Cómo se nombra cada subtipo de caso sintético en el selector, por demo. */
+const SUBTIPOS: Readonly<Record<IdDemo, Record<string, TextoBilingue>>> = {
+  "demo-a": SUBTIPO,
+  "demo-b": SUBTIPO_B,
+};
 
 /** El documento de decisión adversa como lo escribe el grafo (`planlang-documento-adverso/v1`). */
 const OPERADOR: Record<string, string> = {
@@ -143,20 +159,6 @@ const OPERADOR: Record<string, string> = {
   igual_a: "=",
   distinto_de: "≠",
 };
-
-/**
- * Un valor de la traza como se lee: booleanos en palabras, decimales con coma en español, listas con flechas. Las
- * cadenas quedan como las escribió el código (`ambulatoria`, `negar`) en los dos idiomas, como en la maqueta: se
- * comparan contra la regla del plan, que también está en código.
- */
-function valorLeido(v: unknown, i: Idioma): string {
-  if (v === null || v === undefined) return "—";
-  if (typeof v === "boolean") return X(v ? SI_NO.si : SI_NO.no, i);
-  if (typeof v === "number")
-    return Number.isInteger(v) ? String(v) : decimal(v, 2, i);
-  if (Array.isArray(v)) return v.map(String).join(" → ");
-  return String(v);
-}
 
 /** El valor como lo declara la regla (código: `true`, `urgencia`, `U1 = 0,75`). */
 function valorDeclarado(
@@ -173,15 +175,17 @@ function valorDeclarado(
   return String(declarado);
 }
 
-/** Los 20 casos para el selector, en el orden de la corrida. */
+/** Los casos para el selector, en el orden de la corrida. */
 export function chipsDeCasos(d: DatosDemo, i: Idioma): ChipCaso[] {
-  const casos = new Map(d.lote.casos.map((c) => [c.id, c]));
+  const subtipos = new Map<string, string>(
+    d.lote.casos.map((c) => [c.id, c.subtipo] as [string, string]),
+  );
   return d.corrida.trazas.map((t) => {
-    const c = casos.get(t.caso_id)!;
+    const subtipo = subtipos.get(t.caso_id)!;
     return {
       id: t.caso_id,
-      descriptor: X(SUBTIPO[c.subtipo] ?? { es: c.subtipo, en: c.subtipo }, i),
-      enlace: ruta(i, "caso", t.caso_id),
+      descriptor: X(SUBTIPOS[d.id][subtipo] ?? { es: subtipo, en: subtipo }, i),
+      enlace: ruta(i, "caso", t.caso_id, d.id),
     };
   });
 }
@@ -227,35 +231,55 @@ export function portadaCasos(d: DatosDemo, i: Idioma) {
   };
 }
 
-export function vistaCaso(d: DatosDemo, id: string, i: Idioma): VistaCaso {
-  const t = d.corrida.trazas.find((x) => x.caso_id === id);
+/** Lo que el esqueleto lee del caso sintético, igual en los dos demos. */
+interface CasoComun {
+  tipo: string;
+  subtipo: string;
+  semilla: string;
+  esperado: TextoBilingue;
+  verdad_conocida: { decision: string; debe_escalar: boolean };
+}
+
+/** El perfil del demo para un caso, o el error que nombra el caso si la corrida o el lote no lo traen. */
+function perfilDe(
+  d: DatosDemo,
+  t: Traza | undefined,
+  id: string,
+  i: Idioma,
+): { perfil: PerfilCaso; caso: CasoComun; t: Traza } {
+  const falta = () => new Error(`vitrina: la corrida no trae el caso «${id}»`);
+  if (d.id === "demo-a") {
+    const c = d.lote.casos.find((x) => x.id === id);
+    if (!t || !c) throw falta();
+    return { perfil: perfilCasoA(d, t, c, i), caso: c, t };
+  }
   const c = d.lote.casos.find((x) => x.id === id);
-  if (!t || !c) throw new Error(`vitrina: la corrida no trae el caso «${id}»`);
+  if (!t || !c) throw falta();
+  return { perfil: perfilCasoB(d, t, c, i), caso: c, t };
+}
+
+export function vistaCaso(d: DatosDemo, id: string, i: Idioma): VistaCaso {
+  const {
+    perfil,
+    caso: c,
+    t,
+  } = perfilDe(
+    d,
+    d.corrida.trazas.find((x) => x.caso_id === id),
+    id,
+    i,
+  );
   const s = t.senales;
   const final = String(s.decision_final);
   const aprobado = final === "aprobar";
   const persona = s.pausa_humana === true;
   const v = c.verdad_conocida;
   const coincide = final === v.decision && persona === v.debe_escalar;
-  const pb = d.planBeneficios;
   const tipoDe = new Map(
     d.plan.contrato_de_grafo.nodos_esperados.map(
       (n) => [n.id, n.tipo] as const,
     ),
   );
-  const decisionTb = (x: string): TextoBilingue =>
-    VALORES[x] ?? { es: x, en: x };
-  const ex = extraccionA(t);
-  const conf = ex ? decimal(ex.confianza, 2, i) : "—";
-  const cob = (t.cobertura ?? {}) as Record<string, unknown>;
-  const e = c.entrada;
-  const mujer = e.afiliado.sexo === "F";
-  const servicio = pb.procedimientos.find(
-    (p) => p.codigo === e.orden_adjunta.codigo_procedimiento,
-  )?.nombre ?? {
-    es: e.orden_adjunta.codigo_procedimiento,
-    en: e.orden_adjunta.codigo_procedimiento,
-  };
 
   // ── ejemplar del informe ──────────────────────────────────────────────────────────────────────────
   const ejemplares =
@@ -268,30 +292,7 @@ export function vistaCaso(d: DatosDemo, id: string, i: Idioma): VistaCaso {
     ([, x]) => x?.caso_id === id,
   )?.[0];
 
-  // ── la instrucción escondida, marcada ───────────────────────────────────────────────────────────
-  const texto = e.texto_medico[i];
-  const carga = c.adversario?.carga[i];
-  const partes =
-    carga && texto.includes(carga)
-      ? [
-          texto.slice(0, texto.indexOf(carga)),
-          carga,
-          texto.slice(texto.indexOf(carga) + carga.length),
-        ]
-      : [texto];
-
   // ── los pasos ────────────────────────────────────────────────────────────────────────────────────
-  const reglasDelPlan = (nodo: string) =>
-    d.plan.contrato_de_grafo.aristas_condicionales.filter(
-      (a) => a.desde === nodo,
-    ).length;
-  let visitaExtractor = 0;
-  let ciclo = 0;
-  const aclaraciones = leerParaVista(
-    z.array(AclaracionTrazaSchema),
-    t.aclaraciones,
-    `las aclaraciones de ${id}`,
-  );
   const pasos: PasoCaso[] = t.pasos.map((p) => {
     const tokens = p.tokens.entrada + p.tokens.salida;
     const dec = t.decisiones_de_arista
@@ -322,84 +323,16 @@ export function vistaCaso(d: DatosDemo, id: string, i: Idioma): VistaCaso {
       funcion: x.tipo === "funcion",
     }));
     const nodo = p.nodo;
-    let hizo = "";
-    const dialogo: PasoCaso["dialogo"] = [];
-    switch (nodo) {
-      case "enrutador":
-        hizo = X(HIZO.enrutador(decisionTb(String(s.tipo_atencion))), i);
-        break;
-      case "extractor":
-        hizo = X(
-          p.error_proveedor !== null
-            ? HIZO.sinRespuesta(p.error_proveedor)
-            : visitaExtractor === 0
-              ? HIZO.extractor
-              : HIZO.extractorOtraVez,
-          i,
-        );
-        visitaExtractor++;
-        break;
-      case "aclaracion": {
-        const a = aclaraciones[ciclo];
-        ciclo++;
-        hizo = X(
-          p.error_proveedor !== null
-            ? HIZO.sinRespuesta(p.error_proveedor)
-            : HIZO.aclaracion(a?.ciclo ?? ciclo),
-          i,
-        );
-        if (a) dialogo.push({ pregunta: a.pregunta, respuesta: a.respuesta });
-        break;
-      }
-      case "verificador_cobertura":
-        hizo = X(
-          HIZO.verificador({
-            estado: decisionTb(String(cob.estado_servicio)),
-            causal: (cob.causal as string | null) ?? null,
-            propuesta: decisionTb(String(cob.propuesta)),
-          }),
-          i,
-        );
-        break;
-      case "decision":
-        hizo = X(HIZO.decision(reglasDelPlan("decision")), i);
-        break;
-      case "pausa_humana":
-        hizo = X(
-          HIZO.pausa(
-            decisionTb(
-              String(
-                pausaUnica(t.pausas_humanas, `el caso ${t.caso_id}`)
-                  ?.respuesta_simulada.decision,
-              ),
-            ),
-          ),
-          i,
-        );
-        break;
-      case "redactor":
-        hizo = X(HIZO.redactor(t.documento_adverso !== null), i);
-        break;
-      case "guardia_salida":
-        hizo = X(
-          HIZO.guardia({
-            hallazgos: t.guardia_salida?.hallazgos.length ?? 0,
-            severidad: t.guardia_salida?.severidad_accion ?? 0,
-          }),
-          i,
-        );
-        break;
-    }
+    const { hizo, dialogo } = perfil.hizo(p);
     let rama: string | null = null;
     if (dec.length) {
-      const r = RAMA[nodo as keyof typeof RAMA] as
-        Record<string, TextoBilingue> | undefined;
+      const r = perfil.ramas[nodo];
       if (r)
         rama = X(
           textoDeCategoria(
             r,
-            decisora ? categoriaDeRegla(decisora) : "defecto",
-            `RAMA.${nodo} (src/textos/caso.ts)`,
+            decisora ? categoriaDeRegla(decisora, d.id) : "defecto",
+            `RAMA.${nodo} (${perfil.dondeRamas})`,
           ),
           i,
         );
@@ -435,100 +368,6 @@ export function vistaCaso(d: DatosDemo, id: string, i: Idioma): VistaCaso {
       reglas,
     };
   });
-
-  // ── el relato ────────────────────────────────────────────────────────────────────────────────────
-  const pausa = pausaUnica(t.pausas_humanas, `el caso ${t.caso_id}`);
-  const motivoPausa = (): TextoBilingue =>
-    textoDeCategoria(
-      MOTIVO,
-      categoriaDeRegla(
-        reglaDeLaPausa(
-          t.caso_id,
-          pausa?.payload.motivo,
-          t.decisiones_de_arista,
-        ),
-      ),
-      "MOTIVO (src/textos/caso.ts)",
-    );
-  const visito = (n: string) => t.nodos_visitados.includes(n);
-  const relato: string[] = [
-    X(RELATO.pidio({ servicio, mujer, edad: e.afiliado.edad }), i),
-  ];
-  if (!visito("extractor"))
-    relato.push(
-      X(s.tipo_atencion === "urgencia" ? RELATO.urgencia : RELATO.exento, i),
-    );
-  else {
-    const faltanAlInicio = t.aclaraciones.length > 0;
-    const ausentes = c.simulacion.campos_ausentes_en_texto.map(
-      (k) => CAMPO[k] ?? { es: k, en: k },
-    );
-    // En negación: «no decía el diagnóstico ni el costo» · «did not state the diagnosis or the cost».
-    const juntos = (l: TextoBilingue[]): TextoBilingue => ({
-      es: enumerar(
-        l.map((x) => x.es),
-        "es",
-      ).replace(/ y (?=[^,]*$)/, " ni "),
-      en: enumerar(
-        l.map((x) => x.en),
-        "en",
-      ).replace(/ and (?=[^,]*$)/, " or "),
-    });
-    relato.push(
-      X(
-        RELATO.leyo({
-          confianza: conf,
-          faltan: faltanAlInicio && ausentes.length ? juntos(ausentes) : null,
-        }),
-        i,
-      ),
-    );
-    if (faltanAlInicio)
-      relato.push(
-        X(
-          RELATO.aclaro({
-            preguntas: t.aclaraciones.length,
-            completo: Number(s.campos_faltantes_count) === 0,
-            confianza: conf,
-          }),
-          i,
-        ),
-      );
-    if (visito("verificador_cobertura"))
-      relato.push(
-        X(
-          RELATO.cobertura({
-            excluido: cob.estado_servicio === "excluido",
-            causal: (cob.causal as string | null) ?? null,
-            propuesta: decisionTb(String(cob.propuesta)),
-          }),
-          i,
-        ),
-      );
-    relato.push(
-      X(
-        persona
-          ? RELATO.aPersona({
-              motivo: motivoPausa(),
-              decision: decisionTb(final),
-            })
-          : RELATO.solo(decisionTb(final)),
-        i,
-      ),
-    );
-  }
-  if (t.guardia_salida?.carga_detectada_en_entrada)
-    relato.push(X(RELATO.inyeccion(t.guardia_salida.severidad_accion), i));
-  relato.push(
-    X(
-      RELATO.cierre({
-        documento: t.documento_adverso !== null,
-        hallazgos: t.guardia_salida?.hallazgos.length ?? 0,
-      }),
-      i,
-    ),
-    X(RELATO.tardo(decimal(Number(s.latencia_total_s), 1, i)), i),
-  );
 
   // ── cifras y ficha ───────────────────────────────────────────────────────────────────────────────
   const conModelo = t.pasos.filter(
@@ -568,18 +407,7 @@ export function vistaCaso(d: DatosDemo, id: string, i: Idioma): VistaCaso {
         i,
       ),
     },
-    {
-      k: X(FICHA.verdad, i),
-      v: X(
-        FICHA.verdadTexto({
-          decision: v.decision,
-          escalar: v.debe_escalar,
-          ciclos: v.ciclos_aclaracion_necesarios ?? 0,
-          causal: v.causal ?? null,
-        }),
-        i,
-      ),
-    },
+    { k: X(FICHA.verdad, i), v: perfil.verdad },
     {
       k: X(FICHA.caso, i),
       v: X(
@@ -593,88 +421,68 @@ export function vistaCaso(d: DatosDemo, id: string, i: Idioma): VistaCaso {
     },
   ];
 
-  // ── pausa, salida, documento, señales ───────────────────────────────────────────────────────────
-  const payload = pausa
-    ? leerParaVista(
-        PayloadPausaSchema,
-        pausa.payload,
-        `el payload de la pausa de ${id}`,
-      )
-    : undefined;
+  // ── pausa y salida ───────────────────────────────────────────────────────────────────────────────
+  const pausa = pausaUnica(t.pausas_humanas, `el caso ${t.caso_id}`);
+  const pl = perfil.pausa;
   const g = t.guardia_salida;
-  const doc = t.documento_adverso
-    ? leerParaVista(
-        DocumentoAdversoVistaSchema,
-        t.documento_adverso,
-        `el documento adverso de ${id}`,
-      )
-    : null;
   const vista: VistaCaso = {
     id,
-    descriptor: X(SUBTIPO[c.subtipo] ?? { es: c.subtipo, en: c.subtipo }, i),
+    descriptor: X(
+      SUBTIPOS[d.id][c.subtipo] ?? { es: c.subtipo, en: c.subtipo },
+      i,
+    ),
     ejemplar: ejemplar && EJEMPLAR[ejemplar] ? X(EJEMPLAR[ejemplar]!, i) : null,
     aprobado,
-    veredicto: X(aprobado ? CABECERA.aprobado : CABECERA.negado, i),
+    veredicto: X(aprobado ? CABECERA.aprobado : perfil.noAprobado, i),
     persona,
     personaTexto: X(persona ? CABECERA.conPersona : CABECERA.sinPersona, i),
     coincide,
     coincideTexto: X(coincide ? CABECERA.coincide : CABECERA.noCoincide, i),
     debia: X(c.esperado, i),
-    paso: X(CABECERA.pasoTexto({ decision: decisionTb(final), persona }), i),
-    recibe: {
-      texto: partes,
-      orden: `${e.orden_adjunta.codigo_procedimiento} · ${X(RECIBE.atencion, i)} ${valorLeido(e.orden_adjunta.tipo_atencion, i)} · ${X(e.orden_adjunta.observaciones, i)}`,
-      afiliado: X(RECIBE.afiliado({ mujer, edad: e.afiliado.edad }), i),
-    },
+    paso: X(
+      CABECERA.pasoTexto({ decision: perfil.decision(final), persona }),
+      i,
+    ),
+    recibe: perfil.recibe,
     hace: {
       sub: X(HACE.pasos(t.pasos.length), i),
       nodos: t.nodos_visitados.map((n) => ({
         nombre: n,
         tipo: tipoDe.get(n) ?? sinTipo(n),
       })),
-      relato: relato.join(" "),
+      relato: perfil.relato.join(" "),
     },
     entrega: [
-      { titulo: X(ENTREGA.respuesta, i) },
-      ...(doc ? [{ titulo: X(ENTREGA.documento, i) }] : []),
+      ...perfil.entrega,
       { titulo: X(ENTREGA.traza, i), detalle: `${t.huella.slice(0, 12)}…` },
     ],
     cifras,
     ficha,
     pasos,
     pausa:
-      pausa && payload
+      pausa && pl
         ? {
             porQue: (() => {
-              const m = X(motivoPausa(), i);
+              const m = X(pl.motivo, i);
               return `${m.charAt(0).toUpperCase()}${m.slice(1)}.`;
             })(),
-            motivoTecnico: X(payload.motivo, i),
+            motivoTecnico: X(pl.motivoTecnico, i),
             senal: X(
               PAUSA.senal({
-                senal: payload.senal,
-                declarado: String(payload.umbral?.declarado ?? "—"),
-                aplicado: String(payload.umbral?.aplicado ?? "—"),
+                senal: pl.senal,
+                declarado: String(pl.umbral?.declarado ?? "—"),
+                aplicado: String(pl.umbral?.aplicado ?? "—"),
                 nodo: pausa.nodo,
                 paso: pausa.paso,
                 rol: pausa.rol,
               }),
               i,
             ),
-            evidencia: (payload.evidencia ?? []).map((x) => X(x, i)),
-            contraevidencia: (payload.contraevidencia ?? []).map((x) =>
-              X(x, i),
-            ),
-            // Sin extracción (el extractor no respondió) no hay campos ni confianza que mostrar: no se inventa un 0.
-            leyo: payload.extraccion
-              ? `${Object.entries(payload.extraccion.campos)
-                  .map(([k, x]) => `${k} ${valorLeido(x, i)}`)
-                  .join(
-                    " · ",
-                  )} · ${X(PAUSA.confianza, i)} ${decimal(payload.extraccion.confianza, 2, i)}`
-              : X(PAUSA.sinExtraccion, i),
+            evidencia: pl.evidencia.map((x) => X(x, i)),
+            contraevidencia: pl.contraevidencia.map((x) => X(x, i)),
+            leyo: pl.leyo,
             respuesta: valorLeido(pausa.respuesta_simulada.decision, i),
-            nota: X(PAUSA.simulado(pausa.respuesta_simulada.politica), i),
+            nota: pl.nota,
           }
         : null,
     salida: {
@@ -702,52 +510,7 @@ export function vistaCaso(d: DatosDemo, id: string, i: Idioma): VistaCaso {
         { k: X(SALIDA.severidad, i), v: String(g?.severidad_accion ?? 0) },
       ],
     },
-    documento: doc
-      ? {
-          encabezado: `${id} · ${doc.formato}`,
-          filas: [
-            {
-              k: X(DOCUMENTO.servicio, i),
-              v: `${X(doc.servicio.nombre, i)} · \`${doc.servicio.codigo}\``,
-            },
-            { k: X(DOCUMENTO.decision, i), v: X(DOCUMENTO.negada, i) },
-            {
-              k: X(DOCUMENTO.causal, i),
-              v: X(doc.causal.resumen, i),
-              nota: doc.causal.norma,
-            },
-            {
-              k: X(DOCUMENTO.regla, i),
-              v: `\`${doc.regla_disparada.id}\` ${X(doc.regla_disparada.texto, i)}`,
-            },
-            {
-              k: X(DOCUMENTO.datos, i),
-              v: doc.datos_usados
-                ? doc.datos_usados
-                    .map((x) => `${x.campo} ${String(x.valor)}`)
-                    .join(" · ")
-                : X(DOCUMENTO.sinDatos, i),
-            },
-            {
-              k: X(DOCUMENTO.version, i),
-              v: `${doc.version.plan.id} ${doc.version.plan.version} \`${doc.version.plan.huella.slice(0, 12)}…\` · ${doc.version.plan_beneficios.id} ${doc.version.plan_beneficios.version} \`${doc.version.plan_beneficios.huella.slice(0, 12)}…\``,
-            },
-            { k: X(DOCUMENTO.decidido, i), v: X(doc.decidido_por, i) },
-            {
-              k: X(DOCUMENTO.contradecir, i),
-              v: X(doc.via_de_contradiccion, i),
-            },
-          ],
-          aviso: X(doc.aviso_ia, i),
-          completo: X(
-            DOCUMENTO.completo({
-              completo: doc.completo,
-              idiomas: doc.idiomas.join(" · "),
-            }),
-            i,
-          ),
-        }
-      : null,
+    documento: perfil.documento,
     senales: Object.keys(s)
       .sort()
       .map((k) => ({
@@ -760,6 +523,8 @@ export function vistaCaso(d: DatosDemo, id: string, i: Idioma): VistaCaso {
               : valorLeido(s[k], i),
       })),
     senalesTitulo: X(SENALES.titulo(Object.keys(s).length), i),
+    expediente: perfil.expediente,
+    textos: perfil.textos,
   };
   return vista;
 }

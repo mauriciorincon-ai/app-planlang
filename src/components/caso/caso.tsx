@@ -142,39 +142,48 @@ function Cabecera({ v, idioma }: { v: VistaCaso; idioma: Idioma }) {
   );
 }
 
+/** El ícono de cada dato que acompaña la solicitud. */
+const ICONO_DATO = { orden: ClipboardList, persona: Users } as const;
+
 function Ipo({ v, idioma }: { v: VistaCaso; idioma: Idioma }) {
-  const [antes, carga, despues] = v.recibe.texto;
   return (
     <div className="mt-6 grid grid-cols-1 amplio:grid-cols-[minmax(0,4fr)_28px_minmax(0,5fr)_28px_minmax(0,4fr)]">
       <ColumnaIpo icono={Inbox} titulo={RECIBE.titulo[idioma]} sub="">
         <ul className="grid list-none p-0">
-          <ItemIcono icono={FileText} titulo={RECIBE.texto[idioma]}>
-            <blockquote className="mt-2 border-l-2 border-tinta-3 bg-sup-1 px-3 py-2.5 text-chico leading-relaxed">
-              {antes}
-              {carga ? (
-                <mark className="rounded-mini border border-dashed border-tinta-2 bg-transparent px-1 py-px text-tinta-1 [box-decoration-break:clone]">
-                  <Marca
-                    tipo="alerta"
-                    tam={12}
-                    className="mr-1 inline align-[-1px]"
-                  />
-                  <span className="sr-only">{RECIBE.inyeccion[idioma]}: </span>
-                  {carga}
-                </mark>
-              ) : null}
-              {despues}
-            </blockquote>
-          </ItemIcono>
-          <ItemIcono icono={ClipboardList} titulo={RECIBE.orden[idioma]}>
-            <small className="mt-0.75 block text-dato leading-normal text-tinta-2">
-              {v.recibe.orden}
-            </small>
-          </ItemIcono>
-          <ItemIcono icono={Users} titulo={v.recibe.afiliado}>
-            <small className="mt-0.75 block text-dato leading-normal text-tinta-2">
-              {RECIBE.enmascarado[idioma]}
-            </small>
-          </ItemIcono>
+          {v.recibe.documentos.map(
+            ({ titulo, partes: [antes, carga, despues] }) => (
+              <ItemIcono key={titulo} icono={FileText} titulo={titulo}>
+                <blockquote className="mt-2 border-l-2 border-tinta-3 bg-sup-1 px-3 py-2.5 text-chico leading-relaxed">
+                  {antes}
+                  {carga ? (
+                    <mark className="rounded-mini border border-dashed border-tinta-2 bg-transparent px-1 py-px text-tinta-1 [box-decoration-break:clone]">
+                      <Marca
+                        tipo="alerta"
+                        tam={12}
+                        className="mr-1 inline align-[-1px]"
+                      />
+                      <span className="sr-only">
+                        {RECIBE.inyeccion[idioma]}:{" "}
+                      </span>
+                      {carga}
+                    </mark>
+                  ) : null}
+                  {despues}
+                </blockquote>
+              </ItemIcono>
+            ),
+          )}
+          {v.recibe.datos.map((x) => (
+            <ItemIcono
+              key={x.titulo}
+              icono={ICONO_DATO[x.icono]}
+              titulo={x.titulo}
+            >
+              <small className="mt-0.75 block text-dato leading-normal text-tinta-2">
+                {x.detalle}
+              </small>
+            </ItemIcono>
+          ))}
         </ul>
       </ColumnaIpo>
       <FlechaIpo />
@@ -412,11 +421,11 @@ export function Caso({ v, idioma }: { v: VistaCaso; idioma: Idioma }) {
       {v.pausa ? (
         <Seccion
           id="c-pausa"
-          titulo={PAUSA.titulo[idioma]}
+          titulo={v.textos.pausaTitulo}
           cabecera={<Chip procedencia="real">{PAUSA.chip[idioma]}</Chip>}
         >
           <p className="mb-6 max-w-[72ch] text-texto">
-            {PAUSA.lectura[idioma]}
+            {v.textos.pausaLectura}
           </p>
           <div className="grid grid-cols-1 items-start gap-x-12 gap-y-6 amplio:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
             <div className="grid gap-4">
@@ -441,7 +450,7 @@ export function Caso({ v, idioma }: { v: VistaCaso; idioma: Idioma }) {
                 <p className={RELIGUITA}>{v.pausa.leyo}</p>
               </GrupoT>
               <div className={CAJA}>
-                <span className={ET}>{PAUSA.respondio[idioma]}</span>
+                <span className={ET}>{v.textos.pausaRespondio}</span>
                 <p>
                   <b className="font-mono text-texto leading-[1.4] font-medium">
                     {v.pausa.respuesta}
@@ -461,7 +470,7 @@ export function Caso({ v, idioma }: { v: VistaCaso; idioma: Idioma }) {
       >
         <div className="grid grid-cols-1 items-start gap-x-12 gap-y-6 amplio:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
           <div className={CAJA}>
-            <span className={ET}>{SALIDA.recibe[idioma]}</span>
+            <span className={ET}>{v.textos.salidaRecibe}</span>
             <p className="text-texto">{v.salida.respuesta}</p>
             {v.salida.aviso ? (
               <p className="mt-2.5 grid grid-cols-[16px_minmax(0,1fr)] gap-2 border-t border-linea pt-2.5 text-dato text-tinta-2">
@@ -479,15 +488,15 @@ export function Caso({ v, idioma }: { v: VistaCaso; idioma: Idioma }) {
       {v.documento ? (
         <Seccion
           id="c-doc"
-          titulo={DOCUMENTO.titulo[idioma]}
+          titulo={v.textos.documentoTitulo}
           cabecera={<Chip procedencia="real">{DOCUMENTO.chip[idioma]}</Chip>}
         >
           <p className="mb-6 max-w-[72ch] text-texto">
-            {DOCUMENTO.lectura[idioma]}
+            {v.textos.documentoLectura}
           </p>
           <article className="max-w-[820px] rounded-control border border-tinta-3 bg-sup-1">
             <header className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1.5 border-b border-linea px-4.5 py-3 text-chico font-semibold">
-              <span>{DOCUMENTO.cabecera[idioma]}</span>
+              <span>{v.textos.documentoCabecera}</span>
               <span className="font-mono text-dato leading-[1.4] font-normal text-tinta-2">
                 {v.documento.encabezado}
               </span>
@@ -519,10 +528,12 @@ export function Caso({ v, idioma }: { v: VistaCaso; idioma: Idioma }) {
                 </div>
               ))}
             </dl>
-            <footer className="grid grid-cols-[16px_minmax(0,1fr)] items-start gap-2 border-t border-linea px-4.5 py-3 text-dato text-tinta-2">
-              <Icono de={Info} tam={14} className="mt-0.5" />
-              {v.documento.aviso}
-            </footer>
+            {v.documento.aviso ? (
+              <footer className="grid grid-cols-[16px_minmax(0,1fr)] items-start gap-2 border-t border-linea px-4.5 py-3 text-dato text-tinta-2">
+                <Icono de={Info} tam={14} className="mt-0.5" />
+                {v.documento.aviso}
+              </footer>
+            ) : null}
           </article>
           <BloqueExperto
             rotulo={PERFIL.experto[idioma]}
@@ -533,6 +544,8 @@ export function Caso({ v, idioma }: { v: VistaCaso; idioma: Idioma }) {
           </BloqueExperto>
         </Seccion>
       ) : null}
+
+      {v.expediente ? <Expediente e={v.expediente} /> : null}
 
       <Seccion id="c-sen" titulo={v.senalesTitulo} className="solo-experto">
         <BloqueExperto rotulo={PERFIL.experto[idioma]}>
@@ -552,6 +565,59 @@ export function Caso({ v, idioma }: { v: VistaCaso; idioma: Idioma }) {
         </BloqueExperto>
       </Seccion>
     </>
+  );
+}
+
+/** El expediente (demo B): cada conclusión con su cita, como lo escribió el código del redactor. */
+function Expediente({ e }: { e: NonNullable<VistaCaso["expediente"]> }) {
+  return (
+    <Seccion
+      id="c-exp"
+      titulo={e.titulo}
+      cabecera={<Chip procedencia="real">{e.chip}</Chip>}
+    >
+      <p className="mb-6 max-w-[72ch] text-texto">{e.lectura}</p>
+      <article className="max-w-[820px] rounded-control border border-tinta-3 bg-sup-1">
+        <header className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1.5 border-b border-linea px-4.5 py-3 text-chico font-semibold">
+          <span>{e.cabecera}</span>
+          <span className="font-mono text-dato leading-[1.4] font-normal text-tinta-2">
+            {e.encabezado}
+          </span>
+        </header>
+        <ol className="m-0 grid list-none px-4.5 py-1.5">
+          {e.conclusiones.map((k, n) => (
+            <li
+              key={k.id}
+              className={cx(
+                "grid grid-cols-[32px_minmax(0,1fr)] gap-x-3 py-2.25 text-chico leading-[1.55]",
+                n > 0 && "border-t border-linea",
+              )}
+            >
+              <span className="font-mono text-dato text-tinta-2">{k.id}</span>
+              <span>
+                {k.texto}
+                <small
+                  className={cx(
+                    "mt-0.5 block font-mono text-dato",
+                    k.citada ? "text-tinta-2" : "text-tinta-1",
+                  )}
+                >
+                  {k.citada ? null : (
+                    <Marca
+                      tipo="alerta"
+                      tam={12}
+                      className="mr-1 inline align-[-1px]"
+                    />
+                  )}
+                  {k.cita}
+                </small>
+              </span>
+            </li>
+          ))}
+        </ol>
+      </article>
+      <p className={cx("mt-3", RELIGUITA)}>{e.cuenta}</p>
+    </Seccion>
   );
 }
 

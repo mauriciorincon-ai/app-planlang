@@ -48,7 +48,7 @@ export async function PaginaBrecha({
             </p>
           </div>
         </section>
-        <Oraculo idioma={idioma} />
+        <Oraculo idioma={idioma} demo={demo} />
         <div className="mt-8">
           <MiradaBrecha v={v} idioma={idioma} />
         </div>

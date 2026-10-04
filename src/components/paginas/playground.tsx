@@ -38,7 +38,7 @@ export async function PaginaPlayground({
             </p>
           </div>
         </section>
-        <Oraculo idioma={idioma} />
+        <Oraculo idioma={idioma} demo={demo} />
         <div className="mt-8">
           <MiradaPlayground v={v} idioma={idioma} />
         </div>

@@ -368,7 +368,12 @@ export function vistaPlan(d: DatosDemo, i: Idioma): VistaPlan {
       typeof r.condicion === "string" ? r.condicion : String(r.metrica ?? "");
     return {
       id: c.id,
-      titulo: conPlan(X(CRITERIO.lider[d.id][c.id] ?? c.enunciado, i), p, i),
+      titulo: conPlan(
+        X(CRITERIO.lider[d.id][c.id] ?? c.enunciado, i),
+        p,
+        i,
+        d.id,
+      ),
       resumen: `${X(CRITERIO.objetivo, i)}: ${objetivo} · ${X(CRITERIO.origen[c.origen] ?? { es: c.origen, en: c.origen }, i)}`,
       tecnica: `${X(c.enunciado, i)} — ${r.poblacion} → ${lee} · ${r.agregacion}${typeof r.k === "number" ? ` · k = ${r.k}` : ""}`,
       lado: { tipo: "criterio", estado: estadoDeCriterio(ci?.estado, i) },

@@ -1724,7 +1724,7 @@ function filaSupuesto(
     );
   }
   // El valor del umbral que la lectura cita sale del plan, no de la copia (AU-S2-3).
-  const planeo = conPlan(X(l.planeo, i), plan, i);
+  const planeo = conPlan(X(l.planeo, i), plan, i, demo);
   const estado = estadoDeSupuesto(s.estado, i);
   return {
     ancla: `f-${s.id}`,

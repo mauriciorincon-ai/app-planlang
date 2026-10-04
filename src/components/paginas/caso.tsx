@@ -32,11 +32,12 @@ export async function PaginaCasos({
     <Marco idioma={idioma} pagina="caso" demo={demo} corrida={portada.pie}>
       <div className={`${CONT} pb-14`}>
         <PortadaCaso antetitulo={portada.antetituloIndice} idioma={idioma} />
-        <Oraculo idioma={idioma} />
+        <Oraculo idioma={idioma} demo={demo} />
         <MiradaCaso
           chips={chipsDeCasos(d, idioma)}
           actual={null}
           idioma={idioma}
+          demo={demo}
         />
       </div>
     </Marco>
@@ -66,11 +67,12 @@ export async function PaginaCaso({
     >
       <div className={CONT}>
         <PortadaCaso antetitulo={portada.antetitulo} idioma={idioma} />
-        <Oraculo idioma={idioma} />
+        <Oraculo idioma={idioma} demo={demo} />
         <MiradaCaso
           chips={chipsDeCasos(d, idioma)}
           actual={id}
           idioma={idioma}
+          demo={demo}
         />
         <Caso v={vistaCaso(d, id, idioma)} idioma={idioma} />
       </div>

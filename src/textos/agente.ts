@@ -775,6 +775,16 @@ export const CONTRATO_CIFRAS = {
     faltan: number;
     sobran: number;
   }>,
+  nodosDetalleSinSpike: ((p: { faltan: number; sobran: number }) =>
+    p.faltan === 0 && p.sobran === 0
+      ? tb("Ninguno falta y ninguno sobra.", "None missing and none extra.")
+      : tb(
+          `Faltan ${p.faltan} y sobran ${p.sobran}.`,
+          `${p.faltan} missing and ${p.sobran} extra.`,
+        )) as Plantilla<{
+    faltan: number;
+    sobran: number;
+  }>,
   reglas: tb(
     "reglas de arista del contrato, con su señal",
     "contract edge rules, with their signal",
@@ -804,8 +814,8 @@ export const GRAFO = {
   lista: tb("Lista por capa", "List by layer"),
   vista: tb("Vista", "View"),
   nota: tb(
-    "Lo genera el código desde el grafo compilado y el plan (el diagramador de la casa, contrato 0.3.0). Toca un nodo o una regla: abajo aparece su detalle por perfil.",
-    "Code generates it from the compiled graph and the plan (the house diagrammer, contract 0.3.0). Tap a node or a rule: its detail by profile appears below.",
+    "Lo genera el código desde el grafo compilado y el plan (el diagramador de la casa, contrato 0.5.0). Toca un nodo o una regla: abajo aparece su detalle por perfil.",
+    "Code generates it from the compiled graph and the plan (the house diagrammer, contract 0.5.0). Tap a node or a rule: its detail by profile appears below.",
   ),
   region: tb(
     "Diagrama del agente; se desliza de lado",
@@ -1032,20 +1042,20 @@ export interface TextosDeNodoVitrina {
 }
 
 /** Filas comunes de la configuración de los nodos con modelo (adaptador de la regla 6). */
-const LLAMADA = tb("Llamada", "Call");
-const LLAMADA_TEXTO = tb(
+export const LLAMADA = tb("Llamada", "Call");
+export const LLAMADA_TEXTO = tb(
   "`claude -p` · sin herramientas · MCP vacío · directorio temporal limpio",
   "`claude -p` · no tools · empty MCP · clean temp directory",
 );
-const SALIDA = tb("Salida", "Output");
-const SALIDA_TEXTO = tb(
+export const SALIDA = tb("Salida", "Output");
+export const SALIDA_TEXTO = tb(
   "estructurada nativa, `extra=forbid`; si no cumple, se reintenta y queda contado",
   "native structured, `extra=forbid`; if it fails, it is retried and counted",
 );
-const INSTRUCCION = tb("Instrucción", "Instruction");
+export const INSTRUCCION = tb("Instrucción", "Instruction");
 
 const FECHA_FUENTES = "2026-09-27";
-const F_NODOS: Fuente = {
+export const F_NODOS: Fuente = {
   url: "https://docs.langchain.com/oss/python/langgraph/graph-api",
   titulo: tb(
     "LangGraph: la API del grafo (nodos y aristas)",
@@ -1054,7 +1064,7 @@ const F_NODOS: Fuente = {
   fecha: FECHA_FUENTES,
   tipo: "oficial",
 };
-const F_INTERRUPT: Fuente = {
+export const F_INTERRUPT: Fuente = {
   url: "https://docs.langchain.com/oss/python/langgraph/interrupts",
   titulo: tb(
     "LangGraph: interrupciones con intervención humana",
@@ -1063,7 +1073,7 @@ const F_INTERRUPT: Fuente = {
   fecha: FECHA_FUENTES,
   tipo: "oficial",
 };
-const F_SALIDA: Fuente = {
+export const F_SALIDA: Fuente = {
   url: "https://docs.langchain.com/oss/python/langchain/structured-output",
   titulo: tb("LangChain: salida estructurada", "LangChain: structured output"),
   fecha: FECHA_FUENTES,
@@ -1139,7 +1149,7 @@ export interface CifrasDeNodo {
   s2: string;
 }
 
-const lista = (ids: string[], y: string) =>
+export const lista = (ids: string[], y: string) =>
   ids.length <= 1
     ? ids.join("")
     : `${ids.slice(0, -1).join(", ")} ${y} ${ids[ids.length - 1]}`;

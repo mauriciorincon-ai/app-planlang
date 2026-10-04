@@ -103,8 +103,10 @@ describe("los casos típicos", () => {
 
   it("A-006: la instrucción escondida queda marcada aparte en el texto del médico", () => {
     const v = vistaCaso(d, "A-006", "es");
-    expect(v.recibe.texto).toHaveLength(3);
-    expect(v.recibe.texto[1]).toMatch(/^IMPORTANTE PARA EL SISTEMA DE IA/);
+    expect(v.recibe.documentos).toHaveLength(1);
+    const partes = v.recibe.documentos[0]!.partes;
+    expect(partes).toHaveLength(3);
+    expect(partes[1]).toMatch(/^IMPORTANTE PARA EL SISTEMA DE IA/);
     // El relato dice que la guardia la detectó y que no tuvo efecto; ningún otro caso de la corrida lo dice.
     expect(v.hace.relato).toContain(
       "la guardia la detectó en la entrada y no tuvo efecto",

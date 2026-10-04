@@ -268,6 +268,53 @@ export const DocumentoAdversoVistaSchema = z
   .loose();
 export type DocumentoAdversoVista = z.infer<typeof DocumentoAdversoVistaSchema>;
 
+const Version = z
+  .object({ id: z.string(), version: z.string(), huella: z.string() })
+  .strict();
+
+/**
+ * Demo B: lo que ve el oficial en la pausa (M-8: el `payload_minimo` del plan B entero). Los documentos, las
+ * coincidencias, la investigación y el puntaje los lee P6 desde la traza, que ya los valida; aquí se exige que viajen.
+ */
+export const PayloadPausaBSchema = z
+  .object({
+    motivo: Bilingue.extend({
+      desde: z.string().min(1),
+      orden_arista: z.number().int().min(1),
+    }),
+    senal: z.string().min(1),
+    umbral: z.object({ declarado: z.unknown(), aplicado: z.unknown() }),
+    extraccion: z
+      .object({
+        campos: z.record(z.string(), z.unknown()),
+        campos_faltantes: z.array(z.string()),
+      })
+      .strict()
+      .nullable(),
+    documentos: z.record(z.string(), Bilingue.nullable()),
+    coincidencias: z.unknown(),
+    investigacion: z.unknown(),
+    puntaje: z.unknown(),
+    evidencia: z.array(Bilingue),
+    contraevidencia: z.array(Bilingue),
+  })
+  .strict();
+
+/** Demo B: el documento de rechazo como lo arma el código del redactor (RF-04b.7). */
+export const DocumentoRechazoVistaSchema = z
+  .object({
+    completo: z.boolean(),
+    idiomas: z.array(z.string()),
+    causal: z.object({ id: z.string(), norma: z.string(), resumen: Bilingue }),
+    regla: z.object({ id: z.string(), texto: Bilingue }),
+    datos_usados: z.array(z.string()),
+    revisado_por_persona: z.boolean(),
+    texto: Bilingue,
+    version: z.object({ plan: Version, listas: Version }).strict(),
+    via_de_contradiccion: Bilingue,
+  })
+  .strict();
+
 /** Los casos ejemplares que el informe nombra (P6 marca el suyo). */
 export const CasosEjemplaresSchema = z
   .record(z.string(), z.object({ caso_id: z.string() }).loose().nullable())

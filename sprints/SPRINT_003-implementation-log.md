@@ -846,6 +846,62 @@ Pendiente, en este orden:
 4. ADR-014, `lighthouse-urls.json`/`perf-budget.json` con rutas del B, e2e del B, capturas con techo, matriz de la
    mirada de FORMA «no vista», fichas y `brochure-export.json`; borrar la sonda.
 
+### Vitrina con dos demos — Agente y Caso del B (tras compactar, 2026-10-04)
+
+**Vista de Agente partida en esqueleto + perfil por demo.**
+- `src/lib/vista/agente.ts`: los tipos y el esqueleto común (experto, contrato, lienzo, paneles, arista, spike).
+- `agente-comun.ts`: el contexto de la corrida y la interfaz `PerfilAgente`.
+- `agente-a.ts`: lo propio del A, movido sin cambiar una salida.
+- `agente-b.ts`: lo propio del B, con su copia en `src/textos/demo-b/agente.ts`: ficha, nueve nodos, tablas de trazas,
+  la arista U1 (regla 2 de `decision`, elegida por su categoría «coincidencia», no por id) y la arquitectura.
+
+**Vista de Caso igual:**
+- `caso.ts` esqueleto, `caso-comun.ts`, `caso-a.ts` y `caso-b.ts`;
+- copia en `src/textos/demo-b/caso.ts`;
+- «Recibe» pasa a `documentos` + `datos`: el B trae sus tres documentos, con la instrucción plantada marcada en el
+  documento que la trae;
+- sección nueva **Expediente**: cada conclusión con su cita (documento, regla, coincidencia con lista, versión y fecha,
+  arista, decisión del plan);
+- los rótulos de pausa, salida y documento salen de la vista por demo.
+
+**El visor y las plantillas del plan, por demo:**
+- `EntradaLienzo.demo`: los textos de nodo, el nombre corto de regla y quién responde la pausa salen del demo;
+- `conPlan(texto, plan, i, demo)`: `{plan:lista.<nodo>}` y `{plan:destinos.<nodo>}` nombran las reglas con el
+  vocabulario de su demo (`NOMBRE_DE_REGLA_B`, `NODO_DESTINO_B` en `src/textos/demo-b/plan.ts`).
+
+**Frases del A que salían en páginas del B (arregladas):**
+- la franja del oráculo («un auditor simulado… afiliados y plan de beneficios») en Brecha, Playground y Casos del B;
+- los avisos de «El caso en una mirada»;
+- «El spike tenía 3 de 8» en el contrato del Agente (el B no tiene spike: `nodosDetalleSinSpike`).
+
+Además, `GRAFO.nota` decía «contrato 0.3.0»: frase caducada desde el 0.5.0, corregida.
+
+**El A no se movió.** Instantánea del commit `3b494b5` (antes del WIP, exportado con `git archive` al scratchpad,
+sin worktree) contra el árbol nuevo:
+- `vistaAgente` del A en los dos idiomas: idéntica salvo el campo nuevo `arista.etiqueta`, que lleva el mismo texto
+  que antes ponía el componente; el SVG del lienzo, idéntico;
+- el HTML de `Caso` para los 20 casos × 2 idiomas, la franja del oráculo y «El caso en una mirada»: 44 de 44 idénticos.
+
+`valorLeido` muestra ahora los decimales que trae el valor (entre 2 y 4): redondear a 2 una similitud de 0,6988 la
+pintaba igual que el umbral 0,70 que no alcanzó (B-019). Los valores del A tienen 2 decimales: su HTML no cambió.
+
+**Guardias:**
+- `copia-contra-plan` por demo: cada literal se lee contra el plan de su demo (los de `src/textos/demo-b/` y los que
+  van bajo una clave `"demo-b"` de un diccionario común, contra el plan B). Se suman la cobertura de
+  `PLAN_POR_NODO{,_B}` contra el plan y las vistas del B sin plantillas sin resolver (20 casos × 2 idiomas);
+- `textos.test.ts` lee también `src/textos/demo-b/*` (los dos idiomas llenos, el inglés no repite el español; los ids
+  de regla y el código puro quedan exentos).
+
+| # | Gate | Mutación | Rojo (quién lo nombró) |
+|---|---|---|---|
+| D41 | `copia-contra-plan` por demo | «(C9)» plantado en `RAMA_B.decision.riesgo` (el plan A tiene C9; el B, no) | `copia-contra-plan.test.ts › ningún texto del demo-b cita…`: «src/textos/demo-b/caso.ts:263 C9»; con la guardia anterior (todo contra el plan A) habría pasado |
+
+**Hallazgos de leer el B (van al summary; las trazas versionadas no se reescriben):**
+- el documento de rechazo del B no trae `aviso_ia` propio (el del A sí; regla 12). La respuesta que lo acompaña sí
+  lo trae. La vista no lo inventa (`documento.aviso: null`) y el arreglo va al agente B con su próxima corrida;
+- el motivo de la pausa que escribe Python pinta los booleanos como `True` (`carga_detectada (True) equal to True`);
+- una línea de evidencia del B dice «La nacionalidad (…) es el de la entrada» (concordancia).
+
 ## Desviación del plan
 
 1. **Rutas de la orden** (`SPRINT_003-orden.md:65`): `audita-sprint` y `plan-sprint` viven en
@@ -958,3 +1014,5 @@ Pendiente, en este orden:
 | 2026-10-04 | la línea base real del B extrajo bien 1 de 20 casos | su prompt resumía las reglas de campo y no definía `titular_actividad` | el prompt reutiliza las reglas del extractor y del investigador, con prueba (D33); la corrida queda versionada tal cual y el informe lo dirá |
 | 2026-10-04 | el gate E-11 marcó 3 trazas de la línea base | nombres del diccionario en un campo de documento (`titular_actividad`) | en los campos del B, un nombre entero del diccionario cerrado no es un identificador real; uno de fuera sigue en rojo (D21e) |
 | 2026-10-04 | el commit de punto de control `wip(vitrina)` se hizo con `--no-verify`, que salta el hook de gitleaks | desliz del builder al comitear un árbol que sabía en rojo | `gitleaks git --log-opts="HEAD~1..HEAD"` a mano sobre ese commit: «no leaks found». Ningún commit más sin el hook |
+| 2026-10-04 | las páginas del B decían «auditor», «afiliados» y «plan de beneficios» en la franja del oráculo, y «El spike tenía 3 de 8» | textos del A pintados por el componente o por la vista sin pasar por el demo | texto por demo (`ORACULO.texto`, `MIRADA.aviso*`, `nodosDetalleSinSpike`); la guardia de vocabulario por demo sobre `out/` lo vigilará |
+| 2026-10-04 | `{plan:lista.decision}` del B detenía el build | el resolvedor nombraba las reglas con el vocabulario del A | `conPlan` recibe el demo |

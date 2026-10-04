@@ -26,7 +26,12 @@ afterEach(() => {
 function Pagina({ id, idioma }: { id: string; idioma: Idioma }) {
   return (
     <>
-      <MiradaCaso chips={chipsDeCasos(d, idioma)} actual={id} idioma={idioma} />
+      <MiradaCaso
+        chips={chipsDeCasos(d, idioma)}
+        actual={id}
+        idioma={idioma}
+        demo="demo-a"
+      />
       <Caso v={vistaCaso(d, id, idioma)} idioma={idioma} />
     </>
   );

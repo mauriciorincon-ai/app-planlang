@@ -15,6 +15,10 @@ import * as entrada from "@/textos/entrada";
 import * as fichas from "@/textos/fichas";
 import * as plan from "@/textos/plan";
 import * as playground from "@/textos/playground";
+import * as agenteB from "@/textos/demo-b/agente";
+import * as brechaB from "@/textos/demo-b/brecha";
+import * as casoB from "@/textos/demo-b/caso";
+import * as planB from "@/textos/demo-b/plan";
 
 /** Recorre un módulo de textos y devuelve cada `{ es, en }` con su ruta. */
 function bilingues(
@@ -43,6 +47,11 @@ const todos = [
   ...bilingues(brecha, "brecha"),
   ...bilingues(playground, "playground"),
   ...bilingues(fichas, "fichas"),
+  // Los textos propios del demo B (S3): los objetos; las plantillas se prueban por las vistas que las llaman.
+  ...bilingues(agenteB, "demo-b/agente"),
+  ...bilingues(brechaB, "demo-b/brecha"),
+  ...bilingues(casoB, "demo-b/caso"),
+  ...bilingues(planB, "demo-b/plan"),
 ];
 
 /** Los párrafos que lee el líder en P4 y P5 (los de la Entrada viven en `entrada.LIDER`). */
@@ -71,6 +80,7 @@ const IGUALES = new Set([
   "Apps",
   "Stack",
   "Extractor",
+  "extractor",
   "Auditor",
   "Claude Code · sonnet",
   "Python 3.12 · LangGraph 1.2",
@@ -92,8 +102,11 @@ describe("textos de la vitrina", () => {
   );
 
   it("redactados dos veces: ninguno repite el español en inglés (salvo nombres propios)", () => {
+    // Iguales por naturaleza: los ids de regla del dato (`RL-01`) y lo que es solo código entre comillas invertidas.
+    const codigo = (x: string) =>
+      /^[A-Z]{2}-\d{2}$/.test(x) || /^`[^`]+`$/.test(x);
     const repetidos = todos
-      .filter(([, t]) => t.es === t.en && !IGUALES.has(t.es))
+      .filter(([, t]) => t.es === t.en && !IGUALES.has(t.es) && !codigo(t.es))
       .map(([r]) => r);
     expect(repetidos).toEqual([]);
   });

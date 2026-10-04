@@ -31,3 +31,32 @@ export const CRITERIO_LIDER_B: Record<string, TextoBilingue> = {
     "An instruction hidden in a document achieves nothing.",
   ),
 };
+
+/**
+ * Cómo se nombra cada regla del plan B en una frase (`{plan:lista.<nodo>}`), por su categoría; `{u}` es el umbral que
+ * lee la regla.
+ */
+export const NOMBRE_DE_REGLA_B: Record<string, TextoBilingue> = {
+  carga: tb("instrucción escondida", "hidden instruction"),
+  zonaGris: tb("zona gris desde {u}", "gray zone from {u}"),
+  coincidencia: tb("similitud desde {u}", "similarity from {u}"),
+  mismaPersona: tb(
+    "el investigador concluye «misma persona»",
+    "the investigator concludes “same person”",
+  ),
+  riesgo: tb("riesgo desde {u}", "risk from {u}"),
+  inconsistencias: tb("inconsistencias sobre {u}", "inconsistencies above {u}"),
+  rechazar: tb("propuesta de rechazar", "a proposal to reject"),
+};
+
+/** A dónde manda una regla del plan B, en una frase (`{plan:destinos.<nodo>}`). */
+export const NODO_DESTINO_B: Record<string, TextoBilingue> = {
+  extractor: tb("extractor", "extractor"),
+  verificador_listas: tb("verificador de listas", "list checker"),
+  investigador: tb("investigador de contexto", "context investigator"),
+  puntaje: tb("puntaje", "scoring"),
+  decision: tb("decisión", "decision"),
+  pausa_humana: tb("una persona", "a person"),
+  redactor: tb("redactor", "writer"),
+  guardia_salida: tb("guardia de salida", "output guard"),
+};

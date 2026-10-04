@@ -5,6 +5,7 @@
  */
 import { tb, type TextoBilingue } from "@core/formatos/bilingue";
 import type { IdDemo } from "@/lib/demos";
+import { MIRADA_B, ORACULO_TEXTO_B } from "./demo-b/caso";
 
 type Plantilla<P> = (p: P) => TextoBilingue;
 
@@ -45,22 +46,32 @@ export const ORACULO = {
     "Las decisiones humanas de esta corrida se simularon.",
     "This run’s human decisions were simulated.",
   ),
-  texto: tb(
-    "En cada pausa, un auditor simulado respondió lo que dice la verdad conocida del caso (DA-04). Casos, afiliados y plan de beneficios son sintéticos.",
-    "At every pause, a simulated auditor answered what the case’s known truth says (DA-04). Cases, members and the benefits plan are synthetic.",
-  ),
+  /** Quién decidió en la pausa y qué es sintético, en cada demo. */
+  texto: {
+    "demo-a": tb(
+      "En cada pausa, un auditor simulado respondió lo que dice la verdad conocida del caso (DA-04). Casos, afiliados y plan de beneficios son sintéticos.",
+      "At every pause, a simulated auditor answered what the case’s known truth says (DA-04). Cases, members and the benefits plan are synthetic.",
+    ),
+    "demo-b": ORACULO_TEXTO_B,
+  } as Record<IdDemo, TextoBilingue>,
 };
 
 export const MIRADA = {
   titulo: tb("El caso en una mirada", "The case at a glance"),
-  avisoLider: tb(
-    "Ves qué pidió el médico, qué hizo cada nodo y por qué tomó cada camino, en palabras llanas.",
-    "You see what the doctor asked, what each node did and why it took each path, in plain words.",
-  ),
-  avisoExperto: tb(
-    "Cada paso suma sus tokens, milisegundos y costo; cada decisión, la tabla de aristas con la regla del plan y el valor observado; al final, la ficha técnica y las 16 señales de la traza.",
-    "Each step adds its tokens, milliseconds and cost; each decision, the edge table with the plan’s rule and the observed value; at the end, the technical record and the trace’s 16 signals.",
-  ),
+  avisoLider: {
+    "demo-a": tb(
+      "Ves qué pidió el médico, qué hizo cada nodo y por qué tomó cada camino, en palabras llanas.",
+      "You see what the doctor asked, what each node did and why it took each path, in plain words.",
+    ),
+    "demo-b": MIRADA_B.avisoLider,
+  } as Record<IdDemo, TextoBilingue>,
+  avisoExperto: {
+    "demo-a": tb(
+      "Cada paso suma sus tokens, milisegundos y costo; cada decisión, la tabla de aristas con la regla del plan y el valor observado; al final, la ficha técnica y las 16 señales de la traza.",
+      "Each step adds its tokens, milliseconds and cost; each decision, the edge table with the plan’s rule and the observed value; at the end, the technical record and the trace’s 16 signals.",
+    ),
+    "demo-b": MIRADA_B.avisoExperto,
+  } as Record<IdDemo, TextoBilingue>,
   selector: tb("Casos", "Cases"),
   casosDeLaCorrida: ((n: number) =>
     tb(

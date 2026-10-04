@@ -43,6 +43,7 @@ import {
 } from "@core/visor/validar";
 import esquemaMapa from "../../../packages/diagramador/contrato/esquema/mapa.schema.json";
 import gramaticaJson from "../../../packages/diagramador/contrato/gramaticas/agentes-ia.json";
+import type { IdDemo } from "@/lib/demos";
 import {
   DETALLE_NODO,
   EXIGIDO_EN_LISTA,
@@ -50,11 +51,50 @@ import {
   NODOS,
   NODOS_FUERA_DEL_CONTRATO,
   REGLA_CORTA,
+  type TextosDeNodoVitrina,
 } from "@/textos/agente";
+import { NODOS_B, REANUDACION_B, REGLA_CORTA_B } from "@/textos/demo-b/agente";
 import { categoriaDeRegla, reglaDelPlan } from "./motivo-pausa";
 import { conPlan } from "./plan-en-texto";
 
 export const GRAMATICA = gramaticaJson as unknown as Gramatica;
+
+type TextosDelMapa = Pick<
+  TextosDeNodoVitrina,
+  "rol" | "como" | "paraQue" | "fuentes"
+>;
+
+/**
+ * Lo que el mapa dice de cada demo: los textos de sus nodos (los del contrato y los que existieron fuera de él), el
+ * nombre corto de sus reglas sin umbral y quién responde su pausa. Un demo sin entrada aquí no compila.
+ */
+const TEXTOS_DEL_DEMO: Readonly<
+  Record<
+    IdDemo,
+    {
+      nodos: Readonly<Record<string, TextosDelMapa>>;
+      fuera: Readonly<Record<string, TextosDelMapa>>;
+      donde: string;
+      reglaCorta: Readonly<Record<string, TextoIdioma>>;
+      reanudacion: TextoIdioma;
+    }
+  >
+> = {
+  "demo-a": {
+    nodos: NODOS,
+    fuera: NODOS_FUERA_DEL_CONTRATO,
+    donde: "src/textos/agente.ts",
+    reglaCorta: REGLA_CORTA,
+    reanudacion: GRAFO.lista_.reanudacion,
+  },
+  "demo-b": {
+    nodos: NODOS_B,
+    fuera: {},
+    donde: "src/textos/demo-b/agente.ts",
+    reglaCorta: REGLA_CORTA_B,
+    reanudacion: REANUDACION_B,
+  },
+};
 
 const validarEsquemaMapa = new Ajv2020({
   allErrors: true,
@@ -90,22 +130,24 @@ export function grafoParaMapa(g: Grafo): GrafoParaMapa {
 }
 
 function textosDeNodos(
+  demo: IdDemo,
   ids: readonly string[],
   contrato: ContratoDeGrafo,
   codigo: CodigoDeNodos | undefined,
   fecha: string,
 ): Record<string, TextosDeNodo> {
+  const textos = TEXTOS_DEL_DEMO[demo];
   const out: Record<string, TextosDeNodo> = {};
   // Los textos citan el plan con `{plan:…}` (AU-S2-3); en el mapa se resuelven con el contrato del lienzo.
   const p = (t: TextoIdioma): TextoIdioma => ({
-    es: conPlan(t.es, { contrato_de_grafo: contrato }, "es"),
-    en: conPlan(t.en, { contrato_de_grafo: contrato }, "en"),
+    es: conPlan(t.es, { contrato_de_grafo: contrato }, "es", demo),
+    en: conPlan(t.en, { contrato_de_grafo: contrato }, "en", demo),
   });
   for (const id of ids) {
-    const t = NODOS[id] ?? NODOS_FUERA_DEL_CONTRATO[id];
+    const t = textos.nodos[id] ?? textos.fuera[id];
     if (!t)
       throw new Error(
-        `vitrina: faltan los textos del nodo «${id}» en src/textos/agente.ts`,
+        `vitrina: faltan los textos del nodo «${id}» en ${textos.donde}`,
       );
     // La fuente oficial (https) y, si el nodo está en el código, su archivo y líneas (`fuente.tipo: codigo`, 0.5.0).
     const c = codigo?.[id];
@@ -132,6 +174,8 @@ function textosDeNodos(
 }
 
 export interface EntradaLienzo {
+  /** El demo del grafo: de él salen los textos de sus nodos y los nombres de sus reglas. */
+  demo: IdDemo;
   grafo: GrafoParaMapa;
   contrato: ContratoDeGrafo;
   sujeto: { id: string; nombre: TextoIdioma };
@@ -151,7 +195,7 @@ export function mapaDe(e: EntradaLienzo): Mapa {
       ...e.grafo.nodos.map((n) => n.id),
     ]),
   ];
-  const textos = textosDeNodos(ids, e.contrato, e.codigo, e.fecha);
+  const textos = textosDeNodos(e.demo, ids, e.contrato, e.codigo, e.fecha);
   const mapa = construirMapa({
     gramatica: GRAMATICA,
     grafo: e.grafo,
@@ -215,7 +259,10 @@ function reglasCortas(e: EntradaLienzo): Record<string, TextoIdioma> {
       const u = a.valor.slice("umbral.".length);
       out[id] = { es: u, en: u };
     } else {
-      const corta = REGLA_CORTA[categoriaDeRegla(reglaDelPlan(a))];
+      const corta =
+        TEXTOS_DEL_DEMO[e.demo].reglaCorta[
+          categoriaDeRegla(reglaDelPlan(a), e.demo)
+        ];
       if (corta) out[id] = corta;
     }
   }
@@ -357,7 +404,7 @@ export function lienzo(
           );
         for (const l of salientes.filter((x) => x.modo === "reanudacion"))
           flujos.push(
-            `${nombre(n.id)} → ${terminal(l.destino)} · ${GRAFO.lista_.reanudacion[i]}`,
+            `${nombre(n.id)} → ${terminal(l.destino)} · ${TEXTOS_DEL_DEMO[e.demo].reanudacion[i]}`,
           );
         return {
           id: n.id,

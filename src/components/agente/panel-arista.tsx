@@ -36,7 +36,7 @@ function Distribucion({ a, idioma }: { a: Panel; idioma: Idioma }) {
     <svg
       viewBox={`0 0 ${ANCHO} ${ALTO}`}
       role="img"
-      aria-label={`${ARISTA_U1.etiqueta[idioma]}; ${a.umbralId} = ${u}`}
+      aria-label={`${a.etiqueta}; ${a.umbralId} = ${u}`}
       className="block h-auto w-full"
     >
       <path

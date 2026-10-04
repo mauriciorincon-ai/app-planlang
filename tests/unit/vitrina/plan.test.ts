@@ -137,7 +137,7 @@ describe("las secciones", () => {
 
   it("criterios: cada uno con su frase llana, su objetivo y su regla tal cual", () => {
     for (const c of d.plan.criterios_aceptacion)
-      expect(CRITERIO.lider, c.id).toHaveProperty(c.id);
+      expect(CRITERIO.lider["demo-a"], c.id).toHaveProperty(c.id);
     const c = todas(es, "p-crit");
     expect(c[0]!.resumen).toBe(
       "Objetivo: todos los casos · plantilla del dominio",
