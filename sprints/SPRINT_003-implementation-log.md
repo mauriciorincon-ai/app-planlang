@@ -902,6 +902,53 @@ pintaba igual que el umbral 0,70 que no alcanzó (B-019). Los valores del A tien
 - el motivo de la pausa que escribe Python pinta los booleanos como `True` (`carga_detectada (True) equal to True`);
 - una línea de evidencia del B dice «La nacionalidad (…) es el de la entrada» (concordancia).
 
+### Punto de control antes de compactar (2), 2026-10-04
+
+Commits locales sin empujar desde `5dd76fb`: `9744fc1`, `3b494b5`, `03788b9` (WIP con `--no-verify`, ver bugs),
+`e5f2aa9`, `f5cba62` (Agente y Caso del B) y el de este punto de control.
+
+Estado del árbol:
+- `pnpm typecheck`, `pnpm lint` y vitest verdes (3.519 pruebas antes de este commit; fichas 31/31);
+- **`pnpm build` NO pasa:** se detiene en `/es/demo-b/fichas`, porque la vista de Fichas aún llama
+  `fichaAgente`/`brochureExport` con un solo demo.
+
+Hecho en este tramo:
+- `src/textos/demo-b/fichas.ts` (`AGENTE_B`: textos de la ficha del agente B);
+- `src/lib/fichas/armar.ts`: `fichaAgente` toma textos y cifras de su demo. Cifras del B: exactitud C5, casos con el
+  oficial, coincidencias sin persona (C1), rechazos sin persona (C2) y costo por caso; el B no fija latencia. La ficha
+  del A sale idéntica (prueba byte a byte de `fichas.test.ts`).
+
+Pendiente, en este orden:
+1. **Fichas del B:**
+   - `rutas.ts` con ruta por demo (`content/agentes/planlang-demo-b.ficha-tecnica.json` y su `.en.json` en
+     `docs/fichas/`);
+   - `archivosDeFichas(ds, repo)` con las dos fichas de agente;
+   - `brochureExport` con los dos demos: criterios cumplidos y decisiones cruzadas sumados, detalle con las dos
+     corridas, costo de una corrida de cada demo;
+   - `APP.limites` (frase caducada: «El demo B y el entrevistador llegan después»), `APP.nunca` y `APP.privacidad`
+     con solicitante y listas;
+   - `vistaFichas(ds, demo, repo, i)`: la ficha de la app es la misma en las dos páginas;
+   - `scripts/fichas.ts` y `scripts/paquete-vitrina.ts` (copiar la ficha B);
+   - pruebas de fichas por demo, `pnpm fichas`, y verificar el build.
+   - Las funcionalidades de la app (`APP.grupos`) suman el demo B y el entrevistador con el manual de la fase 4.
+2. **Guardia nueva de vocabulario por demo** como regla 7 de `scripts/verificar-export.mjs` (sobre `out/`):
+   - ninguna página bajo `<idioma>/demo-b/` dice palabras solo del A: afiliado, auditor, médico, Texas, plan de
+     beneficios / member, auditor, physician, benefits plan;
+   - ninguna del A dice las del B: solicitante, oficial de cumplimiento, lista vinculante, homónimo, vinculación /
+     applicant, compliance officer, binding list, namesake, onboarding;
+   - la entrada queda fuera (lleva las dos filas); decidir si las fichas también (la de la app habla de los dos);
+   - con su demo en rojo.
+3. **Entrada** con las dos filas reales; el entrevistador sale de «También en construcción».
+4. Pytest de `exportar_grafo` con el B; ADR-014; `lighthouse-urls.json` y `perf-budget.json` con las rutas del B;
+   e2e del B; paridad del playground B en tres motores; visor B con «diagrama = grafo»; capturas con techo; matriz de
+   la mirada de FORMA «no vista».
+5. Borrar las sondas temporales sin comitear (`tests/unit/vitrina/_sonda-demo-b.test.ts`, `_volcado-b.test.ts`),
+   correr el job de calidad completo, empujar y `gh pr checks`.
+
+Instantáneas del A para repetir la comparación (en el scratchpad de la sesión, no en el repo):
+`instantanea-a-antes.json`, `caso-html-antes.json` y las pruebas que las generan (`_instantanea-a.test.ts`,
+`_instantanea-caso-html.test.tsx`). Se sacan del commit `3b494b5` exportado con `git archive` en `scratchpad/base/`.
+
 ## Desviación del plan
 
 1. **Rutas de la orden** (`SPRINT_003-orden.md:65`): `audita-sprint` y `plan-sprint` viven en
