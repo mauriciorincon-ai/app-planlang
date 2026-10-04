@@ -57,7 +57,8 @@ timeout, salida que no tiene la forma de la sección), la respuesta queda **lite
 el idioma de la persona con el otro idioma marcado `⟨pendiente · pending⟩`; una sección estructurada conserva su
 propuesta y la pregunta queda **pendiente** con la respuesta guardada y el motivo (`sin_modelo`, `limite_de_uso`,
 `redaccion_invalida`). La entrevista termina igual, la revisión nombra cada pendiente y `pnpm entrevistar --demo b
---retomar` vuelve solo a esas preguntas. Un borrador con pendientes no se aprueba.
+--retomar` vuelve solo a esas preguntas. Un borrador con pendientes no se aprueba: M1 rechaza todo texto con la marca (`TEXTO_PENDIENTE`) y
+`plan:aprobar` exige además que ninguna pregunta quede pendiente.
 
 ## 5. Proveedor, costo y privacidad
 

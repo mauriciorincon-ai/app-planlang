@@ -119,6 +119,10 @@ def redactar(
         valor=marcar(seccion, valor, propuesta),
         explicaciones=explicaciones,
         costo_nominal_usd=float(meta.get("total_cost_usd") or 0.0),
-        tokens_entrada=int(uso.get("input_tokens") or 0),
+        # Tamaño de contexto (7-S): entrada + creación de caché + lectura de caché.
+        tokens_entrada=sum(
+            int(uso.get(k) or 0)
+            for k in ("input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens")
+        ),
         tokens_salida=int(uso.get("output_tokens") or 0),
     )

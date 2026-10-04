@@ -18,6 +18,7 @@ import {
   VOCABULARIO,
 } from "../brecha/contexto";
 import { FUNCIONES } from "../playground/aristas";
+import { rutasPendientes } from "./contradicciones";
 import type { TextoBilingue } from "../formatos/bilingue";
 import {
   esAristaTripleta,
@@ -45,6 +46,7 @@ export const CODIGOS = [
   "UMBRAL_TIPO_INCOHERENTE",
   "HUELLA_AUSENTE",
   "SENAL_NO_DECLARADA",
+  "TEXTO_PENDIENTE",
 ] as const;
 export type Codigo = (typeof CODIGOS)[number];
 
@@ -326,6 +328,17 @@ export function validarPlan(entrada: unknown): ResultadoValidacion {
     return { ok: false, motivos, advertencias };
   }
   const plan = parse.data;
+  // S3: un texto que la entrevista dejó sin redactar pasa el esquema (es una cadena), pero no es un plan: M1 lo
+  // rechaza aquí, sea cual sea el camino a la aprobación.
+  for (const ruta of rutasPendientes(entrada))
+    motivos.push(
+      motivo(
+        "TEXTO_PENDIENTE",
+        ruta,
+        "El entrevistador dejó este texto sin redactar.",
+        "The interviewer left this text unwritten.",
+      ),
+    );
   const idsUmbral = new Set(plan.umbrales.map((u) => u.id));
   const idsDecision = new Set(plan.decisiones.map((d) => d.id));
   const idsRiesgo = new Set(plan.riesgos.map((r) => r.id));

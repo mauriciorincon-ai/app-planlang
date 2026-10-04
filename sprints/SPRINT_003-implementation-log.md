@@ -465,7 +465,7 @@ respaldo del S2): las pruebas de comportamiento leen los archivos versionados.
 
 ### Pruebas y resultados
 
-- **pytest `test_entrevistador.py` (18):**
+- **pytest `test_entrevistador.py` (17):**
   - el golden de la entrevista simulada, con los mismos bytes;
   - el fixture cubre cada pregunta y sección;
   - la carnada «nunca aprueba»;
@@ -518,6 +518,28 @@ respaldo del S2): las pruebas de comportamiento leen los archivos versionados.
 | D10 | plantilla sellada | «jamás» → «nunca» sin resellar | `dominios.test.ts`: huella |
 | D11 | M1: `riesgos_controlados` rotos | el bucle no recorre nada | `validador.test.ts`: `[] == [[REFERENCIA_ROTA, C1]]` |
 | D12 | lo pendiente impide aprobar | quitar `hayPendientes` | `revision.test.ts`: «una sola pregunta pendiente basta». Antes de la demo, la prueba que había no podía fallar (su borrador ya lo rechazaba M1): se agregó la que aísla la regla |
+| D13 | M1 rechaza un texto pendiente (`TEXTO_PENDIENTE`) | el bucle no recorre nada | `validador.test.ts`: «un texto que el entrevistador dejó sin redactar no pasa M1» |
+
+### Humo real del entrevistador (aprobado por el usuario: «Sí, 3 llamadas», 2026-10-04)
+
+- **3 de 3 redacciones** con la suscripción (`sonnet`), en 42 s, sin reintentos de esquema ni errores. Respuestas del
+  fixture de prueba (valores distintos del § 10.3) a criterios, umbrales y un cambio al contrato; las demás preguntas
+  en «acepto» o «pendiente». Nada se escribió en `plans/demo-b/`; el resultado quedó en el scratchpad.
+- **Lo que hizo el modelo:**
+  - criterios: C1–C4 sin cambios (origen «plantilla», confirmado por código) y C5 nuevo («usuario»), con su
+    explicación de qué registra el agente;
+  - umbrales: los cuatro valores dichos (0,9 · 70 · 1 · 0,75), sin inventar ninguno;
+  - contrato: la arista nueva `coincidencia_exacta_vinculante == true → pausa_humana` como la primera de
+    `verificador_listas`, con el orden renumerado y la señal nueva declarada; origen «usuario».
+  - El código sumó la señal `extraccion_correcta` que lee C5 (RF-02.3).
+- **Costo nominal:** US$ 0,04 · 0,05 · 0,10 por llamada (la suscripción no cobra por llamada).
+- **El borrador del humo pasa M1** y su única contradicción no pendiente es la de R4.
+- **Dos arreglos que salieron del humo:**
+  - **M1 aceptaba un texto con la marca de pendiente** (una cadena pasa el esquema). Solo `plan:aprobar` lo frenaba;
+    `pnpm plan:validar --aprobar` lo habría aprobado. Ahora M1 lo rechaza con `TEXTO_PENDIENTE`, sea cual sea el
+    camino (D13).
+  - **La transcripción contaba 2 tokens de entrada:** solo `input_tokens`. Ahora registra el tamaño de contexto
+    (entrada + creación + lectura de caché, estándar 7-S).
 
 ### Parada de DECISIÓN
 

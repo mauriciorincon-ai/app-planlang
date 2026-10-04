@@ -7,7 +7,12 @@
  */
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { aprobarPlan, validarPlan, type Codigo } from "../../../../core/plan";
+import {
+  aprobarPlan,
+  MARCA_PENDIENTE,
+  validarPlan,
+  type Codigo,
+} from "../../../../core/plan";
 
 type Obj = Record<string, unknown>;
 const base = JSON.parse(
@@ -44,6 +49,12 @@ describe("validador — referencias rotas", () => {
       "REFERENCIA_ROTA",
       "evaluadores.exactitud_extraccion",
     ]);
+  });
+
+  it("un texto que el entrevistador dejó sin redactar no pasa M1 aunque el esquema lo acepte (S3)", () => {
+    const p = clon();
+    p.problema = { es: "Un problema.", en: MARCA_PENDIENTE };
+    expect(codigos(p)).toEqual([["TEXTO_PENDIENTE", "problema.en"]]);
   });
 
   it("criterio → riesgo que dice controlar y no existe (RF-02.5, S3)", () => {
