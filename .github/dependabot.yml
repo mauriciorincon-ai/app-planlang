@@ -24,6 +24,9 @@ updates:
     ignore:
       - dependency-name: "@types/node"
         update-types: ["version-update:semver-major"]
+      # planlang (2026-10-04, PR #9): lucide-react va con la versión exacta que declara design-system.md
+      # (§ íconos). Un bump cambia el sistema de diseño aprobado; sube por decisión de diseño, no por lote.
+      - dependency-name: "lucide-react"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:

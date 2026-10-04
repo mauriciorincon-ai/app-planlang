@@ -84,4 +84,27 @@ describe("dependabot.yml — máximo dos PRs abiertos y el lote nunca arrastra u
       "dependabot debe ignorar los mayores de @types/node",
     ).toContain("version-update:semver-major");
   });
+
+  it("lucide-react va con la versión del design system y dependabot no la propone (2026-10-04)", () => {
+    // Origen: planlang, PR #9 — el lote semanal subió lucide-react 1.48.0 → 1.49.0 contra la versión que fija
+    // design-system.md. Se cruzan el `ignore` (todas las versiones), el package.json y el sistema de diseño.
+    const ds = readFileSync("design-system.md", "utf8");
+    const declarada = /\*\*Lucide\*\* v(\d+\.\d+\.\d+)/.exec(ds)?.[1];
+    expect(
+      declarada,
+      "design-system.md declara la versión de Lucide",
+    ).toBeDefined();
+    const pkg = JSON.parse(readFileSync("package.json", "utf8")) as {
+      dependencies: Record<string, string>;
+    };
+    expect(pkg.dependencies["lucide-react"]).toBe(declarada);
+    const ign = npm?.ignore?.find(
+      (i) => i["dependency-name"] === "lucide-react",
+    );
+    expect(ign, "dependabot debe ignorar lucide-react").toBeDefined();
+    expect(
+      ign?.["update-types"],
+      "el ignore de lucide-react cubre todas las versiones, no solo los mayores",
+    ).toBeUndefined();
+  });
 });
