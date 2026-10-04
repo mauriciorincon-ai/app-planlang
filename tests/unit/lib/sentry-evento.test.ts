@@ -37,3 +37,15 @@ describe("limpiarEvento (beforeSend metadata-only)", () => {
     expect(limpiarEvento({})).toEqual({ breadcrumbs: undefined });
   });
 });
+
+// Sin DSN no se descarga nada (ADR-008): `instrumentation-client.ts` no lleva importaciones estáticas, ni siquiera la
+// de esta limpieza. Demo en rojo (bitácora S3): con `import { limpiarEvento }` arriba, el LCP de /es/agente en CI subió
+// a 2.630 ms y este test lo nombra.
+describe("instrumentation-client.ts (inerte sin DSN)", () => {
+  it("no importa nada de forma estática: Sentry y la limpieza llegan detrás del `if (dsn)`", async () => {
+    const { readFileSync } = await import("node:fs");
+    const fuente = readFileSync("instrumentation-client.ts", "utf8");
+    expect(fuente).not.toMatch(/^\s*import\s/m);
+    expect(fuente).toMatch(/import\("@\/lib\/sentry-evento"\)/);
+  });
+});

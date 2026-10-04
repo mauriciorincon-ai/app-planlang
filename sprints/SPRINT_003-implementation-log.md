@@ -29,6 +29,16 @@
   - Con Texas, `texas_y_no_aprobar` la manda a `pausa_humana`.
   - Más M-16 (`carga_detectada → pausa_humana`) y la unidad de U2 en los dos idiomas.
   - Cambia el contrato de grafo, así que hay lote nuevo (ADR-005).
+  - **Corrección del 2026-10-04, decidida por el usuario («Tope por servicio»):** tal como estaba escrita, la regla
+    no movía ningún caso. El `tope_alto_costo` del plan de beneficios es `umbral.U2`, y la arista 2 de `decision`
+    (RB-04, `costo_estimado > U2 → pausa_humana`) atrapa todo caso caro antes de que se evalúe la de Texas.
+    `aprobar_parcial` nace ahora de un **tope de cobertura por servicio**:
+    - cada servicio que requiere autorización declara hasta cuánto cubre, un dato sintético con semilla del plan de
+      beneficios v2 (no es un umbral del agente);
+    - si el costo supera ese tope pero no U2, se aprueba hasta el tope y el excedente se niega con una regla nueva,
+      RB-08;
+    - lo que pasa de U2 sigue con RB-04.
+    Esto cambia el plan de beneficios (v2 con huella), el generador (un subtipo nuevo), el plan v1.5 y el lote de 200.
 - **Orden en el A:** primero el agente (M-8 · M-15 · M-16 · M-18 · `aprobar_parcial`) y después el lote de 200
   v1.5. Mientras no termine, la vitrina publica la de 200 v1.4, que ya existe completa desde el S2, y lo dice.
 - **Diagramador 0.5.0:**

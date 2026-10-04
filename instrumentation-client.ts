@@ -4,13 +4,17 @@
 // va detrás del `if`, que el build resuelve al compilar; con la importación estática del kit, la vitrina
 // cargaba 148 KB comprimidos de Sentry sin DSN. La vitrina navega con `<a>` (sitio de varias páginas), así
 // que el gancho de transiciones del router del kit no aplica.
+// S3: la limpieza del evento (`src/lib/sentry-evento.ts`) también va detrás del `if`, importada con Sentry. Una
+// importación estática, aunque pese 100 bytes, entra al primer pedazo de JS de cada página: con ella el LCP de
+// `/es/agente` en CI pasó de cumplir a 2.630 ms (PR #14).
 // Server-side Sentry (instrumentation.ts) se añade cuando la app tenga backend, por ADR.
-import { limpiarEvento } from "@/lib/sentry-evento";
-
 const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN;
 
 if (dsn) {
-  void import("@sentry/nextjs").then((Sentry) =>
+  void Promise.all([
+    import("@sentry/nextjs"),
+    import("@/lib/sentry-evento"),
+  ]).then(([Sentry, { limpiarEvento }]) =>
     Sentry.init({
       dsn,
       environment: process.env.NEXT_PUBLIC_VERCEL_ENV ?? "local",
