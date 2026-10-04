@@ -133,6 +133,15 @@ def completa(seccion: str, valor: Any) -> bool:
 
 def es_valor_valido(seccion: str, valor: Any) -> bool:
     """Forma mínima antes de aceptar una redacción (el esquema completo lo exige el CLI y, al final, M1)."""
+    if seccion == "decisiones" and isinstance(valor, list):
+        # Lo que el JSON Schema no expresa y M1 sí exige: una decisión decidida trae su opción y su razón.
+        if any(
+            isinstance(d, dict)
+            and d.get("estado") == "decidida"
+            and not (d.get("opcion_elegida") and d.get("justificacion"))
+            for d in valor
+        ):
+            return False
     if seccion == "problema":
         return isinstance(valor, dict) and all(isinstance(valor.get(k), dict) for k in ("nombre", "problema"))
     if seccion in ("contrato", "lotes"):

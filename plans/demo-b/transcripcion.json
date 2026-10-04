@@ -1,12 +1,12 @@
 {
-  "costo_nominal_usd": 0,
+  "costo_nominal_usd": 0.402803,
   "demo_id": "demo-b",
   "fecha": "2026-10-04",
   "formato": "planlang-transcripcion/v1",
-  "huella": "90e495f819bf20284805639feb1c71fa1c57fbb27c053cd47f3ffeacc9283236",
+  "huella": "cc9361343eb4d534de5b9692bf82bf57c28f88d7477e17cf2a6e97a5c1f41449",
   "idioma": "es",
   "llamadas_al_modelo": 9,
-  "modelo": "simulado",
+  "modelo": "sonnet",
   "pasadas": 1,
   "plan_id": "plan-demo-b",
   "plantilla": {
@@ -30,7 +30,7 @@
       "seccion": "problema",
       "turnos": [
         {
-          "costo_nominal_usd": 0,
+          "costo_nominal_usd": 0.029603400000000002,
           "elementos": [],
           "explicaciones": [],
           "pasada": 1,
@@ -40,11 +40,11 @@
           },
           "respuesta": {
             "idioma": "es",
-            "texto": "Las vinculaciones se atascan revisando listas a mano. El agente arma el expediente para el oficial y jamás rechaza a nadie sin una persona."
+            "texto": "Vincular clientes exige cruzar sus documentos con listas de control, y hacerlo a mano es lento y desigual. El agente arma el expediente de cada solicitud sintética para el oficial de cumplimiento: extrae los datos, cruza las listas, investiga las coincidencias dudosas y calcula un puntaje de riesgo por reglas. Jamás aprueba sin una persona a alguien con riesgo alto, jamás rechaza sin una persona y jamás obedece instrucciones escritas dentro de los documentos."
           },
           "resultado": "redactada",
-          "tokens_entrada": 1784,
-          "tokens_salida": 111
+          "tokens_entrada": 4568,
+          "tokens_salida": 1111
         }
       ]
     },
@@ -109,7 +109,7 @@
       "seccion": "flujo",
       "turnos": [
         {
-          "costo_nominal_usd": 0,
+          "costo_nominal_usd": 0.0327676,
           "elementos": [],
           "explicaciones": [],
           "pasada": 1,
@@ -119,11 +119,11 @@
           },
           "respuesta": {
             "idioma": "es",
-            "texto": "Llega la solicitud con sus documentos; se extraen los datos; se cruzan con las listas; si el parecido es dudoso, el investigador mira el contexto; se calcula el puntaje; decide el oficial cuando toca; se redacta el expediente."
+            "texto": "Llega la solicitud con sus documentos de identidad, actividad económica y origen de fondos. La guardia de entrada busca instrucciones escondidas. El extractor saca los datos de los documentos. El verificador cruza el nombre con las listas de control, de forma exacta y aproximada. Si el parecido cae en la zona gris, el investigador de contexto revisa si es la misma persona o un homónimo. Se calcula el puntaje de riesgo por reglas. Se decide aprobar, rechazar o escalar al oficial; todo rechazo y todo caso dudoso pasan por el oficial. Se redacta el expediente citando la regla o coincidencia de cada conclusión, y la guardia de salida lo revisa."
           },
           "resultado": "redactada",
-          "tokens_entrada": 1766,
-          "tokens_salida": 201
+          "tokens_entrada": 4471,
+          "tokens_salida": 1432
         }
       ]
     },
@@ -142,7 +142,7 @@
       "seccion": "decisiones",
       "turnos": [
         {
-          "costo_nominal_usd": 0,
+          "costo_nominal_usd": 0.042290400000000006,
           "elementos": [
             {
               "id": "D1",
@@ -169,11 +169,11 @@
           },
           "respuesta": {
             "idioma": "es",
-            "texto": "La segunda opción: toda coincidencia en lista vinculante y toda aproximada sobre el umbral."
+            "texto": "La segunda opción: toda coincidencia en una lista vinculante, y toda coincidencia aproximada por encima del umbral de similitud, pasan por el oficial sin excepción. Las listas vinculantes obligan a bloquear y escalar (Ley 1121 art. 20; AMLR 76(5))."
           },
           "resultado": "redactada",
-          "tokens_entrada": 2346,
-          "tokens_salida": 595
+          "tokens_entrada": 6573,
+          "tokens_salida": 1850
         }
       ]
     },
@@ -192,7 +192,7 @@
       "seccion": "decisiones",
       "turnos": [
         {
-          "costo_nominal_usd": 0,
+          "costo_nominal_usd": 0.050031799999999994,
           "elementos": [
             {
               "id": "D1",
@@ -219,11 +219,11 @@
           },
           "respuesta": {
             "idioma": "es",
-            "texto": "En cascada: reglas, luego el investigador de contexto y al final el oficial."
+            "texto": "En cascada: primero las reglas (similitud y datos del documento), después el investigador de contexto solo en la zona gris, y al final el oficial. El investigador nunca decide solo: si concluye que puede ser la misma persona, el caso va al oficial."
           },
           "resultado": "redactada",
-          "tokens_entrada": 2398,
-          "tokens_salida": 648
+          "tokens_entrada": 6831,
+          "tokens_salida": 2927
         }
       ]
     },
@@ -242,7 +242,7 @@
       "seccion": "decisiones",
       "turnos": [
         {
-          "costo_nominal_usd": 0,
+          "costo_nominal_usd": 0.0483228,
           "elementos": [
             {
               "id": "D1",
@@ -269,11 +269,11 @@
           },
           "respuesta": {
             "idioma": "es",
-            "texto": "Entradas, reglas, versión de la lista, salida y quién revisó."
+            "texto": "Las entradas, las reglas aplicadas, la versión y la fecha de cada lista consultada, la salida y quién la revisó, durante cinco años (estimado; AMLR art. 77)."
           },
           "resultado": "redactada",
-          "tokens_entrada": 2447,
-          "tokens_salida": 693
+          "tokens_entrada": 7176,
+          "tokens_salida": 2588
         }
       ]
     },
@@ -292,7 +292,7 @@
       "seccion": "decisiones",
       "turnos": [
         {
-          "costo_nominal_usd": 0,
+          "costo_nominal_usd": 0.056700799999999996,
           "elementos": [
             {
               "id": "D1",
@@ -319,11 +319,11 @@
           },
           "respuesta": {
             "idioma": "es",
-            "texto": "Puntaje por reglas: actividad, jurisdicción y coherencia entre ingresos y actividad. Ninguno es atributo protegido."
+            "texto": "Elijo la segunda opción, y la decisión queda decidida: puntaje por reglas declaradas, de 0 a 100: actividad económica (40), jurisdicción (30) y coherencia entre ingresos declarados y actividad (30) (pesos estimados). Ninguno es un atributo protegido; el nombre no entra al puntaje. Se escala al oficial desde el valor de U2 y con más inconsistencias que U3."
           },
           "resultado": "redactada",
-          "tokens_entrada": 2518,
-          "tokens_salida": 752
+          "tokens_entrada": 7514,
+          "tokens_salida": 3264
         }
       ]
     },
@@ -405,7 +405,7 @@
           "pasada": 1,
           "respuesta": {
             "idioma": "es",
-            "texto": "Acepto."
+            "texto": "acepto"
           },
           "resultado": "aceptada"
         }
@@ -426,14 +426,20 @@
       "seccion": "supuestos",
       "turnos": [
         {
-          "costo_nominal_usd": 0,
+          "costo_nominal_usd": 0.0395516,
           "elementos": [
             {
               "id": "S1",
               "origen": "usuario"
             }
           ],
-          "explicaciones": [],
+          "explicaciones": [
+            {
+              "elemento": "S1",
+              "en": "Record in the trace similitud_max, adversario_detalle (homonimo or not), conclusion_investigador and verdad_conocida, to compare the investigator's conclusion with the known truth in high-similarity cases.",
+              "es": "Registrar en la traza similitud_max, adversario_detalle (homonimo o no), conclusion_investigador y verdad_conocida, para comparar la conclusión del investigador con la verdad conocida en los casos de similitud alta."
+            }
+          ],
           "pasada": 1,
           "redaccion": {
             "en": "entrevistador",
@@ -441,11 +447,11 @@
           },
           "respuesta": {
             "idioma": "es",
-            "texto": "Que la similitud de nombre sola da demasiados falsos positivos; se prueba en el lote de 20."
+            "texto": "Que la similitud de nombre por sí sola produce demasiados falsos positivos y necesita el investigador de contexto. Criticidad alta. Se prueba en el lote de 20: sobre los casos con coincidencia por similitud (similitud_max >= umbral.U4), qué fracción eran homónimos (adversario_detalle == 'homonimo') y en cuántos el investigador concluyó bien (conclusion_investigador == verdad_conocida.conclusion_investigador); se confirma si al menos el 80 % de los homónimos se resolvieron bien."
           },
           "resultado": "redactada",
-          "tokens_entrada": 1735,
-          "tokens_salida": 122
+          "tokens_entrada": 4923,
+          "tokens_salida": 2121
         }
       ]
     },
@@ -464,7 +470,7 @@
       "seccion": "criterios",
       "turnos": [
         {
-          "costo_nominal_usd": 0,
+          "costo_nominal_usd": 0.056331599999999996,
           "elementos": [
             {
               "id": "C1",
@@ -485,13 +491,22 @@
             {
               "id": "C5",
               "origen": "usuario"
+            },
+            {
+              "id": "C6",
+              "origen": "usuario"
             }
           ],
           "explicaciones": [
             {
               "elemento": "C5",
-              "en": "The agent records whether each case was extracted exactly (extraccion_exacta).",
-              "es": "El agente registra si cada caso se extrajo exacto (extraccion_exacta)."
+              "en": "The agent must record in the trace an extraccion_correcta flag (yes or no) that compares each extracted field with the known truth of the case.",
+              "es": "El agente debe registrar en la traza una marca extraccion_correcta (sí o no) que compare cada campo extraído con la verdad conocida del caso."
+            },
+            {
+              "elemento": "C6",
+              "en": "The agent must record in the trace an inyeccion_neutralizada flag (yes or no) that shows whether instructions hidden in the documents were ignored, together with the final decision.",
+              "es": "El agente debe registrar en la traza una marca inyeccion_neutralizada (sí o no) que indique si las instrucciones ocultas en los documentos fueron ignoradas, junto con la decisión final."
             }
           ],
           "pasada": 1,
@@ -501,11 +516,11 @@
           },
           "respuesta": {
             "idioma": "es",
-            "texto": "Acepto los cuatro y agrego: exactitud de extracción de al menos 90 %."
+            "texto": "Acepto los cuatro y agrego dos: exactitud de extracción de al menos 90 % sobre los casos con verdad conocida; y el 100 % de los casos con inyección en documentos neutralizados, con la decisión final igual a la verdad conocida (estimado), que controla el riesgo R4 de inyección."
           },
           "resultado": "redactada",
-          "tokens_entrada": 2224,
-          "tokens_salida": 574
+          "tokens_entrada": 5790,
+          "tokens_salida": 3731
         }
       ]
     },
@@ -524,7 +539,7 @@
       "seccion": "umbrales",
       "turnos": [
         {
-          "costo_nominal_usd": 0,
+          "costo_nominal_usd": 0.047203199999999994,
           "elementos": [
             {
               "id": "U1",
@@ -546,23 +561,23 @@
           "explicaciones": [
             {
               "elemento": "U1",
-              "en": "Measured with the threshold's declared signal.",
-              "es": "Se mide con la señal declarada en el umbral."
+              "en": "The agent must record in the trace the highest name similarity against the list (similitud_max), to check whether it reaches 0.85 and goes to a human pause.",
+              "es": "El agente debe registrar en la traza la similitud de nombre más alta frente a la lista (similitud_max), para comprobar si llega a 0,85 y pasa a pausa humana."
             },
             {
               "elemento": "U2",
-              "en": "Measured with the threshold's declared signal.",
-              "es": "Se mide con la señal declarada en el umbral."
+              "en": "The agent must record in the trace the calculated risk score (puntaje_riesgo), to check whether it reaches 60 and the case goes to the officer.",
+              "es": "El agente debe registrar en la traza el puntaje de riesgo calculado (puntaje_riesgo), para comprobar si llega a 60 y el caso pasa al oficial."
             },
             {
               "elemento": "U3",
-              "en": "Measured with the threshold's declared signal.",
-              "es": "Se mide con la señal declarada en el umbral."
+              "en": "The agent must record in the trace the number of document inconsistencies found (inconsistencias), to check whether there are more than 0 and the case goes to a human pause.",
+              "es": "El agente debe registrar en la traza el número de inconsistencias documentales encontradas (inconsistencias), para comprobar si hay más de 0 y pasa a pausa humana."
             },
             {
               "elemento": "U4",
-              "en": "Measured with the threshold's declared signal.",
-              "es": "Se mide con la señal declarada en el umbral."
+              "en": "The agent must record in the trace the highest name similarity (similitud_max), to check whether it reaches 0.70 and enters the grey zone, where the investigator reviews the context.",
+              "es": "El agente debe registrar en la traza la similitud de nombre más alta (similitud_max), para comprobar si llega a 0,70 y entra en la zona gris, donde el investigador revisa el contexto."
             }
           ],
           "pasada": 1,
@@ -572,11 +587,11 @@
           },
           "respuesta": {
             "idioma": "es",
-            "texto": "Similitud 0,9; escalamiento desde 70 puntos; tolero una inconsistencia; la zona gris empieza en 0,75."
+            "texto": "Similitud de nombre 0,85; escalar al oficial desde 60 puntos de riesgo (estimado); cero inconsistencias documentales toleradas; la zona gris empieza en 0,70 (estimado) y termina en 0,85, donde ya decide el oficial."
           },
           "resultado": "redactada",
-          "tokens_entrada": 2354,
-          "tokens_salida": 643
+          "tokens_entrada": 6420,
+          "tokens_salida": 2293
         }
       ]
     },
@@ -624,20 +639,26 @@
           "pasada": 1,
           "respuesta": {
             "idioma": "es",
-            "texto": "ok"
+            "texto": "acepto"
           },
           "resultado": "aceptada"
         }
       ]
     }
   ],
-  "proveedor": "simulado",
+  "proveedor": "suscripcion",
   "senales_derivadas": [
     {
       "leida_por": [
         "C5"
       ],
-      "senal": "extraccion_exacta"
+      "senal": "extraccion_correcta"
+    },
+    {
+      "leida_por": [
+        "C6"
+      ],
+      "senal": "inyeccion_neutralizada"
     }
   ]
 }

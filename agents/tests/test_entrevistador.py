@@ -162,7 +162,15 @@ def test_el_origen_lo_decide_el_codigo() -> None:
     nuevo = {**prop[2], "id": "R5", "origen": "usuario"}
     sin_origen = {**prop[3], "severidad": 10, "origen": "otra cosa"}
     marcados = marcar("riesgos", [identico, cambiado_sin_decirlo, nuevo, sin_origen], prop)
-    assert [m["origen"] for m in marcados] == ["plantilla", "entrevistador", "usuario", "entrevistador"]
+    # R3 no venía en la lista: se restaura de la propuesta, en su lugar; el nuevo R5 va al final.
+    assert [m["id"] for m in marcados] == ["R1", "R2", "R3", "R4", "R5"]
+    assert [m["origen"] for m in marcados] == [
+        "plantilla",
+        "entrevistador",
+        "plantilla",
+        "entrevistador",
+        "usuario",
+    ]
     # Un campo vacío que el esquema completa (depende_de: []) no cuenta como cambio.
     dec = propuestas(PLANTILLA)["decisiones"][0]
     assert marcar("decisiones", [{**dec, "depende_de": []}], [dec])[0]["origen"] == "plantilla"
@@ -336,3 +344,75 @@ def test_rf_02_3_el_codigo_suma_las_senales_que_el_plan_lee_y_nadie_declaro() ->
     )
     assert nada == [] and completo == contrato
     assert completar_contrato({}, ()) == (None, [])
+
+
+def test_la_prosa_en_una_condicion_no_deriva_senales() -> None:
+    """Visto en la entrevista real del B: S1 trajo «Coincidencias por similitud de nombre en el lote de 20
+    casos.» como población y el código derivó «por», «de», «el»… como señales obligatorias."""
+    from app_agents.entrevistador.borrador import completar_contrato, es_condicion
+
+    assert es_condicion("similitud_max >= umbral.U4 AND NOT (decision_final IN ['aprobar'])")
+    assert es_condicion("todos")
+    assert es_condicion("identificador_sintetico(caso) == true")
+    assert not es_condicion("Coincidencias por similitud de nombre en el lote de 20 casos.")
+    assert not es_condicion("todos los casos")
+    assert not es_condicion("")
+    assert not es_condicion("x == 1 AND")
+    plan = {
+        "supuestos": [
+            {
+                "id": "S1",
+                "medible_en_trazas": {
+                    "poblacion": "Coincidencias por similitud de nombre.",
+                    "condicion": "a > 0",
+                },
+            }
+        ],
+        "contrato_de_grafo": {"senales_obligatorias_en_traza": [], "origen": "plantilla"},
+    }
+    _, derivadas = completar_contrato(plan, ())
+    assert derivadas == [{"senal": "a", "leida_por": ["S1"]}]
+
+
+def test_el_modelo_no_borra_con_null_lo_que_la_propuesta_traia() -> None:
+    """Visto en la entrevista real del B: al redactar D4, el modelo devolvió D1–D3 «decididas» con
+    opcion_elegida y justificacion en null; M1 las rechazó."""
+    from app_agents.entrevistador.secciones import es_valor_valido
+
+    prop = propuestas(PLANTILLA)["decisiones"]
+    decidida = {
+        **prop[0],
+        "estado": "decidida",
+        "opcion_elegida": "solo las exactas",
+        "justificacion": {"es": "Porque sí.", "en": "Because."},
+        "origen": "usuario",
+    }
+    devuelta = {**decidida, "opcion_elegida": None, "justificacion": None, "origen": "entrevistador"}
+    [m] = marcar("decisiones", [devuelta], [decidida])
+    assert (m["opcion_elegida"], m["justificacion"], m["origen"]) == (
+        "solo las exactas",
+        decidida["justificacion"],
+        "usuario",
+    )
+    # Y si no hay de dónde restaurar, la redacción no vale (queda literal y la pregunta pendiente).
+    assert not es_valor_valido("decisiones", [{**prop[0], "estado": "decidida"}])
+    assert es_valor_valido("decisiones", [decidida])
+
+
+def test_el_modelo_no_descarta_elementos_de_la_propuesta() -> None:
+    """Visto en la entrevista real del B (segunda corrida): al redactar D4 el modelo devolvió solo D4 y los
+    umbrales U1 y U4 quedaron apuntando a decisiones que ya no existían."""
+    from app_agents.entrevistador.origen import descartados
+
+    prop = propuestas(PLANTILLA)["decisiones"]
+    solo_d4 = [
+        {**prop[3], "estado": "decidida", "opcion_elegida": "x", "justificacion": {"es": "a", "en": "a"}}
+    ]
+    assert descartados("decisiones", solo_d4, prop) == ["D1", "D2", "D3"]
+    marcados = marcar("decisiones", solo_d4, prop)
+    assert [m["id"] for m in marcados] == ["D1", "D2", "D3", "D4"]
+    assert [m["origen"] for m in marcados] == ["plantilla", "plantilla", "plantilla", "entrevistador"]
+    # Un elemento nuevo del modelo se conserva después de los de la propuesta.
+    con_nuevo = [*solo_d4, {**prop[0], "id": "D5", "origen": "usuario"}]
+    assert [m["id"] for m in marcar("decisiones", con_nuevo, prop)] == ["D1", "D2", "D3", "D4", "D5"]
+    assert descartados("flujo", [], [{"es": "a", "en": "a"}]) == []

@@ -22,6 +22,34 @@ VERSION_DEL_PLAN = "1.0.0"
 _CADENA = re.compile(r"'[^']*'")
 _RAIZ = re.compile(r"(?<![.\w])([a-z_][a-z0-9_]*)\b(?!\s*\()")
 _LITERALES = {"true", "false", "null"}
+_PALABRAS = {"AND", "OR", "NOT", "IMPLICA", "IN", "CONTIENE"}
+_TOKEN = re.compile(
+    r"\s+|(?P<nombre>[A-Za-z_]\w*(?:\.[A-Za-z_]\w*)*)|(?P<numero>-?\d+(?:\.\d+)?)|(?P<cadena>'[^']*')"
+    r"|==|!=|<=|>=|<|>|[()\[\],]"
+)
+
+
+def es_condicion(texto: str) -> bool:
+    """Si el texto tiene la forma del lenguaje de condiciones del plan (y no es prosa).
+
+    Es un filtro, no el parser (que vive en TypeScript, `core/brecha/condiciones.ts`): rechaza lo que ningún
+    parser aceptaría, como dos nombres seguidos sin operador o un punto final.
+    """
+    pos, previo = 0, ""
+    while pos < len(texto):
+        m = _TOKEN.match(texto, pos)
+        if not m:
+            return False
+        pos = m.end()
+        if not m.group().strip():
+            continue
+        clase = m.lastgroup or "op"
+        nombre = m.group("nombre")
+        valor = "palabra" if nombre in _PALABRAS else clase
+        if valor in ("nombre", "numero", "cadena") and previo in ("nombre", "numero", "cadena"):
+            return False
+        previo = valor
+    return previo != "" and previo != "palabra"
 
 
 def pendiente_bilingue() -> dict[str, str]:
@@ -66,7 +94,9 @@ def _lectores(plan: dict[str, Any]) -> list[tuple[str, str]]:
         m = s.get("medible_en_trazas") or {}
         condiciones += [(s["id"], m.get("poblacion")), (s["id"], m.get("condicion"))]
     for quien, texto in condiciones:
-        if isinstance(texto, str):
+        # Solo una condición con forma de condición deriva señales: de la prosa no sale ninguna (M1 la
+        # rechaza).
+        if isinstance(texto, str) and es_condicion(texto):
             pares += [(raiz, quien) for raiz in raices(texto)]
     return pares
 

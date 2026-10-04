@@ -193,6 +193,7 @@ class NodosEntrevista:
                         "resultado": "redactada",
                         "elementos": _ids(r.valor),
                         "explicaciones": r.explicaciones,
+                        **({"restaurados": r.restaurados} if r.restaurados else {}),
                         "redaccion": {idioma: "usuario", _otro(idioma): "entrevistador"},
                         "costo_nominal_usd": r.costo_nominal_usd,
                         "tokens_entrada": r.tokens_entrada,

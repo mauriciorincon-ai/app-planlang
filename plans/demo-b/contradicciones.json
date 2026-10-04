@@ -1,0 +1,74 @@
+{
+  "borrador": {
+    "archivo": "v0-borrador.json",
+    "huella_del_contenido": "823bfba5b42ab498c4650605dea60b32b66df3bb0e20ae64d4d883e90844d79b"
+  },
+  "contradicciones": [],
+  "costo_nominal_usd": 0.402803,
+  "formato": "planlang-contradicciones/v1",
+  "huella": "b7e56e43a31f15cc7930fc8e62f166413a8b95061de820a6f072904ad5ad60d5",
+  "llamadas_al_modelo": 9,
+  "m1": {
+    "advertencias": [],
+    "motivos": [],
+    "ok": true
+  },
+  "pendientes": [],
+  "plan_id": "plan-demo-b",
+  "redactado_por_entrevistador": [
+    {
+      "idioma": "en",
+      "pregunta": "P01"
+    },
+    {
+      "idioma": "en",
+      "pregunta": "P03"
+    },
+    {
+      "idioma": "en",
+      "pregunta": "P04"
+    },
+    {
+      "idioma": "en",
+      "pregunta": "P05"
+    },
+    {
+      "idioma": "en",
+      "pregunta": "P06"
+    },
+    {
+      "idioma": "en",
+      "pregunta": "P07"
+    },
+    {
+      "idioma": "en",
+      "pregunta": "P10"
+    },
+    {
+      "idioma": "en",
+      "pregunta": "P11"
+    },
+    {
+      "idioma": "en",
+      "pregunta": "P12"
+    }
+  ],
+  "senales_derivadas": [
+    {
+      "leida_por": [
+        "C5"
+      ],
+      "senal": "extraccion_correcta"
+    },
+    {
+      "leida_por": [
+        "C6"
+      ],
+      "senal": "inyeccion_neutralizada"
+    }
+  ],
+  "transcripcion": {
+    "archivo": "transcripcion.json",
+    "huella": "cc9361343eb4d534de5b9692bf82bf57c28f88d7477e17cf2a6e97a5c1f41449"
+  }
+}

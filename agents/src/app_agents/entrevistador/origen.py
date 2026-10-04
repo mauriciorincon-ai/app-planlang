@@ -42,6 +42,13 @@ def iguales(a: Any, b: Any) -> bool:
 
 
 def _marcar_uno(elemento: dict[str, Any], propuesto: dict[str, Any] | None) -> dict[str, Any]:
+    # El modelo no borra con null lo que la propuesta ya traía (una decisión decidida que vuelve sin su opción
+    # elegida): el campo conserva su valor y, si todo lo demás coincide, su origen.
+    if propuesto is not None:
+        elemento = {
+            **elemento,
+            **{k: v for k, v in propuesto.items() if elemento.get(k) is None and v is not None},
+        }
     if propuesto is not None and iguales(elemento, propuesto):
         return {**elemento, "origen": propuesto.get("origen", "plantilla")}
     origen = elemento.get("origen")
@@ -56,13 +63,30 @@ SECCIONES_CON_ELEMENTOS = ("actores", "decisiones", "riesgos", "supuestos", "cri
 SECCIONES_OBJETO_CON_ORIGEN = ("contrato", "lotes")
 
 
+def descartados(seccion: str, valor: Any, propuesta: Any) -> list[str]:
+    """Los ids de la propuesta que una redacción dejó fuera (el modelo devolvió la lista incompleta)."""
+    if seccion not in SECCIONES_CON_ELEMENTOS or not isinstance(valor, list):
+        return []
+    presentes = {e.get("id") for e in valor if isinstance(e, dict)}
+    return [e["id"] for e in (propuesta or []) if isinstance(e, dict) and e.get("id") not in presentes]
+
+
 def marcar(seccion: str, valor: Any, propuesta: Any) -> Any:
-    """Fija el origen de cada elemento de una sección redactada contra la propuesta que tenía delante."""
+    """Fija el origen de cada elemento de una sección redactada contra la propuesta que tenía delante.
+
+    Un elemento que la propuesta traía y el modelo dejó fuera se restaura en su lugar: el modelo no
+    descarta elementos (visto en la entrevista real del B: al redactar D4 devolvió solo D4).
+    """
     if seccion in SECCIONES_CON_ELEMENTOS and isinstance(valor, list):
         por_id = {
             e["id"]: e for e in (propuesta or []) if isinstance(e, dict) and isinstance(e.get("id"), str)
         }
-        return [_marcar_uno(e, por_id.get(e.get("id"))) if isinstance(e, dict) else e for e in valor]
+        marcados = [_marcar_uno(e, por_id.get(e.get("id"))) if isinstance(e, dict) else e for e in valor]
+        if not descartados(seccion, valor, propuesta):
+            return marcados
+        nuevos = {e.get("id"): e for e in marcados if isinstance(e, dict)}
+        salida = [nuevos.get(i, p) for i, p in por_id.items()]
+        return salida + [e for e in marcados if not isinstance(e, dict) or e.get("id") not in por_id]
     if seccion in SECCIONES_OBJETO_CON_ORIGEN and isinstance(valor, dict):
         return _marcar_uno(valor, propuesta if isinstance(propuesta, dict) else None)
     return valor

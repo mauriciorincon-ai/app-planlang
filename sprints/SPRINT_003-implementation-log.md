@@ -11,7 +11,7 @@
 | Fase | Estado | Cierre |
 |---|---|---|
 | 0 · Setup, constitución, deltas, diagramador 0.5.0 y plan v1.5 del A | aprobada («continúa»); lote v1.5 de 200 terminado y versionado | 2026-10-04 |
-| 1 · Entrevistador M2 → parada de DECISIÓN (plan B) | construida; espera la entrevista del usuario y su «apruebo el plan B» | 2026-10-04 |
+| 1 · Entrevistador M2 → parada de DECISIÓN (plan B) | construida; entrevista corrida por delegación; espera «apruebo el plan B» | 2026-10-04 |
 | 2 · Demo B: sintético, agente y lote de 20 | pendiente | — |
 | 3 · Brecha B y la vitrina con dos demos | pendiente | — |
 | 4 · Cierres de ciclo | pendiente | — |
@@ -484,7 +484,7 @@ respaldo del S2): las pruebas de comportamiento leen los archivos versionados.
 
 ### Pruebas y resultados
 
-- **pytest `test_entrevistador.py` (17):**
+- **pytest `test_entrevistador.py` (20):**
   - el golden de la entrevista simulada, con los mismos bytes;
   - el fixture cubre cada pregunta y sección;
   - la carnada «nunca aprueba»;
@@ -538,6 +538,9 @@ respaldo del S2): las pruebas de comportamiento leen los archivos versionados.
 | D11 | M1: `riesgos_controlados` rotos | el bucle no recorre nada | `validador.test.ts`: `[] == [[REFERENCIA_ROTA, C1]]` |
 | D12 | lo pendiente impide aprobar | quitar `hayPendientes` | `revision.test.ts`: «una sola pregunta pendiente basta». Antes de la demo, la prueba que había no podía fallar (su borrador ya lo rechazaba M1): se agregó la que aísla la regla |
 | D13 | M1 rechaza un texto pendiente (`TEXTO_PENDIENTE`) | el bucle no recorre nada | `validador.test.ts`: «un texto que el entrevistador dejó sin redactar no pasa M1» |
+| D14 | de la prosa no se derivan señales | quitar `es_condicion` | `test_la_prosa_en_una_condicion_no_deriva_senales`: `[{'senal': 'p…` |
+| D15 | el modelo no borra con `null` | quitar la restauración de campos | `test_el_modelo_no_borra_con_null…`: `(None, None, 'entrevistador')` |
+| D16 | el modelo no descarta elementos | `if True:` en la restauración | `test_el_modelo_no_descarta_elementos…`: `['D4'] == ['D1', 'D2', 'D3', 'D4']` |
 
 ### Humo real del entrevistador (aprobado por el usuario: «Sí, 3 llamadas», 2026-10-04)
 
@@ -560,11 +563,38 @@ respaldo del S2): las pruebas de comportamiento leen los archivos versionados.
   - **La transcripción contaba 2 tokens de entrada:** solo `input_tokens`. Ahora registra el tamaño de contexto
     (entrada + creación + lectura de caché, estándar 7-S).
 
-### Parada de DECISIÓN
+### Parada de DECISIÓN — la entrevista, por delegación explícita (excepción nombrada)
 
-La fase termina aquí. **El usuario corre la entrevista; el builder no responde por él** (orden S3; prompt del
-usuario). Sin «apruebo el plan B» no hay agente B. Si pasan 48 h sin entrevista: excepción nombrada (el builder la
-corre con el § 10.3 y el usuario aprueba el borrador).
+- **Qué dijo el usuario** (2026-10-04, textual): primero «No la verdad estimalo no importa cual sea que sea un buen
+  proceso ya eso es todo, es un demo no hay que darle tanta importancia», y después, ante la pregunta de permiso,
+  «corre la entrevista con tus respuestas». No es la excepción de las 48 h de la orden: es una delegación
+  explícita de las RESPUESTAS. La aprobación sigue siendo suya.
+- **Cómo se respondió:** las respuestas están en `plans/demo-b/respuestas-por-delegacion.json` (versionado). Lo que
+  trae el § 10.3 de la especificación va tal cual (similitud 0,85; 0 inconsistencias; criterios y riesgos de la
+  plantilla; el supuesto del investigador). Lo que el § 10.3 no trae lo estimó el constructor y queda marcado
+  «(estimado)» en el plan: **puntaje para escalar 60**, **zona gris desde 0,70**, pesos del puntaje 40/30/30,
+  conservación de cinco años y **C6**, el criterio que controla el riesgo de inyección (sin él, el borrador traía
+  una contradicción).
+- **Tres corridas, 27 llamadas, US$ 1,28 nominal.** Las dos primeras las rechazó M1, y cada rechazo destapó un
+  hueco del entrevistador que el humo de 3 llamadas no había visto:
+  1. (corrida 1) al redactar D4, el modelo devolvió D1–D3 «decididas» con `opcion_elegida` y `justificacion` en
+     `null`, y dejó D4 abierta; y en S1 escribió prosa como población («Coincidencias por similitud de nombre en
+     el lote de 20 casos.»), de donde el código derivó «por», «de», «el»… como señales obligatorias.
+     **Cierres:** el modelo no borra con `null` lo que la propuesta traía (se restaura); una decisión «decidida»
+     sin opción es redacción inválida (queda literal y pendiente); de la prosa no se deriva ninguna señal
+     (`es_condicion`, un filtro de forma: el parser sigue en TS). Regla 9 del prompt y «nunca prosa» en la 7.
+  2. (corrida 2) al redactar D4, el modelo devolvió SOLO D4: U1 y U4 quedaron apuntando a D1 y D2, que ya no
+     existían; y en S1 escribió la lista con paréntesis (`IN ('a','b')`). **Cierres:** el modelo no descarta
+     elementos de la propuesta: los que faltan se restauran en su lugar y el turno lo registra (`restaurados`);
+     «devuelves la sección COMPLETA» y «listas entre corchetes» en el prompt. Y dos respuestas del constructor se
+     hicieron explícitas (P07 «elijo la segunda opción»; P10 con la medición como expresión).
+  3. (corrida 3) **M1 acepta, 0 contradicciones, 0 pendientes, nada restaurado.** 4 decisiones decididas, 4
+     umbrales con valor, 6 criterios (C5 exactitud ≥ 90 %, C6 inyección 100 % controlando R4), S1 medible con
+     umbral de confirmación 0,8, contrato de 9 nodos; el código sumó `extraccion_correcta` e
+     `inyeccion_neutralizada` a las señales obligatorias.
+- **Salida:** `plans/demo-b/{v0-borrador.json, transcripcion.json, contradicciones.json, revision.es.md,
+  revision.en.md}` (versionados). **Esperando «apruebo el plan B»** del usuario; entonces `pnpm plan:aprobar
+  --demo b --por "Mauricio Rincón" --el <fecha>` escribe `v1.json`.
 
 ## Desviación del plan
 
@@ -646,3 +676,4 @@ corre con el § 10.3 y el usuario aprueba el borrador).
 | 2026-10-04 | el esquema de salida de umbrales rompía (`KeyError: anyOf`) | Zod escribe la unión de primitivos como `type: [...]` | `_con_nulo` admite las dos formas |
 | 2026-10-04 | tras una respuesta vacía, la pregunta se habría repetido sin fin | `repetir` quedaba en `True` hasta el siguiente `elegir` | toda salida válida de `incorporar` lo pone en `False` (revisión antes de probar) |
 | 2026-10-04 | `fichas.test.ts` en rojo | el ADR-012 cambia la cuenta de ADR del `brochure-export.json` | `pnpm fichas` (14 ADR) |
+| 2026-10-04 | la entrevista real del B pasó dos veces por M1 en rojo | el modelo borra con `null`, descarta elementos de la lista y escribe prosa o paréntesis en condiciones; el humo de 3 llamadas no lo vio porque no tocó las decisiones ni los supuestos | tres cierres por código (D14–D16) y tres reglas en el prompt; tercera corrida limpia |
