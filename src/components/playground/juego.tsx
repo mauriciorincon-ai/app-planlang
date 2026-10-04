@@ -369,11 +369,17 @@ function frase(r: Consecuencias, d: DatosIsla, i: Idioma): string {
     );
   if (r.evitados.length) partes.push(FRASE.evitados(r.evitados.length)[i]);
   partes.push(
-    FRASE.minutos({
-      minutos: r.minutos,
-      delta: r.minutos - r.minutos_plan,
-      sinContar: r.no_observados.length,
-    })[i],
+    r.minutos === null || r.minutos_plan === null
+      ? FRASE.personas({
+          personas: r.personas,
+          delta: r.personas - r.personas_plan,
+          sinContar: r.no_observados.length,
+        })[i]
+      : FRASE.minutos({
+          minutos: r.minutos,
+          delta: r.minutos - r.minutos_plan,
+          sinContar: r.no_observados.length,
+        })[i],
   );
   const dejan = r.criterios
     .filter((c) => c.estado === "incumple" && c.estado_informe !== "incumple")
@@ -447,7 +453,7 @@ function Efecto({
   i,
 }: {
   x: CambioDeCaso;
-  minutos: number;
+  minutos: number | null;
   i: Idioma;
 }) {
   switch (x.efecto) {
@@ -801,17 +807,32 @@ export function Juego({ datos }: { datos: DatosIsla }) {
                   texto={CIFRAS.introducidos[i]}
                   sub={CIFRAS.evitados(r.evitados.length)[i]}
                 />
-                <Cifra
-                  id="k-min"
-                  cifra={r.minutos}
-                  texto={CIFRAS.minutos[i]}
-                  sub={
-                    CIFRAS.minutosPlan({
-                      plan: r.minutos_plan,
-                      delta: r.minutos - r.minutos_plan,
-                    })[i]
-                  }
-                />
+                {r.minutos === null || r.minutos_plan === null ? (
+                  // El plan no declara el costo humano (el B): la cifra cuenta los casos, no inventa minutos.
+                  <Cifra
+                    id="k-min"
+                    cifra={r.personas}
+                    texto={CIFRAS.personas[i]}
+                    sub={
+                      CIFRAS.minutosPlan({
+                        plan: r.personas_plan,
+                        delta: r.personas - r.personas_plan,
+                      })[i]
+                    }
+                  />
+                ) : (
+                  <Cifra
+                    id="k-min"
+                    cifra={r.minutos}
+                    texto={CIFRAS.minutos[i]}
+                    sub={
+                      CIFRAS.minutosPlan({
+                        plan: r.minutos_plan,
+                        delta: r.minutos - r.minutos_plan,
+                      })[i]
+                    }
+                  />
+                )}
                 <Cifra
                   id="k-crit"
                   cifra={r.cumplen}
@@ -872,6 +893,7 @@ export function Juego({ datos }: { datos: DatosIsla }) {
                         introducidos: r.introducidos.length,
                         evitados: r.evitados.length,
                         minutos: r.minutos,
+                        personas: r.personas,
                         cumplen: r.cumplen,
                         criterios: r.criterios.length,
                       })[i]

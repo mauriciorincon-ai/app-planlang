@@ -813,6 +813,39 @@ defecto del builder, no de la arquitectura. La primera (`-base`) queda versionad
 | D39 | el dominio sale del plan | el registro se consulta siempre con `dom-salud` | `evaluadores.test.ts` (dos) |
 | D40 | regla 20 en `core/` | el título del informe vuelve a ser un ternario de idioma | `bilingue-fuente.test.ts › core/ tampoco…`: «core/brecha/render-md.ts:612: «Informe de brecha» / «Gap report»» |
 
+### Vitrina con dos demos — EN CURSO (punto de control antes de compactar, 2026-10-04)
+
+Estado del árbol en el commit local `wip(vitrina)` (no se empujó; la CI no lo ha visto). Lo hecho:
+
+- **Datos:** `DatosDemo` = `DatosDemoA | DatosDemoB` (el B trae `lote: LoteB` y `listas`); el manifiesto declara
+  `demo-b` (plan v1.1, corrida real de 20, línea base `-base-v2`, informe en
+  `data/vitrina/demo-b/suscripcion-planlang-b-001-20/`, playground con `claves_del_desenlace`); el freno AU-S2-19 pasa
+  a «un demo que la vitrina no sabe pintar se detiene con su nombre». `exportar_grafo --demo b` →
+  `data/vitrina/demo-b/grafo-codigo.json`.
+- **Rutas (ADR-014, por escribir):** `src/lib/demos.ts`; `ruta(idioma, pantalla, id?, demo)` (el A sin prefijo, el B
+  bajo `/demo-b/`); `Marco`/`Barra` con `demo` y conmutador A·B solo en las pantallas del B; el cuerpo de cada
+  pantalla vive en `src/components/paginas/*.tsx` y las rutas del A y del B (`src/app/[idioma]/demo-b/…`) lo envuelven;
+  `metadatos()` antepone «Demo B ·» al título.
+- **Núcleo del playground:** `minutos_por_persona: number | null` (el plan B no declara costo humano: la isla cuenta
+  casos, no inventa minutos), `personas_plan` en las consecuencias, `claves_del_desenlace` por demo en el manifiesto.
+- **Vistas que ya corren con el B** (sonda `tests/unit/vitrina/_sonda-demo-b.test.ts`, TEMPORAL, sin comitear):
+  Brecha, Plan, Playground, Entrada (esta todavía pinta solo el A). Categorías de regla por demo y por nodo en
+  `motivo-pausa.ts` (B: carga, zonaGris, coincidencia, mismaPersona, riesgo, inconsistencias, rechazar). Textos por
+  demo: `src/textos/demo.ts` (`DEMO_TEXTO`), `DESCRIPCION_PAGINA` por demo, y la copia propia del B en
+  `src/textos/demo-b/{brecha,plan}.ts` (para que la guardia «copia contra plan» la lea contra el plan B).
+
+Pendiente, en este orden:
+1. Vista de **Agente** (`agente.ts`: `CATEGORIAS[d.id]`, `planBeneficios` solo del A, copia B de nodos, ficha, pausas
+   del oficial) y de **Caso** (`caso.ts`: la entrada del B son tres documentos, campos, expediente); typecheck hoy:
+   10 errores en `agente.ts` y 16 en `caso.ts`.
+2. **Entrada** con las dos filas reales; **Fichas** (ficha del agente B, reproducibilidad B).
+3. Pruebas: `copia-contra-plan` por demo (top-level contra el plan A, `src/textos/demo-b/` contra el plan B;
+   `LECTURA_NOTA["demo-a"]`, `PASO_FUERA["demo-a"]`), `plan.test` (`CRITERIO.lider["demo-a"]`), `agente*.test`,
+   `motivo-pausa.test`, `mapa-publicado` (caen por `CATEGORIAS`), pytest de `exportar_grafo` con el B; guardia nueva:
+   ninguna página del B lleva vocabulario del A (afiliado, auditor, Texas…) ni al revés; demos en rojo.
+4. ADR-014, `lighthouse-urls.json`/`perf-budget.json` con rutas del B, e2e del B, capturas con techo, matriz de la
+   mirada de FORMA «no vista», fichas y `brochure-export.json`; borrar la sonda.
+
 ## Desviación del plan
 
 1. **Rutas de la orden** (`SPRINT_003-orden.md:65`): `audita-sprint` y `plan-sprint` viven en

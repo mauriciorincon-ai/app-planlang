@@ -14,6 +14,7 @@ import {
   PayloadPausaSchema,
 } from "@/lib/datos/esquemas";
 import type { DatosDemo } from "@/lib/datos/vitrina";
+import { DEMO_TEXTO } from "@/textos/demo";
 import { ruta } from "@/lib/ruta";
 import { VALORES } from "@/textos/agente";
 import {
@@ -207,9 +208,16 @@ export function pieDeCorrida(d: DatosDemo, i: Idioma): string {
 
 export function portadaCasos(d: DatosDemo, i: Idioma) {
   return {
-    antetitulo: X(PORTADA.antetitulo(d.corrida.manifiesto.corrida_id), i),
+    antetitulo: X(
+      PORTADA.antetitulo({
+        demo: DEMO_TEXTO[d.id].corto,
+        corrida: d.corrida.manifiesto.corrida_id,
+      }),
+      i,
+    ),
     antetituloIndice: X(
       PORTADA.antetituloIndice({
+        demo: DEMO_TEXTO[d.id].corto,
         corrida: d.corrida.manifiesto.corrida_id,
         n: d.corrida.trazas.length,
       }),

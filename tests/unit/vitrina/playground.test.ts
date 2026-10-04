@@ -47,7 +47,7 @@ describe("el playground en una mirada", () => {
     expect(r.cambios.map((x) => [x.id, x.antes, x.ahora])).toEqual([
       ["A-008", "solo", "persona"],
     ]);
-    expect(r.minutos - r.minutos_plan).toBe(12);
+    expect(r.minutos! - r.minutos_plan!).toBe(12);
     expect(r.introducidos).toEqual([]);
     // Y 0,80 y 0,85 no cambian nada: el ejemplo es el primer valor que mueve un caso.
     for (const v of [0.8, 0.85])

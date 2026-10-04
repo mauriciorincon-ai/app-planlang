@@ -33,7 +33,9 @@
       "playground": {
         "senal_propuesta": "propuesta",
         "valor_favorable": "aprobar",
-        "claves_previas": ["extraccion"]
+        "claves_previas": [
+          "extraccion"
+        ]
       },
       "spike": {
         "fecha": "2026-09-26",
@@ -46,6 +48,38 @@
           "archivo": "data/vitrina/demo-a/spike-2026-09-26/lectura.json",
           "sha256": "b138df37c5d1987cbeac89657059fa2e60cf51d2040a502b64ae630dd6205527"
         }
+      }
+    },
+    "demo-b": {
+      "plan": {
+        "archivo": "plans/demo-b/v1.1.json",
+        "huella": "30728d949db2731d6a84d5e7f6191c03fcc49fdc702823e20dd3149648bc5910"
+      },
+      "corrida": {
+        "ruta": "runs/demo-b/suscripcion-planlang-b-001-20",
+        "huella": "112ccac9cf602829267257782355a8c2023f965781545d1b23a558825ff5fa99",
+        "sprint": 3
+      },
+      "repeticiones": [],
+      "linea_base": {
+        "ruta": "runs/demo-b/suscripcion-planlang-b-001-20-base-v2",
+        "huella": "b4c91ee3933db445a763e6fd4ead18c91b9a54a565393247612661cbe43d7be7"
+      },
+      "informe": {
+        "archivo": "data/vitrina/demo-b/suscripcion-planlang-b-001-20/informe.json",
+        "huella": "2fb21628c6914a5c726f3484e5d1252a6b26bb6b2fb9e76bf66d2c09fa15dafa"
+      },
+      "playground": {
+        "senal_propuesta": "propuesta",
+        "valor_favorable": "aprobar",
+        "claves_previas": [
+          "extraccion",
+          "extraccion_correcta"
+        ],
+        "claves_del_desenlace": [
+          "conclusiones_sin_cita",
+          "inyeccion_neutralizada"
+        ]
       }
     }
   }

@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import type { Idioma } from "@core/formatos/bilingue";
+import type { IdDemo } from "@/lib/demos";
 import type { Pantalla } from "@/lib/ruta";
 import { SALTO } from "@/textos/comun";
 import { Barra } from "./barra";
@@ -12,11 +13,14 @@ export function Marco({
   pagina,
   id,
   corrida,
+  demo = "demo-a",
   children,
 }: {
   idioma: Idioma;
   pagina: Pantalla;
   id?: string;
+  /** El demo de la pantalla: las pestañas y el idioma enlazan dentro de él (ADR-014). */
+  demo?: IdDemo;
   /** De qué corrida salen los datos de la pantalla (va al pie). */
   corrida?: string;
   children: ReactNode;
@@ -31,7 +35,7 @@ export function Marco({
         {SALTO[idioma]}
       </a>
       <Rotulo idioma={idioma} />
-      <Barra idioma={idioma} pagina={pagina} id={id} />
+      <Barra idioma={idioma} pagina={pagina} id={id} demo={demo} />
       <main id="contenido" tabIndex={-1} className="outline-none">
         {children}
       </main>

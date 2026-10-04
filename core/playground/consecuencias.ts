@@ -91,12 +91,15 @@ export interface Consecuencias {
   evitados: string[];
   no_observados: string[];
   personas: number;
-  minutos: number;
+  /** Los casos que el plan registró con persona, sobre la misma población que `personas` (sin los no observados). */
+  personas_plan: number;
+  /** `null` si el plan no declara el costo humano por caso (el playground no lo inventa). */
+  minutos: number | null;
   /**
    * Los minutos del plan sobre la misma población que `minutos` (AU-S2-22): los casos que el plan registró con
-   * persona, sin los que con estos umbrales quedan «no observados».
+   * persona, sin los que con estos umbrales quedan «no observados». `null` como `minutos`.
    */
-  minutos_plan: number;
+  minutos_plan: number | null;
   criterios: CriterioRecalculado[];
   cumplen: number;
 }
@@ -411,8 +414,13 @@ export function consecuencias(c: Compacto, umbrales: Umbrales): Consecuencias {
       .filter((x) => x.efecto === "no_observado")
       .map((x) => x.id),
     personas,
-    minutos: personas * c.minutos_por_persona,
-    minutos_plan: personas_plan * c.minutos_por_persona,
+    personas_plan,
+    minutos:
+      c.minutos_por_persona === null ? null : personas * c.minutos_por_persona,
+    minutos_plan:
+      c.minutos_por_persona === null
+        ? null
+        : personas_plan * c.minutos_por_persona,
     criterios,
     cumplen: criterios.filter((x) => x.estado === "cumple").length,
   };

@@ -96,6 +96,11 @@ export interface OpcionesDeDemo {
   parcial?: PropuestaParcial;
   /** Claves que se conocen al decidir además de las señales que leen las aristas (las escribe un nodo escritor). */
   claves_previas: string[];
+  /**
+   * Señales propias del demo que se escriben DESPUÉS de decidir (el redactor, la guardia de salida): en un camino que
+   * el agente no tomó no se conocen. El núcleo trae las del formato de traza; las del demo las declara su manifiesto.
+   */
+  claves_del_desenlace?: string[];
 }
 
 export interface PropuestaParcial {
@@ -114,8 +119,11 @@ export interface Compacto {
   nodos_jugables: string[];
   /** El desenlace de cada rama posible de un nodo jugable. */
   desenlace_de_rama: Record<string, Desenlace>;
-  /** Minutos de una persona por caso que pasa por la pausa (costo humano que el plan declara en sus umbrales). */
-  minutos_por_persona: number;
+  /**
+   * Minutos de una persona por caso que pasa por la pausa (costo humano que el plan declara en sus umbrales); `null`
+   * si el plan no lo declara: el playground cuenta los casos que van a una persona y no inventa sus minutos.
+   */
+  minutos_por_persona: number | null;
   /** La señal de la propuesta del agente y su valor favorable (del manifiesto del demo). */
   propuesta: { senal: string; favorable: string; parcial?: PropuestaParcial };
   casos: CasoCompacto[];

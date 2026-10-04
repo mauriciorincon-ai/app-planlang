@@ -39,6 +39,10 @@ export const BARRA = {
   inicio: tb("planlang, entrada", "planlang, home"),
   espanol: tb("Español", "Spanish"),
   ingles: tb("Inglés", "English"),
+  /** El conmutador de demo en las pantallas del B (ADR-014). */
+  demo: tb("Demo", "Demo"),
+  demoA: tb("Demo A · autorización previa", "Demo A · prior authorization"),
+  demoB: tb("Demo B · vinculación", "Demo B · onboarding"),
 };
 
 export const PERFIL = {

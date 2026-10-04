@@ -69,18 +69,18 @@ describe("datos de la vitrina", () => {
     await expect(cargarDemo("demo-z")).rejects.toThrow(/no declara «demo-z»/);
   });
 
-  it("AU-S2-19 · rojo: un segundo demo en el manifiesto se detiene con su nombre (las páginas no tienen [demo])", async () => {
+  it("AU-S2-19 · rojo: un demo del manifiesto que la vitrina no sabe pintar se detiene con su nombre (ADR-014)", async () => {
     const dir = copia();
     const ruta = join(dir, "data/vitrina/manifiesto.json");
     const m = JSON.parse(readFileSync(ruta, "utf8"));
-    m.demos["demo-b"] = m.demos["demo-a"];
+    m.demos["demo-c"] = m.demos["demo-a"];
     writeFileSync(ruta, JSON.stringify(m));
     await expect(cargarDemo("demo-a", dir)).rejects.toThrow(
-      /declara «demo-b», pero la vitrina solo pinta «demo-a»; un demo nuevo exige rutas por demo/,
+      /declara «demo-c», que la vitrina no sabe pintar \(demo-a, demo-b\); un demo nuevo exige sus rutas/,
     );
   });
 
-  it("AU-S2-19 · rojo: una corrida sin plan de beneficios se nombra (antes, un TypeError sin nombre)", async () => {
+  it("AU-S2-19 · rojo: una corrida sin su mundo (el plan de beneficios del A) se nombra (antes, un TypeError sin nombre)", async () => {
     const dir = copia();
     const rutaM = join(dir, "data/vitrina/manifiesto.json");
     const m = JSON.parse(readFileSync(rutaM, "utf8"));
@@ -101,8 +101,10 @@ describe("datos de la vitrina", () => {
     writeFileSync(rutaI, JSON.stringify(infSellado));
     m.demos["demo-a"].informe.huella = infSellado.huella;
     writeFileSync(rutaM, JSON.stringify(m));
+    // Desde el S3 la corrida cita un solo mundo (plan de beneficios o listas): el lector la rechaza por esquema y lo
+    // dice con su nombre, antes de que la vitrina la pinte.
     await expect(cargarDemo("demo-a", dir)).rejects.toThrow(
-      /no declara su plan de beneficios/,
+      /ESQUEMA .*la corrida cita un solo mundo: plan de beneficios \(A\) o listas \(B\)/,
     );
   });
 

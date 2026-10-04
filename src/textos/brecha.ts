@@ -6,21 +6,43 @@
  */
 import type { CategoriaBrecha } from "@core/brecha/brechas-no-previstas";
 import { tb, type TextoBilingue } from "@core/formatos/bilingue";
+import type { IdDemo } from "@/lib/demos";
+import {
+  DIO_SUPUESTO_B,
+  LECTURA_SUPUESTO_B,
+  NODO_EN_FRASE_B,
+} from "./demo-b/brecha";
 
 type Plantilla<P> = (p: P) => TextoBilingue;
 
 export const TITULO_PAGINA = tb("La brecha · planlang", "The gap · planlang");
-export const DESCRIPCION_PAGINA = tb(
-  "El informe de brecha del demo A: un verificador sin modelo de lenguaje compara lo que el plan prometió con lo que el agente hizo y lo publica con sus fallas. Simulación · no operativo.",
-  "Demo A's gap report: a verifier with no language model compares what the plan promised with what the agent did and publishes it with its failures. Simulation · not operational.",
-);
+export const DESCRIPCION_PAGINA: Record<IdDemo, TextoBilingue> = {
+  "demo-a": tb(
+    "El informe de brecha del demo A: un verificador sin modelo de lenguaje compara lo que el plan prometió con lo que el agente hizo y lo publica con sus fallas. Simulación · no operativo.",
+    "Demo A's gap report: a verifier with no language model compares what the plan promised with what the agent did and publishes it with its failures. Simulation · not operational.",
+  ),
+  "demo-b": tb(
+    "El informe de brecha del demo B: un verificador sin modelo de lenguaje compara lo que el plan prometió con lo que el agente hizo y lo publica con sus fallas. Simulación · no operativo.",
+    "Demo B's gap report: a verifier with no language model compares what the plan promised with what the agent did and publishes it with its failures. Simulation · not operational.",
+  ),
+};
 
 export const PORTADA = {
-  antetitulo: ((p: { corrida: string; fecha: string }) =>
+  antetitulo: ((p: {
+    demo: TextoBilingue;
+    dominio: TextoBilingue;
+    corrida: string;
+    fecha: string;
+  }) =>
     tb(
-      `Demo A · autorizaciones médicas · corrida ${p.corrida} · ${p.fecha}`,
-      `Demo A · medical prior authorizations · run ${p.corrida} · ${p.fecha}`,
-    )) as Plantilla<{ corrida: string; fecha: string }>,
+      `${p.demo.es} · ${p.dominio.es} · corrida ${p.corrida} · ${p.fecha}`,
+      `${p.demo.en} · ${p.dominio.en} · run ${p.corrida} · ${p.fecha}`,
+    )) as Plantilla<{
+    demo: TextoBilingue;
+    dominio: TextoBilingue;
+    corrida: string;
+    fecha: string;
+  }>,
   titulo: tb(
     "La brecha entre el plan y lo que hizo el agente",
     "The gap between the plan and what the agent did",
@@ -135,7 +157,7 @@ export interface LecturaDeFalla {
   significa: TextoBilingue;
 }
 
-export const LECTURA_SUPUESTO: Record<string, LecturaDeFalla> = {
+const LECTURA_SUPUESTO_A: Record<string, LecturaDeFalla> = {
   "S3:refutado": {
     frase: tb(
       "repartir el trabajo entre varios agentes resultó más lento que un solo agente (S3)",
@@ -171,6 +193,15 @@ export const LECTURA_SUPUESTO: Record<string, LecturaDeFalla> = {
   },
 };
 
+/** Las lecturas de cada demo: los ids de sus planes se cruzan (S1, C3…), por eso van por demo. */
+export const LECTURA_SUPUESTO: Record<
+  IdDemo,
+  Record<string, LecturaDeFalla>
+> = {
+  "demo-a": LECTURA_SUPUESTO_A,
+  "demo-b": LECTURA_SUPUESTO_B,
+};
+
 export const LECTURA_BRECHA: Record<
   string,
   Omit<LecturaDeFalla, "frase" | "planeo"> & {
@@ -201,7 +232,7 @@ export const LECTURA_BRECHA: Record<
 };
 
 /** El renglón de un criterio que se cumplió con una nota: lo que la nota significa. */
-export const LECTURA_NOTA: Record<string, Plantilla<number>> = {
+const LECTURA_NOTA_A: Record<string, Plantilla<number>> = {
   C7: (() =>
     tb(
       "Cumple, porque la regla mira la mediana. Si el límite debe valer caso por caso, la regla tiene que decirlo.",
@@ -218,7 +249,7 @@ export const LECTURA_NOTA: Record<string, Plantilla<number>> = {
  * «Qué pasó» de un criterio con casos fuera de su población, dicho con el nombre de esa población (editorial por
  * criterio; sin entrada, la vista usa `PASO.fuera`, que lo dice en general).
  */
-export const PASO_FUERA: Record<
+const PASO_FUERA_A: Record<
   string,
   Plantilla<{ dentro: number; fuera: number }>
 > = {
@@ -227,6 +258,19 @@ export const PASO_FUERA: Record<
       `Los ${p.dentro} casos de alto costo pasaron por una persona. Otros ${p.fuera} no tienen costo medido —el paso que lo escribe no corrió en ellos— y quedan fuera de la cuenta.`,
       `The ${p.dentro} high-cost cases went through a person. Another ${p.fuera} have no measured cost —the step that writes it did not run for them— and are left out of the count.`,
     )) as Plantilla<{ dentro: number; fuera: number }>,
+};
+
+/** Por demo (los ids de criterio de sus planes se cruzan); el B no tiene criterios con nota ni casos fuera. */
+export const LECTURA_NOTA: Record<IdDemo, Record<string, Plantilla<number>>> = {
+  "demo-a": LECTURA_NOTA_A,
+  "demo-b": {},
+};
+export const PASO_FUERA: Record<
+  IdDemo,
+  Record<string, Plantilla<{ dentro: number; fuera: number }>>
+> = {
+  "demo-a": PASO_FUERA_A,
+  "demo-b": {},
 };
 
 /** Lo que pasó, armado con las cifras del informe. */
@@ -294,7 +338,7 @@ export const PASO = {
 };
 
 /** Nombre llano de cada nodo dentro de una frase («el extractor no entregó…»). */
-export const NODO_EN_FRASE: Record<string, TextoBilingue> = {
+const NODO_EN_FRASE_A: Record<string, TextoBilingue> = {
   enrutador: tb("el enrutador", "the router"),
   extractor: tb("el extractor", "the extractor"),
   aclaracion: tb("el nodo de aclaración", "the clarification node"),
@@ -306,6 +350,11 @@ export const NODO_EN_FRASE: Record<string, TextoBilingue> = {
   pausa_humana: tb("la pausa humana", "the human pause"),
   redactor: tb("el redactor", "the writer"),
   guardia_salida: tb("la guardia de salida", "the output guard"),
+};
+
+export const NODO_EN_FRASE: Record<IdDemo, Record<string, TextoBilingue>> = {
+  "demo-a": NODO_EN_FRASE_A,
+  "demo-b": NODO_EN_FRASE_B,
 };
 
 export const BALANCE = {
@@ -888,8 +937,14 @@ export const CATEGORIA_CORTA: Record<CategoriaBrecha, TextoBilingue> = {
 };
 
 /** El nombre corto del criterio más exigente (el de `pass^k`), en la lectura de § 3. */
-export const CRITERIO_EXIGENTE: Record<string, TextoBilingue> = {
-  C5: tb("la exactitud de extracción", "extraction accuracy"),
+export const CRITERIO_EXIGENTE: Record<
+  IdDemo,
+  Record<string, TextoBilingue>
+> = {
+  "demo-a": {
+    C5: tb("la exactitud de extracción", "extraction accuracy"),
+  },
+  "demo-b": {},
 };
 
 export const CATEGORIA_LECTURA: Record<string, TextoBilingue> = {
@@ -921,34 +976,42 @@ export const SUPUESTOS = {
     "Los supuestos son lo que el plan dio por cierto sin haberlo probado. Cada uno trae una prueba barata; el verificador la corre y dice si se confirmó, se refutó o quedó sin probar.",
     "Assumptions are what the plan took as true without having tested it. Each comes with a cheap test; the verifier runs it and says whether it was confirmed, refuted or left untested.",
   ),
-  /** La lectura llana de lo que salió de cada supuesto, por id y estado. */
+  /** La lectura llana de lo que salió de cada supuesto, por demo, id y estado (los ids de sus planes se cruzan). */
   dio: {
-    "S1:sin_probar": ((n: number) =>
-      tb(
-        `La prueba pedía medir si la confianza del modelo separa aciertos de errores. El modelo acertó los ${n} casos: sin errores, esa medida no existe y el supuesto queda abierto.`,
-        `The test asked whether the model’s confidence separates hits from errors. The model got all ${n} cases right: with no errors, that measure does not exist and the assumption stays open.`,
-      )) as Plantilla<number>,
-    "S3:refutado": ((p: {
-      exactitud: string;
-      exactitudBase: string;
-      latencia: string;
-      latenciaBase: string;
-    }) =>
-      tb(
-        `El plan suponía que repartir el trabajo entre varios agentes no rendiría peor que uno solo. Acertó más (${p.exactitud} frente a ${p.exactitudBase}) pero tardó más (${p.latencia} frente a ${p.latenciaBase}), y el plan solo tolera la misma demora: refutado.`,
-        `The plan assumed that splitting the work among several agents would do no worse than one. It got more right (${p.exactitud} against ${p.exactitudBase}) but took longer (${p.latencia} against ${p.latenciaBase}), and the plan only tolerates the same delay: refuted.`,
-      )) as Plantilla<{
-      exactitud: string;
-      exactitudBase: string;
-      latencia: string;
-      latenciaBase: string;
-    }>,
-    "S2:confirmado": ((p: { n: number; u: number }) =>
-      tb(
-        `Los ${p.n} casos con datos faltantes que recibieron respuesta se cerraron en ${p.u} aclaraciones o menos.`,
-        `The ${p.n} cases with missing data that got an answer were closed in ${p.u} clarifications or fewer.`,
-      )) as Plantilla<{ n: number; u: number }>,
-  } as Record<string, (p: never) => TextoBilingue>,
+    "demo-a": {
+      "S1:sin_probar": ((n: number) =>
+        tb(
+          `La prueba pedía medir si la confianza del modelo separa aciertos de errores. El modelo acertó los ${n} casos: sin errores, esa medida no existe y el supuesto queda abierto.`,
+          `The test asked whether the model’s confidence separates hits from errors. The model got all ${n} cases right: with no errors, that measure does not exist and the assumption stays open.`,
+        )) as Plantilla<number>,
+      "S3:refutado": ((p: {
+        exactitud: string;
+        exactitudBase: string;
+        latencia: string;
+        latenciaBase: string;
+      }) =>
+        tb(
+          `El plan suponía que repartir el trabajo entre varios agentes no rendiría peor que uno solo. Acertó más (${p.exactitud} frente a ${p.exactitudBase}) pero tardó más (${p.latencia} frente a ${p.latenciaBase}), y el plan solo tolera la misma demora: refutado.`,
+          `The plan assumed that splitting the work among several agents would do no worse than one. It got more right (${p.exactitud} against ${p.exactitudBase}) but took longer (${p.latencia} against ${p.latenciaBase}), and the plan only tolerates the same delay: refuted.`,
+        )) as Plantilla<{
+        exactitud: string;
+        exactitudBase: string;
+        latencia: string;
+        latenciaBase: string;
+      }>,
+      "S2:confirmado": ((p: { n: number; u: number }) =>
+        tb(
+          `Los ${p.n} casos con datos faltantes que recibieron respuesta se cerraron en ${p.u} aclaraciones o menos.`,
+          `The ${p.n} cases with missing data that got an answer were closed in ${p.u} clarifications or fewer.`,
+        )) as Plantilla<{ n: number; u: number }>,
+    },
+    "demo-b": DIO_SUPUESTO_B,
+  } as Record<IdDemo, Record<string, (p: never) => TextoBilingue>>,
+  /** La nota de la cifra de un supuesto de tasa cuando el plan no la ata a un tope (el B). */
+  aciertosNota: tb(
+    "resueltos como dice la verdad conocida",
+    "resolved as the known truth says",
+  ),
   noExiste: tb(
     "no existe: no hubo errores",
     "does not exist: there were no errors",

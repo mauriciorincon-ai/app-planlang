@@ -285,7 +285,7 @@ describe("los ejemplos de la maqueta, medidos", () => {
     expect(r.cambios.map((x) => [x.id, x.antes, x.ahora, x.efecto])).toEqual([
       ["A-008", "solo", "persona", "revision_de_mas"],
     ]);
-    expect(r.minutos - r.minutos_plan).toBe(12);
+    expect(r.minutos! - r.minutos_plan!).toBe(12);
     expect(r.introducidos).toEqual([]);
     const a008 = r.cambios[0]!;
     expect(a008.ahora_decide?.senal).toBe("senal_confianza");
@@ -324,8 +324,8 @@ describe("los ejemplos de la maqueta, medidos", () => {
     ]);
     expect(r.no_observados).toEqual(["A-007"]);
     // AU-S2-22: los minutos se comparan sobre la misma población; el caso que nadie midió no cuenta como ahorro.
-    expect(r.minutos - r.minutos_plan).toBe(0);
-    expect(r.minutos_plan).toBe(r.personas * c.minutos_por_persona);
+    expect(r.minutos! - r.minutos_plan!).toBe(0);
+    expect(r.minutos_plan).toBe(r.personas * c.minutos_por_persona!);
   });
 
   it("U3 = 1: A-007 llega a una persona con una aclaración menos; A-008 pasa a una persona", async () => {
@@ -524,19 +524,28 @@ describe("los cuatro efectos dependen de la verdad conocida (DA-04)", () => {
 });
 
 describe("el compacto se niega a adivinar (las entradas)", () => {
-  it("un plan con dos costos humanos distintos en sus umbrales no se compacta", async () => {
+  it("un plan con dos costos humanos distintos en sus umbrales no se compacta; sin ninguno, no se inventa (S3)", async () => {
     const d = await datosDemo();
     const plan = structuredClone(d.plan) as Plan;
     plan.umbrales[1]!.costo_humano_por_caso_min = 15;
     expect(() =>
       compactar(plan, d.corrida, d.lote, d.informe, d.manifiesto.playground),
-    ).toThrow(/varios costo humano/);
+    ).toThrow(/varios costos humanos/);
     for (const u of plan.umbrales)
       delete (u as { costo_humano_por_caso_min?: number })
         .costo_humano_por_caso_min;
-    expect(() =>
-      compactar(plan, d.corrida, d.lote, d.informe, d.manifiesto.playground),
-    ).toThrow(/ningún costo humano/);
+    // El plan B no declara costo humano: el playground cuenta los casos que van a una persona y no pone minutos.
+    const c = compactar(
+      plan,
+      d.corrida,
+      d.lote,
+      d.informe,
+      d.manifiesto.playground,
+    );
+    expect(c.minutos_por_persona).toBe(null);
+    const r = consecuencias(c, umbralesDelPlan(c));
+    expect([r.minutos, r.minutos_plan]).toEqual([null, null]);
+    expect(r.personas).toBe(r.personas_plan);
   });
   it("un informe sin un criterio del plan, o una traza sin su caso en el lote, se nombran", async () => {
     const d = await datosDemo();

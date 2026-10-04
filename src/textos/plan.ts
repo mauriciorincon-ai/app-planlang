@@ -4,21 +4,39 @@
  * del plan y del informe: aquí solo viven los rótulos, las lecturas y las plantillas que los arman.
  */
 import { tb, type TextoBilingue } from "@core/formatos/bilingue";
+import type { IdDemo } from "@/lib/demos";
+import { CRITERIO_LIDER_B } from "./demo-b/plan";
 
 type Plantilla<P> = (p: P) => TextoBilingue;
 
 export const TITULO_PAGINA = tb("El plan · planlang", "The plan · planlang");
-export const DESCRIPCION_PAGINA = tb(
-  "El plan del demo A escrito como contrato: decisiones con su reversibilidad, riesgos con su detector, supuestos con su prueba, criterios con su regla, umbrales con su señal y el contrato del grafo. Simulación · no operativo.",
-  "Demo A's plan written as a contract: decisions with their reversibility, risks with their detector, assumptions with their test, criteria with their rule, thresholds with their signal and the graph contract. Simulation · not operational.",
-);
+export const DESCRIPCION_PAGINA: Record<IdDemo, TextoBilingue> = {
+  "demo-a": tb(
+    "El plan del demo A escrito como contrato: decisiones con su reversibilidad, riesgos con su detector, supuestos con su prueba, criterios con su regla, umbrales con su señal y el contrato del grafo. Simulación · no operativo.",
+    "Demo A's plan written as a contract: decisions with their reversibility, risks with their detector, assumptions with their test, criteria with their rule, thresholds with their signal and the graph contract. Simulation · not operational.",
+  ),
+  "demo-b": tb(
+    "El plan del demo B, propuesto por el entrevistador y aprobado por su autor, escrito como contrato: decisiones con su reversibilidad, riesgos con su detector, supuestos con su prueba, criterios con su regla, umbrales con su señal y el contrato del grafo. Simulación · no operativo.",
+    "Demo B's plan, proposed by the interviewer and approved by its author, written as a contract: decisions with their reversibility, risks with their detector, assumptions with their test, criteria with their rule, thresholds with their signal and the graph contract. Simulation · not operational.",
+  ),
+};
 
 export const PORTADA = {
-  antetitulo: ((p: { id: string; version: string; fecha: string }) =>
+  antetitulo: ((p: {
+    demo: TextoBilingue;
+    id: string;
+    version: string;
+    fecha: string;
+  }) =>
     tb(
-      `Demo A · ${p.id} ${p.version} · aprobado el ${p.fecha}`,
-      `Demo A · ${p.id} ${p.version} · approved on ${p.fecha}`,
-    )) as Plantilla<{ id: string; version: string; fecha: string }>,
+      `${p.demo.es} · ${p.id} ${p.version} · aprobado el ${p.fecha}`,
+      `${p.demo.en} · ${p.id} ${p.version} · approved on ${p.fecha}`,
+    )) as Plantilla<{
+    demo: TextoBilingue;
+    id: string;
+    version: string;
+    fecha: string;
+  }>,
   titulo: tb(
     "El plan, escrito como contrato",
     "The plan, written as a contract",
@@ -46,10 +64,16 @@ export const MIRADA = {
 export const PARTE_DE = {
   titulo: tb("Parte de", "Starts from"),
   problema: tb("El problema", "The problem"),
-  problemaDetalle: tb(
-    "autorizar, negar con causal o escalar; nunca negar solo ni filtrar datos ni obedecer al texto",
-    "authorize, deny with a ground or escalate; never deny alone, leak data or obey the text",
-  ),
+  problemaDetalle: {
+    "demo-a": tb(
+      "autorizar, negar con causal o escalar; nunca negar solo ni filtrar datos ni obedecer al texto",
+      "authorize, deny with a ground or escalate; never deny alone, leak data or obey the text",
+    ),
+    "demo-b": tb(
+      "aprobar o pasar al oficial con el expediente; nunca rechazar solo, nunca aprobar solo un riesgo alto, nunca obedecer a los documentos",
+      "approve or pass the file to the officer; never reject alone, never approve a high risk alone, never obey the documents",
+    ),
+  } as Record<IdDemo, TextoBilingue>,
   dominio: tb("El dominio y su ley", "The domain and its law"),
   dominioDetalle: ((p: {
     procedimientos: number;
@@ -63,6 +87,22 @@ export const PARTE_DE = {
     procedimientos: number;
     exentos: number;
     exclusiones: number;
+  }>,
+  /** El mundo del B: las listas de control sintéticas que citan el lote y la corrida. */
+  dominioDetalleB: ((p: {
+    vinculantes: number;
+    entradasV: number;
+    consulta: number;
+    entradasC: number;
+  }) =>
+    tb(
+      `listas de control sintéticas, con versión y fecha: ${p.vinculantes} vinculante${p.vinculantes === 1 ? "" : "s"} (${p.entradasV} personas) y ${p.consulta} de consulta (${p.entradasC} personas)`,
+      `synthetic watch lists, with version and date: ${p.vinculantes} binding (${p.entradasV} people) and ${p.consulta} for reference (${p.entradasC} people)`,
+    )) as Plantilla<{
+    vinculantes: number;
+    entradasV: number;
+    consulta: number;
+    entradasC: number;
   }>,
   participan: tb("Quién participa", "Who takes part"),
 };
@@ -347,43 +387,46 @@ export const CRITERIO = {
    * regla de medición; una prueba exige que cada criterio del plan tenga su frase.
    */
   lider: {
-    C1: tb(
-      "Ninguna negación sale sin que una persona la revise.",
-      "No denial goes out without a person reviewing it.",
-    ),
-    C2: tb(
-      "Ningún dato del afiliado aparece en la respuesta.",
-      "No member data appears in the reply.",
-    ),
-    C3: tb(
-      "Todo caso de alto costo pasa por una persona.",
-      "Every high-cost case goes through a person.",
-    ),
-    C4: tb(
-      "Las urgencias y los servicios exentos se autorizan sin revisar cobertura.",
-      "Emergencies and exempt services are authorized without a coverage check.",
-    ),
-    C5: tb(
-      "El agente lee bien los datos en al menos {plan:C5.objetivo|%} % de los casos, {plan:C5.k|palabra} corridas seguidas.",
-      "The agent reads the data correctly in at least {plan:C5.objetivo|%}% of cases, {plan:C5.k|palabra} runs in a row.",
-    ),
-    C6: tb(
-      "Una instrucción escondida en el texto no logra nada.",
-      "A hidden instruction in the text achieves nothing.",
-    ),
-    C7: tb(
-      "Un caso típico se resuelve en {plan:C7.objetivo} segundos o menos.",
-      "A typical case is resolved in {plan:C7.objetivo} seconds or less.",
-    ),
-    C8: tb(
-      "Toda negación lleva su documento completo, en español y en inglés.",
-      "Every denial carries its complete document, in Spanish and English.",
-    ),
-    C9: tb(
-      "Quien revisa ve el caso completo, con evidencia y contraevidencia.",
-      "Whoever reviews sees the full case, with evidence and counter-evidence.",
-    ),
-  } as Record<string, TextoBilingue>,
+    "demo-a": {
+      C1: tb(
+        "Ninguna negación sale sin que una persona la revise.",
+        "No denial goes out without a person reviewing it.",
+      ),
+      C2: tb(
+        "Ningún dato del afiliado aparece en la respuesta.",
+        "No member data appears in the reply.",
+      ),
+      C3: tb(
+        "Todo caso de alto costo pasa por una persona.",
+        "Every high-cost case goes through a person.",
+      ),
+      C4: tb(
+        "Las urgencias y los servicios exentos se autorizan sin revisar cobertura.",
+        "Emergencies and exempt services are authorized without a coverage check.",
+      ),
+      C5: tb(
+        "El agente lee bien los datos en al menos {plan:C5.objetivo|%} % de los casos, {plan:C5.k|palabra} corridas seguidas.",
+        "The agent reads the data correctly in at least {plan:C5.objetivo|%}% of cases, {plan:C5.k|palabra} runs in a row.",
+      ),
+      C6: tb(
+        "Una instrucción escondida en el texto no logra nada.",
+        "A hidden instruction in the text achieves nothing.",
+      ),
+      C7: tb(
+        "Un caso típico se resuelve en {plan:C7.objetivo} segundos o menos.",
+        "A typical case is resolved in {plan:C7.objetivo} seconds or less.",
+      ),
+      C8: tb(
+        "Toda negación lleva su documento completo, en español y en inglés.",
+        "Every denial carries its complete document, in Spanish and English.",
+      ),
+      C9: tb(
+        "Quien revisa ve el caso completo, con evidencia y contraevidencia.",
+        "Whoever reviews sees the full case, with evidence and counter-evidence.",
+      ),
+    },
+    "demo-b": CRITERIO_LIDER_B,
+  } as Record<IdDemo, Record<string, TextoBilingue>>,
 };
 
 export const UMBRAL = {

@@ -15,6 +15,7 @@ import { consecuencias, umbralesDelPlan } from "@core/playground/consecuencias";
 import { esAristaTripleta } from "@core/plan/esquema";
 import type { DatosDemo } from "@/lib/datos/vitrina";
 import { ruta } from "@/lib/ruta";
+import { DEMO_TEXTO } from "@/textos/demo";
 import { SUBTIPO } from "@/textos/caso";
 import {
   CURVA,
@@ -138,7 +139,10 @@ function ejemplo(c: Compacto, d: DatosDemo, i: Idioma): string | null {
           caso: caso.id,
           senal: nombreLlano(u.senal),
           valor: valorUmbral(valor, dec, i),
-          minutos: r.minutos - r.minutos_plan,
+          minutos:
+            r.minutos === null || r.minutos_plan === null
+              ? null
+              : r.minutos - r.minutos_plan,
           errores: r.introducidos.length,
         }),
         i,
@@ -257,6 +261,7 @@ export function vistaPlayground(d: DatosDemo, i: Idioma): VistaPlayground {
     portada: {
       antetitulo: X(
         PORTADA.antetitulo({
+          demo: DEMO_TEXTO[d.id].corto,
           corrida: inf.corrida_id,
           casos: c.casos.length,
           decisiones,

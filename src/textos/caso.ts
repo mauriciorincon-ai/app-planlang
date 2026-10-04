@@ -4,28 +4,35 @@
  * se ARMA aquí con plantillas desde la traza: ningún caso lleva texto escrito a mano.
  */
 import { tb, type TextoBilingue } from "@core/formatos/bilingue";
+import type { IdDemo } from "@/lib/demos";
 
 type Plantilla<P> = (p: P) => TextoBilingue;
 
 export const TITULO_PAGINA = ((id: string) =>
   tb(`Caso ${id} · planlang`, `Case ${id} · planlang`)) as Plantilla<string>;
 export const TITULO_INDICE = tb("Los casos · planlang", "The cases · planlang");
-export const DESCRIPCION_PAGINA = tb(
-  "Un caso del demo A de punta a punta: lo que recibió el agente, cada paso con la señal que dejó, la persona que decidió y lo que respondió. Simulación · no operativo.",
-  "One demo A case end to end: what the agent received, every step with the signal it left, the person who decided and what it answered. Simulation · not operational.",
-);
+export const DESCRIPCION_PAGINA: Record<IdDemo, TextoBilingue> = {
+  "demo-a": tb(
+    "Un caso del demo A de punta a punta: lo que recibió el agente, cada paso con la señal que dejó, la persona que decidió y lo que respondió. Simulación · no operativo.",
+    "One demo A case end to end: what the agent received, every step with the signal it left, the person who decided and what it answered. Simulation · not operational.",
+  ),
+  "demo-b": tb(
+    "Un caso del demo B de punta a punta: los documentos que recibió el agente, cada paso con la señal que dejó, el oficial que decidió y el expediente que escribió. Simulación · no operativo.",
+    "One demo B case end to end: the documents the agent received, every step with the signal it left, the officer who decided and the file it wrote. Simulation · not operational.",
+  ),
+};
 
 export const PORTADA = {
-  antetitulo: ((corrida: string) =>
+  antetitulo: ((p: { demo: TextoBilingue; corrida: string }) =>
     tb(
-      `Demo A · corrida ${corrida} · una traza real`,
-      `Demo A · run ${corrida} · one real trace`,
-    )) as Plantilla<string>,
-  antetituloIndice: ((p: { corrida: string; n: number }) =>
+      `${p.demo.es} · corrida ${p.corrida} · una traza real`,
+      `${p.demo.en} · run ${p.corrida} · one real trace`,
+    )) as Plantilla<{ demo: TextoBilingue; corrida: string }>,
+  antetituloIndice: ((p: { demo: TextoBilingue; corrida: string; n: number }) =>
     tb(
-      `Demo A · corrida ${p.corrida} · ${p.n} trazas reales`,
-      `Demo A · run ${p.corrida} · ${p.n} real traces`,
-    )) as Plantilla<{ corrida: string; n: number }>,
+      `${p.demo.es} · corrida ${p.corrida} · ${p.n} trazas reales`,
+      `${p.demo.en} · run ${p.corrida} · ${p.n} real traces`,
+    )) as Plantilla<{ demo: TextoBilingue; corrida: string; n: number }>,
   titulo: tb("Un caso, de punta a punta", "One case, end to end"),
   guia: tb(
     "Lo que el agente recibió, cada paso que dio y la señal que dejó al elegir camino, la persona que decidió cuando hacía falta y lo que respondió, tal como quedó en su traza.",

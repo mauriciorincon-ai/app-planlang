@@ -10,6 +10,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import type { Idioma } from "@core/formatos/bilingue";
+import type { IdDemo } from "@/lib/demos";
 import { PANTALLAS, ruta, type Pantalla } from "@/lib/ruta";
 import { BARRA, MARCA, PESTANAS } from "@/textos/comun";
 import { CONT, cx } from "../cx";
@@ -31,16 +32,19 @@ const ICONO: Record<Pantalla, LucideIcon> = {
 /**
  * Barra de navegación: marca, las siete pestañas con ícono, idioma y tema. Bajo 861 px las pestañas bajan
  * a su propia fila y se deslizan de lado (la página no). El idioma son ENLACES a la misma pantalla en el
- * otro idioma (ADR-008: el idioma sale de la ruta).
+ * otro idioma (ADR-008: el idioma sale de la ruta). En las pantallas del B, las pestañas enlazan dentro del B y un
+ * conmutador lleva a la misma pantalla del A (ADR-014); las del A no cambian.
  */
 export function Barra({
   idioma,
   pagina,
   id,
+  demo = "demo-a",
 }: {
   idioma: Idioma;
   pagina: Pantalla;
   id?: string;
+  demo?: IdDemo;
 }) {
   return (
     <header className="border-b border-linea">
@@ -69,7 +73,7 @@ export function Barra({
           {PANTALLAS.map((p) => (
             <a
               key={p}
-              href={ruta(idioma, p)}
+              href={ruta(idioma, p, undefined, demo)}
               aria-current={p === pagina ? "page" : undefined}
               className={cx(
                 "-mb-px flex items-center gap-1.75 border-b-2 border-transparent px-2.5 pt-2.5 pb-3 text-apoyo whitespace-nowrap text-tinta-2 no-underline first:pl-0 hover:text-tinta-1",
@@ -83,9 +87,26 @@ export function Barra({
           ))}
         </nav>
         <div className="ml-auto flex gap-2">
+          {demo !== "demo-a" && (
+            <div className={SEG} role="group" aria-label={BARRA.demo[idioma]}>
+              {(["demo-a", "demo-b"] as const).map((d) => (
+                <a
+                  key={d}
+                  href={ruta(idioma, pagina, undefined, d)}
+                  aria-label={
+                    (d === "demo-a" ? BARRA.demoA : BARRA.demoB)[idioma]
+                  }
+                  aria-current={d === demo ? "true" : undefined}
+                  className={SEG_OPCION}
+                >
+                  {d === "demo-a" ? "A" : "B"}
+                </a>
+              ))}
+            </div>
+          )}
           <div className={SEG} role="group" aria-label={BARRA.idioma[idioma]}>
             <a
-              href={ruta("es", pagina, id)}
+              href={ruta("es", pagina, id, demo)}
               hrefLang="es"
               lang="es"
               aria-label="Español"
@@ -96,7 +117,7 @@ export function Barra({
               ES
             </a>
             <a
-              href={ruta("en", pagina, id)}
+              href={ruta("en", pagina, id, demo)}
               hrefLang="en"
               lang="en"
               aria-label="English"

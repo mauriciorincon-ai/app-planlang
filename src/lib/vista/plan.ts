@@ -12,6 +12,7 @@ import {
 } from "@core/formatos/bilingue";
 import { esAristaTripleta } from "@core/plan/esquema";
 import type { DatosDemo } from "@/lib/datos/vitrina";
+import { DEMO_TEXTO } from "@/textos/demo";
 import { ruta } from "@/lib/ruta";
 import {
   CHIP,
@@ -165,22 +166,46 @@ export function vistaPlan(d: DatosDemo, i: Idioma): VistaPlan {
   // Lo que un plan aprobado trae siempre: sin ello la página no se arma (el build falla nombrando el campo).
   const aprobadoEl = p.aprobado_el;
   const huella = p.huella;
+  // El plan de beneficios es el mundo del A; el B cita sus listas desde el lote y la corrida (desviación 17).
   const beneficios = p.plan_beneficios_sintetico;
   const etiquetaRiesgo = p.etiqueta_riesgo;
   const lineaBase = cg.linea_base;
   const faltan = Object.entries({
     aprobado_el: aprobadoEl,
     huella,
-    plan_beneficios_sintetico: beneficios,
+    ...(d.id === "demo-a" ? { plan_beneficios_sintetico: beneficios } : {}),
     etiqueta_riesgo: etiquetaRiesgo,
     "contrato_de_grafo.linea_base": lineaBase,
   })
     .filter(([, v]) => v === undefined || v === null)
     .map(([k]) => k);
-  if (!aprobadoEl || !huella || !beneficios || !etiquetaRiesgo || !lineaBase)
+  if (
+    !aprobadoEl ||
+    !huella ||
+    (d.id === "demo-a" && !beneficios) ||
+    !etiquetaRiesgo ||
+    !lineaBase
+  )
     throw new Error(
       `vitrina: el plan ${p.id} ${p.version} no trae lo que trae un plan aprobado: ${faltan.join(", ")}`,
     );
+  const mundo =
+    d.id === "demo-a"
+      ? PARTE_DE.dominioDetalle({
+          procedimientos: beneficios!.procedimientos,
+          exentos: beneficios!.exentos_de_autorizacion,
+          exclusiones: beneficios!.exclusiones_con_causal,
+        })
+      : PARTE_DE.dominioDetalleB({
+          vinculantes: d.listas.listas.filter((l) => l.vinculante).length,
+          entradasV: d.listas.listas
+            .filter((l) => l.vinculante)
+            .reduce((n, l) => n + l.entradas.length, 0),
+          consulta: d.listas.listas.filter((l) => !l.vinculante).length,
+          entradasC: d.listas.listas
+            .filter((l) => !l.vinculante)
+            .reduce((n, l) => n + l.entradas.length, 0),
+        });
   const vPlan = versionCorta(p.version);
   const vCorrida = versionCorta(
     informe.ficha_reproducibilidad.corrida.plan_de_ejecucion.version,
@@ -343,7 +368,7 @@ export function vistaPlan(d: DatosDemo, i: Idioma): VistaPlan {
       typeof r.condicion === "string" ? r.condicion : String(r.metrica ?? "");
     return {
       id: c.id,
-      titulo: conPlan(X(CRITERIO.lider[c.id] ?? c.enunciado, i), p, i),
+      titulo: conPlan(X(CRITERIO.lider[d.id][c.id] ?? c.enunciado, i), p, i),
       resumen: `${X(CRITERIO.objetivo, i)}: ${objetivo} · ${X(CRITERIO.origen[c.origen] ?? { es: c.origen, en: c.origen }, i)}`,
       tecnica: `${X(c.enunciado, i)} — ${r.poblacion} → ${lee} · ${r.agregacion}${typeof r.k === "number" ? ` · k = ${r.k}` : ""}`,
       lado: { tipo: "criterio", estado: estadoDeCriterio(ci?.estado, i) },
@@ -524,6 +549,7 @@ export function vistaPlan(d: DatosDemo, i: Idioma): VistaPlan {
     portada: {
       antetitulo: X(
         PORTADA.antetitulo({
+          demo: DEMO_TEXTO[d.id].corto,
           id: p.id,
           version: p.version,
           fecha: aprobadoEl,
@@ -536,19 +562,12 @@ export function vistaPlan(d: DatosDemo, i: Idioma): VistaPlan {
       {
         clave: "problema",
         titulo: X(PARTE_DE.problema, i),
-        detalle: X(PARTE_DE.problemaDetalle, i),
+        detalle: X(PARTE_DE.problemaDetalle[d.id], i),
       },
       {
         clave: "dominio",
         titulo: X(PARTE_DE.dominio, i),
-        detalle: X(
-          PARTE_DE.dominioDetalle({
-            procedimientos: beneficios.procedimientos,
-            exentos: beneficios.exentos_de_autorizacion,
-            exclusiones: beneficios.exclusiones_con_causal,
-          }),
-          i,
-        ),
+        detalle: X(mundo, i),
       },
       {
         clave: "participan",
