@@ -50,6 +50,22 @@ export const rutaDeLote = (semilla: string, n: number): string =>
 
 export const RUTA_AFIRMACION = `${DIRECTORIO_CASOS_DEMO_A}/AFIRMACION-DE-PRIVACIDAD.md`;
 
+/**
+ * Demo B (S3): las listas de control sintéticas y los lotes que se generan con ellas y con el plan B v1 aprobado. El
+ * de 20 es el primer bloque del de 200; el de humo alimenta la corrida simulada de CI.
+ */
+export const PLAN_DEMO_B = "plans/demo-b/v1.json";
+export const LISTAS_DEMO_B = "data/listas/demo-b.json";
+export const DIRECTORIO_CASOS_DEMO_B = "data/casos/demo-b";
+export const LOTES_VERSIONADOS_B = [
+  { semilla: "planlang-b-001", n: 20, receta: "estandar" },
+  { semilla: "planlang-b-001", n: 200, receta: "estandar" },
+  { semilla: "planlang-b-humo", n: 4, receta: "humo" },
+] as const;
+export const rutaDeLoteB = (semilla: string, n: number): string =>
+  `${DIRECTORIO_CASOS_DEMO_B}/${semilla}-${n}.json`;
+export const RUTA_AFIRMACION_B = `${DIRECTORIO_CASOS_DEMO_B}/AFIRMACION-DE-PRIVACIDAD.md`;
+
 interface ResumenLote {
   id: string;
   n: number;
@@ -59,14 +75,17 @@ interface ResumenLote {
 }
 
 /** La afirmación de privacidad (I13) como documento legible, derivada de los lotes que cubre. */
-export function markdownAfirmacion(lotes: readonly ResumenLote[]): string {
+export function markdownAfirmacion(
+  lotes: readonly ResumenLote[],
+  demo = "A",
+): string {
   const primero = lotes[0];
   if (!primero) throw new Error("sin lotes");
   const filas = lotes.map((l) => `| ${l.id} | ${l.n} | \`${l.huella}\` |`);
   return [
     "# Afirmación de privacidad · Privacy claim",
     "",
-    `> Conjunto sintético del demo A de planlang · generador v${primero.version_generador}.`,
+    `> Conjunto sintético del demo ${demo} de planlang · generador v${primero.version_generador}.`,
     "> Archivo generado por `pnpm casos:generar --versionados`: no se edita a mano.",
     "> Generated file: do not edit by hand.",
     "",

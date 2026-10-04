@@ -4,6 +4,7 @@
  * tomó cada rama se arman con las plantillas de `src/textos/caso.ts`: nada de un caso se escribe a mano. Pura.
  */
 import type { Idioma, TextoBilingue } from "@core/formatos/bilingue";
+import { extraccionA } from "@core/formatos/traza";
 import { z } from "zod";
 import {
   AclaracionTrazaSchema,
@@ -236,7 +237,7 @@ export function vistaCaso(d: DatosDemo, id: string, i: Idioma): VistaCaso {
   );
   const decisionTb = (x: string): TextoBilingue =>
     VALORES[x] ?? { es: x, en: x };
-  const ex = t.extraccion;
+  const ex = extraccionA(t);
   const conf = ex ? decimal(ex.confianza, 2, i) : "—";
   const cob = (t.cobertura ?? {}) as Record<string, unknown>;
   const e = c.entrada;

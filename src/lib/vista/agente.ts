@@ -7,7 +7,7 @@ import { SENAL_DE_CONFIANZA } from "@core/brecha/contexto";
 import { mediana } from "@core/brecha/numeros";
 import { minutosPorPersona } from "@core/playground/compactar";
 import type { Idioma, TextoBilingue } from "@core/formatos/bilingue";
-import type { Traza } from "@core/formatos/traza";
+import { extraccionA, type Traza } from "@core/formatos/traza";
 import { esAristaTripleta } from "@core/plan/esquema";
 import type { Caso } from "@core/sintetico/esquema";
 import { idDeMapa } from "@core/visor/ids";
@@ -1206,7 +1206,7 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
         ? (v.regla.senal ?? v.regla.funcion ?? "")
         : X(PANEL.trazas_.porDefecto, i);
     const cob = cobertura(t);
-    const ext = t.extraccion;
+    const ext = extraccionA(t);
     const pausa = pausaUnica(t.pausas_humanas, `el caso ${t.caso_id}`);
     const motivoPausa = () =>
       pausa
@@ -1676,7 +1676,9 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
   ).length;
   const puntos = con(desdeU1)
     .map((t) => {
-      const v = Number(t.extraccion?.confianza ?? senal(t, SENAL_DE_CONFIANZA));
+      const v = Number(
+        extraccionA(t)?.confianza ?? senal(t, SENAL_DE_CONFIANZA),
+      );
       const decidioU1 = visitas(t, desdeU1).some(
         (x) => x.regla?.orden_arista === reglaU1.orden,
       );

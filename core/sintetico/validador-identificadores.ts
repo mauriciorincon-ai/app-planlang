@@ -7,10 +7,13 @@
  *    rango ficticio 555-01XX), correo y URL (salvo dominios reservados example.*, .test, .invalid),
  *    IP (salvo rangos de documentación), fechas con día y mes, edad > 89, direcciones, placas; y el
  *    comodín «cualquier otro número identificador»: todo campo identificador debe llevar prefijo SYN-.
- *  - nombres de persona fuera de los diccionarios cerrados del generador.
+ *  - nombres de persona fuera de los diccionarios cerrados del generador (del A: afiliado, médico, prestador; del
+ *    B: entradas de las listas, campos extraídos y titulares, sin distinguir mayúsculas porque un modelo real puede
+ *    devolver el nombre en otra caja).
  * Si algo aparece, el conjunto no se publica: el test que lo corre sobre `data/` y `runs/` es un gate.
  */
 import * as D from "./diccionarios";
+import { VOCABULARIO_PERSONAS_B } from "./demo-b/diccionarios";
 
 export type ReglaIdentificador =
   | "cedula_rango_real"
@@ -206,6 +209,7 @@ const CLAVES_IDENTIFICADOR = new Set([
   "registro",
   "nit",
   "numero_afiliacion",
+  "titular_actividad",
 ]);
 const PREFIJO_SINTETICO = /^SYN-[A-Z]+-[0-9A-Z-]+$/;
 
@@ -216,6 +220,16 @@ const VOCABULARIO_PERSONAS = new Set<string>([
   ...D.TITULOS_MEDICO,
 ]);
 const PRESTADORES = new Set<string>(D.PRESTADORES);
+
+/** Demo B: claves que llevan el nombre de una persona y los padres donde aparecen. */
+const CLAVES_NOMBRE_B = new Set(["nombre", "titular_fondos", "alias"]);
+const PADRES_NOMBRE_B = new Set(["entradas", "campos", "campos_extraidos"]);
+const VOCABULARIO_B = new Set(VOCABULARIO_PERSONAS_B.map((p) => p.toLowerCase()));
+
+function nombreEnListaB(nombre: string): boolean {
+  const tokens = nombre.split(/[\s,]+/).filter((t) => t.length > 0);
+  return tokens.length > 0 && tokens.every((t) => VOCABULARIO_B.has(t.toLowerCase()));
+}
 
 function nombreEnLista(padre: string | undefined, nombre: string): boolean {
   if (padre === "prestador") return PRESTADORES.has(nombre);
@@ -258,6 +272,14 @@ export function validarIdentificadores(
       clave === "nombre" &&
       (padre === "afiliado" || padre === "medico" || padre === "prestador") &&
       !nombreEnLista(padre, valor)
+    )
+      salida.push({ regla: "nombre_fuera_de_lista", ruta, fragmento: valor });
+    if (
+      clave !== undefined &&
+      CLAVES_NOMBRE_B.has(clave) &&
+      padre !== undefined &&
+      PADRES_NOMBRE_B.has(padre) &&
+      !nombreEnListaB(valor)
     )
       salida.push({ regla: "nombre_fuera_de_lista", ruta, fragmento: valor });
     return [...salida, ...hallazgosEnTexto(valor, ruta)];

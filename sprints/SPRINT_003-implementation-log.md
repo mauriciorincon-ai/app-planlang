@@ -12,7 +12,7 @@
 |---|---|---|
 | 0 · Setup, constitución, deltas, diagramador 0.5.0 y plan v1.5 del A | aprobada («continúa»); lote v1.5 de 200 terminado y versionado | 2026-10-04 |
 | 1 · Entrevistador M2 → parada de DECISIÓN (plan B) | cerrada: plan B aprobado («apruebo el plan B») | 2026-10-04 |
-| 2 · Demo B: sintético, agente y lote de 20 | pendiente | — |
+| 2 · Demo B: sintético, agente y lote de 20 | en curso: sintético, agente, línea base y corridas simuladas construidos y verdes; falta el lote real de 20 (espera el «sí» del usuario por la cuota) | 2026-10-04 |
 | 3 · Brecha B y la vitrina con dos demos | pendiente | — |
 | 4 · Cierres de ciclo | pendiente | — |
 
@@ -600,6 +600,109 @@ respaldo del S2): las pruebas de comportamiento leen los archivos versionados.
   v1.0.0, huella `0cd6590ccbbb611091bf7acbd369874aa33fc7df95474c8c16f0f0beb9bb86dd`. `pnpm plan:validar
   --verificar` ✓. Desde aquí existe el agente B (fase 2).
 
+## Fase 2 — Demo B: sintético, agente y lote de 20 (desde 2026-10-04, tras «continúa»)
+
+### Qué se construyó
+
+**Conjunto sintético del B** (`core/sintetico/demo-b/`, TypeScript puro, mismos bytes en Node y jsdom):
+- `esquema.ts`: listas `planlang-listas/v1` (vinculantes LV y de consulta LC, cada lista con versión y fecha),
+  actividades y jurisdicciones inventadas con nivel de riesgo, pesos del puntaje y seis familias de reglas legibles
+  (RL coincidencia · RI inconsistencias · RP puntaje · RD propuesta · RG guardias · RV verdad); el caso B (solicitud
+  con tres documentos de texto libre bilingües: identidad, actividad económica, origen de fondos; verdad conocida con
+  `en_lista`, `en_lista_vinculante`, `similitud_max`, `conclusion_investigador`, `puntaje_riesgo`, `inconsistencias`,
+  `decision`, `debe_escalar` y sus motivos); el lote B.
+- `similitud.ts`: normalización (tildes por TABLA, no `normalize`, para que Python dé los mismos bytes; tokens
+  ordenados) + Jaro-Winkler clásico + redondeo `floor(x·10⁴+½)/10⁴`; `mejorCoincidencia` sobre nombres y alias.
+- `reglas.ts`: RI-01–03, RP-01–03 con los pesos del archivo (40/30/30 de D4; los niveles medios 20 y 15 son
+  **estimados**, marcados así en el texto de RP-01/RP-02) y `identidadVerificable`.
+- `listas.ts`: genera `data/listas/demo-b.json` con semilla (12 entradas vinculantes, 10 de consulta; las 8 primeras
+  vinculantes llevan nombres de pila transliterables).
+- `generador.ts`: bloques de 20 con 60/15/15/10 (el de 20 es el primer bloque del de 200); 17 subtipos (normal ·
+  borde · faltante · adversario: homónimo en la zona gris, homónimo idéntico, transliteración, inyección en el
+  documento de fondos, documentos contradictorios, dato sensible de un tercero); garantías por bloque (el lote de 20
+  trae un homónimo en la zona gris y una inyección); verdad derivada de las reglas RV y de los umbrales del plan B
+  **leídos desde sus aristas** (`umbralDeArista`: el plan B tiene dos umbrales sobre `similitud_max`, U4 y U1, y la
+  arista que sale de `verificador_listas` nombra uno y la de `decision` el otro — lección M-18).
+- Diccionarios cerrados con apellidos inventados (los de las listas y los de los solicitantes no se cruzan, salvo
+  donde el generador construye la coincidencia); años de nacimiento sin día ni mes.
+- `validador-identificadores.ts` revisa también los nombres del B (entradas de listas, campos extraídos y titulares)
+  sin distinguir mayúsculas; el gate E-11 recorre `data/listas/`.
+- Versionados: `data/listas/demo-b.json`, `data/casos/demo-b/{planlang-b-001-20, planlang-b-001-200,
+  planlang-b-humo-4}.json` y su `AFIRMACION-DE-PRIVACIDAD.md` (`pnpm casos:generar --versionados --demo b`).
+
+**Agente B** (`agents/src/app_agents/demo_b/`, construido sobre el plan B v1 aprobado):
+- Nueve nodos del contrato: `enrutador` (guardia de entrada → `carga_detectada`), `extractor` (modelo,
+  `--json-schema`, documentos minimizados entre delimitadores), `verificador_listas` (escritor: `similitud_max`,
+  determinista), `investigador` (modelo, solo si la arista ≥ U4 lo manda; recibe datos estructurados, nunca el texto),
+  `puntaje` (RI/RP/RD → `puntaje_riesgo`, `inconsistencias`, `propuesta`), `decision` (escritor: las 6 aristas del
+  plan), `pausa_humana` (`interrupt` con los 10 campos de `payload_minimo`, evidencia y contraevidencia),
+  `redactor` (tipo `regla`: expediente, respuesta y documento adverso POR CÓDIGO; `conclusiones_sin_cita`) y
+  `guardia_salida` (identificadores, frases inyectadas, lista blanca → `inyeccion_neutralizada`).
+- RF-04b.6 como arquitectura: el redactor corta el caso si va a emitir un rechazo sin pausa o una aprobación con el
+  puntaje en o sobre U2 sin pausa (comparado con el intérprete, M-18).
+- Espejos de Python: `similitud.py`, `reglas.py` (la firma de `puntaje` solo admite actividad, jurisdicción e
+  ingresos), `mundo.py` (las listas con huella verificada).
+- `expediente.py`: K1–K9, cada conclusión con su cita (documento, coincidencia con versión y fecha de la lista,
+  regla, arista que abrió la pausa, decisión D3).
+- Línea base de agente único (`agente_unico.py`, ADR-006): una llamada que extrae y juzga las listas; la arista del
+  verificador hacia el investigador se reasigna a `puntaje`.
+- Simulación (`simulacion.py`): el oficial sigue la verdad conocida (DA-04); el proveedor simulado responde lo que
+  declaró el generador.
+
+**Generalización a N demos sin mover un byte del A:**
+- `app_agents/demos.py` (registro: plan, lote y salida por defecto, «mundo» y su clave, grafo, estado, entorno,
+  ficha, señales de MEDICIÓN y campos propios de la traza) y `app_agents/nodos_base.py` (utilidades de nodo que usa
+  el B; el A conserva las suyas para no mover `data/vitrina/demo-a/grafo-codigo.json`).
+- `lotes.py --demo a|b` (`--mundo`, alias `--beneficios`); `exportador.traza_de_estado` toma toda señal declarada del
+  estado y escribe los campos propios del B (`coincidencias`, `investigacion`, `puntaje`, `expediente`).
+- `extraccion_correcta` (C5) la calcula el ARNÉS al terminar el caso con la verdad conocida, fuera del grafo.
+- TypeScript: `CorridaSchema` cita un solo mundo (`plan_beneficios` o `listas`); `TrazaSchema` acepta la extracción
+  del B y sus cuatro campos (opcionales: ausentes en el A); el lector elige el esquema del lote por `demo_id` y compara
+  el mundo de la corrida con el del lote. `extraccionA()` estrecha el tipo en las dos vistas del A que leen la
+  confianza (sin cambio de lo que pintan).
+- Corridas simuladas versionadas: `runs/demo-b/simulado-humo` y `-base` (4 casos, reloj fijo).
+
+**ADR-013** «código primero del demo B», con la confesión de que en este conjunto una regla de contexto (mismo año y
+nacionalidad) acertaría lo que hace el investigador.
+
+### Pruebas y resultados
+
+- vitest: **124 archivos, 2.955 pruebas en verde** (cobertura del núcleo 97,6 %). Nuevos: `similitud.test.ts`
+  (valores publicados de Jaro-Winkler), `reglas.test.ts` (permutación de nombres), `generador.test.ts` (regenera el
+  lote), `casos-versionados-b.test.ts` (frescura), `traza-demo-b.test.ts` (contrato Python → TS), carnada B del gate
+  de identificadores.
+- pytest: **211 pruebas en verde, cobertura 96,5 %** (venía de 74 % con el B sin pruebas). `test_demo_b.py` (21):
+  contrato del grafo, corrida versionada idéntica, investigador solo desde U4, el lote de 20 decide lo que dice la
+  verdad, expediente con versión y fecha de cada lista, homónimo resuelto sin persona, el oficial corrige al
+  investigador, las dos carnadas de arquitectura, inyección, datos de terceros, respuesta sin identificadores, guardia,
+  gate TS↔Python, permutación, línea base de una llamada, medición del arnés, lote sin sus listas, CLI.
+- `pnpm trazas:verificar`: 13 corridas ✓ (las 11 del A y las 2 del B: huellas, esquema, umbrales del plan, RF-09.2).
+- Job `quality` completo en local: typecheck, lint, test, trazas, build, `verificar-export`, `diagrama:verificar`,
+  `pnpm audit` (1 alta ignorada: `braces`, ADR-015), `verificar-dependencias`, `pnpm peers check`; ruff, pytest y
+  `pip-audit --skip-editable` en `agents/`.
+
+#### Demos en rojo de la fase 2 (con `scripts/demo-rojo.sh`; todas restauradas y en verde después)
+
+| # | Gate | Mutación | Rojo (quién lo nombró) |
+|---|---|---|---|
+| D17 | Jaro-Winkler (TS) | peso del prefijo 0,1 → 0,2 | `similitud.test.ts`: los tres valores publicados |
+| D18 | permutación de nombres (TS) | +5 puntos si la nacionalidad es SYN-J-06 | `reglas.test.ts › PERMUTACIÓN…` |
+| D19 | bandas del generador | quitar el tope U1 de la banda del homónimo | **no se puso rojo**: la prueba leía el lote del disco. Corregida para regenerar (D19b). Con eso, quitar el tope U1 (D19b) o el piso U4 (D19e) tampoco cambia nada: con estos diccionarios ningún candidato llega a 0,85 ni baja de 0,70. El filtro de banda que sí se ejerce es el de candidatos (D19f) |
+| D19f | bandas del generador | el filtro de candidatos ignora la banda | `generador.test.ts › cada subtipo cae en su banda` (el borde «casi en la zona gris» queda en 0,8686) |
+| D20 | frescura de listas y lotes B | una frase de un diccionario | `casos-versionados-b.test.ts`: los lotes |
+| D21 | gate E-11 con nombres del B | un nombre de lista fuera del diccionario | **la restauración siguió en rojo**: el gate encontró fechas completas en el TEXTO del expediente (ver bugs). Arreglado y repetido: D21b → `identificadores-en-datos.test.ts` (1 rojo, la lista) |
+| D22 | contrato TS ↔ Python | prefijo 0,1 → 0,11 en Python | `test_python_reproduce_la_verdad_que_escribio_typescript` |
+| D23 | carnada: rechazo sin pausa | el chequeo → `if False:` | `test_carnada_nunca_un_rechazo_sin_pausa` |
+| D24 | carnada: aprobación automática con riesgo alto | el chequeo de U2 → `False` | `test_carnada_nunca_una_aprobacion_automatica…` |
+| D25 | corrida simulada versionada del B | una frase del expediente | `test_la_corrida_simulada_versionada…` (las dos) |
+| D26 | investigador solo desde U4 | `similitud_max` → 1,0 | `test_el_investigador_corre_solo_desde…` |
+| D27 | minimización | el extractor recibe el texto crudo | `test_los_datos_de_terceros_no_llegan_al_modelo…` |
+| D28 | guardia de salida | el patrón ya no ve `SYN-ID-` | `test_la_guardia_de_salida_filtra…` |
+| D29 | permutación (Python) | la nacionalidad borra la jurisdicción | `test_permutacion_el_puntaje_no_lee_a_la_persona` |
+| D30 | RF-09.2 cruzado TS ↔ Python | `igual_a` invertido en el intérprete TS | `pnpm trazas:verificar`: las 13 corridas ✗, incluidas `runs/demo-b/simulado-humo` y `-base` |
+| D31 | medición del arnés (C5) | `extraccion_correcta = True` | `test_el_arnes_mide_la_extraccion…` |
+| D32 | contrato Python → TS de la traza B | `"expediente"` → `"expedient"` en una traza | `traza-demo-b.test.ts` (Zod: clave no reconocida) y el lector |
+
 ## Desviación del plan
 
 1. **Rutas de la orden** (`SPRINT_003-orden.md:65`): `audita-sprint` y `plan-sprint` viven en
@@ -666,6 +769,21 @@ respaldo del S2): las pruebas de comportamiento leen los archivos versionados.
     es del usuario. El comando la exige explícita y la bitácora registra la frase.
 16. **Los ejemplos de cada plantilla vienen del otro dominio,** para no anclar la entrevista del B en valores del
     § 10.3.
+17. **El plan B v1 no nombra las listas** (el plan de la sesión de planeación preveía «el B gana una referencia a
+    `listas`»). El plan se aprobó antes de que las listas existieran y no se re-aprueba por esto: las citan el lote y
+    la corrida, como el plan de beneficios del A en sus corridas.
+18. **El redactor del B no usa modelo.** La orden dice «redactor (modelo + guardia)»; el plan B aprobado lo declara
+    de tipo `regla` y la orden pide «expediente ES/EN por código». Manda el plan: el expediente, la respuesta y el
+    documento adverso los escribe el código (ADR-013).
+19. **El investigador corre desde U4 hacia arriba, no solo en la franja U4–U1.** El contrato aprobado manda a
+    `investigador` toda similitud ≥ U4; arriba de U1 su conclusión es evidencia para el oficial, nunca la decisión.
+20. **Sin respaldo por proveedor en el B.** El plan B no declara aristas AU-9 (el A las ganó por enmienda): sin
+    modelo el caso no se decide y se reintenta. Pasarlo a una persona exige enmendar el plan B con el usuario; queda
+    propuesto en el ADR-013, no hecho.
+21. **`data/vitrina/demo-b/grafo-codigo.json`** (el código por nodo para el visor) se genera en la fase 3 con la
+    vitrina del B, junto con su manifiesto; `exportar_grafo.py` sigue siendo del A por ahora.
+22. **Niveles medios del puntaje estimados por el builder** (actividad media 20, jurisdicción media 15). D4 fija los
+    máximos 40/30/30 por delegación explícita; los intermedios no estaban y se marcan «estimado» en RP-01 y RP-02.
 
 ## Registro de miradas
 
@@ -682,3 +800,7 @@ respaldo del S2): las pruebas de comportamiento leen los archivos versionados.
 | 2026-10-04 | tras una respuesta vacía, la pregunta se habría repetido sin fin | `repetir` quedaba en `True` hasta el siguiente `elegir` | toda salida válida de `incorporar` lo pone en `False` (revisión antes de probar) |
 | 2026-10-04 | `fichas.test.ts` en rojo | el ADR-012 cambia la cuenta de ADR del `brochure-export.json` | `pnpm fichas` (14 ADR) |
 | 2026-10-04 | la entrevista real del B pasó dos veces por M1 en rojo | el modelo borra con `null`, descarta elementos de la lista y escribe prosa o paréntesis en condiciones; el humo de 3 llamadas no lo vio porque no tocó las decisiones ni los supuestos | tres cierres por código (D14–D16) y tres reglas en el prompt; tercera corrida limpia |
+| 2026-10-04 | la guardia de salida del B marcaba severidad 2 en todos los casos | tomaba los códigos de catálogo (`SYN-ACT-03`, `SYN-J-02`) del expediente por identificadores de personas | el patrón excluye `SYN-ACT-` y `SYN-J-` (lo vio la primera corrida simulada, antes de las pruebas) |
+| 2026-10-04 | el expediente escribía la fecha completa de cada lista en su texto | D3 pide versión y fecha; el gate E-11 marca toda fecha con día y mes en texto libre | el texto dice mes y año; la fecha completa viaja en la cita estructurada (lo cazó el gate durante la D21) |
+| 2026-10-04 | la prueba de bandas del generador no podía fallar | leía el lote versionado en vez de regenerarlo; una primera corrección no se aplicó porque Prettier había partido la línea | regenera en `beforeAll`; verificado con la D19f |
+| 2026-10-04 | `test_lotes.py` y `respaldo_simulado.py` parcheaban `lotes.RespondedorSimulado` | el respondedor vive ahora en el registro de demos | parchean `app_agents.demo_a.simulacion` |

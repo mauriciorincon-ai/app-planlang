@@ -1,0 +1,326 @@
+{
+  "aristas_condicionales": [
+    {
+      "desde": "decision",
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden": 1,
+      "senal": "carga_detectada",
+      "si_verdadero": "pausa_humana",
+      "valor": true
+    },
+    {
+      "desde": "decision",
+      "inclusivo": true,
+      "operador": "mayor_o_igual_que",
+      "orden": 2,
+      "senal": "similitud_max",
+      "si_verdadero": "pausa_humana",
+      "valor": "umbral.U1"
+    },
+    {
+      "desde": "decision",
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden": 3,
+      "senal": "conclusion_investigador",
+      "si_verdadero": "pausa_humana",
+      "valor": "misma_persona"
+    },
+    {
+      "desde": "decision",
+      "inclusivo": true,
+      "operador": "mayor_o_igual_que",
+      "orden": 4,
+      "senal": "puntaje_riesgo",
+      "si_verdadero": "pausa_humana",
+      "valor": "umbral.U2"
+    },
+    {
+      "desde": "decision",
+      "inclusivo": false,
+      "operador": "mayor_que",
+      "orden": 5,
+      "senal": "inconsistencias",
+      "si_verdadero": "pausa_humana",
+      "valor": "umbral.U3"
+    },
+    {
+      "desde": "decision",
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden": 6,
+      "senal": "propuesta",
+      "si_verdadero": "pausa_humana",
+      "valor": "rechazar"
+    },
+    {
+      "desde": "verificador_listas",
+      "inclusivo": true,
+      "operador": "mayor_o_igual_que",
+      "orden": 1,
+      "senal": "similitud_max",
+      "si_verdadero": "investigador",
+      "valor": "umbral.U4"
+    }
+  ],
+  "demo_id": "demo-b",
+  "formato": "planlang-grafo/v1",
+  "huella": "7b986ef8f5016f4cc87c9c592cb4994b2b4b984dd79e8e2872651a1885783214",
+  "langgraph": {
+    "edges": [
+      {
+        "source": "__start__",
+        "target": "enrutador"
+      },
+      {
+        "conditional": true,
+        "source": "decision",
+        "target": "pausa_humana"
+      },
+      {
+        "conditional": true,
+        "source": "decision",
+        "target": "redactor"
+      },
+      {
+        "source": "enrutador",
+        "target": "extractor"
+      },
+      {
+        "source": "extractor",
+        "target": "verificador_listas"
+      },
+      {
+        "source": "investigador",
+        "target": "puntaje"
+      },
+      {
+        "source": "pausa_humana",
+        "target": "redactor"
+      },
+      {
+        "source": "puntaje",
+        "target": "decision"
+      },
+      {
+        "source": "redactor",
+        "target": "guardia_salida"
+      },
+      {
+        "conditional": true,
+        "source": "verificador_listas",
+        "target": "investigador"
+      },
+      {
+        "conditional": true,
+        "source": "verificador_listas",
+        "target": "puntaje"
+      },
+      {
+        "source": "guardia_salida",
+        "target": "__end__"
+      }
+    ],
+    "nodes": [
+      {
+        "data": {
+          "id": [
+            "langgraph",
+            "_internal",
+            "_runnable",
+            "RunnableCallable"
+          ],
+          "name": "__start__"
+        },
+        "id": "__start__",
+        "type": "runnable"
+      },
+      {
+        "data": {
+          "id": [
+            "langgraph",
+            "_internal",
+            "_runnable",
+            "RunnableCallable"
+          ],
+          "name": "enrutador"
+        },
+        "id": "enrutador",
+        "type": "runnable"
+      },
+      {
+        "data": {
+          "id": [
+            "langgraph",
+            "_internal",
+            "_runnable",
+            "RunnableCallable"
+          ],
+          "name": "extractor"
+        },
+        "id": "extractor",
+        "type": "runnable"
+      },
+      {
+        "data": {
+          "id": [
+            "langgraph",
+            "_internal",
+            "_runnable",
+            "RunnableCallable"
+          ],
+          "name": "verificador_listas"
+        },
+        "id": "verificador_listas",
+        "type": "runnable"
+      },
+      {
+        "data": {
+          "id": [
+            "langgraph",
+            "_internal",
+            "_runnable",
+            "RunnableCallable"
+          ],
+          "name": "investigador"
+        },
+        "id": "investigador",
+        "type": "runnable"
+      },
+      {
+        "data": {
+          "id": [
+            "langgraph",
+            "_internal",
+            "_runnable",
+            "RunnableCallable"
+          ],
+          "name": "puntaje"
+        },
+        "id": "puntaje",
+        "type": "runnable"
+      },
+      {
+        "data": {
+          "id": [
+            "langgraph",
+            "_internal",
+            "_runnable",
+            "RunnableCallable"
+          ],
+          "name": "decision"
+        },
+        "id": "decision",
+        "type": "runnable"
+      },
+      {
+        "data": {
+          "id": [
+            "langgraph",
+            "_internal",
+            "_runnable",
+            "RunnableCallable"
+          ],
+          "name": "pausa_humana"
+        },
+        "id": "pausa_humana",
+        "type": "runnable"
+      },
+      {
+        "data": {
+          "id": [
+            "langgraph",
+            "_internal",
+            "_runnable",
+            "RunnableCallable"
+          ],
+          "name": "redactor"
+        },
+        "id": "redactor",
+        "type": "runnable"
+      },
+      {
+        "data": {
+          "id": [
+            "langgraph",
+            "_internal",
+            "_runnable",
+            "RunnableCallable"
+          ],
+          "name": "guardia_salida"
+        },
+        "id": "guardia_salida",
+        "type": "runnable"
+      },
+      {
+        "id": "__end__"
+      }
+    ]
+  },
+  "nodos": [
+    {
+      "id": "decision",
+      "tipo": "enrutador"
+    },
+    {
+      "id": "enrutador",
+      "tipo": "enrutador"
+    },
+    {
+      "id": "extractor",
+      "tipo": "modelo"
+    },
+    {
+      "id": "guardia_salida",
+      "tipo": "regla"
+    },
+    {
+      "id": "investigador",
+      "tipo": "modelo"
+    },
+    {
+      "id": "pausa_humana",
+      "tipo": "pausa_humana"
+    },
+    {
+      "id": "puntaje",
+      "tipo": "regla"
+    },
+    {
+      "id": "redactor",
+      "tipo": "regla"
+    },
+    {
+      "id": "verificador_listas",
+      "tipo": "regla"
+    }
+  ],
+  "pausas_humanas": [
+    {
+      "nodo": "pausa_humana",
+      "payload_minimo": [
+        "motivo",
+        "senal",
+        "umbral",
+        "extraccion",
+        "documentos",
+        "coincidencias",
+        "investigacion",
+        "puntaje",
+        "evidencia",
+        "contraevidencia"
+      ],
+      "politica_simulada": {
+        "en": "In batches, the simulated officer follows the case’s known truth (DA-04); the showcase discloses it.",
+        "es": "En lotes, el oficial simulado sigue la verdad conocida del caso (DA-04); la vitrina lo divulga."
+      },
+      "rol": "oficial"
+    }
+  ],
+  "ramas_por_defecto": {
+    "decision": "redactor",
+    "verificador_listas": "puntaje"
+  },
+  "variante": "multiagente"
+}
