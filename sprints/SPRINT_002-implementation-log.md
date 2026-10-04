@@ -1478,6 +1478,18 @@ Regla de la casilla 5 de la auditoría: cada campo, un lector fuera de su constr
 | Gate | Prueba | Demo en rojo |
 |---|---|---|
 | AU-S2-11 | paridad.spec.ts en `escritorio`, `paridad-firefox` y `paridad-webkit` contra el golden de Node | un carácter de más en la línea de estado de la isla **solo en Firefox** (`/Firefox/.test(navigator.userAgent)`) → rojo solo en `paridad-firefox` (es y en), nombrando cada encuadre movido («U1=0.5», «U1=0.55»…); Chromium y WebKit verdes → verde al restaurar |
+| B32 · pasada de interacción del paquete | paquete.spec.ts «los controles funcionan dentro del paquete sin salir del origen» (**primera corrida**, sobre el paquete armado desde `32fbbe8`) | quitar los 8 `<script src>` de `es/playground.html` en el paquete armado (controles dibujados sin manejador) → rojo «Expected: "experto" · Received: "lider"» → verde al restaurar; `paquete:verificar` confirma el paquete intacto |
+
+**Verificación del lote 5 (2026-10-03, sobre `32fbbe8`):** `pnpm test` 2544 verdes + 1 saltada con los umbrales de
+cobertura · `typecheck` · `lint` · `ruff` · `pytest` 159 (96,39 %) · `pip-audit` · `pnpm audit` (el aviso aceptado) ·
+`peers check` · `verificar-dependencias` (683 paquetes) · `trazas:verificar` · build · **e2e completo 152 verdes, 0
+fallas, 0 reintentos** (los dos saltados son las pruebas solo-teléfono en `escritorio`) · `export:verificar` (57 HTML) ·
+`diagrama:verificar` (es/en) · `paquete:vitrina` (86 archivos) · `test:e2e:paquete` 3 verdes. Dos ruidos de la máquina,
+anotados para no confundirlos con el árbol: una primera corrida de `pnpm test` con carga 27 (otras sesiones compilando
+Rust y con Playwright) dio 5 pruebas en rojo por tiempo (`perf-200` a 10,9 s, tres guardias a 5–8 s), verdes aisladas y
+en la corrida siguiente; y el primer e2e completo dio 2 rojos de axe en Agente a 380 px que no se repitieron (14 s cada
+una aisladas, al límite de 30 s bajo esa carga). Los 4 rojos del playground de esa corrida eran reales: el spec esperaba
+la URL del caso sin `#paso-N` (P-5) y se ajustó para comprobar que el paso queda a la vista.
 
 ### Punto de retoma (2026-10-02, segunda compactación del día, pedida por el usuario)
 
