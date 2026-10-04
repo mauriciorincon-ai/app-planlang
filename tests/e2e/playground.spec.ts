@@ -5,7 +5,7 @@ import { consolaLimpia, desbordeLateral, sinViolacionesAxe } from "./_comun";
  * P5 Playground en el export servido (S2 fase 3): se llega por su pestaña y se lee en los dos idiomas, temas y
  * perfiles sin desplazar la página de lado, sin violaciones de axe (críticas, serias ni moderadas) y sin errores de hidratación; los
  * deslizadores se mueven con el teclado y recalculan en el navegador (U1 a 0,90 manda A-008 a una persona; U2 a 1600
- * introduce el error de A-010); el modo Texas es un interruptor que no cambia ningún caso y lo dice; «Volver al plan»
+ * introduce el error de A-010, cuyo enlace abre la traza en el paso donde el camino se separa); el modo Texas es un interruptor que no cambia ningún caso y lo dice; «Volver al plan»
  * deshace; y con movimiento reducido lo del experto aparece visible.
  */
 
@@ -127,7 +127,12 @@ for (const idioma of ["es", "en"] as const) {
       expect(await desbordeLateral(page)).toBeLessThanOrEqual(0);
       await sinViolacionesAxe(page);
       await fila.getByRole("link").click();
-      await expect(page).toHaveURL(new RegExp(`/${idioma}/caso/A-010$`));
+      // Abre el caso en el paso donde el camino se separa (AU-S2-P-5), y ese paso queda a la vista.
+      await expect(page).toHaveURL(
+        new RegExp(`/${idioma}/caso/A-010#paso-\\d+$`),
+      );
+      const paso = new URL(page.url()).hash;
+      await expect(page.locator(`li${paso}`)).toBeInViewport();
     });
 
     test("el modo Texas es un interruptor: con la barra espaciadora se enciende y no cambia ningún caso", async ({
