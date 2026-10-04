@@ -14,17 +14,11 @@
 //
 // Uso: node scripts/capturar-vitrina.mjs [--mirada p1] [--anchos 380,1280] [--temas oscuro,claro] [--destino <carpeta>]
 //      [--idiomas es,en] [--calidad 55] [--solo-medir]
-import {
-  createReadStream,
-  existsSync,
-  mkdirSync,
-  statSync,
-  writeFileSync,
-} from "node:fs";
-import { createServer } from "node:http";
-import { extname, join, normalize, resolve, dirname } from "node:path";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { join, resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium } from "@playwright/test";
+import { escuchar, servidor } from "./servidor-estatico.mjs";
 
 const raiz = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const OUT = join(raiz, "out");
@@ -668,47 +662,8 @@ console.log(
   `capturar-vitrina: salida → ${soloMedir ? "(solo medir, sin archivos)" : destino}`,
 );
 
-const TIPOS = {
-  ".html": "text/html; charset=utf-8",
-  ".js": "text/javascript",
-  ".css": "text/css",
-  ".woff2": "font/woff2",
-  ".svg": "image/svg+xml",
-  ".json": "application/json",
-  ".txt": "text/plain; charset=utf-8",
-  ".png": "image/png",
-  ".md": "text/plain; charset=utf-8",
-};
-
-/** Servidor estático con URL limpias (como `serve` y `cleanUrls` de Vercel): /es → es.html. */
-function servidor(base) {
-  return createServer((req, res) => {
-    const ruta = decodeURIComponent(new URL(req.url, "http://x").pathname);
-    const pedido = normalize(join(base, ruta));
-    if (!pedido.startsWith(base)) {
-      res.writeHead(403).end();
-      console.error(`capturar-vitrina: ${ruta} sale de ${base}. Aborto.`);
-      process.exit(1);
-    }
-    const candidatos = [pedido, `${pedido}.html`, join(pedido, "index.html")];
-    const archivo = candidatos.find(
-      (c) => existsSync(c) && statSync(c).isFile(),
-    );
-    if (!archivo) {
-      const nf = join(base, "404.html");
-      res.writeHead(404, { "content-type": TIPOS[".html"] });
-      return existsSync(nf) ? createReadStream(nf).pipe(res) : res.end("404");
-    }
-    res.writeHead(200, {
-      "content-type": TIPOS[extname(archivo)] ?? "application/octet-stream",
-    });
-    createReadStream(archivo).pipe(res);
-  });
-}
-const escuchar = (s) =>
-  new Promise((ok) => s.listen(0, "127.0.0.1", () => ok(s.address().port)));
-const sVitrina = servidor(OUT);
-const sMaqueta = servidor(MAQUETA);
+const sVitrina = servidor(OUT, "capturar-vitrina");
+const sMaqueta = servidor(MAQUETA, "capturar-vitrina");
 const pV = await escuchar(sVitrina);
 const pM = await escuchar(sMaqueta);
 const V = `http://127.0.0.1:${pV}`;

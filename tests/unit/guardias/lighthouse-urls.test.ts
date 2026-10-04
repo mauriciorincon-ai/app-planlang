@@ -10,6 +10,7 @@
  */
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
+import { patronDeRuta as patron } from "../../../scripts/lighthouse/patron.mjs";
 
 const urls = JSON.parse(
   readFileSync("lighthouse-urls.json", "utf8"),
@@ -23,16 +24,6 @@ type Presupuesto = {
 const presupuestos = JSON.parse(
   readFileSync("perf-budget.json", "utf8"),
 ) as Presupuesto[];
-
-/** La conversión de ruta a patrón de `@lhci/utils` (`budgets-converter.js`): `*` comodín, `$` final, prefijo. */
-function patron(path: string): RegExp {
-  if (!path || path === "/") return /.*/;
-  const escapada = path
-    .split("*")
-    .map((p) => p.replace(/([-[\]{}()*+?.,\\^|#\s])/g, "\\$1"))
-    .join(".*");
-  return new RegExp(`https?://[^/]+${escapada}`);
-}
 
 const LCP = "largest-contentful-paint";
 const LCP_MAXIMO = 2500;

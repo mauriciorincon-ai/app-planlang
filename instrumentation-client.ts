@@ -5,6 +5,8 @@
 // cargaba 148 KB comprimidos de Sentry sin DSN. La vitrina navega con `<a>` (sitio de varias páginas), así
 // que el gancho de transiciones del router del kit no aplica.
 // Server-side Sentry (instrumentation.ts) se añade cuando la app tenga backend, por ADR.
+import { limpiarEvento } from "@/lib/sentry-evento";
+
 const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN;
 
 if (dsn) {
@@ -14,14 +16,9 @@ if (dsn) {
       environment: process.env.NEXT_PUBLIC_VERCEL_ENV ?? "local",
       // Sin tracing ni replay: error tracking puro (presupuesto y privacidad).
       tracesSampleRate: 0,
-      // Privacidad (metadata-only): nunca enviar requests ni breadcrumbs que puedan
-      // arrastrar contenido del usuario. Reportar errores vía src/lib/observability.ts.
-      beforeSend(event) {
-        delete event.request;
-        event.breadcrumbs = undefined;
-        if (event.exception?.values?.[0]?.type === "AbortError") return null;
-        return event;
-      },
+      // Privacidad (metadata-only): nunca enviar requests, breadcrumbs ni el MENSAJE de una excepción, que
+      // pueden arrastrar contenido del usuario (kit v1.33.0). Reportar errores vía src/lib/observability.ts.
+      beforeSend: (event) => limpiarEvento(event),
     }),
   );
 }

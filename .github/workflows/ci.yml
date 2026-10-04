@@ -91,3 +91,6 @@ jobs:
           lhci collect --startServerCommand="pnpm start" --numberOfRuns=3 $URLS
           lhci assert --budgetsFile=./perf-budget.json --aggregationMethod=median-run
           lhci assert --config=./lighthouse-categorias.json --aggregationMethod=median-run
+          # kit v1.37.0: margen (<10 % del presupuesto = aviso) + toda URL medida tiene presupuesto de LCP (rojo si no);
+          # planlang S3: con la semántica de LHCI y todas las entradas que casan (scripts/lighthouse/patron.mjs)
+          node scripts/lighthouse-margen.mjs

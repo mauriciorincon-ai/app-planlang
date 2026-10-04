@@ -126,6 +126,11 @@ La etapa se aprobó antes de que el kit v1.32.0 trajera esta sección; se regist
 - [x] **Controladores cargados** — `tests/unit/controladores-maqueta.test.ts` (S2, con su demo en rojo).
 - [ ] **Arnés de capturas con pasada de interacción** — `scripts/capturar-maqueta.mjs` pulsa los controles
       pero no comprueba que algo cambie; la pasada de interacción nace en el arnés de la vitrina (S2).
+- [x] **Las capturas recorren la maqueta SERVIDA, entrando por el índice** (kit v1.37.0, aplicado en el S3):
+      `scripts/capturar-maqueta.mjs` dejó de abrir las páginas por `file://`. Sirve `docs/diseno` con
+      `scripts/servidor-estatico.mjs` (el mismo de `capturar-vitrina.mjs`), abre el índice y sigue su enlace a cada
+      página; si el índice no enlaza una página, la pasada aborta. `tests/unit/guardias/capturas-servidas.test.ts`
+      lo vigila en los dos arneses (demo en rojo en la bitácora del S3). Toda mirada sigue yendo con su matriz.
 
 ## Tokens de reusables consumidos
 

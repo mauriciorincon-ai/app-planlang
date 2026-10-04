@@ -45,3 +45,6 @@ runs/**/*.sqlite-shm
 # Paquete de la vitrina para hoja-de-vida (ADR-009): build propio y la carpeta que se copia; se regeneran.
 /.next-paquete/
 /dist/
+
+# scripts/demo-rojo.sh (kit v1.35.0): respaldo de la mutación mientras corre una demo en rojo
+.demo-rojo/
