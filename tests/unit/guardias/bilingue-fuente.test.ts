@@ -1,6 +1,6 @@
 /**
- * Regla 20 en el código de la vitrina (AU-S2-B17, B18): ninguna palabra se elige con un ternario de idioma
- * (`i === "es" ? "de" : "of"`) en `src/`. Lo que se lee nace como mapa `{ es, en }` en `src/textos/`, redactado entero
+ * Regla 20 en el código de la vitrina (AU-S2-B17, B18) y del núcleo (S3, «informe sin fragmentos»): ninguna palabra
+ * se elige con un ternario de idioma (`i === "es" ? "de" : "of"`) en `src/` ni en `core/`. Lo que se lee nace como mapa `{ es, en }` en `src/textos/`, redactado entero
  * en cada idioma; un fragmento traducido alrededor de los datos no es una redacción. Quedan fuera los códigos de
  * idioma (`"es"`, `"en"`), los valores de atributo (`"true"`), las rutas (`".en"`, `docs/…json`) y `src/lib/vista/formato.ts`,
  * que da formato a números y listas («7.083», «0,75», «A, B y C»), no redacta.
@@ -106,6 +106,16 @@ describe("regla 20: sin ternarios de idioma con palabras (AU-S2-B17, B18)", () =
       "x.ts:6: «real · corrida» / «real · run»",
       "x.ts:7: «cases» / «casos»",
     ]);
+  });
+
+  it("core/ tampoco: el informe, M9 y la revisión del borrador redactan cada idioma entero (S3)", () => {
+    const raiz = process.cwd();
+    const problemas = fuentes(join(raiz, "core"))
+      .map((f) => relative(raiz, f))
+      .flatMap((f) =>
+        ternariosDeIdioma(f, readFileSync(join(raiz, f), "utf8")),
+      );
+    expect(problemas).toEqual([]);
   });
 
   it("src/ no elige palabras por idioma fuera de los textos", () => {

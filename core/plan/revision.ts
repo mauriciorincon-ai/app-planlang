@@ -159,6 +159,14 @@ export function impideAprobar(
 
 // ------------------------------------------------------------------------------------------- documento ES/EN
 
+/** El nombre de cada idioma, dicho en cada idioma. */
+const NOMBRE_IDIOMA: Readonly<
+  Record<"es" | "en", Readonly<Record<string, string>>>
+> = {
+  es: { es: "español", en: "inglés" },
+  en: { es: "Spanish", en: "English" },
+};
+
 const T = {
   es: {
     titulo: "Revisión del borrador",
@@ -173,7 +181,7 @@ const T = {
     ninguna: "Ninguna.",
     redactado: "Textos que redactó el entrevistador (léelos)",
     redactadoLinea: (p: string, i: string) =>
-      `${p}: el texto en ${i === "es" ? "español" : "inglés"} lo redactó el entrevistador desde tu respuesta.`,
+      `${p}: el texto en ${NOMBRE_IDIOMA.es[i] ?? i} lo redactó el entrevistador desde tu respuesta.`,
     senales: "Señales que el agente tendrá que registrar y que sumó el código",
     senalLinea: (s: string, q: string[]) => `\`${s}\`: la lee ${q.join(", ")}.`,
     plan: "El plan, sección por sección",
@@ -196,6 +204,23 @@ const T = {
       lotes: "Lotes",
     },
     pendiente: "pendiente",
+    cab: {
+      actores: ["id", "actor", "tipo"],
+      decisiones: ["id", "pregunta", "elegida", "reversibilidad"],
+      riesgos: ["id", "modo de falla", "S·O·D", "detector"],
+      supuestos: ["id", "supuesto", "prueba barata"],
+      criterios: ["id", "enunciado", "objetivo", "regla", "controla"],
+      umbrales: [
+        "id",
+        "nombre",
+        "señal · operador · valor",
+        "rango",
+        "si se cumple",
+      ],
+    },
+    nodos: "Nodos",
+    porDefecto: "por defecto",
+    senalesObligatorias: "Señales obligatorias",
   },
   en: {
     titulo: "Draft review",
@@ -209,7 +234,7 @@ const T = {
     ninguna: "None.",
     redactado: "Texts the interviewer wrote (read them)",
     redactadoLinea: (p: string, i: string) =>
-      `${p}: the ${i === "es" ? "Spanish" : "English"} text was written by the interviewer from your answer.`,
+      `${p}: the ${NOMBRE_IDIOMA.en[i] ?? i} text was written by the interviewer from your answer.`,
     senales: "Signals the agent will have to record, added by code",
     senalLinea: (s: string, q: string[]) =>
       `\`${s}\`: read by ${q.join(", ")}.`,
@@ -233,6 +258,17 @@ const T = {
       lotes: "Batches",
     },
     pendiente: "pending",
+    cab: {
+      actores: ["id", "actor", "type"],
+      decisiones: ["id", "question", "chosen", "reversibility"],
+      riesgos: ["id", "failure mode", "S·O·D", "detector"],
+      supuestos: ["id", "assumption", "cheap test"],
+      criterios: ["id", "statement", "target", "rule", "controls"],
+      umbrales: ["id", "name", "signal · operator · value", "range", "if true"],
+    },
+    nodos: "Nodes",
+    porDefecto: "by default",
+    senalesObligatorias: "Required signals",
   },
 } as const;
 
@@ -273,7 +309,7 @@ function seccionesDelPlan(b: Obj, idioma: Idioma): string[] {
     `### ${s.actores}`,
     "",
     ...tabla(
-      ["id", idioma === "es" ? "actor" : "actor", "tipo", o],
+      [...t.cab.actores, o],
       lista(b.actores).map((a) => [
         String(a.id),
         txt(a, idioma),
@@ -295,13 +331,7 @@ function seccionesDelPlan(b: Obj, idioma: Idioma): string[] {
     `### ${s.decisiones}`,
     "",
     ...tabla(
-      [
-        "id",
-        idioma === "es" ? "pregunta" : "question",
-        idioma === "es" ? "elegida" : "chosen",
-        "reversibilidad",
-        o,
-      ],
+      [...t.cab.decisiones, o],
       lista(b.decisiones).map((d) => [
         String(d.id),
         txt(d.pregunta, idioma),
@@ -318,13 +348,7 @@ function seccionesDelPlan(b: Obj, idioma: Idioma): string[] {
     `### ${s.riesgos}`,
     "",
     ...tabla(
-      [
-        "id",
-        idioma === "es" ? "modo de falla" : "failure mode",
-        "S·O·D",
-        idioma === "es" ? "detector" : "detector",
-        o,
-      ],
+      [...t.cab.riesgos, o],
       lista(b.riesgos).map((r) => {
         const d = esObj(r.detector_en_trazas) ? r.detector_en_trazas : null;
         return [
@@ -344,12 +368,7 @@ function seccionesDelPlan(b: Obj, idioma: Idioma): string[] {
     `### ${s.supuestos}`,
     "",
     ...tabla(
-      [
-        "id",
-        idioma === "es" ? "supuesto" : "assumption",
-        idioma === "es" ? "prueba barata" : "cheap test",
-        o,
-      ],
+      [...t.cab.supuestos, o],
       lista(b.supuestos).map((x) => [
         String(x.id),
         txt(x.enunciado, idioma),
@@ -363,14 +382,7 @@ function seccionesDelPlan(b: Obj, idioma: Idioma): string[] {
     `### ${s.criterios}`,
     "",
     ...tabla(
-      [
-        "id",
-        idioma === "es" ? "enunciado" : "statement",
-        idioma === "es" ? "objetivo" : "target",
-        idioma === "es" ? "regla" : "rule",
-        idioma === "es" ? "controla" : "controls",
-        o,
-      ],
+      [...t.cab.criterios, o],
       lista(b.criterios_aceptacion).map((c) => {
         const r = esObj(c.regla_de_medicion) ? c.regla_de_medicion : {};
         const regla = [r.poblacion, r.condicion ?? r.metrica]
@@ -396,16 +408,7 @@ function seccionesDelPlan(b: Obj, idioma: Idioma): string[] {
     `### ${s.umbrales}`,
     "",
     ...tabla(
-      [
-        "id",
-        idioma === "es" ? "nombre" : "name",
-        idioma === "es"
-          ? "señal · operador · valor"
-          : "signal · operator · value",
-        idioma === "es" ? "rango" : "range",
-        idioma === "es" ? "si se cumple" : "if true",
-        o,
-      ],
+      [...t.cab.umbrales, o],
       lista(b.umbrales).map((u) => {
         const r = esObj(u.rango_jugable) ? u.rango_jugable : {};
         return [
@@ -426,7 +429,7 @@ function seccionesDelPlan(b: Obj, idioma: Idioma): string[] {
   out.push(`### ${s.contrato}`, "");
   if (cg) {
     out.push(
-      `- ${idioma === "es" ? "Nodos" : "Nodes"}: ${lista(cg.nodos_esperados)
+      `- ${t.nodos}: ${lista(cg.nodos_esperados)
         .map((n) => `\`${String(n.id)}\` (${String(n.tipo)})`)
         .join(", ")}`,
       ...lista(cg.aristas_condicionales).map((a) => {
@@ -438,15 +441,12 @@ function seccionesDelPlan(b: Obj, idioma: Idioma): string[] {
       }),
       ...Object.entries(
         esObj(cg.ramas_por_defecto) ? cg.ramas_por_defecto : {},
-      ).map(
-        ([d, h]) =>
-          `- \`${d}\` ${idioma === "es" ? "por defecto" : "by default"} → \`${String(h)}\``,
-      ),
+      ).map(([d, h]) => `- \`${d}\` ${t.porDefecto} → \`${String(h)}\``),
       ...lista(cg.pausas_humanas).map(
         (p) =>
           `- ⏸ \`${String(p.nodo)}\` · ${String(p.rol)} · ${(Array.isArray(p.payload_minimo) ? p.payload_minimo : []).join(", ")}`,
       ),
-      `- ${idioma === "es" ? "Señales obligatorias" : "Required signals"}: ${(Array.isArray(cg.senales_obligatorias_en_traza) ? cg.senales_obligatorias_en_traza : []).map((x) => `\`${String(x)}\``).join(", ")}`,
+      `- ${t.senalesObligatorias}: ${(Array.isArray(cg.senales_obligatorias_en_traza) ? cg.senales_obligatorias_en_traza : []).map((x) => `\`${String(x)}\``).join(", ")}`,
       `- ${o}: ${String(cg.origen ?? "")}`,
       "",
     );

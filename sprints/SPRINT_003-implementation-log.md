@@ -785,6 +785,22 @@ defecto del builder, no de la arquitectura. La primera (`-base`) queda versionad
   pequeña) y **S2 refutado**: misma exactitud (100 % y 100 %), latencia mediana 6,005 s frente a 5,868 s, y la línea base
   gastó MÁS (US$0,454 frente a 0,293): la comparación no fue a igual presupuesto, y el informe lo dice.
 
+### Informe sin fragmentos (deuda del S2: `render-md.ts` 73 ternarios, `m9.ts` 5, más 20 en `core/plan/revision.ts`)
+
+- `core/brecha/textos-informe.ts`: cada frase del informe Markdown escrita entera en cada idioma, con sus datos
+  dentro (`TEXTOS_INFORME[i]`); `render-md.ts` solo elige el idioma y pone los datos. Igual en `m9.ts`
+  (`TEXTOS_M9`), en `informe.ts` («sin decisión») y en la revisión del borrador (`revision.ts`: cabeceras de tabla,
+  nodos, ramas por defecto, señales y el nombre de cada idioma dicho en cada idioma).
+- **Bytes:** el JSON del verificador no cambia (solo se tocó el render) y el Markdown tampoco: los seis informes
+  publicados del A (cinco corridas y la vitrina) y el reporte M9 salen idénticos (`brecha:informe --verificar`,
+  `manifiesto-vitrina.test.ts`, `m9.test.ts`). **No hubo que regenerar nada publicado**, y por eso la ficha de
+  reproducibilidad no declara regeneración.
+- Dos arreglos de redacción que solo tocan lo que no estaba publicado: la opción elegida que ya termina en punto no
+  recibe otro («… sin excepción..» en el informe B), y la revisión del borrador en inglés decía «tipo» y
+  «reversibilidad» en sus cabeceras.
+- **Guardia extendida** (`tests/unit/guardias/bilingue-fuente.test.ts`): ningún ternario de idioma elige palabras
+  en `core/` tampoco. Al extenderla encontró los 99 de arriba; ninguno queda.
+
 #### Demos en rojo (con `scripts/demo-rojo.sh`; todas restauradas y en verde)
 
 | # | Gate | Mutación | Rojo (quién lo nombró) |
@@ -795,6 +811,7 @@ defecto del builder, no de la arquitectura. La primera (`-base`) queda versionad
 | D37 | registro del B (M-20) | quitar `dom-financiero` del registro | `evaluadores.test.ts` (las tres) |
 | D38 | atribución por dominio | `expediente_con_cita` atribuida al extractor | `evaluadores.test.ts › una falla del B se atribuye a un nodo del B…` |
 | D39 | el dominio sale del plan | el registro se consulta siempre con `dom-salud` | `evaluadores.test.ts` (dos) |
+| D40 | regla 20 en `core/` | el título del informe vuelve a ser un ternario de idioma | `bilingue-fuente.test.ts › core/ tampoco…`: «core/brecha/render-md.ts:612: «Informe de brecha» / «Gap report»» |
 
 ## Desviación del plan
 

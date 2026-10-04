@@ -1,7 +1,8 @@
 /**
  * El informe en Markdown, en español y en inglés (§ 12 de la especificación, 9 secciones). Redactado en
  * los dos idiomas desde plantillas (regla 20): el JSON es la fuente y cada idioma se escribe, no se
- * traduce. El estado nunca va solo en color: símbolo + texto (regla dura 13).
+ * traduce. Toda frase vive entera en `textos-informe.ts`; aquí solo se elige el idioma y se ponen los datos.
+ * El estado nunca va solo en color: símbolo + texto (regla dura 13).
  */
 import type { Idioma, TextoBilingue } from "../formatos/bilingue";
 import type { ResultadoCriterio } from "./criterios";
@@ -10,6 +11,7 @@ import { partirDisparador } from "./detectores";
 import type { CasoEjemplar, Informe, UmbralJugable } from "./informe";
 import { num, numCorto, pct } from "./numeros";
 import type { ResultadoSupuesto } from "./supuestos";
+import { TEXTOS_INFORME } from "./textos-informe";
 
 type Tb = TextoBilingue;
 const tb = (es: string, en: string): Tb => ({ es, en });
@@ -59,11 +61,11 @@ function prioridadRiesgo(r: Informe["riesgos"][number], i: Idioma): string {
   const efectiva =
     PRIORIDAD[r.prioridad_de_accion]?.[i] ?? r.prioridad_de_accion;
   if (!r.control_legal) return efectiva;
-  const legal = i === "es" ? "control legal" : "legal control";
+  const t = TEXTOS_INFORME[i];
   if (r.prioridad_de_tabla === r.prioridad_de_accion)
-    return `${efectiva} · ${legal}`;
+    return `${efectiva} · ${t.controlLegal}`;
   const tabla = PRIORIDAD[r.prioridad_de_tabla]?.[i] ?? r.prioridad_de_tabla;
-  return `${efectiva} · ${legal} (${i === "es" ? "tabla" : "table"}: ${tabla})`;
+  return t.conTabla(efectiva, t.controlLegal, tabla);
 }
 
 /** Enumeraciones del dominio del verificador, redactadas en los dos idiomas (regla 20). */
@@ -125,7 +127,9 @@ const fila = (xs: readonly string[]) => `| ${xs.map(celda).join(" | ")} |`;
 const tabla = (cab: readonly string[], filas: readonly (readonly string[])[]) =>
   [fila(cab), fila(cab.map(() => "---")), ...filas.map(fila)].join("\n");
 const siNo = (b: boolean, i: Idioma) =>
-  b ? (i === "es" ? "sí" : "yes") : "no";
+  b ? TEXTOS_INFORME[i].si : TEXTOS_INFORME[i].no;
+/** Cierra una frase con punto si no lo trae (la opción elegida del B ya termina en punto: «… sin excepción.»). */
+const conPunto = (s: string) => (/[.!?…]$/.test(s) ? s : `${s}.`);
 const casos = (ids: readonly string[]) =>
   ids.length === 0 ? "—" : ids.join(", ");
 
@@ -134,7 +138,9 @@ const casosDeRiesgo = (r: Informe["riesgos"][number], i: Idioma) =>
   r.ambito === "sesion"
     ? casos(
         r.casos.map((c) =>
-          c.replace(/^sesion-/, i === "es" ? "sesión " : "session "),
+          c.startsWith("sesion-")
+            ? TEXTOS_INFORME[i].sesion(c.slice("sesion-".length))
+            : c,
         ),
       )
     : casos(r.casos);
@@ -162,11 +168,7 @@ function notasCriterio(c: ResultadoCriterio, i: Idioma): string[] {
   const out: string[] = [];
   if (c.nota) out.push(c.nota[i]);
   if (c.fuera_por_senal_nula > 0)
-    out.push(
-      i === "es"
-        ? `${c.fuera_por_senal_nula} caso(s) quedan fuera de la población porque la señal que la define es nula en ellos (el paso que la escribe no corrió).`
-        : `${c.fuera_por_senal_nula} case(s) fall outside the population because the signal that defines it is null for them (the step that writes it did not run).`,
-    );
+    out.push(TEXTOS_INFORME[i].fueraPorNulaCriterio(c.fuera_por_senal_nula));
   for (const n of c.no_evaluables) out.push(`${n.caso_id}: ${n.motivo[i]}`);
   return out;
 }
@@ -177,31 +179,24 @@ function seccionResumen(inf: Informe, i: Idioma): string {
     .map((id) => porId.get(id))
     .filter((c): c is ResultadoCriterio => c !== undefined);
   const ocurridos = inf.riesgos.filter((r) => r.estado === "ocurrio");
+  const t = TEXTOS_INFORME[i];
   const motivos = [
-    ...inf.veredicto.bloqueantes.map(
-      (m) => `- ${i === "es" ? "Bloquea" : "Blocks"}: ${m[i]}`,
-    ),
-    ...inf.veredicto.alertas.map(
-      (m) => `- ${i === "es" ? "Alerta" : "Alert"}: ${m[i]}`,
-    ),
+    ...inf.veredicto.bloqueantes.map((m) => t.bloquea(m[i])),
+    ...inf.veredicto.alertas.map((m) => t.alerta(m[i])),
   ];
   return [
-    i === "es"
-      ? "## 1. Resumen para quien decide"
-      : "## 1. Summary for the decision-maker",
+    t.resumen,
     "",
-    `**${i === "es" ? "Veredicto" : "Verdict"}: ${VEREDICTO[inf.veredicto.valor][i]}**`,
+    `**${t.veredicto}: ${VEREDICTO[inf.veredicto.valor][i]}**`,
     "",
     inf.resumen.texto[i],
     "",
-    `**${i === "es" ? "Recomendación" : "Recommendation"}:** ${inf.resumen.recomendacion[i]}`,
+    `**${t.recomendacion}:** ${inf.resumen.recomendacion[i]}`,
     "",
-    `**${i === "es" ? "Los tres criterios más relevantes" : "The three most relevant criteria"}**`,
+    `**${t.tresCriterios}**`,
     "",
     tabla(
-      i === "es"
-        ? ["Id", "Criterio", "Medido", "Objetivo", "Estado"]
-        : ["Id", "Criterion", "Measured", "Target", "Status"],
+      t.cabResumen,
       destacados.map((c) => [
         c.id,
         c.enunciado[i],
@@ -211,44 +206,37 @@ function seccionResumen(inf: Informe, i: Idioma): string {
       ]),
     ),
     "",
-    `**${i === "es" ? "Riesgos que ocurrieron" : "Risks that occurred"}:** ${
+    `**${t.riesgosOcurridos}:** ${
       ocurridos.length === 0
-        ? i === "es"
-          ? "ninguno."
-          : "none."
+        ? t.ninguno
         : ocurridos
             .map((r) => `${r.id} (${r.modo[i]}, ${casosDeRiesgo(r, i)})`)
             .join("; ") + "."
     }`,
     "",
-    `**${i === "es" ? "Por qué este veredicto" : "Why this verdict"}**`,
+    `**${t.porQue}**`,
     "",
-    ...(motivos.length > 0
-      ? motivos
-      : [
-          i === "es"
-            ? "- Nada bloquea ni alerta."
-            : "- Nothing blocks or alerts.",
-        ]),
+    ...(motivos.length > 0 ? motivos : [t.nadaBloquea]),
   ].join("\n");
 }
 
 function seccionPlan(inf: Informe, i: Idioma): string {
   const p = inf.plan_en_breve;
+  const t = TEXTOS_INFORME[i];
   return [
-    i === "es" ? "## 2. El plan en breve" : "## 2. The plan in brief",
+    t.plan,
     "",
-    `**${i === "es" ? "Problema" : "Problem"}.** ${p.problema[i]}`,
+    `**${t.problema}.** ${p.problema[i]}`,
     "",
-    `**${i === "es" ? "Flujo" : "Flow"}**`,
+    `**${t.flujo}**`,
     "",
     ...p.flujo.map((f, k) => `${k + 1}. ${f[i]}`),
     "",
-    `**${i === "es" ? "Decisiones de una sola vía" : "One-way decisions"}**`,
+    `**${t.decisionesUnaVia}**`,
     "",
     ...p.decisiones_una_via.map(
       (d) =>
-        `- **${d.id}** — ${d.pregunta[i]}${d.opcion_elegida ? ` → ${d.opcion_elegida[i]}.` : ""}${d.justificacion ? ` ${d.justificacion[i]}` : ""}`,
+        `- **${d.id}** — ${d.pregunta[i]}${d.opcion_elegida ? ` → ${conPunto(d.opcion_elegida[i])}` : ""}${d.justificacion ? ` ${d.justificacion[i]}` : ""}`,
     ),
   ].join("\n");
 }
@@ -257,29 +245,12 @@ function seccionCriterios(inf: Informe, i: Idioma): string {
   const notas = inf.criterios.flatMap((c) =>
     notasCriterio(c, i).map((n) => `- **${c.id}** — ${n}`),
   );
+  const t = TEXTOS_INFORME[i];
   return [
-    i === "es" ? "## 3. Criterios de aceptación" : "## 3. Acceptance criteria",
+    t.criterios,
     "",
     tabla(
-      i === "es"
-        ? [
-            "Id",
-            "Criterio",
-            "Casos",
-            "Medido",
-            "Objetivo",
-            "Estado",
-            "Casos que incumplen",
-          ]
-        : [
-            "Id",
-            "Criterion",
-            "Cases",
-            "Measured",
-            "Target",
-            "Status",
-            "Cases not meeting it",
-          ],
+      t.cabCriterios,
       inf.criterios.map((c) => [
         c.id,
         c.enunciado[i],
@@ -290,9 +261,7 @@ function seccionCriterios(inf: Informe, i: Idioma): string {
         casos(c.casos_que_incumplen),
       ]),
     ),
-    ...(notas.length > 0
-      ? ["", `**${i === "es" ? "Notas" : "Notes"}**`, "", ...notas]
-      : []),
+    ...(notas.length > 0 ? ["", `**${t.notas}**`, "", ...notas] : []),
   ].join("\n");
 }
 
@@ -301,9 +270,7 @@ function valorRiesgo(r: ResultadoRiesgo, i: Idioma): string {
   const tasa = r.tipo_detector === "tasa";
   const fmt = (x: number): string => (tasa ? pct(x, i) : numCorto(x, i));
   const d = r.ocurre_si === null ? null : partirDisparador(r.ocurre_si);
-  const regla = d
-    ? ` (${i === "es" ? "ocurre si" : "occurs if"} ${d.op} ${fmt(d.n)})`
-    : "";
+  const regla = d ? TEXTOS_INFORME[i].ocurreSi(d.op, fmt(d.n)) : "";
   return `${fmt(r.valor)}${regla}`;
 }
 
@@ -311,11 +278,7 @@ function notasRiesgo(r: ResultadoRiesgo, i: Idioma): string[] {
   const out: string[] = [];
   if (r.nota) out.push(r.nota[i]);
   if (r.fuera_por_senal_nula > 0)
-    out.push(
-      i === "es"
-        ? `${r.fuera_por_senal_nula} caso(s) quedan fuera de la población del detector porque la señal que la define es nula en ellos.`
-        : `${r.fuera_por_senal_nula} case(s) fall outside the detector's population because the signal that defines it is null for them.`,
-    );
+    out.push(TEXTOS_INFORME[i].fueraPorNulaRiesgo(r.fuera_por_senal_nula));
   for (const n of r.no_evaluables) out.push(`${n.caso_id}: ${n.motivo[i]}`);
   return out;
 }
@@ -330,38 +293,19 @@ function seccionRiesgos(inf: Informe, i: Idioma): string {
     (h) =>
       `- ${h.severidad === "bloqueante" ? "✗" : "⚠"} \`${h.codigo}\`${h.caso_id ? ` ${h.caso_id}` : ""} (${h.corrida_id}): ${h.detalle[i]}`,
   );
+  const t = TEXTOS_INFORME[i];
   return [
-    i === "es" ? "## 4. Riesgos previstos" : "## 4. Foreseen risks",
+    t.riesgos,
     "",
     tabla(
-      i === "es"
-        ? [
-            "Id",
-            "Modo de falla",
-            "S·O·D",
-            "Prioridad",
-            "Casos medidos",
-            "Detector",
-            "Estado",
-            "Casos",
-          ]
-        : [
-            "Id",
-            "Failure mode",
-            "S·O·D",
-            "Priority",
-            "Cases measured",
-            "Detector",
-            "Status",
-            "Cases",
-          ],
+      t.cabRiesgos,
       inf.riesgos.map((r) => [
         r.id,
         r.modo[i],
         `${r.severidad}·${r.ocurrencia}·${r.deteccion}`,
         prioridadRiesgo(r, i),
         r.ambito === "sesion"
-          ? `${r.n_poblacion} ${i === "es" ? (r.n_poblacion === 1 ? "sesión" : "sesiones") : r.n_poblacion === 1 ? "session" : "sessions"}`
+          ? t.sesiones(r.n_poblacion)
           : String(r.n_poblacion),
         valorRiesgo(r, i),
         ESTADO_RIESGO[r.estado][i],
@@ -369,19 +313,13 @@ function seccionRiesgos(inf: Informe, i: Idioma): string {
       ]),
     ),
     "",
-    i === "es"
-      ? "La prioridad es la de acción AIAG-VDA (severidad primero); una mitigación «funcionó» si su riesgo no ocurrió, y está implementada si el contrato de grafo de abajo se cumple."
-      : "Priority is the AIAG-VDA action priority (severity first); a mitigation “worked” if its risk did not occur, and it is in place if the graph contract below holds.",
+    t.notaPrioridad,
     ...(notas.length > 0 ? ["", ...notas] : []),
     "",
-    i === "es"
-      ? "### Contrato de grafo: ¿está construido lo que el plan exige?"
-      : "### Graph contract: is what the plan requires actually built?",
+    t.contrato,
     "",
     tabla(
-      i === "es"
-        ? ["Nodo", "Tipo", "En el grafo", "Visitas"]
-        : ["Node", "Type", "In the graph", "Visits"],
+      t.cabNodos,
       ct.nodos.map((n) => [
         n.id,
         nombre(TIPO_NODO, n.tipo, i),
@@ -390,30 +328,18 @@ function seccionRiesgos(inf: Informe, i: Idioma): string {
       ]),
     ),
     "",
-    i === "es"
-      ? `Señales obligatorias: ${ct.senales.filter((s) => s.presente_en === s.de).length} de ${ct.senales.length} presentes en todas las trazas. Pausas humanas: ${ct.pausas.casos_con_pausa} caso(s) con pausa, ${ct.pausas.pausas_registradas} registrada(s), rol «${ct.pausas.rol}».`
-      : `Mandatory signals: ${ct.senales.filter((s) => s.presente_en === s.de).length} of ${ct.senales.length} present in every trace. Human pauses: ${ct.pausas.casos_con_pausa} case(s) with a pause, ${ct.pausas.pausas_registradas} recorded, role «${ct.pausas.rol}».`,
+    t.senalesYPausas(
+      ct.senales.filter((s) => s.presente_en === s.de).length,
+      ct.senales.length,
+      ct.pausas.casos_con_pausa,
+      ct.pausas.pausas_registradas,
+      ct.pausas.rol,
+    ),
     "",
-    i === "es"
-      ? "**Prueba cruzada de las ramas (Python ↔ TypeScript):** con los umbrales aplicados, el intérprete de TypeScript recalcula cada decisión del agente."
-      : "**Branch cross-check (Python ↔ TypeScript):** with the applied thresholds, the TypeScript interpreter recomputes every decision the agent took.",
+    t.pruebaCruzada,
     "",
     tabla(
-      i === "es"
-        ? [
-            "Corrida",
-            "Variante",
-            "Visitas",
-            "Discrepancias",
-            "Misma huella que Python",
-          ]
-        : [
-            "Run",
-            "Variant",
-            "Visits",
-            "Mismatches",
-            "Same fingerprint as Python",
-          ],
+      t.cabRf092,
       ct.rf_09_2.map((r) => [
         r.corrida_id,
         nombre(VARIANTE, r.variante, i),
@@ -423,9 +349,7 @@ function seccionRiesgos(inf: Informe, i: Idioma): string {
       ]),
     ),
     "",
-    ...(hallazgos.length > 0
-      ? hallazgos
-      : [i === "es" ? "Sin hallazgos." : "No findings."]),
+    ...(hallazgos.length > 0 ? hallazgos : [t.sinHallazgos]),
   ].join("\n");
 }
 
@@ -441,42 +365,23 @@ function seccionBrechas(inf: Informe, i: Idioma): string {
     sin_implementacion: tb("✗ sin implementación", "✗ not implemented"),
     mal_formado: tb("⚠ no pudo medir", "⚠ could not measure"),
   };
+  const t = TEXTOS_INFORME[i];
   return [
-    i === "es" ? "## 5. Brechas no previstas" : "## 5. Unforeseen gaps",
+    t.brechas,
     "",
-    i === "es"
-      ? "Fallas que aparecen en las trazas y que ningún riesgo del plan detectó en ese caso."
-      : "Failures that appear in the traces and that no risk in the plan detected in that case.",
+    t.brechasQue,
     "",
     ...(b.brechas.length === 0
-      ? [i === "es" ? "Ninguna." : "None."]
+      ? [t.ninguna]
       : b.brechas.map(
           (x) =>
-            `- ${x.caso_id ? `**${x.caso_id}**` : "—"} · ${nombre(CATEGORIA_BRECHA, x.categoria, i)}${x.corrida_id !== inf.corrida_id ? ` · ${i === "es" ? "repetición" : "repetition"} \`${x.corrida_id}\`` : ""}${x.nodo ? ` · ${i === "es" ? "nodo" : "node"} \`${x.nodo}\`, ${i === "es" ? "paso" : "step"} ${x.paso ?? "—"}` : ""}${x.reintentos !== null ? ` · ${x.reintentos} ${i === "es" ? (x.reintentos === 1 ? "reintento" : "reintentos") : x.reintentos === 1 ? "retry" : "retries"}` : ""}: ${x.detalle[i]}`,
+            `- ${x.caso_id ? `**${x.caso_id}**` : "—"} · ${nombre(CATEGORIA_BRECHA, x.categoria, i)}${x.corrida_id !== inf.corrida_id ? t.repeticion(x.corrida_id) : ""}${x.nodo ? t.nodoYPaso(x.nodo, String(x.paso ?? "—")) : ""}${x.reintentos !== null ? t.reintentos(x.reintentos) : ""}: ${x.detalle[i]}`,
         )),
     "",
-    `**${i === "es" ? "Evaluadores" : "Evaluators"}**`,
+    `**${t.evaluadores}**`,
     "",
     tabla(
-      i === "es"
-        ? [
-            "Evaluador",
-            "Tipo",
-            "Estado",
-            "Casos",
-            "Fallas",
-            "No evaluables",
-            "Riesgos que cubre",
-          ]
-        : [
-            "Evaluator",
-            "Type",
-            "Status",
-            "Cases",
-            "Failures",
-            "Not evaluable",
-            "Risks it covers",
-          ],
+      t.cabEvaluadores,
       b.evaluadores.map((e) => [
         e.id,
         nombre(TIPO_EVALUADOR, e.tipo, i),
@@ -491,34 +396,28 @@ function seccionBrechas(inf: Informe, i: Idioma): string {
 }
 
 function seccionSupuesto(s: ResultadoSupuesto, i: Idioma): string {
+  const t = TEXTOS_INFORME[i];
   const lineas = [
     `### ${s.id} — ${s.enunciado[i]}`,
     "",
-    `**${ESTADO_SUPUESTO[s.estado][i]}** (${i === "es" ? "criticidad" : "criticality"} ${PRIORIDAD[s.criticidad]?.[i] ?? s.criticidad}). ${s.motivo[i]}`,
+    `**${ESTADO_SUPUESTO[s.estado][i]}** (${t.criticidad(PRIORIDAD[s.criticidad]?.[i] ?? s.criticidad)}). ${s.motivo[i]}`,
   ];
   const metricas = Object.keys(s.metricas)
     .sort()
     .map((k) => {
       const v = s.metricas[k];
-      return `${nombre(METRICA, k, i)} = ${v === null || v === undefined ? (i === "es" ? "no existe" : "does not exist") : numCorto(v, i, 4)}`;
+      return `${nombre(METRICA, k, i)} = ${v === null || v === undefined ? t.noExiste : numCorto(v, i, 4)}`;
     });
   if (metricas.length > 0)
-    lineas.push(
-      "",
-      `${i === "es" ? "Medidas" : "Measures"} (n = ${s.n}): ${metricas.join(" · ")}.`,
-    );
+    lineas.push("", t.medidas(s.n, metricas.join(" · ")));
   for (const l of s.limitaciones) lineas.push("", `> ${l[i]}`);
   if (s.curva)
     lineas.push(
       "",
-      i === "es"
-        ? "Curva riesgo-cobertura (umbral de confianza → parte que el agente resuelve sola → errores entre esa parte):"
-        : "Risk-coverage curve (confidence threshold → share the agent resolves alone → errors within that share):",
+      t.curva,
       "",
       tabla(
-        i === "es"
-          ? ["Umbral", "Cobertura", "Riesgo", "Casos"]
-          : ["Threshold", "Coverage", "Risk", "Cases"],
+        t.cabCurva,
         s.curva.map((p) => [
           num(p.umbral, i, 2),
           pct(p.cobertura, i),
@@ -533,46 +432,38 @@ function seccionSupuesto(s: ResultadoSupuesto, i: Idioma): string {
       x === null ? "—" : `${numCorto(x, i)} s`;
     lineas.push(
       "",
-      tabla(
-        i === "es"
-          ? ["", "Multiagente", `Agente único (${c.corrida_base})`]
-          : ["", "Multi-agent", `Single agent (${c.corrida_base})`],
+      tabla(t.cabComparacion(c.corrida_base), [
         [
-          [
-            i === "es"
-              ? "Casos resueltos bien (decisión y pausa)"
-              : "Cases resolved right (decision and pause)",
-            pct(c.exactitud.multiagente, i),
-            pct(c.exactitud.agente_unico, i),
-          ],
-          [
-            i === "es" ? "Latencia mediana" : "Median latency",
-            lat(c.latencia_mediana_s.multiagente),
-            lat(c.latencia_mediana_s.agente_unico),
-          ],
-          [
-            i === "es"
-              ? "Llamadas al modelo (con reintentos)"
-              : "Model calls (with retries)",
-            String(c.presupuesto.multiagente.llamadas_al_modelo),
-            String(c.presupuesto.agente_unico.llamadas_al_modelo),
-          ],
-          [
-            "Tokens",
-            String(c.presupuesto.multiagente.tokens),
-            String(c.presupuesto.agente_unico.tokens),
-          ],
-          [
-            i === "es" ? "Costo nominal (US$)" : "Nominal cost (US$)",
-            num(c.presupuesto.multiagente.costo_nominal_usd, i, 4),
-            num(c.presupuesto.agente_unico.costo_nominal_usd, i, 4),
-          ],
+          t.filaExactitud,
+          pct(c.exactitud.multiagente, i),
+          pct(c.exactitud.agente_unico, i),
         ],
-      ),
+        [
+          t.filaLatencia,
+          lat(c.latencia_mediana_s.multiagente),
+          lat(c.latencia_mediana_s.agente_unico),
+        ],
+        [
+          t.filaLlamadas,
+          String(c.presupuesto.multiagente.llamadas_al_modelo),
+          String(c.presupuesto.agente_unico.llamadas_al_modelo),
+        ],
+        [
+          "Tokens",
+          String(c.presupuesto.multiagente.tokens),
+          String(c.presupuesto.agente_unico.tokens),
+        ],
+        [
+          t.filaCosto,
+          num(c.presupuesto.multiagente.costo_nominal_usd, i, 4),
+          num(c.presupuesto.agente_unico.costo_nominal_usd, i, 4),
+        ],
+      ]),
       "",
-      i === "es"
-        ? `Casos donde difieren: ${casos(c.casos_distintos)}. Presupuesto de la línea base dentro del multiagente: ${siNo(c.presupuesto_respetado, i)}.`
-        : `Cases where they differ: ${casos(c.casos_distintos)}. Baseline budget within the multi-agent one: ${siNo(c.presupuesto_respetado, i)}.`,
+      t.difierenYPresupuesto(
+        casos(c.casos_distintos),
+        siNo(c.presupuesto_respetado, i),
+      ),
     );
   }
   return lineas.join("\n");
@@ -580,7 +471,7 @@ function seccionSupuesto(s: ResultadoSupuesto, i: Idioma): string {
 
 function seccionSupuestos(inf: Informe, i: Idioma): string {
   return [
-    i === "es" ? "## 6. Supuestos" : "## 6. Assumptions",
+    TEXTOS_INFORME[i].supuestos,
     "",
     ...inf.supuestos.flatMap((s) => [seccionSupuesto(s, i), ""]),
   ]
@@ -590,30 +481,23 @@ function seccionSupuestos(inf: Informe, i: Idioma): string {
 
 function seccionEjemplares(inf: Informe, i: Idioma): string {
   const e = inf.casos_ejemplares;
-  const linea = (titulo: Tb, c: CasoEjemplar | null) =>
-    `- **${titulo[i]}:** ${c ? `${c.caso_id} (${c.subtipo}). ${c.por_que[i]}` : i === "es" ? "ninguno en esta corrida." : "none in this run."}`;
+  const t = TEXTOS_INFORME[i];
+  const linea = (titulo: string, c: CasoEjemplar | null) =>
+    `- **${titulo}:** ${c ? `${c.caso_id} (${c.subtipo}). ${c.por_que[i]}` : t.ningunoEnLaCorrida}`;
   return [
-    i === "es" ? "## 7. Casos ejemplares" : "## 7. Example cases",
+    t.ejemplares,
     "",
-    linea(tb("Exitoso", "Successful"), e.exitoso),
-    linea(
-      tb("Escalado correctamente", "Correctly escalated"),
-      e.escalado_correctamente,
-    ),
-    linea(tb("Fallido", "Failed"), e.fallido),
-    linea(
-      tb("Adversario neutralizado", "Adversary neutralised"),
-      e.adversario_neutralizado,
-    ),
+    linea(t.exitoso, e.exitoso),
+    linea(t.escalado, e.escalado_correctamente),
+    linea(t.fallido, e.fallido),
+    linea(t.adversario, e.adversario_neutralizado),
   ].join("\n");
 }
 
 function observado(u: UmbralJugable, i: Idioma): string {
   const o = u.observados;
   if (o.verdaderos !== null)
-    return i === "es"
-      ? `${o.verdaderos} de ${o.n} verdaderos`
-      : `${o.verdaderos} of ${o.n} true`;
+    return TEXTOS_INFORME[i].verdaderos(o.verdaderos, o.n);
   if (o.min === null || o.max === null || o.mediana === null) return "—";
   return `${numCorto(o.min, i)} · ${numCorto(o.mediana, i)} · ${numCorto(o.max, i)} (n = ${o.n})`;
 }
@@ -621,37 +505,18 @@ function observado(u: UmbralJugable, i: Idioma): string {
 function seccionPlayground(inf: Informe, i: Idioma): string {
   const valor = (x: number | boolean | null) =>
     x === null ? "—" : typeof x === "boolean" ? String(x) : numCorto(x, i);
+  const t = TEXTOS_INFORME[i];
   return [
-    i === "es"
-      ? "## 8. Lo que el playground permite explorar"
-      : "## 8. What the playground lets you explore",
+    t.playground,
     "",
     tabla(
-      i === "es"
-        ? [
-            "Umbral",
-            "Qué decide",
-            "Regla",
-            "Rango jugable",
-            "Observado (mín · mediana · máx)",
-            "Casos justo en el umbral",
-          ]
-        : [
-            "Threshold",
-            "What it decides",
-            "Rule",
-            "Playable range",
-            "Observed (min · median · max)",
-            "Cases right at the threshold",
-          ],
+      t.cabPlayground,
       inf.playground.umbrales.map((u) => [
         u.id,
         u.nombre[i],
         `${u.senal} ${operador(u.operador, u.inclusivo)} ${valor(u.valor_aplicado)}`,
         u.rango === "booleano"
-          ? i === "es"
-            ? "sí / no"
-            : "yes / no"
+          ? t.siNoRango
           : `${numCorto(u.rango.min, i)}–${numCorto(u.rango.max, i)}`,
         observado(u, i),
         casos(u.casos_en_el_umbral),
@@ -672,36 +537,47 @@ function seccionFicha(inf: Informe, i: Idioma): string {
           `${k} = ${typeof u[k] === "number" ? numCorto(u[k] as number, i) : String(u[k])}`,
       )
       .join(" · ");
+  const t = TEXTOS_INFORME[i];
   const filas: string[][] = [
     [
-      i === "es" ? "Plan" : "Plan",
+      t.piezaPlan,
       `${f.plan.id} ${f.plan.version} (\`${f.plan.archivo}\`)`,
       `\`${f.plan.huella}\``,
     ],
     [
-      i === "es" ? "Casos" : "Cases",
-      `${f.casos.id} · ${i === "es" ? "semilla" : "seed"} ${f.casos.semilla} · n = ${f.casos.n_lote} · ${i === "es" ? "generado con el plan" : "generated with plan"} ${f.casos.plan_de_generacion.version}`,
+      t.piezaCasos,
+      t.casosDelLote(
+        f.casos.id,
+        f.casos.semilla,
+        f.casos.n_lote,
+        f.casos.plan_de_generacion.version,
+      ),
       `\`${f.casos.huella}\``,
     ],
     [
-      i === "es" ? "Corrida" : "Run",
-      `${f.corrida.id} · ${f.corrida.fecha} · ${f.corrida.proveedor}/${f.corrida.modelo} · ${nombre(VARIANTE, f.corrida.variante, i)} · ${i === "es" ? "ejecutada con el plan" : "run with plan"} ${f.corrida.plan_de_ejecucion.version}${f.corrida.plan_de_ejecucion.huella === f.plan.huella ? "" : i === "es" ? " (misma verdad: mismos umbrales y contrato de grafo, ADR-005)" : " (same truth: same thresholds and graph contract, ADR-005)"}`,
+      t.piezaCorrida,
+      t.corridaDe(
+        f.corrida.id,
+        f.corrida.fecha,
+        `${f.corrida.proveedor}/${f.corrida.modelo}`,
+        nombre(VARIANTE, f.corrida.variante, i),
+        f.corrida.plan_de_ejecucion.version,
+      ) +
+        (f.corrida.plan_de_ejecucion.huella === f.plan.huella
+          ? ""
+          : t.mismaVerdad),
       `\`${f.corrida.huella}\``,
     ],
-    [
-      i === "es" ? "Grafo" : "Graph",
-      i === "es" ? "versión del grafo exportado" : "exported graph version",
-      `\`${f.corrida.version_grafo}\``,
-    ],
+    [t.piezaGrafo, t.versionDelGrafo, `\`${f.corrida.version_grafo}\``],
     ...f.repeticiones.map((r) => [
-      i === "es" ? "Repetición" : "Repetition",
+      t.piezaRepeticion,
       r.corrida_id,
       `\`${r.huella}\``,
     ]),
     ...(f.linea_base
       ? [
           [
-            i === "es" ? "Línea base" : "Baseline",
+            t.piezaLineaBase,
             f.linea_base.corrida_id,
             `\`${f.linea_base.huella}\``,
           ],
@@ -709,36 +585,35 @@ function seccionFicha(inf: Informe, i: Idioma): string {
       : []),
   ];
   return [
-    i === "es"
-      ? "## 9. Ficha de reproducibilidad"
-      : "## 9. Reproducibility record",
+    t.ficha,
     "",
-    tabla(
-      i === "es"
-        ? ["Pieza", "Qué es", "Huella SHA-256"]
-        : ["Piece", "What it is", "SHA-256 fingerprint"],
-      filas,
+    tabla(t.cabFicha, filas),
+    "",
+    t.sesionesDeLaCorrida(
+      f.corrida.sesiones,
+      f.corrida.casos_ejecutados,
+      f.corrida.casos_con_error,
+      f.corrida.limites_alcanzados,
     ),
     "",
-    i === "es"
-      ? `Sesiones: ${f.corrida.sesiones} · casos ejecutados: ${f.corrida.casos_ejecutados} · con error del proveedor: ${f.corrida.casos_con_error} · límites de uso alcanzados: ${f.corrida.limites_alcanzados}.`
-      : `Sessions: ${f.corrida.sesiones} · cases run: ${f.corrida.casos_ejecutados} · with a provider error: ${f.corrida.casos_con_error} · usage limits reached: ${f.corrida.limites_alcanzados}.`,
+    t.umbralesAplicados(
+      umbrales(f.umbrales_aplicados),
+      umbrales(f.umbrales_del_plan),
+    ),
     "",
-    `${i === "es" ? "Umbrales aplicados" : "Applied thresholds"}: ${umbrales(f.umbrales_aplicados)} · ${i === "es" ? "en el plan" : "in the plan"}: ${umbrales(f.umbrales_del_plan)}.`,
+    t.revisionHumana(f.revisor_simulado[i]),
     "",
-    `${i === "es" ? "Revisión humana" : "Human review"}: ${f.revisor_simulado[i]}`,
-    "",
-    `${i === "es" ? "Verificador" : "Verifier"} ${f.verificador.version} · ${f.verificador.formato} · ${i === "es" ? "huella de este informe" : "fingerprint of this report"}: \`${inf.huella}\``,
+    t.verificador(f.verificador.version, f.verificador.formato, inf.huella),
   ].join("\n");
 }
 
 /** El informe completo en un idioma. Mismas entradas → mismos bytes. */
 export function renderizarInforme(inf: Informe, i: Idioma): string {
-  const titulo = i === "es" ? "Informe de brecha" : "Gap report";
+  const t = TEXTOS_INFORME[i];
   const cabecera = [
-    `# ${titulo} — ${inf.plan_en_breve.nombre[i]}`,
+    `# ${t.titulo} — ${inf.plan_en_breve.nombre[i]}`,
     "",
-    `> **${inf.etiqueta[i]}** · ${i === "es" ? "corrida" : "run"} \`${inf.corrida_id}\` · ${inf.fecha} · plan ${inf.plan_en_breve.version}`,
+    `> **${inf.etiqueta[i]}** · ${t.corrida} \`${inf.corrida_id}\` · ${inf.fecha} · plan ${inf.plan_en_breve.version}`,
   ].join("\n");
   return (
     [

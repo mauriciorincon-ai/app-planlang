@@ -315,9 +315,10 @@ const ATAQUE: Readonly<Record<string, TextoBilingue>> = {
   },
 };
 
+const SIN_DECISION: TextoBilingue = { es: "sin decisión", en: "no decision" };
+
 function nombreDecision(d: unknown, i: "es" | "en"): string {
-  if (d === null || d === undefined)
-    return i === "es" ? "sin decisión" : "no decision";
+  if (d === null || d === undefined) return SIN_DECISION[i];
   return DECISION[String(d)]?.[i] ?? String(d);
 }
 
