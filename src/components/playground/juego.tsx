@@ -975,7 +975,7 @@ export function Juego({ datos }: { datos: DatosIsla }) {
                           <Efecto x={x} minutos={minutos} i={i} />
                           {caso ? (
                             <a
-                              href={caso.href}
+                              href={`${caso.href}#paso-${x.paso}`}
                               className="inline-flex items-center gap-1 text-dato text-tinta-1 underline underline-offset-3"
                             >
                               <Icono

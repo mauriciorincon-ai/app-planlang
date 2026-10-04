@@ -15,7 +15,11 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterAll, describe, expect, it } from "vitest";
 import { conHuella } from "@core/formatos/huella";
-import { cargarDemo, datosDemo } from "@/lib/datos/vitrina";
+import {
+  cargarDemo,
+  datosDemo,
+  esElPlanDeBeneficiosDeLaCorrida,
+} from "@/lib/datos/vitrina";
 
 const copias: string[] = [];
 function copia(): string {
@@ -29,11 +33,15 @@ function copia(): string {
   for (const r of [
     "data/vitrina/manifiesto.json",
     "data/vitrina/demo-a/grafo-codigo.json",
+    "data/vitrina/demo-a/spike-2026-09-26",
     "data/plan-beneficios",
     "plans/demo-a",
     d.informe.archivo,
     d.corrida.ruta,
     c.casos.archivo,
+    ...[...d.repeticiones, d.linea_base].map((x: { ruta: string }) =>
+      join(x.ruta, "corrida.json"),
+    ),
   ])
     cpSync(r, join(dir, r), { recursive: true });
   return dir;
@@ -140,6 +148,104 @@ describe("datos de la vitrina", () => {
     writeFileSync(ruta, JSON.stringify(c));
     await expect(cargarDemo("demo-a", dir)).rejects.toThrow(
       /grafo-codigo\.json no trae una huella válida/,
+    );
+  });
+
+  it("AU-S2-P-7 · rojo: una repetición regenerada no coincide con la huella del manifiesto", async () => {
+    const dir = copia();
+    const m = JSON.parse(
+      readFileSync(join(dir, "data/vitrina/manifiesto.json"), "utf8"),
+    );
+    const r2 = join(
+      dir,
+      m.demos["demo-a"].repeticiones[0].ruta,
+      "corrida.json",
+    );
+    const cj = JSON.parse(readFileSync(r2, "utf8"));
+    writeFileSync(
+      r2,
+      JSON.stringify(await conHuella({ ...cj, fecha: "2026-09-30" })),
+    );
+    await expect(cargarDemo("demo-a", dir)).rejects.toThrow(
+      /v1\.2-r2\/corrida\.json tiene la huella [0-9a-f]{8}…, el manifiesto declara 0f5257d5…/,
+    );
+  });
+
+  it("AU-S2-P-7 · rojo: la línea base del manifiesto no es la que midió el informe", async () => {
+    const dir = copia();
+    const ruta = join(dir, "data/vitrina/manifiesto.json");
+    const m = JSON.parse(readFileSync(ruta, "utf8"));
+    // Otra corrida con su huella válida (la r2 como si fuera la base): el informe midió otra.
+    m.demos["demo-a"].linea_base = m.demos["demo-a"].repeticiones[0];
+    writeFileSync(ruta, JSON.stringify(m));
+    await expect(cargarDemo("demo-a", dir)).rejects.toThrow(
+      /la línea base que declara el manifiesto de «demo-a» no es la que midió su informe/,
+    );
+  });
+
+  it("AU-S2-P-7 · rojo: una repetición de menos en el manifiesto", async () => {
+    const dir = copia();
+    const ruta = join(dir, "data/vitrina/manifiesto.json");
+    const m = JSON.parse(readFileSync(ruta, "utf8"));
+    m.demos["demo-a"].repeticiones.pop();
+    writeFileSync(ruta, JSON.stringify(m));
+    await expect(cargarDemo("demo-a", dir)).rejects.toThrow(
+      /las repeticiones que declara el manifiesto de «demo-a» no son las que midió su informe/,
+    );
+  });
+
+  it("AU-S2-P-8 · rojo: la lectura del spike es de otra fecha que la del manifiesto", async () => {
+    const dir = copia();
+    const ruta = join(dir, "data/vitrina/manifiesto.json");
+    const m = JSON.parse(readFileSync(ruta, "utf8"));
+    m.demos["demo-a"].spike.fecha = "2026-09-25";
+    writeFileSync(ruta, JSON.stringify(m));
+    await expect(cargarDemo("demo-a", dir)).rejects.toThrow(
+      /la lectura del spike es del 2026-09-26 y el manifiesto declara el spike del 2026-09-25/,
+    );
+  });
+
+  it("AU-S2-P-9 · rojo: el código por nodo es de otro demo", async () => {
+    const dir = copia();
+    const ruta = join(dir, "data/vitrina/demo-a/grafo-codigo.json");
+    const c = JSON.parse(readFileSync(ruta, "utf8"));
+    delete c.huella;
+    writeFileSync(
+      ruta,
+      JSON.stringify(await conHuella({ ...c, demo_id: "demo-b" })),
+    );
+    await expect(cargarDemo("demo-a", dir)).rejects.toThrow(
+      /grafo-codigo\.json es el código del demo «demo-b», no el de «demo-a»/,
+    );
+  });
+
+  it("AU-S2-P-10 · rojo: el plan de beneficios no es el que nombra la corrida", () => {
+    const ref = {
+      archivo: "data/plan-beneficios/demo-a.json",
+      id: "pb-demo-a",
+      version: "1.0.0",
+    };
+    expect(() =>
+      esElPlanDeBeneficiosDeLaCorrida(
+        ref,
+        { id: "pb-demo-a", version: "9.9.9" },
+        "demo-a",
+      ),
+    ).toThrow(
+      "corrió con el plan de beneficios version «1.0.0» y data/plan-beneficios/demo-a.json trae «9.9.9»",
+    );
+    expect(() =>
+      esElPlanDeBeneficiosDeLaCorrida(
+        ref,
+        { id: "pb-otro", version: "1.0.0" },
+        "demo-a",
+      ),
+    ).toThrow("plan de beneficios id «pb-demo-a»");
+    // Sin id ni versión en la corrida, solo la huella la ata.
+    esElPlanDeBeneficiosDeLaCorrida(
+      { archivo: ref.archivo },
+      { id: "x", version: "y" },
+      "demo-a",
     );
   });
 

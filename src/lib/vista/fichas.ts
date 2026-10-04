@@ -105,7 +105,7 @@ export interface VistaFichas {
   mirada: {
     recibe: { titulo: string; detalle: string }[];
     hace: string[];
-    entrega: { titulo: string; detalle: string; archivo: boolean }[];
+    entrega: { titulo: string; detalle: string }[];
   };
   repro: {
     chip: string;
@@ -368,22 +368,10 @@ export function vistaFichas(
       })),
       hace: MIRADA.haceItems.map((x) => x[i]),
       entrega: [
-        {
-          titulo: E.repro.titulo[i],
-          detalle: E.repro.detalle[i],
-          archivo: false,
-        },
-        { titulo: base(RUTA_EXPORT), detalle: E.export[i], archivo: true },
-        {
-          titulo: base(RUTA_FICHA_AGENTE),
-          detalle: E.agente[i],
-          archivo: true,
-        },
-        {
-          titulo: E.nunca.titulo[i],
-          detalle: E.nunca.detalle[i],
-          archivo: false,
-        },
+        { titulo: E.repro.titulo[i], detalle: E.repro.detalle[i] },
+        { titulo: base(RUTA_EXPORT), detalle: E.export[i] },
+        { titulo: base(RUTA_FICHA_AGENTE), detalle: E.agente[i] },
+        { titulo: E.nunca.titulo[i], detalle: E.nunca.detalle[i] },
       ],
     },
     repro: {

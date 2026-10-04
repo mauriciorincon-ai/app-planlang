@@ -3,7 +3,7 @@
  * del que salen los Markdown en español y en inglés (`render-md.ts`). Dos ejecuciones sobre los mismos
  * archivos dan los mismos bytes: no hay reloj (la fecha es la de la corrida), ni azar, ni `Intl`.
  */
-import { comoBilingue, type TextoBilingue } from "../formatos/bilingue";
+import { esMonolingue, type TextoBilingue } from "../formatos/bilingue";
 import { conHuella } from "../formatos/huella";
 import type { JsonValor } from "../formatos/jcs";
 import { ligadurasDeUmbrales } from "../plan/contrato-constructor";
@@ -43,7 +43,8 @@ import {
 export const FORMATO_INFORME = "planlang-informe/v1";
 /**
  * 1.1.0 (S2): cada riesgo trae la prioridad de tabla y el control legal junto a la efectiva (instrumentos-de-plan
- * v0.2.0, G8); `opcion_elegida` de las decisiones de una vía es bilingüe (M-25).
+ * v0.2.0, G8); `opcion_elegida` de las decisiones de una vía es bilingüe (M-25): si el plan la escribió en un solo
+ * idioma va `null`, no copiada al otro como si fuera suya (regla 20; AU-S2-P-6).
  * 1.2.0 (S2, fase 3): cada brecha no prevista trae `reintentos` (M-24); un criterio con métrica cuya población no
  * tiene un solo valor medido queda `indeterminado`, no `sin_poblacion`, y su nota dice el sentido del objetivo (M-26).
  */
@@ -668,9 +669,10 @@ export async function generarInforme(
         .map((d) => ({
           id: d.id,
           pregunta: d.pregunta,
-          opcion_elegida: d.opcion_elegida
-            ? comoBilingue(d.opcion_elegida)
-            : null,
+          opcion_elegida:
+            d.opcion_elegida && !esMonolingue(d.opcion_elegida)
+              ? d.opcion_elegida
+              : null,
           justificacion: d.justificacion ?? null,
         })),
     },

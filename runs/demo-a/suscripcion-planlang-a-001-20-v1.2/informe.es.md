@@ -220,4 +220,4 @@ Umbrales aplicados: U1 = 0,75 · U2 = 1000 · U3 = 2 · U4 = false · en el plan
 
 Revisión humana: En lotes, el revisor simulado sigue la verdad conocida del caso (DA-04); la vitrina lo divulga.
 
-Verificador 1.2.0 · planlang-informe/v1 · huella de este informe: `e5d68065f343c4dc95824c06c481577e36f49da98323d62eb3fec455c0585f0b`
+Verificador 1.2.0 · planlang-informe/v1 · huella de este informe: `f0c6b2a905ae67a2485be441526c229d4d3826d64c661d4954febb9c1251031b`

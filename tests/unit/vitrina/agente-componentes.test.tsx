@@ -10,6 +10,7 @@ import { afterEach, beforeAll, describe, expect, it } from "vitest";
 import { Detalle } from "@/components/agente/detalle";
 import { FichaAgente } from "@/components/agente/ficha";
 import { SeccionGrafo } from "@/components/agente/grafo";
+import { SeccionSpike } from "@/components/agente/spike";
 import { Seleccion } from "@/components/agente/seleccion";
 import { datosDemo } from "@/lib/datos/vitrina";
 import { vistaAgente, type VistaAgente } from "@/lib/vista/agente";
@@ -138,6 +139,38 @@ describe("el lienzo y la lista", () => {
     expect(
       screen.getByRole("region", { name: /Diagrama del agente/ }),
     ).toBeInTheDocument();
+  });
+});
+
+describe("el spike: lo exigido y ausente también se lee", () => {
+  it("su lista por capa (solo para el lector de pantalla) marca las 5 piezas ausentes, discontinuas y dichas", () => {
+    const { container } = render(
+      <SeccionSpike spike={vistas.es.spike!} idioma="es" />,
+    );
+    const lista = container.querySelector("section.sr-only")!;
+    expect(lista.getAttribute("aria-label")).toMatch(/Lista por capa/);
+    const marcadas = [...lista.querySelectorAll("[data-tipo]")].filter((t) =>
+      t.textContent!.includes("exigido por el plan, ausente del grafo"),
+    );
+    expect(marcadas).toHaveLength(5);
+    for (const t of marcadas) expect(t.className).toContain("border-dashed");
+    expect(lista.querySelectorAll("[data-tipo]").length).toBe(9);
+  });
+
+  it("el experto ve de qué línea del código sale cada parte de la lectura (AU-S2-P-8)", () => {
+    const { container } = render(
+      <SeccionSpike spike={vistas.es.spike!} idioma="es" />,
+    );
+    const p = [...container.querySelectorAll("p.solo-experto")].find((x) =>
+      x.textContent!.startsWith("Leído del código del spike:"),
+    )!;
+    expect([...p.querySelectorAll("code")].map((c) => c.textContent)).toEqual([
+      "spike.py:44",
+      "spike.py:198",
+      "spike.py:228",
+      "spike.py:207",
+      "spike.py:189-218",
+    ]);
   });
 });
 

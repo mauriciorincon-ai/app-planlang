@@ -55,7 +55,6 @@ export interface DatosDemo {
 
 export interface SpikeLeido {
   fecha: string;
-  origen: string;
   lectura: LecturaSpike;
   /** El grafo del spike en la forma que dibuja el visor. */
   grafo: GrafoParaMapa;
@@ -144,6 +143,22 @@ async function conHuellaDeclarada(
     );
 }
 
+/**
+ * La corrida nombra el plan de beneficios con que corrió (id y versión); el archivo que lee la vitrina tiene que
+ * ser ese (AU-S2-P-10). Una corrida sin esos campos (anterior al S2) solo se ata por la huella.
+ */
+export function esElPlanDeBeneficiosDeLaCorrida(
+  ref: { archivo: string; id?: string; version?: string },
+  pb: { id: string; version: string },
+  demo: string,
+): void {
+  for (const k of ["id", "version"] as const)
+    if (ref[k] !== undefined && ref[k] !== pb[k])
+      throw new Error(
+        `vitrina: la corrida de «${demo}» corrió con el plan de beneficios ${k} «${ref[k]}» y ${ref.archivo} trae «${pb[k]}».`,
+      );
+}
+
 /** Carga y verifica un demo desde `raiz` (el repo al compilar; una copia alterada en las pruebas). */
 export async function cargarDemo(
   id: string,
@@ -184,6 +199,29 @@ export async function cargarDemo(
     throw new Error(
       `vitrina: el informe de «${id}» no es el de la corrida que declara el manifiesto.`,
     );
+  // Las repeticiones (pass^k) y la línea base del manifiesto traen su huella y son las que midió el informe
+  // (AU-S2-P-7): una corrida regenerada o cambiada de carpeta no pasa en silencio a la ficha de reproducibilidad.
+  const ficha = informe.ficha_reproducibilidad;
+  for (const r of [
+    ...demo.repeticiones,
+    ...(demo.linea_base ? [demo.linea_base] : []),
+  ]) {
+    const cj = join(r.ruta, "corrida.json");
+    await conHuellaDeclarada(cj, leer(cj), r.huella);
+  }
+  const huellas = (xs: readonly { huella: string }[]) =>
+    xs
+      .map((x) => x.huella)
+      .sort()
+      .join(" ");
+  if (huellas(demo.repeticiones) !== huellas(ficha.repeticiones))
+    throw new Error(
+      `vitrina: las repeticiones que declara el manifiesto de «${id}» no son las que midió su informe (pass^k).`,
+    );
+  if ((demo.linea_base?.huella ?? null) !== (ficha.linea_base?.huella ?? null))
+    throw new Error(
+      `vitrina: la línea base que declara el manifiesto de «${id}» no es la que midió su informe.`,
+    );
   const entorno = EntornoCorridaSchema.parse(
     leer(join(demo.corrida.ruta, "entorno.json")),
   );
@@ -194,7 +232,12 @@ export async function cargarDemo(
   const m = archivos.corrida as {
     plan: { archivo: string };
     casos: { archivo: string };
-    plan_beneficios?: { archivo: string; huella: string };
+    plan_beneficios?: {
+      archivo: string;
+      huella: string;
+      id?: string;
+      version?: string;
+    };
   };
   if (!m.plan_beneficios)
     throw new Error(
@@ -219,6 +262,10 @@ export async function cargarDemo(
       `vitrina: ${archivoCodigo} no trae una huella válida (${v.motivo}); se regenera con app_agents.exportar_grafo.`,
     );
   const codigo = GrafoCodigoSchema.parse(codigoCrudo);
+  if (codigo.demo_id !== id)
+    throw new Error(
+      `vitrina: ${archivoCodigo} es el código del demo «${codigo.demo_id}», no el de «${id}»; se regenera con app_agents.exportar_grafo.`,
+    );
 
   const pbCrudo = leer(planBeneficiosRef.archivo);
   await conHuellaDeclarada(
@@ -227,6 +274,7 @@ export async function cargarDemo(
     planBeneficiosRef.huella,
   );
   const planBeneficios = PlanBeneficiosMinimoSchema.parse(pbCrudo);
+  esElPlanDeBeneficiosDeLaCorrida(planBeneficiosRef, planBeneficios, id);
 
   let spike: SpikeLeido | null = null;
   if (demo.spike) {
@@ -248,9 +296,12 @@ export async function cargarDemo(
         ),
       ),
     );
+    if (lectura.fecha !== demo.spike.fecha)
+      throw new Error(
+        `vitrina: la lectura del spike es del ${lectura.fecha} y el manifiesto declara el spike del ${demo.spike.fecha}.`,
+      );
     spike = {
       fecha: demo.spike.fecha,
-      origen: demo.spike.grafo.origen,
       lectura,
       grafo: grafoDelSpike(exportado, lectura),
     };

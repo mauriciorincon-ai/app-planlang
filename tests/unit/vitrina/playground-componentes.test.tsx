@@ -12,6 +12,7 @@ import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { Juego } from "@/components/playground/juego";
 import { Limites, MiradaPlayground } from "@/components/playground/mirada";
 import { datosDemo, type DatosDemo } from "@/lib/datos/vitrina";
+import { vistaCaso } from "@/lib/vista/caso";
 import { vistaPlayground } from "@/lib/vista/playground";
 import type { Idioma } from "@core/formatos/bilingue";
 
@@ -87,8 +88,12 @@ describe("mover los umbrales", () => {
     expect(estado()).toContain("Movido: U1 0,90.");
     const fila = container.querySelector('[data-caso="A-008"]')!;
     expect(fila.textContent).toContain("confianza 0,88 menor que 0,90");
+    // El enlace abre la traza en el paso donde el camino se separa (AU-S2-P-5): en P6, ese paso es la decisión.
     expect(fila.querySelector("a")!.getAttribute("href")).toBe(
-      "/es/caso/A-008",
+      "/es/caso/A-008#paso-8",
+    );
+    expect(vistaCaso(d, "A-008", "es").pasos.find((p) => p.n === 8)?.nodo).toBe(
+      "decision",
     );
     await act(async () =>
       fireEvent.click(screen.getByRole("button", { name: /Volver al plan/ })),

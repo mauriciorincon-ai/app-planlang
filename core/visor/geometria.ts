@@ -18,14 +18,7 @@ import { ESTILOS, type EstiloDeTexto, type NombreDeEstilo } from "./estilos";
 import { idDeCodigo } from "./ids";
 import { SENAL_POR_DEFECTO } from "./mapa";
 import { ancho, partir } from "./medida";
-import {
-  HOLGURA,
-  rutear,
-  type Lado,
-  type Pedido,
-  type Punto,
-  type Rect,
-} from "./ruteo";
+import { HOLGURA, rutear, type Pedido, type Punto, type Rect } from "./ruteo";
 import type {
   Condicion,
   FlujoMapa,
@@ -83,8 +76,6 @@ export interface LineaGeo {
   origen: string;
   destino: string;
   puntos: Punto[];
-  ladoOrigen: Lado;
-  ladoDestino: Lado;
   /** Saltos: por índice de tramo horizontal, las x donde cruza una vertical de otra línea. */
   saltos: Array<{ tramo: number; x: number }>;
   marcador?: Punto;
@@ -106,7 +97,6 @@ export function condicionEnTexto(c: Condicion): string {
 export interface Geometria {
   ancho: number;
   alto: number;
-  cabecera: number;
   guias: { xs: number[]; y1: number; y2: number };
   bandas: BandaGeo[];
   nodos: NodoGeo[];
@@ -494,8 +484,6 @@ export function geometria(
       origen: p.origen,
       destino: p.destino,
       puntos,
-      ladoOrigen: r.ladoOrigen,
-      ladoDestino: r.ladoDestino,
       saltos: [],
       reglas,
     };
@@ -648,7 +636,6 @@ export function geometria(
   return {
     ancho: anchoLienzo,
     alto,
-    cabecera,
     guias: { xs: xsGuia, y1: cabecera + 8, y2: alto - 8 },
     bandas,
     nodos,

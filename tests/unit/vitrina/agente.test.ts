@@ -119,6 +119,67 @@ describe("el spike, frente al mismo contrato", () => {
     expect(s.lienzo.svg).not.toContain("data-sel-id");
     expect(s.lienzo.svg).toContain("senal_confianza &lt; 0,75");
   });
+
+  it("dice de qué línea del código del spike sale cada parte de la lectura, solo archivo:línea (AU-S2-P-8)", async () => {
+    const d = await datosDemo();
+    const es = vistaAgente(d, "es").spike!.citas;
+    const en = vistaAgente(d, "en").spike!.citas;
+    expect(es.rotulo).toBe("Leído del código del spike");
+    expect(es.refs).toEqual([
+      { que: "umbral", donde: "spike.py:44" },
+      { que: "regla", donde: "spike.py:198" },
+      { que: "aristas", donde: "spike.py:228" },
+      { que: "pausa", donde: "spike.py:207" },
+      { que: "tipos de nodo", donde: "spike.py:189-218" },
+    ]);
+    expect(en.refs.map((r) => r.que)).toEqual([
+      "threshold",
+      "rule",
+      "edges",
+      "pause",
+      "node types",
+    ]);
+    // Una cita que no empieza por archivo:línea, o una parte sin nombre, detienen el build nombrándolas.
+    const mala = {
+      ...d,
+      spike: { ...d.spike!, lectura: { ...d.spike!.lectura } },
+    };
+    mala.spike.lectura.citas = { regla: "en algún lugar del spike" };
+    expect(() => vistaAgente(mala, "es")).toThrow(
+      "la cita «regla» de la lectura del spike no empieza por archivo:línea",
+    );
+    mala.spike.lectura.citas = { memoria: "spike.py:12 x" };
+    expect(() => vistaAgente(mala, "es")).toThrow(
+      "«memoria» no tiene su entrada en SPIKE.cita",
+    );
+  });
+
+  it("la lista por capa dice «exigido» donde el lienzo lo dibuja, y solo ahí (AU-S2-P-1, G10)", async () => {
+    const d = await datosDemo();
+    for (const [i, marca, lector] of [
+      ["es", "exigido", "exigido por el plan, ausente del grafo"],
+      ["en", "required", "required by the plan, missing from the graph"],
+    ] as const) {
+      const v = vistaAgente(d, i);
+      const exigidos = v
+        .spike!.lienzo.lista.flatMap((c) => c.nodos)
+        .filter((n) => n.exigido);
+      expect(exigidos.map((n) => n.id).sort()).toEqual(
+        [
+          "aclaracion",
+          "decision",
+          "guardia-salida",
+          "redactor",
+          "verificador-cobertura",
+        ].sort(),
+      );
+      for (const n of exigidos) expect(n.exigido).toEqual({ marca, lector });
+      // El grafo que corrió tiene todo lo que el plan exige: ninguna marca en su lista.
+      expect(
+        v.lienzo.lista.flatMap((c) => c.nodos).filter((n) => n.exigido),
+      ).toEqual([]);
+    }
+  });
 });
 
 describe("«qué del plan toca a cada nodo» (lectura del autor, comprobada contra el plan)", () => {

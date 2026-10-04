@@ -1343,7 +1343,7 @@ summary como deuda con fecha.
 | C-8 | nodos-gramatica.test (tipos y glifos = gramática agentes-ia, salvo regla → hexágono declarado) | glifo de enrutador cambiado a «circulo» → rojo «enrutador: expected 'circulo' to be 'rombo'» → verde al restaurar |
 | C-10 | copia-contra-plan § 5 (pantallas, secciones y criterios destacados escritos en palabras = el dato) | «las 8 secciones» en la copia → rojo «expected 8 to be 9» → verde al restaurar |
 
-#### Núcleo y gates (lote 3 de lo que faltaba; en curso al compactar)
+#### Núcleo y gates (lote 3 de lo que faltaba)
 
 - **B51 · B52:** con señal nula, «distinto de» también es falso en los dos intérpretes (TS y Python), y un operador
   desconocido falla con nombre en TypeScript como ya fallaba en Python. RF-09.2 no se mueve (el plan no usa
@@ -1382,9 +1382,9 @@ summary como deuda con fecha.
 - **B56:** «tolerancia declarada» solo con claves conocidas.
 - **B57:** oráculos de las señales crudas al mover U1 y U2, conteo de U4 sin `recalcular`, la línea tautológica fuera.
   El golden SVG queda como regresión por diseño (su oráculo es humano: la fidelidad, más «diagrama = grafo»).
-- **P-1 (en curso):** `Lienzo.ancho` fuera; `exigido` llega a la lista por capa (borde punteado, glifo hueco y la
-  marca, como en el lienzo); el spike lleva su lista por capa en `sr-only`. Sin efecto visible en P3 (el demo A no
-  tiene nodos exigidos y ausentes).
+- **P-1 (empezado aquí, cerrado en el lote 4):** `Lienzo.ancho` fuera; `exigido` llega a la lista por capa (borde
+  punteado, glifo hueco y la marca, como en el lienzo); el spike lleva su lista por capa en `sr-only`. Sin efecto
+  visible en P3 (el demo A no tiene nodos exigidos y ausentes).
 
 | Gate | Prueba | Demo en rojo |
 |---|---|---|
@@ -1400,9 +1400,58 @@ summary como deuda con fecha.
 | B50 | brechas-y-veredicto.test «lo que el modelo dejó sin medir es una alerta» (corrida de respaldo: C3 y R5; la de 200 con nulos legítimos, no) | el veredicto sin fueraPorElProveedor → rojo «expected [ … ] to include 'C3: 3 caso(s) quedaron fuera…'» → verde; informe de la corrida de respaldo regenerado (sigue no_cumple, dos alertas nuevas) |
 | B53 | paridad.test, variante «C7 con una condición que algunos casos no cumplen» (y «C3 como tasa» con U3 = 0 para el «ne») | el compacto viejo (métrica solo en los casos «v») → rojo «C7 con {}: expected 'indeterminado' to be 'cumple'»: era una divergencia real con el verificador → verde con la métrica sobre toda la población; la cabecera de consecuencias.ts dice ahora lo que hace una tasa con un «ne» |
 | B54 | validador.test «por ámbito: caso sin claves de sesión, sesión sin señales del caso, y la métrica» | el validador de HEAD (las tres listas unidas, sin métrica) → rojo «expected [ … ] to deeply equal ArrayContaining […]» → verde; la prueba vieja afirmaba el defecto (una población de caso con limites_alcanzados sin aviso) y se rehízo |
-| B56 | supuestos.test «con solo claves desconocidas rige la regla por defecto y el motivo no dice declarada» | devolver  → rojo «expected '…Tolerancia declarada…' to match /Regla por defecto/» → verde contando solo claves conocidas (sin efecto en la v1.3/v1.4: los informes no cambian) |
 | B56 | supuestos.test «con solo claves desconocidas rige la regla por defecto y el motivo no dice declarada» | devolver `Object.keys(umbral).length > 0` → rojo «expected 'El multiagente rinde peor…' to match /Regla por defecto/» → verde contando solo claves conocidas (sin efecto en la v1.3/v1.4: ningún informe cambia) |
 | B57 | paridad.test: oráculos de las señales crudas al mover U1 (0,80…0,95) y U2 (900, 500, 200), conteo de U4 sin `recalcular` y minutos del plan × pausas del informe (la línea tautológica sale) | un recálculo que ignora U1 movido → rojo «expected [] to deeply equal [ 'A-008' ]» en el oráculo de U1 → verde al restaurar. El golden SVG del visor sigue siendo una regresión autogenerada por diseño: su oráculo es humano (la fidelidad) y el gate «diagrama = grafo» sobre lo publicado |
+
+#### Campos sin lector (lote 4: P-1…P-10 y P-12, 2026-10-03)
+
+Regla de la casilla 5 de la auditoría: cada campo, un lector fuera de su construcción y sus pruebas, o fuera.
+
+- **P-1:** pruebas de la marca «exigido» en la lista por capa (vista ES/EN: las 5 piezas del spike, ninguna en el
+  grafo que corrió) y en el componente (la lista `sr-only` del spike: 5 tarjetas punteadas y dichas de 9).
+- **P-2:** `mirada.entrega[].archivo` fuera (nadie lo pintaba).
+- **P-3:** `COLOR_DE_TIPO` fuera (el color sale de `data-tipo` en el CSS); `_paraPruebas` de Brecha ahora tiene sus
+  pruebas (`rangoDeIds`, `cortarCorridas`) y suelta `mediana`, que ya prueba el núcleo.
+- **P-4:** del compacto salen `formato`, `UmbralCompacto.operador`/`inclusivo` y `CasoCompacto.tipo`; `corrida_id`
+  gana lector: el playground busca la prueba cruzada RF-09.2 de la corrida del compacto (no la del informe por
+  suposición), y el error lo dice.
+- **P-5:** salen `Consecuencias.umbrales` y `personas_plan` (queda `minutos_plan`, que es lo que se pinta),
+  `CambioDeCaso.subtipo` y `rama_registrada`. `paso` gana lector: «ver su traza» abre el caso **en el paso** donde el
+  camino se separa (`/es/caso/A-008#paso-8`; cada paso de P6 es un ancla con `scroll-mt-6`). Se quedan, con su lector
+  declarado en el tipo: `CriterioRecalculado.valor` (el estado sale de él y la paridad lo compara con el del
+  verificador) y `Observados.verdaderos` (la misma cuenta que el informe, que el Markdown pinta «N de M verdaderos»;
+  quitarlo rompió la paridad de forma, y volvió).
+- **P-6:** el Markdown del informe dice la opción elegida de cada decisión de una vía (`¿pregunta? → opción.`). Al
+  hacerlo apareció un defecto de la regla 20: los planes v1.1 y v1.2 escribieron esa opción solo en español y el
+  informe la copiaba al inglés como si fuera suya (`comoBilingue`). Ahora va `null` si el plan la escribió en un solo
+  idioma. La vitrina sigue la maqueta (pregunta y justificación). Regenerados: los `informe.*.md` de las cuatro
+  corridas con informe y de `data/vitrina`, los `informe.json` de las dos corridas con plan monolingüe (v1.1, v1.2)
+  y el golden de la corrida simulada. El `informe.json` de la vitrina (plan v1.3, bilingüe) no cambia: el manifiesto
+  conserva su huella.
+- **P-7:** `cargarDemo` verifica la huella de cada repetición y de la línea base del manifiesto y que sean las que
+  midió el informe (pass^k y S3). `SpikeLeido.origen` fuera. `nota` y `spike.grafo.origen` quedan como los
+  comentarios de un JSON editado a mano (procedencia para quien lo edita); la prueba del manifiesto exige que los
+  archivos del repo que cita la `nota` existan.
+- **P-8:** la `fecha` de la lectura del spike se cruza con la del manifiesto; las `citas` llegan al experto bajo el
+  lienzo del spike («Leído del código del spike: umbral `spike.py:44` · regla `spike.py:198` · …»), solo la referencia
+  `archivo:línea` (el resto de la cita es la línea de código, en su idioma) y con su nombre por vocabulario. **Es un
+  elemento nuevo (solo experto): entra a la mirada de cierre.** `nota` de la lectura, como la del manifiesto.
+- **P-9:** `grafo-codigo.demo_id` se compara con el demo que se carga.
+- **P-10:** `id` y `version` del plan de beneficios se cruzan con los que nombra la corrida
+  (`esElPlanDeBeneficiosDeLaCorrida`); `procedimientos[].codigo` ya tenía lector (P6 nombra el servicio con él).
+- **P-12:** `Geometria.cabecera` y `ladoOrigen`/`ladoDestino` (en la geometría y en la ruta) fuera; el SVG no cambia
+  (los golden pasan sin regenerar).
+
+| Gate | Prueba | Demo en rojo |
+|---|---|---|
+| P-1 | agente.test «la lista por capa dice «exigido» donde el lienzo lo dibuja, y solo ahí» · agente-componentes.test «su lista por capa (solo para el lector de pantalla) marca las 5 piezas ausentes» | la lista sin `exigido` (`madurez === "nunca"`) → rojo en las dos → verde al restaurar |
+| P-3 | brecha.test «los recortes de ids y corridas» | (prueba de comportamiento de dos funciones existentes: nace verde; su lectura es el lector que faltaba) |
+| P-4 | errores-con-nombre.test «lee el corrida_id del compacto, no el del informe» (y el error con nombre, reescrito) | volver a buscar por `inf.corrida_id` → rojo en la prueba nueva → verde al restaurar. La primera versión de la prueba no podía fallar (los dos ids eran el mismo): se vio al exigirle el rojo, y se reemplazó por una que separa los dos ids |
+| P-5 | playground-componentes.test (el enlace es `#paso-8` y en P6 ese paso es `decision`) · caso-componentes.test (los 7 pasos de A-004 son anclas `paso-1…7`) | con `#paso-4` supuesto, rojo «Received …#paso-8»: el oráculo es la vista del caso, no una cifra a ojo |
+| P-6 | render-md.test «con un plan bilingüe (v1.4), cada idioma la suya» y «si el plan la escribió en un solo idioma (v1.1), el informe no la copia al otro» | volver a `comoBilingue` y quitar la opción del Markdown → rojo en las dos → verde al restaurar |
+| P-7 | datos.test: repetición regenerada, línea base que no es la del informe, una repetición de menos · manifiesto-vitrina.test «la `nota` solo cita archivos que existen» | quitar las tres comprobaciones → rojo en las tres; citar `src/lib/datos/cargar.ts` en la nota → rojo nombrándolo → verde al restaurar |
+| P-8 | datos.test «la lectura del spike es de otra fecha» · agente.test (citas ES/EN, cita sin `archivo:línea`, parte sin nombre) · agente-componentes.test (el experto ve las 5 referencias en `<code>`) | quitar la comprobación de fecha y el `<code>` → rojo en las dos → verde al restaurar |
+| P-9 · P-10 | datos.test «el código por nodo es de otro demo» · «el plan de beneficios no es el que nombra la corrida» | quitar las dos comprobaciones → rojo en las dos → verde al restaurar |
 
 ### Punto de retoma (2026-10-02, segunda compactación del día, pedida por el usuario)
 
@@ -1410,11 +1459,11 @@ summary como deuda con fecha.
   nombre, B18 y C-1…C-12) — **subidos**, CI del PR #8 con los 4 checks `success` en `1bcdbd7` (Lighthouse midió `/en`
   por primera vez: sin histórico) · el commit de este punto (lote 3, local, sin subir).
 - **Falta, en este orden:**
-  1. P-1 a medias (falta solo la prueba de la marca «exigido» en la lista); P-2…P-10 y P-12 (campos sin lector:
+  1. ~~P-1 a medias (falta solo la prueba de la marca «exigido» en la lista); P-2…P-10 y P-12 (campos sin lector:
      `mirada.entrega[].archivo`, `COLOR_DE_TIPO` y `_paraPruebas`, compacto `formato`/`corrida_id`/`operador`/
      `inclusivo`/`tipo`, `Consecuencias` sobrantes, `opcion_elegida`, manifiesto `nota`/`origen`/repeticiones,
      `LecturaSpike` `nota`/`fecha`/`citas`, `grafo-codigo.demo_id`, `PlanBeneficiosMinimo`, `Geometria.cabecera` y
-     `ladoOrigen`/`ladoDestino`): a cada uno, un lector o fuera;
+     `ladoOrigen`/`ladoDestino`): a cada uno, un lector o fuera~~ — pagado, ver «Campos sin lector (lote 4)»;
   2. AU-S2-11: proyecto Playwright `paridad` (Firefox y WebKit) + corregir los comentarios de `vitest.config.ts` y
      `svg.test.ts`;
   3. documentos: AU-S2-20 (kit de prueba y razón de `b1` en la guía), B4, B5, AU-S2-11 y B33 (los recorridos del

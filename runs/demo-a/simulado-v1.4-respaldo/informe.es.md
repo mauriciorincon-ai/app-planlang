@@ -50,8 +50,8 @@ El plan no se cumplió. Se midieron 8 casos sintéticos. Criterios: 6 cumplidos,
 
 **Decisiones de una sola vía**
 
-- **D1** — ¿Qué datos del afiliado llegan al modelo? Minimización legal (Ley 1581 arts. 3–6, RGPD 9) y guardia de salida trivial.
-- **D2** — ¿Qué decisiones puede tomar el agente sin humano? CA SB 1120, TX SB 815, AI Act art. 14; regla dura de la app.
+- **D1** — ¿Qué datos del afiliado llegan al modelo? → solo edad, sexo, procedimiento, diagnóstico y texto del médico; nombre e identificación enmascarados antes del modelo. Minimización legal (Ley 1581 arts. 3–6, RGPD 9) y guardia de salida trivial.
+- **D2** — ¿Qué decisiones puede tomar el agente sin humano? → solo aprobar; negar y escalar exigen pausa humana. CA SB 1120, TX SB 815, AI Act art. 14; regla dura de la app.
 
 ## 3. Criterios de aceptación
 

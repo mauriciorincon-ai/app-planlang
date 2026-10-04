@@ -13,6 +13,7 @@ import { datosDemo, type DatosDemo } from "@/lib/datos/vitrina";
 import { VEREDICTOS } from "@/textos/comun";
 import { noCumple } from "./_brecha-no-cumple";
 import {
+  _paraPruebas,
   umbralQueLoRompe,
   vistaBrecha,
   type VistaBrecha,
@@ -221,5 +222,23 @@ describe("AU-S2-16: el tope de aclaraciones sale de la regla del plan, nunca de 
     expect(() => vistaBrecha(otro, "es")).toThrow(
       "el plan no tiene una regla «tope» que lea un umbral declarado",
     );
+  });
+});
+
+describe("los recortes de ids y corridas (AU-S2-P-3)", () => {
+  const { rangoDeIds, cortarCorridas } = _paraPruebas;
+  it("«C1–C9» solo si son todos los del plan, en orden y más de dos", () => {
+    const todos = ["C1", "C2", "C3", "C4"];
+    expect(rangoDeIds(todos, todos)).toBe("C1–C4");
+    expect(rangoDeIds(["C1", "C2", "C4"], todos)).toBe("C1, C2, C4");
+    expect(rangoDeIds(["C2", "C1", "C3", "C4"], todos)).toBe("C2, C1, C3, C4");
+    expect(rangoDeIds(["C1", "C2"], ["C1", "C2"])).toBe("C1, C2");
+  });
+  it("recorta el prefijo común en su último guion; una sola corrida o sin guion, entera", () => {
+    const c = cortarCorridas(["2026-09-27-v1.2", "2026-09-27-v1.2-r2"]);
+    expect(c("2026-09-27-v1.2")).toBe("…v1.2");
+    expect(c("2026-09-27-v1.2-r2")).toBe("…v1.2-r2");
+    expect(cortarCorridas(["solo-una"])("solo-una")).toBe("solo-una");
+    expect(cortarCorridas(["abc", "abd"])("abc")).toBe("abc");
   });
 });

@@ -325,7 +325,7 @@ describe("los ejemplos de la maqueta, medidos", () => {
     expect(r.no_observados).toEqual(["A-007"]);
     // AU-S2-22: los minutos se comparan sobre la misma población; el caso que nadie midió no cuenta como ahorro.
     expect(r.minutos - r.minutos_plan).toBe(0);
-    expect(r.personas_plan).toBe(r.personas);
+    expect(r.minutos_plan).toBe(r.personas * c.minutos_por_persona);
   });
 
   it("U3 = 1: A-007 llega a una persona con una aclaración menos; A-008 pasa a una persona", async () => {

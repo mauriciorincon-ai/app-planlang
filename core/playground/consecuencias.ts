@@ -37,13 +37,11 @@ export type Efecto =
 
 export interface CambioDeCaso {
   id: string;
-  subtipo: string;
   antes: "persona" | "solo";
   ahora: Desenlace;
-  /** El nodo y el paso donde el camino se separa del que tomó el agente. */
+  /** El nodo y el paso donde el camino se separa del que tomó el agente: el enlace a su traza abre en ese paso. */
   nodo: string;
   paso: number;
-  rama_registrada: string;
   rama_nueva: string;
   /** Las señales que observó esa visita. */
   senales: Senales;
@@ -60,6 +58,7 @@ export interface CriterioRecalculado {
   id: string;
   estado: EstadoCriterio;
   estado_informe: EstadoCriterio;
+  /** El valor recalculado del que sale el estado; la prueba de paridad lo compara con el del verificador. */
   valor: number | boolean | null;
   casos_que_incumplen: string[];
   /** Casos que la regla no puede medir en el camino nuevo (lee lo que la traza no registró). */
@@ -74,12 +73,15 @@ export interface Observados {
   min: number | null;
   mediana: number | null;
   max: number | null;
+  /**
+   * En un umbral booleano, cuántos casos lo tuvieron verdadero: es la misma cuenta del informe (que el Markdown
+   * pinta, «N de M verdaderos») y la prueba de paridad compara la forma completa (AU-S2-P-5).
+   */
   verdaderos: number | null;
   casos_en_el_umbral: string[];
 }
 
 export interface Consecuencias {
-  umbrales: Umbrales;
   /** Ids de los umbrales que difieren del plan. */
   movidos: string[];
   /** Destino de cada caso con estos umbrales (en el orden del compacto). */
@@ -89,10 +91,11 @@ export interface Consecuencias {
   evitados: string[];
   no_observados: string[];
   personas: number;
-  /** Los casos que el plan registró con persona, sin los que con estos umbrales quedan «no observados». */
-  personas_plan: number;
   minutos: number;
-  /** Los minutos del plan sobre la misma población que `minutos` (AU-S2-22). */
+  /**
+   * Los minutos del plan sobre la misma población que `minutos` (AU-S2-22): los casos que el plan registró con
+   * persona, sin los que con estos umbrales quedan «no observados».
+   */
   minutos_plan: number;
   criterios: CriterioRecalculado[];
   cumplen: number;
@@ -327,12 +330,10 @@ export function consecuencias(c: Compacto, umbrales: Umbrales): Consecuencias {
     const ordenPlan = d.plan.find((r) => r.resultado)?.orden_arista;
     cambios.push({
       id: caso.id,
-      subtipo: caso.subtipo,
       antes: caso.registrado,
       ahora,
       nodo: v.desde,
       paso: v.paso,
-      rama_registrada: v.rama,
       rama_nueva: d.rama,
       senales: v.senales,
       ahora_decide: ahoraDecide,
@@ -377,7 +378,6 @@ export function consecuencias(c: Compacto, umbrales: Umbrales): Consecuencias {
     (k) => k.registrado === "persona" && !sinObservar.has(k.id),
   ).length;
   return {
-    umbrales,
     movidos,
     destinos,
     cambios,
@@ -391,7 +391,6 @@ export function consecuencias(c: Compacto, umbrales: Umbrales): Consecuencias {
       .filter((x) => x.efecto === "no_observado")
       .map((x) => x.id),
     personas,
-    personas_plan,
     minutos: personas * c.minutos_por_persona,
     minutos_plan: personas_plan * c.minutos_por_persona,
     criterios,

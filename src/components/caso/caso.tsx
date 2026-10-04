@@ -319,7 +319,10 @@ function TablaReglas({
 
 function Paso({ p, idioma }: { p: PasoCaso; idioma: Idioma }) {
   return (
-    <li className="grid grid-cols-[28px_minmax(0,1fr)] gap-x-3.5 gap-y-1 border-t border-linea py-3.5">
+    <li
+      id={`paso-${p.n}`}
+      className="grid scroll-mt-6 grid-cols-[28px_minmax(0,1fr)] gap-x-3.5 gap-y-1 border-t border-linea py-3.5"
+    >
       <span className="row-span-2 font-mono text-dato leading-[1.9] font-medium text-tinta-2">
         {p.n}
       </span>

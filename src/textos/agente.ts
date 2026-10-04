@@ -1993,6 +1993,15 @@ export const SPIKE = {
     "Las piezas que el plan exige y el spike no tenía van con borde discontinuo y la marca «exigido».",
     "The pieces the plan requires and the spike lacked have a dashed border and the “required” mark.",
   ),
+  /** De qué línea del código del spike sale cada parte de la lectura del autor (AU-S2-P-8; solo experto). */
+  citas: tb("Leído del código del spike", "Read from the spike's code"),
+  cita: {
+    umbral: tb("umbral", "threshold"),
+    regla: tb("regla", "rule"),
+    aristas: tb("aristas", "edges"),
+    pausa: tb("pausa", "pause"),
+    tipos: tb("tipos de nodo", "node types"),
+  } as Readonly<Record<string, TextoBilingue>>,
 };
 
 export const PIE_AGENTE = ((p: {

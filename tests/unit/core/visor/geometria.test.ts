@@ -3,11 +3,7 @@
  * ajena), etiquetas sin encimarse, independencia del idioma y determinismo.
  */
 import { describe, expect, it } from "vitest";
-import {
-  geometria,
-  textoDeRegla,
-  type Geometria,
-} from "@core/visor/geometria";
+import { geometria, textoDeRegla, type Geometria } from "@core/visor/geometria";
 import type { Punto, Rect } from "@core/visor/ruteo";
 import {
   GRAMATICA,
@@ -98,7 +94,7 @@ describe("dibujo sin encimar", () => {
       expect(
         e.x >= 0 &&
           e.x + e.w <= geo.ancho &&
-          e.y >= geo.cabecera &&
+          e.y >= geo.guias.y1 - 8 && // las guías nacen 8 px bajo la cabecera de las bandas
           e.y + e.h <= geo.alto,
       ).toBe(true);
       for (const n of geo.nodos) expect(solapan(e, n.caja)).toBe(false);
@@ -144,7 +140,10 @@ describe("texto de una regla", () => {
     expect(textoDeRegla(c, "es")).toBe("senal_confianza < 0,75");
     expect(textoDeRegla(c, "en")).toBe("senal_confianza < 0.75");
     expect(
-      textoDeRegla({ senal: "tipo_atencion", operador: "=", valor: "urgencia" }, "es"),
+      textoDeRegla(
+        { senal: "tipo_atencion", operador: "=", valor: "urgencia" },
+        "es",
+      ),
     ).toBe("tipo_atencion = urgencia");
   });
 });

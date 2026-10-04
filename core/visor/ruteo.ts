@@ -34,8 +34,6 @@ export type Punto = [number, number];
 export interface Ruta {
   id: string;
   puntos: Punto[];
-  ladoOrigen: Lado;
-  ladoDestino: Lado;
 }
 
 export interface Escenario {
@@ -561,8 +559,6 @@ function rutearTodo(
     rutas.push({
       id: p.id,
       puntos: c.puntos,
-      ladoOrigen: f.o.lado,
-      ladoDestino: f.d.lado,
     });
   }
   return { rutas, costo };
@@ -623,8 +619,6 @@ function rutaDeLazo(e: Escenario, p: Pedido): Ruta {
       [x + LAZO, y2],
       [x, y2],
     ],
-    ladoOrigen: "derecha",
-    ladoDestino: "derecha",
   };
 }
 

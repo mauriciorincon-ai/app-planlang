@@ -201,6 +201,8 @@ export interface VistaSpike {
   cifras: Cifra[];
   lienzo: Lienzo;
   region: string;
+  /** De qué línea del código del spike sale cada parte de la lectura: `archivo:línea`, sin enlace. */
+  citas: { rotulo: string; refs: Array<{ que: string; donde: string }> };
 }
 export interface VistaAgente {
   portada: { antetitulo: string; titulo: string; guia: string };
@@ -1873,6 +1875,29 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
       ],
       lienzo: lz,
       region: X(SPIKE.region, i),
+      citas: {
+        rotulo: X(SPIKE.citas, i),
+        refs: Object.entries(sp.lectura.citas).map(([que, cita]) => {
+          // Solo la referencia `archivo:línea` del principio: el resto de la cita es la línea del código, en el
+          // idioma en que se escribió, y no se publica como si fuera texto de la página.
+          const donde = /^([\w./-]+:\d+(?:-\d+)?)/.exec(cita)?.[1];
+          if (!donde)
+            throw new Error(
+              `vitrina: la cita «${que}» de la lectura del spike no empieza por archivo:línea («${cita}»).`,
+            );
+          return {
+            que: X(
+              delVocabulario(
+                SPIKE.cita,
+                que,
+                "SPIKE.cita (src/textos/agente.ts)",
+              ),
+              i,
+            ),
+            donde,
+          };
+        }),
+      },
     };
   }
 

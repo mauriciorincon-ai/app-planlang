@@ -11,7 +11,7 @@ import type { BrechaNoPrevista } from "@core/brecha/brechas-no-previstas";
 import type { ResultadoSupuesto } from "@core/brecha/supuestos";
 import type { CategoriaBrecha } from "@core/brecha/brechas-no-previstas";
 import { SENAL_DE_CONFIANZA } from "@core/brecha/contexto";
-import { mediana, numCorto } from "@core/brecha/numeros";
+import { numCorto } from "@core/brecha/numeros";
 import { compactar } from "@core/playground/compactar";
 import type { Compacto } from "@core/playground/compacto";
 import { consecuencias, umbralesDelPlan } from "@core/playground/consecuencias";
@@ -2347,4 +2347,4 @@ export function columnasFallo(i: Idioma) {
   };
 }
 
-export const _paraPruebas = { cortarCorridas, rangoDeIds, mediana };
+export const _paraPruebas = { cortarCorridas, rangoDeIds };

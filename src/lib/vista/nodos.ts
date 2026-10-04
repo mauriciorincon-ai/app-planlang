@@ -24,15 +24,6 @@ export const GLIFO_DE_TIPO: Record<TipoDeNodo, FormaDeGlifo> = {
   enrutador: "rombo",
 };
 
-/** La variable de color de cada tipo (tokens.css): `--tipo-1` … `--tipo-5`. */
-export const COLOR_DE_TIPO: Record<TipoDeNodo, string> = {
-  modelo: "var(--tipo-1)",
-  herramienta: "var(--tipo-2)",
-  regla: "var(--tipo-3)",
-  pausa_humana: "var(--tipo-4)",
-  enrutador: "var(--tipo-5)",
-};
-
 export function tipoDeNodo(tipo: string): TipoDeNodo {
   if ((TIPOS_DE_NODO as readonly string[]).includes(tipo))
     return tipo as TipoDeNodo;

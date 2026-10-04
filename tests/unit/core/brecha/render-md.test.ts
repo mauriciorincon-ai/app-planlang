@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import { generarInforme } from "../../../../core/brecha/informe";
 import { SIEMBRAS } from "../../../../core/brecha/m9";
 import { renderizarInforme } from "../../../../core/brecha/render-md";
+import { entradaDesdeDisco, hermanas } from "../../../../scripts/_corridas";
 import {
   entradaReal,
   entradaSimulada,
@@ -91,5 +92,24 @@ describe("render del informe", () => {
     expect(renderizarInforme(inf, "en")).toMatch(
       /\| Repetition \| simulado-3casos-r2 \|/,
     );
+  });
+});
+
+describe("las decisiones de una vía dicen qué se eligió (AU-S2-P-6)", () => {
+  it("con un plan bilingüe (v1.4), cada idioma la suya tras la pregunta", async () => {
+    const ruta = "runs/demo-a/simulado-v1.4-respaldo";
+    const inf = await generarInforme(entradaDesdeDisco(ruta, hermanas(ruta)));
+    const d1 = inf.plan_en_breve.decisiones_una_via.find((d) => d.id === "D1")!;
+    expect(d1.opcion_elegida).not.toBeNull();
+    for (const i of ["es", "en"] as const)
+      expect(renderizarInforme(inf, i)).toContain(
+        `? → ${d1.opcion_elegida![i]}. `,
+      );
+  });
+  it("si el plan la escribió en un solo idioma (v1.1), el informe no la copia al otro como si fuera suya", async () => {
+    const inf = await generarInforme(entradaReal());
+    const d1 = inf.plan_en_breve.decisiones_una_via.find((d) => d.id === "D1")!;
+    expect(d1.opcion_elegida).toBeNull();
+    expect(renderizarInforme(inf, "en")).not.toMatch(/→ solo edad/);
   });
 });

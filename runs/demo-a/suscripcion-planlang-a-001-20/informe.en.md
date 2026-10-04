@@ -214,4 +214,4 @@ Applied thresholds: U1 = 0.75 · U2 = 1000 · U3 = 2 · U4 = false · in the pla
 
 Human review: In batches, the simulated reviewer follows the case's known truth (DA-04); the showcase discloses it.
 
-Verifier 1.2.0 · planlang-informe/v1 · fingerprint of this report: `73c30c4921bde6be1139263cbb94cf75531655645da793c4ee160d3195b18a38`
+Verifier 1.2.0 · planlang-informe/v1 · fingerprint of this report: `f67ea49d0e3d61848b18e22ceec545aa53291e6be916c8178b5deebf144c651c`

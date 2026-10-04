@@ -248,7 +248,7 @@ function seccionPlan(inf: Informe, i: Idioma): string {
     "",
     ...p.decisiones_una_via.map(
       (d) =>
-        `- **${d.id}** — ${d.pregunta[i]}${d.justificacion ? ` ${d.justificacion[i]}` : ""}`,
+        `- **${d.id}** — ${d.pregunta[i]}${d.opcion_elegida ? ` → ${d.opcion_elegida[i]}.` : ""}${d.justificacion ? ` ${d.justificacion[i]}` : ""}`,
     ),
   ].join("\n");
 }

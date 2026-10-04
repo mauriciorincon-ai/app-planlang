@@ -612,7 +612,7 @@
     }
   },
   "formato": "planlang-informe/v1",
-  "huella": "e5d68065f343c4dc95824c06c481577e36f49da98323d62eb3fec455c0585f0b",
+  "huella": "f0c6b2a905ae67a2485be441526c229d4d3826d64c661d4954febb9c1251031b",
   "plan_en_breve": {
     "decisiones_una_via": [
       {
@@ -621,10 +621,7 @@
           "en": "Legal minimization and a trivial output guard.",
           "es": "Minimización legal (Ley 1581 arts. 3–6, RGPD 9) y guardia de salida trivial."
         },
-        "opcion_elegida": {
-          "en": "solo edad, sexo, procedimiento, diagnóstico y texto del médico; nombre e identificación enmascarados antes del modelo",
-          "es": "solo edad, sexo, procedimiento, diagnóstico y texto del médico; nombre e identificación enmascarados antes del modelo"
-        },
+        "opcion_elegida": null,
         "pregunta": {
           "en": "Which member data reach the model?",
           "es": "¿Qué datos del afiliado llegan al modelo?"
@@ -636,10 +633,7 @@
           "en": "State law and AI Act art. 14; app hard rule.",
           "es": "CA SB 1120, TX SB 815, AI Act art. 14; regla dura de la app."
         },
-        "opcion_elegida": {
-          "en": "solo aprobar; negar y escalar exigen pausa humana",
-          "es": "solo aprobar; negar y escalar exigen pausa humana"
-        },
+        "opcion_elegida": null,
         "pregunta": {
           "en": "Which decisions may the agent take without a human?",
           "es": "¿Qué decisiones puede tomar el agente sin humano?"

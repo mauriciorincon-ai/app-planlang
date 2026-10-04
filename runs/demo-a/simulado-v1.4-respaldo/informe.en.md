@@ -50,8 +50,8 @@ The plan was not met. 8 synthetic cases were measured. Criteria: 6 met, 2 failed
 
 **One-way decisions**
 
-- **D1** — Which member data reach the model? Legal data minimization (Law 1581 arts. 3–6, GDPR art. 9) and a trivial output guard.
-- **D2** — Which decisions may the agent take without a human? CA SB 1120, TX SB 815, AI Act art. 14; the app's hard rule.
+- **D1** — Which member data reach the model? → only age, sex, procedure, diagnosis and the physician's text; name and ID masked before the model. Legal data minimization (Law 1581 arts. 3–6, GDPR art. 9) and a trivial output guard.
+- **D2** — Which decisions may the agent take without a human? → approve only; deny and escalate require a human pause. CA SB 1120, TX SB 815, AI Act art. 14; the app's hard rule.
 
 ## 3. Acceptance criteria
 

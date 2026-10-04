@@ -34,7 +34,6 @@ import {
   type CriterioCompacto,
   type Desenlace,
   type Evaluacion,
-  FORMATO_COMPACTO,
   type OpcionesDeDemo,
   type Resultado,
   type VisitaCompacta,
@@ -295,7 +294,6 @@ export function compactar(
         senales_de_umbral[u.id] = traza.senales[u.senal] as JsonValor;
     return {
       id: caso.id,
-      tipo: caso.tipo,
       subtipo: caso.subtipo,
       debe_escalar: caso.verdad_conocida.debe_escalar,
       registrado: traza.pausas_humanas.length > 0 ? "persona" : "solo",
@@ -321,13 +319,10 @@ export function compactar(
   });
 
   return {
-    formato: FORMATO_COMPACTO,
     corrida_id: corrida.manifiesto.corrida_id,
     umbrales: plan.umbrales.map((u) => ({
       id: u.id,
       senal: u.senal,
-      operador: u.operador,
-      inclusivo: u.inclusivo,
       valor_en_plan: u.valor_en_plan,
       rango:
         "min" in u.rango_jugable

@@ -5,7 +5,7 @@
  * verificador, el plan o una traza sin regenerar, lo nombra. Regenerar:
  * `pnpm brecha:informe --corrida <ruta> --plan <plan> --salida data/vitrina/<demo>/<corrida>`.
  */
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { generarInforme } from "../../core/brecha/informe";
@@ -26,7 +26,7 @@ interface Demo {
 }
 const manifiesto = JSON.parse(
   readFileSync("data/vitrina/manifiesto.json", "utf8"),
-) as { formato: string; demos: Record<string, Demo> };
+) as { formato: string; nota: string; demos: Record<string, Demo> };
 const huellaDe = (archivo: string) =>
   (JSON.parse(readFileSync(archivo, "utf8")) as { huella: string }).huella;
 
@@ -34,6 +34,11 @@ describe("manifiesto de la vitrina", () => {
   it("declara su formato y al menos el demo A", () => {
     expect(manifiesto.formato).toBe("planlang-vitrina/v1");
     expect(Object.keys(manifiesto.demos)).toContain("demo-a");
+  });
+  it("su `nota` (el comentario de quien lo edita a mano) solo cita archivos que existen (AU-S2-P-7)", () => {
+    const citados = manifiesto.nota.match(/[\w./-]+\.(?:ts|json)\b/g) ?? [];
+    expect(citados.length).toBeGreaterThan(0);
+    for (const f of citados) expect(existsSync(f), f).toBe(true);
   });
   it.each(Object.entries(manifiesto.demos))(
     "%s: cada huella coincide con su archivo",

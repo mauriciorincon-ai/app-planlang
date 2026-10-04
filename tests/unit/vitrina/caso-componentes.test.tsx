@@ -41,9 +41,14 @@ describe("un caso con pausa y documento, uno sin ellos", () => {
     expect(titulo("La pausa humana: lo que vio el auditor")).not.toBeNull();
     expect(titulo("El documento de decisión adversa")).not.toBeNull();
     expect(titulo(/^Las 16 señales que deja la traza$/)).not.toBeNull();
-    expect(
-      container.querySelectorAll("section[aria-labelledby=c-rec] ol > li"),
-    ).toHaveLength(7);
+    const pasos = container.querySelectorAll(
+      "section[aria-labelledby=c-rec] ol > li",
+    );
+    expect(pasos).toHaveLength(7);
+    // Cada paso es un ancla: el playground enlaza al paso donde el camino se separa (AU-S2-P-5).
+    expect([...pasos].map((li) => li.id)).toEqual(
+      [1, 2, 3, 4, 5, 6, 7].map((n) => `paso-${n}`),
+    );
     // El documento es un artículo con su aviso de IA al pie.
     const doc = container.querySelector(
       "section[aria-labelledby=c-doc] article",

@@ -65,15 +65,24 @@ describe("P4 Brecha", () => {
 });
 
 describe("P5 Playground (C-6)", () => {
-  it("un informe sin la prueba cruzada de su propia corrida", () => {
+  it("un informe sin la prueba cruzada de la corrida que el playground recalcula", () => {
     const otro = conInforme();
     otro.informe.contrato_de_grafo.rf_09_2 =
       otro.informe.contrato_de_grafo.rf_09_2.filter(
-        (r) => r.corrida_id !== otro.informe.corrida_id,
+        (r) => r.corrida_id !== otro.corrida.manifiesto.corrida_id,
       );
     expect(() => vistaPlayground(otro, "es")).toThrow(
-      "no trae la prueba cruzada RF-09.2 de su propia corrida",
+      `no trae la prueba cruzada RF-09.2 de la corrida que recalcula (${otro.corrida.manifiesto.corrida_id})`,
     );
+  });
+});
+
+describe("P5 Playground: la prueba cruzada es la de la corrida del compacto (AU-S2-P-4)", () => {
+  it("lee el corrida_id del compacto, no el del informe", () => {
+    const otro = conInforme();
+    // Cargar ya exige que informe y corrida sean la misma; aquí solo se separan los dos ids para ver cuál se lee.
+    otro.informe.corrida_id = "otra-corrida";
+    expect(() => vistaPlayground(otro, "es")).not.toThrow();
   });
 });
 

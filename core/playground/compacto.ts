@@ -13,11 +13,9 @@
  *   criterios con la regla del plan sin cargar el evaluador de reglas ni los textos de salida de los casos.
  */
 import type { JsonValor } from "../formatos/jcs";
-import type { AristaCondicional, Operador } from "../plan/esquema";
+import type { AristaCondicional } from "../plan/esquema";
 import type { EstadoCriterio } from "../brecha/criterios";
 import type { Senales } from "./aristas";
-
-export const FORMATO_COMPACTO = "planlang-playground/v1";
 
 /** A dónde lleva una rama: a una persona, al final sin persona, o a algo que la traza no registró. */
 export type Desenlace = "persona" | "solo" | "no_observado";
@@ -37,8 +35,6 @@ export interface Evaluacion {
 export interface UmbralCompacto {
   id: string;
   senal: string;
-  operador: Operador;
-  inclusivo: boolean;
   valor_en_plan: number | boolean;
   rango: { min: number; max: number; paso: number } | "booleano";
 }
@@ -54,7 +50,6 @@ export interface VisitaCompacta {
 
 export interface CasoCompacto {
   id: string;
-  tipo: string;
   subtipo: string;
   /** Verdad conocida: el caso debía pasar por una persona (con las reglas y los umbrales del plan). */
   debe_escalar: boolean;
@@ -99,7 +94,7 @@ export interface OpcionesDeDemo {
 }
 
 export interface Compacto {
-  formato: typeof FORMATO_COMPACTO;
+  /** La corrida de la que salió: el playground recalcula SUS decisiones (las de su prueba cruzada RF-09.2). */
   corrida_id: string;
   umbrales: UmbralCompacto[];
   aristas: AristaCondicional[];

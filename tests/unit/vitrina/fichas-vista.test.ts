@@ -58,11 +58,11 @@ describe("la ficha de reproducibilidad", () => {
 
 describe("lo que entrega P7", () => {
   it("el export y la ficha del agente viajan; la de reproducibilidad se queda", () => {
-    expect(es.mirada.entrega.map((x) => [x.titulo, x.archivo])).toEqual([
-      ["La ficha de reproducibilidad", false],
-      ["brochure-export.json", true],
-      ["planlang-demo-a.ficha-tecnica.json", true],
-      ["Ningún enlace", false],
+    expect(es.mirada.entrega.map((x) => x.titulo)).toEqual([
+      "La ficha de reproducibilidad",
+      "brochure-export.json",
+      "planlang-demo-a.ficha-tecnica.json",
+      "Ningún enlace",
     ]);
     expect(es.app.tabla.entrega).toBe("docs/brochure-export.json");
     expect(es.agente.tabla.entrega).toBe(
