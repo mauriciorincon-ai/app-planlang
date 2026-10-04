@@ -1,6 +1,7 @@
 /** RF-06.6 y RF-06.7 — brechas no previstas (con agente y paso) y el veredicto con sus motivos. */
 import { describe, expect, it } from "vitest";
 import { brechasNoPrevistas } from "../../../../core/brecha/brechas-no-previstas";
+import { documentoVerificado } from "../../../../core/brecha/contexto";
 import type { ResultadoContrato } from "../../../../core/brecha/contrato-grafo";
 import type { ResultadoCriterio } from "../../../../core/brecha/criterios";
 import type { ResultadoRiesgo } from "../../../../core/brecha/detectores";
@@ -144,6 +145,56 @@ describe("brechas no previstas", () => {
     expect(
       evaluadores.find((e) => e.id === "pausas_cumplidas")?.fallas,
     ).toEqual(["R"]);
+  });
+  it("con el modo Texas, una aprobación en parte sin pausa falla pausas_cumplidas; sin él, no (plan v1.5, R10)", () => {
+    const parcial = (id: string, modo_texas: boolean) =>
+      vista(
+        id,
+        {
+          ...base,
+          decision_final: "aprobar_parcial",
+          pausa_humana: false,
+          modo_texas,
+        },
+        { pasos: [paso(1, "redactor")] } as Partial<Traza>,
+      );
+    const { evaluadores } = brechasNoPrevistas(
+      plan,
+      [parcial("T", true), parcial("S", false)],
+      [],
+      "c",
+    );
+    expect(
+      evaluadores.find((e) => e.id === "pausas_cumplidas")?.fallas,
+    ).toEqual(["T"]);
+  });
+  it("M-15: el verificador recalcula completo e idiomas del documento adverso, no le cree al emisor", () => {
+    const doc = {
+      decision: "aprobar_parcial",
+      servicio: { codigo: "SYN-P-001", nombre: { es: "x", en: "x" } },
+      causal: { id: "tope_cobertura", resumen: { es: "y", en: "" } },
+      regla_disparada: { id: "RB-08", texto: { es: "z", en: "z" } },
+      datos_usados: [{ campo: "costo_estimado", valor: 850 }],
+      version: { plan: { id: "p" } },
+      via_de_contradiccion: { es: "v", en: "v" },
+      decidido_por: { es: "d", en: "d" },
+      aviso_ia: { es: "a", en: "a" },
+      completo: true,
+      idiomas: ["es", "en"],
+    };
+    // Sin monto (lo exige la parcial) y con un texto vacío en inglés: lo declarado no cuenta.
+    expect(documentoVerificado(doc)).toMatchObject({
+      completo: false,
+      idiomas: ["es"],
+    });
+    expect(
+      documentoVerificado({
+        ...doc,
+        monto: { aprobado: 590 },
+        causal: { id: "t", resumen: { es: "y", en: "y" } },
+      }),
+    ).toMatchObject({ completo: true, idiomas: ["es", "en"] });
+    expect(documentoVerificado(null)).toBeNull();
   });
   it("un juez requerido que no corrió y una regla sin implementación se reportan", () => {
     const p = planV11();

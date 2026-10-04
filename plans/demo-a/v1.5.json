@@ -399,7 +399,7 @@
       "regla_de_medicion": {
         "agregacion": "todos_cumplen",
         "condicion": "documento_adverso.completo == true AND documento_adverso.idiomas == ['es','en']",
-        "poblacion": "decision_final IN ['negar']"
+        "poblacion": "decision_final IN ['negar', 'aprobar_parcial']"
       },
       "tipo": "absoluto",
       "valor_objetivo": true
@@ -727,7 +727,7 @@
       "es": "El redactor produce la respuesta; la guardia determinista la filtra; si es adversa, sale el documento de decisión adversa."
     }
   ],
-  "huella": "b6bf051f7822ee340ee60979fb34198e8d5a1335bc70fe561f0582bcd4afea3b",
+  "huella": "e1dc89c72a37bf780bd3ddd5225dff84284da6bedabe6aae9f8b3bc670c57ee1",
   "id": "plan-demo-a",
   "lotes": {
     "completo": 200,

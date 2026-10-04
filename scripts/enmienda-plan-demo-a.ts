@@ -459,7 +459,7 @@ const CARGA = {
  *      del servicio; se aprueba hasta el tope y se niega el excedente). Sin el modo Texas sale sola; con él, la función
  *      `texas_y_no_aprobar` la manda a una persona. D2 lo dice en su opción elegida, R10 es su modo de falla (con
  *      Texas, una negación parcial sin humano) y C10 su criterio. La negación completa sigue siempre con una persona
- *      (C1, regla dura 4).
+ *      (C1, regla dura 4). C8 («toda decisión adversa lleva documento») suma la aprobación parcial a su población.
  *   2. M-16: `carga_detectada` (la guardia de entrada, sin modelo) es la primera arista de `decision`, hacia la pausa
  *      humana; las demás bajan un lugar. Es señal obligatoria en la traza y una mitigación de R3.
  *   3. M-8: la pausa humana recibe además la orden adjunta, las aclaraciones y la cobertura (`payload_minimo`).
@@ -610,7 +610,20 @@ export function enmendarAV15(v14: Plan): Record<string, unknown> {
     flujo_objetivo: flujo,
     decisiones,
     riesgos: [...riesgos, r10],
-    criterios_aceptacion: [...v14.criterios_aceptacion, c10],
+    criterios_aceptacion: [
+      ...v14.criterios_aceptacion.map((c) =>
+        c.id === "C8"
+          ? {
+              ...c,
+              regla_de_medicion: {
+                ...c.regla_de_medicion,
+                poblacion: "decision_final IN ['negar', 'aprobar_parcial']",
+              },
+            }
+          : c,
+      ),
+      c10,
+    ],
     umbrales,
     plan_beneficios_sintetico: {
       ...v14.plan_beneficios_sintetico,

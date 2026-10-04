@@ -32,6 +32,23 @@ class PlanBeneficios:
     def regla(self, id_: str) -> dict[str, Any]:
         return next(r for r in self.datos["reglas"] if r["id"] == id_)
 
+    @property
+    def tope_alto_costo(self) -> str:
+        """La referencia al umbral de alto costo del plan (`umbral.U2`): se resuelve contra el plan (M-18)."""
+        return str(self.datos["tope_alto_costo"])
+
+    @property
+    def unidad_de_costo(self) -> dict[str, str]:
+        return dict(self.datos["unidad_de_costo"])
+
+    def tope_cobertura(self, codigo: str | None) -> int | None:
+        """Hasta cuánto cubre el plan un servicio (plan de beneficios v2, RB-08); `None` si no tiene tope."""
+        p = self.procedimiento(codigo)
+        return p.get("tope_cobertura") if p is not None else None
+
+    def con_topes(self) -> bool:
+        return any(p.get("tope_cobertura") is not None for p in self.datos["procedimientos"])
+
     def es_exento(self, codigo: str | None) -> bool:
         p = self.procedimiento(codigo)
         return p is not None and p["estado"] == "exento"
@@ -48,7 +65,8 @@ class PlanBeneficios:
         def linea(p: dict[str, Any]) -> str:
             base = f"{p['codigo']} {p['nombre']['es']}"
             if not con_estado or p["estado"] == "requiere_autorizacion":
-                return base
+                tope = p.get("tope_cobertura")
+                return f"{base} [tope de cobertura: {tope}]" if con_estado and tope is not None else base
             return (
                 f"{base} [excluido: causal {p['causal']}]"
                 if p["estado"] == "excluido"

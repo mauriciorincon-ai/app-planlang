@@ -267,13 +267,14 @@ cambió ningún presupuesto.
 
 #### 5.2 · Plan v1.5 del A y su lote de 200
 
-- **`plans/demo-a/v1.5.json`** (huella `b6bf051f…`, aprobada por Mauricio Rincón el 2026-10-04 en el G-Plan).
+- **`plans/demo-a/v1.5.json`** (huella `e1dc89c7…`, aprobada por Mauricio Rincón el 2026-10-04 en el G-Plan).
   Sale de `enmendarAV15` (`scripts/enmienda-plan-demo-a.ts`; CLI `--a 1.5`) y M1 la valida. Trae:
   - **la aprobación parcial**:
     - D2 refina su opción elegida («aprobar y aprobar en parte; negar y escalar exigen pausa humana; con el modo
       Texas, también la aprobación en parte»), con una justificación que cita TX SB 815;
     - **R10** (con Texas, una negación parcial sin humano; S9 · O2 · D3, control legal) y **C10** (con Texas,
       ninguna negación ni parcial sin pausa) la vigilan;
+    - **C8** suma `aprobar_parcial` a su población: toda decisión adversa lleva documento;
     - la nota de la función `texas_y_no_aprobar` nombra «negar o aprobar en parte»;
     - C1 queda igual: la negación completa siempre pasa por una persona;
   - **M-16:** `carga_detectada → pausa_humana` es la arista 1 de `decision`, y las demás bajan un lugar (Texas queda
@@ -285,7 +286,7 @@ cambió ningún presupuesto.
 - Las calificaciones S/O/D de R10 las propone el builder, copiando las de R1 (mismo daño, parcial), y se declaran
   aquí: son del FMEA, no umbrales de comportamiento.
 - **Lote `planlang-a-002-200`** (`data/casos/demo-a/`): plan v1.5 y plan de beneficios v2, generador 1.1.0, huella
-  `5e17647d…`. Trae 169 aprobar, 22 negar y **9 aprobar en parte**; con el modo Texas apagado (el valor del plan)
+  `5e76ef4c…`. Trae 169 aprobar, 22 negar y **9 aprobar en parte**; con el modo Texas apagado (el valor del plan)
   ninguna de las 9 escala. La semilla es otra (`002`) porque el subtipo nuevo cambia la mezcla.
   `lotes-versionados.ts` lleva el plan de beneficios de cada lote, y la afirmación de privacidad suma su fila.
 - `core/plan/esquema.ts`: `topes_de_cobertura` es opcional, y `plan.schema.json` se regeneró.
@@ -300,6 +301,88 @@ verificaba la huella de un plan. Se reparó de dos formas:
 |---|---|---|---|
 | Plan v1.5 = su enmienda | `"topes_de_cobertura": 6` → `7` en el archivo | primero **verde** (demo fallida); con la guarda: «plans/demo-a/v1.5.json: si lleva huella, es la de su contenido» y «se reproduce desde el v1.4…» | 82/82 |
 | Huellas de los planes (`huellas-de-planes.test.ts`) | U2 `1000` → `1100` en la v1.2 | «plans/demo-a/v1.2.json: si lleva huella, es la de su contenido» | 9/9 |
+
+#### 5.3 · El agente A en Python (M-8 · M-15 · M-16 · M-18 · aprobación parcial)
+
+- **Aprobación parcial:** `verificador_cobertura` propone `aprobar_parcial` y dispara RB-08 cuando el costo pasa el
+  tope del servicio. Con plan de beneficios v2, la cobertura registra `tope_cobertura`.
+- **M-18:** `PlanCargado.umbral_de_senal` y `umbral_de_referencia`. Confianza, alto costo y modo Texas se resuelven
+  por su señal; el tope de alto costo, por su referencia. Todo se compara con `comparar()`. El `modo_texas` lo deja el
+  enrutador, y `estado_inicial` ya no lee `U4`.
+- **M-16:** el enrutador escribe `carga_detectada` (`carga_en_entrada`, sin modelo), solo si el plan la declara. El
+  exportador la saca a la traza, y la pausa recibe la evidencia «instrucciones escondidas».
+- **M-8:** el payload suma lo que pide `payload_minimo` (orden adjunta, aclaraciones y cobertura).
+- **M-15:** el documento adverso trae:
+  - `decision`, y la regla según la causal (RB-03 o RB-08);
+  - el servicio de la orden;
+  - `monto` (solicitado, aprobado y negado) si es parcial;
+  - `idiomas` calculado de sus textos.
+  Si la parte negada sale sin persona, el aviso y «decidido por» lo dicen (`AVISO_IA_SIN_PERSONA`,
+  `DECIDIDO_POR_REGLA`). La arquitectura corta una parcial sin pausa con el modo Texas encendido.
+- **Prompts:**
+  - las reglas nuevas del redactor y de la línea base (`REDACTOR_TOPE`, `AGENTE_UNICO_TOPE`) se suman solo con un plan
+    de beneficios con topes;
+  - la primera versión las ponía siempre, y `simulado-3casos` y `simulado-v1.4-respaldo` cambiaban de bytes: el
+    proveedor simulado cuenta el prompt y daba +47 tokens en el redactor;
+  - esas corridas no se regeneraron, porque `runs/` es solo de agregar.
+- **`lotes.py`:** sin `--beneficios`, usa el plan de beneficios cuya huella es la del lote (`beneficios_del_lote`).
+- **Corrida simulada `runs/demo-a/simulado-v1.5-tope`** (plan v1.5, lote 002, 20 casos; generador
+  `agents/tests/v15_simulado.py`), el gate de contrato entre lenguajes de la v1.5:
+  - A-006 y A-018 aprueban en parte sin pausa, con documento completo en ES/EN;
+  - A-016, una inyección, dispara la arista 1 (`carga_detectada`);
+  - `trazas:verificar` la lee entera, con RF-09.2 recalculado en TS y coincidente.
+- `grafo-codigo.json` se regeneró: el código se movió y el enrutador ahora escribe `carga_detectada` y `modo_texas`.
+- **Pruebas:** `test_v15_versionado.py` (8). pytest da 169 en verde (96,7 %) y ruff está limpio.
+
+#### 5.4 · Lado TS: verificador, playground e informe
+
+- **M-15 (verificador):** `documentoVerificado` recalcula `completo` (los campos requeridos, más `monto` si es
+  parcial) e `idiomas` (todo texto bilingüe no vacío). Lo que declara el emisor no entra a C8. Los informes
+  publicados no cambiaron: los documentos de las corridas reales ya eran completos.
+- **`pausas_cumplidas`** suma «con el modo Texas, una aprobación parcial pasa por una persona».
+- **Informe:** `aprobar_parcial` se nombra «aprobar en parte» / «approve in part».
+- **Playground:** `propuestaAdversa`. Con la declaración `parcial` del demo, aprobar en parte solo es adversa si el
+  modo Texas jugado está encendido; si no, sigue la regla del S2. El manifiesto no la declara todavía (fase 3), así
+  que el compacto no cambió.
+- **Hallazgo de proceso:** la guarda «el núcleo no conoce ningún demo» atrapó un literal `"propuesta"` en un tipo
+  `Pick<…>`, y se reescribió.
+
+#### 5.5 · M-17: la línea base de extracción por patrones, medida
+
+`scripts/linea-base-patrones.ts` (nombres del catálogo, expresión del costo, palabra clave de urgencia). La prueba
+`tests/unit/guardias/linea-base-patrones.test.ts` fija las cifras y exige que el ADR-001 las cite.
+
+| Lote | Patrones (4 campos exactos) | Modelo (corrida real) |
+|---|---|---|
+| 20 | **14 de 15** | 15 de 15 |
+| 200 | **152 de 153** | 150 de 153 |
+
+**Hallazgo para el usuario:** en el conjunto sintético, los patrones alcanzan al modelo campo a campo, porque las notas
+salen de plantillas. El ADR-001 lo dice en una adenda: el modelo se sostiene por la confianza calibrada y por la
+resistencia a la inyección (A-006 hace que la palabra clave marque urgencia), no por una exactitud mayor, que no está
+medida aquí. Un conjunto con texto realmente libre queda como deuda del método.
+
+**ADR-016** («aprobación parcial y modo Texas»): registra todo lo anterior. Las fichas se regeneraron (13 ADR).
+
+| Gate | Mutación | Rojo (a quién nombró) | Verde al restaurar |
+|---|---|---|---|
+| M-16 `carga_detectada` (Python) | el enrutador escribe `False` | «test_la_corrida_v15_se_regenera_identica» | 8/8 |
+| RB-08 parcial (Python) | la propuesta vuelve a `aprobar` | regeneración idéntica y «…con_texas_pasa_por_una_persona» | 8/8 |
+| Texas corta una parcial sin pausa | `if False and …` | «test_con_texas_la_arquitectura_corta_una_parcial_sin_pausa» | 8/8 |
+| M-8 payload | `payload.update({})` | regeneración idéntica | 8/8 |
+| M-18 referencia | la comprobación de la referencia pasa a `if False:` | «test_m18_umbrales_por_senal_y_tope_por_referencia» | 8/8 |
+| Aviso sin persona | `aviso_ia` devuelve siempre `AVISO_IA` | regeneración idéntica | 8/8 |
+| `pausas_cumplidas` con Texas (TS) | se quita la cláusula de Texas | «con el modo Texas, una aprobación en parte sin pausa falla…» | 16/16 |
+| M-15 `completo` recalculado (TS) | `completo: doc.completo` | «M-15: el verificador recalcula completo e idiomas…» | 16/16 |
+| Playground parcial (TS) | `propuestaAdversa` devuelve `true` | «aprobar en parte es adversa solo con el modo Texas jugado encendido» | 16/16 |
+| Línea base por patrones | la urgencia solo en plural | «lote de 20: 14 de 15…» y «lote de 200: 152 de 153…» | 3/3 |
+
+En M-16, M-8 y el aviso, quien atrapa la mutación es la regeneración byte a byte de la corrida versionada (como el
+respaldo del S2): las pruebas de comportamiento leen los archivos versionados.
+
+**Pendiente del paso 5:**
+- el **lote real de 200 de la v1.5**: humo real 3/3 y después sesiones de 20, fuera de CI. **Se le pregunta al
+  usuario antes de gastar cuota.**
 
 ## Desviación del plan
 

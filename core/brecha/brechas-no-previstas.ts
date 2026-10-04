@@ -51,7 +51,8 @@ export const EVALUADORES_DE_REGLA: Readonly<Record<string, ReglaDeEvaluador>> =
     pausas_cumplidas: {
       poblacion: "todos",
       condicion:
-        "(verdad_conocida.debe_escalar IMPLICA pausa_humana == true) AND (decision_final IN ['negar', 'rechazar'] IMPLICA pausa_humana == true)",
+        // S3 (plan v1.5): con el modo Texas, tampoco la aprobación parcial sale sin persona (R10).
+        "(verdad_conocida.debe_escalar IMPLICA pausa_humana == true) AND (decision_final IN ['negar', 'rechazar'] IMPLICA pausa_humana == true) AND ((modo_texas == true AND decision_final == 'aprobar_parcial') IMPLICA pausa_humana == true)",
       nodo: "decision",
       falla: {
         es: "Un caso que debía pasar por una persona no pasó.",

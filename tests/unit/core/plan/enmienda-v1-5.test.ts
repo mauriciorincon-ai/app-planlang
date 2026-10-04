@@ -81,6 +81,11 @@ describe("plan v1.5 del demo A", () => {
       (a) => !esAristaTripleta(a) && a.funcion.nombre === "texas_y_no_aprobar",
     );
     expect(texas?.orden).toBe(6);
+    // C8: la aprobación parcial es adversa y también lleva su documento.
+    expect(
+      v15.criterios_aceptacion.find((c) => c.id === "C8")!.regla_de_medicion
+        .poblacion,
+    ).toBe("decision_final IN ['negar', 'aprobar_parcial']");
     // C1 sigue igual: la negación completa siempre con una persona.
     expect(v15.criterios_aceptacion.find((c) => c.id === "C1")).toEqual(
       v14.criterios_aceptacion.find((c) => c.id === "C1"),

@@ -299,6 +299,7 @@ export function resumenDelInforme(
 /** Los valores de dominio que el informe nombra, redactados en cada idioma (regla 20: nada crudo en el EN). */
 const DECISION: Readonly<Record<string, TextoBilingue>> = {
   aprobar: { es: "aprobar", en: "approve" },
+  aprobar_parcial: { es: "aprobar en parte", en: "approve in part" },
   negar: { es: "negar", en: "deny" },
   rechazar: { es: "rechazar", en: "reject" },
   escalar: { es: "escalar", en: "escalate" },

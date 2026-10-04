@@ -62,6 +62,8 @@ def traza_de_estado(
     finales = {
         "tipo_atencion": estado.get("tipo_atencion"),
         "servicio_exento": estado.get("servicio_exento"),
+        # M-16 (plan v1.5): sale solo si el plan la declara obligatoria.
+        "carga_detectada": estado.get("carga_detectada"),
         "senal_confianza": estado.get("senal_confianza"),
         "campos_faltantes_count": estado.get("campos_faltantes_count"),
         "ciclos_aclaracion": int(estado.get("aclaraciones_hechas", 0)),

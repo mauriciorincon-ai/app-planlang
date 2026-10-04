@@ -15,6 +15,7 @@ from __future__ import annotations
 import argparse
 import datetime as dt
 import importlib.metadata as md
+import json
 import os
 import platform
 import sqlite3
@@ -153,6 +154,16 @@ def ejecutar_caso(
     return app.get_state(config).values
 
 
+def beneficios_del_lote(lote: dict[str, Any]) -> Path:
+    """El plan de beneficios con que se generó el lote, buscado por su huella en `data/plan-beneficios/`
+    (S3: el lote de la v1.5 usa el v2). Sin uno que coincida, el lote no corre."""
+    huella = lote["plan_beneficios"]["huella"]
+    for ruta in sorted((RAIZ_REPO / Path(BENEFICIOS_POR_DEFECTO).parent).glob("*.json")):
+        if json.loads(ruta.read_text(encoding="utf-8")).get("huella") == huella:
+            return ruta
+    raise CorridaIncompatible(f"ningún plan de beneficios en data/plan-beneficios/ tiene la huella {huella}")
+
+
 def ejecutar_lote(
     *,
     corrida_id: str,
@@ -160,7 +171,7 @@ def ejecutar_lote(
     proveedor: str,
     plan_ruta: str | Path = PLAN_POR_DEFECTO,
     casos_ruta: str | Path = CASOS_POR_DEFECTO,
-    beneficios_ruta: str | Path = BENEFICIOS_POR_DEFECTO,
+    beneficios_ruta: str | Path | None = None,
     salida: str | Path = SALIDA_POR_DEFECTO,
     n: int | None = None,
     variante: str = "multiagente",
@@ -181,9 +192,11 @@ def ejecutar_lote(
             raise ValueError(f"regla 6: con la suscripción, a lo sumo {tope} casos por sesión")
         if pausa_s <= 0:
             raise ValueError("regla 6: con la suscripción los casos van espaciados (pausa_s > 0)")
-    pb = cargar_plan_beneficios(_ruta(beneficios_ruta))
     lote_ruta = _ruta(casos_ruta)
     lote = leer_verificando(lote_ruta)
+    if beneficios_ruta is None:
+        beneficios_ruta = beneficios_del_lote(lote)
+    pb = cargar_plan_beneficios(_ruta(beneficios_ruta))
     if lote["plan_beneficios"]["huella"] != pb.huella:
         # La verdad conocida del lote se derivó con SU plan de beneficios (auditoría S1, M-2).
         raise CorridaIncompatible("el lote de casos se generó con otro plan de beneficios")
@@ -399,7 +412,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--modelo", default=None)
     p.add_argument("--plan", default=PLAN_POR_DEFECTO)
     p.add_argument("--casos", default=CASOS_POR_DEFECTO)
-    p.add_argument("--beneficios", default=BENEFICIOS_POR_DEFECTO)
+    p.add_argument("--beneficios", default=None, help="por defecto, el del lote (por su huella)")
     p.add_argument("--salida", default=SALIDA_POR_DEFECTO)
     p.add_argument("--corrida", default=None)
     p.add_argument("--variante", default="multiagente", choices=VARIANTES)

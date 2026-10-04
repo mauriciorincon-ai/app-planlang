@@ -22,6 +22,12 @@ CARTAS_SIMULADAS = {
         "es": "Su solicitud fue aprobada. Puede coordinar la atención con su prestador.",
         "en": "Your request was approved. You can arrange the care with your provider.",
     },
+    "aprobar_parcial": {
+        "es": "Su solicitud fue aprobada en parte: el plan cubre el servicio hasta su tope y el resto no. "
+        "Recibirá un documento que explica la parte no cubierta y cómo reclamar.",
+        "en": "Your request was approved in part: the plan covers the service up to its cap and not the "
+        "rest. You will receive a document explaining the part not covered and how to appeal.",
+    },
     "negar": {
         "es": "Su solicitud no fue aprobada porque el servicio está excluido del plan por una causa de ley. "
         "Recibirá un documento que explica cómo reclamar.",
@@ -59,7 +65,7 @@ class EntornoSimulado:
         return conocidos
 
 
-_DECISION = re.compile(r"^Decisión: (aprobar|negar)$", re.MULTILINE)
+_DECISION = re.compile(r"^Decisión: (aprobar_parcial|aprobar|negar)$", re.MULTILINE)
 
 
 class RespondedorSimulado:

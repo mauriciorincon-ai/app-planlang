@@ -339,7 +339,12 @@ export function compactar(
     nodos_jugables: jugables,
     desenlace_de_rama,
     minutos_por_persona: minutosPorPersona(plan),
-    propuesta: { senal: demo.senal_propuesta, favorable: demo.valor_favorable },
+    propuesta: {
+      senal: demo.senal_propuesta,
+      favorable: demo.valor_favorable,
+      // Solo si el demo la declara: sin ella, el compacto conserva sus bytes.
+      ...(demo.parcial ? { parcial: { ...demo.parcial } } : {}),
+    },
     casos,
     criterios,
   };

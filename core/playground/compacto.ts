@@ -89,8 +89,18 @@ export interface OpcionesDeDemo {
   senal_propuesta: string;
   /** El valor favorable de la propuesta; cualquier otro es adverso (negar, rechazar) y exige una persona. */
   valor_favorable: string;
+  /**
+   * Una propuesta adversa que el plan deja salir sin persona mientras una señal esté apagada (plan v1.5 del A: la
+   * aprobación parcial con el modo Texas apagado). Si la señal está ligada a un umbral, cuenta el valor jugado.
+   */
+  parcial?: PropuestaParcial;
   /** Claves que se conocen al decidir además de las señales que leen las aristas (las escribe un nodo escritor). */
   claves_previas: string[];
+}
+
+export interface PropuestaParcial {
+  valor: string;
+  senal_que_exige_persona: string;
 }
 
 export interface Compacto {
@@ -107,7 +117,7 @@ export interface Compacto {
   /** Minutos de una persona por caso que pasa por la pausa (costo humano que el plan declara en sus umbrales). */
   minutos_por_persona: number;
   /** La señal de la propuesta del agente y su valor favorable (del manifiesto del demo). */
-  propuesta: { senal: string; favorable: string };
+  propuesta: { senal: string; favorable: string; parcial?: PropuestaParcial };
   casos: CasoCompacto[];
   criterios: CriterioCompacto[];
 }

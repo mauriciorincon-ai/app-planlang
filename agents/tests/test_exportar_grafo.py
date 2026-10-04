@@ -26,7 +26,15 @@ def test_cada_nodo_trae_su_funcion_lineas_y_lo_que_escribe() -> None:
         assert b["hasta"] - b["desde"] + 1 == len(b["codigo"].splitlines())
         assert "pasos" in b["escribe"]
     escribe = {n: set(b["escribe"]) for n, b in datos["nodos"].items()}
-    assert escribe["enrutador"] == {"decisiones_de_arista", "pasos", "servicio_exento", "tipo_atencion"}
+    # S3: el enrutador también deja `modo_texas` (resuelto por su señal, M-18) y `carga_detectada` (M-16).
+    assert escribe["enrutador"] == {
+        "carga_detectada",
+        "decisiones_de_arista",
+        "modo_texas",
+        "pasos",
+        "servicio_exento",
+        "tipo_atencion",
+    }
     assert "decision_final" in datos["nodos"]["pausa_humana"]["escribe"]
     # Sigue los nombres locales: `{**senales, …}` en el extractor y `return salida` en la aclaración.
     assert {"senal_confianza", "campos_faltantes_count", "costo_estimado"} <= escribe["extractor"]

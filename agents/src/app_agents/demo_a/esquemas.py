@@ -49,7 +49,7 @@ def crear_modelo_extraccion_y_carta(
     return create_model(
         "ExtraccionYCarta",
         __base__=base,
-        propuesta=(Literal["aprobar", "negar"], ...),
+        propuesta=(Literal["aprobar", "aprobar_parcial", "negar"], ...),
         carta_es=(str, ...),
         carta_en=(str, ...),
         acciones=(list[str], ...),

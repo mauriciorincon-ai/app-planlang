@@ -173,6 +173,27 @@ function desvioDe(
   return null;
 }
 
+/**
+ * ¿La propuesta del caso es adversa con estos umbrales? Toda la que no es la favorable lo es, salvo la parcial del
+ * demo mientras su señal está apagada (con el modo Texas apagado, aprobar en parte sale sola por plan, D2 v1.5).
+ */
+export function propuestaAdversa(
+  c: Compacto,
+  senales: Readonly<Record<string, JsonValor>>,
+  umbrales: Umbrales,
+): boolean {
+  const { senal, favorable, parcial } = c.propuesta;
+  if (!Object.hasOwn(senales, senal)) return false;
+  const p = senales[senal];
+  if (p === favorable) return false;
+  if (parcial && p === parcial.valor) {
+    const s = parcial.senal_que_exige_persona;
+    const id = c.ligaduras[s];
+    return id !== undefined ? umbrales[id] === true : senales[s] === true;
+  }
+  return true;
+}
+
 function efectoDe(
   antes: "persona" | "solo",
   ahora: Desenlace,
@@ -345,8 +366,7 @@ export function consecuencias(c: Compacto, umbrales: Umbrales): Consecuencias {
         caso.registrado,
         ahora,
         caso.debe_escalar,
-        Object.hasOwn(v.senales, c.propuesta.senal) &&
-          v.senales[c.propuesta.senal] !== c.propuesta.favorable,
+        propuestaAdversa(c, v.senales, umbrales),
       ),
       visitas_ahorradas: caso.visitas
         .slice(d.i + 1)

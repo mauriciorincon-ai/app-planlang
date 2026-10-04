@@ -31,6 +31,14 @@ export const ManifiestoVitrinaSchema = z.object({
           senal_propuesta: z.string().min(1),
           valor_favorable: z.string().min(1),
           claves_previas: z.array(z.string().min(1)),
+          // Plan v1.5 del A: la aprobación parcial sale sola mientras el modo Texas esté apagado.
+          parcial: z
+            .object({
+              valor: z.string().min(1),
+              senal_que_exige_persona: z.string().min(1),
+            })
+            .strict()
+            .optional(),
         })
         .strict(),
       /**
