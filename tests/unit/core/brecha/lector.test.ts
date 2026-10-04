@@ -2,6 +2,7 @@
  * RF-06.1 — el lector rechaza, con TODOS sus motivos, lo que no puede atribuir: huellas que no
  * coinciden, archivos fuera de esquema, referencias rotas, trazas mal formadas y corridas incompatibles.
  */
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { conHuella, sinHuella } from "../../../../core/formatos/huella";
 import type { JsonValor } from "../../../../core/formatos/jcs";
@@ -398,5 +399,51 @@ describe("lector — lote generado con otro plan", () => {
     await expect(
       leerCorridaVerificada(e.corrida, e.plan, e.casos),
     ).rejects.toBeInstanceOf(ErrorDeLectura);
+  });
+});
+
+describe("lector — corridas de otro plan con la misma verdad (ADR-005, S2)", () => {
+  const leer = (v: string) =>
+    JSON.parse(readFileSync(`plans/demo-a/${v}.json`, "utf8")) as O;
+  it("la corrida simulada (plan v1.2) se verifica contra el plan v1.3 y el informe sabe con qué plan corrió", async () => {
+    const e = entradaSimulada();
+    const leida = await leerEntrada({
+      ...e,
+      plan: leer("v1.3"),
+      planDeLaCorrida: e.plan,
+    });
+    expect(leida.plan.version).toBe("1.3.0");
+    expect(leida.planCorrida).toEqual({
+      version: "1.2.0",
+      huella: (e.plan as O)["huella"],
+    });
+    // Sin declarar el plan de la corrida, otro plan es otra huella: se rechaza como antes.
+    expect(codigos(await motivos({ ...e, plan: leer("v1.3") }))).toContain(
+      "HUELLA_NO_COINCIDE",
+    );
+  });
+  it("un plan de la corrida que no es el del manifiesto, o que da otra verdad → rechazo", async () => {
+    const e = entradaSimulada();
+    expect(
+      (
+        await motivos({
+          ...e,
+          plan: leer("v1.3"),
+          planDeLaCorrida: leer("v1.1"),
+        })
+      ).map((m) => m.detalle.es),
+    ).toContain(
+      "el plan entregado como plan de las corridas no es el que declara su manifiesto",
+    );
+    const otra = copia(leer("v1.3")) as O;
+    (otra["umbrales"] as O[])[0]!["valor_en_plan"] = 0.8;
+    const ms = await motivos({
+      ...e,
+      plan: await sellar(otra),
+      planDeLaCorrida: e.plan,
+    });
+    expect(ms.map((m) => m.detalle.es).join()).toMatch(
+      /otro plan o tiene otros umbrales u otro contrato de grafo/,
+    );
   });
 });

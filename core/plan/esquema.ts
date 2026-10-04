@@ -8,7 +8,10 @@
  * clave desconocida es un error, no un silencio.
  */
 import { z } from "zod";
-import { TextoBilingueSchema } from "../formatos/bilingue";
+import {
+  TextoBilingueSchema,
+  TextoLibreSchema,
+} from "../formatos/bilingue-esquema";
 
 export const ID = z
   .string()
@@ -22,9 +25,9 @@ export const ESTADO_DECISION = ["abierta", "decidida", "superada"] as const;
 
 export const OpcionSchema = z
   .object({
-    nombre: z.string().min(1),
-    pros: z.string().optional(),
-    contras: z.string().optional(),
+    nombre: TextoLibreSchema,
+    pros: TextoLibreSchema.optional(),
+    contras: TextoLibreSchema.optional(),
   })
   .strict();
 
@@ -33,7 +36,7 @@ export const DecisionSchema = z
     id: ID,
     pregunta: TextoBilingueSchema,
     opciones: z.array(OpcionSchema).min(2),
-    opcion_elegida: z.string().optional(),
+    opcion_elegida: TextoLibreSchema.optional(),
     justificacion: TextoBilingueSchema.optional(),
     reversibilidad: z.enum(REVERSIBILIDAD),
     tipo: z.enum(TIPO_DECISION),
@@ -56,17 +59,25 @@ export const Escala = z.number().int().min(1).max(10);
 
 export const MitigacionSchema = z
   .object({
-    accion: z.string().min(1),
-    momento: z.string().min(1),
-    efecto_esperado: z.string().min(1),
+    accion: TextoLibreSchema,
+    momento: TextoLibreSchema,
+    efecto_esperado: TextoLibreSchema,
   })
   .strict();
 
 export const TIPO_DETECTOR = ["conteo", "tasa"] as const;
 
+/**
+ * Ámbito del detector: `caso` (por defecto) evalúa sobre las trazas; `sesion` sobre las sesiones del manifiesto
+ * de la corrida (`limites_alcanzados`, `detenida_por`, `casos_ejecutados`) — para lo que por diseño no queda en
+ * ninguna traza, como el límite de uso que detiene un lote (M-14, plan v1.3).
+ */
+export const AMBITO_DETECTOR = ["caso", "sesion"] as const;
+
 export const DetectorSchema = z
   .object({
     tipo: z.enum(TIPO_DETECTOR),
+    ambito: z.enum(AMBITO_DETECTOR).optional(),
     poblacion: z.string().min(1),
     condicion: z.string().min(1),
     ocurre_si: z
@@ -90,7 +101,9 @@ export const ModoDeFallaSchema = z
     deteccion: Escala,
     mitigaciones: z.array(MitigacionSchema).default([]),
     detector_en_trazas: DetectorSchema.nullable(),
-    no_detectable_en_trazas: z.string().min(1).optional(),
+    no_detectable_en_trazas: TextoLibreSchema.optional(),
+    /** Instrumentos-de-plan v0.2.0 (G8): protege una obligación legal ⇒ prioridad efectiva alta. */
+    control_legal: z.boolean().optional(),
   })
   .strict();
 
@@ -188,7 +201,7 @@ export const UmbralSchema = z
     operador: z.enum(OPERADOR),
     inclusivo: z.boolean(),
     valor_en_plan: z.union([z.number(), z.boolean()]),
-    unidad: z.string().optional(),
+    unidad: TextoLibreSchema.optional(),
     rango_jugable: RangoJugableSchema,
     consecuencia_si_verdadero: z.string().min(1),
     costo_humano_por_caso_min: z.number().nonnegative().optional(),

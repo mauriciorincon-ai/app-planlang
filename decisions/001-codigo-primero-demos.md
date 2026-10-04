@@ -1,5 +1,7 @@
 # ADR-001 — Los demos de planlang usan IA generativa solo para extraer y redactar texto libre: por qué el código no alcanza
 
+**Summary (EN):** Demo agents use generative AI only where code cannot reach: extracting fields from free clinical text, asking one clarifying question and drafting the reply. Routing, coverage checks, the output guard and the adverse-decision document are deterministic code. §4 records the real fallback behaviour: since plan v1.4 (S2, AU-9) a provider failure while extracting or clarifying sends the case to the human pause.
+
 > Plantilla del kit v1.27.0 (regla dura «código primero», estándares § 7, G-Metodo 2026-07-12).
 > **Cítese por tema:** «ADR código primero de los demos».
 
@@ -20,7 +22,7 @@ la que decidió.
 | **Verificador de cobertura por reglas** (exentos, exclusiones con causal, alto costo, contradicción orden/texto)             | Todo: son reglas escritas en `data/plan-beneficios/demo-a.json`                                          | No se quedó corto — **código**                                                                                                                                                                                                                                                                                                                                             | `agents/tests/test_grafo_demo_a.py` (las reglas viven en `agents/src/app_agents/demo_a/nodos.py`; enmendado 2026-09-27, auditoría S1)                                                                          |
 | **Guardia de salida por reglas** (identificadores del conjunto, patrones de instrucción inyectada, lista blanca de acciones) | Todo; única defensa con evidencia frente a atacantes adaptativos (científica I8, Nasr/Carlini 2025)      | No se quedó corto — **arquitectura**                                                                                                                                                                                                                                                                                                                                       | `agents/tests/test_guardia.py`                                                                                                                                                                     |
 | **Documento de decisión adversa** por plantillas de código ES/EN                                                             | Todo: causal tasada, regla, datos usados, versión, vía de contradicción                                  | No se quedó corto — **código**                                                                                                                                                                                                                                                                                                                                             | `agents/tests/test_documento_adverso.py`                                                                                                                                                           |
-| **Extracción por patrones** (expresiones regulares y diccionarios sobre el texto libre del médico)                           | Casos `normal` con vocabulario del diccionario                                                           | El texto del médico es libre por diseño del demo (RF-04a.1): sinónimos, abreviaturas, negaciones («no es urgente»), campos implícitos («como el mes pasado»), y los adversarios inyectan instrucciones que un patrón no distingue de datos. Una extracción por patrones no produce **confianza** — y el plan mide justo la calibración de esa confianza (supuesto S1, E-5) | **No medido en el S1** (enmendado 2026-09-27, auditoría S1): la evidencia hoy es cualitativa (variantes léxicas de `core/sintetico/diccionarios.ts`); la línea base de extracción por patrones sobre el lote de 20 queda como **deuda del S2** |
+| **Extracción por patrones** (expresiones regulares y diccionarios sobre el texto libre del médico)                           | Casos `normal` con vocabulario del diccionario                                                           | El texto del médico es libre por diseño del demo (RF-04a.1): sinónimos, abreviaturas, negaciones («no es urgente»), campos implícitos («como el mes pasado»), y los adversarios inyectan instrucciones que un patrón no distingue de datos. Una extracción por patrones no produce **confianza** — y el plan mide justo la calibración de esa confianza (supuesto S1, E-5) | **No medido en el S1** (enmendado 2026-09-27, auditoría S1): la evidencia hoy es cualitativa (variantes léxicas de `core/sintetico/diccionarios.ts`); la línea base de extracción por patrones sobre el lote de 20 queda como **deuda del S2**, que el S2 pasó al **S3** (M-17, desviación 9 de su bitácora) |
 | **Redacción por plantilla** de la respuesta al afiliado                                                                      | La parte fija (aviso de IA, causal, vía de contradicción) — **se queda como código** (documento adverso) | El párrafo explicativo en lenguaje llano ES/EN por caso: una plantilla produce texto genérico que un lector no técnico no reconoce como respuesta a SU solicitud (gate ⭐ de lectura de la VISION)                                                                                                                                                                         | Juicio del gate ⭐ (parada 2); en la vitrina el redactor es la única salida «creativa»                                                                                                             |
 
 ## 3. Dónde entra el LLM y dónde NO
@@ -44,21 +46,27 @@ la que decidió.
 ## 4. Fallback determinista (obligatorio)
 
 > **Enmendado 2026-09-27 (auditoría S1, AU-9):** la versión anterior de esta sección describía un
-> enrutamiento a `pausa_humana` con motivo `proveedor_no_disponible` que el código no implementa. Este
-> es el comportamiento real.
+> enrutamiento a `pausa_humana` con motivo `proveedor_no_disponible` que el código no implementaba.
+> **Enmendado 2026-10-01 (S2, AU-9 pagado):** ese enrutamiento existe desde el plan v1.4. Este es el
+> comportamiento real.
 
 Sin proveedor el caso **no se inventa**:
 
 - **`limite_de_uso`** (en stderr o en el JSON del CLI): la sesión se detiene, el caso no se exporta y
   se reintenta en la sesión siguiente, acumulable sin duplicar (RF-05.5).
-- **Cualquier otro error** (`timeout`, `esquema_invalido` tras 2 reintentos, `otro`): se exporta una
-  traza parcial con `resultado: error`, `error_proveedor` y el nodo que falló; el lote continúa con el
-  caso siguiente y ese caso queda **sin decisión** (no pasa por `pausa_humana`). El verificador lo
-  reporta como brecha no prevista y, en la línea base, como caso mal resuelto (informe v1.2: A-012).
+- **Cualquier otro error** (`timeout`, `esquema_invalido` tras 2 reintentos, `otro`) **al extraer o al
+  aclarar**, desde el plan v1.4 (S2, AU-9): el nodo deja `proveedor_no_disponible = true` y
+  `error_proveedor`, y la arista de respaldo del plan (orden 1 de `extractor` y de `aclaracion`) lleva el
+  caso a `pausa_humana`. Una persona ve el caso completo con lo que haya (motivo: la señal
+  `proveedor_no_disponible`) y decide; la traza queda `completo`, con el paso que falló y su costo. R9 lo
+  anticipa en el plan y el verificador lo cuenta como riesgo ocurrido, no como brecha no prevista.
+- **Lo que queda fuera:** si falla el **redactor**, la decisión ya está tomada (y si es adversa, ya la vio
+  una persona): se exporta una traza parcial con `resultado: error` y el caso queda sin carta. Con un plan
+  anterior a la v1.4 (sin la arista de respaldo) todo error se comporta así, como en el S1 (informe v1.2:
+  A-012 de la línea base).
 - En CI el proveedor es `ChatSimulado` (primera clase dentro del adaptador), así que toda la cadena
-  plan → casos → grafo → trazas → informe corre sin modelo.
-- **Deuda (S2):** enrutar el caso sin proveedor a `pausa_humana` con motivo `proveedor_no_disponible`
-  (una persona ve el caso completo), como pedía la versión original de esta sección.
+  plan → casos → grafo → trazas → informe corre sin modelo; `runs/demo-a/simulado-v1.4-respaldo` es la
+  corrida versionada con fallas inyectadas.
 
 ## 5. Proveedor, costo y privacidad
 

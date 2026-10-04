@@ -1,9 +1,13 @@
 /**
  * Carga de un plan con verificación de huella (RF-01.7, RF-06.1): un plan aprobado cuya huella no
  * coincide se rechaza. `aprobarPlan` produce la versión aprobada con huella calculada.
+ *
+ * M-22 (S2): se sella el plan CANÓNICO parseado (con lo que el esquema completa, como `depende_de: []`) y se
+ * verifica sobre lo que hay en disco, sin parsear. Antes se sellaba el borrador crudo y se verificaba el parseado:
+ * un plan recién aprobado podía no cargar, y borrar del archivo un valor por omisión pasaba sin aviso.
  */
 import { conHuella, verificarHuella } from "../formatos/huella";
-import type { JsonValor } from "../formatos/jcs";
+import { normalizar, type JsonValor } from "../formatos/jcs";
 import type { Plan } from "./esquema";
 import {
   validarPlan,
@@ -35,8 +39,9 @@ export async function cargarPlan(entrada: unknown): Promise<ResultadoCarga> {
       ],
     };
   }
+  // Sobre la entrada tal cual (lo que hay en disco), no sobre lo que el esquema completó al parsear.
   const verificacion = await verificarHuella(
-    v.plan as unknown as Record<string, JsonValor>,
+    entrada as Record<string, JsonValor>,
   );
   if (!verificacion.ok) {
     return {
@@ -82,7 +87,31 @@ export async function aprobarPlan(
     if (motivos.length > 0)
       return { ok: false, motivos, advertencias: v.advertencias };
   }
-  const aprobado = await conHuella(candidato as Record<string, JsonValor>);
+  // M-23: una condición que lee una señal no declarada se advierte al validar y detiene la aprobación: el
+  // constructor no tendría por qué registrarla y el criterio mediría sobre un campo ausente.
+  const noDeclaradas = v.advertencias.filter(
+    (m) => m.codigo === "SENAL_NO_DECLARADA",
+  );
+  if (noDeclaradas.length > 0)
+    return {
+      ok: false,
+      motivos: noDeclaradas,
+      advertencias: v.advertencias.filter(
+        (m) => m.codigo !== "SENAL_NO_DECLARADA",
+      ),
+    };
+  // La forma canónica: el esquema completa lo que el borrador omitió. Se parsea con una huella provisional (un
+  // plan aprobado sin huella no valida) y se sella lo parseado, normalizado como JSON.
+  const provisional = validarPlan({ ...candidato, huella: "0".repeat(64) });
+  if (!provisional.ok)
+    return {
+      ok: false,
+      motivos: provisional.motivos,
+      advertencias: provisional.advertencias,
+    };
+  const aprobado = await conHuella(
+    normalizar(provisional.plan as unknown as Record<string, JsonValor>),
+  );
   const final = validarPlan(aprobado);
   if (!final.ok)
     return {

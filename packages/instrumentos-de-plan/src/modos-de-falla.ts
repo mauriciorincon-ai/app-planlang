@@ -1,7 +1,9 @@
 /**
  * Prioridad de acción de un modo de falla por la tabla AIAG-VDA (2019) que viaja en DATOS
  * (`datos/prioridad-de-accion.json`): severidad primero (G4, G7). El RPN (S×O×D) es solo orden
- * secundario y jamás criterio de acción. Un modo `alta` sin mitigación es bloqueante (G5).
+ * secundario y jamás criterio de acción. Un modo con `control_legal` tiene prioridad EFECTIVA `alta`
+ * sea cual sea la tabla, y la de tabla se muestra al lado (G8, v0.2.0). Un modo con prioridad
+ * efectiva `alta` sin mitigación es bloqueante (G5).
  */
 import tabla from "../datos/prioridad-de-accion.json";
 import type { ModoDeFallaMinimo, PrioridadDeAccion } from "./tipos";
@@ -45,9 +47,29 @@ export function rpn(m: ModoDeFallaMinimo): number {
   return m.severidad * m.ocurrencia * m.deteccion;
 }
 
-export interface ModoEvaluado {
-  id: string;
+export interface Prioridades {
+  /** La que manda la acción: `alta` si hay control legal; si no, la de la tabla. */
   prioridad_de_accion: PrioridadDeAccion;
+  /** La que da la tabla AIAG-VDA por S·O·D; se muestra siempre, nunca se oculta (G8). */
+  prioridad_de_tabla: PrioridadDeAccion;
+  control_legal: boolean;
+}
+
+export function prioridades(
+  m: ModoDeFallaMinimo,
+  t: TablaDePrioridad = TABLA_AIAG_VDA,
+): Prioridades {
+  const deTabla = prioridadDeAccion(m.severidad, m.ocurrencia, m.deteccion, t);
+  const legal = m.control_legal === true;
+  return {
+    prioridad_de_accion: legal ? "alta" : deTabla,
+    prioridad_de_tabla: deTabla,
+    control_legal: legal,
+  };
+}
+
+export interface ModoEvaluado extends Prioridades {
+  id: string;
   rpn: number;
   bloqueante: boolean;
 }
@@ -58,24 +80,21 @@ const ORDEN_PRIORIDAD: Record<PrioridadDeAccion, number> = {
   baja: 2,
 };
 
-/** Evalúa cada modo y devuelve la lista ordenada: prioridad (alta primero), luego RPN descendente, luego id. */
+/** Evalúa cada modo y devuelve la lista ordenada: prioridad efectiva (alta primero), luego RPN descendente, luego id. */
 export function evaluarModosDeFalla(
   modos: readonly ModoDeFallaMinimo[],
   t: TablaDePrioridad = TABLA_AIAG_VDA,
 ): ModoEvaluado[] {
   return modos
     .map((m) => {
-      const prioridad = prioridadDeAccion(
-        m.severidad,
-        m.ocurrencia,
-        m.deteccion,
-        t,
-      );
+      const p = prioridades(m, t);
       return {
         id: m.id,
-        prioridad_de_accion: prioridad,
+        ...p,
         rpn: rpn(m),
-        bloqueante: prioridad === "alta" && (m.mitigaciones ?? []).length === 0,
+        bloqueante:
+          p.prioridad_de_accion === "alta" &&
+          (m.mitigaciones ?? []).length === 0,
       };
     })
     .sort(

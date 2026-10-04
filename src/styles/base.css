@@ -1,0 +1,163 @@
+/* Base de la vitrina: medidas que cambian con el ancho, estilos de elemento, perfil de lectura y
+   movimiento (design-system.md 1.0.0 § 2.3, 2.4, 2.6 y el componente «Leer como»). */
+:root {
+  --t-titulo: 28px;
+  --t-guia: 16px;
+  --t-cifra: 24px;
+  --t-cita: 19px;
+  --margen: 16px;
+}
+@media (min-width: 721px) {
+  :root {
+    --t-titulo: 36px;
+    --t-guia: 17px;
+    --t-cifra: 28px;
+    --margen: 32px;
+  }
+}
+@media (min-width: 861px) {
+  :root {
+    --t-cita: 22px;
+  }
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    background: var(--fondo);
+    color: var(--tinta-1);
+    font: 400 15px / 1.6 var(--font-letra);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  /* Preflight de Tailwind quita el subrayado; la maqueta lo conserva en los enlaces de texto. Los que
+     tienen forma de botón, pestaña o marca lo quitan con `no-underline`. */
+  a {
+    color: inherit;
+    text-decoration-line: underline;
+    text-underline-offset: 3px;
+  }
+  :focus-visible {
+    outline: 2px solid var(--tinta-1);
+    outline-offset: 2px;
+  }
+  /* Los datos se muestran tal cual: sin ligaduras de la mono (`!=` no se dibuja ≠, `->` no es →). */
+  code,
+  pre,
+  .font-mono {
+    font-variant-ligatures: none;
+  }
+  svg {
+    flex: none;
+  }
+}
+
+/* La mono de datos (JetBrains Mono) entra DESPUÉS de la carga (ADR-008): el primer pintado no la necesita
+   y en una red lenta sus 47 KB competían con él. Hasta entonces los datos van en la mono del sistema; el script
+   previo pone `data-mono` al terminar la carga. Sin JS se quedan en la del sistema. */
+html[data-mono] {
+  --mono-activa: var(--fuente-mono), ui-monospace, monospace;
+}
+
+/* Datos en mono dentro de una frase (señales, operadores): un punto menor que el texto, sin ligaduras. */
+@utility mono-en-texto {
+  font-family: var(--mono-activa, ui-monospace, monospace);
+  font-size: 0.88em;
+  font-variant-ligatures: none;
+}
+
+/* Perfil de lectura (página entera): html[data-perfil] = lider | experto. Los dos perfiles se pintan en
+   el servidor y se ocultan por atributo: la FORMA del árbol nunca depende del estado del cliente
+   (regla de desarrollo 5-a). Sin JS no hay atributo y se lee como líder. */
+html:not([data-perfil="experto"]) .solo-experto,
+html[data-perfil="experto"] .solo-lider {
+  display: none !important;
+}
+
+/* La opción elegida de tema y de perfil se pinta desde el atributo de <html>, que el script previo fija antes de
+   pintar: correcta desde el primer cuadro, sin destello al hidratar (`aria-pressed` llega con React y queda
+   para los lectores de pantalla). */
+html[data-theme="oscuro"] [data-pref="tema"][data-valor="oscuro"],
+html[data-theme="claro"] [data-pref="tema"][data-valor="claro"],
+html[data-perfil="lider"] [data-pref="perfil"][data-valor="lider"],
+html[data-perfil="experto"] [data-pref="perfil"][data-valor="experto"] {
+  background-color: var(--tinta-1);
+  color: var(--fondo);
+}
+
+/* En las pestañas de un panel del agente (Líder · Experto · Código · Trazas), Líder y Experto se pintan desde el
+   perfil solo mientras el panel muestra el perfil; con Código o Trazas a la vista, la elegida es esa. */
+html [data-vista-actual]:not([data-vista-actual="perfil"]) [data-pref="perfil"][data-valor] {
+  background-color: transparent;
+  color: var(--tinta-2);
+}
+
+/* Lo que solo ve el experto entra con un fundido de 0,45 s (design-system § 5, «Bloque del experto»). */
+@keyframes perfil-entra {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  html.perfil-cambio .cambia-perfil {
+    animation: perfil-entra 0.45s ease-out both;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Color de veredicto y de tipo de nodo por atributo (design-system § 2.2): el componente fija `data-v` o
+   `data-tipo` y sus utilidades leen `--v`/`--vt` (color y tinte) o `--c` (color del tipo). La forma
+   (marca, glifo) y el texto van siempre con el color. */
+[data-v] {
+  --v: var(--tinta-2);
+  --vt: transparent;
+}
+[data-v="cumple"] {
+  --v: var(--cumple);
+  --vt: var(--cumple-tinte);
+}
+[data-v="alerta"] {
+  --v: var(--alerta);
+  --vt: var(--alerta-tinte);
+}
+[data-v="no-cumple"] {
+  --v: var(--no-cumple);
+  --vt: var(--no-cumple-tinte);
+}
+[data-tipo="modelo"] {
+  --c: var(--tipo-1);
+  --ct: var(--tipo-1-tinte);
+}
+[data-tipo="herramienta"] {
+  --c: var(--tipo-2);
+  --ct: var(--tipo-2-tinte);
+}
+[data-tipo="regla"] {
+  --c: var(--tipo-3);
+  --ct: var(--tipo-3-tinte);
+}
+/* El plan escribe `pausa_humana`; el mapa del diagramador, `pausa-humana` (ids con guion, ADR-010). */
+[data-tipo="pausa_humana"],
+[data-tipo="pausa-humana"] {
+  --c: var(--tipo-4);
+  --ct: var(--tipo-4-tinte);
+}
+[data-tipo="enrutador"] {
+  --c: var(--tipo-5);
+  --ct: var(--tipo-5-tinte);
+}

@@ -4,13 +4,23 @@
  * cadena JCS y cada huella. Corre en los proyectos `core` (node) y `core-jsdom`.
  *
  * Demo en rojo (bitácora S1): editar un `jcs` del fixture (`1e-7` → `1e-07`).
+ *
+ * M-13 (S2): el fixture trae también cada valor `crudo`, tal como entró a Python (claves y cadenas en NFD, `-0.0`):
+ * antes solo llegaba el normalizado y la NFC era asimétrica. El lado TS debe dar el mismo JCS y la misma huella desde
+ * el crudo. Demo en rojo (bitácora S2): quitar la NFC de `jcs.ts`.
  */
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { huella } from "../../core/formatos/huella";
 import { jcs, type JsonValor } from "../../core/formatos/jcs";
 
-type Caso = { nombre: string; valor: JsonValor; jcs: string; huella: string };
+type Caso = {
+  nombre: string;
+  crudo: JsonValor;
+  valor: JsonValor;
+  jcs: string;
+  huella: string;
+};
 const fixture = JSON.parse(readFileSync("tests/contrato/jcs-valores-tramposos.json", "utf8")) as {
   formato: string;
   casos: Caso[];
@@ -20,7 +30,13 @@ describe("contrato JCS Python → TS", () => {
   it("el fixture es el formato esperado y trae los casos difíciles", () => {
     expect(fixture.formato).toBe("planlang-contrato-jcs/v1");
     const nombres = fixture.casos.map((c) => c.nombre);
-    for (const n of ["menos_cero", "exponente_pequeno", "orden_de_claves_utf16", "nfc_y_nfd_como_claves"]) {
+    for (const n of [
+      "menos_cero",
+      "exponente_pequeno",
+      "orden_de_claves_utf16",
+      "nfc_y_nfd_como_claves",
+      "cadena_nfd",
+    ]) {
       expect(nombres).toContain(n);
     }
   });
@@ -36,6 +52,14 @@ describe("contrato JCS Python → TS", () => {
     "reproduce la huella SHA-256 de Python: %s",
     async (_nombre, caso) => {
       expect(await huella(caso.valor)).toBe(caso.huella);
+    },
+  );
+
+  it.each(fixture.casos.map((c) => [c.nombre, c] as const))(
+    "desde el valor crudo (sin normalizar) da el mismo JCS y la misma huella: %s",
+    async (_nombre, caso) => {
+      expect(jcs(caso.crudo)).toBe(caso.jcs);
+      expect(await huella(caso.crudo)).toBe(caso.huella);
     },
   );
 });

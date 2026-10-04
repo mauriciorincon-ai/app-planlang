@@ -1,8 +1,8 @@
 # planlang (app-planlang) — constitución de la app (Claude Code)
 
 > Auto-cargado en cada sesión de este repo. Esta app pertenece al pipeline **AI-APPs**; su plan
-> vive en la casa planeadora. Estampada desde kit-app **v1.30.0 con `--estatico --python`** el
-> 2026-09-26. **Primera app híbrida TypeScript + Python del portafolio y primera cuya IA de
+> vive en la casa planeadora. Estampada desde kit-app **v1.30.1 con `--estatico --python`** el
+> 2026-09-26; deltas del kit hasta **v1.32.1** aplicados en el S2 (2026-09-28). **Primera app híbrida TypeScript + Python del portafolio y primera cuya IA de
 > construcción es la suscripción de Claude Code del usuario (estándar 7-S).** Segundo consumidor de
 > dos reusables de la casa (diagramador · instrumentos-de-plan). Nace con el pipeline completo
 > (Etapa de Diseño · dos filtros ⭐/⭐⭐ · cierre en dos actos · cero enlaces · bilingüe integral)
@@ -19,6 +19,10 @@
 - ❌ **Nunca escribes** en la planeadora. Si el plan necesita cambio, lo anotas en tu
   `sprints/SPRINT_NNN-implementation-log.md` bajo `## Desviación del plan` y avisas al usuario.
 - El avance de implementación vive **solo aquí** — la planeadora te lee, tú no le reportas a mano.
+- **Worktrees prohibidos (regla del usuario, 2026-09-27).** Todo el trabajo ocurre en el checkout
+  principal `~/Code/app-planlang`: nada de `git worktree` ni de `.claude/worktrees`. Un trabajo en
+  paralelo (como fue la Etapa de Diseño) vive como archivos en este directorio y se comitea a su rama
+  sin cambiar de rama (índice temporal); jamás `git stash` a secas sobre trabajo ajeno.
 - **Los contratos de los dos reusables viven en la planeadora** (`reusables/diagramador/CONTRATO.md`,
   `reusables/instrumentos-de-plan/CONTRATO.md`); aquí viven sus implementaciones (`packages/…`) con
   **copia fijada** y huella (`CONTRATO.lock`). Tú propones enmiendas en el summary; la planeadora las
@@ -81,7 +85,7 @@ fuente: 89 % observan, 52 % evalúan, casi nadie planeó qué evaluar.
    de Claude Code en modo no interactivo a través de `ChatClaudeCode(BaseChatModel)` en `agents/`:
    `claude -p --output-format json --model <alias> --max-turns 1 --no-session-persistence
    --strict-mcp-config --mcp-config '{"mcpServers":{}}' --setting-sources "" --tools ""
-   --system-prompt <propio> --json-schema <esquema>`, **cwd = directorio temporal limpio** (esta
+   --system-prompt <propio> --json-schema <esquema>` (**`--max-turns 2` únicamente cuando va `--json-schema`**, estándar 7-S v2.16.0 / ADR-004; con 1 turno el CLI corta hasta el 56 % de las llamadas estructuradas), **cwd = directorio temporal limpio** (esta
    constitución NO entra al prompt), **nunca `--bare`** (desactiva la suscripción), `structured_output`
    nativo, `usage` y `total_cost_usd` en `response_metadata`, `with_structured_output` sobrescrito. El
    token jamás entra a `env`, trazas, LangSmith ni al repo. **Lotes fuera de CI, de 20 casos,
@@ -137,17 +141,21 @@ fuente: 89 % observan, 52 % evalúan, casi nadie planeó qué evaluar.
 15. **EL CORTE DE DOS SEMANAS ES HONESTO.** S1 «El contrato y la corrida» (sin pantalla) + S2 «La
     vitrina» = demo A de punta a punta publicado. El demo B, el entrevistador M2 y lo demás del
     roadmap aparecen en la vitrina como **«en construcción»** desde el primer día; jamás se simula
-    lo que no corrió. **Excepción registrada (F1 planlang):** el S1 no tiene UI y arranca en paralelo
-    a la Etapa de Diseño; **ningún componente de UI antes de G-Diseño**, que gatea el S2.
+    lo que no corrió. **Excepción registrada (F1 planlang), ya cumplida:** el S1 no tuvo UI y corrió en
+    paralelo a la Etapa de Diseño; G-Diseño se aprobó el 2026-09-27 (`design-system.md` 1.0.0) y abrió
+    el S2, primer sprint con UI.
 16. **PYTHON 3.12 Y PINES POR ADR.** `agents/` corre en 3.12 (la CI también); `langchain>=1.4,<2`,
     `langgraph>=1.2,<1.3`, `langchain-core<2`, `langsmith<1`, `langgraph-checkpoint-sqlite>=3.1,<4`
     entran en el S1 con su ADR; `SqliteSaver` en corridas, `InMemorySaver` en tests. Los pines suben
-    por ADR en sprint (no hay Dependabot `pip`: regla 18); `pip-audit --strict` en cada PR.
+    por ADR en sprint (no hay Dependabot `pip`: regla 18); `pip-audit --skip-editable` en cada PR (kit v1.32.1, K4: con `--strict` el paquete editable tumba el job).
+
+    **Excepción registrada B-10 (cierre del S1, 2026-09-27):** los ADR de planlang se escriben en **español** con una línea «Summary (EN)» al inicio desde el S2 (los 001–006 la reciben en el S2); no se traducen. Prevalece sobre § Idioma del kit («Inglés en … ADRs») para esta app.
 
 ## Stack
 
 - **Frontend (vitrina):** Next.js 16.3 LTS **exportado estático** (`output: "export"`, perfil `--estatico`) + TypeScript
-  strict + Tailwind + shadcn/ui; trazas precargadas en **IndexedDB** (no `localStorage`); `serve` sirve `out/`.
+  strict + Tailwind + shadcn/ui; **datos precomputados y verificados en build, sin IndexedDB** (enmienda del S2,
+  ADR-008; la orden original decía «trazas precargadas en IndexedDB»); `serve` sirve `out/`.
 - **Núcleo determinista (`core/`):** TypeScript estricto, un solo módulo para verificador y playground que corre en
   Node y en el navegador; JCS (RFC 8785) + `crypto.subtle.digest`; golden files.
 - **Agentes (`agents/`, perfil `--python`):** Python 3.12 · LangChain 1.4 · LangGraph 1.2 (estado tipado, nodos
@@ -300,6 +308,15 @@ decisions/001-codigo-primero-demos.md · 002-proveedor-y-cumplimiento-suscripcio
    mirada real con todos los gates de palabra cumplidos; 3ª ocurrencia de la clase. Es la
    regla 15-hermana del lado humano: una mirada satisfecha sin mirada es un gate que nunca
    ejecutó.)*
+   **Dos clases de mirada (kit v1.31.0, método v1.33.0):** la de **FORMA** (qué se construye:
+   estado nuevo, pantalla, estructura) abre parada antes de construir encima. La de **TEXTO**
+   (si un copy se entiende) **no bloquea**: maquetas igual, registras «maquetado, no visto» y su
+   veredicto viaja al gate humano del MVP; mientras, la vigilan los gates automáticos
+   (diccionario fiel a la maqueta, fidelidad, maquetas que caben). Toda mirada va en **matriz
+   de una fila** (archivo · botón/estado · qué mirar · respuesta esperada), nunca preguntas
+   sueltas. **Las segundas vueltas no abren parada**: copy retocado por su propio veredicto y
+   filas sin respuesta se aplican, se registran y se ven al cierre de fase. *(Angel Ghost S2:
+   el usuario cortó las paradas de copy — «así no vamos a avanzar nada».)*
 11. **Guía de prueba viva y ACUMULATIVA (`docs/GUIA-DE-PRUEBA.html`, OBLIGATORIA en todo sprint
    con UI — reglas duras del pipeline, G-Metodo 2026-07-12 ×2).** HTML visual y **AUTOCONTENIDO**
    (cero CDNs; casillas con `localStorage` bajo **prefijo versionado por sprint** — cambia en
@@ -420,6 +437,11 @@ decisions/001-codigo-primero-demos.md · 002-proveedor-y-cumplimiento-suscripcio
    vez con el perfil con que la app se DISTRIBUYE, y el summary lo dice *(Angel Ghost S1: el
    `catch_unwind` que protegía el parseo de PDF pasaba todos sus tests en debug y era letra
    muerta en release, donde `panic = "abort"` lo anula)*.
+   **Y `gh pr checks` DESPUÉS DE CADA PUSH (kit v1.31.0), no al cierre de la fase:** un rojo
+   que nadie mira es un gate que no ejecutó para ti *(Angel Ghost S2: tres corridas en rojo sin
+   mirar en una fase; desde entonces cada push termina leyendo sus checks)*. **Y una métrica
+   del kit que la CI NO puede medir se declara `manual` con su corrida local registrada**, o
+   no se declara: el WER vivió dos sprints «en CI» sin que el runner tuviera modelos de voz.
 16. **El bundle publicable del design system es un ARTEFACTO DEL REPO (kit v1.17.0).** `design-sync/`
    se versiona aquí como **espejo 1:1** de lo publicado en Claude Design, y la jerarquía es fija:
    `design-system.md` (fuente de verdad) → `design-sync/` (bundle, deriva) → el proyecto remoto
@@ -451,10 +473,12 @@ decisions/001-codigo-primero-demos.md · 002-proveedor-y-cumplimiento-suscripcio
    `BLUEPRINT.html` (documenta dominio y protección como "qué ve quién sin sesión" **sin escribir
    la URL** — la URL exacta vive en la planeadora, que es privada), ni el manual, ni la guía
    (su campo de URL se llena EN USO, desde la orden), ni `package.json`. El CTA público de la app
-   es la **«lista de espera»** — sin promesa de otorgamiento. **La limpieza del campo homepage
-   es RECURRENTE, no de una vez (kit v1.22.0):** la GitHub App de Vercel lo reescribe tras cada
-   deploy de producción (confirmado en vivo) — se re-verifica tras CADA merge a `main`, y JAMÁS
-   se automatiza con un PAT de administración como secret en un repo público. Y **los documentos
+   es la **«lista de espera»** — sin promesa de otorgamiento. **El campo homepage del repo APUNTA AL PROPIO
+   REPO (kit v1.32.1; antes «limpieza recurrente», v1.22.0):** la GitHub App de Vercel reescribe
+   el campo solo cuando está VACÍO — con cualquier valor puesto deja de tocarlo (experiencia del
+   usuario en otra app y en planlang). El estampador lo fija al crear el repo (`gh repo edit
+   --homepage <url del repo>`); se verifica una vez tras el primer deploy de producción y en
+   `/deploy-check`. JAMÁS se automatiza con un PAT de administración como secret en un repo público. Y **los documentos
    que NARRAN el barrido escriben los patrones sin el literal** (clase de carácter, p. ej.
    `vercel[.]app`): un summary que cita el patrón tal cual rompe el grep y el gate deja de ser
    binario. **El comando del barrido corre sobre TODOS los archivos versionados** (kit
@@ -472,6 +496,9 @@ decisions/001-codigo-primero-demos.md · 002-proveedor-y-cumplimiento-suscripcio
    ciega la ventana entre él y el push (los artefactos de `.lighthouseci/` entraron así al PR
    del S5 de hoja-de-vida con seis falsos positivos), y el comentario de un spec que cita el
    dominio de preview es una fuga igual que una URL en el README.
+   **El README de diseño registra «preview del PR #N», jamás la URL (kit v1.32.0):** el registro
+   de G-Diseño identifica dónde se aprobó por el número del PR cuyo preview recorrió el usuario; la
+   URL exacta vive en la planeadora.
 
 18. **PRs de dependencias: máximo DOS abiertos y el lockfile NO se pelea (kit v1.24.0 — regla
    del usuario 2026-08-22).** dependabot con techo real de 2 (limit 1 por ecosistema, todo
@@ -483,6 +510,10 @@ decisions/001-codigo-primero-demos.md · 002-proveedor-y-cumplimiento-suscripcio
    CI pasa VERDE porque **ninguna puerta compara el resultado contra la INTENCIÓN del PR**:
    leer la salida del install ES el gate. `pnpm peers check` corre en quality (es lo único que
    ve un peer insatisfecho). Overrides: en `pnpm-workspace.yaml`, jamás en `package.json`.
+   **Comprobación MECÁNICA (kit v1.32.0):** `scripts/verificar-dependencias.mjs` compara las
+   versiones de `pnpm-lock.yaml` del PR contra `origin/main` y falla si alguna quedó por debajo;
+   corre en el job `quality` en cada PR. Leer la salida del install sigue siendo obligatorio; el
+   script es la red que no depende de que alguien la lea.
 19. **Todo puente entre dos lenguajes exige su GATE DE CONTRATO, en el mismo sprint que lo
    cruza (kit v1.28.0).** Donde un dato cambia de lenguaje o de runtime —Rust→TS por eventos
    de Tauri, worker→UI por `postMessage`, servidor→cliente por JSON, Swift→Rust por FFI— la
@@ -506,6 +537,18 @@ decisions/001-codigo-primero-demos.md · 002-proveedor-y-cumplimiento-suscripcio
     vigentes, re-leídos antes de cada release, y un **interruptor a proveedor por clave** · prohibido exponer
     el patrón a terceros (para usuarios externos, siempre clave de API). *(Primera app: planlang; el spike
     de su F1 fijó los flags y el costo por llamada.)*
+22. **Todo control dibujado tiene su script cargado, y una pasada de INTERACCIÓN lo demuestra (kit
+    v1.32.0).** Un botón, un panel, una ficha o un conmutador que aparece en una maqueta o en una pantalla
+    solo cuenta si su controlador está cargado y hace algo: (a) el gate `tests/unit/controladores-maqueta`
+    (plantilla del kit; cada app lo endurece) falla si una página dibuja controles sin script o con un
+    `src` que no existe; (b) **el arnés de capturas incluye una pasada de interacción**: activa cada
+    control (abrir panel, cambiar tema, cambiar idioma, siguiente paso) y comprueba que ALGO cambió en el
+    DOM o en la captura antes de darlo por bueno — una captura de un panel cerrado «mide bien» y no dice
+    nada. *(Origen: Big-D, Etapa de Diseño — la ficha del nivel 2 no cargó su script desde la mirada 2 y
+    cuatro miradas con capturas no lo vieron; lo cazó el auditor independiente.)* Y **el generador de la
+    maqueta nace EN EL REPO desde la fase 0** de la Etapa de Diseño, con su gate de deriva byte a byte
+    (regenerar = mismos bytes): un generador fuera del repo hace inauditable la regla 8 y deja la
+    referencia sin fuente.
 
 ## Estándares (los 6+1, gates en CI)
 
@@ -625,8 +668,18 @@ pr: <link>
 
 ## Patrones de dominio de esta app
 
-[DOMAIN — llenar al estampar con los patrones del brief. Ej.: motor de fronteras de decisión en
-`src/engine/decision-boundary.ts`, inferencia en Web Workers.]
+- **Núcleo determinista en `core/`** (TypeScript puro, sin `node:*`, reloj, azar ni `Intl`; lo vigila
+  `tests/unit/guardias/determinismo.test.ts`): plan (`core/plan`), sintético (`core/sintetico`), verificador
+  de brecha (`core/brecha`), intérprete de aristas y consecuencias (`core/playground`), visor (`core/visor`) y
+  formatos con JCS + SHA-256 (`core/formatos`). Solo `scripts/_io.ts` y `scripts/_corridas.ts` leen el disco.
+- **La arista se interpreta dos veces** — `core/playground/interprete.ts` y
+  `agents/src/app_agents/reglas_arista.py` — y RF-09.2 las cruza sobre cada corrida versionada.
+- **Huella dentro del archivo:** `huella = SHA-256(JCS(objeto sin "huella"))`, igual en Python y TS (gate de
+  contrato con `tests/contrato/`).
+- **Corridas `planlang-trace/v1`** en `runs/<demo>/<corrida>/`, append-only; los derivados que muestra la
+  vitrina viven en `data/vitrina/` y los declara `data/vitrina/manifiesto.json`.
+- **Proveedor de modelo** por `crear_modelo()` en `agents/src/app_agents/adaptador.py` (`ChatClaudeCode`,
+  `ChatSimulado` en CI).
 
 ## Idioma
 

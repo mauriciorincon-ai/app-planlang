@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es-CO">
+<html lang="es-CO" data-idioma="es">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -60,6 +60,10 @@
      desde qué estado se parte ("reinicia la sesión y…", "con el contador en cero…"). Origen:
      la prueba A6 de habla pedía ver subir un mínimo corrido dentro de la misma sesión — un
      imposible del instrumento que solo el gate humano detectó.
+
+  planlang S2 (2026-10-02): llega la vitrina. La guía pasa a ES/EN con un conmutador (cada texto en dos
+  <span> redactados, no traducidos; el idioma elegido se recuerda en este navegador, fuera del NS versionado).
+  Las 21 pruebas del S1 siguen enteras; las paradas del gate corto se renumeran (ahora 4).
 
   planlang S1: nace sin pantalla. Las pruebas se hacen en la terminal (raíz del repo) y sobre
   archivos del repo; la caja de URL de la plantilla se reemplaza por «Dónde se prueba». Los tokens
@@ -152,27 +156,34 @@
   footer { margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--borde); }
   footer details { margin-top: 10px; }
   footer summary { cursor: pointer; }
+  [data-idioma="es"] .en, [data-idioma="en"] .es { display: none; }
+  /* A 380 px una ruta larga en <code> no debe empujar la página de lado (la guía del S1 desbordaba en g3). */
+  code { overflow-wrap: anywhere; }
+  ul.pasos label, .meta-bloque { min-width: 0; overflow-wrap: anywhere; }
+  .idioma { display: flex; gap: 6px; margin: 0 0 8px; }
+  .idioma button { font: inherit; font-size: 0.8rem; padding: 3px 10px; border-radius: 99px;
+    border: 1px solid var(--borde); background: var(--superficie); color: var(--tinta); cursor: pointer; }
+  .idioma button[aria-pressed="true"] { background: var(--acento); border-color: var(--acento); color: var(--fondo); }
 </style>
 </head>
 <body>
 <div class="pagina">
   <header>
-    <p class="eyebrow">planlang · Guía de prueba viva y acumulativa · Sprint 1 · 2026-09-27</p>
-    <h1>Guía de prueba</h1>
-    <p class="suave">Todas las pruebas vigentes de la app, con su origen. En el sprint 1 no hay pantalla: se prueba en la
-      terminal y leyendo archivos del repo. Las casillas se guardan solas en este navegador.</p>
-    <p class="chica"><strong>Gate corto ⭐⭐: 3 paradas · ~15 min — diferido al cierre de pruebas del ciclo (MVP) por decisión del usuario (2026-09-27).</strong> Solo lo
-      que únicamente tú puedes juzgar: correr el lote con tu suscripción, leer el informe y mirar el espejo en LangSmith.
-      Deja fuera 2 pruebas ⭐ (bloque D) porque la CI ya las verifica; ninguna se borra.</p>
-    <p class="chica"><strong>Gate mínimo ⭐: 5 pruebas · ~20 min.</strong> Las 3 paradas más la re-verificación de confianza
-      del bloque D. <strong>Todo lo demás lo verifica la CI</strong> (golden files, prueba cruzada de ramas, M9, validador de
-      identificadores): bloques E–H, y el kit de prueba en <code>docs/kit-de-prueba/</code>.</p>
+    <div class="idioma" role="group" aria-label="Idioma · Language">
+      <button type="button" data-idioma-elegir="es" aria-pressed="true">Español</button>
+      <button type="button" data-idioma-elegir="en" aria-pressed="false" lang="en">English</button>
+    </div>
+    <p class="eyebrow"><span class="es">planlang · Guía de prueba viva y acumulativa · Sprint 2 · 2026-10-02</span><span class="en" lang="en">planlang · Living, cumulative test guide · Sprint 2 · 2026-10-02</span></p>
+    <h1><span class="es">Guía de prueba</span><span class="en" lang="en">Test guide</span></h1>
+    <p class="suave"><span class="es">Todas las pruebas vigentes de la app, con su origen. Desde el sprint 2 hay vitrina: unas pruebas se hacen en tu teléfono y otras en la terminal o leyendo archivos del repo. Las casillas se guardan solas en este navegador.</span><span class="en" lang="en">Every current test of the app, with its origin. Since sprint 2 there is a showcase: some tests are done on your phone and others in the terminal or by reading repository files. The checkboxes save themselves in this browser.</span></p>
+    <p class="chica"><strong><span class="es">Gate corto ⭐⭐: 4 paradas · ~22 min — diferido al cierre de pruebas del ciclo (MVP), como en el S1.</span><span class="en" lang="en">Short gate ⭐⭐: 4 stops · ~22 min — deferred to the cycle's testing close (MVP), as in S1.</span></strong>
+      <span class="es">Solo lo que únicamente tú puedes juzgar: correr el lote con tu suscripción, el espejo en LangSmith, recorrer la vitrina como líder en tu teléfono y jugar con los umbrales. Deja fuera 11 pruebas ⭐ y ninguna se borra: la lectura del informe en la terminal (B) es el mismo informe que muestra la pantalla Brecha y la CI lo compara; las del bloque G las verifica la CI; las de tema, perfil, diagrama, caso y fichas (D–F) ya se aprobaron mirando capturas en las cuatro miradas del S2; y la de hoja-de-vida (H) depende del PR de contenido, que se hace después del sprint.</span><span class="en" lang="en">Only what nobody but you can judge: running the batch with your subscription, the LangSmith mirror, walking the showcase as a leader on your phone and playing with the thresholds. It leaves out 11 ⭐ tests and none is deleted: reading the report in the terminal (B) is the same report the Gap screen shows and CI compares them; block G is checked by CI; theme, profile, diagram, case and records (D–F) were already approved by looking at captures in S2's four reviews; and hoja-de-vida (H) depends on the content PR, which comes after the sprint.</span></p>
+    <p class="chica"><strong><span class="es">Gate mínimo ⭐: 15 pruebas · ~1 h.</span><span class="en" lang="en">Minimum gate ⭐: 15 tests · ~1 h.</span></strong>
+      <span class="es">Las paradas del gate corto, lo visual que solo tú puedes juzgar en tu teléfono y la re-verificación de confianza. <strong>Todo lo demás lo verifica la CI</strong> (bloques I–M) y el kit de prueba está en <code>docs/kit-de-prueba/</code>.</span><span class="en" lang="en">The short-gate stops, the visual checks only you can judge on your phone and the confidence re-check. <strong>Everything else is checked by CI</strong> (blocks I–M) and the test kit is in <code>docs/kit-de-prueba/</code>.</span></p>
     <div class="url-caja">
-      <p class="eyebrow" style="margin:0 0 6px">Dónde se prueba</p>
-      <p style="margin:0">Una terminal abierta en la raíz del repositorio (<code>~/Code/app-planlang</code>), con
-        <code>pnpm install</code> hecho y Claude Code con tu sesión iniciada. Sin URL: el S1 no tiene pantalla.</p>
-      <p class="chica suave" style="margin:8px 0 0"><strong>Cada bloque abre con «Empieza en:»</strong>: la terminal, un
-        archivo del repo o un servicio. Ve ahí antes de empezar el bloque.</p>
+      <p class="eyebrow" style="margin:0 0 6px"><span class="es">Dónde se prueba</span><span class="en" lang="en">Where to test</span></p>
+      <p style="margin:0"><span class="es">Tres lugares. <strong>La terminal</strong>, abierta en la raíz del repositorio (<code>~/Code/app-planlang</code>), con <code>pnpm install</code> hecho y Claude Code con tu sesión iniciada. <strong>La vitrina</strong>: el preview del PR #8, que abres desde el PR en GitHub con tu sesión de Vercel (en tu teléfono), o <code>pnpm build</code> y <code>pnpm start</code> en tu Mac. <strong>LangSmith</strong>, si lo configuras. Esta guía no escribe ninguna dirección de producción.</span><span class="en" lang="en">Three places. <strong>The terminal</strong>, open at the repository root (<code>~/Code/app-planlang</code>), with <code>pnpm install</code> done and Claude Code signed in. <strong>The showcase</strong>: the PR #8 preview, which you open from the PR on GitHub with your Vercel session (on your phone), or <code>pnpm build</code> and <code>pnpm start</code> on your Mac. <strong>LangSmith</strong>, if you set it up. This guide writes no production address.</span></p>
+      <p class="chica suave" style="margin:8px 0 0"><span class="es"><strong>Cada bloque abre con «Empieza en:»</strong>: la terminal, un archivo del repo, una pestaña de la vitrina o un servicio. Ve ahí antes de empezar el bloque.</span><span class="en" lang="en"><strong>Every block opens with “Starts at:”</strong>: the terminal, a repository file, a showcase tab or a service. Go there before you start the block.</span></p>
     </div>
   </header>
 
@@ -181,173 +192,251 @@
       <div class="barra"><div id="barra-avance"></div></div>
       <span class="num" id="contador">0/0</span>
     </div>
-    <div class="filtros" role="group" aria-label="Filtrar pruebas por origen">
-      <button type="button" data-filtro="todo" class="activo">Todo</button>
-      <button type="button" data-filtro="cambios">Lo que cambió en S1</button>
-      <button type="button" data-filtro="minimo">Gate mínimo ⭐</button>
-      <button type="button" data-filtro="corto">Gate corto ⭐⭐</button>
+    <div class="filtros" role="group" aria-label="Filtrar pruebas · Filter tests">
+      <button type="button" data-filtro="todo" class="activo"><span class="es">Todo</span><span class="en" lang="en">All</span> <span class="cuenta"></span></button>
+      <button type="button" data-filtro="cambios"><span class="es">Lo que cambió en S2</span><span class="en" lang="en">What changed in S2</span> <span class="cuenta"></span></button>
+      <button type="button" data-filtro="minimo"><span class="es">Gate mínimo ⭐</span><span class="en" lang="en">Minimum gate ⭐</span> <span class="cuenta"></span></button>
+      <button type="button" data-filtro="corto"><span class="es">Gate corto ⭐⭐</span><span class="en" lang="en">Short gate ⭐⭐</span> <span class="cuenta"></span></button>
     </div>
   </div>
 
   <section class="bloque">
-    <div class="bloque-cabeza"><span class="letra">A</span><h2>Correr un lote de 20 con tu suscripción</h2></div>
-    <p class="meta-bloque chica suave"><strong>Empieza en:</strong> <code>terminal · raíz del repo</code> · ~8 min (5 de espera) · latencia y cuota reales en tu Mac</p>
+    <div class="bloque-cabeza"><span class="letra">A</span><h2><span class="es">Correr un lote de 20 con tu suscripción</span><span class="en" lang="en">Run a 20-case batch with your subscription</span></h2></div>
+    <p class="meta-bloque chica suave"><strong><span class="es">Empieza en:</span><span class="en" lang="en">Starts at:</span></strong> <code>terminal · raíz del repo</code> · <span class="es">~8 min (5 de espera) · latencia y cuota reales en tu Mac</span><span class="en" lang="en">~8 min (5 of waiting) · real latency and quota on your Mac</span></p>
     <ul class="pasos">
-      <li data-origen="nuevo" data-minimo data-corto><input type="checkbox" id="a1"><label for="a1"><strong>1 · Prepara la terminal (para la parada 3).</strong> Si ya tienes cuenta de LangSmith, en ESTA terminal
-        escribe <code>read -s LANGSMITH_API_KEY &amp;&amp; export LANGSMITH_API_KEY</code> (pega la clave; no se ve ni queda en el
-        historial), luego <code>export LANGSMITH_TRACING=true LANGSMITH_PROJECT=planlang-demo-a</code>. <strong>Nunca</strong>
-        la escribas en un archivo del repo. Sin cuenta: salta este paso y la parada 3 queda como deuda declarada.<br>
-        <strong>2 · Mira tu cuota antes.</strong> En la app de Claude: Configuración → Uso. Anota el porcentaje usado.
-        Luego corre <code>pnpm lote:demo --corrida gate-s1 --fecha AAAA-MM-DD --salida /tmp/planlang-gate</code> (con la fecha
-        de hoy; el comando ya deja 2 s entre casos y, con la suscripción, no acepta más de 20 ni correr sin pausa). Esperado: <strong>20 casos, 0 con error, unos 5 minutos</strong>; cada caso imprime una línea con
-        <code>latencia_ms</code>. Vuelve a mirar la cuota: la diferencia es lo que cuesta un lote de 20 (dato para decidir
-        el lote de 200).
-        <span class="origen origen-nuevo">Nuevo · S1</span>
-        <span class="minimo">⭐ mínimo</span>
-        <span class="minimo">⭐⭐ Parada 1 de 3</span></label></li>
+      <li data-origen="heredada" data-minimo data-corto><input type="checkbox" id="a1"><label for="a1"><span class="es"><strong>1 · Prepara la terminal (para la parada 2).</strong> Si ya tienes cuenta de LangSmith, en ESTA terminal escribe <code>read -s LANGSMITH_API_KEY &amp;&amp; export LANGSMITH_API_KEY</code> (pega la clave; no se ve ni queda en el historial), luego <code>export LANGSMITH_TRACING=true LANGSMITH_PROJECT=planlang-demo-a</code>. <strong>Nunca</strong> la escribas en un archivo del repo. Sin cuenta: salta este paso y la parada 2 queda como deuda declarada.<br><strong>2 · Mira tu cuota antes.</strong> En la app de Claude: Configuración → Uso. Anota el porcentaje usado. Luego corre <code>pnpm lote:demo --corrida gate-s1 --fecha AAAA-MM-DD --salida /tmp/planlang-gate</code> (con la fecha de hoy; el comando ya deja 2 s entre casos y, con la suscripción, no acepta más de 20 ni correr sin pausa). Esperado: <strong>20 casos, 0 con error, unos 5 minutos</strong>; cada caso imprime una línea con <code>latencia_ms</code>. Vuelve a mirar la cuota: la diferencia es lo que cuesta un lote de 20.</span><span class="en" lang="en"><strong>1 · Prepare the terminal (for stop 2).</strong> If you already have a LangSmith account, in THIS terminal type <code>read -s LANGSMITH_API_KEY &amp;&amp; export LANGSMITH_API_KEY</code> (paste the key; it is not shown and does not stay in the history), then <code>export LANGSMITH_TRACING=true LANGSMITH_PROJECT=planlang-demo-a</code>. <strong>Never</strong> write it into a repository file. No account: skip this step and stop 2 stays as declared debt.<br><strong>2 · Check your quota first.</strong> In the Claude app: Settings → Usage. Note the percentage used. Then run <code>pnpm lote:demo --corrida gate-s1 --fecha YYYY-MM-DD --salida /tmp/planlang-gate</code> (with today's date; the command already leaves 2 s between cases and, with the subscription, refuses more than 20 or running them back to back). Expected: <strong>20 cases, 0 with an error, about 5 minutes</strong>; each case prints a line with <code>latencia_ms</code>. Check the quota again: the difference is what a 20-case batch costs.</span>
+        <span class="origen origen-heredada"><span class="es">S1</span><span class="en" lang="en">S1</span></span>
+        <span class="minimo"><span class="es">⭐ mínimo</span><span class="en" lang="en">⭐ minimum</span></span>
+        <span class="minimo"><span class="es">⭐⭐ Parada 1 de 4</span><span class="en" lang="en">⭐⭐ Stop 1 of 4</span></span></label></li>
     </ul>
     <div class="tabla-scroll"><table>
-      <tr><th>Qué mirar</th><th>Valor / comportamiento correcto</th></tr>
-      <tr><td>Casos ejecutados</td><td class="valor">20 de 20 · 0 con error del proveedor</td></tr>
-      <tr><td>Latencia por caso</td><td class="valor">la mayoría entre 5 y 20 s; mediana ≈ 11 s (el plan exige ≤ 30 s)</td></tr>
-      <tr><td>Consumo de cuota</td><td class="valor">un lote de 20 ≈ US$ 0,70 nominales (46–50 llamadas al modelo)</td></tr>
+      <tr><th><span class="es">Qué mirar</span><span class="en" lang="en">What to look at</span></th><th><span class="es">Valor / comportamiento correcto</span><span class="en" lang="en">Correct value / behaviour</span></th></tr>
+      <tr><td><span class="es">Casos ejecutados</span><span class="en" lang="en">Cases run</span></td><td class="valor"><span class="es">20 de 20 · 0 con error del proveedor</span><span class="en" lang="en">20 of 20 · 0 with a provider error</span></td></tr>
+      <tr><td><span class="es">Latencia por caso</span><span class="en" lang="en">Latency per case</span></td><td class="valor"><span class="es">la mayoría entre 5 y 20 s; mediana ≈ 11 s (el plan exige ≤ 30 s)</span><span class="en" lang="en">most between 5 and 20 s; median ≈ 11 s (the plan requires ≤ 30 s)</span></td></tr>
+      <tr><td><span class="es">Consumo de cuota</span><span class="en" lang="en">Quota used</span></td><td class="valor"><span class="es">un lote de 20 ≈ US$ 0,70 nominales (46–50 llamadas al modelo)</span><span class="en" lang="en">a 20-case batch ≈ US$0.70 nominal (46–50 model calls)</span></td></tr>
     </table></div>
-    <div class="reportame"><p><strong>Repórtame sí o sí:</strong> un límite de uso a mitad de lote, un caso con error, una
-      latencia por caso mayor de 60 s, o cualquier línea que muestre una clave o un identificador de sesión.</p></div>
+    <div class="reportame"><p><span class="es"><strong>Repórtame sí o sí:</strong> un límite de uso a mitad de lote, un caso con error, una latencia por caso mayor de 60 s, o cualquier línea que muestre una clave o un identificador de sesión.</span><span class="en" lang="en"><strong>Report it no matter what:</strong> a usage limit mid-batch, a case with an error, a latency per case above 60 s, or any line that shows a key or a session identifier.</span></p></div>
   </section>
 
   <section class="bloque">
-    <div class="bloque-cabeza"><span class="letra">B</span><h2>Leer el informe de brecha</h2></div>
-    <p class="meta-bloque chica suave"><strong>Empieza en:</strong> <code>runs/demo-a/suscripcion-planlang-a-001-20-v1.2/informe.es.md</code> · ~5 min · ¿reconoces tu plan?</p>
+    <div class="bloque-cabeza"><span class="letra">B</span><h2><span class="es">Leer el informe de brecha en la terminal</span><span class="en" lang="en">Read the gap report in the terminal</span></h2></div>
+    <p class="meta-bloque chica suave"><strong><span class="es">Empieza en:</span><span class="en" lang="en">Starts at:</span></strong> <code>data/vitrina/demo-a/suscripcion-planlang-a-001-20-v1.2/informe.es.md</code> · <span class="es">~5 min · ¿reconoces tu plan? Es el informe que publica la pantalla Brecha</span><span class="en" lang="en">~5 min · do you recognise your plan? It is the report the Gap screen publishes</span></p>
     <ul class="pasos">
-      <li data-origen="nuevo" data-minimo data-corto><input type="checkbox" id="b1"><label for="b1">Abre <code>informe.es.md</code> de esa carpeta (en VS Code, <code>Cmd+Shift+V</code> lo muestra formateado) y
-        luego <code>informe.en.md</code>. Lee la sección 1 y responde: <strong>¿reconoces tu plan?</strong> ¿El veredicto,
-        el criterio que no cierra (si hay uno) y la recomendación se entienden sin saber programar, en los dos idiomas?
-        <span class="origen origen-nuevo">Nuevo · S1</span>
-        <span class="minimo">⭐ mínimo</span>
-        <span class="minimo">⭐⭐ Parada 2 de 3</span></label></li>
+      <li data-origen="mejorado" data-minimo><input type="checkbox" id="b1"><label for="b1"><span class="es">Abre <code>informe.es.md</code> de esa carpeta (en VS Code, <code>Cmd+Shift+V</code> lo muestra formateado) y luego <code>informe.en.md</code>. Lee la sección 1 y responde: <strong>¿reconoces tu plan?</strong> ¿El veredicto, el criterio que no cierra (si hay uno) y la recomendación se entienden sin saber programar, en los dos idiomas?</span><span class="en" lang="en">Open <code>informe.es.md</code> in that folder (in VS Code, <code>Cmd+Shift+V</code> shows it formatted) and then <code>informe.en.md</code>. Read section 1 and answer: <strong>do you recognise your plan?</strong> Can the verdict, the criterion that does not close (if any) and the recommendation be understood without knowing how to code, in both languages?</span>
+        <span class="origen origen-mejorado"><span class="es">Mejorado en S2</span><span class="en" lang="en">Improved in S2</span></span>
+        <span class="minimo"><span class="es">⭐ mínimo</span><span class="en" lang="en">⭐ minimum</span></span></label></li>
     </ul>
     <div class="tabla-scroll"><table>
-      <tr><th>Qué mirar</th><th>Valor / comportamiento correcto</th></tr>
-      <tr><td>Encabezado</td><td class="valor">«Simulación · no operativo», la corrida, la fecha y el plan 1.2.0</td></tr>
-      <tr><td>Sección 1</td><td class="valor">veredicto con símbolo y texto, un resumen de ≤ 50 palabras y una recomendación accionable</td></tr>
-      <tr><td>Sección 1</td><td class="valor">«cumple con alertas»: 9 de 9 criterios cumplidos (C5 medido con 3 de 3 corridas), ningún riesgo
-        ocurrido, y tres alertas a la vista: S1 sin probar, S3 refutado y 5 fallas no previstas</td></tr>
-      <tr><td>Sección 5</td><td class="valor">5 fallas no previstas: 1 en la corrida y 4 en las repeticiones (cada una dice en cuál)</td></tr>
-      <tr><td>Sección 6 · supuestos</td><td class="valor">S3 <strong>refutado</strong> por latencia (el multiagente acierta más pero tarda más), con la regla que lo decidió,
-        el error de la línea base en A-012 y sus 5 respuestas inservibles, dicho sin maquillar; S1 sin probar con su razón (sin errores
-        de extracción no hay nada que discriminar); S2 confirmado con la nota de muestra pequeña</td></tr>
-      <tr><td>Sección 8</td><td class="valor">«U4 (Modo Texas): conmutarlo cambia 0 de las 62 decisiones»: con este plan, el modo Texas no mueve nada
-        (toda negación ya pasa por una persona) y el informe lo calcula en vez de prometerlo</td></tr>
-      <tr><td>Sección 9</td><td class="valor">huellas del plan, los casos y la corrida; «generado con el plan 1.1.0» en los casos</td></tr>
+      <tr><th><span class="es">Qué mirar</span><span class="en" lang="en">What to look at</span></th><th><span class="es">Valor / comportamiento correcto</span><span class="en" lang="en">Correct value / behaviour</span></th></tr>
+      <tr><td><span class="es">Encabezado</span><span class="en" lang="en">Header</span></td><td class="valor"><span class="es">«Simulación · no operativo», la corrida, la fecha y el plan 1.3.0 (la corrida se ejecutó con el 1.2.0: misma verdad, ADR-005)</span><span class="en" lang="en">“Simulation · not operational”, the run, the date and plan 1.3.0 (the run was executed with 1.2.0: same truth, ADR-005)</span></td></tr>
+      <tr><td><span class="es">Sección 1</span><span class="en" lang="en">Section 1</span></td><td class="valor"><span class="es">veredicto con símbolo y texto, un resumen de ≤ 50 palabras y una recomendación accionable</span><span class="en" lang="en">verdict with symbol and text, a summary of ≤ 50 words and an actionable recommendation</span></td></tr>
+      <tr><td><span class="es">Sección 1</span><span class="en" lang="en">Section 1</span></td><td class="valor"><span class="es">«cumple con alertas»: 9 de 9 criterios cumplidos (C5 medido con 3 de 3 corridas), ningún riesgo ocurrido, y tres alertas a la vista: S1 sin probar, S3 refutado y 5 fallas no previstas</span><span class="en" lang="en">“met with alerts”: 9 of 9 criteria met (C5 measured with 3 of 3 runs), no risk occurred, and three alerts in plain sight: S1 untested, S3 refuted and 5 unforeseen failures</span></td></tr>
+      <tr><td><span class="es">Sección 4</span><span class="en" lang="en">Section 4</span></td><td class="valor"><span class="es">R1 y R6 con prioridad «alta · control legal (tabla: baja)»: la ley sube la que daría la tabla; R8 medido sobre «1 sesión», no sobre casos</span><span class="en" lang="en">R1 and R6 with priority “high · legal control (table: low)”: the law raises what the table would give; R8 measured over “1 session”, not over cases</span></td></tr>
+      <tr><td><span class="es">Sección 5</span><span class="en" lang="en">Section 5</span></td><td class="valor"><span class="es">5 fallas no previstas: 1 en la corrida y 4 en las repeticiones (cada una dice en cuál)</span><span class="en" lang="en">5 unforeseen failures: 1 in the run and 4 in the repetitions (each says which)</span></td></tr>
+      <tr><td><span class="es">Sección 6 · supuestos</span><span class="en" lang="en">Section 6 · assumptions</span></td><td class="valor"><span class="es">S3 <strong>refutado</strong> por latencia (el multiagente acierta más pero tarda más), con la regla que lo decidió, el error de la línea base en A-012 y sus 5 respuestas inservibles, dicho sin maquillar; S1 sin probar con su razón (sin errores de extracción no hay nada que discriminar); S2 confirmado con la nota de muestra pequeña</span><span class="en" lang="en">S3 <strong>refuted</strong> on latency (the multi-agent is more accurate but slower), with the rule that decided it, the baseline error in A-012 and its 5 unusable answers, stated without spin; S1 untested with its reason (with no extraction errors there is nothing to discriminate); S2 confirmed with the small-sample note</span></td></tr>
+      <tr><td><span class="es">Sección 8</span><span class="en" lang="en">Section 8</span></td><td class="valor"><span class="es">«U4 (Modo Texas): conmutarlo cambia 0 de las 62 decisiones»: con este plan, el modo Texas no mueve nada (toda negación ya pasa por una persona) y el informe lo calcula en vez de prometerlo</span><span class="en" lang="en">“U4 (Texas mode): switching it changes 0 of the 62 decisions”: with this plan, Texas mode moves nothing (every denial already goes to a person) and the report computes it instead of promising it</span></td></tr>
+      <tr><td><span class="es">Sección 9</span><span class="en" lang="en">Section 9</span></td><td class="valor"><span class="es">huellas del plan, los casos y la corrida; «generado con el plan 1.1.0» en los casos</span><span class="en" lang="en">fingerprints of the plan, the cases and the run; “generated with plan 1.1.0” on the cases</span></td></tr>
     </table></div>
-    <div class="kit"><p><strong>Kit de prueba:</strong> <code>docs/kit-de-prueba/README.md</code> explica qué informe es cuál (el
-      de la v1.2, el de la v1.1 que queda como historia y el de la corrida simulada que usa la CI).</p></div>
-    <div class="reportame"><p><strong>Repórtame sí o sí:</strong> una frase que no entiendas, un número que no coincida entre
-      español e inglés, o un resultado que te parezca escondido o maquillado.</p></div>
+    <div class="kit"><p><span class="es"><strong>Kit de prueba:</strong> <code>docs/kit-de-prueba/README.md</code> explica qué informe es cuál: el que publica la vitrina (plan v1.3), el del lote de 200 (plan v1.4), los de la v1.2 y la v1.1 que quedan como historia y el de la corrida simulada que usa la CI.</span><span class="en" lang="en"><strong>Test kit:</strong> <code>docs/kit-de-prueba/README.md</code> explains which report is which: the one the showcase publishes (plan v1.3), the 200-case batch one (plan v1.4), the v1.2 and v1.1 ones kept as history and the simulated run the CI uses.</span></p></div>
+    <div class="reportame"><p><span class="es"><strong>Repórtame sí o sí:</strong> una frase que no entiendas, un número que no coincida entre español e inglés, o un resultado que te parezca escondido o maquillado.</span><span class="en" lang="en"><strong>Report it no matter what:</strong> a sentence you do not understand, a number that differs between Spanish and English, or a result that looks hidden or dressed up.</span></p></div>
   </section>
 
   <section class="bloque">
-    <div class="bloque-cabeza"><span class="letra">C</span><h2>Ver el espejo en LangSmith</h2></div>
-    <p class="meta-bloque chica suave"><strong>Empieza en:</strong> <code>LangSmith · proyecto planlang-demo-a</code> · ~3 min · nada que no sea sintético</p>
+    <div class="bloque-cabeza"><span class="letra">C</span><h2><span class="es">Ver el espejo en LangSmith</span><span class="en" lang="en">See the mirror in LangSmith</span></h2></div>
+    <p class="meta-bloque chica suave"><strong><span class="es">Empieza en:</span><span class="en" lang="en">Starts at:</span></strong> <code>LangSmith · proyecto planlang-demo-a</code> · <span class="es">~3 min · nada que no sea sintético</span><span class="en" lang="en">~3 min · nothing that is not synthetic</span></p>
     <ul class="pasos">
-      <li data-origen="nuevo" data-minimo data-corto><input type="checkbox" id="c1"><label for="c1">Entra a LangSmith, proyecto <code>planlang-demo-a</code>. Debes ver las 20 trazas del lote de la parada 1, con los
-        nombres de nodo (<code>extractor</code>, <code>redactor</code>…). Abre dos al azar y confirma que <strong>ninguna muestra
-        una credencial</strong> ni un dato que no sea sintético (los documentos empiezan por <code>SYN-</code>, los teléfonos por
-        <code>555-01</code>, los correos terminan en <code>example.com</code>).
-        <span class="origen origen-nuevo">Nuevo · S1</span>
-        <span class="minimo">⭐ mínimo</span>
-        <span class="minimo">⭐⭐ Parada 3 de 3</span></label></li>
+      <li data-origen="heredada" data-minimo data-corto><input type="checkbox" id="c1"><label for="c1"><span class="es">Entra a LangSmith, proyecto <code>planlang-demo-a</code>. Debes ver las 20 trazas del lote de la parada 1, con los nombres de nodo (<code>extractor</code>, <code>redactor</code>…). Abre dos al azar y confirma que <strong>ninguna muestra una credencial</strong> ni un dato que no sea sintético (los documentos empiezan por <code>SYN-</code>, los teléfonos por <code>555-01</code>, los correos terminan en <code>example.com</code>).</span><span class="en" lang="en">Go to LangSmith, project <code>planlang-demo-a</code>. You should see the 20 traces of the stop-1 batch, with the node names (<code>extractor</code>, <code>redactor</code>…). Open two at random and confirm <strong>none shows a credential</strong> or any data that is not synthetic (documents start with <code>SYN-</code>, phone numbers with <code>555-01</code>, emails end in <code>example.com</code>).</span>
+        <span class="origen origen-heredada"><span class="es">S1</span><span class="en" lang="en">S1</span></span>
+        <span class="minimo"><span class="es">⭐ mínimo</span><span class="en" lang="en">⭐ minimum</span></span>
+        <span class="minimo"><span class="es">⭐⭐ Parada 2 de 4</span><span class="en" lang="en">⭐⭐ Stop 2 of 4</span></span></label></li>
     </ul>
-    <div class="diferido"><p><strong>Si no configuraste LangSmith en la parada 1:</strong> esta parada queda <strong>diferida y
-      declarada</strong> en el summary del sprint (deuda del espejo desde la fase 3). Las trazas propias en <code>runs/</code> son
-      la fuente de verdad; LangSmith es solo un espejo.</p></div>
+    <div class="diferido"><p><span class="es"><strong>Si no configuraste LangSmith en la parada 1:</strong> esta parada queda <strong>diferida y declarada</strong> en el summary. En el S2 tampoco se aprovisionó: las corridas de fondo corrieron sin espejo. Las trazas propias en <code>runs/</code> son la fuente de verdad; LangSmith es solo un espejo.</span><span class="en" lang="en"><strong>If you did not set up LangSmith at stop 1:</strong> this stop stays <strong>deferred and declared</strong> in the summary. It was not provisioned in S2 either: the background runs ran without a mirror. The app's own traces in <code>runs/</code> are the source of truth; LangSmith is only a mirror.</span></p></div>
   </section>
 
   <section class="bloque">
-    <div class="bloque-cabeza"><span class="letra">D</span><h2>Re-verificación de confianza (la CI ya lo cubre)</h2></div>
-    <p class="meta-bloque chica suave"><strong>Empieza en:</strong> <code>terminal · raíz del repo</code> · ~2 min · opcional, fuera del gate corto</p>
+    <div class="bloque-cabeza"><span class="letra">D</span><h2><span class="es">Recorrer la vitrina en tu teléfono</span><span class="en" lang="en">Walk the showcase on your phone</span></h2></div>
+    <p class="meta-bloque chica suave"><strong><span class="es">Empieza en:</span><span class="en" lang="en">Starts at:</span></strong> <code>preview del PR #8 · tu teléfono</code> · <span class="es">~14 min · ¿se entiende sin saber programar?</span><span class="en" lang="en">~14 min · does it make sense without knowing how to code?</span></p>
     <ul class="pasos">
-      <li data-origen="nuevo" data-minimo><input type="checkbox" id="d1"><label for="d1"><code>pnpm trazas:verificar</code>. Esperado: <strong>✓ en cada corrida de <code>runs/</code></strong> (huellas, ramas
-        reproducibles desde el plan, ninguna credencial).
-        <span class="origen origen-nuevo">Nuevo · S1</span>
-        <span class="minimo">⭐ mínimo</span></label></li>
-      <li data-origen="nuevo" data-minimo><input type="checkbox" id="d2"><label for="d2"><code>pnpm m9:reporte --verificar</code>. Esperado: <strong>«M9: 10/10 · control limpio»</strong>: las 10 fallas sembradas
-        a propósito se detectan y la corrida limpia no dispara ninguna.
-        <span class="origen origen-nuevo">Nuevo · S1</span>
-        <span class="minimo">⭐ mínimo</span></label></li>
+      <li data-origen="nuevo" data-minimo data-corto><input type="checkbox" id="v1"><label for="v1"><span class="es">En tu teléfono abre el preview del PR #8 (desde el PR en GitHub, con tu sesión de Vercel). La portada te lleva a tu idioma. Como líder, recorre las siete pestañas en orden deslizando su fila: Entrada, Plan, Agente, Brecha, Playground, Casos, Fichas. En Brecha responde: <strong>¿reconoces tu plan?</strong> ¿Se entiende sin saber programar qué cumplió, qué no se pudo probar y qué falló?</span><span class="en" lang="en">On your phone open the PR #8 preview (from the PR on GitHub, with your Vercel session). The home page takes you to your language. As a leader, walk the seven tabs in order by sliding their row: Home, Plan, Agent, Gap, Playground, Cases, Records. On Gap answer: <strong>do you recognise your plan?</strong> Can you tell, without knowing how to code, what was met, what could not be tested and what failed?</span>
+        <span class="origen origen-nuevo"><span class="es">Nuevo · S2</span><span class="en" lang="en">New · S2</span></span>
+        <span class="minimo"><span class="es">⭐ mínimo</span><span class="en" lang="en">⭐ minimum</span></span>
+        <span class="minimo"><span class="es">⭐⭐ Parada 3 de 4</span><span class="en" lang="en">⭐⭐ Stop 3 of 4</span></span></label></li>
+      <li data-origen="nuevo" data-minimo><input type="checkbox" id="v2"><label for="v2"><span class="es">Pasa a tema claro y a «Leer como: Experto» en Plan y en Casos. Esperado: la misma pantalla con más detalle (reglas, señales, de dónde sale cada cifra); nada desaparece ni se reacomoda, y ningún estado se distingue solo por color (cada veredicto lleva símbolo y texto).</span><span class="en" lang="en">Switch to the light theme and to “Read as: Expert” on Plan and on Cases. Expected: the same screen with more detail (rules, signals, where each figure comes from); nothing disappears or moves around, and no status is told apart by colour alone (every verdict carries a symbol and text).</span>
+        <span class="origen origen-nuevo"><span class="es">Nuevo · S2</span><span class="en" lang="en">New · S2</span></span>
+        <span class="minimo"><span class="es">⭐ mínimo</span><span class="en" lang="en">⭐ minimum</span></span></label></li>
+      <li data-origen="nuevo" data-minimo><input type="checkbox" id="v3"><label for="v3"><span class="es">En Agente, desliza el diagrama y toca un nodo (por ejemplo «Decisión»). Esperado: se abre su ficha con líder, experto, código y tres casos reales que pasaron por ahí, y el índice de capas sigue tu posición.</span><span class="en" lang="en">On Agent, slide the diagram and tap a node (for example “Decision”). Expected: its panel opens with leader, expert, code and three real cases that went through it, and the layer index follows your position.</span>
+        <span class="origen origen-nuevo"><span class="es">Nuevo · S2</span><span class="en" lang="en">New · S2</span></span>
+        <span class="minimo"><span class="es">⭐ mínimo</span><span class="en" lang="en">⭐ minimum</span></span></label></li>
     </ul>
+    <div class="tabla-scroll"><table>
+      <tr><th><span class="es">Qué mirar</span><span class="en" lang="en">What to look at</span></th><th><span class="es">Valor / comportamiento correcto</span><span class="en" lang="en">Correct value / behaviour</span></th></tr>
+      <tr><td><span class="es">En toda pantalla</span><span class="en" lang="en">On every screen</span></td><td class="valor"><span class="es">el rótulo «Simulación · no operativo · datos sintéticos»</span><span class="en" lang="en">the label “Simulation · not operational · synthetic data”</span></td></tr>
+      <tr><td><span class="es">Brecha</span><span class="en" lang="en">Gap</span></td><td class="valor"><span class="es">«cumple con alertas»: 9 de 9 criterios, ningún riesgo ocurrido, S1 sin probar, S3 refutado y 5 brechas no previstas, todo a la vista</span><span class="en" lang="en">“met with alerts”: 9 of 9 criteria, no risk occurred, S1 untested, S3 refuted and 5 unforeseen gaps, all in plain sight</span></td></tr>
+      <tr><td><span class="es">A lo ancho del teléfono</span><span class="en" lang="en">Across the phone</span></td><td class="valor"><span class="es">solo se deslizan de lado la fila de pestañas y el diagrama; la página nunca</span><span class="en" lang="en">only the tab row and the diagram slide sideways; the page never does</span></td></tr>
+    </table></div>
+    <div class="reportame"><p><span class="es"><strong>Repórtame sí o sí:</strong> una pantalla sin el rótulo de simulación, una frase de líder que no entiendas, un dato que cambie entre español e inglés, o algo que la vitrina afirme sin decir de dónde sale.</span><span class="en" lang="en"><strong>Report it no matter what:</strong> a screen without the simulation label, a leader sentence you do not understand, a figure that changes between Spanish and English, or anything the showcase claims without saying where it comes from.</span></p></div>
   </section>
 
   <section class="bloque">
-    <div class="bloque-cabeza"><span class="letra">E</span><h2>Automatizadas · el plan como contrato</h2></div>
-    <p class="meta-bloque chica suave"><strong>Empieza en:</strong> <code>CI · job quality</code> · no requiere acción · referencia</p>
+    <div class="bloque-cabeza"><span class="letra">E</span><h2><span class="es">Jugar con los umbrales</span><span class="en" lang="en">Play with the thresholds</span></h2></div>
+    <p class="meta-bloque chica suave"><strong><span class="es">Empieza en:</span><span class="en" lang="en">Starts at:</span></strong> <code>pestaña Playground</code> · <span class="es">~5 min · ¿se entienden las consecuencias?</span><span class="en" lang="en">~5 min · do the consequences make sense?</span></p>
     <ul class="pasos">
-      <li data-origen="nuevo"><input type="checkbox" id="e1"><label for="e1">12 planes con errores sembrados se rechazan, cada uno con su motivo. <span class="suave">Lo verifica la CI · <code>tests/unit/core/plan/planes-sembrados.test.ts</code></span>
-        <span class="origen origen-nuevo">Nuevo · S1</span></label></li>
-      <li data-origen="nuevo"><input type="checkbox" id="e2"><label for="e2">Los planes v1, v1.1 y v1.2 se reproducen con la misma huella desde sus enmiendas. <span class="suave">Lo verifica la CI · <code>tests/unit/core/plan/enmienda-*.test.ts</code></span>
-        <span class="origen origen-nuevo">Nuevo · S1</span></label></li>
-      <li data-origen="nuevo"><input type="checkbox" id="e3"><label for="e3">Carnadas C01–C05 y C03-bis del reusable instrumentos de plan (prioridad de acción AIAG-VDA). <span class="suave">Lo verifica la CI · <code>packages/instrumentos-de-plan/tests</code></span>
-        <span class="origen origen-nuevo">Nuevo · S1</span></label></li>
-      <li data-origen="nuevo"><input type="checkbox" id="e4"><label for="e4">JSON canónico y huella iguales en Python y TypeScript sobre valores difíciles. <span class="suave">Lo verifica la CI · <code>tests/contrato/jcs-python-ts.test.ts</code></span>
-        <span class="origen origen-nuevo">Nuevo · S1</span></label></li>
-      <li data-origen="nuevo"><input type="checkbox" id="e5"><label for="e5">El núcleo no usa reloj, azar ni Intl; los reusables no nombran el dominio. <span class="suave">Lo verifica la CI · <code>tests/unit/guardias/</code></span>
-        <span class="origen origen-nuevo">Nuevo · S1</span></label></li>
-    </ul>
-  </section>
-
-  <section class="bloque">
-    <div class="bloque-cabeza"><span class="letra">F</span><h2>Automatizadas · casos sintéticos</h2></div>
-    <p class="meta-bloque chica suave"><strong>Empieza en:</strong> <code>CI · jobs quality y python</code> · no requiere acción · referencia</p>
-    <ul class="pasos">
-      <li data-origen="nuevo"><input type="checkbox" id="f1"><label for="f1">Los lotes de 3, 20 y 200 casos se regeneran idénticos byte a byte, en Node y en jsdom. <span class="suave">Lo verifica la CI · <code>tests/integration/casos-versionados.test.ts</code></span>
-        <span class="origen origen-nuevo">Nuevo · S1</span></label></li>
-      <li data-origen="nuevo"><input type="checkbox" id="f2"><label for="f2">Ningún identificador con formato real en casos, planes de beneficios, corridas ni informes (3 carnadas en rojo). <span class="suave">Lo verifica la CI · <code>tests/unit/guardias/identificadores-en-datos.test.ts</code></span>
-        <span class="origen origen-nuevo">Nuevo · S1</span></label></li>
+      <li data-origen="nuevo" data-minimo data-corto><input type="checkbox" id="p1"><label for="p1"><span class="es">Sube U1 (confianza mínima de extracción) de 0,75 a 0,90. Esperado: <strong>cambia un solo caso, A-008, que pasa a una persona</strong>; ábrelo desde la lista. Luego lleva U2 a 1.600: aparece el error de A-010. «Volver al plan» deshace todo y deja 0 cambios. ¿Se entienden las consecuencias (casos que cambian, errores, minutos de revisión humana, criterios)?</span><span class="en" lang="en">Raise U1 (minimum extraction confidence) from 0.75 to 0.90. Expected: <strong>a single case changes, A-008, which goes to a person</strong>; open it from the list. Then take U2 to 1,600: A-010's error appears. “Back to the plan” undoes everything and leaves 0 changes. Do the consequences make sense (cases that change, errors, minutes of human review, criteria)?</span>
+        <span class="origen origen-nuevo"><span class="es">Nuevo · S2</span><span class="en" lang="en">New · S2</span></span>
+        <span class="minimo"><span class="es">⭐ mínimo</span><span class="en" lang="en">⭐ minimum</span></span>
+        <span class="minimo"><span class="es">⭐⭐ Parada 4 de 4</span><span class="en" lang="en">⭐⭐ Stop 4 of 4</span></span></label></li>
+      <li data-origen="nuevo" data-minimo><input type="checkbox" id="p2"><label for="p2"><span class="es">Enciende el modo Texas (U4). Esperado: no cambia ningún caso y la pantalla explica por qué (toda propuesta adversa ya pasaba por una persona). ¿La explicación se entiende?</span><span class="en" lang="en">Turn on Texas mode (U4). Expected: no case changes and the screen explains why (every adverse proposal already went to a person). Does the explanation make sense?</span>
+        <span class="origen origen-nuevo"><span class="es">Nuevo · S2</span><span class="en" lang="en">New · S2</span></span>
+        <span class="minimo"><span class="es">⭐ mínimo</span><span class="en" lang="en">⭐ minimum</span></span></label></li>
     </ul>
   </section>
 
   <section class="bloque">
-    <div class="bloque-cabeza"><span class="letra">G</span><h2>Automatizadas · el agente y sus trazas</h2></div>
-    <p class="meta-bloque chica suave"><strong>Empieza en:</strong> <code>CI · job python</code> · no requiere acción · referencia</p>
+    <div class="bloque-cabeza"><span class="letra">F</span><h2><span class="es">Un caso y las fichas</span><span class="en" lang="en">A case and the records</span></h2></div>
+    <p class="meta-bloque chica suave"><strong><span class="es">Empieza en:</span><span class="en" lang="en">Starts at:</span></strong> <code>pestaña Casos</code> · <span class="es">~5 min · lo que vería un afiliado y tu hoja de vida</span><span class="en" lang="en">~5 min · what a member and your CV site would see</span></p>
     <ul class="pasos">
-      <li data-origen="nuevo"><input type="checkbox" id="g1"><label for="g1">El adaptador llama a <code>claude</code> con los flags exactos, sin <code>--bare</code>, sin claves en el entorno y en un directorio temporal limpio. <span class="suave">Lo verifica la CI · <code>agents/tests/test_adaptador_flags.py</code></span>
-        <span class="origen origen-nuevo">Nuevo · S1</span></label></li>
-      <li data-origen="nuevo"><input type="checkbox" id="g2"><label for="g2">El grafo del demo A: urgencias y exentos sin cobertura, toda negación con pausa humana, guardia de salida, documento adverso ES/EN. <span class="suave">Lo verifica la CI · <code>agents/tests/test_grafo_demo_a.py</code></span>
-        <span class="origen origen-nuevo">Nuevo · S1</span></label></li>
-      <li data-origen="nuevo"><input type="checkbox" id="g3"><label for="g3">La corrida simulada de 3 casos se regenera idéntica (cualquier cambio del grafo o del exportador la pone en rojo). <span class="suave">Lo verifica la CI · <code>agents/tests/test_corrida_simulada_versionada.py</code></span>
-        <span class="origen origen-nuevo">Nuevo · S1</span></label></li>
-      <li data-origen="nuevo"><input type="checkbox" id="g4"><label for="g4">Lotes acumulables sin duplicar, límite de uso, reintentos de salida estructurada y lotes de otro plan solo si dan la misma verdad. <span class="suave">Lo verifica la CI · <code>agents/tests/test_lotes.py</code></span>
-        <span class="origen origen-nuevo">Nuevo · S1</span></label></li>
+      <li data-origen="nuevo" data-minimo><input type="checkbox" id="k1"><label for="k1"><span class="es">Abre A-004 (una negación). Esperado: la pausa con el auditor (el caso completo, evidencia y contraevidencia, y la respuesta simulada con su divulgación), la carta con su aviso de IA y el documento de decisión adversa con causa, regla, datos usados, versión y vía para reclamar.</span><span class="en" lang="en">Open A-004 (a denial). Expected: the pause with the auditor (the full case, evidence and counter-evidence, and the simulated answer with its disclosure), the letter with its AI notice and the adverse-decision document with ground, rule, data used, version and how to appeal.</span>
+        <span class="origen origen-nuevo"><span class="es">Nuevo · S2</span><span class="en" lang="en">New · S2</span></span>
+        <span class="minimo"><span class="es">⭐ mínimo</span><span class="en" lang="en">⭐ minimum</span></span></label></li>
+      <li data-origen="nuevo" data-minimo><input type="checkbox" id="k2"><label for="k2"><span class="es">En Fichas, lee la ficha del agente A como la vería alguien en tu hoja de vida. ¿La reconoces como tuya? ¿Algo promete más de lo que se midió?</span><span class="en" lang="en">On Records, read agent A's record as someone on your CV site would. Do you recognise it as yours? Does anything promise more than what was measured?</span>
+        <span class="origen origen-nuevo"><span class="es">Nuevo · S2</span><span class="en" lang="en">New · S2</span></span>
+        <span class="minimo"><span class="es">⭐ mínimo</span><span class="en" lang="en">⭐ minimum</span></span></label></li>
     </ul>
   </section>
 
   <section class="bloque">
-    <div class="bloque-cabeza"><span class="letra">H</span><h2>Automatizadas · el verificador de brecha</h2></div>
-    <p class="meta-bloque chica suave"><strong>Empieza en:</strong> <code>CI · job quality</code> · no requiere acción · referencia</p>
+    <div class="bloque-cabeza"><span class="letra">G</span><h2><span class="es">Re-verificación de confianza (la CI ya lo cubre)</span><span class="en" lang="en">Confidence re-check (CI already covers it)</span></h2></div>
+    <p class="meta-bloque chica suave"><strong><span class="es">Empieza en:</span><span class="en" lang="en">Starts at:</span></strong> <code>terminal · raíz del repo</code> · <span class="es">~8 min · opcional, fuera del gate corto</span><span class="en" lang="en">~8 min · optional, outside the short gate</span></p>
     <ul class="pasos">
-      <li data-origen="nuevo"><input type="checkbox" id="h1"><label for="h1">El informe de la corrida simulada es idéntico al golden en Node y en jsdom (JSON, español e inglés). <span class="suave">Lo verifica la CI · <code>tests/integration/informe-simulado.test.ts</code></span>
-        <span class="origen origen-nuevo">Nuevo · S1</span></label></li>
-      <li data-origen="nuevo"><input type="checkbox" id="h2"><label for="h2">Prueba cruzada Python ↔ TypeScript: cada decisión de cada corrida versionada se reproduce desde el plan, con la misma huella. <span class="suave">Lo verifica la CI · <code>tests/unit/core/playground/rf-09-2.test.ts</code></span>
-        <span class="origen origen-nuevo">Nuevo · S1</span></label></li>
-      <li data-origen="nuevo"><input type="checkbox" id="h3"><label for="h3">M9: 10 de 10 fallas sembradas detectadas y corrida limpia sin falsas alarmas. <span class="suave">Lo verifica la CI · <code>tests/unit/core/brecha/m9.test.ts</code></span>
-        <span class="origen origen-nuevo">Nuevo · S1</span></label></li>
-      <li data-origen="nuevo"><input type="checkbox" id="h4"><label for="h4">Los informes guardados junto a las corridas están al día. <span class="suave">Lo verifica la CI · <code>tests/integration/informes-versionados.test.ts</code></span>
-        <span class="origen origen-nuevo">Nuevo · S1</span></label></li>
-      <li data-origen="nuevo"><input type="checkbox" id="h5"><label for="h5">Informe de 200 casos en menos de 2 s; textos para quien decide dentro del presupuesto de 50 palabras. <span class="suave">Lo verifica la CI · <code>tests/unit/core/brecha/</code></span>
-        <span class="origen origen-nuevo">Nuevo · S1</span></label></li>
+      <li data-origen="heredada" data-minimo><input type="checkbox" id="d1"><label for="d1"><span class="es"><code>pnpm trazas:verificar</code>. Esperado: <strong>✓ en cada corrida de <code>runs/</code></strong> (huellas, ramas reproducibles desde el plan, ninguna credencial).</span><span class="en" lang="en"><code>pnpm trazas:verificar</code>. Expected: <strong>✓ on every run in <code>runs/</code></strong> (fingerprints, branches reproducible from the plan, no credentials).</span>
+        <span class="origen origen-heredada"><span class="es">S1</span><span class="en" lang="en">S1</span></span>
+        <span class="minimo"><span class="es">⭐ mínimo</span><span class="en" lang="en">⭐ minimum</span></span></label></li>
+      <li data-origen="heredada" data-minimo><input type="checkbox" id="d2"><label for="d2"><span class="es"><code>pnpm m9:reporte --verificar</code>. Esperado: <strong>«M9: 10/10 · control limpio»</strong>: las 10 fallas sembradas a propósito se detectan y la corrida limpia no dispara ninguna.</span><span class="en" lang="en"><code>pnpm m9:reporte --verificar</code>. Expected: <strong>“M9: 10/10 · clean control”</strong>: the 10 failures planted on purpose are caught and the clean run triggers none.</span>
+        <span class="origen origen-heredada"><span class="es">S1</span><span class="en" lang="en">S1</span></span>
+        <span class="minimo"><span class="es">⭐ mínimo</span><span class="en" lang="en">⭐ minimum</span></span></label></li>
+      <li data-origen="nuevo" data-minimo><input type="checkbox" id="d3"><label for="d3"><span class="es"><code>pnpm paquete:vitrina</code>. Esperado: los cinco pasos en ✓ y al final <strong>«paquete-vitrina: verde → dist/paquete-hoja-de-vida/»</strong>, con un manifiesto de 85 archivos.</span><span class="en" lang="en"><code>pnpm paquete:vitrina</code>. Expected: the five steps in ✓ and at the end <strong>“paquete-vitrina: verde → dist/paquete-hoja-de-vida/”</strong>, with an 85-file manifest.</span>
+        <span class="origen origen-nuevo"><span class="es">Nuevo · S2</span><span class="en" lang="en">New · S2</span></span>
+        <span class="minimo"><span class="es">⭐ mínimo</span><span class="en" lang="en">⭐ minimum</span></span></label></li>
+      <li data-origen="nuevo" data-minimo><input type="checkbox" id="d4"><label for="d4"><span class="es">Abre <code>runs/demo-a/suscripcion-planlang-a-001-200-v1.4/informe.es.md</code> (la corrida de 200 del plan v1.4). Esperado: «cumple con alertas»; C5 incompleto porque pide tres corridas y hay una; ningún riesgo ocurrido; S1 <strong>confirmado</strong> y S2 refutado.</span><span class="en" lang="en">Open <code>runs/demo-a/suscripcion-planlang-a-001-200-v1.4/informe.en.md</code> (plan v1.4's 200-case run). Expected: “met with alerts”; C5 incomplete because it asks for three runs and there is one; no risk occurred; S1 <strong>confirmed</strong> and S2 refuted.</span>
+        <span class="origen origen-nuevo"><span class="es">Nuevo · S2</span><span class="en" lang="en">New · S2</span></span>
+        <span class="minimo"><span class="es">⭐ mínimo</span><span class="en" lang="en">⭐ minimum</span></span></label></li>
+    </ul>
+  </section>
+
+  <section class="bloque">
+    <div class="bloque-cabeza"><span class="letra">H</span><h2><span class="es">El paquete dentro de hoja-de-vida</span><span class="en" lang="en">The package inside hoja-de-vida</span></h2></div>
+    <p class="meta-bloque chica suave"><strong><span class="es">Empieza en:</span><span class="en" lang="en">Starts at:</span></strong> <code>tu repositorio app-hoja-de-vida</code> · <span class="es">~10 min · cuando hagas el PR de contenido</span><span class="en" lang="en">~10 min · when you open the content PR</span></p>
+    <ul class="pasos">
+      <li data-origen="nuevo" data-minimo><input type="checkbox" id="j1"><label for="j1"><span class="es">En una rama de hoja-de-vida copia <code>dist/paquete-hoja-de-vida/</code> (sus carpetas <code>public/</code>, <code>content/</code> y <code>data/</code>), corre hoja-de-vida en local y abre <code>/piezas/planlang/es.html</code>. Esperado: la vitrina completa dentro de tu sitio, sus enlaces navegan entre sus páginas y nada pide recursos de otro origen; la ficha del agente A aparece en el frente Agentes y la de la app se arma desde el export.</span><span class="en" lang="en">In a hoja-de-vida branch copy <code>dist/paquete-hoja-de-vida/</code> (its <code>public/</code>, <code>content/</code> and <code>data/</code> folders), run hoja-de-vida locally and open <code>/piezas/planlang/en.html</code>. Expected: the whole showcase inside your site, its links move between its pages and nothing asks for resources from another origin; agent A's record shows in the Agents front and the app's record is built from the export.</span>
+        <span class="origen origen-nuevo"><span class="es">Nuevo · S2</span><span class="en" lang="en">New · S2</span></span>
+        <span class="minimo"><span class="es">⭐ mínimo</span><span class="en" lang="en">⭐ minimum</span></span></label></li>
+    </ul>
+  </section>
+
+  <section class="bloque">
+    <div class="bloque-cabeza"><span class="letra">I</span><h2><span class="es">Automatizadas · el plan como contrato</span><span class="en" lang="en">Automated · the plan as a contract</span></h2></div>
+    <p class="meta-bloque chica suave"><strong><span class="es">Empieza en:</span><span class="en" lang="en">Starts at:</span></strong> <code>CI · job quality</code> · <span class="es">no requiere acción · referencia</span><span class="en" lang="en">no action needed · reference</span></p>
+    <ul class="pasos">
+      <li data-origen="heredada"><input type="checkbox" id="e1"><label for="e1"><span class="es">12 planes con errores sembrados se rechazan, cada uno con su motivo.</span><span class="en" lang="en">12 plans with planted errors are rejected, each with its reason.</span> <span class="suave"><span class="es">Lo verifica la CI</span><span class="en" lang="en">Checked by CI</span> · <code>tests/unit/core/plan/planes-sembrados.test.ts</code></span>
+        <span class="origen origen-heredada"><span class="es">S1</span><span class="en" lang="en">S1</span></span></label></li>
+      <li data-origen="mejorado"><input type="checkbox" id="e2"><label for="e2"><span class="es">Los planes v1 a v1.4 se reproducen con la misma huella desde sus enmiendas; la v1.4 cambia el contrato de grafo y por eso no comparte la verdad de los lotes de la v1.1.</span><span class="en" lang="en">Plans v1 to v1.4 are reproduced with the same fingerprint from their amendments; v1.4 changes the graph contract, so it does not share the truth of the v1.1 batches.</span> <span class="suave"><span class="es">Lo verifica la CI</span><span class="en" lang="en">Checked by CI</span> · <code>tests/unit/core/plan/enmienda-*.test.ts</code></span>
+        <span class="origen origen-mejorado"><span class="es">Mejorado en S2</span><span class="en" lang="en">Improved in S2</span></span></label></li>
+      <li data-origen="heredada"><input type="checkbox" id="e3"><label for="e3"><span class="es">Carnadas C01–C05 y C03-bis del reusable instrumentos de plan (prioridad de acción AIAG-VDA).</span><span class="en" lang="en">Baits C01–C05 and C03-bis of the plan-instruments reusable (AIAG-VDA action priority).</span> <span class="suave"><span class="es">Lo verifica la CI</span><span class="en" lang="en">Checked by CI</span> · <code>packages/instrumentos-de-plan/tests</code></span>
+        <span class="origen origen-heredada"><span class="es">S1</span><span class="en" lang="en">S1</span></span></label></li>
+      <li data-origen="mejorado"><input type="checkbox" id="e4"><label for="e4"><span class="es">JSON canónico y huella iguales en Python y TypeScript sobre valores difíciles, también con texto compuesto de otra forma (NFC).</span><span class="en" lang="en">Canonical JSON and fingerprint match in Python and TypeScript on tricky values, including text composed another way (NFC).</span> <span class="suave"><span class="es">Lo verifica la CI</span><span class="en" lang="en">Checked by CI</span> · <code>tests/contrato/jcs-python-ts.test.ts</code></span>
+        <span class="origen origen-mejorado"><span class="es">Mejorado en S2</span><span class="en" lang="en">Improved in S2</span></span></label></li>
+      <li data-origen="heredada"><input type="checkbox" id="e5"><label for="e5"><span class="es">El núcleo no usa reloj, azar ni Intl; los reusables no nombran el dominio.</span><span class="en" lang="en">The core uses no clock, randomness or Intl; the reusables do not name the domain.</span> <span class="suave"><span class="es">Lo verifica la CI</span><span class="en" lang="en">Checked by CI</span> · <code>tests/unit/guardias/</code></span>
+        <span class="origen origen-heredada"><span class="es">S1</span><span class="en" lang="en">S1</span></span></label></li>
+      <li data-origen="nuevo"><input type="checkbox" id="e6"><label for="e6"><span class="es">Control legal (instrumentos de plan 0.2.0): R1 y R6 suben a prioridad alta aunque su tabla diga baja, y la carnada C06 se pone en rojo si falta.</span><span class="en" lang="en">Legal control (plan instruments 0.2.0): R1 and R6 rise to high priority even when their table says low, and bait C06 turns red if it is missing.</span> <span class="suave"><span class="es">Lo verifica la CI</span><span class="en" lang="en">Checked by CI</span> · <code>packages/instrumentos-de-plan/tests</code></span>
+        <span class="origen origen-nuevo"><span class="es">Nuevo · S2</span><span class="en" lang="en">New · S2</span></span></label></li>
+      <li data-origen="nuevo"><input type="checkbox" id="e7"><label for="e7"><span class="es">Un plan aprobado siempre vuelve a cargar, y una regla que lee una señal no declarada o una función sin registrar se rechaza.</span><span class="en" lang="en">An approved plan always loads again, and a rule that reads an undeclared signal or an unregistered function is rejected.</span> <span class="suave"><span class="es">Lo verifica la CI</span><span class="en" lang="en">Checked by CI</span> · <code>tests/unit/core/plan/</code></span>
+        <span class="origen origen-nuevo"><span class="es">Nuevo · S2</span><span class="en" lang="en">New · S2</span></span></label></li>
+    </ul>
+  </section>
+
+  <section class="bloque">
+    <div class="bloque-cabeza"><span class="letra">J</span><h2><span class="es">Automatizadas · casos sintéticos</span><span class="en" lang="en">Automated · synthetic cases</span></h2></div>
+    <p class="meta-bloque chica suave"><strong><span class="es">Empieza en:</span><span class="en" lang="en">Starts at:</span></strong> <code>CI · jobs quality y python</code> · <span class="es">no requiere acción · referencia</span><span class="en" lang="en">no action needed · reference</span></p>
+    <ul class="pasos">
+      <li data-origen="mejorado"><input type="checkbox" id="f1"><label for="f1"><span class="es">Los lotes de 3, 20 y 200 casos se regeneran idénticos byte a byte, en Node y en jsdom; el de 200 se genera con el plan v1.4 y sus primeros 20 casos son el lote de 20.</span><span class="en" lang="en">The 3-, 20- and 200-case batches are regenerated byte for byte, in Node and in jsdom; the 200 one is generated with plan v1.4 and its first 20 cases are the 20-case batch.</span> <span class="suave"><span class="es">Lo verifica la CI</span><span class="en" lang="en">Checked by CI</span> · <code>tests/integration/casos-versionados.test.ts</code></span>
+        <span class="origen origen-mejorado"><span class="es">Mejorado en S2</span><span class="en" lang="en">Improved in S2</span></span></label></li>
+      <li data-origen="heredada"><input type="checkbox" id="f2"><label for="f2"><span class="es">Ningún identificador con formato real en casos, planes de beneficios, corridas ni informes (3 carnadas en rojo).</span><span class="en" lang="en">No identifier with a real format in cases, benefit plans, runs or reports (3 baits in red).</span> <span class="suave"><span class="es">Lo verifica la CI</span><span class="en" lang="en">Checked by CI</span> · <code>tests/unit/guardias/identificadores-en-datos.test.ts</code></span>
+        <span class="origen origen-heredada"><span class="es">S1</span><span class="en" lang="en">S1</span></span></label></li>
+    </ul>
+  </section>
+
+  <section class="bloque">
+    <div class="bloque-cabeza"><span class="letra">K</span><h2><span class="es">Automatizadas · el agente y sus trazas</span><span class="en" lang="en">Automated · the agent and its traces</span></h2></div>
+    <p class="meta-bloque chica suave"><strong><span class="es">Empieza en:</span><span class="en" lang="en">Starts at:</span></strong> <code>CI · job python</code> · <span class="es">no requiere acción · referencia</span><span class="en" lang="en">no action needed · reference</span></p>
+    <ul class="pasos">
+      <li data-origen="mejorado"><input type="checkbox" id="g1"><label for="g1"><span class="es">El adaptador llama a <code>claude</code> con los flags exactos (<code>--max-turns 2</code> solo cuando pide salida estructurada), sin <code>--bare</code>, sin claves en el entorno y en un directorio temporal limpio.</span><span class="en" lang="en">The adapter calls <code>claude</code> with the exact flags (<code>--max-turns 2</code> only when it asks for structured output), without <code>--bare</code>, with no keys in the environment and in a clean temporary directory.</span> <span class="suave"><span class="es">Lo verifica la CI</span><span class="en" lang="en">Checked by CI</span> · <code>agents/tests/test_adaptador_flags.py</code></span>
+        <span class="origen origen-mejorado"><span class="es">Mejorado en S2</span><span class="en" lang="en">Improved in S2</span></span></label></li>
+      <li data-origen="heredada"><input type="checkbox" id="g2"><label for="g2"><span class="es">El grafo del demo A: urgencias y exentos sin cobertura, toda negación con pausa humana, guardia de salida, documento adverso ES/EN.</span><span class="en" lang="en">Demo A's graph: emergencies and exempt services skip the coverage check, every denial with a human pause, output guard, adverse document ES/EN.</span> <span class="suave"><span class="es">Lo verifica la CI</span><span class="en" lang="en">Checked by CI</span> · <code>agents/tests/test_grafo_demo_a.py</code></span>
+        <span class="origen origen-heredada"><span class="es">S1</span><span class="en" lang="en">S1</span></span></label></li>
+      <li data-origen="heredada"><input type="checkbox" id="g3"><label for="g3"><span class="es">La corrida simulada de 3 casos se regenera idéntica (cualquier cambio del grafo o del exportador la pone en rojo).</span><span class="en" lang="en">The simulated 3-case run is regenerated identical (any change to the graph or the exporter turns it red).</span> <span class="suave"><span class="es">Lo verifica la CI</span><span class="en" lang="en">Checked by CI</span> · <code>agents/tests/test_corrida_simulada_versionada.py</code></span>
+        <span class="origen origen-heredada"><span class="es">S1</span><span class="en" lang="en">S1</span></span></label></li>
+      <li data-origen="heredada"><input type="checkbox" id="g4"><label for="g4"><span class="es">Lotes acumulables sin duplicar, límite de uso, reintentos de salida estructurada y lotes de otro plan solo si dan la misma verdad.</span><span class="en" lang="en">Batches accumulate without duplicates, usage limit, structured-output retries and batches from another plan only if they give the same truth.</span> <span class="suave"><span class="es">Lo verifica la CI</span><span class="en" lang="en">Checked by CI</span> · <code>agents/tests/test_lotes.py</code></span>
+        <span class="origen origen-heredada"><span class="es">S1</span><span class="en" lang="en">S1</span></span></label></li>
+      <li data-origen="nuevo"><input type="checkbox" id="g5"><label for="g5"><span class="es">Sin modelo al extraer o al aclarar, el caso pasa a una persona (plan v1.4); el límite de uso sigue deteniendo la sesión. La corrida simulada con fallas inyectadas se regenera idéntica y TypeScript la lee entera.</span><span class="en" lang="en">With no model while extracting or clarifying, the case goes to a person (plan v1.4); the usage limit still stops the session. The simulated run with injected failures is regenerated identical and TypeScript reads all of it.</span> <span class="suave"><span class="es">Lo verifica la CI</span><span class="en" lang="en">Checked by CI</span> · <code>agents/tests/test_respaldo_versionado.py</code></span>
+        <span class="origen origen-nuevo"><span class="es">Nuevo · S2</span><span class="en" lang="en">New · S2</span></span></label></li>
+      <li data-origen="nuevo"><input type="checkbox" id="g6"><label for="g6"><span class="es">El entorno de Python es exactamente el del lock (<code>agents/constraints.txt</code>), dentro de los rangos del pyproject.</span><span class="en" lang="en">The Python environment is exactly the lock's (<code>agents/constraints.txt</code>), within the pyproject ranges.</span> <span class="suave"><span class="es">Lo verifica la CI</span><span class="en" lang="en">Checked by CI</span> · <code>agents/tests/test_constraints.py</code></span>
+        <span class="origen origen-nuevo"><span class="es">Nuevo · S2</span><span class="en" lang="en">New · S2</span></span></label></li>
+      <li data-origen="nuevo"><input type="checkbox" id="g7"><label for="g7"><span class="es">Una excepción inesperada a mitad de sesión no se lleva las trazas ya obtenidas: se escriben y la sesión queda «detenida por excepción».</span><span class="en" lang="en">An unexpected exception mid-session does not take the traces already obtained with it: they are written and the session is marked “stopped by exception”.</span> <span class="suave"><span class="es">Lo verifica la CI</span><span class="en" lang="en">Checked by CI</span> · <code>agents/tests/test_lotes.py</code></span>
+        <span class="origen origen-nuevo"><span class="es">Nuevo · S2</span><span class="en" lang="en">New · S2</span></span></label></li>
+    </ul>
+  </section>
+
+  <section class="bloque">
+    <div class="bloque-cabeza"><span class="letra">L</span><h2><span class="es">Automatizadas · el verificador de brecha</span><span class="en" lang="en">Automated · the gap verifier</span></h2></div>
+    <p class="meta-bloque chica suave"><strong><span class="es">Empieza en:</span><span class="en" lang="en">Starts at:</span></strong> <code>CI · job quality</code> · <span class="es">no requiere acción · referencia</span><span class="en" lang="en">no action needed · reference</span></p>
+    <ul class="pasos">
+      <li data-origen="heredada"><input type="checkbox" id="h1"><label for="h1"><span class="es">El informe de la corrida simulada es idéntico al golden en Node y en jsdom (JSON, español e inglés).</span><span class="en" lang="en">The simulated run's report is identical to the golden file in Node and in jsdom (JSON, Spanish and English).</span> <span class="suave"><span class="es">Lo verifica la CI</span><span class="en" lang="en">Checked by CI</span> · <code>tests/integration/informe-simulado.test.ts</code></span>
+        <span class="origen origen-heredada"><span class="es">S1</span><span class="en" lang="en">S1</span></span></label></li>
+      <li data-origen="mejorado"><input type="checkbox" id="h2"><label for="h2"><span class="es">Prueba cruzada Python ↔ TypeScript: cada decisión de cada corrida versionada se reproduce desde el plan, con la misma huella; una señal no observada (nula) no cumple ninguna comparación de orden, igual en los dos lados.</span><span class="en" lang="en">Python ↔ TypeScript cross-check: every decision of every versioned run is reproduced from the plan, with the same fingerprint; an unobserved (null) signal satisfies no ordering comparison, the same on both sides.</span> <span class="suave"><span class="es">Lo verifica la CI</span><span class="en" lang="en">Checked by CI</span> · <code>tests/unit/core/playground/rf-09-2.test.ts</code></span>
+        <span class="origen origen-mejorado"><span class="es">Mejorado en S2</span><span class="en" lang="en">Improved in S2</span></span></label></li>
+      <li data-origen="heredada"><input type="checkbox" id="h3"><label for="h3"><span class="es">M9: 10 de 10 fallas sembradas detectadas y corrida limpia sin falsas alarmas.</span><span class="en" lang="en">M9: 10 of 10 planted failures caught and the clean run without false alarms.</span> <span class="suave"><span class="es">Lo verifica la CI</span><span class="en" lang="en">Checked by CI</span> · <code>tests/unit/core/brecha/m9.test.ts</code></span>
+        <span class="origen origen-heredada"><span class="es">S1</span><span class="en" lang="en">S1</span></span></label></li>
+      <li data-origen="heredada"><input type="checkbox" id="h4"><label for="h4"><span class="es">Los informes guardados junto a las corridas están al día.</span><span class="en" lang="en">The reports stored next to the runs are up to date.</span> <span class="suave"><span class="es">Lo verifica la CI</span><span class="en" lang="en">Checked by CI</span> · <code>tests/integration/informes-versionados.test.ts</code></span>
+        <span class="origen origen-heredada"><span class="es">S1</span><span class="en" lang="en">S1</span></span></label></li>
+      <li data-origen="heredada"><input type="checkbox" id="h5"><label for="h5"><span class="es">Informe de 200 casos en menos de 2 s; textos para quien decide dentro del presupuesto de 50 palabras.</span><span class="en" lang="en">A 200-case report in under 2 s; texts for the decision-maker within the 50-word budget.</span> <span class="suave"><span class="es">Lo verifica la CI</span><span class="en" lang="en">Checked by CI</span> · <code>tests/unit/core/brecha/</code></span>
+        <span class="origen origen-heredada"><span class="es">S1</span><span class="en" lang="en">S1</span></span></label></li>
+      <li data-origen="nuevo"><input type="checkbox" id="h6"><label for="h6"><span class="es">Verificador 1.2.0: los casos que no se pudieron evaluar se cuentan a la vista y cada criterio dice con qué métrica se midió.</span><span class="en" lang="en">Verifier 1.2.0: the cases that could not be evaluated are counted in plain sight and each criterion says which metric measured it.</span> <span class="suave"><span class="es">Lo verifica la CI</span><span class="en" lang="en">Checked by CI</span> · <code>tests/unit/core/brecha/</code></span>
+        <span class="origen origen-nuevo"><span class="es">Nuevo · S2</span><span class="en" lang="en">New · S2</span></span></label></li>
+    </ul>
+  </section>
+
+  <section class="bloque">
+    <div class="bloque-cabeza"><span class="letra">M</span><h2><span class="es">Automatizadas · la vitrina</span><span class="en" lang="en">Automated · the showcase</span></h2></div>
+    <p class="meta-bloque chica suave"><strong><span class="es">Empieza en:</span><span class="en" lang="en">Starts at:</span></strong> <code>CI · jobs quality, e2e y lighthouse</code> · <span class="es">no requiere acción · referencia</span><span class="en" lang="en">no action needed · reference</span></p>
+    <ul class="pasos">
+      <li data-origen="nuevo"><input type="checkbox" id="m1"><label for="m1"><span class="es">Las siete pantallas a 380 px y en escritorio, en los dos idiomas, temas y perfiles: sin desplazamiento de lado, sin errores de hidratación y sin violaciones serias de axe.</span><span class="en" lang="en">The seven screens at 380 px and on desktop, in both languages, themes and profiles: no sideways scroll, no hydration errors and no serious axe violations.</span> <span class="suave"><span class="es">Lo verifica la CI</span><span class="en" lang="en">Checked by CI</span> · <code>tests/e2e/</code></span>
+        <span class="origen origen-nuevo"><span class="es">Nuevo · S2</span><span class="en" lang="en">New · S2</span></span></label></li>
+      <li data-origen="nuevo"><input type="checkbox" id="m2"><label for="m2"><span class="es">Con movimiento reducido, lo del experto aparece visible y sin animación.</span><span class="en" lang="en">With reduced motion, the expert content shows up visible and without animation.</span> <span class="suave"><span class="es">Lo verifica la CI</span><span class="en" lang="en">Checked by CI</span> · <code>tests/e2e/</code></span>
+        <span class="origen origen-nuevo"><span class="es">Nuevo · S2</span><span class="en" lang="en">New · S2</span></span></label></li>
+      <li data-origen="nuevo"><input type="checkbox" id="m3"><label for="m3"><span class="es">Diagrama = grafo: el lienzo publicado dibuja los 8 nodos, las 13 aristas y las 9 reglas del grafo que corrió; si no coincide, la vitrina no se publica.</span><span class="en" lang="en">Diagram = graph: the published canvas draws the 8 nodes, 13 edges and 9 rules of the graph that ran; if it does not match, the showcase is not published.</span> <span class="suave"><span class="es">Lo verifica la CI</span><span class="en" lang="en">Checked by CI</span> · <code>pnpm diagrama:verificar</code></span>
+        <span class="origen origen-nuevo"><span class="es">Nuevo · S2</span><span class="en" lang="en">New · S2</span></span></label></li>
+      <li data-origen="nuevo"><input type="checkbox" id="m4"><label for="m4"><span class="es">Con los umbrales del plan, el playground reproduce exactamente el informe; recalcula 200 casos en menos de 100 ms y un movimiento sobre 20 en menos de 16 ms.</span><span class="en" lang="en">With the plan's thresholds, the playground reproduces the report exactly; it recalculates 200 cases in under 100 ms and a move over 20 in under 16 ms.</span> <span class="suave"><span class="es">Lo verifica la CI</span><span class="en" lang="en">Checked by CI</span> · <code>tests/unit/core/playground/</code></span>
+        <span class="origen origen-nuevo"><span class="es">Nuevo · S2</span><span class="en" lang="en">New · S2</span></span></label></li>
+      <li data-origen="nuevo"><input type="checkbox" id="m5"><label for="m5"><span class="es">El export no lleva la maqueta, ni <code>localhost</code>, ni ninguna dirección publicada, y cada control dibujado tiene su script cargado.</span><span class="en" lang="en">The export carries no mock-up, no <code>localhost</code> and no published address, and every drawn control has its script loaded.</span> <span class="suave"><span class="es">Lo verifica la CI</span><span class="en" lang="en">Checked by CI</span> · <code>scripts/verificar-export.mjs</code></span>
+        <span class="origen origen-nuevo"><span class="es">Nuevo · S2</span><span class="en" lang="en">New · S2</span></span></label></li>
+      <li data-origen="nuevo"><input type="checkbox" id="m6"><label for="m6"><span class="es">El paquete para hoja-de-vida: 54 páginas rastreadas bajo <code>/piezas/planlang</code>, todas del mismo origen y con la consola limpia; manifiesto con la huella de cada archivo.</span><span class="en" lang="en">The hoja-de-vida package: 54 pages crawled under <code>/piezas/planlang</code>, all from the same origin and with a clean console; a manifest with each file's fingerprint.</span> <span class="suave"><span class="es">Lo verifica la CI</span><span class="en" lang="en">Checked by CI</span> · <code>tests/e2e-paquete/</code></span>
+        <span class="origen origen-nuevo"><span class="es">Nuevo · S2</span><span class="en" lang="en">New · S2</span></span></label></li>
+      <li data-origen="nuevo"><input type="checkbox" id="m7"><label for="m7"><span class="es">La ficha del agente A cumple el contrato v1.3.1 de hoja-de-vida y el export el 1.0.0; las fichas están al día con el plan y el informe.</span><span class="en" lang="en">Agent A's record meets hoja-de-vida's contract v1.3.1 and the export meets 1.0.0; the records are up to date with the plan and the report.</span> <span class="suave"><span class="es">Lo verifica la CI</span><span class="en" lang="en">Checked by CI</span> · <code>pnpm fichas --verificar</code></span>
+        <span class="origen origen-nuevo"><span class="es">Nuevo · S2</span><span class="en" lang="en">New · S2</span></span></label></li>
+      <li data-origen="nuevo"><input type="checkbox" id="m8"><label for="m8"><span class="es">Lighthouse ≥ 90 en las cuatro categorías y LCP ≤ 2,5 s en las pantallas medidas, salvo el playground: ≤ 2,8 s (ADR-011).</span><span class="en" lang="en">Lighthouse ≥ 90 in the four categories and LCP ≤ 2.5 s on the measured screens, except the playground: ≤ 2.8 s (ADR-011).</span> <span class="suave"><span class="es">Lo verifica la CI</span><span class="en" lang="en">Checked by CI</span> · <code>lighthouse-urls.json</code> · <code>perf-budget.json</code></span>
+        <span class="origen origen-nuevo"><span class="es">Nuevo · S2</span><span class="en" lang="en">New · S2</span></span></label></li>
+      <li data-origen="nuevo"><input type="checkbox" id="m9"><label for="m9"><span class="es">Tokens y fuentes iguales a los de la maqueta, tintas vetadas como texto y la misma forma de la página en los dos perfiles.</span><span class="en" lang="en">Tokens and fonts identical to the mock-up's, inks banned as text and the same page shape in both profiles.</span> <span class="suave"><span class="es">Lo verifica la CI</span><span class="en" lang="en">Checked by CI</span> · <code>tests/unit/</code></span>
+        <span class="origen origen-nuevo"><span class="es">Nuevo · S2</span><span class="en" lang="en">New · S2</span></span></label></li>
     </ul>
   </section>
 
   <footer>
-    <p class="chica suave">Guía <strong>viva y acumulativa</strong>: contiene TODAS las pruebas vigentes de la app con su
-      origen visible; una prueba solo se elimina cuando su feature dejó de existir (queda declarado abajo). Archivo
-      autocontenido: se abre sin internet, se versiona con el repo y se puede compartir tal cual.</p>
+    <p class="chica suave"><span class="es">Guía <strong>viva y acumulativa</strong>: contiene TODAS las pruebas vigentes de la app con su origen visible; una prueba solo se elimina cuando su feature dejó de existir (queda declarado abajo). Archivo autocontenido: se abre sin internet, se versiona con el repo y se puede compartir tal cual.</span><span class="en" lang="en">A <strong>living, cumulative</strong> guide: it holds EVERY current test of the app with its origin in sight; a test is only removed when its feature stops existing (declared below). A self-contained file: it opens without internet, is versioned with the repository and can be shared as it is.</span></p>
     <details class="chica">
-      <summary>Historial de la guía</summary>
+      <summary><span class="es">Historial de la guía</span><span class="en" lang="en">Guide history</span></summary>
       <ul>
-        <li><strong>S1 · 2026-09-27:</strong> nace. 3 paradas del gate corto (lote real, informe, LangSmith), 2 de confianza
-          y 16 automatizadas de referencia. Ninguna eliminada. Las 3 paradas se difirieron al MVP (decisión del usuario).</li>
+        <li><span class="es"><strong>S1 · 2026-09-27:</strong> nace. 3 paradas del gate corto (lote real, informe, LangSmith), 2 de confianza y 16 automatizadas de referencia. Ninguna eliminada. Las 3 paradas se difirieron al MVP (decisión del usuario).</span><span class="en" lang="en"><strong>S1 · 2026-09-27:</strong> born. 3 short-gate stops (real batch, report, LangSmith), 2 confidence checks and 16 automated references. None removed. The 3 stops were deferred to the MVP (the user's decision).</span></li>
+        <li><span class="es"><strong>S2 · 2026-10-02:</strong> llega la vitrina y la guía pasa a español e inglés. 25 pruebas nuevas, 6 mejoradas (b1, e2, e4, f1, g1, h2) y ninguna eliminada; 46 en total. La lectura del informe (b1) pasa al que publica la vitrina, con el plan 1.3.0. El gate corto pasa a 4 paradas: entran la vitrina en tu teléfono y el playground, y la lectura del informe en la terminal queda en el ⭐ (la pantalla Brecha muestra ese mismo informe). El ⭐ del S2 se difiere al acumulado del ciclo (S1: 5 · S2: 10) con sus contrapesos: la pasada de capturas y el e2e de movimiento reducido.</span><span class="en" lang="en"><strong>S2 · 2026-10-02:</strong> the showcase arrives and the guide becomes Spanish and English. 25 new tests, 6 improved (b1, e2, e4, f1, g1, h2) and none removed; 46 in all. Reading the report (b1) moves to the one the showcase publishes, with plan 1.3.0. The short gate becomes 4 stops: the showcase on your phone and the playground come in, and reading the report in the terminal stays in the ⭐ (the Gap screen shows that same report). S2's ⭐ is deferred to the cycle's accumulated gate (S1: 5 · S2: 10) with its counterweights: the capture pass and the reduced-motion e2e.</span></li>
       </ul>
     </details>
   </footer>
@@ -356,13 +445,36 @@
 <script>
   (function () {
     // NS VERSIONADO POR SPRINT (regla dura): al publicar la guía de un sprint nuevo se cambia
-    // s1 — así una regresión sin correr no aparece marcada por el sprint anterior.
-    var NS = "guia-planlang:s1:";
+    // s2 — así una regresión sin correr no aparece marcada por el sprint anterior.
+    var NS = "guia-planlang:s2:";
+    // El idioma elegido es una comodidad de este navegador: no cambia con el sprint.
+    var CLAVE_IDIOMA = "guia-planlang:idioma";
+    var raiz = document.documentElement;
     var casillas = Array.prototype.slice.call(document.querySelectorAll('input[type="checkbox"]'));
     var barra = document.getElementById("barra-avance");
     var contador = document.getElementById("contador");
     var botones = Array.prototype.slice.call(document.querySelectorAll(".filtros button"));
     var secciones = Array.prototype.slice.call(document.querySelectorAll("section.bloque"));
+    var botonesIdioma = Array.prototype.slice.call(document.querySelectorAll("[data-idioma-elegir]"));
+
+    function ponerIdioma(i) {
+      raiz.setAttribute("data-idioma", i);
+      raiz.setAttribute("lang", i === "en" ? "en" : "es-CO");
+      botonesIdioma.forEach(function (b) {
+        b.setAttribute("aria-pressed", String(b.getAttribute("data-idioma-elegir") === i));
+      });
+      try { localStorage.setItem(CLAVE_IDIOMA, i); } catch (e) {}
+    }
+    var inicial = "es";
+    try {
+      var guardado = localStorage.getItem(CLAVE_IDIOMA);
+      if (guardado === "es" || guardado === "en") inicial = guardado;
+      else if ((navigator.language || "").toLowerCase().indexOf("en") === 0) inicial = "en";
+    } catch (e) {}
+    ponerIdioma(inicial);
+    botonesIdioma.forEach(function (b) {
+      b.addEventListener("click", function () { ponerIdioma(b.getAttribute("data-idioma-elegir")); });
+    });
 
     function visible(li, filtro) {
       if (filtro === "todo") return true;
@@ -396,7 +508,7 @@
     botones.forEach(function (b) {
       var f = b.getAttribute("data-filtro"), n = 0;
       document.querySelectorAll("ul.pasos li").forEach(function (li) { if (visible(li, f)) n++; });
-      b.textContent = b.textContent + " (" + n + ")";
+      b.querySelector(".cuenta").textContent = "(" + n + ")";
       b.addEventListener("click", function () { aplicarFiltro(f); });
     });
     casillas.forEach(function (c) {

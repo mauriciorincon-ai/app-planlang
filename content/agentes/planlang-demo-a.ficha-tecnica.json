@@ -1,0 +1,369 @@
+{
+  "schema_version": "1.3.1",
+  "actualizado": "2026-09-28",
+  "pieza": {
+    "slug": "planlang-demo-a",
+    "nombre": "Agente A · autorizaciones médicas",
+    "frente": "agentes",
+    "estado": "inicial",
+    "ciclo": "H1",
+    "version": "1.3.0",
+    "sellado_en": null,
+    "sprints_cerrados": 2
+  },
+  "promesa": {
+    "tagline": "Aprueba, niega con causal o escala; nunca niega sin una persona.",
+    "intro": "El agente lee la solicitud, pide lo que falta, aplica las reglas del plan de beneficios y aprueba solo lo que el plan permite; lo demás lo pasa a un auditor con la evidencia y la contraevidencia, y responde al afiliado con un aviso de IA.",
+    "para_quien": "Para una aseguradora —sintética— que recibe solicitudes de autorización con el texto libre del médico y hoy las revisa a mano, una por una, sin saber cuáles podían decidirse solas y cuáles necesitaban a un auditor."
+  },
+  "titular": "Un agente de autorizaciones médicas construido según un plan verificable: cada camino que toma está escrito en el plan, y una persona revisa toda negación con el caso completo delante.",
+  "stack": [
+    {
+      "nombre": "LangGraph 1.2",
+      "papel": "el grafo del agente: estado tipado, aristas condicionales y la pausa humana con interrupt"
+    },
+    {
+      "nombre": "LangChain 1.4",
+      "papel": "el adaptador del modelo y la salida estructurada por esquema"
+    },
+    {
+      "nombre": "Python 3.12",
+      "papel": "los nodos, la guardia y el exportador de trazas"
+    },
+    {
+      "nombre": "Claude Code · sonnet",
+      "papel": "extrae y redacta; el binario oficial, por la suscripción del autor, sin clave de API"
+    },
+    {
+      "nombre": "Reglas deterministas",
+      "papel": "cobertura, guardia de salida y documento adverso, sin modelo"
+    },
+    {
+      "nombre": "planlang-trace/v1",
+      "papel": "el formato propio de las trazas, con huella; lo único que lee el verificador"
+    }
+  ],
+  "cifras": [
+    {
+      "clave": "exactitud_extraccion",
+      "valor": 100,
+      "unidad": "%",
+      "etiqueta": "exactitud de extracción, 3 de 3 corridas",
+      "fuente": "medido",
+      "detalle": "Criterio C5 del plan, medido por el verificador como pass^3: los campos extraídos son los de la verdad conocida en los 15 casos que la tienen, en las 3 corridas seguidas."
+    },
+    {
+      "clave": "latencia_mediana",
+      "valor": 11.8,
+      "unidad": "segundos",
+      "etiqueta": "mediana por caso, de punta a punta",
+      "fuente": "medido",
+      "detalle": "Criterio C7 del plan sobre 20 casos: la mediana de la latencia total registrada en cada traza."
+    },
+    {
+      "clave": "casos_con_persona",
+      "valor": 8,
+      "etiqueta": "de 20 casos pasaron por una persona",
+      "fuente": "medido",
+      "detalle": "Pausas humanas registradas en las trazas: el auditor vio el caso completo antes de decidir."
+    },
+    {
+      "clave": "negaciones_sin_persona",
+      "valor": 0,
+      "etiqueta": "negaciones sin una persona",
+      "fuente": "medido",
+      "detalle": "Criterio C1 del plan sobre 20 casos: toda negación pasó por la pausa humana."
+    },
+    {
+      "clave": "costo_por_caso",
+      "valor": 0.034,
+      "unidad": "US$",
+      "etiqueta": "costo nominal por caso",
+      "fuente": "calculada",
+      "detalle": "US$ 0,6704 de la corrida entre 20 casos: el costo nominal que el CLI declara por llamada, sumado en las trazas. Por la suscripción no se pagó aparte."
+    }
+  ],
+  "bloques": [
+    {
+      "orden": 1,
+      "nombre": "Enrutador",
+      "linea": "Separa urgencias y exentos, que se autorizan sin revisar cobertura.",
+      "cuenta": 0
+    },
+    {
+      "orden": 2,
+      "nombre": "Extractor",
+      "linea": "Convierte el texto del médico en campos, con su confianza.",
+      "cuenta": 0
+    },
+    {
+      "orden": 3,
+      "nombre": "Aclaración",
+      "linea": "Pide lo que falta, hasta el máximo que fija el plan.",
+      "cuenta": 0
+    },
+    {
+      "orden": 4,
+      "nombre": "Verificador de cobertura",
+      "linea": "Aplica las reglas del plan de beneficios, sin modelo.",
+      "cuenta": 0
+    },
+    {
+      "orden": 5,
+      "nombre": "Decisión",
+      "linea": "Las reglas escritas en el plan deciden si el caso escala.",
+      "cuenta": 0
+    },
+    {
+      "orden": 6,
+      "nombre": "Pausa humana",
+      "linea": "Un auditor ve el caso completo antes de negar.",
+      "cuenta": 0
+    },
+    {
+      "orden": 7,
+      "nombre": "Redactor",
+      "linea": "Escribe la respuesta y el documento de decisión adversa.",
+      "cuenta": 0
+    },
+    {
+      "orden": 8,
+      "nombre": "Guardia de salida",
+      "linea": "Reglas fijas: ningún dato sensible, ninguna orden inyectada.",
+      "cuenta": 0
+    }
+  ],
+  "proceso": {
+    "titulo": "Una solicitud de autorización",
+    "carriles": [
+      {
+        "id": "medico",
+        "nombre": "Médico"
+      },
+      {
+        "id": "agente",
+        "nombre": "El agente"
+      },
+      {
+        "id": "auditor",
+        "nombre": "Auditor"
+      },
+      {
+        "id": "afiliado",
+        "nombre": "Afiliado"
+      }
+    ],
+    "pasos": [
+      {
+        "id": "inicio",
+        "tipo": "inicio",
+        "carril": "medico",
+        "texto": "Una solicitud"
+      },
+      {
+        "id": "envia",
+        "tipo": "tarea",
+        "carril": "medico",
+        "texto": "Envía la solicitud"
+      },
+      {
+        "id": "clasifica",
+        "tipo": "tarea",
+        "carril": "agente",
+        "texto": "Clasifica la atención"
+      },
+      {
+        "id": "urgencia",
+        "tipo": "decision",
+        "carril": "agente",
+        "texto": "¿Urgente o exento?"
+      },
+      {
+        "id": "extrae",
+        "tipo": "tarea",
+        "carril": "agente",
+        "texto": "Extrae los campos"
+      },
+      {
+        "id": "falta",
+        "tipo": "decision",
+        "carril": "agente",
+        "texto": "¿Falta algo?"
+      },
+      {
+        "id": "pregunta",
+        "tipo": "tarea",
+        "carril": "agente",
+        "texto": "Pide la aclaración"
+      },
+      {
+        "id": "responde",
+        "tipo": "tarea",
+        "carril": "medico",
+        "texto": "Responde la aclaración"
+      },
+      {
+        "id": "cobertura",
+        "tipo": "tarea",
+        "carril": "agente",
+        "texto": "Aplica las reglas de cobertura"
+      },
+      {
+        "id": "escala",
+        "tipo": "decision",
+        "carril": "agente",
+        "texto": "¿Escala?"
+      },
+      {
+        "id": "revisa",
+        "tipo": "tarea",
+        "carril": "auditor",
+        "texto": "Revisa el caso completo y decide"
+      },
+      {
+        "id": "redacta",
+        "tipo": "tarea",
+        "carril": "agente",
+        "texto": "Redacta con aviso de IA"
+      },
+      {
+        "id": "guardia",
+        "tipo": "tarea",
+        "carril": "agente",
+        "texto": "La guardia filtra la salida"
+      },
+      {
+        "id": "recibe",
+        "tipo": "tarea",
+        "carril": "afiliado",
+        "texto": "Recibe la respuesta"
+      },
+      {
+        "id": "fin",
+        "tipo": "fin",
+        "carril": "afiliado",
+        "texto": ""
+      }
+    ],
+    "flujos": [
+      {
+        "de": "inicio",
+        "a": "envia"
+      },
+      {
+        "de": "envia",
+        "a": "clasifica"
+      },
+      {
+        "de": "clasifica",
+        "a": "urgencia"
+      },
+      {
+        "de": "urgencia",
+        "a": "redacta",
+        "etiqueta": "sí · se autoriza"
+      },
+      {
+        "de": "urgencia",
+        "a": "extrae",
+        "etiqueta": "no"
+      },
+      {
+        "de": "extrae",
+        "a": "falta"
+      },
+      {
+        "de": "falta",
+        "a": "pregunta",
+        "etiqueta": "sí"
+      },
+      {
+        "de": "falta",
+        "a": "cobertura",
+        "etiqueta": "no"
+      },
+      {
+        "de": "pregunta",
+        "a": "responde"
+      },
+      {
+        "de": "responde",
+        "a": "extrae"
+      },
+      {
+        "de": "cobertura",
+        "a": "escala"
+      },
+      {
+        "de": "escala",
+        "a": "revisa",
+        "etiqueta": "sí"
+      },
+      {
+        "de": "escala",
+        "a": "redacta",
+        "etiqueta": "no"
+      },
+      {
+        "de": "revisa",
+        "a": "redacta"
+      },
+      {
+        "de": "redacta",
+        "a": "guardia"
+      },
+      {
+        "de": "guardia",
+        "a": "recibe"
+      },
+      {
+        "de": "recibe",
+        "a": "fin"
+      }
+    ],
+    "anotaciones": [
+      {
+        "paso": "revisa",
+        "texto": "Ninguna negación sale sin el auditor; en esta demo, el auditor se simuló en lote."
+      },
+      {
+        "paso": "pregunta",
+        "texto": "Si tras el máximo de aclaraciones sigue faltando algo, el caso va al auditor."
+      },
+      {
+        "paso": "guardia",
+        "texto": "El texto del caso nunca decide qué acción se ejecuta."
+      }
+    ]
+  },
+  "procedencia_proceso": "app",
+  "limites": [
+    "Decide sobre casos sintéticos: es una demostración, no un servicio.",
+    "Su auditor humano se simuló en lote siguiendo la verdad conocida.",
+    "Corre en lotes de 20 casos, fuera de CI y con pausas entre lotes."
+  ],
+  "nunca": [
+    "Niega sin que una persona lo revise.",
+    "Obedece instrucciones escondidas en el texto de un caso.",
+    "Deja salir un dato del afiliado en la respuesta.",
+    "Pide autorización para una urgencia."
+  ],
+  "hitos": [
+    {
+      "valor": "v1.3",
+      "etiqueta": "versión del plan"
+    },
+    {
+      "valor": "2026-09-27",
+      "etiqueta": "primera corrida real"
+    },
+    {
+      "valor": "8 de 8",
+      "etiqueta": "piezas del contrato"
+    },
+    {
+      "valor": "233",
+      "etiqueta": "decisiones verificadas"
+    }
+  ]
+}

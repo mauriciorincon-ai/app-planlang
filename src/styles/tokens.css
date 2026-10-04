@@ -1,0 +1,89 @@
+/* GENERADO por scripts/paleta/generar-tokens.mjs — no editar a mano. `pnpm tokens` lo regenera. */
+:root,
+[data-theme="oscuro"] {
+  --fondo: #0b0c0f;
+  --sup-1: #111315;
+  --sup-2: #191b1d;
+  --linea: #2c2e31;
+  --tinta-3: #75777b;
+  --tinta-2: #b8bbbe;
+  --tinta-1: #eceff3;
+  --tipo-1: #a87eeb;
+  --tipo-2: #17d0d8;
+  --tipo-3: #8ea1b4;
+  --tipo-4: #e4762c;
+  --tipo-5: #badbfe;
+  --cumple: #57c173;
+  --alerta: #eac33f;
+  --no-cumple: #ffa09c;
+  --tipo-1-tinte: #2b2938;
+  --tipo-2-tinte: #213235;
+  --tipo-3-tinte: #282d31;
+  --tipo-4-tinte: #342823;
+  --tipo-5-tinte: #2e3339;
+  --cumple-tinte: #233129;
+  --alerta-tinte: #333126;
+  --no-cumple-tinte: #372d2e;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    --fondo: #fbfcfe;
+    --sup-1: #ffffff;
+    --sup-2: #f4f6f8;
+    --linea: #dee0e2;
+    --tinta-3: #7f8082;
+    --tinta-2: #515254;
+    --tinta-1: #17181a;
+    --tipo-1: #794db6;
+    --tipo-2: #02787d;
+    --tipo-3: #2f3f4f;
+    --tipo-4: #a04a02;
+    --tipo-5: #015493;
+    --cumple: #037434;
+    --alerta: #907402;
+    --no-cumple: #cb454a;
+    --tipo-1-tinte: #e0dcef;
+    --tipo-2-tinte: #d5e3e5;
+    --tipo-3-tinte: #d4d8dd;
+    --tipo-4-tinte: #e9dcd5;
+    --tipo-5-tinte: #d1ddea;
+    --cumple-tinte: #d4e2d9;
+    --alerta-tinte: #e4e2d7;
+    --no-cumple-tinte: #f2dcdd;
+    color-scheme: light;
+  }
+}
+[data-theme="claro"] {
+  --fondo: #fbfcfe;
+  --sup-1: #ffffff;
+  --sup-2: #f4f6f8;
+  --linea: #dee0e2;
+  --tinta-3: #7f8082;
+  --tinta-2: #515254;
+  --tinta-1: #17181a;
+  --tipo-1: #794db6;
+  --tipo-2: #02787d;
+  --tipo-3: #2f3f4f;
+  --tipo-4: #a04a02;
+  --tipo-5: #015493;
+  --cumple: #037434;
+  --alerta: #907402;
+  --no-cumple: #cb454a;
+  --tipo-1-tinte: #e0dcef;
+  --tipo-2-tinte: #d5e3e5;
+  --tipo-3-tinte: #d4d8dd;
+  --tipo-4-tinte: #e9dcd5;
+  --tipo-5-tinte: #d1ddea;
+  --cumple-tinte: #d4e2d9;
+  --alerta-tinte: #e4e2d7;
+  --no-cumple-tinte: #f2dcdd;
+  color-scheme: light;
+}
+:root {
+  --modelo: var(--tipo-1);
+  --herramienta: var(--tipo-2);
+  --regla: var(--tipo-3);
+  --pausa-humana: var(--tipo-4);
+  --enrutador: var(--tipo-5);
+}

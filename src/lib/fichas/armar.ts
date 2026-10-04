@@ -1,0 +1,490 @@
+/**
+ * Arma lo que planlang entrega a hoja-de-vida, desde los datos del demo y los hechos del repositorio:
+ * - la ficha del agente A (contrato ficha técnica v1.3.1, frente Agentes): el texto redactado de `src/textos/fichas.ts`
+ *   y las cifras del informe, la corrida y el plan;
+ * - el `brochure-export.json` (contrato 1.0.0): los hechos de la app, de los que hoja-de-vida arma su ficha;
+ * - el complemento que planlang propone para la ficha de la app (titular, cifras destacadas, límites, nunca);
+ * - y la ficha de la app tal como la arma hoja-de-vida en su build: réplica de su `armarFichaTecnica`
+ *   (export + complemento; huella de ese código en `docs/contratos/hoja-de-vida/CONTRATO.lock`).
+ * Un idioma por ficha, como pide el contrato; se entrega el español y el inglés queda para la vitrina.
+ */
+import type { Idioma, TextoBilingue } from "@core/formatos/bilingue";
+import type { DatosDemo } from "@/lib/datos/vitrina";
+import type { HechosDelRepo } from "@/lib/datos/repo";
+import { numeroTal, versionCorta } from "@/lib/vista/formato";
+import { AGENTE, APP, METRICAS_APP as M } from "@/textos/fichas";
+import { VERSION_EXPORT, VERSION_FICHA } from "./contrato";
+import type { BrochureExport, CifraFicha, FichaTecnica } from "./tipos";
+
+const X = (t: TextoBilingue, i: Idioma) => t[i];
+
+/**
+ * «Actualizado»: la fecha más reciente de lo que la ficha cuenta (la corrida, la aprobación del plan y, en la de la
+ * app, los ADR y los summaries), no solo la de la corrida (AU-S2-B41). Fechas ISO: se comparan como texto.
+ */
+function masReciente(...fechas: (string | null | undefined)[]): string {
+  return fechas
+    .filter((f): f is string => typeof f === "string" && f !== "")
+    .sort()
+    .at(-1)!;
+}
+
+/** Redondeo para mostrar una cifra en la ficha (la fuente exacta queda en `detalle`). */
+const red = (x: number, d: number) => Math.round(x * 10 ** d) / 10 ** d;
+
+function criterio(d: DatosDemo, id: string) {
+  const c = d.informe.criterios.find((x) => x.id === id);
+  if (!c) throw new Error(`fichas: el informe no trae el criterio ${id}.`);
+  return c;
+}
+
+function costoDeLaCorrida(d: DatosDemo): number {
+  const s = d.informe.supuestos.find((x) => x.comparacion);
+  const c = s?.comparacion?.presupuesto.multiagente.costo_nominal_usd;
+  if (typeof c !== "number")
+    throw new Error(
+      "fichas: el informe no trae el costo nominal de la corrida.",
+    );
+  return c;
+}
+
+/** Los nodos del contrato del grafo, en el orden del plan. */
+function nodosDelPlan(d: DatosDemo): string[] {
+  return d.plan.contrato_de_grafo.nodos_esperados.map((n) => n.id);
+}
+
+// ------------------------------------------------------------------------------------------- agente A
+
+export function fichaAgente(
+  d: DatosDemo,
+  repo: HechosDelRepo,
+  i: Idioma,
+): FichaTecnica {
+  const inf = d.informe;
+  const rep = inf.ficha_reproducibilidad;
+  const n = rep.corrida.casos_ejecutados;
+  const c1 = criterio(d, "C1");
+  const c5 = criterio(d, "C5");
+  const c7 = criterio(d, "C7");
+  if (
+    typeof c5.valor_medido !== "number" ||
+    typeof c7.valor_medido !== "number"
+  )
+    throw new Error("fichas: C5 o C7 sin valor medido.");
+  const costo = costoDeLaCorrida(d);
+  const C = AGENTE.cifras;
+  const cifras: CifraFicha[] = [
+    {
+      clave: "exactitud_extraccion",
+      valor: red(c5.valor_medido * 100, 1),
+      unidad: "%",
+      etiqueta: X(C.exactitud.etiqueta, i),
+      fuente: "medido",
+      detalle: X(
+        C.exactitud.detalle({ n: c5.n_poblacion, k: c5.k?.observado ?? 1 }),
+        i,
+      ),
+    },
+    {
+      clave: "latencia_mediana",
+      valor: red(c7.valor_medido, 1),
+      unidad: X(C.latencia.unidad, i),
+      etiqueta: X(C.latencia.etiqueta, i),
+      fuente: "medido",
+      detalle: X(C.latencia.detalle({ n: c7.n_poblacion }), i),
+    },
+    {
+      clave: "casos_con_persona",
+      valor: inf.contrato_de_grafo.pausas.casos_con_pausa,
+      etiqueta: X(C.personas.etiqueta(n), i),
+      fuente: "medido",
+      detalle: X(C.personas.detalle, i),
+    },
+    {
+      clave: "negaciones_sin_persona",
+      valor: c1.casos_que_incumplen.length,
+      etiqueta: X(C.sinPersona.etiqueta, i),
+      fuente: "medido",
+      detalle: X(C.sinPersona.detalle(c1.n_poblacion), i),
+    },
+    {
+      clave: "costo_por_caso",
+      valor: red(costo / n, 3),
+      unidad: "US$",
+      etiqueta: X(C.costo.etiqueta, i),
+      fuente: "calculada",
+      detalle: X(
+        C.costo.detalle({
+          total: numeroTal(costo, i),
+          n,
+        }),
+        i,
+      ),
+    },
+  ];
+  const nodos = nodosDelPlan(d);
+  // `cuenta` en 0: hoja-de-vida la pinta como «N funcionalidades» y un nodo del grafo no las tiene; con 0 la calla.
+  const bloques = nodos.map((id, k) => {
+    const b = AGENTE.bloques[id];
+    if (!b)
+      throw new Error(
+        `fichas: el nodo «${id}» del contrato no tiene su bloque en la ficha del agente (src/textos/fichas.ts).`,
+      );
+    return {
+      orden: k + 1,
+      nombre: X(b.nombre, i),
+      linea: X(b.linea, i),
+      cuenta: 0,
+    };
+  });
+  const P = AGENTE.proceso;
+  const ct = inf.contrato_de_grafo;
+  const decisiones = ct.rf_09_2.reduce((s, r) => s + r.visitas, 0);
+  const versionPlan = versionCorta(inf.plan_en_breve.version);
+  const entorno = d.entorno.paquetes;
+  const mm = (v: string) => v.split(".").slice(0, 2).join(".");
+  return {
+    schema_version: VERSION_FICHA,
+    actualizado: masReciente(rep.corrida.fecha, d.plan.aprobado_el),
+    pieza: {
+      slug: AGENTE.slug,
+      nombre: X(AGENTE.nombre, i),
+      frente: "agentes",
+      estado: "inicial",
+      ciclo: "H1",
+      // La versión del plan que gobierna al agente, en semver: hoja-de-vida la pinta como «v{version}».
+      version: inf.plan_en_breve.version,
+      sellado_en: null,
+      sprints_cerrados: repo.sprintsCerrados,
+    },
+    promesa: {
+      tagline: X(AGENTE.tagline, i),
+      intro: X(AGENTE.intro, i),
+      para_quien: X(AGENTE.para_quien, i),
+    },
+    titular: X(AGENTE.titular, i),
+    stack: [
+      {
+        nombre: `LangGraph ${mm(entorno.langgraph)}`,
+        papel: X(AGENTE.stack.langgraph, i),
+      },
+      {
+        nombre: `LangChain ${mm(entorno.langchain)}`,
+        papel: X(AGENTE.stack.langchain, i),
+      },
+      {
+        nombre: `Python ${mm(d.entorno.python)}`,
+        papel: X(AGENTE.stack.python, i),
+      },
+      {
+        nombre: X(AGENTE.stackNombre.modelo, i),
+        papel: X(AGENTE.stack.modelo, i),
+      },
+      {
+        nombre: X(AGENTE.stackNombre.reglas, i),
+        papel: X(AGENTE.stack.reglas, i),
+      },
+      { nombre: "planlang-trace/v1", papel: X(AGENTE.stack.trazas, i) },
+    ],
+    cifras,
+    bloques,
+    proceso: {
+      titulo: X(P.titulo, i),
+      carriles: Object.entries(P.carriles).map(([id, nombre]) => ({
+        id,
+        nombre: X(nombre, i),
+      })),
+      pasos: P.pasos.map((p) => ({
+        id: p.id,
+        tipo: p.tipo,
+        carril: p.carril,
+        texto: p.texto ? X(p.texto, i) : "",
+      })),
+      flujos: P.flujos.map((f) => ({
+        de: f.de,
+        a: f.a,
+        ...(f.etiqueta ? { etiqueta: X(f.etiqueta, i) } : {}),
+      })),
+      anotaciones: P.anotaciones.map((a) => ({
+        paso: a.paso,
+        texto: X(a.texto, i),
+      })),
+    },
+    procedencia_proceso: "app",
+    limites: AGENTE.limites.map((t) => X(t, i)),
+    nunca: AGENTE.nunca.map((t) => X(t, i)),
+    hitos: [
+      { valor: versionPlan, etiqueta: X(AGENTE.hitos.plan, i) },
+      { valor: rep.corrida.fecha, etiqueta: X(AGENTE.hitos.corrida, i) },
+      {
+        valor: X(
+          AGENTE.hitos.piezasValor({
+            a: ct.nodos.filter((x) => x.en_grafo).length,
+            b: ct.nodos.length,
+          }),
+          i,
+        ),
+        etiqueta: X(AGENTE.hitos.piezas, i),
+      },
+      { valor: String(decisiones), etiqueta: X(AGENTE.hitos.decisiones, i) },
+    ],
+  };
+}
+
+// ------------------------------------------------------------------------------------------- la app
+
+/** Los hechos de la app (contrato brochure-export 1.0.0). Lo cuenta todo desde los datos: nada se escribe a mano. */
+export function brochureExport(
+  d: DatosDemo,
+  repo: HechosDelRepo,
+  i: Idioma,
+): BrochureExport {
+  const inf = d.informe;
+  const rep = inf.ficha_reproducibilidad;
+  const ct = inf.contrato_de_grafo;
+  const decisiones = ct.rf_09_2.reduce((s, r) => s + r.visitas, 0);
+  const diferencias = ct.rf_09_2.reduce((s, r) => s + r.discrepancias, 0);
+  const cumplen = inf.criterios.filter((c) => c.estado === "cumple").length;
+  const n = rep.corrida.casos_ejecutados;
+  const corridas = 1 + rep.repeticiones.length;
+  const grupos = APP.grupos.map((g, k) => ({
+    orden: k + 1,
+    estrella: g.estrella,
+    nombre: X(g.nombre, i),
+    linea: X(g.linea, i),
+    features: g.features.map((f) => ({
+      id: f.id,
+      nombre: X(f.nombre, i),
+      que_hace: X(f.que_hace, i),
+      seccion_manual: X(f.seccion_manual, i),
+    })),
+  }));
+  const total = grupos.reduce((s, g) => s + g.features.length, 0);
+  const costo = costoDeLaCorrida(d);
+  return {
+    _schema: repo.bloqueSchema,
+    schema_version: VERSION_EXPORT,
+    actualizado: masReciente(
+      rep.corrida.fecha,
+      d.plan.aprobado_el,
+      repo.ultimaFecha,
+    ),
+    app: {
+      slug: APP.slug,
+      nombre: APP.nombre,
+      ciclo: "H1",
+      estado: "inicial",
+      sellado_en: null,
+      sprints_cerrados: repo.sprintsCerrados,
+      version_repo: repo.version,
+    },
+    promesa: {
+      tagline: X(APP.tagline, i),
+      intro: X(APP.intro, i),
+      para_quien: X(APP.para_quien, i),
+      diferencial: X(APP.diferencial, i),
+    },
+    funcionalidades: {
+      total,
+      fuente_del_conteo: "docs/MANUAL-DE-USO.md",
+      descartadas: [],
+      grupos,
+    },
+    metricas: [
+      {
+        clave: "criterios_cumplidos",
+        etiqueta: X(M.criteriosCumplidos.etiqueta(inf.criterios.length), i),
+        valor: cumplen,
+        unidad: X(M.criteriosCumplidos.unidad, i),
+        fuente: "medido",
+        detalle: X(
+          M.criteriosCumplidos.detalle({
+            verificador: inf.version_verificador,
+            corrida: inf.corrida_id,
+            cumplen,
+            n: inf.criterios.length,
+          }),
+          i,
+        ),
+      },
+      {
+        clave: "decisiones_cruzadas",
+        etiqueta: X(M.decisionesCruzadas.etiqueta(diferencias), i),
+        valor: decisiones,
+        unidad: X(M.decisionesCruzadas.unidad, i),
+        fuente: "medido",
+        detalle: X(M.decisionesCruzadas.detalle(ct.rf_09_2.length), i),
+      },
+      {
+        clave: "casos_por_corrida",
+        etiqueta: X(M.casosPorCorrida.etiqueta(corridas), i),
+        valor: n,
+        unidad: X(M.casosPorCorrida.unidad, i),
+        fuente: "medido",
+        detalle: X(
+          M.casosPorCorrida.detalle({
+            corrida: rep.corrida.id,
+            repeticiones: rep.repeticiones.length,
+          }),
+          i,
+        ),
+      },
+      {
+        clave: "llamadas_a_modelos_en_la_vitrina",
+        etiqueta: X(M.llamadasEnLaVitrina.etiqueta, i),
+        valor: 0,
+        unidad: X(M.llamadasEnLaVitrina.unidad, i),
+        fuente: "declarado",
+        detalle: X(M.llamadasEnLaVitrina.detalle, i),
+      },
+      {
+        clave: "costo_de_una_corrida",
+        etiqueta: X(M.costoDeUnaCorrida.etiqueta(n), i),
+        valor: costo,
+        unidad: "US$",
+        fuente: "calculada",
+        detalle: X(M.costoDeUnaCorrida.detalle, i),
+      },
+      {
+        clave: "funcionalidades",
+        etiqueta: X(M.funcionalidades.etiqueta, i),
+        valor: total,
+        unidad: X(M.funcionalidades.unidad, i),
+        fuente: "medido",
+        detalle: X(M.funcionalidades.detalle, i),
+      },
+      {
+        clave: "decisiones_registradas",
+        etiqueta: X(M.decisionesRegistradas.etiqueta, i),
+        valor: repo.adrs,
+        unidad: "ADR",
+        fuente: "medido",
+        detalle: X(M.decisionesRegistradas.detalle, i),
+      },
+    ],
+    stack: APP.stack.map((s) => ({
+      nombre: X(s.nombre, i),
+      papel: X(s.papel, i),
+    })),
+    privacidad: {
+      detalle: X(APP.privacidad.detalle, i),
+      datos_sinteticos: APP.privacidad.datos_sinteticos,
+      llamadas_a_modelos_en_la_vitrina:
+        APP.privacidad.llamadas_a_modelos_en_la_vitrina,
+      red_saliente_en_la_vitrina: APP.privacidad.red_saliente_en_la_vitrina,
+    },
+    enlaces: {
+      produccion: null,
+      razon: X(APP.enlaces.razon, i),
+      repositorio: null,
+      razon_repositorio: X(APP.enlaces.razon_repositorio, i),
+      brochure_archivo: X(APP.enlaces.brochure_archivo, i),
+      brochure_ruta_local: X(APP.enlaces.brochure_ruta_local, i),
+    },
+  };
+}
+
+export interface Complemento {
+  schema_version: string;
+  app: string;
+  /** Solo con un proceso: hoja-de-vida rechaza una procedencia sin proceso, y la ficha de la app no lo trae. */
+  procedencia?: "app" | "cv-viva" | "planeadora";
+  declarado_en: string;
+  titular: string;
+  cifras_destacadas: string[];
+  limites: string[];
+  nunca: string[];
+}
+
+/** Las cifras que planlang propone destacar (claves del export). */
+export const CIFRAS_DESTACADAS = [
+  "criterios_cumplidos",
+  "decisiones_cruzadas",
+  "casos_por_corrida",
+  "llamadas_a_modelos_en_la_vitrina",
+  "costo_de_una_corrida",
+];
+
+/** El complemento que planlang propone para su ficha (en hoja-de-vida vive en `data/fichas/<slug>.yaml`). */
+export function complementoPropuesto(d: DatosDemo, i: Idioma): Complemento {
+  return {
+    schema_version: "1.0.0",
+    app: APP.slug,
+    declarado_en: d.informe.ficha_reproducibilidad.corrida.fecha,
+    titular: X(APP.titular, i),
+    cifras_destacadas: CIFRAS_DESTACADAS,
+    limites: APP.limites.map((t) => X(t, i)),
+    nunca: APP.nunca.map((t) => X(t, i)),
+  };
+}
+
+/**
+ * La ficha de la app como la arma hoja-de-vida: réplica de su `armarFichaTecnica` (export + complemento → ficha),
+ * con su misma `schema_version` y los hitos como claves que su componente traduce. Una cifra destacada que no exista
+ * en el export detiene el build.
+ */
+export function armarFichaApp(
+  exp: BrochureExport,
+  comp: Complemento,
+): FichaTecnica {
+  if (comp.app !== exp.app.slug)
+    throw new Error(
+      `fichas: complemento de «${comp.app}» aplicado a «${exp.app.slug}».`,
+    );
+  const cifras = comp.cifras_destacadas.map((clave) => {
+    const m = exp.metricas.find((x) => x.clave === clave);
+    if (!m)
+      throw new Error(
+        `fichas: la cifra destacada «${clave}» no existe en el export (disponibles: ${exp.metricas.map((x) => x.clave).join(", ")}).`,
+      );
+    return {
+      clave: m.clave,
+      valor: m.valor,
+      unidad: m.unidad,
+      etiqueta: m.etiqueta,
+      fuente: m.fuente,
+      detalle: m.detalle,
+    };
+  });
+  const a = exp.app;
+  const dec = exp.metricas.find((m) => m.clave === "decisiones_registradas");
+  return {
+    schema_version: VERSION_FICHA,
+    actualizado: exp.actualizado,
+    pieza: {
+      slug: a.slug,
+      nombre: a.nombre,
+      frente: "apps",
+      estado: a.estado,
+      ciclo: a.ciclo,
+      version: a.version_repo,
+      sellado_en: a.sellado_en,
+      sprints_cerrados: a.sprints_cerrados,
+    },
+    promesa: {
+      tagline: exp.promesa.tagline,
+      intro: exp.promesa.intro,
+      para_quien: exp.promesa.para_quien,
+    },
+    titular: comp.titular,
+    stack: exp.stack.map((s) => ({ nombre: s.nombre, papel: s.papel })),
+    cifras,
+    bloques: exp.funcionalidades.grupos.map((g) => ({
+      orden: g.orden,
+      nombre: g.nombre,
+      linea: g.linea,
+      cuenta: g.features.length,
+    })),
+    limites: comp.limites,
+    nunca: comp.nunca,
+    hitos: [
+      { valor: a.ciclo, etiqueta: "ciclo" },
+      { valor: String(a.sprints_cerrados), etiqueta: "sprints" },
+      a.sellado_en
+        ? { valor: a.sellado_en, etiqueta: "sellada" }
+        : { valor: "—", etiqueta: "construccion" },
+      { valor: `v${a.version_repo}`, etiqueta: "version" },
+      ...(dec ? [{ valor: String(dec.valor), etiqueta: "decisiones" }] : []),
+    ],
+  };
+}

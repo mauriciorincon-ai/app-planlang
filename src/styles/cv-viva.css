@@ -1,0 +1,98 @@
+/*
+ * Piel de CV Viva (P7 Fichas; design-system § 5, «Marco de CV Viva»): las fichas de la app y del agente como las
+ * pinta hoja-de-vida. Es la única otra piel de la vitrina y vive solo dentro de `.cv-viva`: papel claro en los dos
+ * temas de planlang, Fraunces 500 en titulares y cifras, Inter en el texto. La paleta es la de hoja-de-vida (sus
+ * tokens de color), no la de planlang, y no trae su tinta 3: no alcanza 4,5:1 sobre el papel, así que ningún texto
+ * la usa.
+ *
+ * Fraunces (OFL, los mismos bytes que la maqueta; licencia en /licencias) se declara aquí y no con next/font: así su
+ * `@font-face` viaja en la hoja global sin pedir otra (una hoja más bloquea la primera pintura de todas las páginas),
+ * y el navegador solo la descarga donde hay texto `.cv-letra`, que solo existe en Fichas, bajo el pliegue. Como la
+ * mono (ADR-008), entra DESPUÉS de la carga (`html[data-mono]`, que pone el script previo): en la primera pintura
+ * competía con Inter. Hasta entonces, y sin JS, los titulares de la piel van en Georgia.
+ */
+@font-face {
+  font-family: "Fraunces CV";
+  src: url("../app/fuentes/fraunces-500.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+.cv-viva {
+  --cv-papel-0: #fbfaf7;
+  --cv-papel-1: #f5f3ed;
+  --cv-papel-2: #ece9e0;
+  --cv-papel-3: #ddd8cb;
+  --cv-tarjeta: #ffffff;
+  --cv-tinta-0: #121110;
+  --cv-tinta-1: #2a2927;
+  --cv-tinta-2: #5e5c55;
+  --cv-salvia: #cfe3cf;
+  --cv-salvia-tinta: #3c5a3c;
+  --cv-rosa-tinta: #7a3f3f;
+  --cv-cielo: #cedde9;
+  --cv-cielo-tinta: #2e4e6b;
+  --cv-lila: #ddd3e8;
+  --cv-lila-tinta: #4e3e6b;
+  --cv-durazno: #f2dec4;
+  --cv-durazno-tinta: #6b4820;
+  --cv-citron: #e6e3b8;
+  --cv-citron-tinta: #5e5a1e;
+  --cv-sombra: 0 1px 0 rgb(18 17 16 / 0.04), 0 1px 2px rgb(18 17 16 / 0.04);
+  color-scheme: light;
+  background: var(--cv-papel-0);
+  color: var(--cv-tinta-1);
+}
+
+.cv-viva .cv-letra {
+  font-family: Georgia, serif;
+  font-weight: 500;
+}
+html[data-mono] .cv-viva .cv-letra {
+  font-family: "Fraunces CV", Georgia, serif;
+}
+
+.cv-viva .cv-caja {
+  border: 1px solid var(--cv-papel-2);
+  background: var(--cv-tarjeta);
+  box-shadow: var(--cv-sombra);
+}
+
+/* Fuente de cada cifra y estado de la pieza: color + palabra, nunca el color solo (regla dura 13). */
+.cv-viva [data-fuente="medido"],
+.cv-viva [data-estado="sellado"] {
+  background: var(--cv-salvia);
+  color: var(--cv-salvia-tinta);
+}
+.cv-viva [data-fuente="calculada"] {
+  background: var(--cv-cielo);
+  color: var(--cv-cielo-tinta);
+}
+.cv-viva [data-fuente="declarado"] {
+  background: var(--cv-lila);
+  color: var(--cv-lila-tinta);
+}
+.cv-viva [data-fuente="estimacion"] {
+  background: var(--cv-durazno);
+  color: var(--cv-durazno-tinta);
+}
+.cv-viva [data-estado="inicial"] {
+  background: var(--cv-citron);
+  color: var(--cv-citron-tinta);
+}
+
+/* El paso de un carril: la forma dice el tipo (decisión con borde discontinuo; inicio y fin redondos). */
+.cv-viva [data-paso] {
+  border: 1px solid var(--cv-tinta-2);
+  border-radius: 6px;
+  background: var(--cv-tarjeta);
+  color: var(--cv-tinta-0);
+}
+.cv-viva [data-paso="decision"] {
+  border-style: dashed;
+}
+.cv-viva [data-paso="inicio"],
+.cv-viva [data-paso="fin"] {
+  border-radius: 999px;
+}

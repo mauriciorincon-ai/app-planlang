@@ -1,5 +1,7 @@
 # ADR-006 — Línea base de agente único: qué significa «a igual presupuesto»
 
+**Summary (EN):** "Same budget" for the single-agent baseline means a budget no larger than the multi-agent's, in model calls (retries included) and nominal cost; the verifier computes it and the report shows both columns. The S3 verdict (refuted on latency) is published as is; wording proposals go to the planning house.
+
 **Estado:** aceptado · **Fecha:** 2026-09-27 · **Sprint:** S1 «El contrato y la corrida»
 **Cítese por tema:** «ADR de la línea base».
 **Origen:** auditoría final del S1 (hallazgo M-10, `sprints/SPRINT_001-auditoria.md`).
@@ -46,3 +48,9 @@ presupuesto» sin dejarlo decidido en ningún lado.
 - El informe sigue calculando y mostrando el presupuesto de las dos variantes y los casos que difieren.
 - La regla por defecto con que el verificador decide S3 («no peor» en exactitud y latencia mediana,
   tolerancia cero) queda escrita en el motivo del informe (auditoría S1, M-6).
+
+## Adenda (2026-10-02, auditoría S2, AU-S2-B40)
+
+La propuesta A se aplicó en el plan v1.3 (S2, solo medición, con el gate del usuario en el plan del sprint): S3
+dice «a un presupuesto no mayor» y declara su tolerancia. La B no se hizo: pasó al S3 con M-18 (refactor del grafo
+con riesgo sobre RF-09.2; desviación 9 de la bitácora del S2).

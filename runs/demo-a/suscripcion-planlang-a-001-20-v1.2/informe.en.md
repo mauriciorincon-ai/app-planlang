@@ -4,7 +4,7 @@
 
 ## 1. Summary for the decision-maker
 
-**Verdict: ⚠ MET WITH ALERTS**
+**Verdict: ⚠ MEETS WITH WARNINGS**
 
 The plan was met with alerts. 20 synthetic cases were measured. Criteria: 9 met, 0 failed and 0 still open, out of 9. Risks that occurred: none. Human decisions were simulated.
 
@@ -109,21 +109,21 @@ No findings.
 
 Failures that appear in the traces and that no risk in the plan detected in that case.
 
-- **A-003** · node `extractor`, step 2: The model did not return the structured output on the first try (1 retry, with its cost); the plan did not foresee this failure mode.
-- **A-006** · repetition `suscripcion-planlang-a-001-20-v1.2-r2` · node `extractor`, step 2: The model did not return the structured output on the first try (2 retries, with their cost); the plan did not foresee this failure mode.
-- **A-017** · repetition `suscripcion-planlang-a-001-20-v1.2-r2` · node `extractor`, step 2: The model did not return the structured output on the first try (1 retry, with its cost); the plan did not foresee this failure mode.
-- **A-016** · repetition `suscripcion-planlang-a-001-20-v1.2-r3` · node `extractor`, step 2: The model did not return the structured output on the first try (1 retry, with its cost); the plan did not foresee this failure mode.
-- **A-017** · repetition `suscripcion-planlang-a-001-20-v1.2-r3` · node `extractor`, step 2: The model did not return the structured output on the first try (2 retries, with their cost); the plan did not foresee this failure mode.
+- **A-003** · structured-output retry · node `extractor`, step 2 · 1 retry: The model did not return the structured output on the first try (1 retry, with its cost); the plan did not foresee this failure mode.
+- **A-006** · structured-output retry · repetition `suscripcion-planlang-a-001-20-v1.2-r2` · node `extractor`, step 2 · 2 retries: The model did not return the structured output on the first try (2 retries, with their cost); the plan did not foresee this failure mode.
+- **A-017** · structured-output retry · repetition `suscripcion-planlang-a-001-20-v1.2-r2` · node `extractor`, step 2 · 1 retry: The model did not return the structured output on the first try (1 retry, with its cost); the plan did not foresee this failure mode.
+- **A-016** · structured-output retry · repetition `suscripcion-planlang-a-001-20-v1.2-r3` · node `extractor`, step 2 · 1 retry: The model did not return the structured output on the first try (1 retry, with its cost); the plan did not foresee this failure mode.
+- **A-017** · structured-output retry · repetition `suscripcion-planlang-a-001-20-v1.2-r3` · node `extractor`, step 2 · 2 retries: The model did not return the structured output on the first try (2 retries, with their cost); the plan did not foresee this failure mode.
 
 **Evaluators**
 
-| Evaluator | Type | Status | Cases | Failures | Risks it covers |
-| --- | --- | --- | --- | --- | --- |
-| exactitud_extraccion | rule | run | 15 | — | R5, R7 |
-| datos_sensibles_en_salida | rule | run | 20 | — | R2 |
-| pausas_cumplidas | rule | run | 20 | — | R1, R6 |
-| inyeccion_neutralizada | rule | run | 1 | — | R3 |
-| calidad_redaccion | model judge | did not run (optional in this cut) | 0 | — | — |
+| Evaluator | Type | Status | Cases | Failures | Not evaluable | Risks it covers |
+| --- | --- | --- | --- | --- | --- | --- |
+| exactitud_extraccion | rule | run | 15 | — | 0 | R5, R7 |
+| datos_sensibles_en_salida | rule | run | 20 | — | 0 | R2 |
+| pausas_cumplidas | rule | run | 20 | — | 0 | R1, R6 |
+| inyeccion_neutralizada | rule | run | 1 | — | 0 | R3 |
+| calidad_redaccion | model judge | did not run (optional in this cut) | 0 | — | 0 | — |
 
 ## 6. Assumptions
 
@@ -208,7 +208,7 @@ Cases where they differ: A-008, A-012, A-020. Baseline budget within the multi-a
 | --- | --- | --- |
 | Plan | plan-demo-a 1.2.0 (`plans/demo-a/v1.2.json`) | `9add6e5ad5515a03e9efb8c1c691e0c6b38d414622ae028dd5f7bb8b529592c2` |
 | Cases | planlang-a-001-20 · seed planlang-a-001 · n = 20 · generated with plan 1.1.0 | `886e36e5dff396ab9cd74a03615782d320c5287afe8702e8a6dcff5a2eee359c` |
-| Run | suscripcion-planlang-a-001-20-v1.2 · 2026-09-27 · suscripcion/sonnet · multi-agent | `60b272f60e46fa23d95e23add14292a74b74733fb8ad7ba83dd49420ff55f3f1` |
+| Run | suscripcion-planlang-a-001-20-v1.2 · 2026-09-27 · suscripcion/sonnet · multi-agent · run with plan 1.2.0 | `60b272f60e46fa23d95e23add14292a74b74733fb8ad7ba83dd49420ff55f3f1` |
 | Graph | exported graph version | `896708bdb11415ac928ba24776d3fa65d05bcc45f9d924a7f6c23ad5b4acff76` |
 | Repetition | suscripcion-planlang-a-001-20-v1.2-r2 | `0f5257d5265a5bdb40e788cd1818123b3de8ef43518a41b0649433f0a989dd38` |
 | Repetition | suscripcion-planlang-a-001-20-v1.2-r3 | `4380307cf1505bcd0b07302a22a5c99ea84bdf026ed7619e50a8672125025d87` |
@@ -220,4 +220,4 @@ Applied thresholds: U1 = 0.75 · U2 = 1000 · U3 = 2 · U4 = false · in the pla
 
 Human review: In batches, the simulated reviewer follows the case's known truth (DA-04); the showcase discloses it.
 
-Verifier 1.0.0 · planlang-informe/v1 · fingerprint of this report: `691e0e370bd0550588340c715062fc90d9c192d88261f4857695428269445553`
+Verifier 1.2.0 · planlang-informe/v1 · fingerprint of this report: `f0c6b2a905ae67a2485be441526c229d4d3826d64c661d4954febb9c1251031b`

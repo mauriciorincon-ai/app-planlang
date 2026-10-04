@@ -1,0 +1,263 @@
+{
+  "corrida_id": "simulado-v1.4-respaldo",
+  "formato": "planlang-ramas/v1",
+  "fuente": "python · app_agents.reglas_arista",
+  "huella": "801a416d5d80bfaf83288c1c15a2e93014fe3b5f1627162ed111ad8e4927d6dd",
+  "umbrales_aplicados": {
+    "U1": 0.75,
+    "U2": 1000,
+    "U3": 2,
+    "U4": false
+  },
+  "visitas": [
+    {
+      "caso_id": "A-001",
+      "desde": "enrutador",
+      "paso": 1,
+      "rama_tomada": "extractor",
+      "resultados": [
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "A-001",
+      "desde": "extractor",
+      "paso": 2,
+      "rama_tomada": "pausa_humana",
+      "resultados": [
+        true,
+        false
+      ]
+    },
+    {
+      "caso_id": "A-002",
+      "desde": "enrutador",
+      "paso": 1,
+      "rama_tomada": "extractor",
+      "resultados": [
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "A-002",
+      "desde": "extractor",
+      "paso": 2,
+      "rama_tomada": "verificador_cobertura",
+      "resultados": [
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "A-002",
+      "desde": "decision",
+      "paso": 4,
+      "rama_tomada": "redactor",
+      "resultados": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "A-003",
+      "desde": "enrutador",
+      "paso": 1,
+      "rama_tomada": "extractor",
+      "resultados": [
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "A-003",
+      "desde": "extractor",
+      "paso": 2,
+      "rama_tomada": "verificador_cobertura",
+      "resultados": [
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "A-003",
+      "desde": "decision",
+      "paso": 4,
+      "rama_tomada": "redactor",
+      "resultados": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "A-004",
+      "desde": "enrutador",
+      "paso": 1,
+      "rama_tomada": "extractor",
+      "resultados": [
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "A-004",
+      "desde": "extractor",
+      "paso": 2,
+      "rama_tomada": "pausa_humana",
+      "resultados": [
+        true,
+        false
+      ]
+    },
+    {
+      "caso_id": "A-005",
+      "desde": "enrutador",
+      "paso": 1,
+      "rama_tomada": "redactor",
+      "resultados": [
+        true,
+        false
+      ]
+    },
+    {
+      "caso_id": "A-006",
+      "desde": "enrutador",
+      "paso": 1,
+      "rama_tomada": "extractor",
+      "resultados": [
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "A-006",
+      "desde": "extractor",
+      "paso": 2,
+      "rama_tomada": "verificador_cobertura",
+      "resultados": [
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "A-006",
+      "desde": "decision",
+      "paso": 4,
+      "rama_tomada": "pausa_humana",
+      "resultados": [
+        false,
+        false,
+        false,
+        true,
+        false
+      ]
+    },
+    {
+      "caso_id": "A-007",
+      "desde": "enrutador",
+      "paso": 1,
+      "rama_tomada": "extractor",
+      "resultados": [
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "A-007",
+      "desde": "extractor",
+      "paso": 2,
+      "rama_tomada": "aclaracion",
+      "resultados": [
+        false,
+        true
+      ]
+    },
+    {
+      "caso_id": "A-007",
+      "desde": "aclaracion",
+      "paso": 3,
+      "rama_tomada": "extractor",
+      "resultados": [
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "A-007",
+      "desde": "extractor",
+      "paso": 4,
+      "rama_tomada": "aclaracion",
+      "resultados": [
+        false,
+        true
+      ]
+    },
+    {
+      "caso_id": "A-007",
+      "desde": "aclaracion",
+      "paso": 5,
+      "rama_tomada": "extractor",
+      "resultados": [
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "A-007",
+      "desde": "extractor",
+      "paso": 6,
+      "rama_tomada": "aclaracion",
+      "resultados": [
+        false,
+        true
+      ]
+    },
+    {
+      "caso_id": "A-007",
+      "desde": "aclaracion",
+      "paso": 7,
+      "rama_tomada": "pausa_humana",
+      "resultados": [
+        false,
+        true
+      ]
+    },
+    {
+      "caso_id": "A-008",
+      "desde": "enrutador",
+      "paso": 1,
+      "rama_tomada": "extractor",
+      "resultados": [
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "A-008",
+      "desde": "extractor",
+      "paso": 2,
+      "rama_tomada": "aclaracion",
+      "resultados": [
+        false,
+        true
+      ]
+    },
+    {
+      "caso_id": "A-008",
+      "desde": "aclaracion",
+      "paso": 3,
+      "rama_tomada": "pausa_humana",
+      "resultados": [
+        true,
+        false
+      ]
+    }
+  ]
+}

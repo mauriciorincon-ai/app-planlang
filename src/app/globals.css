@@ -1,26 +1,9 @@
-@import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}
+/* Hoja de estilos de la vitrina (ADR-008). `source("..")` limita el escaneo de Tailwind a src/: sin él
+   recorre docs/diseno y runs/. Los colores salen de tokens.css (GENERADO por `pnpm tokens`); el tema de
+   Tailwind y la base, de los dos archivos siguientes. */
+@import "tailwindcss" source("..");
+@import "../styles/tokens.css";
+@import "../styles/tema.css";
+@import "../styles/base.css";
+@import "../styles/visor.css";
+@import "../styles/cv-viva.css";

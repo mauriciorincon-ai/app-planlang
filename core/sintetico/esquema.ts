@@ -4,7 +4,7 @@
  * los consume como JSON; el generador valida su propia salida contra estos esquemas.
  */
 import { z } from "zod";
-import { TextoBilingueSchema } from "../formatos/bilingue";
+import { TextoBilingueSchema } from "../formatos/bilingue-esquema";
 
 const HEX64 = /^[0-9a-f]{64}$/;
 const CODIGO_PROCEDIMIENTO = /^SYN-P-\d{3}$/;
@@ -116,6 +116,12 @@ export const PlanBeneficiosSchema = z
     }
   });
 export type PlanBeneficios = z.infer<typeof PlanBeneficiosSchema>;
+
+/**
+ * El demo cuyos casos genera este generador (el de autorizaciones médicas). Una sola declaración para el esquema y
+ * el generador; el demo B trae su propio generador y su id en el S3 (C-12).
+ */
+export const DEMO_DEL_GENERADOR = "demo-a";
 
 export const TIPOS_CASO = [
   "normal",
@@ -241,7 +247,7 @@ export type VerdadConocida = z.infer<typeof VerdadConocidaSchema>;
 export const CasoSchema = z
   .object({
     id: z.string().regex(/^A[H]?-\d{3}$/),
-    demo_id: z.literal("demo-a"),
+    demo_id: z.literal(DEMO_DEL_GENERADOR),
     tipo: z.enum(TIPOS_CASO),
     subtipo: z.enum(SUBTIPOS),
     adversario_detalle: z.enum(DETALLES_ADVERSARIO).nullable(),
@@ -305,7 +311,7 @@ export const LoteSchema = z
   .object({
     formato: z.literal("planlang-casos/v1"),
     id: z.string().min(1),
-    demo_id: z.literal("demo-a"),
+    demo_id: z.literal(DEMO_DEL_GENERADOR),
     semilla: z.string().min(1),
     receta: z.enum(["estandar", "humo"]),
     n: z.number().int().positive(),

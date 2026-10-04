@@ -43,8 +43,34 @@ describe("comparar — operadores y empates", () => {
   });
 
   it("ordenar algo que no es número es error, no false", () => {
-    expect(() => comparar(null, "menor_que", 0.75, false)).toThrow(ErrorArista);
     expect(() => comparar("a", "mayor_que", 1, false)).toThrow(/exige números/);
+    expect(() => comparar(true, "menor_que", 1, false)).toThrow(ErrorArista);
+    expect(() => comparar(null, "mayor_que", "x", false)).toThrow(ErrorArista);
+  });
+
+  it("una señal nula no cumple ninguna comparación de orden (AU-9: no se observó)", () => {
+    for (const op of [
+      "menor_que",
+      "mayor_que",
+      "menor_o_igual_que",
+      "mayor_o_igual_que",
+    ] as const) {
+      expect(comparar(null, op, 0, false)).toBe(false);
+      expect(comparar(null, op, 0.75, true)).toBe(false);
+    }
+  });
+
+  it("ni de igualdad: con señal nula, «distinto de» también es falso (AU-S2-B51, igual que Python)", () => {
+    expect(comparar(null, "distinto_de", "urgencia", false)).toBe(false);
+    expect(comparar(null, "igual_a", "urgencia", false)).toBe(false);
+  });
+
+  it("un operador desconocido falla con nombre, aun con señal nula (AU-S2-B52, igual que Python)", () => {
+    const op = "parecido_a" as unknown as Parameters<typeof comparar>[1];
+    expect(() => comparar(0.5, op, 0.75, false)).toThrow(
+      "operador desconocido: parecido_a",
+    );
+    expect(() => comparar(null, op, 0.75, false)).toThrow(ErrorArista);
   });
 });
 

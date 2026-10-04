@@ -1,0 +1,122 @@
+<!-- @dsCard group="Fundamentos" name="Color" -->
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Color · planlang 1.0.0</title>
+<style>
+/* GENERADO por scripts/paleta/generar-tokens.mjs — no editar a mano. `pnpm tokens` lo regenera. */
+:root, [data-theme="oscuro"] {
+  --fondo: #0b0c0f;
+  --sup-1: #111315;
+  --sup-2: #191b1d;
+  --linea: #2c2e31;
+  --tinta-3: #75777b;
+  --tinta-2: #b8bbbe;
+  --tinta-1: #eceff3;
+  --tipo-1: #a87eeb;
+  --tipo-2: #17d0d8;
+  --tipo-3: #8ea1b4;
+  --tipo-4: #e4762c;
+  --tipo-5: #badbfe;
+  --cumple: #57c173;
+  --alerta: #eac33f;
+  --no-cumple: #ffa09c;
+  --tipo-1-tinte: #2b2938;
+  --tipo-2-tinte: #213235;
+  --tipo-3-tinte: #282d31;
+  --tipo-4-tinte: #342823;
+  --tipo-5-tinte: #2e3339;
+  --cumple-tinte: #233129;
+  --alerta-tinte: #333126;
+  --no-cumple-tinte: #372d2e;
+  color-scheme: dark;
+}
+[data-theme="claro"] {
+  --fondo: #fbfcfe;
+  --sup-1: #ffffff;
+  --sup-2: #f4f6f8;
+  --linea: #dee0e2;
+  --tinta-3: #7f8082;
+  --tinta-2: #515254;
+  --tinta-1: #17181a;
+  --tipo-1: #794db6;
+  --tipo-2: #02787d;
+  --tipo-3: #2f3f4f;
+  --tipo-4: #a04a02;
+  --tipo-5: #015493;
+  --cumple: #037434;
+  --alerta: #907402;
+  --no-cumple: #cb454a;
+  --tipo-1-tinte: #e0dcef;
+  --tipo-2-tinte: #d5e3e5;
+  --tipo-3-tinte: #d4d8dd;
+  --tipo-4-tinte: #e9dcd5;
+  --tipo-5-tinte: #d1ddea;
+  --cumple-tinte: #d4e2d9;
+  --alerta-tinte: #e4e2d7;
+  --no-cumple-tinte: #f2dcdd;
+  color-scheme: light;
+}
+:root {
+  --modelo: var(--tipo-1);
+  --herramienta: var(--tipo-2);
+  --regla: var(--tipo-3);
+  --pausa-humana: var(--tipo-4);
+  --enrutador: var(--tipo-5);
+}
+:root {
+  /* § 2.3 Tipografía: Inter en la interfaz, JetBrains Mono solo para datos (la app sirve las dos; aquí, la pila). */
+  --letra: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  --t-titulo: 600 36px/1.15 var(--letra);
+  --t-seccion: 600 20px/1.3 var(--letra);
+  --t-sub: 600 15px/1.4 var(--letra);
+  --t-texto: 400 15px/1.6 var(--letra);
+  --t-guia: 400 17px/1.55 var(--letra);
+  --t-chico: 400 13px/1.5 var(--letra);
+  --t-dato: 400 12px/1.5 var(--mono);
+  --t-cifra: 600 28px/1 var(--letra);
+  /* § 2.4 Espacio (múltiplos de 4), rejilla, radios. Sin sombras. */
+  --e-1: 4px; --e-2: 8px; --e-3: 12px; --e-4: 16px; --e-5: 24px; --e-6: 32px; --e-7: 48px; --e-8: 64px;
+  --ancho: 1120px; --margen: 32px;
+  --r-control: 6px; --r-chip: 4px; --r-baldosa: 8px;
+  /* § 2.6 Movimiento: solo transform y opacity (más color en controles); nada con reducir movimiento. */
+  --curva: cubic-bezier(0.2, 0, 0, 1); --m-control: 150ms; --m-seleccion: 200ms;
+}
+@media (prefers-reduced-motion: reduce) {
+  :root { --m-control: 0ms; --m-seleccion: 0ms; }
+}
+*{box-sizing:border-box}
+body{margin:0;background:#888;font:var(--t-texto)}
+.temas{display:grid;grid-template-columns:1fr 1fr;gap:0;min-height:100vh}
+@media (max-width:860px){.temas{grid-template-columns:1fr}}
+.tema{background:var(--fondo);color:var(--tinta-1);padding:var(--e-5);min-width:0}
+.rotulo-tema{font:var(--t-dato);color:var(--tinta-2);margin:0 0 var(--e-4)}
+h1{font:var(--t-seccion);letter-spacing:-0.01em;margin:0 0 var(--e-2)}
+h2{font:var(--t-sub);margin:var(--e-5) 0 var(--e-2)}
+p{margin:0 0 var(--e-2)}
+.chico{font:var(--t-chico);color:var(--tinta-2)}
+.dato{font:var(--t-dato)}
+code{font:var(--t-dato)}
+.fila{display:flex;flex-wrap:wrap;gap:var(--e-3);align-items:center}
+.sup{background:var(--sup-2);border:1px solid var(--linea);border-radius:var(--r-baldosa);padding:var(--e-4)}
+.m{display:flex;align-items:center;gap:var(--e-2);padding:var(--e-1) 0}.c{width:28px;height:28px;border-radius:var(--r-chip);border:1px solid var(--linea);flex:none}
+</style>
+</head>
+<body>
+<div class="temas">
+<section class="tema" data-theme="oscuro"><p class="rotulo-tema">oscuro (primario)</p>
+<h1>Color</h1><p class="chico">Tinta sobre neutro; el color es dato: solo tipo de nodo y veredicto. Cada cromático lleva su tinte (15 %) para fondos de estado.</p>
+<h2>Neutros</h2><div class="m"><span class="c" style="background:var(--fondo)"></span><code>--fondo</code></div><div class="m"><span class="c" style="background:var(--sup-1)"></span><code>--sup-1</code></div><div class="m"><span class="c" style="background:var(--sup-2)"></span><code>--sup-2</code></div><div class="m"><span class="c" style="background:var(--linea)"></span><code>--linea</code><span class="chico">vetada como texto</span></div><div class="m"><span class="c" style="background:var(--tinta-3)"></span><code>--tinta-3</code><span class="chico">vetada como texto</span></div><div class="m"><span class="c" style="background:var(--tinta-2)"></span><code>--tinta-2</code></div><div class="m"><span class="c" style="background:var(--tinta-1)"></span><code>--tinta-1</code></div>
+<h2>Cromáticos y su tinte</h2><div class="m"><span class="c" style="background:var(--tipo-1);box-shadow:inset 0 0 0 6px var(--tipo-1-tinte)"></span><code>--tipo-1</code><span class="chico">modelo</span></div><div class="m"><span class="c" style="background:var(--tipo-2);box-shadow:inset 0 0 0 6px var(--tipo-2-tinte)"></span><code>--tipo-2</code><span class="chico">herramienta</span></div><div class="m"><span class="c" style="background:var(--tipo-3);box-shadow:inset 0 0 0 6px var(--tipo-3-tinte)"></span><code>--tipo-3</code><span class="chico">regla</span></div><div class="m"><span class="c" style="background:var(--tipo-4);box-shadow:inset 0 0 0 6px var(--tipo-4-tinte)"></span><code>--tipo-4</code><span class="chico">pausa humana</span></div><div class="m"><span class="c" style="background:var(--tipo-5);box-shadow:inset 0 0 0 6px var(--tipo-5-tinte)"></span><code>--tipo-5</code><span class="chico">enrutador</span></div><div class="m"><span class="c" style="background:var(--cumple);box-shadow:inset 0 0 0 6px var(--cumple-tinte)"></span><code>--cumple</code><span class="chico">cumple</span></div><div class="m"><span class="c" style="background:var(--alerta);box-shadow:inset 0 0 0 6px var(--alerta-tinte)"></span><code>--alerta</code><span class="chico">cumple con alertas</span></div><div class="m"><span class="c" style="background:var(--no-cumple);box-shadow:inset 0 0 0 6px var(--no-cumple-tinte)"></span><code>--no-cumple</code><span class="chico">no cumple</span></div>
+</section>
+<section class="tema" data-theme="claro"><p class="rotulo-tema">claro</p>
+<h1>Color</h1><p class="chico">Tinta sobre neutro; el color es dato: solo tipo de nodo y veredicto. Cada cromático lleva su tinte (15 %) para fondos de estado.</p>
+<h2>Neutros</h2><div class="m"><span class="c" style="background:var(--fondo)"></span><code>--fondo</code></div><div class="m"><span class="c" style="background:var(--sup-1)"></span><code>--sup-1</code></div><div class="m"><span class="c" style="background:var(--sup-2)"></span><code>--sup-2</code></div><div class="m"><span class="c" style="background:var(--linea)"></span><code>--linea</code><span class="chico">vetada como texto</span></div><div class="m"><span class="c" style="background:var(--tinta-3)"></span><code>--tinta-3</code><span class="chico">vetada como texto</span></div><div class="m"><span class="c" style="background:var(--tinta-2)"></span><code>--tinta-2</code></div><div class="m"><span class="c" style="background:var(--tinta-1)"></span><code>--tinta-1</code></div>
+<h2>Cromáticos y su tinte</h2><div class="m"><span class="c" style="background:var(--tipo-1);box-shadow:inset 0 0 0 6px var(--tipo-1-tinte)"></span><code>--tipo-1</code><span class="chico">modelo</span></div><div class="m"><span class="c" style="background:var(--tipo-2);box-shadow:inset 0 0 0 6px var(--tipo-2-tinte)"></span><code>--tipo-2</code><span class="chico">herramienta</span></div><div class="m"><span class="c" style="background:var(--tipo-3);box-shadow:inset 0 0 0 6px var(--tipo-3-tinte)"></span><code>--tipo-3</code><span class="chico">regla</span></div><div class="m"><span class="c" style="background:var(--tipo-4);box-shadow:inset 0 0 0 6px var(--tipo-4-tinte)"></span><code>--tipo-4</code><span class="chico">pausa humana</span></div><div class="m"><span class="c" style="background:var(--tipo-5);box-shadow:inset 0 0 0 6px var(--tipo-5-tinte)"></span><code>--tipo-5</code><span class="chico">enrutador</span></div><div class="m"><span class="c" style="background:var(--cumple);box-shadow:inset 0 0 0 6px var(--cumple-tinte)"></span><code>--cumple</code><span class="chico">cumple</span></div><div class="m"><span class="c" style="background:var(--alerta);box-shadow:inset 0 0 0 6px var(--alerta-tinte)"></span><code>--alerta</code><span class="chico">cumple con alertas</span></div><div class="m"><span class="c" style="background:var(--no-cumple);box-shadow:inset 0 0 0 6px var(--no-cumple-tinte)"></span><code>--no-cumple</code><span class="chico">no cumple</span></div>
+</section>
+</div>
+</body>
+</html>

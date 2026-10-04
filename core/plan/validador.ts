@@ -12,6 +12,12 @@ import {
   type InformeInstrumentos,
 } from "../../packages/instrumentos-de-plan/src";
 import { ErrorSintaxis, parsear, referencias } from "../brecha/condiciones";
+import {
+  CLAVES_DE_SESION,
+  FUNCIONES_DE_CONDICION,
+  VOCABULARIO,
+} from "../brecha/contexto";
+import { FUNCIONES } from "../playground/aristas";
 import type { TextoBilingue } from "../formatos/bilingue";
 import {
   esAristaTripleta,
@@ -38,6 +44,7 @@ export const CODIGOS = [
   "ORDEN_DE_ARISTAS",
   "UMBRAL_TIPO_INCOHERENTE",
   "HUELLA_AUSENTE",
+  "SENAL_NO_DECLARADA",
 ] as const;
 export type Codigo = (typeof CODIGOS)[number];
 
@@ -193,6 +200,31 @@ function validarContrato(
         );
       }
     } else {
+      // M-23: la función nombrada existe en el registro cerrado (el mismo que Python) y lee lo que el registro dice.
+      const registrada = Object.hasOwn(FUNCIONES, a.funcion.nombre)
+        ? FUNCIONES[a.funcion.nombre]
+        : undefined;
+      if (!registrada)
+        motivos.push(
+          motivo(
+            "REFERENCIA_ROTA",
+            el,
+            `La función «${a.funcion.nombre}» no está registrada: ni el grafo ni el playground sabrían evaluarla.`,
+            `Function “${a.funcion.nombre}” is not registered: neither the graph nor the playground could evaluate it.`,
+          ),
+        );
+      else if (
+        JSON.stringify(registrada.entradas) !==
+        JSON.stringify(a.funcion.entradas)
+      )
+        motivos.push(
+          motivo(
+            "REFERENCIA_ROTA",
+            el,
+            `La función «${a.funcion.nombre}» lee ${registrada.entradas.join(", ")}; el plan le da ${a.funcion.entradas.join(", ")}.`,
+            `Function “${a.funcion.nombre}” reads ${registrada.entradas.join(", ")}; the plan gives it ${a.funcion.entradas.join(", ")}.`,
+          ),
+        );
       for (const entrada of a.funcion.entradas) {
         if (!senales.has(entrada)) {
           motivos.push(
@@ -366,6 +398,26 @@ export function validarPlan(entrada: unknown): ResultadoValidacion {
           `Criterion ${c.id} (${r.agregacion}) declares no metric to aggregate.`,
         ),
       );
+    // M-26: una métrica con una agregación que no la agrega (o una condición en una que solo agrega la métrica) se
+    // ignoraría en silencio al medir.
+    if (exigeCondicion && r.metrica)
+      motivos.push(
+        motivo(
+          "CRITERIO_SIN_REGLA",
+          c.id,
+          `El criterio ${c.id} declara la métrica «${r.metrica}», pero ${r.agregacion} mide su condición caso por caso y no la agrega.`,
+          `Criterion ${c.id} declares metric “${r.metrica}”, but ${r.agregacion} measures its condition case by case and does not aggregate it.`,
+        ),
+      );
+    if (!exigeCondicion && r.condicion)
+      motivos.push(
+        motivo(
+          "CRITERIO_SIN_REGLA",
+          c.id,
+          `El criterio ${c.id} (${r.agregacion}) agrega la métrica y no mide la condición «${r.condicion}»: va en la población.`,
+          `Criterion ${c.id} (${r.agregacion}) aggregates the metric and does not measure condition “${r.condicion}”: it belongs in the population.`,
+        ),
+      );
     if (r.agregacion === "pass^k" && !r.k)
       motivos.push(
         motivo(
@@ -517,6 +569,81 @@ export function validarPlan(entrada: unknown): ResultadoValidacion {
           `evaluadores.${e.id}`,
           `El evaluador de regla ${e.id} no cubre ningún riesgo: sus fallas contarán como brechas no previstas.`,
           `Rule evaluator ${e.id} covers no risk: its failures will count as unforeseen gaps.`,
+        ),
+      );
+  }
+
+  // M-23: lo que lee cada condición existe. Una raíz que no es señal declarada ni clave del contexto es una
+  // advertencia (al aprobar, un motivo: `aprobarPlan`); una función que el contexto no registra, un motivo.
+  // Por ámbito (AU-S2-B54): una condición de caso lee señales y el contexto del caso; un detector de sesión, las
+  // claves de la sesión. Antes se unían las tres listas y una condición de caso que leía `limites_alcanzados` pasaba
+  // (en ejecución quedaba «indeterminado»). La métrica de un criterio también se valida.
+  const conocidas: Record<"caso" | "sesion", Set<string>> = {
+    caso: new Set<string>([...senales, ...Object.keys(VOCABULARIO), "todos"]),
+    sesion: new Set<string>([...CLAVES_DE_SESION, "umbral"]),
+  };
+  const funcionesConocidas = new Set<string>(FUNCIONES_DE_CONDICION);
+  type Condicion = [string, string | undefined, "caso" | "sesion"];
+  const condiciones: Condicion[] = [
+    ...plan.criterios_aceptacion.flatMap((c): Condicion[] => [
+      [`${c.id}.poblacion`, c.regla_de_medicion.poblacion, "caso"],
+      [`${c.id}.condicion`, c.regla_de_medicion.condicion ?? undefined, "caso"],
+      [`${c.id}.metrica`, c.regla_de_medicion.metrica ?? undefined, "caso"],
+    ]),
+    ...plan.riesgos.flatMap((r): Condicion[] => {
+      const d = r.detector_en_trazas;
+      if (!d) return [];
+      const ambito = d.ambito === "sesion" ? "sesion" : "caso";
+      return [
+        [`${r.id}.poblacion`, d.poblacion, ambito],
+        [`${r.id}.condicion`, d.condicion, ambito],
+      ];
+    }),
+    ...plan.supuestos.flatMap((s): Condicion[] =>
+      s.medible_en_trazas
+        ? [
+            [`${s.id}.poblacion`, s.medible_en_trazas.poblacion, "caso"],
+            [
+              `${s.id}.condicion`,
+              s.medible_en_trazas.condicion ?? undefined,
+              "caso",
+            ],
+          ]
+        : [],
+    ),
+  ];
+  for (const [elemento, texto, ambito] of condiciones) {
+    if (!texto) continue;
+    let refs: { rutas: string[]; funciones: string[] };
+    try {
+      refs = referencias(parsear(texto));
+    } catch {
+      continue; // ya es CONDICION_NO_INTERPRETABLE
+    }
+    const raices = [...new Set(refs.rutas.map((r) => r.split(".")[0]!))];
+    for (const raiz of raices.filter((x) => !conocidas[ambito].has(x)))
+      advertencias.push(
+        ambito === "sesion"
+          ? motivo(
+              "SENAL_NO_DECLARADA",
+              elemento,
+              `El detector es de sesión y lee «${raiz}», que no es una clave de la sesión (${CLAVES_DE_SESION.join(", ")}).`,
+              `The detector is session-scoped and reads “${raiz}”, which is not a session key (${CLAVES_DE_SESION.join(", ")}).`,
+            )
+          : motivo(
+              "SENAL_NO_DECLARADA",
+              elemento,
+              `La condición lee «${raiz}», que no está en senales_obligatorias_en_traza ni en el contexto del caso: el agente no tiene por qué registrarla.`,
+              `The condition reads “${raiz}”, which is neither in senales_obligatorias_en_traza nor in the case context: the agent has no reason to record it.`,
+            ),
+      );
+    for (const f of refs.funciones.filter((x) => !funcionesConocidas.has(x)))
+      motivos.push(
+        motivo(
+          "REFERENCIA_ROTA",
+          elemento,
+          `La condición llama a «${f}», que el verificador no registra.`,
+          `The condition calls “${f}”, which the verifier does not register.`,
         ),
       );
   }

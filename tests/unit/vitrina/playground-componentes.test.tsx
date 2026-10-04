@@ -1,0 +1,213 @@
+/**
+ * P5 Playground renderizado (Testing Library): la isla hidrata sin diferencias con lo que pintó el servidor (los
+ * valores del plan son el primer render; sin #418); mover U1 a 0,90 manda A-008 a una persona y «Volver al plan»
+ * deshace; U2 en 1600 introduce el error de A-010 y C3 deja de cumplirse; el modo Texas no cambia ningún caso y lo
+ * dice; el inglés sin español residual; y la regla 5-a: la FORMA del árbol no depende del perfil.
+ */
+import "../../setup.core-jsdom";
+import { act, fireEvent, render, screen, within } from "@testing-library/react";
+import { hydrateRoot, type Root } from "react-dom/client";
+import { renderToStaticMarkup, renderToString } from "react-dom/server";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
+import { Juego } from "@/components/playground/juego";
+import { Limites, MiradaPlayground } from "@/components/playground/mirada";
+import { datosDemo, type DatosDemo } from "@/lib/datos/vitrina";
+import { vistaCaso } from "@/lib/vista/caso";
+import { vistaPlayground } from "@/lib/vista/playground";
+import type { Idioma } from "@core/formatos/bilingue";
+
+const html = document.documentElement;
+let d: DatosDemo;
+beforeAll(async () => {
+  d = await datosDemo();
+});
+afterEach(() => {
+  html.removeAttribute("data-perfil");
+  localStorage.clear();
+  vi.restoreAllMocks();
+});
+
+function Pagina({ idioma }: { idioma: Idioma }) {
+  const v = vistaPlayground(d, idioma);
+  return (
+    <>
+      <MiradaPlayground v={v} idioma={idioma} />
+      <Juego datos={v.isla} />
+      <Limites v={v} idioma={idioma} />
+    </>
+  );
+}
+
+const estado = () =>
+  screen
+    .getAllByRole("status")
+    .map((s) => s.textContent ?? "")
+    .join(" | ");
+const filas = (c: HTMLElement) =>
+  [...c.querySelectorAll("#cambios [data-caso]")].map((x) =>
+    x.getAttribute("data-caso"),
+  );
+
+describe("la isla hidrata sobre el HTML del servidor", () => {
+  it("con los valores del plan, el primer render del cliente es el del servidor", async () => {
+    const isla = vistaPlayground(d, "es").isla;
+    const servidor = renderToString(<Juego datos={isla} />);
+    const cont = document.createElement("div");
+    cont.innerHTML = servidor;
+    document.body.appendChild(cont);
+    // El HTML tal como lo deja el navegador al leerlo (`<input>` sin barra): contra eso se compara.
+    const antes = cont.innerHTML;
+    const errores: unknown[] = [];
+    vi.spyOn(console, "error").mockImplementation((...a) => errores.push(a));
+    let raiz: Root | undefined;
+    try {
+      await act(async () => {
+        raiz = hydrateRoot(cont, <Juego datos={isla} />, {
+          onRecoverableError: (e) => errores.push(e),
+        });
+      });
+      expect(errores).toEqual([]);
+      expect(cont.innerHTML).toBe(antes);
+    } finally {
+      await act(async () => raiz?.unmount());
+      cont.remove();
+    }
+  });
+});
+
+describe("mover los umbrales", () => {
+  it("U1 a 0,90 manda A-008 a una persona; «Volver al plan» lo deshace", async () => {
+    const { container } = render(<Pagina idioma="es" />);
+    expect(filas(container)).toEqual([]);
+    expect(estado()).toContain(
+      "En los valores del plan: el recálculo reproduce el camino de los 20 casos.",
+    );
+    const u1 = screen.getByRole("slider", { name: /Confianza mínima/ });
+    await act(async () => fireEvent.change(u1, { target: { value: "0.9" } }));
+    expect(filas(container)).toEqual(["A-008"]);
+    expect(estado()).toContain("Movido: U1 0,90.");
+    const fila = container.querySelector('[data-caso="A-008"]')!;
+    expect(fila.textContent).toContain("confianza 0,88 menor que 0,90");
+    // El enlace abre la traza en el paso donde el camino se separa (AU-S2-P-5): en P6, ese paso es la decisión.
+    expect(fila.querySelector("a")!.getAttribute("href")).toBe(
+      "/es/caso/A-008#paso-8",
+    );
+    expect(vistaCaso(d, "A-008", "es").pasos.find((p) => p.n === 8)?.nodo).toBe(
+      "decision",
+    );
+    await act(async () =>
+      fireEvent.click(screen.getByRole("button", { name: /Volver al plan/ })),
+    );
+    expect(filas(container)).toEqual([]);
+    expect((u1 as HTMLInputElement).value).toBe("0.75");
+  });
+
+  it("U2 en 1600: A-010 sale sin persona, es un error y C3 deja de cumplirse", async () => {
+    const { container } = render(<Pagina idioma="es" />);
+    const u2 = screen.getByRole("slider", { name: /Alto costo/ });
+    await act(async () => fireEvent.change(u2, { target: { value: "1600" } }));
+    expect(filas(container)).toEqual(["A-010"]);
+    const fila = container.querySelector('[data-caso="A-010"]')!;
+    expect(fila.textContent).toContain("error: debía ir a una persona");
+    expect(container.textContent).toContain("C3 no cumple");
+    expect(container.textContent).toContain("Deja de cumplirse C3.");
+  });
+
+  it("lo que oye un lector: la línea de estado lee las cifras y el valor del deslizador se dice una vez (AU-S2-B21, B29)", async () => {
+    const { container } = render(<Pagina idioma="es" />);
+    const viva = container.querySelector(
+      '[role="status"][aria-live="polite"]',
+    )!;
+    expect(viva.textContent).toContain(
+      "De 20 casos, 0 cambian de camino; 0 errores introducidos y 0 evitados;",
+    );
+    const u2 = screen.getByRole("slider", { name: /Alto costo/ });
+    await act(async () => fireEvent.change(u2, { target: { value: "1600" } }));
+    expect(viva.textContent).toContain(
+      "De 20 casos, 1 cambia de camino; 1 error introducido y 0 evitados;",
+    );
+    expect(viva.textContent).toMatch(/de \d+ criterios cumplen\.$/);
+    const salidas = [...container.querySelectorAll("output")];
+    expect(salidas.length).toBeGreaterThan(0);
+    for (const o of salidas) expect(o.getAttribute("aria-live")).toBe("off");
+  });
+
+  it("el modo Texas es un interruptor: encenderlo no cambia ningún caso, y lo dice", async () => {
+    const { container } = render(<Pagina idioma="es" />);
+    const t = screen.getByRole("switch", { name: /Modo Texas/ });
+    expect(t.getAttribute("aria-checked")).toBe("false");
+    await act(async () => fireEvent.click(t));
+    expect(t.getAttribute("aria-checked")).toBe("true");
+    expect(filas(container)).toEqual([]);
+    expect(container.textContent).toContain(
+      "Encender el modo Texas no cambia ningún caso: toda propuesta adversa ya pasaba por una persona.",
+    );
+    expect(estado()).toContain("Movido: modo Texas encendido.");
+  });
+});
+
+describe("inglés", () => {
+  it("sin español residual en lo que se lee (salvo los nombres del código)", async () => {
+    const { container } = render(<Pagina idioma="en" />);
+    const u1 = screen.getByRole("slider", { name: /Minimum extraction/i });
+    await act(async () => fireEvent.change(u1, { target: { value: "0.9" } }));
+    const copia = container.cloneNode(true) as HTMLElement;
+    // Lo que no se lee: las citas en español y lo oculto por `hidden` (las marcas «movido» de los umbrales quietos).
+    for (const x of copia.querySelectorAll('[lang="es"], [hidden]')) x.remove();
+    const texto = copia.textContent ?? "";
+    expect(texto).toContain("The playground at a glance");
+    expect(texto).toContain("Moved: U1 0.90.");
+    for (const residuo of [
+      "Mueve",
+      "Recibe",
+      "Entrega",
+      " casos",
+      "errores",
+      "criterios",
+      "Volver",
+      "persona ",
+      " confianza 0",
+      "Pruébalo",
+    ])
+      expect(texto, residuo).not.toContain(residuo);
+  });
+});
+
+/** La forma del árbol: etiquetas y atributos, sin los que describen el estado. */
+const ESTADO = new Set(["aria-pressed", "aria-current", "hidden", "class"]);
+function forma(el: Element): string {
+  const attrs = [...el.attributes]
+    .filter((a) => !ESTADO.has(a.name))
+    .map((a) => `${a.name}=${a.value}`)
+    .sort()
+    .join(",");
+  return `<${el.tagName}${attrs}>${[...el.children].map(forma).join("")}</${el.tagName}>`;
+}
+
+describe("regla 5-a: la forma no depende del perfil", () => {
+  it("el servidor pinta lo mismo sea cual sea el perfil y trae los dos", () => {
+    html.setAttribute("data-perfil", "lider");
+    const a = renderToStaticMarkup(<Pagina idioma="es" />);
+    html.setAttribute("data-perfil", "experto");
+    const b = renderToStaticMarkup(<Pagina idioma="es" />);
+    expect(a).toBe(b);
+    expect(a).toContain("solo-experto");
+    expect(a).toContain("Ficha técnica del playground");
+    expect(a).toContain("Las 20 decisiones, con sus señales");
+  });
+
+  it("cambiar a experto y volver no cambia la forma", async () => {
+    const { container } = render(<Pagina idioma="es" />);
+    const antes = forma(container);
+    const grupo = screen.getByRole("group", { name: "Leer como" });
+    await act(async () =>
+      fireEvent.click(within(grupo).getByRole("button", { name: "Experto" })),
+    );
+    expect(html.getAttribute("data-perfil")).toBe("experto");
+    expect(forma(container)).toBe(antes);
+    await act(async () =>
+      fireEvent.click(within(grupo).getByRole("button", { name: "Líder" })),
+    );
+    expect(forma(container)).toBe(antes);
+  });
+});

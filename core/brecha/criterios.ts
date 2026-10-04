@@ -5,7 +5,8 @@
  * - `incompleto`: una tasa `pass^k` medida con menos corridas de las exigidas (k_observado < k) que aún
  *   no falla — como pass^k no crece con k, si la tasa observada ya está bajo el objetivo es `incumple`;
  * - `indeterminado`: nada falló pero hay casos que no se pudieron evaluar;
- * - `sin_poblacion`: ningún caso del lote cae en la población: no se midió (y se dice);
+ * - `sin_poblacion`: ningún caso del lote cae en la población: no se midió (y se dice); con casos en la población
+ *   pero ningún valor de su métrica, `indeterminado` (M-26);
  * - `mal_formado`: la regla del plan no puede medir lo que dice (error del plan, no del agente).
  */
 import type { TextoBilingue } from "../formatos/bilingue";
@@ -92,7 +93,12 @@ function porMetrica(
       : r.agregacion === "promedio"
         ? promedio(xs)
         : maximo(xs);
-  if (agregado === null || typeof c.valor_objetivo !== "number") return salida;
+  // M-26: una población con casos pero sin un solo valor medido no es «sin población»: es indeterminado.
+  if (agregado === null) {
+    if (ev.poblacion.length > 0) salida.estado = "indeterminado";
+    return salida;
+  }
+  if (typeof c.valor_objetivo !== "number") return salida;
   const objetivo = c.valor_objetivo;
   const menor = MENOR_ES_MEJOR.has(c.tipo);
   const bien = (x: number) => (menor ? x <= objetivo : x >= objetivo);
@@ -105,11 +111,17 @@ function porMetrica(
     : salida.no_evaluables.length > 0
       ? "indeterminado"
       : "cumple";
+  // M-26: la nota dice el sentido del objetivo (una latencia lo supera; una exactitud queda por debajo).
   if (salida.casos_que_incumplen.length > 0)
-    salida.nota = {
-      es: "El criterio se mide sobre el agregado; los casos listados superan el objetivo uno a uno.",
-      en: "The criterion is measured on the aggregate; the listed cases exceed the target one by one.",
-    };
+    salida.nota = menor
+      ? {
+          es: "El criterio se mide sobre el agregado; los casos listados superan el objetivo uno a uno.",
+          en: "The criterion is measured on the aggregate; the listed cases exceed the target one by one.",
+        }
+      : {
+          es: "El criterio se mide sobre el agregado; los casos listados quedan por debajo del objetivo uno a uno.",
+          en: "The criterion is measured on the aggregate; the listed cases fall below the target one by one.",
+        };
   return salida;
 }
 

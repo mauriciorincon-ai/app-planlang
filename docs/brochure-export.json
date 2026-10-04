@@ -1,0 +1,280 @@
+{
+  "_schema": {
+    "_lee_esto_primero": "Este bloque documenta el formato y no es dato de la app. Se conserva en cada export para que el esquema viaje con el archivo: quien lo consuma no necesita buscar otro documento. Las apps que adopten este formato copian este bloque tal cual y rellenan el resto.",
+    "_origen": "Definido por app-dash-agent-ai en su entrega de brochure (2026-08-19). Es el PRIMER export del portafolio; las demás apps lo adoptan.",
+    "_consumidor": "La vitrina de hoja-de-vida. Renderiza la ficha de cada app sin abrir su repositorio.",
+    "_regla_madre": "Toda cifra de `metricas[]` lleva su etiqueta de `fuente`. Es la regla dura 3 de Dash Agent AI aplicada a su propia ficha: una app que exige procedencia a cada número de su pantalla no puede publicar cifras sueltas sobre sí misma. Se recomienda al resto del portafolio.",
+    "schema_version": "semver del FORMATO, no de la app. Cambio mayor = campo eliminado o con significado distinto; menor = campo nuevo opcional; parche = documentación.",
+    "app.estado": "\"inicial\" mientras el brochure describe la construcción cerrada; \"sellado\" cuando el gate de pruebas del usuario terminó. `sellado_en` es null hasta entonces.",
+    "funcionalidades.total": "El número que el brochure declara en su pie. `fuente_del_conteo` dice contra qué documento se cuadró — sin eso, el total es una afirmación.",
+    "funcionalidades.descartadas": "Las que se construyeron o se planearon y NO existen. Van aquí con su razón y su fecha para que nadie las cuente como pendientes ni como entregadas.",
+    "metricas[].fuente": "Una de cuatro: \"medido\" (salió de un contador o un comando), \"calculada\" (medido operado con una tarifa o una regla, y se dice cuál), \"declarado\" (lo fijó una persona), \"estimacion\" (deducido). Una cifra sin fuente no entra.",
+    "enlaces.produccion": "null cuando la app no tiene URL pública. `razon` explica por qué, y es lo que la vitrina muestra en lugar del enlace. Nunca se rellena con un enlace de repositorio ni con una promesa."
+  },
+  "schema_version": "1.0.0",
+  "actualizado": "2026-10-04",
+  "app": {
+    "slug": "planlang",
+    "nombre": "planlang",
+    "ciclo": "H1",
+    "estado": "inicial",
+    "sellado_en": null,
+    "sprints_cerrados": 2,
+    "version_repo": "0.1.0"
+  },
+  "promesa": {
+    "tagline": "Planeé, construí y medí la brecha.",
+    "intro": "Escribes el plan como un contrato —decisiones, riesgos, supuestos, criterios y umbrales, cada uno medible— y planlang lo usa para construir el agente, correrlo sobre casos con respuesta conocida y publicar la brecha. Luego mueves un umbral y ves qué habría costado.",
+    "para_quien": "Para quien planea, construye o aprueba un proyecto de agentes de IA y hoy mide lo que el agente hace sin haber escrito antes qué debía hacer: mira trazas, corre evaluaciones sueltas y decide a ojo cuándo un resultado basta.",
+    "diferencial": "Observar trazas y evaluar respuestas ya lo hacen muchas herramientas. Lo que no hace nadie es exigir el plan antes y medir contra él después: el informe de brecha plan → resultado, con el análisis de riesgos previo, y los umbrales del plan jugables sobre las trazas reales."
+  },
+  "funcionalidades": {
+    "total": 16,
+    "fuente_del_conteo": "docs/MANUAL-DE-USO.md",
+    "descartadas": [],
+    "grupos": [
+      {
+        "orden": 1,
+        "estrella": false,
+        "nombre": "Planear",
+        "linea": "El plan como contrato: plantillas, validador y contrato para el constructor.",
+        "features": [
+          {
+            "id": "plantillas",
+            "nombre": "Plantillas de dominio como datos",
+            "que_hace": "Actores, decisiones, riesgos y criterios típicos de salud y de vinculación financiera, con las restricciones legales en lenguaje llano y con su fuente.",
+            "seccion_manual": "Validar un plan"
+          },
+          {
+            "id": "validador",
+            "nombre": "Validador del plan",
+            "que_hace": "Ningún plan se aprueba con un criterio sin regla de medición, un umbral sin señal o un riesgo de prioridad alta sin mitigación; dice exactamente qué falta.",
+            "seccion_manual": "Validar un plan"
+          },
+          {
+            "id": "contrato",
+            "nombre": "Contrato para el constructor",
+            "que_hace": "El plan entrega los nodos, las aristas con señal · operador · valor, las pausas humanas y las señales que la traza debe registrar; lo que decide el agente es literalmente lo que dice el plan.",
+            "seccion_manual": "Validar un plan"
+          }
+        ]
+      },
+      {
+        "orden": 2,
+        "estrella": false,
+        "nombre": "Correr",
+        "linea": "Casos con verdad conocida, el demo A y las corridas por lotes.",
+        "features": [
+          {
+            "id": "casos",
+            "nombre": "Casos sintéticos con verdad conocida",
+            "que_hace": "Lotes reproducibles con semilla: normales, de borde, incompletos y adversarios; un validador garantiza que ningún identificador podría ser real.",
+            "seccion_manual": "Generar casos sintéticos"
+          },
+          {
+            "id": "demo-a",
+            "nombre": "Demo A: autorizaciones médicas",
+            "que_hace": "Un enrutador, un extractor, un verificador de cobertura por reglas y un redactor aprueban, niegan con causal o escalan a un auditor; ninguna negación sale sin una persona.",
+            "seccion_manual": "Correr un lote"
+          },
+          {
+            "id": "documento-adverso",
+            "nombre": "Documento de decisión adversa",
+            "que_hace": "Toda negación produce, por código, un documento en español e inglés con la causal, la regla, los datos usados y la vía de contradicción.",
+            "seccion_manual": "Correr un lote"
+          },
+          {
+            "id": "lotes",
+            "nombre": "Corridas por lotes y exportación",
+            "que_hace": "Lotes acumulables sin duplicar casos, con el modelo servido por la suscripción de Claude Code; las trazas se exportan a un formato propio y versionado.",
+            "seccion_manual": "Correr un lote"
+          }
+        ]
+      },
+      {
+        "orden": 3,
+        "estrella": true,
+        "nombre": "Medir",
+        "linea": "El verificador de brecha y los supuestos medidos de verdad.",
+        "features": [
+          {
+            "id": "verificador",
+            "nombre": "Verificador de brecha",
+            "que_hace": "Lee plan, trazas y evaluaciones y dice, criterio por criterio y riesgo por riesgo, qué se cumplió y en qué casos no; emite el informe en español e inglés, idéntico byte a byte.",
+            "seccion_manual": "Leer el informe de brecha"
+          },
+          {
+            "id": "supuestos",
+            "nombre": "Supuestos con prueba barata",
+            "que_hace": "«El modelo extrae con confianza calibrada» se mide de verdad —calibración y curva riesgo-cobertura— y queda confirmado, refutado o sin probar.",
+            "seccion_manual": "Leer el informe de brecha"
+          },
+          {
+            "id": "instrumento",
+            "nombre": "Validación del instrumento",
+            "que_hace": "Brechas sembradas que el verificador debe detectar, planes con errores que debe rechazar y la prueba cruzada de que el playground reproduce las ramas del agente.",
+            "seccion_manual": "Verificar las corridas y el instrumento"
+          },
+          {
+            "id": "adr",
+            "nombre": "Dos ADR de arranque",
+            "que_hace": "«Código primero» para los demos, y proveedor y cumplimiento para el uso de la suscripción, releído antes de cada entrega.",
+            "seccion_manual": "Verificar las corridas y el instrumento"
+          }
+        ]
+      },
+      {
+        "orden": 4,
+        "estrella": false,
+        "nombre": "Jugar",
+        "linea": "Mover los umbrales sobre las trazas reales.",
+        "features": [
+          {
+            "id": "playground",
+            "nombre": "Mover los umbrales del plan",
+            "que_hace": "Deslizas la confianza mínima, el alto costo, el máximo de aclaraciones o el modo Texas y ves qué casos cambian de camino, qué errores aparecen, cuánto trabajo humano cuesta y la curva riesgo-cobertura.",
+            "seccion_manual": "Mover umbrales en el playground"
+          }
+        ]
+      },
+      {
+        "orden": 5,
+        "estrella": false,
+        "nombre": "Entender",
+        "linea": "El grafo real, nodo por nodo, contra el plan.",
+        "features": [
+          {
+            "id": "visor",
+            "nombre": "El grafo real desde el código",
+            "que_hace": "El diagrama se genera desde el grafo compilado; cada nodo muestra su explicación para líderes y expertos, su código y sus trazas reales, y el diagrama señala cualquier ausencia frente al plan.",
+            "seccion_manual": "Abrir la vitrina"
+          }
+        ]
+      },
+      {
+        "orden": 6,
+        "estrella": false,
+        "nombre": "Mostrar",
+        "linea": "La vitrina bilingüe y sus fichas.",
+        "features": [
+          {
+            "id": "entrada",
+            "nombre": "Página de entrada",
+            "que_hace": "La tesis en una pantalla para un visitante no técnico: todos observan, la mitad evalúa, casi nadie planeó qué evaluar.",
+            "seccion_manual": "Abrir la vitrina"
+          },
+          {
+            "id": "pestanas",
+            "nombre": "Plan, Agente, Brecha y Casos",
+            "que_hace": "En lenguaje llano con detalle para expertos, en español e inglés, en un teléfono de 380 px, con el rótulo «Simulación · no operativo» y la divulgación del revisor simulado.",
+            "seccion_manual": "Abrir la vitrina"
+          },
+          {
+            "id": "fichas",
+            "nombre": "Fichas y paquete para la vitrina personal",
+            "que_hace": "La ficha de reproducibilidad, la del agente A y estos hechos de la app, con el paquete estático que hoja-de-vida publica sin un solo enlace.",
+            "seccion_manual": "Entregar el paquete a hoja-de-vida"
+          }
+        ]
+      }
+    ]
+  },
+  "metricas": [
+    {
+      "clave": "criterios_cumplidos",
+      "etiqueta": "criterios del plan cumplidos, de 9",
+      "valor": 9,
+      "unidad": "criterios",
+      "fuente": "medido",
+      "detalle": "Del informe del verificador 1.2.0 sobre la corrida suscripcion-planlang-a-001-20-v1.2: 9 de 9 criterios cumplidos."
+    },
+    {
+      "clave": "decisiones_cruzadas",
+      "etiqueta": "decisiones rehechas en otro lenguaje, con 0 diferencias",
+      "valor": 233,
+      "unidad": "decisiones",
+      "fuente": "medido",
+      "detalle": "Prueba cruzada RF-09.2 sobre 4 corridas: el intérprete de aristas de TypeScript rehace cada decisión que registró Python."
+    },
+    {
+      "clave": "casos_por_corrida",
+      "etiqueta": "casos por corrida, en 3 corridas y una línea base",
+      "valor": 20,
+      "unidad": "casos",
+      "fuente": "medido",
+      "detalle": "Corrida suscripcion-planlang-a-001-20-v1.2 con sus 2 repeticiones (pass^k) y la línea base de agente único a igual presupuesto."
+    },
+    {
+      "clave": "llamadas_a_modelos_en_la_vitrina",
+      "etiqueta": "llamadas a modelos al visitar la vitrina",
+      "valor": 0,
+      "unidad": "llamadas",
+      "fuente": "declarado",
+      "detalle": "Lo fija la arquitectura: la vitrina es un export estático con los datos precalculados; el paquete se prueba sin una sola solicitud fuera de su origen."
+    },
+    {
+      "clave": "costo_de_una_corrida",
+      "etiqueta": "costo nominal de una corrida de 20 casos",
+      "valor": 0.6704,
+      "unidad": "US$",
+      "fuente": "calculada",
+      "detalle": "Suma del costo nominal que el CLI declara por llamada, en las trazas de la corrida; por la suscripción no se pagó aparte."
+    },
+    {
+      "clave": "funcionalidades",
+      "etiqueta": "funcionalidades construidas",
+      "valor": 16,
+      "unidad": "funcionalidades",
+      "fuente": "medido",
+      "detalle": "Las de la visión del producto marcadas para el corte de dos semanas, contadas contra docs/MANUAL-DE-USO.md; las del roadmap no cuentan."
+    },
+    {
+      "clave": "decisiones_registradas",
+      "etiqueta": "decisiones de arquitectura registradas",
+      "valor": 11,
+      "unidad": "ADR",
+      "fuente": "medido",
+      "detalle": "Archivos de decisions/."
+    }
+  ],
+  "stack": [
+    {
+      "nombre": "Next.js exportado estático",
+      "papel": "la vitrina: siete pantallas en español e inglés, sin servidor"
+    },
+    {
+      "nombre": "TypeScript estricto",
+      "papel": "el núcleo determinista: plan, verificador, playground y visor, iguales en Node y en el navegador"
+    },
+    {
+      "nombre": "Python 3.12 · LangGraph 1.2",
+      "papel": "el agente del demo A, con la pausa humana como interrupt"
+    },
+    {
+      "nombre": "Claude Code por suscripción",
+      "papel": "el modelo de los agentes, en lotes fuera de CI; nunca en el núcleo ni en la vitrina"
+    },
+    {
+      "nombre": "JSON canónico + SHA-256",
+      "papel": "planes, casos, trazas e informes con huella, comprobables byte a byte"
+    },
+    {
+      "nombre": "Vitest · Playwright · axe",
+      "papel": "las pruebas, incluida la cruzada de las aristas entre Python y TypeScript"
+    }
+  ],
+  "privacidad": {
+    "detalle": "Todo caso, afiliado, médico y plan de beneficios es sintético, con semilla, y un validador de identificadores en CI rechaza cualquiera con forma real. La vitrina es estática: ningún visitante lanza llamadas a modelos ni a servicios.",
+    "datos_sinteticos": true,
+    "llamadas_a_modelos_en_la_vitrina": false,
+    "red_saliente_en_la_vitrina": false
+  },
+  "enlaces": {
+    "produccion": null,
+    "razon": "La app privada no se publica. La vitrina viaja a hoja-de-vida como paquete estático, rotulado «Simulación · no operativo», y se muestra allí.",
+    "repositorio": null,
+    "razon_repositorio": "El repositorio no se enlaza desde la vitrina (regla de cero enlaces del portafolio).",
+    "brochure_archivo": "pendiente: docs/BROCHURE.html nace al cierre del ciclo H1 (sprint 3)",
+    "brochure_ruta_local": "pendiente: la ruta /conoce nace con el brochure (sprint 3)"
+  }
+}

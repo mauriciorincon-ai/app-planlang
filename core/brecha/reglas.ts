@@ -20,7 +20,7 @@ import {
   parsear,
   type Contexto,
 } from "./condiciones";
-import type { VistaDeCaso } from "./contexto";
+import type { VistaEvaluable } from "./contexto";
 
 export interface NoEvaluable {
   caso_id: string;
@@ -98,7 +98,7 @@ function probar(nodo: ReturnType<typeof parsear>, ctx: Contexto): Resultado {
 export function evaluarRegla(
   poblacion: string,
   condicion: string | undefined,
-  vistas: readonly VistaDeCaso[],
+  vistas: readonly VistaEvaluable[],
 ): EvaluacionDeRegla {
   const salida: EvaluacionDeRegla = {
     poblacion: [],
@@ -154,7 +154,7 @@ export function evaluarRegla(
 export function valoresDeMetrica(
   metrica: string,
   poblacion: readonly string[],
-  vistas: readonly VistaDeCaso[],
+  vistas: readonly VistaEvaluable[],
 ): {
   valores: { caso_id: string; valor: number }[];
   no_evaluables: NoEvaluable[];

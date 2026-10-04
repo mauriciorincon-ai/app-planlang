@@ -277,3 +277,29 @@ describe("veredicto", () => {
     ]);
   });
 });
+
+describe("AU-S2-B50: lo que el modelo dejó sin medir es una alerta", () => {
+  it("la corrida de respaldo (el modelo no respondió en 3 casos) alerta en C3 y en R5; la de 200, con nulos legítimos, no", async () => {
+    const { generarInforme, fueraPorElProveedor } =
+      await import("../../../../core/brecha/informe");
+    const { entradaDesdeDisco, hermanas } =
+      await import("../../../../scripts/_corridas");
+    const ruta = "runs/demo-a/simulado-v1.4-respaldo";
+    const inf = await generarInforme(entradaDesdeDisco(ruta, hermanas(ruta)));
+    const alertas = inf.veredicto.alertas.map((a) => a.es);
+    expect(alertas).toContain(
+      "C3: 3 caso(s) quedaron fuera de su población porque el modelo no respondió; ahí no se verificó.",
+    );
+    expect(alertas.some((a) => a.startsWith("R5: "))).toBe(true);
+    expect(fueraPorElProveedor(planV11(), [])).toEqual([]);
+    const de200 = "runs/demo-a/suscripcion-planlang-a-001-200-v1.4";
+    const inf200 = await generarInforme(
+      entradaDesdeDisco(de200, hermanas(de200)),
+    );
+    expect(
+      inf200.veredicto.alertas.some((a) =>
+        a.es.includes("el modelo no respondió"),
+      ),
+    ).toBe(false);
+  });
+});

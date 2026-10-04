@@ -1,5 +1,6 @@
 /** RF-06.3 — cada detector de riesgo del plan, aplicado tal cual. */
 import { describe, expect, it } from "vitest";
+import { vistasDeSesiones } from "../../../../core/brecha/contexto";
 import { disparador, evaluarRiesgos } from "../../../../core/brecha/detectores";
 import { planV11, riesgo, vista } from "../../../helpers/vistas";
 
@@ -105,5 +106,66 @@ describe("evaluarRiesgos", () => {
     ]);
     expect(rs[3]?.nota?.es).toBe("Solo se ve en producción.");
     expect(rs[4]?.nota).toBeNull();
+  });
+});
+
+describe("detector de ámbito sesión (M-14, plan v1.3)", () => {
+  const cuota = riesgo("R8", {
+    tipo: "conteo",
+    ambito: "sesion",
+    poblacion: "todos",
+    condicion: "limites_alcanzados > 0",
+    ocurre_si: "> 0",
+  });
+  const sesiones = vistasDeSesiones([
+    {
+      numero: 1,
+      limites_alcanzados: 0,
+      detenida_por: null,
+      casos_ejecutados: ["A", "B"],
+    },
+    {
+      numero: 2,
+      limites_alcanzados: 1,
+      detenida_por: "limite_de_uso",
+      casos_ejecutados: ["C"],
+    },
+  ]);
+  it("mide sobre las sesiones del manifiesto, no sobre las trazas", () => {
+    const [r] = evaluarRiesgos(
+      conRiesgos(cuota),
+      [vista("A", { limites_alcanzados: 0 })],
+      sesiones,
+    );
+    expect(r).toMatchObject({
+      ambito: "sesion",
+      estado: "ocurrio",
+      valor: 1,
+      n_poblacion: 2,
+      casos: ["sesion-2"],
+    });
+  });
+  it("sin límites alcanzados no ocurre; el detector de ámbito caso sigue midiendo trazas", () => {
+    const [r] = evaluarRiesgos(
+      conRiesgos(cuota),
+      [],
+      vistasDeSesiones([
+        { numero: 1, limites_alcanzados: 0, casos_ejecutados: ["A"] },
+      ]),
+    );
+    expect(r).toMatchObject({ estado: "no_ocurrio", valor: 0, casos: [] });
+    const [c] = evaluarRiesgos(
+      conRiesgos(
+        riesgo("RC", {
+          tipo: "conteo",
+          poblacion: "todos",
+          condicion: "fuga",
+          ocurre_si: "> 0",
+        }),
+      ),
+      [vista("1", { fuga: true })],
+      sesiones,
+    );
+    expect(c).toMatchObject({ ambito: "caso", casos: ["1"] });
   });
 });

@@ -1,0 +1,14 @@
+[
+  {
+    "nombre": "@types/node",
+    "de": "26.6.2",
+    "a": "22.20.4",
+    "razon": "S2 planlang: los tipos siguen al Node 22 de la CI y de Vercel (el PR #6 los subió a 26)"
+  },
+  {
+    "nombre": "undici-types",
+    "de": "8.9.0",
+    "a": "6.21.0",
+    "razon": "dependencia de @types/node: vuelve con él a la versión de Node 22"
+  }
+]

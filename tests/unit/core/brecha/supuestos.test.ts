@@ -4,6 +4,7 @@ import {
   acotadaPorElGrafo,
   evaluarSupuestos,
   presupuestoDe,
+  respuestaInservible,
 } from "../../../../core/brecha/supuestos";
 import type { Paso, Traza } from "../../../../core/formatos/traza";
 import { planV11, supuesto, vista } from "../../../helpers/vistas";
@@ -291,6 +292,47 @@ describe("comparación con la línea base (S3)", () => {
       })[0]?.motivo.en,
     ).toMatch(/accuracy and median latency/);
   });
+  it("tolerancia declarada en el plan (v1.3): la regla es la del plan y se dice; claves desconocidas se declaran", () => {
+    // multiagente: exactitud 1, latencia mediana 11 · base: exactitud 1, latencia mediana 8 (37,5 % más rápida).
+    const base = [
+      caso("1", true, 7, [paso(50, 0.05)]),
+      caso("2", true, 9, [paso(50, 0.05)]),
+    ];
+    const con = (umbral: Record<string, number>) =>
+      evaluarSupuestos(
+        conSupuestos({
+          ...s3,
+          medible_en_trazas: {
+            ...(s3.medible_en_trazas as NonNullable<
+              typeof s3.medible_en_trazas
+            >),
+            umbral_confirmacion: umbral,
+          },
+        }),
+        multi,
+        U,
+        { corrida_id: "b", vistas: base },
+      )[0];
+    const estricta = con({
+      exactitud_dif_min: 0,
+      latencia_mediana_razon_max: 1,
+    });
+    expect(estricta?.estado).toBe("refutado");
+    expect(estricta?.motivo.es).toMatch(/Tolerancia declarada en el plan/);
+    expect(estricta?.motivo.es).not.toMatch(/Regla por defecto/);
+    expect(estricta?.motivo.en).toMatch(/median latency ≤ 1 × the baseline's/);
+    expect(con({ latencia_mediana_razon_max: 1.5 })?.estado).toBe("confirmado");
+    expect(
+      con({ exactitud_dif_min: 0.1, latencia_mediana_razon_max: 2 })?.estado,
+    ).toBe("refutado");
+    const rara = con({ latencia_max: 1 });
+    expect(rara?.limitaciones.map((l) => l.es).join(" ")).toMatch(
+      /claves de tolerancia que la comparación no conoce y no aplica: latencia_max/,
+    );
+    // Con solo claves desconocidas rige la regla por defecto, y el motivo no dice «declarada» (AU-S2-B56).
+    expect(rara?.motivo.es).toMatch(/Regla por defecto/);
+    expect(rara?.motivo.es).not.toMatch(/Tolerancia declarada en el plan/);
+  });
   it("una base con error del proveedor lo declara; toda muestra < 30 lleva su nota", () => {
     const base = [
       caso("1", true, 11, [paso(50, 0.05)]),
@@ -380,5 +422,45 @@ describe("comparación con la línea base (S3)", () => {
         { pasos: [paso(0, 0), paso(10, 0, 2)] } as unknown as Traza,
       ]),
     ).toEqual({ llamadas_al_modelo: 3, tokens: 10, costo_nominal_usd: 0 });
+  });
+});
+
+describe("AU-S2-10: una respuesta inservible tras el respaldo AU-9 se juzga", () => {
+  const traza = (t: Partial<Traza>) =>
+    ({
+      resultado: "completo",
+      error_proveedor: null,
+      salida_final: { es: "Su solicitud fue aprobada.", en: "Approved." },
+      ...t,
+    }) as unknown as Traza;
+  const vacia = {
+    es: "",
+    en: "",
+    aviso_ia: { es: "aviso", en: "notice" },
+  } as Traza["salida_final"];
+
+  it("un caso completo por el respaldo (con `error_proveedor`) y respuesta vacía cuenta como inservible", () => {
+    expect(
+      respuestaInservible(
+        traza({ error_proveedor: "timeout", salida_final: vacia }),
+      ),
+    ).toBe(true);
+  });
+
+  it("un caso que terminó en error no tiene respuesta que juzgar", () => {
+    expect(
+      respuestaInservible(
+        traza({
+          resultado: "error",
+          error_proveedor: "otro",
+          salida_final: vacia,
+        }),
+      ),
+    ).toBe(false);
+    expect(respuestaInservible(traza({ salida_final: null }))).toBe(false);
+  });
+
+  it("una respuesta útil no es inservible aunque un paso previo haya fallado", () => {
+    expect(respuestaInservible(traza({ error_proveedor: "otro" }))).toBe(false);
   });
 });

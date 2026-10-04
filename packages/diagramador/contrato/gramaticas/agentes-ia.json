@@ -1,0 +1,318 @@
+{
+  "contrato_version": "0.3.0",
+  "id": "agentes-ia",
+  "version": "1.1.0",
+  "nombre": {
+    "es": "Agentes y flujos de IA",
+    "en": "AI agents and flows"
+  },
+  "descripcion": "Gramática registrada en el batch G-Metodo de la F1 de planlang (2026-09-26), promovida desde prueba-agentes-ia; convertida al contrato 0.3.0 el 2026-09-27 (mapas de idioma ES/EN, madurez por nivel, nodos_por_banda_max, el modo condicional exige `condicion`, id `pausa_humana` corregido a `pausa-humana` porque el patrón de ids no admite guion bajo). Los tipos de nodo son los cinco de la especificación de planlang (RF-08.2): modelo, herramienta, regla, pausa humana y enrutador; el mapa lo genera un conversor desde el grafo compilado de LangGraph (get_graph().to_json() + un JSON propio con las ramas de cada arista condicional), y las trazas de casos se publican como recorridos. Primer consumidor: planlang (visor de agente, M8).",
+  "idiomas": [
+    "es",
+    "en"
+  ],
+  "idioma_base": "es",
+  "bandas": [
+    {
+      "id": "entrada",
+      "nombre": {
+        "es": "Entrada",
+        "en": "Input"
+      },
+      "clase": "capa",
+      "orden": 1,
+      "pregunta_lider": {
+        "es": "¿Qué recibe el agente?",
+        "en": "What does the agent receive?"
+      }
+    },
+    {
+      "id": "orquestacion",
+      "nombre": {
+        "es": "Orquestación",
+        "en": "Orchestration"
+      },
+      "clase": "capa",
+      "orden": 2,
+      "pregunta_lider": {
+        "es": "¿Quién decide el siguiente paso?",
+        "en": "Who decides the next step?"
+      }
+    },
+    {
+      "id": "agentes",
+      "nombre": {
+        "es": "Agentes especializados",
+        "en": "Specialised agents"
+      },
+      "clase": "capa",
+      "orden": 3,
+      "pregunta_lider": {
+        "es": "¿Quién razona y con qué modelo?",
+        "en": "Who reasons, and with which model?"
+      }
+    },
+    {
+      "id": "reglas",
+      "nombre": {
+        "es": "Reglas y guardias",
+        "en": "Rules and guards"
+      },
+      "clase": "capa",
+      "orden": 4,
+      "pregunta_lider": {
+        "es": "¿Qué verifica el código sin preguntarle a un modelo?",
+        "en": "What does the code check without asking a model?"
+      }
+    },
+    {
+      "id": "pausa-humana",
+      "nombre": {
+        "es": "Pausa humana",
+        "en": "Human pause"
+      },
+      "clase": "capa",
+      "orden": 5,
+      "pregunta_lider": {
+        "es": "¿Cuándo se detiene a esperar a una persona?",
+        "en": "When does it stop and wait for a person?"
+      }
+    },
+    {
+      "id": "salida",
+      "nombre": {
+        "es": "Salida",
+        "en": "Output"
+      },
+      "clase": "capa",
+      "orden": 6,
+      "pregunta_lider": {
+        "es": "¿Qué entrega y con qué garantías?",
+        "en": "What does it deliver, and with what guarantees?"
+      }
+    },
+    {
+      "id": "guardarrailes",
+      "nombre": {
+        "es": "Guardarraíles",
+        "en": "Guardrails"
+      },
+      "clase": "transversal",
+      "orden": 1,
+      "pregunta_lider": {
+        "es": "¿Qué no puede hacer nunca?",
+        "en": "What may it never do?"
+      }
+    },
+    {
+      "id": "trazas-costo",
+      "nombre": {
+        "es": "Trazas y costo",
+        "en": "Traces and cost"
+      },
+      "clase": "transversal",
+      "orden": 2,
+      "pregunta_lider": {
+        "es": "¿Qué queda registrado y cuánto cuesta?",
+        "en": "What gets recorded, and what does it cost?"
+      }
+    }
+  ],
+  "tipos_de_nodo": [
+    {
+      "id": "modelo",
+      "nombre": {
+        "es": "Nodo con modelo de lenguaje",
+        "en": "Language-model node"
+      },
+      "token_color": "tipo-1",
+      "glifo": "estrella",
+      "etiqueta_corta": {
+        "es": "MOD",
+        "en": "MOD"
+      }
+    },
+    {
+      "id": "herramienta",
+      "nombre": {
+        "es": "Herramienta",
+        "en": "Tool"
+      },
+      "token_color": "tipo-2",
+      "glifo": "triangulo",
+      "etiqueta_corta": {
+        "es": "HER",
+        "en": "TOOL"
+      }
+    },
+    {
+      "id": "regla",
+      "nombre": {
+        "es": "Regla determinista",
+        "en": "Deterministic rule"
+      },
+      "token_color": "tipo-3",
+      "glifo": "escudo",
+      "etiqueta_corta": {
+        "es": "REG",
+        "en": "RULE"
+      }
+    },
+    {
+      "id": "pausa-humana",
+      "nombre": {
+        "es": "Pausa humana",
+        "en": "Human pause"
+      },
+      "token_color": "tipo-4",
+      "glifo": "cuadrado",
+      "etiqueta_corta": {
+        "es": "HUM",
+        "en": "HUM"
+      }
+    },
+    {
+      "id": "enrutador",
+      "nombre": {
+        "es": "Enrutador",
+        "en": "Router"
+      },
+      "token_color": "tipo-5",
+      "glifo": "rombo",
+      "etiqueta_corta": {
+        "es": "ENR",
+        "en": "RTR"
+      }
+    }
+  ],
+  "modos_de_flujo": [
+    {
+      "id": "secuencia",
+      "nombre": {
+        "es": "Secuencia",
+        "en": "Sequence"
+      },
+      "estilo_linea": "continua",
+      "marcador": "ninguno",
+      "descripcion": {
+        "es": "Sigue siempre al paso anterior.",
+        "en": "Always follows the previous step."
+      }
+    },
+    {
+      "id": "condicional",
+      "nombre": {
+        "es": "Condicional",
+        "en": "Conditional"
+      },
+      "estilo_linea": "discontinua",
+      "marcador": "cuadros",
+      "descripcion": {
+        "es": "Se toma solo si una señal registrada cumple el umbral del plan; la señal, el operador y el valor van en la condición del flujo.",
+        "en": "Taken only when a recorded signal meets the plan's threshold; the signal, operator and value live in the flow's condition."
+      },
+      "exige_condicion": true
+    },
+    {
+      "id": "reanudacion",
+      "nombre": {
+        "es": "Reanudación",
+        "en": "Resumption"
+      },
+      "estilo_linea": "punteada",
+      "marcador": "ida-y-vuelta",
+      "descripcion": {
+        "es": "Continúa cuando una persona responde a la pausa.",
+        "en": "Continues when a person answers the pause."
+      }
+    }
+  ],
+  "escala_madurez": [
+    {
+      "id": "implementado",
+      "nombre": {
+        "es": "Implementado y corrido",
+        "en": "Implemented and run"
+      },
+      "nivel": 4,
+      "disponible": true
+    },
+    {
+      "id": "en-construccion",
+      "nombre": {
+        "es": "En construcción",
+        "en": "Under construction"
+      },
+      "nivel": 1,
+      "disponible": false
+    },
+    {
+      "id": "exigido-por-el-plan",
+      "nombre": {
+        "es": "Exigido por el plan, aún no en el grafo",
+        "en": "Required by the plan, not yet in the graph"
+      },
+      "nivel": 0,
+      "disponible": false
+    }
+  ],
+  "vigencia": {
+    "umbral_revisar_dias": 30,
+    "umbral_vencido_dias": 90
+  },
+  "recorrido_referencia": {
+    "desde_bandas": [
+      "entrada"
+    ],
+    "hasta_bandas": [
+      "salida"
+    ],
+    "llegadas": "alguna"
+  },
+  "limites": {
+    "bloques_min": 1,
+    "bloques_max": 8,
+    "frases_lider_max": 2,
+    "nodos_por_banda_max": 8
+  },
+  "terminos_a_explicar": {
+    "es": [
+      "token",
+      "prompt",
+      "modelo de lenguaje",
+      "grafo",
+      "nodo",
+      "arista condicional",
+      "señal",
+      "umbral",
+      "interrupt",
+      "checkpointer",
+      "traza",
+      "inyección de instrucciones",
+      "guardia de salida",
+      "verdad conocida",
+      "playground",
+      "supervisor",
+      "enrutador"
+    ],
+    "en": [
+      "token",
+      "prompt",
+      "language model",
+      "graph",
+      "node",
+      "conditional edge",
+      "signal",
+      "threshold",
+      "interrupt",
+      "checkpointer",
+      "trace",
+      "prompt injection",
+      "output guard",
+      "known truth",
+      "playground",
+      "supervisor",
+      "router"
+    ]
+  }
+}

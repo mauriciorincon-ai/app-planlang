@@ -109,7 +109,18 @@ export function contextoDeCaso(
   traza: Traza,
   umbrales: Umbrales,
 ): Contexto {
-  return contextoDesdeObjeto(objetoDeCaso(caso, traza, umbrales), {
+  return contextoDeObjeto(caso, objetoDeCaso(caso, traza, umbrales));
+}
+
+/**
+ * El contexto de un caso sobre un objeto ya armado (el de `objetoDeCaso` o uno derivado: el playground lo usa
+ * con el desenlace de un camino que el agente no tomó).
+ */
+export function contextoDeObjeto(
+  caso: Caso,
+  objeto: Record<string, JsonValor>,
+): Contexto {
+  return contextoDesdeObjeto(objeto, {
     identificador_sintetico: (id) => {
       if (id !== caso.id)
         throw new ErrorEvaluacion(
@@ -125,6 +136,47 @@ export interface VistaDeCaso {
   caso: Caso;
   traza: Traza;
   ctx: Contexto;
+}
+
+/** Lo que una regla necesita de una unidad medida: su id y su contexto (un caso o una sesión). */
+export interface VistaEvaluable {
+  caso_id: string;
+  ctx: Contexto;
+}
+
+/** Lo que el contexto de una sesión expone a los detectores de ámbito `sesion` (M-14). */
+export const CLAVES_DE_SESION = [
+  "todos",
+  "limites_alcanzados",
+  "detenida_por",
+  "casos_ejecutados",
+] as const;
+
+/** Las funciones que una condición puede llamar: las que `contextoDeObjeto` registra. */
+export const FUNCIONES_DE_CONDICION = ["identificador_sintetico"] as const;
+
+/**
+ * Vistas de las sesiones de una corrida para los detectores de ámbito `sesion` (M-14): el id es `sesion-N` y el
+ * contexto expone `todos` (como el de caso), `limites_alcanzados`, `detenida_por` y `casos_ejecutados` (cuántos
+ * casos corrió la sesión).
+ */
+export function vistasDeSesiones(
+  sesiones: readonly {
+    numero: number;
+    limites_alcanzados: number;
+    detenida_por?: string | null;
+    casos_ejecutados: readonly string[];
+  }[],
+): VistaEvaluable[] {
+  return sesiones.map((s) => ({
+    caso_id: `sesion-${s.numero}`,
+    ctx: contextoDesdeObjeto({
+      todos: true,
+      limites_alcanzados: s.limites_alcanzados,
+      detenida_por: s.detenida_por ?? null,
+      casos_ejecutados: s.casos_ejecutados.length,
+    }),
+  }));
 }
 
 export function vistasDeCorrida(

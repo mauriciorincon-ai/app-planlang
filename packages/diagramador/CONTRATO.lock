@@ -1,9 +1,56 @@
 {
   "objeto": "diagramador",
-  "contrato": "reusables/diagramador/CONTRATO.md (planeadora)",
-  "version": "0.2.0",
-  "sha256": "0e62bc60d05ea1062118491c995e4accbbe8f559ccdf342bff9c4717bb37d317",
-  "fijado": "2026-09-27",
-  "consumidor": "planlang (segundo consumidor; gramática agentes-ia v1.0.0). En el S1 solo se fija el contrato: el conversor grafo → mapa vive en core/visor (S2) y el SVG llega con el piloto de big-d.",
-  "enmiendas_propuestas": []
+  "contrato": "reusables/diagramador/ (planeadora)",
+  "version": "0.3.0",
+  "gramatica": "agentes-ia 1.1.0",
+  "sha256": "763bde26d46c8c4ff7293500be6048fdb8d51d2181c0b4555aa53244d2ced602",
+  "archivos": {
+    "CONTRATO.md": "763bde26d46c8c4ff7293500be6048fdb8d51d2181c0b4555aa53244d2ced602",
+    "esquema/gramatica.schema.json": "b99d68eee1d38f197d11846e709888bdb62b0799371971b167a89ce6d63db9e2",
+    "esquema/mapa.schema.json": "d64ec0864d49e7d38259ac86fdcd3f267f8f3e42ba175592f058fdf2297746c9",
+    "gramaticas/agentes-ia.json": "bd9c73b36eb1a513dc70ff37adb8ab94b4c9cfd8c2bf81e6d99ba60b90002014"
+  },
+  "tabla_de_metricas": {
+    "core/visor/metricas.json": "5bf806babc93974f0af3b817940ab1340d885c9afb61759a11c2c9be6748583d",
+    "nota": "Tabla de avances de Inter y JetBrains Mono (G15), generada por scripts/visor/metricas.ts desde los woff2 de la vitrina. Enmienda propuesta: la fuente del consumidor es Inter, no Space Grotesk."
+  },
+  "fijado": "2026-09-28",
+  "consumidor": "planlang (segundo consumidor). Copia fijada en contrato/: el contrato, los dos esquemas y la gramática agentes-ia. El conversor grafo → mapa vive en core/visor (S2) y dibuja con el SVG propio de la vitrina.",
+  "enmiendas_propuestas": [
+    {
+      "id": "terminal",
+      "que": "Tipo de nodo `terminal` para __start__ y __end__ (hoy terminales del dibujo fuera del mapa).",
+      "fuente": "ADR-010 § 2"
+    },
+    {
+      "id": "condicion.funcion",
+      "que": "Condición de arista que es una función nombrada con sus entradas (`texas_y_no_aprobar`), en lugar de la convención `senal: \"texas-y-no-aprobar\"`.",
+      "fuente": "ADR-010 § 2"
+    },
+    {
+      "id": "condicion.por_defecto",
+      "que": "Rama por defecto («si no») como condición propia, en lugar de `senal: \"rama-por-defecto\"`.",
+      "fuente": "ADR-010 § 2"
+    },
+    {
+      "id": "fuente.tipo-codigo",
+      "que": "`fuente.tipo: \"codigo\"` para citar archivo y líneas del repositorio sin URL https.",
+      "fuente": "ADR-010 § 2"
+    },
+    {
+      "id": "glifo-regla-hexagono",
+      "que": "Glifo de `regla` = hexágono (sellado en el design system 1.0.0) frente a `escudo` de agentes-ia.",
+      "fuente": "desviación 4 del S2"
+    },
+    {
+      "id": "G15-inter",
+      "que": "La tabla de métricas G15 con la fuente del consumidor (Inter), no Space Grotesk.",
+      "fuente": "tabla_de_metricas.nota"
+    }
+  ],
+  "planeadora_adelante": {
+    "version": "0.4.0",
+    "sha256": "9b28d9ffe53d3f06766c31cb96849e434c3fe0ba8e64ac38c7c464699443f1fd",
+    "decision": "Visto el 2026-10-01 (fase 4 del S2): la planeadora publicó la v0.4.0, MINOR de datos (ningún mapa 0.3.0 válido deja de serlo). La orden del S2 fija la 0.3.0 y el visor se construyó y validó contra ella; la adopción se decide en el gate de la fase 4 (en este sprint o en el S3) y queda en la bitácora, desviación 45."
+  }
 }

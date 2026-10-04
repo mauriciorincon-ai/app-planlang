@@ -34,6 +34,9 @@ class Estado(TypedDict, total=False):
     decision_final: str | None
     pausa_humana: bool
     severidad_accion: int | None
+    # AU-9 (plan v1.4): el nodo que llama al modelo deja si el proveedor respondió, y con qué falló si no.
+    proveedor_no_disponible: bool
+    error_proveedor: str | None
     # Trabajo del grafo.
     aclaraciones_hechas: int
     aclaraciones: Annotated[list[dict[str, Any]], operator.add]
@@ -75,6 +78,8 @@ def estado_inicial(caso: dict[str, Any], umbrales: dict[str, Any]) -> Estado:
         "propuesta": None,
         "decision_final": None,
         "severidad_accion": None,
+        "proveedor_no_disponible": False,
+        "error_proveedor": None,
         "extraccion": None,
         "cobertura": None,
         "revision": None,

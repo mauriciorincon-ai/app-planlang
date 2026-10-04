@@ -5,7 +5,10 @@
 import type { Idioma } from "../formatos/bilingue";
 
 export function redondear(x: number, decimales = 4): number {
-  const f = 10 ** decimales;
+  // Potencia de diez multiplicando, no con `**`: el playground corre esto en el navegador y G2 veta `**`, cuya
+  // exactitud no garantiza la especificación entre motores (AU-S2-B8). Hasta 10^22 cada producto es exacto.
+  let f = 1;
+  for (let k = 0; k < decimales; k++) f *= 10;
   const r = Math.round(x * f) / f;
   return Object.is(r, -0) ? 0 : r;
 }

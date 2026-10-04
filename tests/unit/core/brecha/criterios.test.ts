@@ -225,8 +225,46 @@ describe("métricas agregadas", () => {
     expect(
       evaluarCriterios(conCriterios(t), [vista("1", { x: 0.1 })])[0]?.estado,
     ).toBe("incumple");
+    // M-26: casos en la población sin un solo valor medido → indeterminado (antes, «sin población», que es falso).
     expect(
       evaluarCriterios(conCriterios(t), [vista("1", { x: null })])[0]?.estado,
+    ).toBe("indeterminado");
+  });
+
+  it("M-26: sin casos en la población sigue siendo «sin población»", () => {
+    const t = criterio(
+      "P",
+      { poblacion: "todos == false", metrica: "x", agregacion: "mediana" },
+      { tipo: "latencia", valor_objetivo: 30 },
+    );
+    expect(
+      evaluarCriterios(conCriterios(t), [vista("1", { x: 10 })])[0]?.estado,
     ).toBe("sin_poblacion");
+  });
+
+  it("M-26: la nota de los casos que incumplen uno a uno dice el sentido del objetivo", () => {
+    const latencia = criterio(
+      "L",
+      { poblacion: "todos", metrica: "x", agregacion: "mediana" },
+      { tipo: "latencia", valor_objetivo: 30 },
+    );
+    const exactitud = criterio(
+      "E",
+      { poblacion: "todos", metrica: "x", agregacion: "mediana" },
+      { tipo: "tasa", valor_objetivo: 0.5 },
+    );
+    const [l] = evaluarCriterios(conCriterios(latencia), [
+      vista("1", { x: 10 }),
+      vista("2", { x: 40 }),
+      vista("3", { x: 12 }),
+    ]);
+    expect(l?.nota?.es).toMatch(/superan el objetivo/);
+    const [e] = evaluarCriterios(conCriterios(exactitud), [
+      vista("1", { x: 0.9 }),
+      vista("2", { x: 0.1 }),
+      vista("3", { x: 0.8 }),
+    ]);
+    expect(e?.nota?.es).toMatch(/quedan por debajo del objetivo/);
+    expect(e?.nota?.en).toMatch(/fall below the target/);
   });
 });

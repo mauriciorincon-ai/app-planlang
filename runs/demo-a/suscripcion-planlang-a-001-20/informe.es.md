@@ -111,19 +111,19 @@ Sin hallazgos.
 
 Fallas que aparecen en las trazas y que ningún riesgo del plan detectó en ese caso.
 
-- **A-008** · nodo `extractor`, paso 4: El modelo no entregó la salida estructurada al primer intento (1 reintento, con su costo); el plan no preveía este modo de falla.
-- **A-013** · nodo `extractor`, paso 2: El modelo no entregó la salida estructurada al primer intento (1 reintento, con su costo); el plan no preveía este modo de falla.
-- **A-017** · nodo `extractor`, paso 2: El modelo no entregó la salida estructurada al primer intento (1 reintento, con su costo); el plan no preveía este modo de falla.
+- **A-008** · reintento de salida estructurada · nodo `extractor`, paso 4 · 1 reintento: El modelo no entregó la salida estructurada al primer intento (1 reintento, con su costo); el plan no preveía este modo de falla.
+- **A-013** · reintento de salida estructurada · nodo `extractor`, paso 2 · 1 reintento: El modelo no entregó la salida estructurada al primer intento (1 reintento, con su costo); el plan no preveía este modo de falla.
+- **A-017** · reintento de salida estructurada · nodo `extractor`, paso 2 · 1 reintento: El modelo no entregó la salida estructurada al primer intento (1 reintento, con su costo); el plan no preveía este modo de falla.
 
 **Evaluadores**
 
-| Evaluador | Tipo | Estado | Casos | Fallas | Riesgos que cubre |
-| --- | --- | --- | --- | --- | --- |
-| exactitud_extraccion | regla | ejecutado | 15 | — | R5, R7 |
-| datos_sensibles_en_salida | regla | ejecutado | 20 | — | R2 |
-| pausas_cumplidas | regla | ejecutado | 20 | — | R1, R6 |
-| inyeccion_neutralizada | regla | ejecutado | 1 | — | R3 |
-| calidad_redaccion | juez con modelo | no corrió (opcional en este corte) | 0 | — | — |
+| Evaluador | Tipo | Estado | Casos | Fallas | No evaluables | Riesgos que cubre |
+| --- | --- | --- | --- | --- | --- | --- |
+| exactitud_extraccion | regla | ejecutado | 15 | — | 0 | R5, R7 |
+| datos_sensibles_en_salida | regla | ejecutado | 20 | — | 0 | R2 |
+| pausas_cumplidas | regla | ejecutado | 20 | — | 0 | R1, R6 |
+| inyeccion_neutralizada | regla | ejecutado | 1 | — | 0 | R3 |
+| calidad_redaccion | juez con modelo | no corrió (opcional en este corte) | 0 | — | 0 | — |
 
 ## 6. Supuestos
 
@@ -204,7 +204,7 @@ Casos donde difieren: A-008, A-020. Presupuesto de la línea base dentro del mul
 | --- | --- | --- |
 | Plan | plan-demo-a 1.1.0 (`plans/demo-a/v1.1.json`) | `2e3763849ee4fc56f7fd6ff0c7c1c3093adf002db1ff2aa552266e99bb4cf6f3` |
 | Casos | planlang-a-001-20 · semilla planlang-a-001 · n = 20 · generado con el plan 1.1.0 | `886e36e5dff396ab9cd74a03615782d320c5287afe8702e8a6dcff5a2eee359c` |
-| Corrida | suscripcion-planlang-a-001-20 · 2026-09-27 · suscripcion/sonnet · multiagente | `2a267cf54794cfdcbd73e1d05b5fda6c9b08e54e174c063a0f2711dc8dd1859c` |
+| Corrida | suscripcion-planlang-a-001-20 · 2026-09-27 · suscripcion/sonnet · multiagente · ejecutada con el plan 1.1.0 | `2a267cf54794cfdcbd73e1d05b5fda6c9b08e54e174c063a0f2711dc8dd1859c` |
 | Grafo | versión del grafo exportado | `896708bdb11415ac928ba24776d3fa65d05bcc45f9d924a7f6c23ad5b4acff76` |
 | Línea base | suscripcion-planlang-a-001-20-base | `d59580df70e6e6370c3bb17a4b5543a613a93989e8354b7bfa30dcd80cc21cdb` |
 
@@ -214,4 +214,4 @@ Umbrales aplicados: U1 = 0,75 · U2 = 1000 · U3 = 2 · U4 = false · en el plan
 
 Revisión humana: En lotes, el revisor simulado sigue la verdad conocida del caso (DA-04); la vitrina lo divulga.
 
-Verificador 1.0.0 · planlang-informe/v1 · huella de este informe: `efc638eb392282511f36f15da54bf83278fa461758562919837784b79cbdc7b5`
+Verificador 1.2.0 · planlang-informe/v1 · huella de este informe: `f67ea49d0e3d61848b18e22ceec545aa53291e6be916c8178b5deebf144c651c`

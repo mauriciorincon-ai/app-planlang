@@ -56,6 +56,26 @@ def test_orden_solo_entre_numeros_y_operador_conocido() -> None:
         comparar(True, "mayor_que", 0, False)
     with pytest.raises(ErrorArista):
         comparar(1, "parecido_a", 1, False)
+    with pytest.raises(ErrorArista):
+        comparar(None, "mayor_que", "x", False)
+
+
+def test_una_senal_nula_no_cumple_ninguna_comparacion_de_orden() -> None:
+    """AU-9: sin proveedor el extractor no observa sus señales (nulas) y su arista de faltantes es falsa."""
+    for op in ("menor_que", "mayor_que", "menor_o_igual_que", "mayor_o_igual_que"):
+        assert comparar(None, op, 0, False) is False
+        assert comparar(None, op, 0.75, True) is False
+
+
+def test_con_senal_nula_tampoco_es_distinta() -> None:
+    """AU-S2-B51: el nulo no cumple ninguna comparación, tampoco «distinto de» (como el intérprete TS)."""
+    assert comparar(None, "distinto_de", "urgencia", False) is False
+    assert comparar(None, "igual_a", "urgencia", False) is False
+
+
+def test_operador_desconocido_aun_con_senal_nula() -> None:
+    with pytest.raises(ErrorArista, match="operador desconocido"):
+        comparar(None, "parecido_a", 0.75, False)
 
 
 def test_resolver_valor() -> None:

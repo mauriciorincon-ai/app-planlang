@@ -38,10 +38,11 @@ const ESTADO_SUPUESTO: Record<ResultadoSupuesto["estado"], Tb> = {
   sin_probar: tb("◌ sin probar", "◌ untested"),
 };
 
+/** Las mismas palabras que la vitrina y la maqueta aprobada («Meets with warnings»): AU-S2-B44. */
 const VEREDICTO: Record<Informe["veredicto"]["valor"], Tb> = {
-  cumple: tb("✓ CUMPLE", "✓ MET"),
-  cumple_con_alertas: tb("⚠ CUMPLE CON ALERTAS", "⚠ MET WITH ALERTS"),
-  no_cumple: tb("✗ NO CUMPLE", "✗ NOT MET"),
+  cumple: tb("✓ CUMPLE", "✓ MEETS"),
+  cumple_con_alertas: tb("⚠ CUMPLE CON ALERTAS", "⚠ MEETS WITH WARNINGS"),
+  no_cumple: tb("✗ NO CUMPLE", "✗ DOES NOT MEET"),
 };
 
 const PRIORIDAD: Record<string, Tb> = {
@@ -49,6 +50,21 @@ const PRIORIDAD: Record<string, Tb> = {
   media: tb("media", "medium"),
   baja: tb("baja", "low"),
 };
+
+/**
+ * Prioridad de un riesgo (instrumentos-de-plan v0.2.0, G8): la efectiva manda; con control legal se dice, y
+ * la de tabla se muestra al lado cuando difiere — nunca se oculta.
+ */
+function prioridadRiesgo(r: Informe["riesgos"][number], i: Idioma): string {
+  const efectiva =
+    PRIORIDAD[r.prioridad_de_accion]?.[i] ?? r.prioridad_de_accion;
+  if (!r.control_legal) return efectiva;
+  const legal = i === "es" ? "control legal" : "legal control";
+  if (r.prioridad_de_tabla === r.prioridad_de_accion)
+    return `${efectiva} · ${legal}`;
+  const tabla = PRIORIDAD[r.prioridad_de_tabla]?.[i] ?? r.prioridad_de_tabla;
+  return `${efectiva} · ${legal} (${i === "es" ? "tabla" : "table"}: ${tabla})`;
+}
 
 /** Enumeraciones del dominio del verificador, redactadas en los dos idiomas (regla 20). */
 const TIPO_NODO: Record<string, Tb> = {
@@ -61,6 +77,15 @@ const TIPO_EVALUADOR: Record<string, Tb> = {
   regla: tb("regla", "rule"),
   juez_modelo: tb("juez con modelo", "model judge"),
   humano: tb("persona", "person"),
+};
+const CATEGORIA_BRECHA: Record<string, Tb> = {
+  evaluador: tb("evaluador", "evaluator"),
+  error_proveedor: tb("error del proveedor", "provider error"),
+  reintento_de_esquema: tb(
+    "reintento de salida estructurada",
+    "structured-output retry",
+  ),
+  evaluador_no_ejecutado: tb("evaluador sin correr", "evaluator not run"),
 };
 const VARIANTE: Record<string, Tb> = {
   multiagente: tb("multiagente", "multi-agent"),
@@ -103,6 +128,16 @@ const siNo = (b: boolean, i: Idioma) =>
   b ? (i === "es" ? "sí" : "yes") : "no";
 const casos = (ids: readonly string[]) =>
   ids.length === 0 ? "—" : ids.join(", ");
+
+/** Casos de un riesgo; con detector de ámbito `sesion` (M-14) son sesiones del manifiesto. */
+const casosDeRiesgo = (r: Informe["riesgos"][number], i: Idioma) =>
+  r.ambito === "sesion"
+    ? casos(
+        r.casos.map((c) =>
+          c.replace(/^sesion-/, i === "es" ? "sesión " : "session "),
+        ),
+      )
+    : casos(r.casos);
 
 function valorCriterio(c: ResultadoCriterio, i: Idioma): string {
   const v = c.valor_medido;
@@ -182,7 +217,7 @@ function seccionResumen(inf: Informe, i: Idioma): string {
           ? "ninguno."
           : "none."
         : ocurridos
-            .map((r) => `${r.id} (${r.modo[i]}, ${casos(r.casos)})`)
+            .map((r) => `${r.id} (${r.modo[i]}, ${casosDeRiesgo(r, i)})`)
             .join("; ") + "."
     }`,
     "",
@@ -213,7 +248,7 @@ function seccionPlan(inf: Informe, i: Idioma): string {
     "",
     ...p.decisiones_una_via.map(
       (d) =>
-        `- **${d.id}** — ${d.pregunta[i]}${d.justificacion ? ` ${d.justificacion[i]}` : ""}`,
+        `- **${d.id}** — ${d.pregunta[i]}${d.opcion_elegida ? ` → ${d.opcion_elegida[i]}.` : ""}${d.justificacion ? ` ${d.justificacion[i]}` : ""}`,
     ),
   ].join("\n");
 }
@@ -272,11 +307,25 @@ function valorRiesgo(r: ResultadoRiesgo, i: Idioma): string {
   return `${fmt(r.valor)}${regla}`;
 }
 
+function notasRiesgo(r: ResultadoRiesgo, i: Idioma): string[] {
+  const out: string[] = [];
+  if (r.nota) out.push(r.nota[i]);
+  if (r.fuera_por_senal_nula > 0)
+    out.push(
+      i === "es"
+        ? `${r.fuera_por_senal_nula} caso(s) quedan fuera de la población del detector porque la señal que la define es nula en ellos.`
+        : `${r.fuera_por_senal_nula} case(s) fall outside the detector's population because the signal that defines it is null for them.`,
+    );
+  for (const n of r.no_evaluables) out.push(`${n.caso_id}: ${n.motivo[i]}`);
+  return out;
+}
+
 function seccionRiesgos(inf: Informe, i: Idioma): string {
   const ct = inf.contrato_de_grafo;
-  const notas = inf.riesgos
-    .filter((r) => r.nota)
-    .map((r) => `- **${r.id}** — ${r.nota![i]}`);
+  // M-24: los casos que el detector no pudo medir y los que quedan fuera por una señal nula se ven, como en criterios.
+  const notas = inf.riesgos.flatMap((r) =>
+    notasRiesgo(r, i).map((n) => `- **${r.id}** — ${n}`),
+  );
   const hallazgos = ct.hallazgos.map(
     (h) =>
       `- ${h.severidad === "bloqueante" ? "✗" : "⚠"} \`${h.codigo}\`${h.caso_id ? ` ${h.caso_id}` : ""} (${h.corrida_id}): ${h.detalle[i]}`,
@@ -310,11 +359,13 @@ function seccionRiesgos(inf: Informe, i: Idioma): string {
         r.id,
         r.modo[i],
         `${r.severidad}·${r.ocurrencia}·${r.deteccion}`,
-        PRIORIDAD[r.prioridad_de_accion]?.[i] ?? r.prioridad_de_accion,
-        String(r.n_poblacion),
+        prioridadRiesgo(r, i),
+        r.ambito === "sesion"
+          ? `${r.n_poblacion} ${i === "es" ? (r.n_poblacion === 1 ? "sesión" : "sesiones") : r.n_poblacion === 1 ? "session" : "sessions"}`
+          : String(r.n_poblacion),
         valorRiesgo(r, i),
         ESTADO_RIESGO[r.estado][i],
-        casos(r.casos),
+        casosDeRiesgo(r, i),
       ]),
     ),
     "",
@@ -401,7 +452,7 @@ function seccionBrechas(inf: Informe, i: Idioma): string {
       ? [i === "es" ? "Ninguna." : "None."]
       : b.brechas.map(
           (x) =>
-            `- ${x.caso_id ? `**${x.caso_id}**` : "—"}${x.corrida_id !== inf.corrida_id ? ` · ${i === "es" ? "repetición" : "repetition"} \`${x.corrida_id}\`` : ""}${x.nodo ? ` · ${i === "es" ? "nodo" : "node"} \`${x.nodo}\`, ${i === "es" ? "paso" : "step"} ${x.paso ?? "—"}` : ""}: ${x.detalle[i]}`,
+            `- ${x.caso_id ? `**${x.caso_id}**` : "—"} · ${nombre(CATEGORIA_BRECHA, x.categoria, i)}${x.corrida_id !== inf.corrida_id ? ` · ${i === "es" ? "repetición" : "repetition"} \`${x.corrida_id}\`` : ""}${x.nodo ? ` · ${i === "es" ? "nodo" : "node"} \`${x.nodo}\`, ${i === "es" ? "paso" : "step"} ${x.paso ?? "—"}` : ""}${x.reintentos !== null ? ` · ${x.reintentos} ${i === "es" ? (x.reintentos === 1 ? "reintento" : "reintentos") : x.reintentos === 1 ? "retry" : "retries"}` : ""}: ${x.detalle[i]}`,
         )),
     "",
     `**${i === "es" ? "Evaluadores" : "Evaluators"}**`,
@@ -414,6 +465,7 @@ function seccionBrechas(inf: Informe, i: Idioma): string {
             "Estado",
             "Casos",
             "Fallas",
+            "No evaluables",
             "Riesgos que cubre",
           ]
         : [
@@ -422,6 +474,7 @@ function seccionBrechas(inf: Informe, i: Idioma): string {
             "Status",
             "Cases",
             "Failures",
+            "Not evaluable",
             "Risks it covers",
           ],
       b.evaluadores.map((e) => [
@@ -430,6 +483,7 @@ function seccionBrechas(inf: Informe, i: Idioma): string {
         ESTADO_EVAL[e.estado]?.[i] ?? e.estado,
         String(e.casos_evaluados),
         casos(e.fallas),
+        String(e.no_evaluables),
         casos(e.riesgos_cubiertos),
       ]),
     ),
@@ -631,7 +685,7 @@ function seccionFicha(inf: Informe, i: Idioma): string {
     ],
     [
       i === "es" ? "Corrida" : "Run",
-      `${f.corrida.id} · ${f.corrida.fecha} · ${f.corrida.proveedor}/${f.corrida.modelo} · ${nombre(VARIANTE, f.corrida.variante, i)}`,
+      `${f.corrida.id} · ${f.corrida.fecha} · ${f.corrida.proveedor}/${f.corrida.modelo} · ${nombre(VARIANTE, f.corrida.variante, i)} · ${i === "es" ? "ejecutada con el plan" : "run with plan"} ${f.corrida.plan_de_ejecucion.version}${f.corrida.plan_de_ejecucion.huella === f.plan.huella ? "" : i === "es" ? " (misma verdad: mismos umbrales y contrato de grafo, ADR-005)" : " (same truth: same thresholds and graph contract, ADR-005)"}`,
       `\`${f.corrida.huella}\``,
     ],
     [

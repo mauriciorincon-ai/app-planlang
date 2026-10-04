@@ -1,6 +1,7 @@
 /**
- * `pnpm brecha:informe --corrida runs/demo-a/<id> [--salida <dir>] [--base <ruta>|--sin-base]
- *  [--repeticiones <ruta>,<ruta>] [--verificar]`
+ * `pnpm brecha:informe --corrida runs/demo-a/<id> [--plan plans/demo-a/vX.json] [--salida <dir>]
+ *  [--base <ruta>|--sin-base] [--repeticiones <ruta>,<ruta>] [--verificar]`
+ * `--plan` verifica la corrida contra otro plan que el suyo: solo si da la misma verdad (ADR-005).
  *
  * Verifica la corrida (huellas, contrato de grafo, RF-09.2) y escribe `informe.json`, `informe.es.md` e
  * `informe.en.md` en `--salida` (por defecto, la carpeta de la corrida). Por convención toma como línea
@@ -42,7 +43,11 @@ async function main(): Promise<number> {
   let informe;
   try {
     informe = await generarInforme(
-      entradaDesdeDisco(ruta, { base, repeticiones }),
+      entradaDesdeDisco(ruta, {
+        base,
+        repeticiones,
+        ...(typeof a.plan === "string" ? { plan: a.plan } : {}),
+      }),
     );
   } catch (e) {
     if (e instanceof ErrorDeLectura) {

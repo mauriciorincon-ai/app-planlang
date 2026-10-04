@@ -1,66 +1,80 @@
 {
   "casos": [
     {
+      "crudo": 1,
       "huella": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
       "jcs": "1",
       "nombre": "entero_uno",
       "valor": 1
     },
     {
+      "crudo": 1.0,
       "huella": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
       "jcs": "1",
       "nombre": "flotante_uno_punto_cero",
       "valor": 1
     },
     {
+      "crudo": 0.30000000000000004,
       "huella": "06bad31060c1212ae832de4c031f7b31e3b48aed57858294478cb19450cf34ca",
       "jcs": "0.30000000000000004",
       "nombre": "suma_flotante",
       "valor": 0.30000000000000004
     },
     {
+      "crudo": 1e+21,
       "huella": "241c4643fa70b1dcde1205b71be4e3bebb17e9f880c8e1a33d0ead6c27271d3c",
       "jcs": "1e+21",
       "nombre": "exponente_grande",
       "valor": 1e+21
     },
     {
+      "crudo": 1e+20,
       "huella": "c344e9487bfbd5c4e03c9fb90d62a5dde5e00b54d55c46e9f4a803aea162b80c",
       "jcs": "100000000000000000000",
       "nombre": "exponente_limite",
       "valor": 1e+20
     },
     {
+      "crudo": 1e-07,
       "huella": "5b33e02f2c5103a05d32f6ba9cb058294452bfbf393967f68bb30c1bdcbbab22",
       "jcs": "1e-7",
       "nombre": "exponente_pequeno",
       "valor": 1e-07
     },
     {
+      "crudo": 1e-06,
       "huella": "159fb29a827ad04b260aa6c8ab6d8637f8f2b38af5c4f3cb49d6a21205e040f8",
       "jcs": "0.000001",
       "nombre": "decimal_pequeno",
       "valor": 1e-06
     },
     {
+      "crudo": 9007199254740991,
       "huella": "f40b423c2dd95ff2b2f027e22208f438cf7242862e5e746860e697308c9add26",
       "jcs": "9007199254740991",
       "nombre": "entero_seguro_maximo",
       "valor": 9007199254740991
     },
     {
+      "crudo": -0.0,
       "huella": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
       "jcs": "0",
       "nombre": "menos_cero",
       "valor": 0
     },
     {
+      "crudo": -12.5,
       "huella": "6e734d1ba4828d18ef4d256e8820f89e30551bca8b2c5740f2ed9fc532da07de",
       "jcs": "-12.5",
       "nombre": "negativo",
       "valor": -12.5
     },
     {
+      "crudo": {
+        "é": "nfd",
+        "é": "nfc"
+      },
       "huella": "c417435fb9c540912327a22d7687a4e7ee3ad2f766ba480e0a08a9562aaed5e4",
       "jcs": "{\"é\":\"nfc\"}",
       "nombre": "nfc_y_nfd_como_claves",
@@ -69,6 +83,14 @@
       }
     },
     {
+      "crudo": {
+        "Z": 2,
+        "z": 1,
+        "ñ": 3,
+        "€": 4,
+        "￿": 5,
+        "𝄞": 6
+      },
       "huella": "d119cf5e77b299bafd013a479fd7b128e807c867a3e4ebd06e3c5bef03924c03",
       "jcs": "{\"Z\":2,\"z\":1,\"ñ\":3,\"€\":4,\"𝄞\":6,\"￿\":5}",
       "nombre": "orden_de_claves_utf16",
@@ -82,12 +104,18 @@
       }
     },
     {
+      "crudo": "tab\tnl\nquote\"barra\\slash/\u001f fin",
       "huella": "b8b9a4f345db6a5f0f113fcc516675e7c3594e7f360bb90b5304ee0b8958ea6a",
       "jcs": "\"tab\\tnl\\nquote\\\"barra\\\\slash/\\u001f fin\"",
       "nombre": "controles_y_escapes",
       "valor": "tab\tnl\nquote\"barra\\slash/\u001f fin"
     },
     {
+      "crudo": {
+        "cadena": "",
+        "lista": [],
+        "objeto": {}
+      },
       "huella": "8814b6c322ebff5684ce3f14476064ee7864ca852001a91daebe6e41aadd48b2",
       "jcs": "{\"cadena\":\"\",\"lista\":[],\"objeto\":{}}",
       "nombre": "vacios",
@@ -98,6 +126,21 @@
       }
     },
     {
+      "crudo": {
+        "a": {
+          "c": "é"
+        },
+        "b": [
+          1,
+          {
+            "x": [
+              true,
+              false
+            ],
+            "y": null
+          }
+        ]
+      },
       "huella": "7f39a3d0ba93af463d2d9cbba326014373876777caa9ef367424a212f0f4b365",
       "jcs": "{\"a\":{\"c\":\"é\"},\"b\":[1,{\"x\":[true,false],\"y\":null}]}",
       "nombre": "anidado",
@@ -118,6 +161,11 @@
       }
     },
     {
+      "crudo": [
+        true,
+        false,
+        null
+      ],
       "huella": "4d0f18de2133118249c26acc481838d4f6bb6bc1de882d99abbd19ae9397e8df",
       "jcs": "[true,false,null]",
       "nombre": "booleanos_y_nulo",
@@ -128,10 +176,18 @@
       ]
     },
     {
+      "crudo": "español ¿qué? — 😀",
       "huella": "1735ce3c6f84788bdd5955754eba33b4327105afc3338153720f56a175bfab2d",
       "jcs": "\"español ¿qué? — 😀\"",
       "nombre": "cadena_con_unicode",
       "valor": "español ¿qué? — 😀"
+    },
+    {
+      "crudo": "café y piña",
+      "huella": "0954ec194bfa6d00a626906fa3cec3d828bc22f32d13ebc1a27d633890181254",
+      "jcs": "\"café y piña\"",
+      "nombre": "cadena_nfd",
+      "valor": "café y piña"
     }
   ],
   "formato": "planlang-contrato-jcs/v1"

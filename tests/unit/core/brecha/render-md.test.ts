@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import { generarInforme } from "../../../../core/brecha/informe";
 import { SIEMBRAS } from "../../../../core/brecha/m9";
 import { renderizarInforme } from "../../../../core/brecha/render-md";
+import { entradaDesdeDisco, hermanas } from "../../../../scripts/_corridas";
 import {
   entradaReal,
   entradaSimulada,
@@ -26,7 +27,7 @@ describe("render del informe", () => {
       expect(md).not.toMatch(/undefined|NaN|\[object Object\]/);
       expect(md.endsWith("\n")).toBe(true);
       expect(md).toMatch(
-        i === "es" ? /⚠ CUMPLE CON ALERTAS/ : /⚠ MET WITH ALERTS/,
+        i === "es" ? /⚠ CUMPLE CON ALERTAS/ : /⚠ MEETS WITH WARNINGS/,
       );
       expect(md).toMatch(
         i === "es"
@@ -54,11 +55,31 @@ describe("render del informe", () => {
         (s) => s.id === "dato_sensible_en_salida",
       )!.aplicar(entradaSimulada());
       const md = renderizarInforme(await generarInforme(e), i);
-      expect(md).toMatch(i === "es" ? /✗ NO CUMPLE/ : /✗ NOT MET/);
+      expect(md).toMatch(i === "es" ? /✗ NO CUMPLE/ : /✗ DOES NOT MEET/);
       expect(md).toMatch(i === "es" ? /- Bloquea: C2/ : /- Blocks: C2/);
       expect(md).toMatch(/R2 \(/);
     },
   );
+  it("M-24: cada brecha dice su categoría y sus reintentos; los evaluadores, sus no evaluables", async () => {
+    const inf = await generarInforme(entradaReal());
+    const es = renderizarInforme(inf, "es");
+    const en = renderizarInforme(inf, "en");
+    expect(es).toContain("| Fallas | No evaluables | Riesgos que cubre |");
+    expect(en).toContain("| Failures | Not evaluable | Risks it covers |");
+    const conReintento = inf.brechas_no_previstas.brechas.filter(
+      (b) => b.categoria === "reintento_de_esquema",
+    );
+    expect(conReintento.length).toBeGreaterThan(0);
+    for (const b of conReintento) {
+      expect(b.reintentos).toBeGreaterThan(0);
+      expect(es).toMatch(
+        new RegExp(
+          `\\*\\*${b.caso_id}\\*\\* · reintento de salida estructurada .* · ${b.reintentos} reintentos?:`,
+        ),
+      );
+    }
+    expect(en).toMatch(/· structured-output retry ·/);
+  });
   it("hallazgos del contrato y repeticiones en la ficha", async () => {
     const e = entradaSimulada();
     const inf = await generarInforme({
@@ -71,5 +92,24 @@ describe("render del informe", () => {
     expect(renderizarInforme(inf, "en")).toMatch(
       /\| Repetition \| simulado-3casos-r2 \|/,
     );
+  });
+});
+
+describe("las decisiones de una vía dicen qué se eligió (AU-S2-P-6)", () => {
+  it("con un plan bilingüe (v1.4), cada idioma la suya tras la pregunta", async () => {
+    const ruta = "runs/demo-a/simulado-v1.4-respaldo";
+    const inf = await generarInforme(entradaDesdeDisco(ruta, hermanas(ruta)));
+    const d1 = inf.plan_en_breve.decisiones_una_via.find((d) => d.id === "D1")!;
+    expect(d1.opcion_elegida).not.toBeNull();
+    for (const i of ["es", "en"] as const)
+      expect(renderizarInforme(inf, i)).toContain(
+        `? → ${d1.opcion_elegida![i]}. `,
+      );
+  });
+  it("si el plan la escribió en un solo idioma (v1.1), el informe no la copia al otro como si fuera suya", async () => {
+    const inf = await generarInforme(entradaReal());
+    const d1 = inf.plan_en_breve.decisiones_una_via.find((d) => d.id === "D1")!;
+    expect(d1.opcion_elegida).toBeNull();
+    expect(renderizarInforme(inf, "en")).not.toMatch(/→ solo edad/);
   });
 });

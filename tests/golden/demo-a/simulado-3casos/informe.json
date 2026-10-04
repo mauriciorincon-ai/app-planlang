@@ -477,6 +477,10 @@
       "id": "simulado-3casos",
       "limites_alcanzados": 0,
       "modelo": "simulado",
+      "plan_de_ejecucion": {
+        "huella": "9add6e5ad5515a03e9efb8c1c691e0c6b38d414622ae028dd5f7bb8b529592c2",
+        "version": "1.2.0"
+      },
       "proveedor": "simulado",
       "sesiones": 1,
       "variante": "multiagente",
@@ -508,11 +512,11 @@
     },
     "verificador": {
       "formato": "planlang-informe/v1",
-      "version": "1.0.0"
+      "version": "1.2.0"
     }
   },
   "formato": "planlang-informe/v1",
-  "huella": "6c56025576e6bcadd1133498c73233ceea467f62469556b89b52f68ec9cd724f",
+  "huella": "43808665b19c5b961edc3b7b6410c979c6f2e6d2f8dc6b9b5f7307325a73188c",
   "plan_en_breve": {
     "decisiones_una_via": [
       {
@@ -521,7 +525,7 @@
           "en": "Legal minimization and a trivial output guard.",
           "es": "Minimización legal (Ley 1581 arts. 3–6, RGPD 9) y guardia de salida trivial."
         },
-        "opcion_elegida": "solo edad, sexo, procedimiento, diagnóstico y texto del médico; nombre e identificación enmascarados antes del modelo",
+        "opcion_elegida": null,
         "pregunta": {
           "en": "Which member data reach the model?",
           "es": "¿Qué datos del afiliado llegan al modelo?"
@@ -533,7 +537,7 @@
           "en": "State law and AI Act art. 14; app hard rule.",
           "es": "CA SB 1120, TX SB 815, AI Act art. 14; regla dura de la app."
         },
-        "opcion_elegida": "solo aprobar; negar y escalar exigen pausa humana",
+        "opcion_elegida": null,
         "pregunta": {
           "en": "Which decisions may the agent take without a human?",
           "es": "¿Qué decisiones puede tomar el agente sin humano?"
@@ -717,7 +721,9 @@
   },
   "riesgos": [
     {
+      "ambito": "caso",
       "casos": [],
+      "control_legal": false,
       "decision_id": "D2",
       "deteccion": 3,
       "estado": "no_ocurrio",
@@ -734,13 +740,16 @@
       "ocurre_si": "> 0",
       "ocurrencia": 3,
       "prioridad_de_accion": "baja",
+      "prioridad_de_tabla": "baja",
       "rpn": 81,
       "severidad": 9,
       "tipo_detector": "conteo",
       "valor": 0
     },
     {
+      "ambito": "caso",
       "casos": [],
+      "control_legal": false,
       "decision_id": "D1",
       "deteccion": 4,
       "estado": "no_ocurrio",
@@ -757,13 +766,16 @@
       "ocurre_si": "> 0",
       "ocurrencia": 4,
       "prioridad_de_accion": "alta",
+      "prioridad_de_tabla": "alta",
       "rpn": 160,
       "severidad": 10,
       "tipo_detector": "conteo",
       "valor": 0
     },
     {
+      "ambito": "caso",
       "casos": [],
+      "control_legal": false,
       "decision_id": null,
       "deteccion": 4,
       "estado": "no_ocurrio",
@@ -780,13 +792,16 @@
       "ocurre_si": "> 0",
       "ocurrencia": 5,
       "prioridad_de_accion": "alta",
+      "prioridad_de_tabla": "alta",
       "rpn": 180,
       "severidad": 9,
       "tipo_detector": "conteo",
       "valor": 0
     },
     {
+      "ambito": "caso",
       "casos": [],
+      "control_legal": false,
       "decision_id": "D5",
       "deteccion": 2,
       "estado": "no_ocurrio",
@@ -803,13 +818,16 @@
       "ocurre_si": "> 0",
       "ocurrencia": 4,
       "prioridad_de_accion": "baja",
+      "prioridad_de_tabla": "baja",
       "rpn": 40,
       "severidad": 5,
       "tipo_detector": "conteo",
       "valor": 0
     },
     {
+      "ambito": "caso",
       "casos": [],
+      "control_legal": false,
       "decision_id": "D3",
       "deteccion": 5,
       "estado": "no_ocurrio",
@@ -826,13 +844,16 @@
       "ocurre_si": "> 0.10",
       "ocurrencia": 6,
       "prioridad_de_accion": "alta",
+      "prioridad_de_tabla": "alta",
       "rpn": 210,
       "severidad": 7,
       "tipo_detector": "tasa",
       "valor": 0
     },
     {
+      "ambito": "caso",
       "casos": [],
+      "control_legal": false,
       "decision_id": null,
       "deteccion": 2,
       "estado": "no_ocurrio",
@@ -849,13 +870,16 @@
       "ocurre_si": "> 0",
       "ocurrencia": 3,
       "prioridad_de_accion": "baja",
+      "prioridad_de_tabla": "baja",
       "rpn": 48,
       "severidad": 8,
       "tipo_detector": "conteo",
       "valor": 0
     },
     {
+      "ambito": "caso",
       "casos": [],
+      "control_legal": false,
       "decision_id": "D4",
       "deteccion": 4,
       "estado": "no_ocurrio",
@@ -872,13 +896,16 @@
       "ocurre_si": "> 0",
       "ocurrencia": 4,
       "prioridad_de_accion": "baja",
+      "prioridad_de_tabla": "baja",
       "rpn": 96,
       "severidad": 6,
       "tipo_detector": "conteo",
       "valor": 0
     },
     {
+      "ambito": "caso",
       "casos": [],
+      "control_legal": false,
       "decision_id": "D6",
       "deteccion": 2,
       "estado": "no_ocurrio",
@@ -895,6 +922,7 @@
       "ocurre_si": "> 0",
       "ocurrencia": 5,
       "prioridad_de_accion": "baja",
+      "prioridad_de_tabla": "baja",
       "rpn": 40,
       "severidad": 4,
       "tipo_detector": "conteo",
@@ -1062,5 +1090,5 @@
     "bloqueantes": [],
     "valor": "cumple_con_alertas"
   },
-  "version_verificador": "1.0.0"
+  "version_verificador": "1.2.0"
 }

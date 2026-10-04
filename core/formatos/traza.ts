@@ -7,7 +7,7 @@
  * (cobertura, documento adverso, payload de la pausa) se valida en lo que el verificador usa.
  */
 import { z } from "zod";
-import { TextoBilingueSchema } from "./bilingue";
+import { TextoBilingueSchema } from "./bilingue-esquema";
 import {
   AristaCondicionalSchema,
   OPERADOR,

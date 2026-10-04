@@ -17,16 +17,18 @@ un validador en CI lo comprueba.
 | `agents/`                    | Agentes en Python 3.12 con LangGraph 1.x: el demo A (autorizaciones médicas simuladas), el adaptador de modelo y el exportador de trazas `planlang-trace/v1`                                                         |
 | `packages/`                  | Implementaciones de los dos reusables de la casa (instrumentos de plan · diagramador), con su contrato fijado                                                                                                        |
 | `plans/` · `data/` · `runs/` | El plan aprobado con huella, las plantillas de dominio, los casos sintéticos y las corridas exportadas                                                                                                               |
-| `src/`                       | La vitrina estática bilingüe (Next.js exportado). Llega en el S2, tras la Etapa de Diseño                                                                                                                            |
+| `src/`                       | La vitrina estática bilingüe (Next.js exportado): siete pantallas (Entrada, Plan, Agente, Brecha, Playground, Casos, Fichas), construida en el S2 sobre la maqueta aprobada en la Etapa de Diseño                  |
 | `docs/`                      | Manual de uso, guía de prueba y kit de prueba (el brochure y el blueprint nacen al cierre del ciclo)                                                                                                                 |
-| `decisions/`                 | ADRs: código primero · proveedor y cumplimiento · pines de Python · salida estructurada · enmiendas de medición · línea base                                                                                         |
+| `decisions/`                 | ADRs: código primero · proveedor y cumplimiento · pines de Python · salida estructurada · enmiendas de medición · línea base · ruteo del export · i18n por ruta · paquete para hoja-de-vida · conversión grafo → mapa |
 | `sprints/`                   | Bitácora y summary de cada sprint                                                                                                                                                                                    |
 
-## Cómo se usa (S1, sin pantalla)
+## Cómo se usa
 
 ```bash
 pnpm install                                          # también re-aplica el hook de git (gitleaks)
-pnpm plan:validar --verificar plans/demo-a/v1.2.json  # el plan vigente del demo A, con su huella
+pnpm plan:validar --verificar plans/demo-a/v1.4.json  # el último plan del demo A, con su huella (la vitrina publica el v1.3)
+pnpm build && pnpm start                              # la vitrina en local (export estático servido con serve)
+pnpm paquete:vitrina                                  # el paquete para hoja-de-vida (ver el manual)
 pnpm casos:generar --versionados                      # regenera los lotes sintéticos versionados (misma semilla, mismos bytes)
 pnpm lote:demo --corrida <id> --fecha <AAAA-MM-DD>    # lote de 20 con la suscripción de Claude Code (fuera de CI)
 pnpm brecha:informe --corrida runs/demo-a/<id>        # informe de brecha ES/EN, idéntico byte a byte

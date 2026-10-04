@@ -1,0 +1,266 @@
+{
+  "plan": {
+    "cifras": "0cases change pathof 20 | 0errors introducedavoided: 0 | 96auditor minplan: 96 · ±0 | 9of 9 criteria metunchanged",
+    "huella": "d70b5533c4bc38fa7216c11ccbdb96d3ddce858181b44d0e5599672a35cab7d0"
+  },
+  "U1=0.5": {
+    "cifras": "0cases change pathof 20 | 0errors introducedavoided: 0 | 96auditor minplan: 96 · ±0 | 9of 9 criteria metunchanged",
+    "huella": "25f6844f3ee983f5ca2e11dadfc9d9d4be7e23f28fa0905c1a2586610b4b42aa"
+  },
+  "U1=0.55": {
+    "cifras": "0cases change pathof 20 | 0errors introducedavoided: 0 | 96auditor minplan: 96 · ±0 | 9of 9 criteria metunchanged",
+    "huella": "ff9a641c42e9ed8074d34be33a0e2fbc45788b6f3aef4245f8b5f11a43bfc48d"
+  },
+  "U1=0.6": {
+    "cifras": "0cases change pathof 20 | 0errors introducedavoided: 0 | 96auditor minplan: 96 · ±0 | 9of 9 criteria metunchanged",
+    "huella": "d4e18c7ebe5bbd5358233af9a81106c0b4f6fc8621a2550d935718f0ac935e33"
+  },
+  "U1=0.65": {
+    "cifras": "0cases change pathof 20 | 0errors introducedavoided: 0 | 96auditor minplan: 96 · ±0 | 9of 9 criteria metunchanged",
+    "huella": "348a9c4dabfb3810124df4c5b585f34a746b234ffa9f2b7c5392efe08831a592"
+  },
+  "U1=0.7": {
+    "cifras": "0cases change pathof 20 | 0errors introducedavoided: 0 | 96auditor minplan: 96 · ±0 | 9of 9 criteria metunchanged",
+    "huella": "e827b3a25f4964de67c34558c6b9a6e147d17266a26344e5a98107a8d6d552b3"
+  },
+  "U1=0.75": {
+    "cifras": "0cases change pathof 20 | 0errors introducedavoided: 0 | 96auditor minplan: 96 · ±0 | 9of 9 criteria metunchanged",
+    "huella": "d70b5533c4bc38fa7216c11ccbdb96d3ddce858181b44d0e5599672a35cab7d0"
+  },
+  "U1=0.8": {
+    "cifras": "0cases change pathof 20 | 0errors introducedavoided: 0 | 96auditor minplan: 96 · ±0 | 9of 9 criteria metunchanged",
+    "huella": "e79a1e6c73ec1baa92cbef0c9901a0209e99194290f75cab94c5ebd5ac5b2af1"
+  },
+  "U1=0.85": {
+    "cifras": "0cases change pathof 20 | 0errors introducedavoided: 0 | 96auditor minplan: 96 · ±0 | 9of 9 criteria metunchanged",
+    "huella": "b740301f2211ef7262195f529a4ef289aa1d0f6bd57d229538af8c43dfcaac35"
+  },
+  "U1=0.9": {
+    "cifras": "1cases change pathof 20 | 0errors introducedavoided: 0 | 108auditor minplan: 96 · +12 | 6of 9 criteria metbefore: 9 · 3 cannot be measured",
+    "huella": "a8abb240fddd81be79bf401c0b163e1ee09eefeaf387a10c29db5a2597570a13"
+  },
+  "U1=0.95": {
+    "cifras": "1cases change pathof 20 | 0errors introducedavoided: 0 | 108auditor minplan: 96 · +12 | 6of 9 criteria metbefore: 9 · 3 cannot be measured",
+    "huella": "215e68e3fb33c416fa9d95b9058fc4f1ebf743a0f1bb5a4d41615b8a372ddcb1"
+  },
+  "U2=200": {
+    "cifras": "7cases change pathof 20 | 0errors introducedavoided: 0 | 180auditor minplan: 96 · +84 | 6of 9 criteria metbefore: 9 · 3 cannot be measured",
+    "huella": "b37cce505787cfce6de3bbc52230e7470886f977b870ae778259aaf1632526c0"
+  },
+  "U2=300": {
+    "cifras": "4cases change pathof 20 | 0errors introducedavoided: 0 | 144auditor minplan: 96 · +48 | 6of 9 criteria metbefore: 9 · 3 cannot be measured",
+    "huella": "234259fc7cca6a8c4c3bb6fac0dfbf0aeaf8d3b907a02494cc81ea1f9f5d9190"
+  },
+  "U2=400": {
+    "cifras": "4cases change pathof 20 | 0errors introducedavoided: 0 | 144auditor minplan: 96 · +48 | 6of 9 criteria metbefore: 9 · 3 cannot be measured",
+    "huella": "480ad0382855d6ce2cdf658013d88a3747a88b062b63fe8a7110a47c9548e423"
+  },
+  "U2=500": {
+    "cifras": "3cases change pathof 20 | 0errors introducedavoided: 0 | 132auditor minplan: 96 · +36 | 6of 9 criteria metbefore: 9 · 3 cannot be measured",
+    "huella": "448e520098948ded50034272caacae0bce2b789fd2eaf1f2565a58bc973ce2f2"
+  },
+  "U2=600": {
+    "cifras": "3cases change pathof 20 | 0errors introducedavoided: 0 | 132auditor minplan: 96 · +36 | 6of 9 criteria metbefore: 9 · 3 cannot be measured",
+    "huella": "90903426bf1862a289457d3bede6204e1a6204715e40dbf81278b87c2d4cd13e"
+  },
+  "U2=700": {
+    "cifras": "3cases change pathof 20 | 0errors introducedavoided: 0 | 132auditor minplan: 96 · +36 | 6of 9 criteria metbefore: 9 · 3 cannot be measured",
+    "huella": "d8ac0448605219ae6f20983bf3f1605111d44be72b6afedb766151b9bd3a31ba"
+  },
+  "U2=800": {
+    "cifras": "3cases change pathof 20 | 0errors introducedavoided: 0 | 132auditor minplan: 96 · +36 | 6of 9 criteria metbefore: 9 · 3 cannot be measured",
+    "huella": "ce9b13c25c0b531543a0b53bcb89c6bca1b0351eec9037b5eac4ce389e3c5c73"
+  },
+  "U2=900": {
+    "cifras": "1cases change pathof 20 | 0errors introducedavoided: 0 | 108auditor minplan: 96 · +12 | 6of 9 criteria metbefore: 9 · 3 cannot be measured",
+    "huella": "23f8faed4816d544b609d4096e3ee5e0663e9ac000086bf4d353b36dc3878007"
+  },
+  "U2=1000": {
+    "cifras": "0cases change pathof 20 | 0errors introducedavoided: 0 | 96auditor minplan: 96 · ±0 | 9of 9 criteria metunchanged",
+    "huella": "d70b5533c4bc38fa7216c11ccbdb96d3ddce858181b44d0e5599672a35cab7d0"
+  },
+  "U2=1100": {
+    "cifras": "0cases change pathof 20 | 0errors introducedavoided: 0 | 96auditor minplan: 96 · ±0 | 9of 9 criteria metunchanged",
+    "huella": "d176b8464061917474d1e0ca7e7b34ec881de2a767b2009b52983dadab68fb01"
+  },
+  "U2=1200": {
+    "cifras": "0cases change pathof 20 | 0errors introducedavoided: 0 | 96auditor minplan: 96 · ±0 | 9of 9 criteria metunchanged",
+    "huella": "944fc5d30a7e6d3c501d18722fcfd54ef7fc76a45d0673f484a5838fe0ffadbb"
+  },
+  "U2=1300": {
+    "cifras": "0cases change pathof 20 | 0errors introducedavoided: 0 | 96auditor minplan: 96 · ±0 | 9of 9 criteria metunchanged",
+    "huella": "fb2c5b9c4a619287cb5182d2925a6bae8139b2d23f2033ef68fb668a270d2f5e"
+  },
+  "U2=1400": {
+    "cifras": "0cases change pathof 20 | 0errors introducedavoided: 0 | 96auditor minplan: 96 · ±0 | 9of 9 criteria metunchanged",
+    "huella": "e6b42e64d1ec4db62921e68c2d23ee67699747639db851eb691d1f186b736ce5"
+  },
+  "U2=1500": {
+    "cifras": "1cases change pathof 20 | 1errors introducedavoided: 0 | 84auditor minplan: 96 · −12 | 6of 9 criteria metbefore: 9 · 2 cannot be measured",
+    "huella": "a81440c8b0f542d319bb7be95ea2749917567b4b2750cebc20dc6ad69a19dd83"
+  },
+  "U2=1600": {
+    "cifras": "1cases change pathof 20 | 1errors introducedavoided: 0 | 84auditor minplan: 96 · −12 | 6of 9 criteria metbefore: 9 · 2 cannot be measured",
+    "huella": "3487ab0bd2959983aa76c2f465bdff1270e0e916ce86a215fe7e9d4e1c597feb"
+  },
+  "U2=1700": {
+    "cifras": "1cases change pathof 20 | 1errors introducedavoided: 0 | 84auditor minplan: 96 · −12 | 6of 9 criteria metbefore: 9 · 2 cannot be measured",
+    "huella": "f994995734238d87cc1e608f51cf8a43df8ed3fe8e2e0698ede7f9fc3128dfa3"
+  },
+  "U2=1800": {
+    "cifras": "1cases change pathof 20 | 1errors introducedavoided: 0 | 84auditor minplan: 96 · −12 | 6of 9 criteria metbefore: 9 · 2 cannot be measured",
+    "huella": "9e72ed76f0d59f50783262c82e0114678c8329de7b82237f92dff5b66d22154a"
+  },
+  "U2=1900": {
+    "cifras": "1cases change pathof 20 | 1errors introducedavoided: 0 | 84auditor minplan: 96 · −12 | 6of 9 criteria metbefore: 9 · 2 cannot be measured",
+    "huella": "beaae9d33bac8b8d997988a46430911d6d54e4e1c9f5e214f930d062e4e8a86f"
+  },
+  "U2=2000": {
+    "cifras": "1cases change pathof 20 | 1errors introducedavoided: 0 | 84auditor minplan: 96 · −12 | 6of 9 criteria metbefore: 9 · 2 cannot be measured",
+    "huella": "2370ba84e14f6c2dbd424d47086ca936477098cb86c814981bd70a8802c7db9f"
+  },
+  "U2=2100": {
+    "cifras": "1cases change pathof 20 | 1errors introducedavoided: 0 | 84auditor minplan: 96 · −12 | 6of 9 criteria metbefore: 9 · 2 cannot be measured",
+    "huella": "a340c9b190a5f94967b9e4418948d6c8a1c9ff8bd55ca2816daa9637d5315d3e"
+  },
+  "U2=2200": {
+    "cifras": "1cases change pathof 20 | 1errors introducedavoided: 0 | 84auditor minplan: 96 · −12 | 6of 9 criteria metbefore: 9 · 2 cannot be measured",
+    "huella": "9b86b3dc1ff915724a3638587b0ddbb9379c4072a4fb70040ade9aac49b5b928"
+  },
+  "U2=2300": {
+    "cifras": "1cases change pathof 20 | 1errors introducedavoided: 0 | 84auditor minplan: 96 · −12 | 6of 9 criteria metbefore: 9 · 2 cannot be measured",
+    "huella": "307c8012f4f918dcda6670905aefa4f5f8c20662fb7df597d24fae38e96b8d8d"
+  },
+  "U2=2400": {
+    "cifras": "1cases change pathof 20 | 1errors introducedavoided: 0 | 84auditor minplan: 96 · −12 | 6of 9 criteria metbefore: 9 · 2 cannot be measured",
+    "huella": "6f00742b28d6e8f1b9fa502592a869487d061886871235094404d831c35e720b"
+  },
+  "U2=2500": {
+    "cifras": "1cases change pathof 20 | 1errors introducedavoided: 0 | 84auditor minplan: 96 · −12 | 6of 9 criteria metbefore: 9 · 2 cannot be measured",
+    "huella": "e64a063475342604166df4dd361dc1a0d9b3e323a9833dd62aa0df84a1b18969"
+  },
+  "U2=2600": {
+    "cifras": "1cases change pathof 20 | 1errors introducedavoided: 0 | 84auditor minplan: 96 · −12 | 6of 9 criteria metbefore: 9 · 2 cannot be measured",
+    "huella": "eceeef07ffb9b75f3062fe40e4a7db1d943fb15b0f0416a1e0c8778856456687"
+  },
+  "U2=2700": {
+    "cifras": "1cases change pathof 20 | 1errors introducedavoided: 0 | 84auditor minplan: 96 · −12 | 6of 9 criteria metbefore: 9 · 2 cannot be measured",
+    "huella": "dcc2a6554e9cb3eef435ca365a4a79ff8ee84a8a5bd6246ce0caa047a2297069"
+  },
+  "U2=2800": {
+    "cifras": "1cases change pathof 20 | 1errors introducedavoided: 0 | 84auditor minplan: 96 · −12 | 6of 9 criteria metbefore: 9 · 2 cannot be measured",
+    "huella": "8a2dd493011f775d8a26157c8c671c6bac59db96e796a84fe54f3ca2db57e5a8"
+  },
+  "U2=2900": {
+    "cifras": "1cases change pathof 20 | 1errors introducedavoided: 0 | 84auditor minplan: 96 · −12 | 6of 9 criteria metbefore: 9 · 2 cannot be measured",
+    "huella": "79bb8154c795f989beee4b3bb617985c726909ca55b4c09e818cedcae9e5e276"
+  },
+  "U2=3000": {
+    "cifras": "1cases change pathof 20 | 1errors introducedavoided: 0 | 84auditor minplan: 96 · −12 | 6of 9 criteria metbefore: 9 · 2 cannot be measured",
+    "huella": "cac73e5e35261a8993f1fd3e27a62d87b9a208f35d2e39e8d86a6f8af497c13f"
+  },
+  "U2=3100": {
+    "cifras": "1cases change pathof 20 | 1errors introducedavoided: 0 | 84auditor minplan: 96 · −12 | 6of 9 criteria metbefore: 9 · 2 cannot be measured",
+    "huella": "82530d71958be890bfedc2ba41025d3cd96bddd87eacf8d9355607d15773aa06"
+  },
+  "U2=3200": {
+    "cifras": "1cases change pathof 20 | 1errors introducedavoided: 0 | 84auditor minplan: 96 · −12 | 6of 9 criteria metbefore: 9 · 2 cannot be measured",
+    "huella": "6aa453614e423fc5982c784ab09dde56240f91984bf56edfb3735c3ea0f40b26"
+  },
+  "U2=3300": {
+    "cifras": "1cases change pathof 20 | 1errors introducedavoided: 0 | 84auditor minplan: 96 · −12 | 6of 9 criteria metbefore: 9 · 2 cannot be measured",
+    "huella": "b88986e22bd40c446c4c7362fcff76f392b7ce2e20bd9f0b6856cd740dde4a60"
+  },
+  "U2=3400": {
+    "cifras": "1cases change pathof 20 | 1errors introducedavoided: 0 | 84auditor minplan: 96 · −12 | 6of 9 criteria metbefore: 9 · 2 cannot be measured",
+    "huella": "3458f2541dd65ee3eda756f32357ba09c6ecc5d786c5141b9487b64f7ed66ead"
+  },
+  "U2=3500": {
+    "cifras": "1cases change pathof 20 | 1errors introducedavoided: 0 | 84auditor minplan: 96 · −12 | 6of 9 criteria metbefore: 9 · 2 cannot be measured",
+    "huella": "5033e2b5bef115ab83d584fec6417ba87e6ab826b589e1dbab8060dc2491ad44"
+  },
+  "U2=3600": {
+    "cifras": "1cases change pathof 20 | 1errors introducedavoided: 0 | 84auditor minplan: 96 · −12 | 6of 9 criteria metbefore: 9 · 2 cannot be measured",
+    "huella": "e377758a7772a6b65df45093f268a5f2402b391388b94ed74b4efc269957c2d1"
+  },
+  "U2=3700": {
+    "cifras": "1cases change pathof 20 | 1errors introducedavoided: 0 | 84auditor minplan: 96 · −12 | 6of 9 criteria metbefore: 9 · 2 cannot be measured",
+    "huella": "680f7355f4045d4e6d6f4428a5b847847300b3c2946d2fa2af867f6630710664"
+  },
+  "U2=3800": {
+    "cifras": "1cases change pathof 20 | 1errors introducedavoided: 0 | 84auditor minplan: 96 · −12 | 6of 9 criteria metbefore: 9 · 2 cannot be measured",
+    "huella": "2832fd1a6de5e5f15bb7b494bb460bb2a54d3a546ee280b69b1ffab14fa94a1a"
+  },
+  "U2=3900": {
+    "cifras": "1cases change pathof 20 | 1errors introducedavoided: 0 | 84auditor minplan: 96 · −12 | 6of 9 criteria metbefore: 9 · 2 cannot be measured",
+    "huella": "8555f6c2ac9653ca26fcc44badfdd5deba6dc75a063b90abc16e50dfae89a3a4"
+  },
+  "U2=4000": {
+    "cifras": "1cases change pathof 20 | 1errors introducedavoided: 0 | 84auditor minplan: 96 · −12 | 6of 9 criteria metbefore: 9 · 2 cannot be measured",
+    "huella": "55d5dcaf3c0b13b908933930925f5017009268188603eb2a6114bfb382ce6428"
+  },
+  "U2=4100": {
+    "cifras": "1cases change pathof 20 | 1errors introducedavoided: 0 | 84auditor minplan: 96 · −12 | 6of 9 criteria metbefore: 9 · 2 cannot be measured",
+    "huella": "31446619c9b7c5e014c38c495c62b2098cfe0a66eac34f889caede2745ce419e"
+  },
+  "U2=4200": {
+    "cifras": "1cases change pathof 20 | 1errors introducedavoided: 0 | 84auditor minplan: 96 · −12 | 6of 9 criteria metbefore: 9 · 2 cannot be measured",
+    "huella": "2dc6497272c256bcf492bd3dc7ba47085b9b2fb9bbfde094192735040f46edbe"
+  },
+  "U2=4300": {
+    "cifras": "1cases change pathof 20 | 1errors introducedavoided: 0 | 84auditor minplan: 96 · −12 | 6of 9 criteria metbefore: 9 · 2 cannot be measured",
+    "huella": "83135e7d75619ce089c9ed131f14cdc3aa219ff1733688870b46e012b1fdd771"
+  },
+  "U2=4400": {
+    "cifras": "1cases change pathof 20 | 1errors introducedavoided: 0 | 84auditor minplan: 96 · −12 | 6of 9 criteria metbefore: 9 · 2 cannot be measured",
+    "huella": "a9d37dea7d0edf5ec4e8e45f72b56b1f37959c6d0498b515901c3375bb10daaf"
+  },
+  "U2=4500": {
+    "cifras": "1cases change pathof 20 | 1errors introducedavoided: 0 | 84auditor minplan: 96 · −12 | 6of 9 criteria metbefore: 9 · 2 cannot be measured",
+    "huella": "f1264591da699e8ccd51d74a785509cdb84cc6869910c66437fb679289b02c6a"
+  },
+  "U2=4600": {
+    "cifras": "1cases change pathof 20 | 1errors introducedavoided: 0 | 84auditor minplan: 96 · −12 | 6of 9 criteria metbefore: 9 · 2 cannot be measured",
+    "huella": "a12a2d8ce0572ad5472fa5aaa9fad2d99ceda941612c1129cce878f8a24bd6d4"
+  },
+  "U2=4700": {
+    "cifras": "1cases change pathof 20 | 1errors introducedavoided: 0 | 84auditor minplan: 96 · −12 | 6of 9 criteria metbefore: 9 · 2 cannot be measured",
+    "huella": "5145cce7591480cd453714a5d5304199fd553536704909df1338e6c08ca7d8df"
+  },
+  "U2=4800": {
+    "cifras": "1cases change pathof 20 | 1errors introducedavoided: 0 | 84auditor minplan: 96 · −12 | 6of 9 criteria metbefore: 9 · 2 cannot be measured",
+    "huella": "3cb28367785eb9044a8640c9820feb368063533540d59c1efa47f6b7ecbdb26f"
+  },
+  "U2=4900": {
+    "cifras": "1cases change pathof 20 | 1errors introducedavoided: 0 | 84auditor minplan: 96 · −12 | 6of 9 criteria metbefore: 9 · 2 cannot be measured",
+    "huella": "c02729da0cba8588d4d2ed4549c76e350db4356baa98b9c4a32374bdc24c7de0"
+  },
+  "U2=5000": {
+    "cifras": "1cases change pathof 20 | 1errors introducedavoided: 0 | 84auditor minplan: 96 · −12 | 6of 9 criteria metbefore: 9 · 2 cannot be measured",
+    "huella": "b9957457f4a162954bb24b2575b08aba463abbf7ecc46e510ee88e35992bcb84"
+  },
+  "U3=0": {
+    "cifras": "3cases change pathof 20 | 0errors introducedavoided: 0 | 120auditor minplan: 96 · +24 | 4of 9 criteria metbefore: 9 · 5 cannot be measured",
+    "huella": "c6fe3a82d3abd6675384aa2a35b2f375788bd928c1a581d8cf939d8597ec936d"
+  },
+  "U3=1": {
+    "cifras": "2cases change pathof 20 | 0errors introducedavoided: 0 | 108auditor minplan: 96 · +12 | 4of 9 criteria metbefore: 9 · 5 cannot be measured",
+    "huella": "317ecefbd1bf1d246a8331d8452e7798a72713038f331d79b5d68e39995aa25d"
+  },
+  "U3=2": {
+    "cifras": "0cases change pathof 20 | 0errors introducedavoided: 0 | 96auditor minplan: 96 · ±0 | 9of 9 criteria metunchanged",
+    "huella": "d70b5533c4bc38fa7216c11ccbdb96d3ddce858181b44d0e5599672a35cab7d0"
+  },
+  "U3=3": {
+    "cifras": "1cases change pathof 20 · 1 not observed | 0errors introducedavoided: 0 | 84auditor minplan: 84 · ±0 | 4of 9 criteria metbefore: 9 · 5 cannot be measured",
+    "huella": "bc46eadef1137f0392d98de771b2f16991206c2e66f24740cf5250d8e7ee23d3"
+  },
+  "U3=4": {
+    "cifras": "1cases change pathof 20 · 1 not observed | 0errors introducedavoided: 0 | 84auditor minplan: 84 · ±0 | 4of 9 criteria metbefore: 9 · 5 cannot be measured",
+    "huella": "cf437fff80a38023a3ea7e311cbd796ae8d33778c7fcde9f21b9cdb93dc97f79"
+  },
+  "U4=alternado": {
+    "cifras": "0cases change pathof 20 | 0errors introducedavoided: 0 | 96auditor minplan: 96 · ±0 | 9of 9 criteria metunchanged",
+    "huella": "6a744e1f92122f19c5aad858cda5b03d8d05e84f88787b791e3ed20a2831b3aa"
+  }
+}

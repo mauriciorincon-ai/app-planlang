@@ -1,0 +1,1604 @@
+{
+  "nota": "Pasada de capturas de cierre del S2 (AU-S2-12): cada encuadre con su huella; las capturas enteras viven fuera del repo. Lo genera scripts/registro-cierre.mjs.",
+  "miradas": [
+    {
+      "mirada": "p1",
+      "pares": [
+        {
+          "pantalla": "P1 Entrada",
+          "ruta": "/es",
+          "ancho": 380,
+          "tema": "oscuro",
+          "idioma": "es",
+          "perfil": "lider",
+          "vitrina": "vitrina-380-oscuro-es.jpg",
+          "maqueta": "maqueta-380-oscuro-es.jpg",
+          "sha256_vitrina": "b2399358623bc1f8ca8c067f3c5cdafd002882ec9b0b10f2734fe959612cd6ca",
+          "sha256_maqueta": "0648164cf5039e8a75c9511190b631848b4500b2d3aec63b34d3c91f00bafe20",
+          "miniatura": "mini-p1-vitrina-380-oscuro-es.jpg"
+        },
+        {
+          "pantalla": "P1 Entrada",
+          "ruta": "/en",
+          "ancho": 380,
+          "tema": "oscuro",
+          "idioma": "en",
+          "perfil": "lider",
+          "vitrina": "vitrina-380-oscuro-en.jpg",
+          "maqueta": "maqueta-380-oscuro-en.jpg",
+          "sha256_vitrina": "a50c01405061e9f8dd81a5f57778e4dcc6e374d074ffcc71bf6d873113afe6a4",
+          "sha256_maqueta": "dca34673970d42de204c465520e28a23dbc31621aaec9874704dbe34f9b07dbf",
+          "miniatura": "mini-p1-vitrina-380-oscuro-en.jpg"
+        },
+        {
+          "pantalla": "P1 Entrada",
+          "ruta": "/es",
+          "ancho": 380,
+          "tema": "claro",
+          "idioma": "es",
+          "perfil": "lider",
+          "vitrina": "vitrina-380-claro-es.jpg",
+          "maqueta": "maqueta-380-claro-es.jpg",
+          "sha256_vitrina": "eef4e53a3fc1dfc9b817ceac512ce9d7715c753ab6d534e20f7db88caad74a06",
+          "sha256_maqueta": "7122904125338515d36fc507cf021c369c16311ddb37313e234f8ee5a9b4ab81",
+          "miniatura": "mini-p1-vitrina-380-claro-es.jpg"
+        },
+        {
+          "pantalla": "P1 Entrada",
+          "ruta": "/en",
+          "ancho": 380,
+          "tema": "claro",
+          "idioma": "en",
+          "perfil": "lider",
+          "vitrina": "vitrina-380-claro-en.jpg",
+          "maqueta": "maqueta-380-claro-en.jpg",
+          "sha256_vitrina": "82ab85c6ac9e27527222cec66ef864925e870a253e78224788aaec2877dc4b9f",
+          "sha256_maqueta": "81737345e71171ca00ca46f30062729dc4e090c882ad575e67a817c9fb998338",
+          "miniatura": "mini-p1-vitrina-380-claro-en.jpg"
+        },
+        {
+          "pantalla": "P1 Entrada",
+          "ruta": "/es",
+          "ancho": 1280,
+          "tema": "oscuro",
+          "idioma": "es",
+          "perfil": "lider",
+          "vitrina": "vitrina-1280-oscuro-es.jpg",
+          "maqueta": "maqueta-1280-oscuro-es.jpg",
+          "sha256_vitrina": "3117f5f50c6e79171076f279e3c66401d2cb7134dfd47f9b98b72ec4a9c9ceda",
+          "sha256_maqueta": "33b75f683a2ea9f6e6bb6f958f7f6df9b987de6814f04734c4593d49f2b30ba0",
+          "miniatura": "mini-p1-vitrina-1280-oscuro-es.jpg"
+        },
+        {
+          "pantalla": "P1 Entrada",
+          "ruta": "/en",
+          "ancho": 1280,
+          "tema": "oscuro",
+          "idioma": "en",
+          "perfil": "lider",
+          "vitrina": "vitrina-1280-oscuro-en.jpg",
+          "maqueta": "maqueta-1280-oscuro-en.jpg",
+          "sha256_vitrina": "e4451e129b38dcacb4667007715826d4112a664125ae32b891b3384b9ea3d121",
+          "sha256_maqueta": "f1f76eaa3a4e8e3bdf18d5aad11e12beeeb851bd4b67fd5fa0cb1bf70276393b",
+          "miniatura": "mini-p1-vitrina-1280-oscuro-en.jpg"
+        },
+        {
+          "pantalla": "P1 Entrada",
+          "ruta": "/es",
+          "ancho": 1280,
+          "tema": "claro",
+          "idioma": "es",
+          "perfil": "lider",
+          "vitrina": "vitrina-1280-claro-es.jpg",
+          "maqueta": "maqueta-1280-claro-es.jpg",
+          "sha256_vitrina": "91133dc957fadbeb70c993a7c662110286ed818749a33c57193088b2b8936baa",
+          "sha256_maqueta": "5cdd25cc3b328f713017b994de102e6760faa91c1729d88e6cf707d47c414f81",
+          "miniatura": "mini-p1-vitrina-1280-claro-es.jpg"
+        },
+        {
+          "pantalla": "P1 Entrada",
+          "ruta": "/en",
+          "ancho": 1280,
+          "tema": "claro",
+          "idioma": "en",
+          "perfil": "lider",
+          "vitrina": "vitrina-1280-claro-en.jpg",
+          "maqueta": "maqueta-1280-claro-en.jpg",
+          "sha256_vitrina": "91fb2b7cc0060cd544ebfa938b89e8963a32ee40679e2ce7b8a3688aa9351225",
+          "sha256_maqueta": "69a2df8e28fb3da1077940c309076fa0bf638657bc9a522e08f0787c15cdcbf7",
+          "miniatura": "mini-p1-vitrina-1280-claro-en.jpg"
+        },
+        {
+          "pantalla": "P1 Entrada",
+          "ruta": "/es",
+          "ancho": 1280,
+          "tema": "oscuro",
+          "idioma": "es",
+          "perfil": "experto",
+          "vitrina": "vitrina-1280-oscuro-es-experto.jpg",
+          "maqueta": "maqueta-1280-oscuro-es-experto.jpg",
+          "sha256_vitrina": "ab39e1272dfe1a34260fa39aeff95833296a603c72d2d1759fa3cfc74f6cbee7",
+          "sha256_maqueta": "fa95d4fd33cf0f9db9d55f213cf03ce88937461b8c0853032e2f1e64dd70c35d",
+          "miniatura": "mini-p1-vitrina-1280-oscuro-es-experto.jpg"
+        },
+        {
+          "pantalla": "P1 Entrada",
+          "ruta": "/es",
+          "ancho": 380,
+          "tema": "oscuro",
+          "idioma": "es",
+          "perfil": "experto",
+          "vitrina": "vitrina-380-oscuro-es-experto.jpg",
+          "maqueta": "maqueta-380-oscuro-es-experto.jpg",
+          "sha256_vitrina": "00440992dee30a315c62edf9adb10f93c77d0ff4b40c46afca1eeea535dc6014",
+          "sha256_maqueta": "2ec86a86270ec4834e3ae6acddf3144488eb7616256ded4013132505c9dcf6ec",
+          "miniatura": "mini-p1-vitrina-380-oscuro-es-experto.jpg"
+        }
+      ],
+      "mediciones": [
+        {
+          "que": "vitrina P1 Entrada 380 oscuro es lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P1 Entrada 380 oscuro en lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P1 Entrada 380 claro es lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P1 Entrada 380 claro en lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P1 Entrada 1280 oscuro es lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P1 Entrada 1280 oscuro en lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P1 Entrada 1280 claro es lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P1 Entrada 1280 claro en lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P1 Entrada 1280 oscuro es experto",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P1 Entrada 380 oscuro es experto",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        }
+      ],
+      "interacciones": [
+        {
+          "nombre": "tema → Claro",
+          "ok": true
+        },
+        {
+          "nombre": "tema → Oscuro",
+          "ok": true
+        },
+        {
+          "nombre": "Leer como → Experto",
+          "ok": true
+        },
+        {
+          "nombre": "Volver a líder",
+          "ok": true
+        },
+        {
+          "nombre": "Ver como experto",
+          "ok": true
+        },
+        {
+          "nombre": "idioma → EN",
+          "ok": true
+        },
+        {
+          "nombre": "pestaña → Plan",
+          "ok": true
+        }
+      ],
+      "fallas": []
+    },
+    {
+      "mirada": "p2",
+      "pares": [
+        {
+          "pantalla": "P2 Plan",
+          "ruta": "/es/plan",
+          "ancho": 380,
+          "tema": "oscuro",
+          "idioma": "es",
+          "perfil": "lider",
+          "vitrina": "vitrina-p2-380-oscuro-es.jpg",
+          "maqueta": "maqueta-p2-380-oscuro-es.jpg",
+          "sha256_vitrina": "5ebfe6db59fbbf3dfb297ac6ced2c011423386457deae4f5bcad2a3762860556",
+          "sha256_maqueta": "0a920964b2c82429c77c402d777b9e3f3fb233e53ee507d73252cb88a8b44a17",
+          "miniatura": "mini-p2-vitrina-p2-380-oscuro-es.jpg"
+        },
+        {
+          "pantalla": "P2 Plan",
+          "ruta": "/en/plan",
+          "ancho": 380,
+          "tema": "oscuro",
+          "idioma": "en",
+          "perfil": "lider",
+          "vitrina": "vitrina-p2-380-oscuro-en.jpg",
+          "maqueta": "maqueta-p2-380-oscuro-en.jpg",
+          "sha256_vitrina": "d2111dfa14406db66d8533507ad34c9aed28f0c9773e51efde7ec55e0357219a",
+          "sha256_maqueta": "12259ee907fbc26152f1223fe562d4f6d3379024642c9dc2d9efc7261789a5e1",
+          "miniatura": "mini-p2-vitrina-p2-380-oscuro-en.jpg"
+        },
+        {
+          "pantalla": "P2 Plan",
+          "ruta": "/es/plan",
+          "ancho": 380,
+          "tema": "claro",
+          "idioma": "es",
+          "perfil": "lider",
+          "vitrina": "vitrina-p2-380-claro-es.jpg",
+          "maqueta": "maqueta-p2-380-claro-es.jpg",
+          "sha256_vitrina": "8ad7917af79bc6a08266e898014f1f57bae845428e018a386e0d7c5d77a30148",
+          "sha256_maqueta": "c22ee8a1b887a57030b600727e7edef8635b1a37e90e5a978b010cbf25c617d5",
+          "miniatura": "mini-p2-vitrina-p2-380-claro-es.jpg"
+        },
+        {
+          "pantalla": "P2 Plan",
+          "ruta": "/en/plan",
+          "ancho": 380,
+          "tema": "claro",
+          "idioma": "en",
+          "perfil": "lider",
+          "vitrina": "vitrina-p2-380-claro-en.jpg",
+          "maqueta": "maqueta-p2-380-claro-en.jpg",
+          "sha256_vitrina": "3e75c74610f660907bc0460225549c06d31e10013658f8dfe65c022872fe5446",
+          "sha256_maqueta": "4b09eaf630f7a435c453ae39db749798c1a16099391dc33bcafe8f56e9440acd",
+          "miniatura": "mini-p2-vitrina-p2-380-claro-en.jpg"
+        },
+        {
+          "pantalla": "P2 Plan",
+          "ruta": "/es/plan",
+          "ancho": 1280,
+          "tema": "oscuro",
+          "idioma": "es",
+          "perfil": "lider",
+          "vitrina": "vitrina-p2-1280-oscuro-es.jpg",
+          "maqueta": "maqueta-p2-1280-oscuro-es.jpg",
+          "sha256_vitrina": "5d49586c1ba5c26e0e5b07d1b99270fec5b98de71da690f69dda7d57eb9badbe",
+          "sha256_maqueta": "ce0b9224bb33ac83b6e7f748e224502a22aee9d5d44a5b80d6a517e2eb7190c9",
+          "miniatura": "mini-p2-vitrina-p2-1280-oscuro-es.jpg"
+        },
+        {
+          "pantalla": "P2 Plan",
+          "ruta": "/en/plan",
+          "ancho": 1280,
+          "tema": "oscuro",
+          "idioma": "en",
+          "perfil": "lider",
+          "vitrina": "vitrina-p2-1280-oscuro-en.jpg",
+          "maqueta": "maqueta-p2-1280-oscuro-en.jpg",
+          "sha256_vitrina": "f5f5cbcd25d34937a62eec6551e32ea9e58f46d1b8ad6d64f5dd105123abc657",
+          "sha256_maqueta": "cd1ccc7a9c89a47e3af8e769728fc58d53a43da782d6e287ecd71be2e7e58eff",
+          "miniatura": "mini-p2-vitrina-p2-1280-oscuro-en.jpg"
+        },
+        {
+          "pantalla": "P2 Plan",
+          "ruta": "/es/plan",
+          "ancho": 1280,
+          "tema": "claro",
+          "idioma": "es",
+          "perfil": "lider",
+          "vitrina": "vitrina-p2-1280-claro-es.jpg",
+          "maqueta": "maqueta-p2-1280-claro-es.jpg",
+          "sha256_vitrina": "36346eb12089e5b08f2f57c0134051259bc4998318c4111c7152388356ed7db6",
+          "sha256_maqueta": "a14999ec6065ddc7e704b1ee8531907e2b9f0946c7a7c6117676b4898718346a",
+          "miniatura": "mini-p2-vitrina-p2-1280-claro-es.jpg"
+        },
+        {
+          "pantalla": "P2 Plan",
+          "ruta": "/en/plan",
+          "ancho": 1280,
+          "tema": "claro",
+          "idioma": "en",
+          "perfil": "lider",
+          "vitrina": "vitrina-p2-1280-claro-en.jpg",
+          "maqueta": "maqueta-p2-1280-claro-en.jpg",
+          "sha256_vitrina": "a7d0b8cf2ad52ae5144aad03d8f15d74f98dffa32a9ad24d801d387c6d5391ac",
+          "sha256_maqueta": "be649c95dabf9e5dfb19a1ea5975b44493263e3fa9a52b089521ed90fd9aeac6",
+          "miniatura": "mini-p2-vitrina-p2-1280-claro-en.jpg"
+        },
+        {
+          "pantalla": "P2 Plan",
+          "ruta": "/es/plan",
+          "ancho": 1280,
+          "tema": "oscuro",
+          "idioma": "es",
+          "perfil": "experto",
+          "vitrina": "vitrina-p2-1280-oscuro-es-experto.jpg",
+          "maqueta": "maqueta-p2-1280-oscuro-es-experto.jpg",
+          "sha256_vitrina": "2552419284baed4d2715d560788ad303ba8fdf8d2dbcf82b867b8876c54f98e5",
+          "sha256_maqueta": "e4e324499906e5e8ecfe7090363befb3921de461ae10e4eaa7f694ab2166a5ca",
+          "miniatura": "mini-p2-vitrina-p2-1280-oscuro-es-experto.jpg"
+        },
+        {
+          "pantalla": "P2 Plan",
+          "ruta": "/es/plan",
+          "ancho": 380,
+          "tema": "oscuro",
+          "idioma": "es",
+          "perfil": "experto",
+          "vitrina": "vitrina-p2-380-oscuro-es-experto.jpg",
+          "maqueta": "maqueta-p2-380-oscuro-es-experto.jpg",
+          "sha256_vitrina": "5e16acec02995a840bc5e603276ae962715193e3445636b9f351206678f92b9b",
+          "sha256_maqueta": "1cceaa7df570ceb76c6f3e19395ae83b9357208bcca7585b20fbd325282a9472",
+          "miniatura": "mini-p2-vitrina-p2-380-oscuro-es-experto.jpg"
+        },
+        {
+          "pantalla": "P3 Agente",
+          "ruta": "/es/agente",
+          "ancho": 380,
+          "tema": "oscuro",
+          "idioma": "es",
+          "perfil": "lider",
+          "vitrina": "vitrina-p3-380-oscuro-es.jpg",
+          "maqueta": "maqueta-p3-380-oscuro-es.jpg",
+          "sha256_vitrina": "ab90ed216785e8539deb63fce9fd3b5f84ac7383f666030e8d1a64af60846db6",
+          "sha256_maqueta": "148883f8f5bafab1235836e575cf27d03866a19664c5d02b229a5516b61c3ccc",
+          "miniatura": "mini-p2-vitrina-p3-380-oscuro-es.jpg"
+        },
+        {
+          "pantalla": "P3 Agente",
+          "ruta": "/en/agente",
+          "ancho": 380,
+          "tema": "oscuro",
+          "idioma": "en",
+          "perfil": "lider",
+          "vitrina": "vitrina-p3-380-oscuro-en.jpg",
+          "maqueta": "maqueta-p3-380-oscuro-en.jpg",
+          "sha256_vitrina": "a1350544a1d9c11fd23d3b803d7c9f613bb94c17fd526a2444326d15c3752c9c",
+          "sha256_maqueta": "fbaf121f507834ea685a5e50f2d05295afdf837a4b8be62810a40f0e5cf3b532",
+          "miniatura": "mini-p2-vitrina-p3-380-oscuro-en.jpg"
+        },
+        {
+          "pantalla": "P3 Agente",
+          "ruta": "/es/agente",
+          "ancho": 380,
+          "tema": "claro",
+          "idioma": "es",
+          "perfil": "lider",
+          "vitrina": "vitrina-p3-380-claro-es.jpg",
+          "maqueta": "maqueta-p3-380-claro-es.jpg",
+          "sha256_vitrina": "07ccdcbbd7b6a3c33549455641785a8d9b6f448269e0a6f4fe5a7dd044abfec4",
+          "sha256_maqueta": "ec1ed01dadbcb6b6171b2dda9d1a16f043226d18c5dd784ce896a6ec93c7a9aa",
+          "miniatura": "mini-p2-vitrina-p3-380-claro-es.jpg"
+        },
+        {
+          "pantalla": "P3 Agente",
+          "ruta": "/en/agente",
+          "ancho": 380,
+          "tema": "claro",
+          "idioma": "en",
+          "perfil": "lider",
+          "vitrina": "vitrina-p3-380-claro-en.jpg",
+          "maqueta": "maqueta-p3-380-claro-en.jpg",
+          "sha256_vitrina": "a5b9f2963dc201095d00fd674ad86238796b6837581cf6a426c531b6c16c9de1",
+          "sha256_maqueta": "d6bdbc690779e64087afa5ea93601fb5ecd215be75dae432b023e5a44dcb7175",
+          "miniatura": "mini-p2-vitrina-p3-380-claro-en.jpg"
+        },
+        {
+          "pantalla": "P3 Agente",
+          "ruta": "/es/agente",
+          "ancho": 1280,
+          "tema": "oscuro",
+          "idioma": "es",
+          "perfil": "lider",
+          "vitrina": "vitrina-p3-1280-oscuro-es.jpg",
+          "maqueta": "maqueta-p3-1280-oscuro-es.jpg",
+          "sha256_vitrina": "31a563bb947cd624558b4b5132ce572f0ac7160348aa0b17bb9114fc22c7449d",
+          "sha256_maqueta": "416ab79ffad8eaf6a5047515fff6ac9d9af77b38309f348fdba5170f54a7c231",
+          "miniatura": "mini-p2-vitrina-p3-1280-oscuro-es.jpg"
+        },
+        {
+          "pantalla": "P3 Agente",
+          "ruta": "/en/agente",
+          "ancho": 1280,
+          "tema": "oscuro",
+          "idioma": "en",
+          "perfil": "lider",
+          "vitrina": "vitrina-p3-1280-oscuro-en.jpg",
+          "maqueta": "maqueta-p3-1280-oscuro-en.jpg",
+          "sha256_vitrina": "b024a37c6fd40ef585df7fddef5934a59082bce10ecee528517842551fbb9154",
+          "sha256_maqueta": "97b9e3412795c3de6e4eeecd04584294749de8d6051b09caba84c6eca584694c",
+          "miniatura": "mini-p2-vitrina-p3-1280-oscuro-en.jpg"
+        },
+        {
+          "pantalla": "P3 Agente",
+          "ruta": "/es/agente",
+          "ancho": 1280,
+          "tema": "claro",
+          "idioma": "es",
+          "perfil": "lider",
+          "vitrina": "vitrina-p3-1280-claro-es.jpg",
+          "maqueta": "maqueta-p3-1280-claro-es.jpg",
+          "sha256_vitrina": "2531eedc951135267e26fdbcef10a3699887659da5dfad66945e147038bb03a0",
+          "sha256_maqueta": "249ab4f5874aca726c0ba9fef3061d30b9a866cd03a2d6dd174a714e151d7823",
+          "miniatura": "mini-p2-vitrina-p3-1280-claro-es.jpg"
+        },
+        {
+          "pantalla": "P3 Agente",
+          "ruta": "/en/agente",
+          "ancho": 1280,
+          "tema": "claro",
+          "idioma": "en",
+          "perfil": "lider",
+          "vitrina": "vitrina-p3-1280-claro-en.jpg",
+          "maqueta": "maqueta-p3-1280-claro-en.jpg",
+          "sha256_vitrina": "2c6c7913bfce95e1a4c0b3d0ae54cbb3de0525cb8331fae4a014c72859f2bd9b",
+          "sha256_maqueta": "5d19688298f7304a01657fea49b7bc3441c2fbc13adb209017e9250de95da786",
+          "miniatura": "mini-p2-vitrina-p3-1280-claro-en.jpg"
+        },
+        {
+          "pantalla": "P3 Agente",
+          "ruta": "/es/agente",
+          "ancho": 1280,
+          "tema": "oscuro",
+          "idioma": "es",
+          "perfil": "experto",
+          "vitrina": "vitrina-p3-1280-oscuro-es-experto.jpg",
+          "maqueta": "maqueta-p3-1280-oscuro-es-experto.jpg",
+          "sha256_vitrina": "179442abce9aa1b18ef7e941e8c784c09821c1beaec66b2e4bc89206786d3f0b",
+          "sha256_maqueta": "b021827e1c9c03869653fa7dadc2f87d14dba07e2295cd9c5bbfe3fb6694ac15",
+          "miniatura": "mini-p2-vitrina-p3-1280-oscuro-es-experto.jpg"
+        },
+        {
+          "pantalla": "P3 Agente",
+          "ruta": "/es/agente",
+          "ancho": 380,
+          "tema": "oscuro",
+          "idioma": "es",
+          "perfil": "experto",
+          "vitrina": "vitrina-p3-380-oscuro-es-experto.jpg",
+          "maqueta": "maqueta-p3-380-oscuro-es-experto.jpg",
+          "sha256_vitrina": "7208f8060996b50453944e96dd27f7bb61a5650de0e922dfd0fe99dad2afedc9",
+          "sha256_maqueta": "dc2456f813738bb46f995eaa9fb927d4aa119e33c88a7560b4e4d64102f03122",
+          "miniatura": "mini-p2-vitrina-p3-380-oscuro-es-experto.jpg"
+        },
+        {
+          "pantalla": "P6 Caso (A-006)",
+          "ruta": "/es/caso/A-006",
+          "ancho": 380,
+          "tema": "oscuro",
+          "idioma": "es",
+          "perfil": "lider",
+          "vitrina": "vitrina-p6-380-oscuro-es.jpg",
+          "maqueta": "maqueta-p6-380-oscuro-es.jpg",
+          "sha256_vitrina": "7d7a02339adcc1aa815dc7a9f62b84e77a48eebfeab008d765598a9c33171776",
+          "sha256_maqueta": "e68b87e20a649dad731913791b781d52b448375f8f41c0e7a221697f285077a8",
+          "miniatura": "mini-p2-vitrina-p6-380-oscuro-es.jpg"
+        },
+        {
+          "pantalla": "P6 Caso (A-006)",
+          "ruta": "/en/caso/A-006",
+          "ancho": 380,
+          "tema": "oscuro",
+          "idioma": "en",
+          "perfil": "lider",
+          "vitrina": "vitrina-p6-380-oscuro-en.jpg",
+          "maqueta": "maqueta-p6-380-oscuro-en.jpg",
+          "sha256_vitrina": "79be1c0c454f2d6fe4db91d44cb6cf1e283c30852c7afde3a4d439d45119f397",
+          "sha256_maqueta": "46fa699f6c1648f08ac2d0f3ed19471152cf1ca7134e363aa9b1be2e007af559",
+          "miniatura": "mini-p2-vitrina-p6-380-oscuro-en.jpg"
+        },
+        {
+          "pantalla": "P6 Caso (A-006)",
+          "ruta": "/es/caso/A-006",
+          "ancho": 380,
+          "tema": "claro",
+          "idioma": "es",
+          "perfil": "lider",
+          "vitrina": "vitrina-p6-380-claro-es.jpg",
+          "maqueta": "maqueta-p6-380-claro-es.jpg",
+          "sha256_vitrina": "180b2f8ce7223c74b81c3c6b2eacfffccd31e4d7c22d0f3f12321d5cca69100f",
+          "sha256_maqueta": "28926816653f880c5ec12f0e9a7bd2ad4035eeeaef734fdced5d388537bec598",
+          "miniatura": "mini-p2-vitrina-p6-380-claro-es.jpg"
+        },
+        {
+          "pantalla": "P6 Caso (A-006)",
+          "ruta": "/en/caso/A-006",
+          "ancho": 380,
+          "tema": "claro",
+          "idioma": "en",
+          "perfil": "lider",
+          "vitrina": "vitrina-p6-380-claro-en.jpg",
+          "maqueta": "maqueta-p6-380-claro-en.jpg",
+          "sha256_vitrina": "23c3c0804583f3006a5835b94193d20f8be75dcbf2de279d62f12ac567641f70",
+          "sha256_maqueta": "e8353cb43902357cfb210b777fb8be1a23cc4c49b193e4d0571f5f9931db1784",
+          "miniatura": "mini-p2-vitrina-p6-380-claro-en.jpg"
+        },
+        {
+          "pantalla": "P6 Caso (A-006)",
+          "ruta": "/es/caso/A-006",
+          "ancho": 1280,
+          "tema": "oscuro",
+          "idioma": "es",
+          "perfil": "lider",
+          "vitrina": "vitrina-p6-1280-oscuro-es.jpg",
+          "maqueta": "maqueta-p6-1280-oscuro-es.jpg",
+          "sha256_vitrina": "6f1c5119e9197afcf3ba929bcc8952eda9edf8838e541e87a4898bca6c4fc2c7",
+          "sha256_maqueta": "f295babec69c6cad58652b1626bf3fc71a15a534161fa57c4fe3c5db871d0060",
+          "miniatura": "mini-p2-vitrina-p6-1280-oscuro-es.jpg"
+        },
+        {
+          "pantalla": "P6 Caso (A-006)",
+          "ruta": "/en/caso/A-006",
+          "ancho": 1280,
+          "tema": "oscuro",
+          "idioma": "en",
+          "perfil": "lider",
+          "vitrina": "vitrina-p6-1280-oscuro-en.jpg",
+          "maqueta": "maqueta-p6-1280-oscuro-en.jpg",
+          "sha256_vitrina": "30d486b199e8b2c02e2970a8274d907d9b852b764597438c284721898f3dc14a",
+          "sha256_maqueta": "370df1ae837dab8788bf73e778b0797d1c7eed64c71ea00261ffe17186f0767b",
+          "miniatura": "mini-p2-vitrina-p6-1280-oscuro-en.jpg"
+        },
+        {
+          "pantalla": "P6 Caso (A-006)",
+          "ruta": "/es/caso/A-006",
+          "ancho": 1280,
+          "tema": "claro",
+          "idioma": "es",
+          "perfil": "lider",
+          "vitrina": "vitrina-p6-1280-claro-es.jpg",
+          "maqueta": "maqueta-p6-1280-claro-es.jpg",
+          "sha256_vitrina": "e04f6e18431be921fd45d97b6f1011690aa180575b0f4486bc776179531142fb",
+          "sha256_maqueta": "afa4a6d8cc24794606a9bd2567475f5afdac9ad034d720503f7da076eef051e7",
+          "miniatura": "mini-p2-vitrina-p6-1280-claro-es.jpg"
+        },
+        {
+          "pantalla": "P6 Caso (A-006)",
+          "ruta": "/en/caso/A-006",
+          "ancho": 1280,
+          "tema": "claro",
+          "idioma": "en",
+          "perfil": "lider",
+          "vitrina": "vitrina-p6-1280-claro-en.jpg",
+          "maqueta": "maqueta-p6-1280-claro-en.jpg",
+          "sha256_vitrina": "9581df4ccc0a200cadf21831bbe964ea40471b43ff11d8f3f14317256eae3b27",
+          "sha256_maqueta": "96f7084a01300a798eb8bf79b243a028da1cd7bf595d102c8761b4cf5109f9a9",
+          "miniatura": "mini-p2-vitrina-p6-1280-claro-en.jpg"
+        },
+        {
+          "pantalla": "P6 Caso (A-006)",
+          "ruta": "/es/caso/A-006",
+          "ancho": 1280,
+          "tema": "oscuro",
+          "idioma": "es",
+          "perfil": "experto",
+          "vitrina": "vitrina-p6-1280-oscuro-es-experto.jpg",
+          "maqueta": "maqueta-p6-1280-oscuro-es-experto.jpg",
+          "sha256_vitrina": "37694fcad67d3e8b25f40d7af515ef3c6cb46856984fb01a3a8d691fc8c7b20d",
+          "sha256_maqueta": "38e3dd7765525a4c2a188a90072c8c769ffb339f0fbb4201d5fc9bff0150e81b",
+          "miniatura": "mini-p2-vitrina-p6-1280-oscuro-es-experto.jpg"
+        },
+        {
+          "pantalla": "P6 Caso (A-006)",
+          "ruta": "/es/caso/A-006",
+          "ancho": 380,
+          "tema": "oscuro",
+          "idioma": "es",
+          "perfil": "experto",
+          "vitrina": "vitrina-p6-380-oscuro-es-experto.jpg",
+          "maqueta": "maqueta-p6-380-oscuro-es-experto.jpg",
+          "sha256_vitrina": "b2353a84d06474006c02c71c0fa6505d8804ee50dc1bcbe60a8376c6c3d1daf4",
+          "sha256_maqueta": "3716fd61aadbe9d0d05beccb579acffbfda3eea64d55c980ab48821b9c49ce26",
+          "miniatura": "mini-p2-vitrina-p6-380-oscuro-es-experto.jpg"
+        }
+      ],
+      "mediciones": [
+        {
+          "que": "vitrina P2 Plan 380 oscuro es lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P2 Plan 380 oscuro en lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P2 Plan 380 claro es lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P2 Plan 380 claro en lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P2 Plan 1280 oscuro es lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P2 Plan 1280 oscuro en lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P2 Plan 1280 claro es lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P2 Plan 1280 claro en lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P2 Plan 1280 oscuro es experto",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P2 Plan 380 oscuro es experto",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P3 Agente 380 oscuro es lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P3 Agente 380 oscuro en lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P3 Agente 380 claro es lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P3 Agente 380 claro en lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P3 Agente 1280 oscuro es lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P3 Agente 1280 oscuro en lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P3 Agente 1280 claro es lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P3 Agente 1280 claro en lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P3 Agente 1280 oscuro es experto",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P3 Agente 380 oscuro es experto",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P6 Caso (A-006) 380 oscuro es lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P6 Caso (A-006) 380 oscuro en lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P6 Caso (A-006) 380 claro es lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P6 Caso (A-006) 380 claro en lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P6 Caso (A-006) 1280 oscuro es lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P6 Caso (A-006) 1280 oscuro en lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P6 Caso (A-006) 1280 claro es lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P6 Caso (A-006) 1280 claro en lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P6 Caso (A-006) 1280 oscuro es experto",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P6 Caso (A-006) 380 oscuro es experto",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        }
+      ],
+      "interacciones": [
+        {
+          "nombre": "Plan: índice → Riesgos",
+          "ok": true
+        },
+        {
+          "nombre": "Plan: «Ver 3 más»",
+          "ok": true
+        },
+        {
+          "nombre": "Plan: abrir un renglón",
+          "ok": true
+        },
+        {
+          "nombre": "Plan: Leer como → Experto",
+          "ok": true
+        },
+        {
+          "nombre": "Agente: elegir «decision» en el lienzo",
+          "ok": true
+        },
+        {
+          "nombre": "Agente: pestaña «Código» del panel",
+          "ok": true
+        },
+        {
+          "nombre": "Caso: selector → A-008",
+          "ok": true
+        }
+      ],
+      "fallas": []
+    },
+    {
+      "mirada": "p3",
+      "pares": [
+        {
+          "pantalla": "P4 Brecha",
+          "ruta": "/es/brecha",
+          "ancho": 380,
+          "tema": "oscuro",
+          "idioma": "es",
+          "perfil": "lider",
+          "vitrina": "vitrina-p4-380-oscuro-es.jpg",
+          "maqueta": "maqueta-p4-380-oscuro-es.jpg",
+          "sha256_vitrina": "e4cb06109a8416f1671a20a448645dad7be5c7dba4d3fba90b99a29a3935e50a",
+          "sha256_maqueta": "e3dad3abe409c78d97959ebd594ad4cb3edbc4d7617f96b6cf8908b90d1280b3",
+          "miniatura": "mini-p3-vitrina-p4-380-oscuro-es.jpg"
+        },
+        {
+          "pantalla": "P4 Brecha",
+          "ruta": "/en/brecha",
+          "ancho": 380,
+          "tema": "oscuro",
+          "idioma": "en",
+          "perfil": "lider",
+          "vitrina": "vitrina-p4-380-oscuro-en.jpg",
+          "maqueta": "maqueta-p4-380-oscuro-en.jpg",
+          "sha256_vitrina": "bd64a934b534c8d530a7019a4cd52899035004fe32668b2e78235a70c6c7ebcb",
+          "sha256_maqueta": "b4936b10d36e29d008701ae9dc226585ef823f65470d8b7daa3fa92c75b1e3c5",
+          "miniatura": "mini-p3-vitrina-p4-380-oscuro-en.jpg"
+        },
+        {
+          "pantalla": "P4 Brecha",
+          "ruta": "/es/brecha",
+          "ancho": 380,
+          "tema": "claro",
+          "idioma": "es",
+          "perfil": "lider",
+          "vitrina": "vitrina-p4-380-claro-es.jpg",
+          "maqueta": "maqueta-p4-380-claro-es.jpg",
+          "sha256_vitrina": "69284c946948efce4fb0b48c53b26a996aa4908e06dbead8495fe76ad1cb6ef5",
+          "sha256_maqueta": "dbbdb440f566089f9fda2e22b6b77b44e62adc69e9293ee61e6060814fed798d",
+          "miniatura": "mini-p3-vitrina-p4-380-claro-es.jpg"
+        },
+        {
+          "pantalla": "P4 Brecha",
+          "ruta": "/en/brecha",
+          "ancho": 380,
+          "tema": "claro",
+          "idioma": "en",
+          "perfil": "lider",
+          "vitrina": "vitrina-p4-380-claro-en.jpg",
+          "maqueta": "maqueta-p4-380-claro-en.jpg",
+          "sha256_vitrina": "554a66090261c182cf48dc3523786295c25b69b427889813568a07b2f4d75729",
+          "sha256_maqueta": "3fe63cf8f201dc9c7be0ed6285088e68349b8d86483b11e74427e354e9f6c71b",
+          "miniatura": "mini-p3-vitrina-p4-380-claro-en.jpg"
+        },
+        {
+          "pantalla": "P4 Brecha",
+          "ruta": "/es/brecha",
+          "ancho": 1280,
+          "tema": "oscuro",
+          "idioma": "es",
+          "perfil": "lider",
+          "vitrina": "vitrina-p4-1280-oscuro-es.jpg",
+          "maqueta": "maqueta-p4-1280-oscuro-es.jpg",
+          "sha256_vitrina": "a00f99456179a8fb8f78b2b06cf3b527bcedc4a6da8f751129705692a76ed4eb",
+          "sha256_maqueta": "5663ce21047fc02c46e31c54dd6b36acd5f7548997e8e6227777611c839bf7fb",
+          "miniatura": "mini-p3-vitrina-p4-1280-oscuro-es.jpg"
+        },
+        {
+          "pantalla": "P4 Brecha",
+          "ruta": "/en/brecha",
+          "ancho": 1280,
+          "tema": "oscuro",
+          "idioma": "en",
+          "perfil": "lider",
+          "vitrina": "vitrina-p4-1280-oscuro-en.jpg",
+          "maqueta": "maqueta-p4-1280-oscuro-en.jpg",
+          "sha256_vitrina": "ad4313b53fbcb520143012438162b46aa70cf9d025d1fced738d755acd85b4ad",
+          "sha256_maqueta": "58d8e65a698d43b5ab18280cdbbd6a795f25f509e532ddf2fb32f976cefe8e29",
+          "miniatura": "mini-p3-vitrina-p4-1280-oscuro-en.jpg"
+        },
+        {
+          "pantalla": "P4 Brecha",
+          "ruta": "/es/brecha",
+          "ancho": 1280,
+          "tema": "claro",
+          "idioma": "es",
+          "perfil": "lider",
+          "vitrina": "vitrina-p4-1280-claro-es.jpg",
+          "maqueta": "maqueta-p4-1280-claro-es.jpg",
+          "sha256_vitrina": "cf9d06a9f4c4dfcb76c3a4b8e49b79918cbb3b82167da0caf0b88e03797b4d8d",
+          "sha256_maqueta": "40e299cbb954e6ca05c0cb2b690eb22158577d2c80038fbebf2d22ffe0d01e33",
+          "miniatura": "mini-p3-vitrina-p4-1280-claro-es.jpg"
+        },
+        {
+          "pantalla": "P4 Brecha",
+          "ruta": "/en/brecha",
+          "ancho": 1280,
+          "tema": "claro",
+          "idioma": "en",
+          "perfil": "lider",
+          "vitrina": "vitrina-p4-1280-claro-en.jpg",
+          "maqueta": "maqueta-p4-1280-claro-en.jpg",
+          "sha256_vitrina": "9cc6ecda402ecf72f424da09c8c5ba8d98ab70a340c6a4b404307b9133dce84c",
+          "sha256_maqueta": "7e5edb105afe775a971c6e629452c9d4bac5eaf494f600450a177cf0792ae700",
+          "miniatura": "mini-p3-vitrina-p4-1280-claro-en.jpg"
+        },
+        {
+          "pantalla": "P4 Brecha",
+          "ruta": "/es/brecha",
+          "ancho": 1280,
+          "tema": "oscuro",
+          "idioma": "es",
+          "perfil": "experto",
+          "vitrina": "vitrina-p4-1280-oscuro-es-experto.jpg",
+          "maqueta": "maqueta-p4-1280-oscuro-es-experto.jpg",
+          "sha256_vitrina": "d7e153da35eff898fb2bdb27eb70c5a9d281b37e354ec063d8d37f6905b7efee",
+          "sha256_maqueta": "c3c4ed1e71f00269c7bced54f3526e131082d734bf95e1bdf7842cc74215ed3e",
+          "miniatura": "mini-p3-vitrina-p4-1280-oscuro-es-experto.jpg"
+        },
+        {
+          "pantalla": "P4 Brecha",
+          "ruta": "/es/brecha",
+          "ancho": 380,
+          "tema": "oscuro",
+          "idioma": "es",
+          "perfil": "experto",
+          "vitrina": "vitrina-p4-380-oscuro-es-experto.jpg",
+          "maqueta": "maqueta-p4-380-oscuro-es-experto.jpg",
+          "sha256_vitrina": "b034f036e6730e295e81692d7ad26c32aea654d793b026aba454c0f06ca22fbd",
+          "sha256_maqueta": "4d70b91e9e13aa7eafa8878c2ba8646aa57a131df217d1d69a281b670a6ee7a6",
+          "miniatura": "mini-p3-vitrina-p4-380-oscuro-es-experto.jpg"
+        },
+        {
+          "pantalla": "P5 Playground",
+          "ruta": "/es/playground",
+          "ancho": 380,
+          "tema": "oscuro",
+          "idioma": "es",
+          "perfil": "lider",
+          "vitrina": "vitrina-p5-380-oscuro-es.jpg",
+          "maqueta": "maqueta-p5-380-oscuro-es.jpg",
+          "sha256_vitrina": "cc2dbf9360230f42850a411ecb1dfad8295d7ff8d87b98c5681aeb8ffadce69a",
+          "sha256_maqueta": "58691aba08430613d830bbe99546a694d8bdce232bc2b05899261048b93cc568",
+          "miniatura": "mini-p3-vitrina-p5-380-oscuro-es.jpg"
+        },
+        {
+          "pantalla": "P5 Playground",
+          "ruta": "/en/playground",
+          "ancho": 380,
+          "tema": "oscuro",
+          "idioma": "en",
+          "perfil": "lider",
+          "vitrina": "vitrina-p5-380-oscuro-en.jpg",
+          "maqueta": "maqueta-p5-380-oscuro-en.jpg",
+          "sha256_vitrina": "e586f74efb03f53b489800513a05ff09dd3b6709c4e8b1a674aaf77c97dfc396",
+          "sha256_maqueta": "0567c3d45de14bf5441bed334873e59833c8a3a89099ddc90450416a481d9cb9",
+          "miniatura": "mini-p3-vitrina-p5-380-oscuro-en.jpg"
+        },
+        {
+          "pantalla": "P5 Playground",
+          "ruta": "/es/playground",
+          "ancho": 380,
+          "tema": "claro",
+          "idioma": "es",
+          "perfil": "lider",
+          "vitrina": "vitrina-p5-380-claro-es.jpg",
+          "maqueta": "maqueta-p5-380-claro-es.jpg",
+          "sha256_vitrina": "c88a7dd434f992969f42bf26e1d7169ff1bf5cfb50779049c39f31e48e3c5bee",
+          "sha256_maqueta": "b39c61b4a6f530c66d147b82ab38162a0f021f5c220f4a9ac248cfb47d15334d",
+          "miniatura": "mini-p3-vitrina-p5-380-claro-es.jpg"
+        },
+        {
+          "pantalla": "P5 Playground",
+          "ruta": "/en/playground",
+          "ancho": 380,
+          "tema": "claro",
+          "idioma": "en",
+          "perfil": "lider",
+          "vitrina": "vitrina-p5-380-claro-en.jpg",
+          "maqueta": "maqueta-p5-380-claro-en.jpg",
+          "sha256_vitrina": "1e922cde2b9853e38eb0d7c887266b524239642acccfeb722d65dc35ca3319d7",
+          "sha256_maqueta": "a730a803cd2d6cf9fbe2f3d107b9544db0f36915238fc30053d74ef58161300b",
+          "miniatura": "mini-p3-vitrina-p5-380-claro-en.jpg"
+        },
+        {
+          "pantalla": "P5 Playground",
+          "ruta": "/es/playground",
+          "ancho": 1280,
+          "tema": "oscuro",
+          "idioma": "es",
+          "perfil": "lider",
+          "vitrina": "vitrina-p5-1280-oscuro-es.jpg",
+          "maqueta": "maqueta-p5-1280-oscuro-es.jpg",
+          "sha256_vitrina": "c05b406f8091da500b988119e5f97ee135baa9108e13b5c91e1e03fedc1d040e",
+          "sha256_maqueta": "80862ad7f6f63ea886495e8130e5d64f688b489e7985209a2710f2ec019e1e87",
+          "miniatura": "mini-p3-vitrina-p5-1280-oscuro-es.jpg"
+        },
+        {
+          "pantalla": "P5 Playground",
+          "ruta": "/en/playground",
+          "ancho": 1280,
+          "tema": "oscuro",
+          "idioma": "en",
+          "perfil": "lider",
+          "vitrina": "vitrina-p5-1280-oscuro-en.jpg",
+          "maqueta": "maqueta-p5-1280-oscuro-en.jpg",
+          "sha256_vitrina": "6eab8c729cba8c0578451a3e06a78f404c9a4c13a5ebcb19ebc6b2a38646c307",
+          "sha256_maqueta": "c593c05cbb90e047f6b72a324aeb54149dd4d5ca4e06a07f87f346152c8fab86",
+          "miniatura": "mini-p3-vitrina-p5-1280-oscuro-en.jpg"
+        },
+        {
+          "pantalla": "P5 Playground",
+          "ruta": "/es/playground",
+          "ancho": 1280,
+          "tema": "claro",
+          "idioma": "es",
+          "perfil": "lider",
+          "vitrina": "vitrina-p5-1280-claro-es.jpg",
+          "maqueta": "maqueta-p5-1280-claro-es.jpg",
+          "sha256_vitrina": "38797c552cc0775b008b98a965ed5a89317f7c1e25a6cd99fd5709161e7a3ccb",
+          "sha256_maqueta": "942d84a6ce970f891469a9bb49d8c6f25d7dfd733e085638bb40cb84dc6a458b",
+          "miniatura": "mini-p3-vitrina-p5-1280-claro-es.jpg"
+        },
+        {
+          "pantalla": "P5 Playground",
+          "ruta": "/en/playground",
+          "ancho": 1280,
+          "tema": "claro",
+          "idioma": "en",
+          "perfil": "lider",
+          "vitrina": "vitrina-p5-1280-claro-en.jpg",
+          "maqueta": "maqueta-p5-1280-claro-en.jpg",
+          "sha256_vitrina": "c5f65305c4defcb5d3072c18cf11c18abb960adb4af4f4afc9ded3f8c2221d3b",
+          "sha256_maqueta": "6e83b296e621f2976edad7970f01035c8bea3fe2089795486fb23d65a57ea952",
+          "miniatura": "mini-p3-vitrina-p5-1280-claro-en.jpg"
+        },
+        {
+          "pantalla": "P5 Playground",
+          "ruta": "/es/playground",
+          "ancho": 1280,
+          "tema": "oscuro",
+          "idioma": "es",
+          "perfil": "experto",
+          "vitrina": "vitrina-p5-1280-oscuro-es-experto.jpg",
+          "maqueta": "maqueta-p5-1280-oscuro-es-experto.jpg",
+          "sha256_vitrina": "a06df0c9f472c14e7b7924a938c5a1b7b00fcd14e882fa2ef9d53ec883c2560b",
+          "sha256_maqueta": "1f0286b34480b72fbca680bb5994b0ad6fac3de6258cbe75f313618c4e253341",
+          "miniatura": "mini-p3-vitrina-p5-1280-oscuro-es-experto.jpg"
+        },
+        {
+          "pantalla": "P5 Playground",
+          "ruta": "/es/playground",
+          "ancho": 380,
+          "tema": "oscuro",
+          "idioma": "es",
+          "perfil": "experto",
+          "vitrina": "vitrina-p5-380-oscuro-es-experto.jpg",
+          "maqueta": "maqueta-p5-380-oscuro-es-experto.jpg",
+          "sha256_vitrina": "747824734eff80410b002554bc63c3782b67f644dcc5f118f0be1335dd84d19e",
+          "sha256_maqueta": "4fea349f1f6e1a45b6766f7ab19db9a187df47bc4aa1773f759b0f5a37ebb07c",
+          "miniatura": "mini-p3-vitrina-p5-380-oscuro-es-experto.jpg"
+        },
+        {
+          "pantalla": "P5 Playground con U2 en 1600",
+          "ruta": "/es/playground",
+          "ancho": 1280,
+          "tema": "oscuro",
+          "idioma": "es",
+          "perfil": "lider",
+          "vitrina": "vitrina-p5-u2-1280-oscuro-es.jpg",
+          "maqueta": "maqueta-p5-u2-1280-oscuro-es.jpg",
+          "sha256_vitrina": "909a4abab4e480b964221e2ce0a26cb1f6408c1a160210db1dbd571fd444ea2b",
+          "sha256_maqueta": "bac57afce6103ce82819ccbefd78b6f2172311b8c51b8c145fa0a864fc48603a",
+          "miniatura": "mini-p3-vitrina-p5-u2-1280-oscuro-es.jpg"
+        },
+        {
+          "pantalla": "P5 Playground con U2 en 1600",
+          "ruta": "/es/playground",
+          "ancho": 380,
+          "tema": "oscuro",
+          "idioma": "es",
+          "perfil": "lider",
+          "vitrina": "vitrina-p5-u2-380-oscuro-es.jpg",
+          "maqueta": "maqueta-p5-u2-380-oscuro-es.jpg",
+          "sha256_vitrina": "c7a3e166d474979b7262275eacdb05698a269bcb0c8ab856b5e24cc69b2c34aa",
+          "sha256_maqueta": "91fb45529ba6e39b015b015178ce6fdbb6c66ff6c8fc673a2f2dc40f2435f5a7",
+          "miniatura": "mini-p3-vitrina-p5-u2-380-oscuro-es.jpg"
+        },
+        {
+          "pantalla": "P5 Playground con U2 en 1600",
+          "ruta": "/en/playground",
+          "ancho": 1280,
+          "tema": "oscuro",
+          "idioma": "en",
+          "perfil": "lider",
+          "vitrina": "vitrina-p5-u2-1280-oscuro-en.jpg",
+          "maqueta": "maqueta-p5-u2-1280-oscuro-en.jpg",
+          "sha256_vitrina": "8857c918d58c80fcfb1cb6f1a2a0abe71bfc942a7fc626569f3570e408b1c069",
+          "sha256_maqueta": "eebf4d407702257061ed24b5b66c34b1fb65ce06cd4e17ba3ddc153bfe7c57d9",
+          "miniatura": "mini-p3-vitrina-p5-u2-1280-oscuro-en.jpg"
+        }
+      ],
+      "mediciones": [
+        {
+          "que": "vitrina P4 Brecha 380 oscuro es lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P4 Brecha 380 oscuro en lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P4 Brecha 380 claro es lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P4 Brecha 380 claro en lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P4 Brecha 1280 oscuro es lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P4 Brecha 1280 oscuro en lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P4 Brecha 1280 claro es lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P4 Brecha 1280 claro en lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P4 Brecha 1280 oscuro es experto",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P4 Brecha 380 oscuro es experto",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P5 Playground 380 oscuro es lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P5 Playground 380 oscuro en lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P5 Playground 380 claro es lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P5 Playground 380 claro en lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P5 Playground 1280 oscuro es lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P5 Playground 1280 oscuro en lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P5 Playground 1280 claro es lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P5 Playground 1280 claro en lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P5 Playground 1280 oscuro es experto",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P5 Playground 380 oscuro es experto",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P5 Playground con U2 en 1600 1280 oscuro es lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P5 Playground con U2 en 1600 380 oscuro es lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P5 Playground con U2 en 1600 1280 oscuro en lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        }
+      ],
+      "interacciones": [
+        {
+          "nombre": "Brecha: «Ver como experto»",
+          "ok": true
+        },
+        {
+          "nombre": "Brecha: balance «1 · S3» → lo que falló",
+          "ok": true
+        },
+        {
+          "nombre": "Brecha: «Abrir el playground»",
+          "ok": true
+        },
+        {
+          "nombre": "Playground: U2 → 1600 con el teclado",
+          "ok": true
+        },
+        {
+          "nombre": "Playground: «Volver al plan»",
+          "ok": true
+        },
+        {
+          "nombre": "Playground: modo Texas encendido",
+          "ok": true
+        }
+      ],
+      "fallas": []
+    },
+    {
+      "mirada": "p4",
+      "pares": [
+        {
+          "pantalla": "P7 Fichas",
+          "ruta": "/es/fichas",
+          "ancho": 380,
+          "tema": "oscuro",
+          "idioma": "es",
+          "perfil": "lider",
+          "vitrina": "vitrina-380-oscuro-es.jpg",
+          "maqueta": "maqueta-380-oscuro-es.jpg",
+          "sha256_vitrina": "d2648ba550eca3b57d504ebdb92b1191e3fbb7f930f4262cd228b595d02a5f01",
+          "sha256_maqueta": "05a096ac46c80396580c92266f2cff481487cd9c960f67cba69ce3abaa6c16a0",
+          "miniatura": "mini-p4-vitrina-380-oscuro-es.jpg"
+        },
+        {
+          "pantalla": "P7 Fichas",
+          "ruta": "/en/fichas",
+          "ancho": 380,
+          "tema": "oscuro",
+          "idioma": "en",
+          "perfil": "lider",
+          "vitrina": "vitrina-380-oscuro-en.jpg",
+          "maqueta": "maqueta-380-oscuro-en.jpg",
+          "sha256_vitrina": "c115c3cfa1ef772d89555d25669176371c630fdb583c9ac2a6ba98033a32b819",
+          "sha256_maqueta": "8318068ff5b908d24c87f5741e20e011916f1d859241fca1ec75342cab7a2973",
+          "miniatura": "mini-p4-vitrina-380-oscuro-en.jpg"
+        },
+        {
+          "pantalla": "P7 Fichas",
+          "ruta": "/es/fichas",
+          "ancho": 380,
+          "tema": "claro",
+          "idioma": "es",
+          "perfil": "lider",
+          "vitrina": "vitrina-380-claro-es.jpg",
+          "maqueta": "maqueta-380-claro-es.jpg",
+          "sha256_vitrina": "3b0512fe80e4c841b81dceef915dbb7877b39397cacb3c38aa6529834ec63b4e",
+          "sha256_maqueta": "033a4e00914ffaf22e01dae1ff060862d8f2d7f10ebbbac8a76c075d0693d008",
+          "miniatura": "mini-p4-vitrina-380-claro-es.jpg"
+        },
+        {
+          "pantalla": "P7 Fichas",
+          "ruta": "/en/fichas",
+          "ancho": 380,
+          "tema": "claro",
+          "idioma": "en",
+          "perfil": "lider",
+          "vitrina": "vitrina-380-claro-en.jpg",
+          "maqueta": "maqueta-380-claro-en.jpg",
+          "sha256_vitrina": "607062cb91d2c51fda3442666633b4062e122c7bccba1cf644537363b987c1b5",
+          "sha256_maqueta": "0f51d1c90390485fd9c8350f1ca67a911bc39eb0d57335dd8ac893a6bf8cc5b9",
+          "miniatura": "mini-p4-vitrina-380-claro-en.jpg"
+        },
+        {
+          "pantalla": "P7 Fichas",
+          "ruta": "/es/fichas",
+          "ancho": 1280,
+          "tema": "oscuro",
+          "idioma": "es",
+          "perfil": "lider",
+          "vitrina": "vitrina-1280-oscuro-es.jpg",
+          "maqueta": "maqueta-1280-oscuro-es.jpg",
+          "sha256_vitrina": "7d08d58622af141aa6a84e5ec77f5fc1e9f00470df0462bf9bf8ee085dfd66f6",
+          "sha256_maqueta": "b78ac8582971c2641aa1387aea975464effdea8c0bb121ed446e3a9d9efd4dbc",
+          "miniatura": "mini-p4-vitrina-1280-oscuro-es.jpg"
+        },
+        {
+          "pantalla": "P7 Fichas",
+          "ruta": "/en/fichas",
+          "ancho": 1280,
+          "tema": "oscuro",
+          "idioma": "en",
+          "perfil": "lider",
+          "vitrina": "vitrina-1280-oscuro-en.jpg",
+          "maqueta": "maqueta-1280-oscuro-en.jpg",
+          "sha256_vitrina": "5b29b12620705e7c2df8f572a52a88c7df59dac320ea82a25503bac7d3f6ecf1",
+          "sha256_maqueta": "b389f71b86fc045c59a8229e5d6a87f74643d2776c5f8911e3a5253cbb22d7b3",
+          "miniatura": "mini-p4-vitrina-1280-oscuro-en.jpg"
+        },
+        {
+          "pantalla": "P7 Fichas",
+          "ruta": "/es/fichas",
+          "ancho": 1280,
+          "tema": "claro",
+          "idioma": "es",
+          "perfil": "lider",
+          "vitrina": "vitrina-1280-claro-es.jpg",
+          "maqueta": "maqueta-1280-claro-es.jpg",
+          "sha256_vitrina": "3cd591207189563f0f69ac9d2e983ffe15af3357ca8e819587447225c33fc36a",
+          "sha256_maqueta": "2d2abedbda773529aae1f609354849beb049fe4b98d0b9c058906c2d2caa61ea",
+          "miniatura": "mini-p4-vitrina-1280-claro-es.jpg"
+        },
+        {
+          "pantalla": "P7 Fichas",
+          "ruta": "/en/fichas",
+          "ancho": 1280,
+          "tema": "claro",
+          "idioma": "en",
+          "perfil": "lider",
+          "vitrina": "vitrina-1280-claro-en.jpg",
+          "maqueta": "maqueta-1280-claro-en.jpg",
+          "sha256_vitrina": "d898f6cdb93063855f5f0311e27d24820d32ce344362350d84959fb16257a271",
+          "sha256_maqueta": "e3ce28dce2c9cbcfefc5a3de0054d8b7348de259460819fb67f7ff399de2b4bd",
+          "miniatura": "mini-p4-vitrina-1280-claro-en.jpg"
+        },
+        {
+          "pantalla": "P7 Fichas",
+          "ruta": "/es/fichas",
+          "ancho": 1280,
+          "tema": "oscuro",
+          "idioma": "es",
+          "perfil": "experto",
+          "vitrina": "vitrina-1280-oscuro-es-experto.jpg",
+          "maqueta": "maqueta-1280-oscuro-es-experto.jpg",
+          "sha256_vitrina": "70d86f50c71ec4e28a61f12a44461e780e56472565cb54369a02c7f95ba79057",
+          "sha256_maqueta": "9a47c8a94e3216d33d1332c15158ee7b14b8bbc4259c9553cba728df314d5bbd",
+          "miniatura": "mini-p4-vitrina-1280-oscuro-es-experto.jpg"
+        },
+        {
+          "pantalla": "P7 Fichas",
+          "ruta": "/es/fichas",
+          "ancho": 380,
+          "tema": "oscuro",
+          "idioma": "es",
+          "perfil": "experto",
+          "vitrina": "vitrina-380-oscuro-es-experto.jpg",
+          "maqueta": "maqueta-380-oscuro-es-experto.jpg",
+          "sha256_vitrina": "3e755d267019102512726e03ae2d8160c68dd168502a4e950dbc54935e1ca30c",
+          "sha256_maqueta": "b4f2a4cc61f04743606b996b1ba7e29e85e376d99a383bbb5bf1d95458be0bab",
+          "miniatura": "mini-p4-vitrina-380-oscuro-es-experto.jpg"
+        }
+      ],
+      "mediciones": [
+        {
+          "que": "vitrina P7 Fichas 380 oscuro es lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P7 Fichas 380 oscuro en lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P7 Fichas 380 claro es lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P7 Fichas 380 claro en lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P7 Fichas 1280 oscuro es lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P7 Fichas 1280 oscuro en lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P7 Fichas 1280 claro es lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P7 Fichas 1280 claro en lider",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P7 Fichas 1280 oscuro es experto",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        },
+        {
+          "que": "vitrina P7 Fichas 380 oscuro es experto",
+          "desbordaDeLado": false,
+          "fuentes": true,
+          "errores": 0
+        }
+      ],
+      "interacciones": [
+        {
+          "nombre": "Fichas: «Ver como experto» → la tabla de campos",
+          "ok": true
+        },
+        {
+          "nombre": "Fichas: «Volver a líder» → la tabla se oculta",
+          "ok": true
+        },
+        {
+          "nombre": "Fichas: «English» → la misma pantalla en inglés",
+          "ok": true
+        }
+      ],
+      "fallas": []
+    }
+  ],
+  "cambios": [
+    {
+      "clave": "entrada-en-construccion",
+      "titulo": "Entrada: «También en construcción»",
+      "url": "/es",
+      "archivo": "cambio-entrada-en-construccion.jpg"
+    },
+    {
+      "clave": "raiz-rotulo",
+      "titulo": "La raíz «/»: rótulo bilingüe",
+      "url": "/",
+      "archivo": "cambio-raiz-rotulo.jpg"
+    },
+    {
+      "clave": "404-rotulo",
+      "titulo": "La 404: rótulo bilingüe",
+      "url": "/no-existe",
+      "archivo": "cambio-404-rotulo.jpg"
+    },
+    {
+      "clave": "saltar-al-contenido",
+      "titulo": "«Saltar al contenido», al pulsar Tab",
+      "url": "/es",
+      "archivo": "cambio-saltar-al-contenido.jpg"
+    },
+    {
+      "clave": "lienzo-foco-oscuro",
+      "titulo": "Agente: anillo de foco del lienzo (oscuro)",
+      "url": "/es/agente",
+      "archivo": "cambio-lienzo-foco-oscuro.jpg"
+    },
+    {
+      "clave": "lienzo-foco-claro",
+      "titulo": "Agente: anillo de foco del lienzo (claro)",
+      "url": "/es/agente",
+      "archivo": "cambio-lienzo-foco-claro.jpg"
+    },
+    {
+      "clave": "capa-activa",
+      "titulo": "Agente en el teléfono: la capa activa subrayada",
+      "url": "/es/agente",
+      "archivo": "cambio-capa-activa.jpg"
+    },
+    {
+      "clave": "volver-deshabilitado-oscuro",
+      "titulo": "Playground: «Volver al plan» deshabilitado (oscuro)",
+      "url": "/es/playground",
+      "archivo": "cambio-volver-deshabilitado-oscuro.jpg"
+    },
+    {
+      "clave": "volver-activo-oscuro",
+      "titulo": "Playground: «Volver al plan» habilitado (oscuro)",
+      "url": "/es/playground",
+      "archivo": "cambio-volver-activo-oscuro.jpg"
+    },
+    {
+      "clave": "volver-deshabilitado-claro",
+      "titulo": "Playground: «Volver al plan» deshabilitado (claro)",
+      "url": "/es/playground",
+      "archivo": "cambio-volver-deshabilitado-claro.jpg"
+    },
+    {
+      "clave": "volver-activo-claro",
+      "titulo": "Playground: «Volver al plan» habilitado (claro)",
+      "url": "/es/playground",
+      "archivo": "cambio-volver-activo-claro.jpg"
+    },
+    {
+      "clave": "spike-citas",
+      "titulo": "Agente, experto: de qué línea del código sale la lectura del spike",
+      "url": "/es/agente",
+      "archivo": "cambio-spike-citas.jpg"
+    },
+    {
+      "clave": "caso-en-su-paso",
+      "titulo": "Playground → caso: abre en el paso donde el camino se separa",
+      "url": "/es/caso/A-010#paso-4",
+      "archivo": "cambio-caso-en-su-paso.jpg"
+    }
+  ]
+}

@@ -11,7 +11,8 @@ Semántica (idéntica en TS):
 - `igual_a` / `distinto_de`: igualdad ESTRICTA de tipo (`True` no es `1`, como en `===`); ignoran `inclusivo`.
 - `menor_que` / `mayor_que`: estrictos; con `inclusivo: true` pasan a `<=` / `>=`.
 - `menor_o_igual_que` / `mayor_o_igual_que`: siempre inclusivos.
-- Orden solo entre números; una señal ausente es error, jamás `false`.
+- Orden solo entre números; una señal nula (no observada: el nodo no pudo medirla, AU-9) no cumple ninguna
+  comparación de orden; una señal ausente es error, jamás `false`.
 - `valor` literal o `umbral.Ux`, resuelto con los umbrales aplicados de la corrida.
 """
 
@@ -66,12 +67,16 @@ def _igual(a: Any, b: Any) -> bool:
 
 
 def comparar(observado: Any, operador: str, declarado: Any, inclusivo: bool) -> bool:
+    # Una señal nula no se observó: no cumple ninguna comparación, ni de igualdad ni de orden;
+    # «distinto de» tampoco (AU-S2-B51, igual en core/playground/aristas.ts).
     if operador == "igual_a":
         return _igual(observado, declarado)
     if operador == "distinto_de":
-        return not _igual(observado, declarado)
+        return observado is not None and not _igual(observado, declarado)
     if operador not in OPERADORES:
         raise ErrorArista(f"operador desconocido: {operador}")
+    if observado is None and _es_numero(declarado):
+        return False
     if not (_es_numero(observado) and _es_numero(declarado)):
         raise ErrorArista(f"{operador} exige números: {observado!r} vs {declarado!r}")
     if operador == "menor_que":

@@ -1,0 +1,13 @@
+const a = Math.sin(1);
+const b = Math.cos(1);
+const c = Math.tan(1);
+const d = Math.atan2(1, 2);
+const e = Math.exp(1);
+const f = Math.log(2);
+const g = Math.pow(2, 3);
+const h = Math.hypot(3, 4);
+const i = 2 ** 3;
+const j = "a".localeCompare("b");
+const k = el.getBBox();
+const l = el.getComputedTextLength();
+const m = ctx.measureText("x");
