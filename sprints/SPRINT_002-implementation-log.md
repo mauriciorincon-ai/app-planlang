@@ -1491,6 +1491,21 @@ en la corrida siguiente; y el primer e2e completo dio 2 rojos de axe en Agente a
 una aisladas, al límite de 30 s bajo esa carga). Los 4 rojos del playground de esa corrida eran reales: el spec esperaba
 la URL del caso sin `#paso-N` (P-5) y se ajustó para comprobar que el paso queda a la vista.
 
+#### Lighthouse de `/en/playground` en el borde (2026-10-03)
+
+- CI de `8048989`: `lighthouse` en **rojo** por una sola aserción: LCP de `/en/playground` = **2.638 ms** (las tres
+  corridas: 2.649 · 2.639 · 2.638) contra el presupuesto de 2.500. `/es/playground` y las otras 7 URL, verdes.
+- CI de `11115e5` (mismo `src/`): los cuatro checks en `success`, Lighthouse incluido.
+- **No es una regresión de los lotes 3–5:** armé `1bcdbd7` (la última CI verde de esa URL antes de esta) en el
+  scratchpad con `git archive` y comparé el export: HTML 26.491 frente a 26.494 bytes comprimidos, JavaScript
+  195.522 frente a 195.579, CSS idéntico. La simulación de Lighthouse (red y CPU lentas) suma todo lo que se pide
+  antes de la primera pintura; el elemento LCP es el párrafo guía de la portada y su retraso es de pintura, no de
+  descarga. El playground es la página con más JavaScript propio (la isla, ~22 KB comprimidos sobre ~156 KB que de
+  verdad se descargan; el trozo de 39 KB es el de polyfills `noModule`, que un navegador moderno no pide), y queda a
+  ±150 ms del límite según la máquina de la CI.
+- **Decisión pendiente del usuario** (se le presenta con la mirada): darle margen ya (partir los textos de la isla
+  por idioma o aligerar su DOM) o declararlo deuda del S3 con su riesgo: un PR puede salir rojo sin cambiar nada.
+
 #### Pasada de capturas de cierre, versionada (AU-S2-12, 2026-10-03)
 
 - **Corrida** sobre el build de `32fbbe8` (el mismo `src/` que `8048989`): `capturar-vitrina.mjs --destino` para p1–p4
