@@ -1014,6 +1014,39 @@ var sel={ancho:"todos",pantalla:"todos"};document.querySelectorAll(".filtros").f
 </html>
 `;
   writeFileSync(join(destino, "index.html"), html);
+  // El registro legible por máquina: lo lee `scripts/registro-cierre.mjs` para versionar la pasada de cierre (con
+  // las huellas de cada encuadre) sin versionar las capturas (AU-S2-12).
+  writeFileSync(
+    join(destino, "registro.json"),
+    `${JSON.stringify(
+      {
+        mirada,
+        pares: pares.map((p) => ({
+          pantalla: p.pantalla.nombre,
+          ruta: p.pantalla.ruta(p.idioma),
+          ancho: p.ancho,
+          tema: p.tema,
+          idioma: p.idioma,
+          perfil: p.perfil,
+          vitrina: p.archivoV,
+          maqueta: p.archivoM,
+        })),
+        mediciones: mediciones.map((x) => ({
+          que: x.que,
+          desbordaDeLado: x.desbordaDeLado,
+          fuentes: x.fuentes.every(([, ok]) => ok),
+          errores: x.errores.length,
+        })),
+        interacciones: interacciones.map((x) => ({
+          nombre: x.nombre,
+          ok: x.ok,
+        })),
+        fallas,
+      },
+      null,
+      2,
+    )}\n`,
+  );
 }
 
 console.log(

@@ -1491,6 +1491,26 @@ en la corrida siguiente; y el primer e2e completo dio 2 rojos de axe en Agente a
 una aisladas, al límite de 30 s bajo esa carga). Los 4 rojos del playground de esa corrida eran reales: el spec esperaba
 la URL del caso sin `#paso-N` (P-5) y se ajustó para comprobar que el paso queda a la vista.
 
+#### Pasada de capturas de cierre, versionada (AU-S2-12, 2026-10-03)
+
+- **Corrida** sobre el build de `32fbbe8` (el mismo `src/` que `8048989`): `capturar-vitrina.mjs --destino` para p1–p4
+  → **73 pares (146 encuadres)**, las 7 pantallas en 380 y 1280 px, oscuro y claro, español e inglés y el perfil
+  experto; **73 mediciones** sin desplazamiento lateral, fuentes cargadas y consola limpia; **23/23 interacciones**;
+  0 fallas. El arnés escribe ahora `registro.json` junto a su índice.
+- **Registro versionado:** `scripts/registro-cierre.mjs` (nuevo) arma `docs/fidelidad/cierre/` (1,5 MB): la huella
+  SHA-256 de cada encuadre entero en `registro.json`, una miniatura de la parte de arriba de cada encuadre de la
+  vitrina y las mediciones e interacciones. Las capturas enteras (unos 60 MB) quedan fuera del repo, como pidió la
+  auditoría: la huella dice cuál se leyó.
+- **Mirada de los cambios de forma de la Fase 2** (la misma página, arriba): 13 recortes a doble densidad de la
+  vitrina en el estado que los muestra — «También en construcción», el rótulo bilingüe en `/` y en la 404, «Saltar al
+  contenido» con Tab, el anillo de foco del lienzo (oscuro y claro), la capa activa subrayada en 380 px, «Volver al
+  plan» deshabilitado y habilitado (oscuro y claro), las citas del spike (experto) y el caso que abre en su paso.
+- **Leídos como imagen:** los 13 recortes y 4 encuadres enteros de la pasada (Playground 1280 oscuro ES, Entrada 380
+  claro EN, Agente 1280 oscuro ES experto, Fichas 1280 claro ES). Sin defectos de forma. Una cosa para tu juicio, dicha
+  en la matriz: «Saltar al contenido», mientras tiene el foco, tapa el principio del rótulo (el patrón habitual de ese
+  enlace; al seguir con Tab el rótulo vuelve entero).
+- **Pendiente:** tu mirada (forma: abre parada). Se registra abajo, en «Registro de miradas», antes de seguir.
+
 ### Punto de retoma (2026-10-02, segunda compactación del día, pedida por el usuario)
 
 - **Commits:** `64e8ce6` (foco y tablas) · `a12fe25` (accesibilidad, bilingüe y gates) · `1bcdbd7` (vocabulario con
@@ -1506,9 +1526,9 @@ la URL del caso sin `#paso-N` (P-5) y se ajustó para comprobar que el paso qued
      `svg.test.ts`~~ — pagado, ver «lote 5»;
   3. ~~documentos: AU-S2-20 (kit de prueba y razón de `b1` en la guía), B4, B5, AU-S2-11 y B33 (los recorridos del
      mapa) como desviaciones~~ — pagado (AU-S2-11 no es desviación: se hizo); B2 (cuerpo del PR) va al cierre;
-  4. build, e2e completo, `verificar-export`, `diagrama:verificar`, `paquete:vitrina` y `test:e2e:paquete` (corre por
-     primera vez la pasada de interacción del paquete); subir y `gh pr checks 8`;
-  5. **AU-S2-12:** pasada de capturas de cierre con registro versionado; es también la **mirada** de los cambios de
+  4. ~~build, e2e completo, `verificar-export`, `diagrama:verificar`, `paquete:vitrina` y `test:e2e:paquete` (corre por
+     primera vez la pasada de interacción del paquete); subir y `gh pr checks 8`~~ — hecho (ver «Verificación del lote 5»);
+  5. ~~**AU-S2-12:** pasada de capturas de cierre con registro versionado~~ (hecha; falta el veredicto de la mirada); es también la **mirada** de los cambios de
      forma de la fase: lista «También en construcción» en Entrada, rótulo bilingüe en `/` y en la 404, anillo de
      foco del lienzo, enlace «Saltar al contenido», capa activa subrayada, botón deshabilitado punteado;
   6. barrido de frases caducadas; `/deploy-check --python`; summary + `pnpm fichas` en el mismo commit (con: la
@@ -1718,6 +1738,7 @@ la URL del caso sin `#paso-N` (P-5) y se ajustó para comprobar que el paso qued
 | 2026-09-30 | Mirada 2: P2 Plan · P3 Agente · P6 Caso (presentada el 2026-09-29; matriz de 16 filas) | `docs/fidelidad/p2/index.html` (capturas de `c8db3b3`: 30 pares, 7/7 interacciones) | «lo abrí y apruebo» | fase 3: P4 Brecha · P5 Playground (arranca con el «continúa» de fase) |
 | 2026-10-01 | Mirada 3: P4 Brecha · P5 Playground (presentada el 2026-09-30; matriz de 13 filas) | `docs/fidelidad/p3/index.html` (capturas de `defb8a7`: 23 pares, 6/6 interacciones; CI del PR #8 en verde) | «continúa» → se repreguntó «¿qué viste al abrirlo?» → «Esta bien continua» → se pidió la constancia → «lo abrí y apruebo» | fase 4: P7 Fichas · paquete · corridas de fondo · deuda |
 | 2026-10-02 | Mirada 4: P7 Fichas (presentada el 2026-10-01; matriz de 6 filas) | `docs/fidelidad/p4/index.html` (capturas de `84207d1`: 10 pares, 3/3 interacciones; CI del PR #8 en verde sobre `3449bfd` y `03f94ae`) | «lo abrí y apruebo» (con «continúa»); sin objeción a que la vitrina siga en la corrida de 20 y la de 200 quede para el S3 | fase 5: cierre |
+| 2026-10-03 | Cambios de forma de la Fase 2 de la auditoría (presentada el 2026-10-03; matriz de 13 filas) | `docs/fidelidad/cierre/index.html` (recortes y pasada de cierre del build de `32fbbe8`: 73 pares, 23/23 interacciones) | *(pendiente)* | — (el summary y el PR esperan este veredicto) |
 
 ## Bugs y fricciones
 
