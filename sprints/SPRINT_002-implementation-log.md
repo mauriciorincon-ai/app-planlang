@@ -1554,6 +1554,55 @@ la URL del caso sin `#paso-N` (P-5) y se ajustó para comprobar que el paso qued
   enlace; al seguir con Tab el rótulo vuelve entero).
 - **Mirada:** aprobada el 2026-10-03 («lo abri y lo apruebo, sigamos»), registrada abajo en «Registro de miradas».
 
+#### CI de `edf146f`: Lighthouse en rojo y margen de LCP por ruta (ADR-011, 2026-10-04)
+
+- CI de `edf146f` (el commit de cierre): `quality`, `e2e` y `python` en `success`; **`lighthouse` en rojo** por el LCP
+  de `/en/playground`: **2.646 ms** (2.646 · 2.647 · 2.649) contra 2.500. El usuario lo avisó («Falo pr»): con un check
+  requerido en rojo el PR no se mergea, así que la «deuda del S3» del 2026-10-03 ya no alcanzaba.
+- **Diagnóstico con las trazas de lantern** (`LANTERN_DEBUG=1`, Lighthouse 12.6.1, el mismo de la CI; puerto 3007,
+  porque el 3000 lo ocupa `next-server` de app-ds, que no se tocó). La simulación es **bimodal con los mismos bytes**:
+  - modo bajo (~1.955 ms): el chunk de React (70 KB comprimidos) se evaluó después de la primera pintura observada y
+    lantern lo deja fuera; el LCP lo marcan Inter precargada y el runtime de Next;
+  - modo alto (~2.664 ms): React se evaluó antes de pintar; su descarga comparte los 1,6 Mb/s simulados con la
+    fuente, el runtime, el CSS y los chunks de la página, termina a 2.561 ms, y su evaluación con el arranque suma
+    ~100 ms.
+  En local, intercalando el build de HEAD con otro: 1.850 · 1.956 · 1.962 · 2.646 · 2.666 ms. Las demás pantallas
+  tienen el mismo modo alto pero en ~2.340 ms (sin el chunk de la isla, 17 KB comprimidos, y con menos HTML).
+- **Probado y descartado** (detalle en el ADR-011):
+  - sin la precarga de Inter, el LCP del playground baja a ~2,5 s, pero el FCP sube ~0,3 s en todas las pantallas y
+    `/es/agente` cae por FCP (1.509 ms contra 1.500);
+  - los íconos de la isla dibujados en el servidor: −1,3 KB y la misma distribución en un A/B intercalado;
+  - sin el chunk de la isla (copia alterada del export): ~−130 ms, no alcanza;
+  - los chunks compartidos son React y Next, sin código de la app;
+  - una fuente más liviana rompe la igualdad byte a byte con la maqueta.
+  Los tres cambios de código probados se revirtieron: el árbol quedó como en `edf146f`.
+- **Decisión del usuario (2026-10-04), entre tres salidas presentadas** (margen por ruta, medir con la red frenada de
+  verdad, reintentar la CI): «Margen por ruta (Recomendado)». `perf-budget.json` deja FCP, TBT, CLS y los pesos en
+  `/*` y pasa el LCP a una entrada por ruta: 2.500 para todas y **2.800 solo para `/*/playground`**. Hace falta
+  partir el LCP porque LHCI aplica todas las entradas que casan con una URL (`@lhci/utils`, `budgets-converter.js`):
+  un LCP en `/*` seguiría valiendo para el playground. Desviación 58; deuda del S3 con su pago en el ADR-011.
+- **Gate del reparto** (`tests/unit/guardias/lighthouse-urls.test.ts`, con la misma conversión de ruta a patrón que
+  LHCI): cada URL medida cae en exactamente un presupuesto de LCP; ninguna ruta pasa de 2,5 s sin margen declarado
+  con su ADR; FCP, TBT, CLS y pesos valen para todas. ¿Puede fallar? Sí, y lo hizo:
+
+  | Demo | Rojo | Verde al revertir |
+  |---|---|---|
+  | `/es/nueva` en `lighthouse-urls.json` | «/es/nueva cae en exactamente un presupuesto de LCP: expected [] to have a length of 1» | 13/13 |
+  | Fichas a 2.800 | «/*/fichas: expected 2800 to be 2500» | 13/13 |
+  | `lhci assert` con el playground a 2.600 sobre la colección local | `/es/playground` 2.644,76 y `/en/playground` 2.614,16 `> 2600`, exit 1; las otras 7 URL, sin aserción fallida | con 2.800, exit 0 |
+
+  La tercera demo prueba además que LHCI acepta las rutas con `$` (`/es$`, `/en$`) y que la entrada del playground
+  alcanza a las dos URL.
+- **Medición con los comandos del job** (`lhci collect` 3 corridas + los dos `lhci assert`, build de `edf146f`), las
+  dos aserciones en verde. Medianas de LCP: `/es/playground` 2.646 y `/en/playground` 2.615 (los dos en modo alto,
+  bajo 2.800); `/es/plan` 2.383, `/es` 2.359, `/es/brecha` 2.354, `/es/caso/A-004` 2.352, `/es/fichas` 2.339,
+  `/en` 2.321, `/es/agente` 2.105. FCP ≤ 1.205 ms, CLS 0, rendimiento 97–100.
+- **`pnpm fichas` en el mismo commit** (AU-S2-B6): el export cuenta los ADR y toma la fecha más reciente, así que
+  pasa a 11 ADR y `actualizado` 2026-10-04 (la fecha del ADR-011); `fichas-vista.test.ts` espera esa fecha.
+- **Job `quality` en local** con sus comandos: `peers check`, `verificar-dependencias`, `typecheck`, `lint`, `pnpm test`
+  (**2555** + 1 saltada; cobertura 98,3 % líneas · 97,8 % sentencias · 88,7 % ramas), `trazas:verificar`, `build`,
+  `verificar-export`, `diagrama:verificar`, `audit` y `fichas --verificar`, todo en verde.
+
 ### Punto de retoma (2026-10-02, segunda compactación del día, pedida por el usuario)
 
 - **Commits:** `64e8ce6` (foco y tablas) · `a12fe25` (accesibilidad, bilingüe y gates) · `1bcdbd7` (vocabulario con
@@ -1771,6 +1820,11 @@ la URL del caso sin `#paso-N` (P-5) y se ajustó para comprobar que el paso qued
     paneles de P3 (tres trazas reales por nodo, cada una enlazada a su caso) y el recorrido entero en P6, que se
     genera de la traza y no del mapa. Llenar `recorridos` sirve al día en que el diagramador dibuje un recorrido
     sobre el lienzo; se propone para el S3 junto con las enmiendas del ADR-010.
+58. **El LCP del playground tiene 2,8 s de presupuesto, no 2,5** (`perf-budget.json`, ADR-011; decisión del usuario
+    del 2026-10-04): la simulación de Lighthouse sobre localhost es bimodal con los mismos bytes (~1,96 s o
+    ~2,65 s, según si React se evalúa antes o después de la primera pintura) y lo alcanzable sin tocar la fuente
+    aprobada ni el framework baja ~0,13 s. Solo `/*/playground`; el resto de rutas y métricas sigue igual. Se paga
+    en el S3: volver a 2.500.
 
 
 ## Registro de miradas
@@ -1792,6 +1846,7 @@ la URL del caso sin `#paso-N` (P-5) y se ajustó para comprobar que el paso qued
 | 2026-09-28 | Demo de desbordamiento verde por error | bloque de 400 px sin alto (área cero no desborda) | demo repetida con 400×4 px: rojo |
 | 2026-09-28 | `lighthouse` rojo: LCP 2,72 s > 2,5 s | el runtime de Next y la mono de datos bajaban antes del primer pintado | mono diferida al `load` (LCP local 2,31 s); ver «CI del commit `8c7ae2d`» |
 | 2026-09-30 | LCP del Playground en el borde (2.499,99 ms) | Zod en la isla: `SinProbar` importado de `brecha/mirada.tsx` y esquemas Zod en `core/formatos/bilingue.ts` | `sin-probar.tsx` y `bilingue-esquema.ts`; JS propio 132 → 17 KB comprimido (ver «P5 Playground, pruebas y cierre») |
+| 2026-10-04 | `lighthouse` rojo en `edf146f`: LCP de `/en/playground` 2.646 ms > 2.500 | la simulación de lantern es bimodal: React se evalúa antes o después de la primera pintura en localhost (~2,65 s o ~1,96 s con los mismos bytes) | margen por ruta de 2,8 s solo para el playground, por decisión del usuario (ADR-011, desviación 58), con el gate del reparto y sus demos en rojo |
 | 2026-10-01 | El complemento propuesto llevaba `procedencia` sin proceso | se copió del formato de `armar.py`, que la pone siempre; el Zod de hoja-de-vida la rechaza si no hay proceso | `complementoPropuesto` ya no la emite; espejo `EsquemaComplemento` en `contrato.ts` con su prueba |
 | 2026-10-01 | La ficha del agente se habría visto «vplan v1.3» y «5 funcionalidades» en Decisión | `pieza.version` con prefijo y `cuenta` con las reglas del plan; hoja-de-vida pinta `v{version}` y «N funcionalidades» | versión semver y `cuenta: 0` (desviación 47) |
 | 2026-10-01 | FCP de Fichas +450 ms | la `@font-face` de Fraunces en una hoja propia de la ruta (next/font importado solo en Fichas) | Fraunces declarada en `cv-viva.css` y activada tras la carga (desviación 48) |

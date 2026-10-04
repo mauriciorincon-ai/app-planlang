@@ -12,7 +12,7 @@
     "enlaces.produccion": "null cuando la app no tiene URL pública. `razon` explica por qué, y es lo que la vitrina muestra en lugar del enlace. Nunca se rellena con un enlace de repositorio ni con una promesa."
   },
   "schema_version": "1.0.0",
-  "actualizado": "2026-10-03",
+  "actualizado": "2026-10-04",
   "app": {
     "slug": "planlang",
     "nombre": "planlang",
@@ -231,7 +231,7 @@
     {
       "clave": "decisiones_registradas",
       "etiqueta": "decisiones de arquitectura registradas",
-      "valor": 10,
+      "valor": 11,
       "unidad": "ADR",
       "fuente": "medido",
       "detalle": "Archivos de decisions/."
