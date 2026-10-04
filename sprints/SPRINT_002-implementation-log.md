@@ -1655,6 +1655,35 @@ la URL del caso sin `#paso-N` (P-5) y se ajustó para comprobar que el paso qued
      mismo commit; cuerpo del PR; 4 checks `success`.
 - Las demos en rojo de cada lote están en sus tablas, arriba.
 
+### Después del merge (2026-10-04)
+
+El PR #8 se mergeó el 2026-10-04 (`1de0e92`); la CI de `main` (`CI` y `CI Python`) salió en `success` y el campo
+homepage sigue apuntando al repo.
+
+- **PR #10 — la lista de bajas permitidas, vacía.** Con `@types/node` 22 y `undici-types` 6 en `main`, sus dos
+  entradas ya no aplicaban y `verificar-dependencias` fallaba en todo PR nuevo (sobre `main`: «tiene entradas que ya
+  no aplican; bórralas»). `scripts/degradaciones-permitidas.json` queda como `[]`. Cuatro checks en `success`;
+  mergeado por el usuario.
+- **PR #9 de dependabot (lote de 7) en rojo en `quality`**, por tres cosas:
+  1. la lista vieja: el lote se armó antes del #10;
+  2. `why-is-node-running` baja de 3.2.2 a 3.2.1: `vitest` 5.0.3 la fija exacta en 3.2.1 (la 5.0.2 pedía `^3.2.1`).
+     Es una baja que impone `vitest`, sin aviso de seguridad sobre ninguna de las dos; se declara en la lista de
+     bajas permitidas del propio PR;
+  3. `lucide-react` 1.48.0 → 1.49.0, contra la versión que fija `design-system.md` (y `fuentes.test.ts`). La 1.49.0
+     solo agrega íconos (ninguno de los 53 que usa planlang cambia). **Decisión del usuario: quedarse en 1.48.0**
+     («Quedarse en 1.48.0 (Recomendado)»).
+- **Dependabot sin lucide** (rama `sprint-002/dependabot-sin-lucide`): `ignore` de `lucide-react` en todas sus
+  versiones, y una prueba en `tests/unit/dependabot-config.test.ts` que cruza el `ignore`, el `package.json` y la
+  versión que declara el sistema de diseño (un `ignore` solo no es gate). Demos en rojo:
+
+  | Demo | Rojo | Verde al revertir |
+  |---|---|---|
+  | sin el `ignore` de `lucide-react` | «dependabot debe ignorar lucide-react: expected undefined to be defined» | 5/5 |
+  | `package.json` con `lucide-react` 1.49.0 | «expected 1.49.0 to be 1.48.0» | 5/5 |
+
+  Después de ese merge, el #9 se regenera (sin lucide) y lleva su entrada de `why-is-node-running`; tras mergearlo,
+  el PR siguiente vacía la lista otra vez.
+
 ## Desviación del plan
 
 1. **El centinela «Worktrees prohibidos» no existe** en `ordenes/CLAUDE-md-para-app.md` (vive en el batch
