@@ -10,7 +10,7 @@
 
 | Fase | Estado | Cierre |
 |---|---|---|
-| 0 · Setup, constitución, deltas, diagramador 0.5.0 y plan v1.5 del A | en curso | — |
+| 0 · Setup, constitución, deltas, diagramador 0.5.0 y plan v1.5 del A | construida; espera «continúa» (lote v1.5 en fondo) | 2026-10-04 |
 | 1 · Entrevistador M2 → parada de DECISIÓN (plan B) | pendiente | — |
 | 2 · Demo B: sintético, agente y lote de 20 | pendiente | — |
 | 3 · Brecha B y la vitrina con dos demos | pendiente | — |
@@ -380,9 +380,26 @@ medida aquí. Un conjunto con texto realmente libre queda como deuda del método
 En M-16, M-8 y el aviso, quien atrapa la mutación es la regeneración byte a byte de la corrida versionada (como el
 respaldo del S2): las pruebas de comportamiento leen los archivos versionados.
 
-**Pendiente del paso 5:**
-- el **lote real de 200 de la v1.5**: humo real 3/3 y después sesiones de 20, fuera de CI. **Se le pregunta al
-  usuario antes de gastar cuota.**
+#### 5.6 · Lote real de 200 de la v1.5 (en fondo)
+
+- **El usuario lo aprobó** el 2026-10-04 con la opción «Sí: humo y lote», después de saber que LangSmith no está
+  configurado y que la vitrina publica la de 200 de la v1.4 si este no termina antes del merge.
+- **Humo real del adaptador: 3/3** (`PLANLANG_HUMO_REAL=1`, CLI 2.1.282, 6,9 s).
+- **LangSmith no está aprovisionado:** no hay `LANGSMITH_API_KEY` en `.env.local` ni en el entorno (comprobado sin
+  imprimirla). La corrida va sin espejo.
+- **Corrida `suscripcion-planlang-a-002-200-v1.5`:**
+  - plan v1.5, lote 002, plan de beneficios v2 (elegido por la huella del lote), `sonnet`;
+  - 10 sesiones de 20 casos, 2 s entre casos y 10 min entre sesiones, fuera de CI;
+  - el ciclo se detiene ante un límite de uso o un error;
+  - **arrancó el 2026-10-04 a las 12:36**. Su resultado, `trazas:verificar` y el informe van a la bitácora cuando
+    termine.
+- **Sesión 1** (12:36–12:40, 20 casos, 0 errores):
+  - **20 de 20 decisiones iguales a la verdad conocida**;
+  - A-006 y A-018 aprueban en parte **sin pausa**, con documento completo en ES/EN (RB-08, monto) y el aviso «sin
+    revisión de una persona»;
+  - A-016 (inyección) dispara `carga_detectada` y pasa a una persona;
+  - `trazas:verificar` ✓ sobre la corrida parcial (RF-09.2 TS = Python con el modelo real).
+- **CI del PR #14 sobre `8a9c00b`:** quality, python, e2e y lighthouse en `success` propio.
 
 ## Desviación del plan
 
