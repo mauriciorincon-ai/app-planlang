@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "diagramador/gramatica.schema.json",
-  "title": "Gramática del diagramador (contrato 0.3.0)",
+  "title": "Gramática del diagramador (contrato 0.4.0)",
   "description": "Reglas de un dominio: idiomas, bandas, tipos de nodo, modos de flujo, escala de madurez, vigencia y límites. Todo texto que se dibuja es un MAPA DE IDIOMA {es, en, …}; la gramática declara qué idiomas y cuál es el base. Las referencias cruzadas (ids únicos, órdenes únicos, niveles únicos, bandas de recorrido existentes, umbrales crecientes, idiomas completos) se validan en código: ver CONTRATO § 6.",
   "type": "object",
   "additionalProperties": false,
@@ -92,7 +92,7 @@
         "id": { "$ref": "#/$defs/id" },
         "nombre": { "$ref": "#/$defs/texto_idioma" },
         "token_color": { "$ref": "#/$defs/id", "description": "Nombre del token; el valor por tema lo fija el design system del consumidor bajo el umbral de paleta del CONTRATO § 5.2" },
-        "glifo": { "enum": ["circulo", "cuadrado", "rombo", "triangulo", "escudo", "estrella", "anillo", "barras"], "description": "Paths de caja 16 u en el CONTRATO § 5.4 (0.3.0: salen hexagono y pentagono, entran escudo y barras)" },
+        "glifo": { "enum": ["circulo", "cuadrado", "rombo", "triangulo", "escudo", "estrella", "anillo", "barras", "hexagono"], "description": "Paths de caja 16 u en el CONTRATO § 5.4 (0.3.0: salen hexagono y pentagono, entran escudo y barras; 0.5.0: vuelve hexagono para agentes-ia, a 16 u con etiqueta)" },
         "etiqueta_corta": { "$ref": "#/$defs/etiqueta_idioma" }
       }
     },
@@ -117,6 +117,7 @@
         "id": { "$ref": "#/$defs/id" },
         "nombre": { "$ref": "#/$defs/texto_idioma" },
         "nivel": { "type": "integer", "minimum": -1, "maximum": 4, "description": "Se dibuja como medidor (D13): −1 vacío y tachado (retirado) · 0 vacío discontinuo · 1 un cuarto · 2 la mitad · 3 tres cuartos · 4 lleno. Único dentro de la escala (G2)" },
+        "etiqueta_corta": { "$ref": "#/$defs/etiqueta_idioma", "description": "Opcional (0.4.0, D-S1-17): el nombre largo no cabe en bloques ni nodos; si falta, el motor usa el nombre" },
         "disponible": { "type": "boolean" }
       }
     }

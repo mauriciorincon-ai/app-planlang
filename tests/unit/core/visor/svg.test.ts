@@ -44,7 +44,7 @@ describe.each(["es", "en"] as const)("SVG del demo A (%s)", (idioma) => {
     expect(svg).toContain(
       `lang="${idioma}" role="graphics-document document" aria-labelledby="visor-a-t visor-a-d"`,
     );
-    expect(svg).not.toMatch(/\r|20\d\d-\d\d-\d\d|0\.3\.0/);
+    expect(svg).not.toMatch(/\r|20\d\d-\d\d-\d\d|0\.[35]\.0/);
     expect(svg.endsWith("</svg>\n")).toBe(true);
   });
 

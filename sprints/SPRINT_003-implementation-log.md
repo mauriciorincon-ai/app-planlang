@@ -119,6 +119,85 @@
 gate en verde: el ADR cita el id tres veces y la mutación solo cambia la primera aparición. Se repitió con el fallo
 real (un id nuevo en el workspace).
 
+### Diagramador 0.5.0 (paso 4)
+
+**Copia fijada y lock.**
+- La copia está en `packages/diagramador/contrato/` (el contrato, los dos esquemas y `agentes-ia` 1.2.0), con las 4
+  huellas de la casa verificadas (`c8598a1a…`, `264c929c…`, `2fd7f762…`, `62557dca…`).
+- `CONTRATO.lock` 0.5.0 lleva `fuente_metricas: "Inter"` con la huella de `core/visor/metricas.json` y no trae
+  `planeadora_adelante`.
+- `contratos-lock.test.ts`: las 6 enmiendas del S2 están en el contrato y ya no se proponen; cada propuesta nueva dice
+  qué y de dónde sale.
+
+**`core/visor`.**
+- `Condicion` en sus tres formas (`condicion.ts`, nuevo):
+  - la función va como `{funcion: "texas_y_no_aprobar", entradas: ["modo-texas","propuesta"]}`;
+  - el «si no» va como `{por_defecto: true}`;
+  - se retiró `SENAL_POR_DEFECTO`.
+- `papel` inicio/fin en `enrutador` y `guardia-salida`, desde las aristas de `__start__`/`__end__`.
+- Fuente `codigo` (`ruta` + `lineas`) desde `grafo-codigo.json`.
+- Glifos desde la gramática, con los trazos del § 5.4.
+- `recorridos` desde las trazas (`recorridos.ts`, nuevo): un recorrido por camino distinto; con la corrida actual
+  salen 6.
+- Versión semver: `1.4` pasa a `1.4.0` y el spike va como `0.1.0`.
+- Validación V3 por tipo de fuente, más V4, V5, V6 de recorridos, V7, V12, V14/V15 de recorridos y V17.
+  `EXCEPCIONES_PLANLANG` (`V5-papel`, V7 como alerta) lleva su razón.
+
+**Vitrina.**
+- `src/lib/vista/visor.ts` valida el mapa que se dibuja (el del demo A y el del spike) contra `mapa.schema.json` con
+  Ajv antes de dibujarlo (fase 1 en el build), además de V1–V17 (fase 2).
+- Prueba nueva: `tests/unit/vitrina/mapa-publicado.test.ts`.
+
+**Golden del visor regenerados contra la corrida ACTUAL** (v1.2, plan v1.4; antes de la v1.5 y de la de 200). El diff de
+`tests/golden/visor/demo-a.{es,en}.svg` es de 10 líneas por idioma, y nada más se movió:
+- `data-condiciones`: las 4 ramas `rama-por-defecto = true` pasan a `por_defecto`, y `texas-y-no-aprobar = true` pasa
+  a `texas_y_no_aprobar(modo-texas,propuesta)`;
+- trazos de los glifos: la estrella a 1 decimal (`M0.0,-8.2 L2.1,-2.8 …`) y el hexágono con 6,9 en vez de 6,93, como
+  en la tabla del § 5.4.
+
+**Lo que queda fuera, con nombre:**
+- el semáforo de vigencia (§ 4.8 y § 5.6) es un **vacío conocido**: el visor no dibuja insignias de vigencia y su
+  fecha es una entrada del build (ADR-010, adenda § 3);
+- las enmiendas nuevas van al lock (desviación 11).
+
+**Verificación:**
+- `pnpm typecheck` · `pnpm lint` · `pnpm test` (108 archivos, 2.589 pruebas, cobertura sin umbrales en rojo);
+- `pnpm build`: el mapa A y el del spike pasan Ajv y V1–V17;
+- `pnpm diagrama:verificar` (ES y EN: 8 nodos, 13 aristas, 9 reglas) · `pnpm trazas:verificar`;
+- `verificar-export` (57 HTML) · `pnpm audit --audit-level high` (1 alta ignorada: `braces`, ADR-015) ·
+  `verificar-dependencias` (683 paquetes).
+
+#### Demos en rojo del paso 4 (con `scripts/demo-rojo.sh`)
+
+| Gate | Mutación | Rojo (a quién nombró) | Verde al restaurar |
+|---|---|---|---|
+| V17 (`validar.test.ts`) | `if (k > 1)` → `if (k > 99)` | «V17: dos ramas por defecto desde el mismo origen» | 14/14 |
+| V5, inicio y llegada (`validar.test.ts`) | la condición de llegada pasa a `if (false)` | «V5: un recorrido que empieza o termina lejos del inicio y el fin» | 14/14 |
+| `papel` en «diagrama = grafo» (`igualdad.test.ts`) | `if (esperado !== dibujado)` → `if (false && …)` | «rojo si el papel de inicio o fin no es el del grafo» y «rojo si el dibujo pierde un nodo» | 9/9 |
+| Ajv del mapa publicado (`mapa-publicado.test.ts`) | `if (esquema.length)` → `if (false && esquema.length)` | «rojo en el build si el mapa del spike no pasa el esquema (fecha sin formato)» | 3/3 |
+| Lock multiarchivo (`contratos-lock.test.ts`) | `"minLength": 1` → `2` en la copia de `mapa.schema.json` | «esquema/mapa.schema.json: expected '78769051…' to be '2fd7f762…'» | 13/13 |
+| «Diagrama = grafo» sobre la página (`diagrama-igual-grafo.test.ts`) | la rama por defecto vuelve a `"rama-por-defecto = true"` | el golden, la línea inventada y la condición cambiada (3 pruebas) | 8/8 |
+
+La tercera pregunta (¿puede fallar siquiera?):
+- la de Ajv solo podía ponerse roja con un dato que las reglas V no ven antes. Se eligió la fecha del spike sin
+  formato: ninguna regla V mira el formato de la fecha, y el esquema sí;
+- la de V5 necesitaba una prueba propia (un recorrido sin su último o su primer paso). La carnada de «pasos sin
+  unión» no la cubría.
+
+### CI del PR #14 sobre `be317ef` y LCP de `/es/agente` (por medir antes de cerrar la fase 0)
+
+`quality`, `e2e` y `python` quedaron en `success`. **`lighthouse` quedó en rojo:**
+- `/es/agente` dio un LCP de 2.631 ms contra 2.500 (`lhci assert` de presupuestos);
+- `lighthouse-margen` no llegó a correr, porque el paso se cortó antes;
+- en la colección local del S2, `/es/agente` daba 2.105 ms. Parece el mismo modo alto bimodal del ADR-011, ahora
+  en otra página.
+
+Lo único de `be317ef` que viaja a todas las páginas es `src/lib/sentry-evento.ts`. **Antes de cerrar la fase 0:**
+- medir en local `/es/agente` con y sin esa importación (`lhci collect` en el puerto 3007, 3 corridas, luego
+  `lhci assert` + `lighthouse-margen`);
+- si no es la importación, es la deuda del LCP de la fase 4: se le reporta al usuario con las cifras, sin cambiar
+  presupuestos.
+
 ## Desviación del plan
 
 1. **Rutas de la orden** (`SPRINT_003-orden.md:65`): `audita-sprint` y `plan-sprint` viven en
@@ -168,6 +247,9 @@ real (un id nuevo en el workspace).
    la fija.
 10. **`scripts/capturar-maqueta.mjs` abre la maqueta por `file://`**, y el README de diseño del kit v1.37.0 pide
     capturar sobre la maqueta servida: pasa a servir `docs/diseno`.
+11. **`enmiendas_propuestas` del lock del diagramador** (la orden pide `[]`): el lock sí propone tres enmiendas
+    (`V5-papel`, `V7-sin-bloques` y `erratas-0.5.0`, cada una con qué y de dónde sale). Son las que el 0.5.0 deja
+    abiertas frente a la geometría aprobada (desviación 6), y el lock es donde la casa las lee.
 
 ## Registro de miradas
 

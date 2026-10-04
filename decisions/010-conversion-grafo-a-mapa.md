@@ -99,3 +99,43 @@ exactly the compiled graph and the plan's rules.
 - Reemplazar el ruteo propio por una librería de disposición (ELK, dagre) queda descartado mientras el núcleo deba
   dar los mismos bytes en Node y en los tres motores sin `Math` trigonométrico ni coma flotante dependiente del
   motor.
+
+## Adenda — contrato 0.5.0 (S3, 2026-10-04)
+
+**Summary (EN):** The house accepted the six S2 amendments in diagramador 0.5.0 (grammar `agentes-ia` 1.2.0); the
+conventions of § 2 are retired and the map now uses the contract's own forms. Two named exceptions remain (V5 by
+`papel`, V7 as a warning) and are proposed back as amendments in `CONTRATO.lock`.
+
+1. **Las convenciones del § 2 se retiran: el contrato trae sus formas propias.**
+   - Terminales: el nodo real que sigue a `__start__` lleva `papel: "inicio"` (`enrutador`) y el que llega a
+     `__end__`, `papel: "fin"` (`guardia_salida`); no se crean tarjetas para `__start__`/`__end__`. El visor dibuja
+     el marcador junto a la tarjeta leyendo el `papel` del mapa (`terminalesDelMapa`), y «diagrama = grafo» compara
+     ese `papel` con las aristas de `__start__` y `__end__` del grafo compilado.
+   - Condición (§ 3.4, `core/visor/condicion.ts`): la función nombrada va como `{ funcion: "texas_y_no_aprobar",
+     entradas: ["modo-texas", "propuesta"] }` y el «si no» como `{ por_defecto: true }`. El SVG publica
+     `data-condiciones` como `texas_y_no_aprobar(modo-texas,propuesta)` y `por_defecto`.
+   - Fuentes: cada nodo suma una fuente `{ tipo: "codigo", ruta, lineas }` desde `grafo-codigo.json`, además de la
+     documentación oficial `https` (V3 exige una de esas).
+   - Glifos: la forma de cada tipo sale de la gramática (`regla` = hexágono desde la 1.2.0) y el trazo es el de la
+     tabla del § 5.4 (`core/visor/glifos.ts`, con prueba contra la copia fijada).
+   - G15: `options.fuente_metricas` = Inter, declarado en el lock con la huella de `core/visor/metricas.json`.
+2. **Lo nuevo del 0.5.0 que planlang ya cumple:**
+   - **`recorridos` desde las trazas** (`core/visor/recorridos.ts`): un recorrido por camino distinto de la corrida
+     declarada, con los casos que lo siguieron en el título; la clave del dibujo en memoria suma la huella de la
+     corrida.
+   - Validación en código: V4 (autoflujo), V5 (pasos unidos por flujos, `sigue_de` anterior, inicio y llegada),
+     V12 (bifurcaciones), V17 (a lo sumo un `por_defecto` por origen) y V3 por tipo de fuente.
+   - **Fase 1 en el build:** el mapa que se dibuja (el del demo A y el del spike) pasa `mapa.schema.json` 0.5.0 con
+     Ajv antes de dibujarse (`src/lib/vista/visor.ts`); antes solo lo pasaba el mapa de las pruebas.
+   - La versión del mapa es semver: la del plan (`1.4`) pasa a `1.4.0` y el spike va como `0.1.0`.
+3. **Desvíos que quedan, con nombre (`EXCEPCIONES_PLANLANG` en `core/visor/validar.ts`):**
+   - **V5 por `papel`:** la geometría aprobada no pone nodos en las bandas `entrada`/`salida`; el recorrido empieza
+     y termina en los nodos con `papel` inicio/fin.
+   - **V7 como alerta:** el mapa no tiene bloques y `agentes-ia` pide `bloques_min: 1`.
+   - Siguen igual que en el S2 la geometría de la maqueta (§ 3 de esta decisión) y el relleno tintado del
+     seleccionado (§ 6).
+   - El **semáforo de vigencia** (§ 4.8 y § 5.6 del contrato) no se dibuja: el visor no muestra insignias de
+     vigencia y su fecha es una entrada del build. Es un vacío conocido, no una excepción del validador.
+4. **Enmiendas que se proponen a la casa** (en `packages/diagramador/CONTRATO.lock` → `enmiendas_propuestas`):
+   V5 con `papel`, V7 sin bloques para gramáticas de grafo, y las erratas del 0.5.0 (título y esquemas en 0.4.0,
+   V17 fuera de la tabla del § 7, V3 que solo nombra `https`, `lineas` opcional en el esquema).

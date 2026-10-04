@@ -16,7 +16,7 @@ import {
   type LineaGeo,
   type NodoGeo,
 } from "./geometria";
-import { GLIFO_DE_TIPO_MAPA, RUTA_GLIFO } from "./glifos";
+import { formaDeGlifo, RUTA_GLIFO } from "./glifos";
 import { idDeCodigo } from "./ids";
 import type { Gramatica, TextoIdioma } from "./tipos";
 
@@ -373,7 +373,7 @@ function nodoSvg(n: NodoGeo, g: Gramatica, op: OpcionesSvg): string {
   const c = n.caja;
   const tipo = g.tipos_de_nodo.find((t) => t.id === n.tipo)!;
   const exigido = n.madurez === "exigido-por-el-plan";
-  const forma = GLIFO_DE_TIPO_MAPA[n.tipo]!;
+  const forma = formaDeGlifo(g, n.tipo);
   const nombre = n.nombre.lineas[i].join("");
   // El anillo de foco, a 4 px de la caja (oculto hasta el foco): distinto de la selección, que tiñe la caja
   // (AU-S2-14).

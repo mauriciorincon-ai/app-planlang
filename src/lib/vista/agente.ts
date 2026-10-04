@@ -740,8 +740,11 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
       version: d.corrida.manifiesto.plan.version,
       fecha,
       modelo,
+      codigo: d.codigo.nodos,
+      trazas: d.corrida.trazas,
     },
-    `${grafo.huella}:${d.plan.huella}`,
+    // La huella de la corrida entra a la clave: sus trazas son los recorridos del mapa (contrato 0.5.0 § 3.5).
+    `${grafo.huella}:${d.plan.huella}:${d.manifiesto.corrida.huella}`,
     i,
     {
       ns: "agente",
@@ -1780,7 +1783,8 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
         grafo: sp.grafo,
         contrato: contratoG,
         sujeto: { id: `${d.id}-spike`, nombre: demo },
-        version: `spike-${sp.fecha}`,
+        // El spike corrió antes del plan: su mapa va como 0.1.0 (el contrato exige semver; antes «spike-<fecha>»).
+        version: "0.1.0",
         fecha: sp.fecha,
         modelo: sp.lectura.modelo,
       },

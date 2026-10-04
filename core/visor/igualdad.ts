@@ -10,20 +10,22 @@
  * - RAMAS POR DEFECTO: cada «si no» del grafo (o el `si_falso` de una regla) es un flujo `…-defecto`, y no hay
  *   otro;
  * - ARISTAS: cada arista de LangGraph entre nodos es al menos un flujo del mapa y cada flujo del mapa es una
- *   arista de LangGraph (las de `__start__` y `__end__` son los terminales del dibujo).
+ *   arista de LangGraph;
+ * - TERMINALES (0.5.0): los nodos con `papel` inicio/fin son exactamente los que siguen a `__start__` y los que
+ *   llegan a `__end__`.
  *
- * Las ausencias se reportan por nombre; nada se completa por inferencia (G14). Las entradas de una función nombrada
- * no viajan en el mapa (su condición es `<funcion> = true`): las compara el contrato de grafo del verificador
- * (`core/brecha/contrato-grafo.ts`), que sí lee la traza.
+ * Las ausencias se reportan por nombre; nada se completa por inferencia (G14). Desde el 0.5.0 la condición viaja en
+ * su forma (tripleta, función con sus entradas o rama por defecto) y se compara entera, entradas incluidas.
  */
 import type { ContratoDeGrafo } from "../plan/esquema";
 import { idDeMapa } from "./ids";
+import { condicionEnTexto, esPorDefecto, esRegla } from "./condicion";
 import {
   FIN,
   FUERA_DEL_CONTRATO,
   INICIO,
-  SENAL_POR_DEFECTO,
   condicionDeRegla,
+  terminales,
   type GrafoParaMapa,
 } from "./mapa";
 import type { Mapa } from "./tipos";
@@ -87,9 +89,7 @@ export function diagramaIgualGrafo(
       );
 
   // Reglas del plan ↔ flujos condicionales con condición (sin contar el «si no»).
-  const reglasMapa = mapa.flujos.filter(
-    (f) => f.condicion && f.condicion.senal !== SENAL_POR_DEFECTO,
-  );
+  const reglasMapa = mapa.flujos.filter((f) => esRegla(f.condicion));
   const usados = new Set<string>();
   const exigidasAusentes: string[] = [];
   let dibujadas = 0;
@@ -101,16 +101,14 @@ export function diagramaIgualGrafo(
       exigidasAusentes.push(nombre);
       continue;
     }
-    const c = condicionDeRegla(r);
+    const c = condicionEnTexto(condicionDeRegla(r));
     const f = reglasMapa.find(
       (x) =>
         !usados.has(x.id) &&
         x.id === `${desde}-a-${hacia}-r${r.orden}` &&
         x.origen === desde &&
         x.destino === hacia &&
-        x.condicion!.senal === c.senal &&
-        x.condicion!.operador === c.operador &&
-        x.condicion!.valor === c.valor,
+        condicionEnTexto(x.condicion!) === c,
     );
     if (!f) fallas.push(`regla del plan sin su flujo en el dibujo: ${nombre}`);
     else {
@@ -124,9 +122,7 @@ export function diagramaIgualGrafo(
 
   // Ramas por defecto del grafo ↔ flujos «si no».
   const defectosMapa = new Set(
-    mapa.flujos
-      .filter((f) => f.condicion?.senal === SENAL_POR_DEFECTO)
-      .map((f) => f.id),
+    mapa.flujos.filter((f) => esPorDefecto(f.condicion)).map((f) => f.id),
   );
   const defectosGrafo = new Set<string>();
   for (const o of new Set([
@@ -161,6 +157,21 @@ export function diagramaIgualGrafo(
       fallas.push(`arista del grafo sin flujo en el dibujo: ${p}`);
   for (const p of [...pares].sort(cmp))
     if (!paresGrafo.has(p)) fallas.push(`flujo sin arista en el grafo: ${p}`);
+
+  // Terminales: el `papel` de los nodos ↔ las aristas de `__start__` y `__end__`.
+  const t = terminales(grafo);
+  for (const papel of ["inicio", "fin"] as const) {
+    const esperado = [...new Set(t[papel])].sort(cmp).join(", ");
+    const dibujado = mapa.nodos
+      .filter((n) => n.papel === papel)
+      .map((n) => n.id)
+      .sort(cmp)
+      .join(", ");
+    if (esperado !== dibujado)
+      fallas.push(
+        `papel «${papel}» en el dibujo (${dibujado || "ninguno"}) distinto del grafo (${esperado || "ninguno"})`,
+      );
+  }
 
   const fuera = [...enGrafo].filter((id) => !plan.has(id)).sort(cmp);
   return {

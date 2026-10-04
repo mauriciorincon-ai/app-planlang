@@ -15,17 +15,25 @@ import {
   xColumna,
 } from "./disposicion";
 import { ESTILOS, type EstiloDeTexto, type NombreDeEstilo } from "./estilos";
-import { idDeCodigo } from "./ids";
-import { SENAL_POR_DEFECTO } from "./mapa";
+import {
+  condicionEnTexto,
+  esPorDefecto,
+  esRegla,
+  nombreDeRegla,
+  textoDeRegla,
+} from "./condicion";
 import { ancho, partir } from "./medida";
 import { HOLGURA, rutear, type Pedido, type Punto, type Rect } from "./ruteo";
 import type {
-  Condicion,
+  CondicionFuncion,
+  CondicionTripleta,
   FlujoMapa,
   Gramatica,
   Mapa,
   TextoIdioma,
 } from "./tipos";
+
+export { condicionEnTexto, textoDeRegla, valorDeRegla } from "./condicion";
 
 export const INICIO_ID = "inicio";
 export const FIN_ID = "fin";
@@ -89,11 +97,6 @@ export interface LineaGeo {
   condiciones: string[];
 }
 
-/** Una condición del mapa como texto estable: `señal operador valor` (sin formato de idioma). */
-export function condicionEnTexto(c: Condicion): string {
-  return `${c.senal} ${c.operador} ${String(c.valor)}`;
-}
-
 export interface Geometria {
   ancho: number;
   alto: number;
@@ -145,26 +148,6 @@ function anchoMax(t: TextoPorIdioma): number {
   );
 }
 
-const SIMBOLO: Record<string, string> = {
-  "<": "<",
-  "<=": "≤",
-  "=": "=",
-  "!=": "≠",
-  ">=": "≥",
-  ">": ">",
-};
-
-/** Un valor de regla como se lee en cada idioma: en español, decimales con coma (design-system § 3); sin `Intl`. */
-export function valorDeRegla(v: Condicion["valor"], i: Idioma): string {
-  return typeof v === "number" && i === "es"
-    ? String(v).replace(".", ",")
-    : String(v);
-}
-
-export function textoDeRegla(c: Condicion, i: Idioma): string {
-  return `${idDeCodigo(c.senal)} ${SIMBOLO[c.operador]} ${valorDeRegla(c.valor, i)}`;
-}
-
 const O: TextoIdioma = { es: "o", en: "or" };
 const REGLAS: TextoIdioma = { es: "reglas", en: "rules" };
 const SI_NO: TextoIdioma = { es: "si no", en: "else" };
@@ -182,9 +165,9 @@ function etiquetaDe(
       lineas: porIdioma(idiomas, (i) => [REANUDA[i]]),
       estilo: "flujoSuave",
     };
-  const reglas = flujos.filter(
-    (f) => f.condicion && f.condicion.senal !== SENAL_POR_DEFECTO,
-  );
+  const reglas = flujos.filter((f) => esRegla(f.condicion));
+  const regla = (f: FlujoMapa) =>
+    f.condicion as CondicionTripleta | CondicionFuncion;
   if (reglas.length === 0)
     return {
       lineas: porIdioma(idiomas, (i) => [SI_NO[i]]),
@@ -195,8 +178,7 @@ function etiquetaDe(
     return {
       lineas: porIdioma(idiomas, (i) =>
         reglas.map(
-          (f, k) =>
-            `${k ? `${O[i]} ` : ""}${textoDeRegla(f.condicion as Condicion, i)}`,
+          (f, k) => `${k ? `${O[i]} ` : ""}${textoDeRegla(regla(f), i)}`,
         ),
       ),
       estilo: "flujoRegla",
@@ -204,7 +186,7 @@ function etiquetaDe(
   return {
     lineas: porIdioma(idiomas, (i) =>
       partir(
-        `${reglas.length} ${REGLAS[i]}: ${reglas.map((f) => cortas[f.id]?.[i] ?? idDeCodigo((f.condicion as Condicion).senal)).join(SEP)}`,
+        `${reglas.length} ${REGLAS[i]}: ${reglas.map((f) => cortas[f.id]?.[i] ?? nombreDeRegla(regla(f))).join(SEP)}`,
         e,
         ETIQUETA_MAX,
       ),
@@ -359,7 +341,7 @@ export function geometria(
   // Líneas: una por (origen, destino, modo, ¿por defecto?).
   const grupos = new Map<string, FlujoMapa[]>();
   for (const f of mapa.flujos) {
-    const defecto = f.condicion?.senal === SENAL_POR_DEFECTO;
+    const defecto = esPorDefecto(f.condicion);
     const k = `${f.origen}|${f.destino}|${f.modo_id}|${defecto ? "d" : "r"}`;
     (grupos.get(k) ?? grupos.set(k, []).get(k)!).push(f);
   }
@@ -470,9 +452,7 @@ export function geometria(
         bx - Math.sign(bx - ax) * RETROCESO_PUNTA,
         by - Math.sign(by - ay) * RETROCESO_PUNTA,
       ];
-    const reglas = p.flujos.filter(
-      (f) => f.condicion && f.condicion.senal !== SENAL_POR_DEFECTO,
-    ).length;
+    const reglas = p.flujos.filter((f) => esRegla(f.condicion)).length;
     const ordenados = [...p.flujos].sort((a, b) => cmp(a.id, b.id));
     const l: LineaGeo = {
       id: `l-${p.id}`,

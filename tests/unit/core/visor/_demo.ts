@@ -1,17 +1,21 @@
 /**
  * Datos reales del demo A para las pruebas del visor: la gramática `agentes-ia` fijada, el grafo exportado de la
- * corrida que declara el manifiesto y el contrato de grafo del plan v1.3. Los textos que NO se dibujan (líder,
- * experto, por qué importa, fuentes) son de relleno: la vitrina pone los suyos; los que se dibujan son los de la
- * página.
+ * corrida que declara el manifiesto y el contrato de grafo del plan v1.3, con los recorridos de sus trazas (contrato
+ * 0.5.0 § 3.5). Los textos que NO se dibujan (líder, experto, por qué importa, fuentes) son de relleno: la vitrina
+ * pone los suyos; los que se dibujan son los de la página.
  */
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { geometria, type OpcionesGeometria } from "@core/visor/geometria";
 import {
   construirMapa,
-  terminales,
+  terminalesDelMapa,
   type GrafoParaMapa,
   type TextosDeNodo,
 } from "@core/visor/mapa";
+import {
+  recorridosDeTrazas,
+  type TrazaParaRecorrido,
+} from "@core/visor/recorridos";
 import type { Gramatica, Mapa, TextoIdioma } from "@core/visor/tipos";
 import type { ContratoDeGrafo } from "@core/plan/esquema";
 
@@ -25,6 +29,14 @@ const demo = manifiesto.demos["demo-a"];
 const grafo = leer(`${demo.corrida.ruta}/grafo.json`);
 export const PLAN = leer(demo.plan.archivo);
 export const CONTRATO = PLAN.contrato_de_grafo as ContratoDeGrafo;
+
+/** Las trazas de la corrida (caso y nodos visitados): sus caminos son los recorridos del mapa. */
+export const TRAZAS: TrazaParaRecorrido[] = readdirSync(
+  `${demo.corrida.ruta}/trazas`,
+)
+  .filter((f) => f.endsWith(".json"))
+  .sort()
+  .map((f) => leer(`${demo.corrida.ruta}/trazas/${f}`) as TrazaParaRecorrido);
 
 export const GRAFO: GrafoParaMapa = {
   nodos: grafo.nodos,
@@ -58,15 +70,20 @@ export function textosDeRelleno(
   );
 }
 
-export function mapaDemo(g: GrafoParaMapa = GRAFO): Mapa {
+export function mapaDemo(
+  g: GrafoParaMapa = GRAFO,
+  trazas: readonly TrazaParaRecorrido[] = TRAZAS,
+): Mapa {
+  const textos = textosDeRelleno([
+    ...CONTRATO.nodos_esperados.map((n) => n.id),
+    ...g.nodos.map((n) => n.id),
+  ]);
   return construirMapa({
     gramatica: GRAMATICA,
     grafo: g,
     contrato: CONTRATO,
-    textos: textosDeRelleno([
-      ...CONTRATO.nodos_esperados.map((n) => n.id),
-      ...g.nodos.map((n) => n.id),
-    ]),
+    textos,
+    recorridos: recorridosDeTrazas(trazas, textos),
     sujeto_id: "demo-a",
     sujeto_nombre: {
       es: "Demo A · autorizaciones médicas",
@@ -80,7 +97,7 @@ export function mapaDemo(g: GrafoParaMapa = GRAFO): Mapa {
 const r = (es: string, en: string): TextoIdioma => ({ es, en });
 export const OPCIONES: OpcionesGeometria = {
   idiomas: ["es", "en"],
-  terminales: terminales(GRAFO),
+  terminales: terminalesDelMapa(mapaDemo()),
   textosTerminales: { inicio: r("solicitud", "request"), fin: r("fin", "end") },
   detalleNodo: {
     enrutador: r("2 reglas", "2 rules"),

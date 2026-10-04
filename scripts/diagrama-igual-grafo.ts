@@ -17,9 +17,9 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { IDIOMAS } from "../core/formatos/bilingue";
 import type { AristaCondicional } from "../core/plan/esquema";
-import { condicionEnTexto } from "../core/visor/geometria";
+import { condicionEnTexto } from "../core/visor/condicion";
 import { idDeMapa } from "../core/visor/ids";
-import { condicionDeRegla, SENAL_POR_DEFECTO } from "../core/visor/mapa";
+import { condicionDeRegla } from "../core/visor/mapa";
 
 export interface GrafoPublicable {
   nodos: ReadonlyArray<{ id: string }>;
@@ -114,15 +114,9 @@ export function flujosEsperados(
     const porDefecto =
       grafo.ramas_por_defecto[a.source] ??
       reglasDe(a.source).find((r) => r.si_falso !== undefined)?.si_falso;
+    // La rama «si no» es su propia forma desde el 0.5.0 (§ 3.4), no una tripleta disfrazada.
     if (porDefecto === a.target)
-      out.set(
-        `${par}-defecto`,
-        condicionEnTexto({
-          senal: SENAL_POR_DEFECTO,
-          operador: "=",
-          valor: true,
-        }),
-      );
+      out.set(`${par}-defecto`, condicionEnTexto({ por_defecto: true }));
   }
   return out;
 }

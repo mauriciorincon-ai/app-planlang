@@ -1,20 +1,30 @@
 /**
- * Conversor grafo compilado + contrato del plan → mapa 0.3.0 (ADR-010), sobre el grafo REAL de la corrida que
- * declara el manifiesto. Fase 1 de la validación del contrato: el mapa pasa el esquema JSON fijado (Ajv 2020).
+ * Conversor grafo compilado + contrato del plan → mapa 0.5.0 (ADR-010 y su adenda del S3), sobre el grafo REAL de la
+ * corrida que declara el manifiesto. Fase 1 de la validación del contrato: el mapa pasa el esquema JSON fijado (Ajv
+ * 2020).
  */
 import { readFileSync } from "node:fs";
 import Ajv2020 from "ajv/dist/2020";
 import { describe, expect, it } from "vitest";
 import { idDeCodigo, idDeMapa } from "@core/visor/ids";
+import { esPorDefecto, esRegla } from "@core/visor/condicion";
 import {
   FUERA_DEL_CONTRATO,
-  SENAL_POR_DEFECTO,
   condicionDeRegla,
   construirMapa,
   terminales,
+  terminalesDelMapa,
   valorDeCondicion,
+  versionDeMapa,
 } from "@core/visor/mapa";
-import { CONTRATO, GRAFO, GRAMATICA, mapaDemo, textosDeRelleno } from "./_demo";
+import {
+  CONTRATO,
+  GRAFO,
+  GRAMATICA,
+  TRAZAS,
+  mapaDemo,
+  textosDeRelleno,
+} from "./_demo";
 
 const esquema = JSON.parse(
   readFileSync(
@@ -26,7 +36,7 @@ const esquema = JSON.parse(
 describe("mapa del demo A", () => {
   const mapa = mapaDemo();
 
-  it("pasa el esquema del contrato 0.3.0 (fase 1)", () => {
+  it("pasa el esquema del contrato 0.5.0 (fase 1)", () => {
     const ajv = new Ajv2020({ allErrors: true, strict: false });
     const valida = ajv.compile(esquema);
     expect(valida(mapa), JSON.stringify(valida.errors)).toBe(true);
@@ -49,12 +59,8 @@ describe("mapa del demo A", () => {
   });
 
   it("un flujo por regla del plan, uno por rama por defecto y uno por arista incondicional", () => {
-    const reglas = mapa.flujos.filter(
-      (f) => f.condicion && f.condicion.senal !== SENAL_POR_DEFECTO,
-    );
-    const defectos = mapa.flujos.filter(
-      (f) => f.condicion?.senal === SENAL_POR_DEFECTO,
-    );
+    const reglas = mapa.flujos.filter((f) => esRegla(f.condicion));
+    const defectos = mapa.flujos.filter((f) => esPorDefecto(f.condicion));
     expect(reglas).toHaveLength(CONTRATO.aristas_condicionales.length);
     expect(defectos.map((f) => `${f.origen}>${f.destino}`).sort()).toEqual([
       "aclaracion>extractor",
@@ -76,7 +82,7 @@ describe("mapa del demo A", () => {
     ).toEqual(["pausa-humana-a-redactor"]);
   });
 
-  it("la condición es la tripleta del plan; la función nombrada va como `<función> = true`", () => {
+  it("la condición es la tripleta del plan; la función nombrada va con sus entradas y la rama por defecto es la suya (§ 3.4)", () => {
     const porId = Object.fromEntries(
       mapa.flujos.map((f) => [f.id, f.condicion]),
     );
@@ -96,10 +102,40 @@ describe("mapa del demo A", () => {
       valor: 0,
     });
     expect(porId["decision-a-pausa-humana-r5"]).toEqual({
-      senal: "texas-y-no-aprobar",
-      operador: "=",
-      valor: true,
+      funcion: "texas_y_no_aprobar",
+      entradas: ["modo-texas", "propuesta"],
     });
+    expect(porId["decision-a-redactor-defecto"]).toEqual({ por_defecto: true });
+  });
+
+  it("el papel de inicio y fin va en los nodos reales donde el grafo empieza y termina (§ 3.3)", () => {
+    expect(
+      mapa.nodos.filter((n) => n.papel).map((n) => [n.id, n.papel]),
+    ).toEqual([
+      ["enrutador", "inicio"],
+      ["guardia-salida", "fin"],
+    ]);
+    expect(terminalesDelMapa(mapa)).toEqual(terminales(GRAFO));
+  });
+
+  it("un recorrido por camino distinto de las trazas, y cada caso en exactamente uno (§ 3.5)", () => {
+    const caminos = new Set(
+      TRAZAS.map((t) => t.pasos.map((p) => p.nodo).join(">")),
+    );
+    expect(mapa.recorridos).toHaveLength(caminos.size);
+    expect(mapa.recorridos.map((r) => r.id)).toEqual(
+      mapa.recorridos.map((_, i) => `camino-${i + 1}`),
+    );
+    for (const r of mapa.recorridos) {
+      expect(r.pasos[0]?.nodo_id).toBe("enrutador");
+      expect(r.pasos.at(-1)?.nodo_id).toBe("guardia-salida");
+    }
+  });
+
+  it("la versión del mapa es semver (§ 3.1): x.y pasa a x.y.0 y lo demás se rechaza", () => {
+    expect(versionDeMapa("1.4")).toBe("1.4.0");
+    expect(versionDeMapa("1.4.2")).toBe("1.4.2");
+    expect(() => versionDeMapa("v1")).toThrow();
   });
 
   it("los terminales salen del grafo: el inicio va al enrutador y la guardia llega al fin", () => {
