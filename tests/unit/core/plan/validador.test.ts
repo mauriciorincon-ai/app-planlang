@@ -46,6 +46,17 @@ describe("validador — referencias rotas", () => {
     ]);
   });
 
+  it("criterio → riesgo que dice controlar y no existe (RF-02.5, S3)", () => {
+    const p = clon();
+    (arr(p, "criterios_aceptacion")[0] as Obj).riesgos_controlados = [
+      "R1",
+      "R99",
+    ];
+    expect(codigos(p).filter(([k]) => k === "REFERENCIA_ROTA")).toEqual([
+      ["REFERENCIA_ROTA", "C1"],
+    ]);
+  });
+
   it("aristas: nodo desconocido, umbral inexistente, señal no declarada, entrada de función no declarada", () => {
     const p = clon();
     const aristas = arr(contrato(p), "aristas_condicionales");

@@ -10,8 +10,8 @@
 
 | Fase | Estado | Cierre |
 |---|---|---|
-| 0 · Setup, constitución, deltas, diagramador 0.5.0 y plan v1.5 del A | construida; espera «continúa» (lote v1.5 en fondo) | 2026-10-04 |
-| 1 · Entrevistador M2 → parada de DECISIÓN (plan B) | pendiente | — |
+| 0 · Setup, constitución, deltas, diagramador 0.5.0 y plan v1.5 del A | aprobada («continúa»; lote v1.5 en fondo) | 2026-10-04 |
+| 1 · Entrevistador M2 → parada de DECISIÓN (plan B) | construida; espera la entrevista del usuario y su «apruebo el plan B» | 2026-10-04 |
 | 2 · Demo B: sintético, agente y lote de 20 | pendiente | — |
 | 3 · Brecha B y la vitrina con dos demos | pendiente | — |
 | 4 · Cierres de ciclo | pendiente | — |
@@ -401,6 +401,130 @@ respaldo del S2): las pruebas de comportamiento leen los archivos versionados.
   - `trazas:verificar` ✓ sobre la corrida parcial (RF-09.2 TS = Python con el modelo real).
 - **CI del PR #14 sobre `8a9c00b`:** quality, python, e2e y lighthouse en `success` propio.
 
+## Fase 1 — Entrevistador M2 → parada de DECISIÓN (desde 2026-10-04)
+
+### Qué se construyó
+
+- **Plantillas de dominio 1.1.0, selladas** (las dos traían `huella: null`):
+  - `PlantillaDominioSchema` gana preguntas con `id`, `seccion`, `ejemplo` ES/EN (RF-02.2) y `obligatoria`, y dos
+    propuestas opcionales: `umbrales_sugeridos` (sin valor: `valor_en_plan: null`) y `contrato_sugerido`.
+  - `dom-financiero.json`:
+    - 14 preguntas en el orden de las secciones (problema · actores · flujo · decisiones · riesgos · supuestos ·
+      criterios · umbrales · contrato · lotes);
+    - las 5 preguntas de la v1.0.0 se conservan textuales (§ 9.2: no se omite ninguna);
+    - la decisión típica DT4 (umbral de escalamiento, § 10.1);
+    - la desviación 7 corregida: CT2 sin `umbral.UR`, la población de CT4 posible, claves de RT1/RT3/CT1–CT3 que
+      el plan puede declarar;
+    - `riesgos_controlados` en los criterios;
+    - cuatro umbrales sin valor (similitud, puntaje, inconsistencias, inicio de la zona gris), con los rangos del
+      § 10.3;
+    - un contrato de grafo para RF-04b.2 (nueve nodos, la pausa del oficial, aristas por umbral y «nunca rechazo sin
+      persona»).
+  - **Los ejemplos vienen del otro dominio** (salud en la financiera y al revés), para que ningún ejemplo sea la
+    respuesta del plan B.
+- **Esquema del plan:**
+  - `origen` opcional en decisiones, riesgos, supuestos, umbrales, actores, contrato y lotes (RF-02.4; los criterios
+    ya lo traían);
+  - `riesgos_controlados` opcional en los criterios, y su referencia rota es `REFERENCIA_ROTA` en M1.
+  - Los planes del A no cambian un byte ni de huella: son campos opcionales.
+- **`core/plan/contradicciones.ts`** (RF-02.5), sobre un borrador que puede no pasar el esquema:
+  - `SEVERIDAD_SIN_CRITERIO` (≥ 9);
+  - `PAUSA_SIN_UMBRAL`;
+  - `UMBRAL_SIN_SENAL`;
+  - `UMBRAL_SIN_ARISTA`;
+  - `CRITERIO_SIN_REGLA`;
+  - `PENDIENTE`.
+- **`core/plan/revision.ts`:**
+  - la transcripción declarada en Zod (gate de contrato);
+  - `revisarBorrador`: M1, las señales no declaradas que bloquearían la aprobación (M-23), contradicciones,
+    pendientes y textos redactados por el entrevistador;
+  - `impideAprobar`;
+  - el documento `revision.{es,en}.md`.
+- **`agents/src/app_agents/entrevistador/`** (LangGraph):
+  - `grafo.py`: elegir → preguntar (`interrupt`) → incorporar → cerrar; otra pasada solo con lo pendiente o lo
+    forzado;
+  - `plantilla.py`: propuestas e ids DT1 → D1, `umbral.UT1` → `umbral.U1`;
+  - `respuestas.py`: «acepto», «pendiente» y «salir» sin modelo;
+  - `redactar.py`: la única llamada al modelo, con `--json-schema` sacado de `plan.schema.json`;
+  - `origen.py`: el origen lo decide el código, y quita las claves de aprobación;
+  - `borrador.py`: siempre `borrador`, `huella: null`, y las señales derivadas (RF-02.3);
+  - `transcripcion.py`, `vista.py` (consola ES/EN), `cli.py` y `__main__.py`.
+  - El hilo vive en `.entrevistas/demo-b.sqlite`: carpeta 700, archivo 600 (regla 17-bis) y en `.gitignore`.
+- **Comandos:**
+  - `pnpm entrevistar --demo b [--retomar] [--nueva] [--pregunta P13] [--respuestas archivo] [--idioma es|en]
+    [--sin-modelo]`: corre Python con la consola heredada y después la revisión TS. Escribe `plans/demo-b/`:
+    `v0-borrador.json`, `transcripcion.json` (con huella), `contradicciones.json` (con huella) y
+    `revision.{es,en}.md`.
+  - `pnpm plan:aprobar --demo b --por --el [--con-contradicciones]`:
+    - nunca aprueba lo pendiente;
+    - una contradicción solo pasa si el usuario la acepta de forma explícita;
+    - no reescribe un `v1.json` existente;
+    - aprueba con `aprobarPlan` de M1.
+- **ADR-012** «código primero del entrevistador».
+- **Fichas:** se regeneraron (14 ADR).
+
+### Pruebas y resultados
+
+- **pytest `test_entrevistador.py` (18):**
+  - el golden de la entrevista simulada, con los mismos bytes;
+  - el fixture cubre cada pregunta y sección;
+  - la carnada «nunca aprueba»;
+  - «acepto» no llama al modelo (un modelo que falla la prueba si se le llama), y lo obligatorio con huecos se
+    repregunta;
+  - fallback literal y fallo del proveedor;
+  - el origen por código;
+  - retomar desde SQLite (permisos 600/700, pasada 2, `--pregunta`);
+  - la respuesta como dato;
+  - el esquema de salida;
+  - el mapeo de la plantilla;
+  - las señales derivadas;
+  - el lector de consola;
+  - el vocabulario igual al del verificador;
+  - los códigos de salida de la consola.
+  - Suite completa: **187 passed, 3 skipped, cobertura 96,68 %**.
+- **vitest:**
+  - `contradicciones.test.ts` (7, un rojo por código; el plan v1.5 del A solo marca R1, R2, R3 y R10, porque nació
+    antes de `riesgos_controlados`);
+  - `revision.test.ts` (5);
+  - `tests/contrato/entrevista-borrador.test.ts` (6 × node y jsdom: esquema, M1, contradicciones, aprobación y la
+    marca de pendiente igual en los dos lados);
+  - `dominios.test.ts` (+7) y `validador.test.ts` (+1).
+  - Suite completa: **117 archivos, 2.823 passed**; `core/plan` 99,6 % líneas · 94,7 % ramas.
+- **La entrevista simulada pasa M1 y la aprobación de prueba.** Su única contradicción es real y viene de la
+  plantilla: **R4 (inyección, severidad 9) no tiene criterio que lo controle** (el § 10.3 no trae uno).
+- **Humo de la CLI, sin modelo** (`--sin-modelo --respuestas`):
+  - corre de punta a punta;
+  - `--retomar` hace la pasada 2 solo con lo pendiente;
+  - sin `--retomar` se niega con la entrevista guardada;
+  - `plan:aprobar` se niega con pendientes y no escribe `v1.json`.
+  - Lo generado (`plans/demo-b/`, `.entrevistas/`) se borró: `plans/demo-b/` es la salida de la entrevista del
+    usuario.
+- `pnpm typecheck` ✓ · `pnpm lint` ✓ · `ruff check` / `ruff format --check` ✓.
+
+#### Demos en rojo de la fase 1 (con `scripts/demo-rojo.sh`; todas restauradas y en verde después)
+
+| # | Gate | Mutación | A quién nombró el rojo |
+|---|---|---|---|
+| D1 | golden de la entrevista simulada | `VERSION_DEL_PLAN` 1.0.0 → 1.0.1 | `…regenera_con_los_mismos_bytes`: `v0-borrador.json` |
+| D2 | carnada «nunca aprueba» | `CLAVES_DE_APROBACION` → solo `huella` | `test_carnada_nunca_aprueba`: `aprobado_por` |
+| D3 | origen por código | aceptar «plantilla» declarada | `test_el_origen_lo_decide_el_codigo` |
+| D4 | hilo privado (17-bis) | `chmod 0o600` → `0o644` | `test_se_retoma…`: `420 == 384` |
+| D5 | «acepto» con huecos se repregunta | la condición → `if False:` | `test_aceptar_no_llama…`: `0 == 8` |
+| D6 | señales derivadas (RF-02.3) | `if True:` en la derivación | **no se puso rojo**: `fixture_cubre` lee el fixture comiteado. Tercera pregunta: se agregó `test_rf_02_3_…`, que corre el código |
+| D6b | señales derivadas, prueba directa | igual | `test_rf_02_3_…`: `[] == [...]` |
+| D7 | `SEVERIDAD_SIN_CRITERIO` | 9 → 10 | `contradicciones.test.ts` (3 pruebas) |
+| D8 | `PAUSA_SIN_UMBRAL` | quitar «ligada a un umbral» | `rojo: una pausa que solo activan aristas sin umbral` |
+| D9 | contrato Python ↔ TS de la marca | la marca de Python cambia | `entrevista-borrador.test.ts` (node y jsdom) |
+| D10 | plantilla sellada | «jamás» → «nunca» sin resellar | `dominios.test.ts`: huella |
+| D11 | M1: `riesgos_controlados` rotos | el bucle no recorre nada | `validador.test.ts`: `[] == [[REFERENCIA_ROTA, C1]]` |
+| D12 | lo pendiente impide aprobar | quitar `hayPendientes` | `revision.test.ts`: «una sola pregunta pendiente basta». Antes de la demo, la prueba que había no podía fallar (su borrador ya lo rechazaba M1): se agregó la que aísla la regla |
+
+### Parada de DECISIÓN
+
+La fase termina aquí. **El usuario corre la entrevista; el builder no responde por él** (orden S3; prompt del
+usuario). Sin «apruebo el plan B» no hay agente B. Si pasan 48 h sin entrevista: excepción nombrada (el builder la
+corre con el § 10.3 y el usuario aprueba el borrador).
+
 ## Desviación del plan
 
 1. **Rutas de la orden** (`SPRINT_003-orden.md:65`): `audita-sprint` y `plan-sprint` viven en
@@ -454,6 +578,20 @@ respaldo del S2): las pruebas de comportamiento leen los archivos versionados.
     (`V5-papel`, `V7-sin-bloques` y `erratas-0.5.0`, cada una con qué y de dónde sale). Son las que el 0.5.0 deja
     abiertas frente a la geometría aprobada (desviación 6), y el lock es donde la casa las lee.
 
+12. **La plantilla propone más que preguntas** (`umbrales_sugeridos` y `contrato_sugerido`, fuera del § 6.1). La orden
+    pedía completar las preguntas. Sin propuestas, el contrato de grafo, que M1 exige completo, quedaría entero en
+    manos del modelo. Con ellas, «acepto» lo resuelve el código (ADR-012). Los umbrales llegan sin valor: los fija
+    el usuario.
+13. **El origen por elemento vive en el plan como campo opcional.** El problema y el flujo son textos bilingües
+    estrictos y no lo admiten, así que su origen (y el de cada idioma) queda en la transcripción.
+14. **Dos códigos de contradicción más que los cuatro del plan:**
+    - `UMBRAL_SIN_ARISTA`: un umbral que no mueve ningún caso (la lección del U4 inerte del S2);
+    - `PENDIENTE`: la condición de término del § 9.2.
+15. **`plan:aprobar --con-contradicciones`:** RF-02.5 dice «señalar», y la decisión de aprobar con una contradicción
+    es del usuario. El comando la exige explícita y la bitácora registra la frase.
+16. **Los ejemplos de cada plantilla vienen del otro dominio,** para no anclar la entrevista del B en valores del
+    § 10.3.
+
 ## Registro de miradas
 
 | Fecha | Mirada | Clase | Artefacto | Veredicto del usuario (textual) | Qué se construyó encima |
@@ -463,3 +601,7 @@ respaldo del S2): las pruebas de comportamiento leen los archivos versionados.
 
 | Fecha | Qué | Causa | Resolución |
 |---|---|---|---|
+| 2026-10-04 | `pnpm entrevistar` salía con 1 sin decir nada | ruta relativa al intérprete con `cwd: agents` en el proceso hijo | ruta absoluta y el error de lanzamiento se reporta |
+| 2026-10-04 | el esquema de salida de umbrales rompía (`KeyError: anyOf`) | Zod escribe la unión de primitivos como `type: [...]` | `_con_nulo` admite las dos formas |
+| 2026-10-04 | tras una respuesta vacía, la pregunta se habría repetido sin fin | `repetir` quedaba en `True` hasta el siguiente `elegir` | toda salida válida de `incorporar` lo pone en `False` (revisión antes de probar) |
+| 2026-10-04 | `fichas.test.ts` en rojo | el ADR-012 cambia la cuenta de ADR del `brochure-export.json` | `pnpm fichas` (14 ADR) |

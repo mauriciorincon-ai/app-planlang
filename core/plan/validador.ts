@@ -375,6 +375,16 @@ export function validarPlan(entrada: unknown): ResultadoValidacion {
 
   // Criterios: regla de medición completa e interpretable.
   for (const c of plan.criterios_aceptacion) {
+    for (const id of c.riesgos_controlados ?? [])
+      if (!idsRiesgo.has(id))
+        motivos.push(
+          motivo(
+            "REFERENCIA_ROTA",
+            c.id,
+            `El criterio dice controlar el riesgo «${id}», que no existe.`,
+            `The criterion claims to control risk “${id}”, which does not exist.`,
+          ),
+        );
     const r = c.regla_de_medicion;
     const exigeCondicion =
       r.agregacion === "todos_cumplen" ||

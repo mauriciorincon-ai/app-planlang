@@ -48,3 +48,7 @@ runs/**/*.sqlite-shm
 
 # scripts/demo-rojo.sh (kit v1.35.0): respaldo de la mutación mientras corre una demo en rojo
 .demo-rojo/
+
+# planlang S3 — el hilo de la entrevista (SqliteSaver) para retomarla: privado (700/600) y fuera del repo; lo que se
+# versiona es el borrador, la transcripción y la revisión en plans/demo-<x>/
+.entrevistas/

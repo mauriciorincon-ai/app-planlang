@@ -18,6 +18,14 @@
             "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
             "type": "string"
           },
+          "origen": {
+            "enum": [
+              "plantilla",
+              "entrevistador",
+              "usuario"
+            ],
+            "type": "string"
+          },
           "rol_en_pausa": {
             "type": "boolean"
           },
@@ -276,6 +284,14 @@
           "minItems": 1,
           "type": "array"
         },
+        "origen": {
+          "enum": [
+            "plantilla",
+            "entrevistador",
+            "usuario"
+          ],
+          "type": "string"
+        },
         "pausas_humanas": {
           "items": {
             "additionalProperties": false,
@@ -430,6 +446,13 @@
               "agregacion"
             ],
             "type": "object"
+          },
+          "riesgos_controlados": {
+            "items": {
+              "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            "type": "array"
           },
           "tipo": {
             "enum": [
@@ -619,6 +642,14 @@
             "minItems": 2,
             "type": "array"
           },
+          "origen": {
+            "enum": [
+              "plantilla",
+              "entrevistador",
+              "usuario"
+            ],
+            "type": "string"
+          },
           "pregunta": {
             "additionalProperties": false,
             "properties": {
@@ -775,6 +806,14 @@
         },
         "modelo_alias": {
           "minLength": 1,
+          "type": "string"
+        },
+        "origen": {
+          "enum": [
+            "plantilla",
+            "entrevistador",
+            "usuario"
+          ],
           "type": "string"
         },
         "proveedor": {
@@ -1107,6 +1146,14 @@
             "minimum": 1,
             "type": "integer"
           },
+          "origen": {
+            "enum": [
+              "plantilla",
+              "entrevistador",
+              "usuario"
+            ],
+            "type": "string"
+          },
           "severidad": {
             "maximum": 10,
             "minimum": 1,
@@ -1210,6 +1257,14 @@
             ],
             "type": "object"
           },
+          "origen": {
+            "enum": [
+              "plantilla",
+              "entrevistador",
+              "usuario"
+            ],
+            "type": "string"
+          },
           "prueba_barata": {
             "additionalProperties": false,
             "properties": {
@@ -1307,6 +1362,14 @@
               "menor_o_igual_que",
               "mayor_que",
               "mayor_o_igual_que"
+            ],
+            "type": "string"
+          },
+          "origen": {
+            "enum": [
+              "plantilla",
+              "entrevistador",
+              "usuario"
             ],
             "type": "string"
           },

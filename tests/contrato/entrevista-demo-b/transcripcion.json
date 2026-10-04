@@ -1,0 +1,643 @@
+{
+  "costo_nominal_usd": 0,
+  "demo_id": "demo-b",
+  "fecha": "2026-10-04",
+  "formato": "planlang-transcripcion/v1",
+  "huella": "d6c650961dd1378e68c2c8d7a34f48f57e801bee1da4bc210fc8aaff647ac084",
+  "idioma": "es",
+  "llamadas_al_modelo": 9,
+  "modelo": "simulado",
+  "pasadas": 1,
+  "plan_id": "plan-demo-b",
+  "plantilla": {
+    "huella": "16bc8ab96ac7ede83109495779e5753c2f91895a5f4859bf06e43f7faa1c9b65",
+    "id": "dom-financiero",
+    "version": "1.1.0"
+  },
+  "preguntas": [
+    {
+      "ejemplo": {
+        "en": "“Medical authorizations take days; the agent prepares the decision for the auditor and never denies a service without a person reviewing it.”",
+        "es": "«Las autorizaciones médicas tardan días; el agente prepara la decisión para el auditor y jamás niega un servicio sin que una persona lo revise.»"
+      },
+      "estado": "respondida",
+      "id": "P01",
+      "obligatoria": true,
+      "pregunta": {
+        "en": "What problem does the agent solve, for whom, and what must it never do?",
+        "es": "¿Qué problema resuelve el agente, para quién, y qué no debe hacer jamás?"
+      },
+      "seccion": "problema",
+      "turnos": [
+        {
+          "costo_nominal_usd": 0,
+          "elementos": [],
+          "explicaciones": [],
+          "pasada": 1,
+          "redaccion": {
+            "en": "entrevistador",
+            "es": "usuario"
+          },
+          "respuesta": {
+            "idioma": "es",
+            "texto": "Las vinculaciones se atascan revisando listas a mano. El agente arma el expediente para el oficial y jamás rechaza a nadie sin una persona."
+          },
+          "resultado": "redactada",
+          "tokens_entrada": 1648,
+          "tokens_salida": 111
+        }
+      ]
+    },
+    {
+      "ejemplo": {
+        "en": "“I accept the template’s and add the internal audit team, which reviews a sample every month.”",
+        "es": "«Acepto los de la plantilla y agrego al equipo de auditoría interna, que revisa una muestra cada mes.»"
+      },
+      "estado": "aceptada",
+      "id": "P02",
+      "obligatoria": false,
+      "pregunta": {
+        "en": "Who takes part, people and systems? Check the template’s list: is anyone missing or extra?",
+        "es": "¿Quiénes participan, personas y sistemas? Revisa los de la plantilla: ¿falta o sobra alguno?"
+      },
+      "seccion": "actores",
+      "turnos": [
+        {
+          "elementos": [
+            {
+              "id": "solicitante",
+              "origen": "plantilla"
+            },
+            {
+              "id": "analista",
+              "origen": "plantilla"
+            },
+            {
+              "id": "oficial",
+              "origen": "plantilla"
+            },
+            {
+              "id": "listas",
+              "origen": "plantilla"
+            },
+            {
+              "id": "agente",
+              "origen": "plantilla"
+            }
+          ],
+          "pasada": 1,
+          "respuesta": {
+            "idioma": "es",
+            "texto": "acepto"
+          },
+          "resultado": "aceptada"
+        }
+      ]
+    },
+    {
+      "ejemplo": {
+        "en": "“The request arrives; the data are extracted; coverage is checked; if anything is doubtful a person decides; the answer is written and checked before it goes out.”",
+        "es": "«Llega la solicitud; se extraen los datos; se verifica la cobertura; si algo es dudoso decide una persona; se redacta la respuesta y se revisa antes de salir.»"
+      },
+      "estado": "respondida",
+      "id": "P03",
+      "obligatoria": true,
+      "pregunta": {
+        "en": "What path does a request follow, step by step, from arrival to answer?",
+        "es": "¿Qué recorrido sigue una solicitud, paso a paso, desde que llega hasta la respuesta?"
+      },
+      "seccion": "flujo",
+      "turnos": [
+        {
+          "costo_nominal_usd": 0,
+          "elementos": [],
+          "explicaciones": [],
+          "pasada": 1,
+          "redaccion": {
+            "en": "entrevistador",
+            "es": "usuario"
+          },
+          "respuesta": {
+            "idioma": "es",
+            "texto": "Llega la solicitud con sus documentos; se extraen los datos; se cruzan con las listas; si el parecido es dudoso, el investigador mira el contexto; se calcula el puntaje; decide el oficial cuando toca; se redacta el expediente."
+          },
+          "resultado": "redactada",
+          "tokens_entrada": 1630,
+          "tokens_salida": 201
+        }
+      ]
+    },
+    {
+      "ejemplo": {
+        "en": "“I choose that every denial goes through the auditor, with no exception, because the law requires it.”",
+        "es": "«Elijo que toda negación pase por el auditor, sin excepción, porque la ley lo exige.»"
+      },
+      "estado": "respondida",
+      "id": "P04",
+      "obligatoria": true,
+      "pregunta": {
+        "en": "Which list matches require a person without exception?",
+        "es": "¿Qué coincidencias en listas exigen una persona sin excepción?"
+      },
+      "seccion": "decisiones",
+      "turnos": [
+        {
+          "costo_nominal_usd": 0,
+          "elementos": [
+            {
+              "id": "D1",
+              "origen": "usuario"
+            },
+            {
+              "id": "D2",
+              "origen": "plantilla"
+            },
+            {
+              "id": "D3",
+              "origen": "plantilla"
+            },
+            {
+              "id": "D4",
+              "origen": "plantilla"
+            }
+          ],
+          "explicaciones": [],
+          "pasada": 1,
+          "redaccion": {
+            "en": "entrevistador",
+            "es": "usuario"
+          },
+          "respuesta": {
+            "idioma": "es",
+            "texto": "La segunda opción: toda coincidencia en lista vinculante y toda aproximada sobre el umbral."
+          },
+          "resultado": "redactada",
+          "tokens_entrada": 2210,
+          "tokens_salida": 595
+        }
+      ]
+    },
+    {
+      "ejemplo": {
+        "en": "“If the extraction confidence is doubtful, clarification is requested up to twice; if it is still doubtful, the auditor decides.”",
+        "es": "«Si la confianza de la extracción es dudosa, se pide una aclaración hasta dos veces; si sigue dudosa, decide el auditor.»"
+      },
+      "estado": "respondida",
+      "id": "P05",
+      "obligatoria": true,
+      "pregunta": {
+        "en": "How is an approximate match resolved before bothering the officer?",
+        "es": "¿Cómo se resuelve una coincidencia aproximada antes de molestar al oficial?"
+      },
+      "seccion": "decisiones",
+      "turnos": [
+        {
+          "costo_nominal_usd": 0,
+          "elementos": [
+            {
+              "id": "D1",
+              "origen": "usuario"
+            },
+            {
+              "id": "D2",
+              "origen": "usuario"
+            },
+            {
+              "id": "D3",
+              "origen": "plantilla"
+            },
+            {
+              "id": "D4",
+              "origen": "plantilla"
+            }
+          ],
+          "explicaciones": [],
+          "pasada": 1,
+          "redaccion": {
+            "en": "entrevistador",
+            "es": "usuario"
+          },
+          "respuesta": {
+            "idioma": "es",
+            "texto": "En cascada: reglas, luego el investigador de contexto y al final el oficial."
+          },
+          "resultado": "redactada",
+          "tokens_entrada": 2262,
+          "tokens_salida": 648
+        }
+      ]
+    },
+    {
+      "ejemplo": {
+        "en": "“The file keeps the request, the extracted data, the rule applied with its version, the decision and who reviewed it.”",
+        "es": "«Queda la solicitud, los datos extraídos, la regla aplicada con su versión, la decisión y quién la revisó.»"
+      },
+      "estado": "respondida",
+      "id": "P06",
+      "obligatoria": true,
+      "pregunta": {
+        "en": "What stays in the file and which list version was cited?",
+        "es": "¿Qué queda en el expediente y qué versión de lista se citó?"
+      },
+      "seccion": "decisiones",
+      "turnos": [
+        {
+          "costo_nominal_usd": 0,
+          "elementos": [
+            {
+              "id": "D1",
+              "origen": "usuario"
+            },
+            {
+              "id": "D2",
+              "origen": "usuario"
+            },
+            {
+              "id": "D3",
+              "origen": "usuario"
+            },
+            {
+              "id": "D4",
+              "origen": "plantilla"
+            }
+          ],
+          "explicaciones": [],
+          "pasada": 1,
+          "redaccion": {
+            "en": "entrevistador",
+            "es": "usuario"
+          },
+          "respuesta": {
+            "idioma": "es",
+            "texto": "Entradas, reglas, versión de la lista, salida y quién revisó."
+          },
+          "resultado": "redactada",
+          "tokens_entrada": 2311,
+          "tokens_salida": 693
+        }
+      ]
+    },
+    {
+      "ejemplo": {
+        "en": "“Service cost, urgency and request history, weighted 40, 30 and 30; none is a protected attribute.”",
+        "es": "«Costo del servicio, urgencia y antecedentes de la solicitud, con pesos 40, 30 y 30; ninguno es un atributo protegido.»"
+      },
+      "estado": "respondida",
+      "id": "P07",
+      "obligatoria": true,
+      "pregunta": {
+        "en": "Which factors, with which weights, form the risk score? Is any a protected attribute?",
+        "es": "¿Qué factores, y con qué pesos, forman el puntaje de riesgo? ¿Alguno es un atributo protegido?"
+      },
+      "seccion": "decisiones",
+      "turnos": [
+        {
+          "costo_nominal_usd": 0,
+          "elementos": [
+            {
+              "id": "D1",
+              "origen": "usuario"
+            },
+            {
+              "id": "D2",
+              "origen": "usuario"
+            },
+            {
+              "id": "D3",
+              "origen": "usuario"
+            },
+            {
+              "id": "D4",
+              "origen": "usuario"
+            }
+          ],
+          "explicaciones": [],
+          "pasada": 1,
+          "redaccion": {
+            "en": "entrevistador",
+            "es": "usuario"
+          },
+          "respuesta": {
+            "idioma": "es",
+            "texto": "Puntaje por reglas: actividad, jurisdicción y coherencia entre ingresos y actividad. Ninguno es atributo protegido."
+          },
+          "resultado": "redactada",
+          "tokens_entrada": 2382,
+          "tokens_salida": 752
+        }
+      ]
+    },
+    {
+      "ejemplo": {
+        "en": "“I accept the template’s and add one: approving a service that is not covered, severity 8, likelihood 4.”",
+        "es": "«Acepto los de la plantilla y agrego uno: aprobar un servicio no cubierto, severidad 8, probabilidad 4.»"
+      },
+      "estado": "aceptada",
+      "id": "P08",
+      "obligatoria": false,
+      "pregunta": {
+        "en": "What can go wrong, how severe would it be (1 to 10) and how likely? Check the template’s.",
+        "es": "¿Qué puede salir mal, qué tan grave sería (1 a 10) y qué tan probable? Revisa los de la plantilla."
+      },
+      "seccion": "riesgos",
+      "turnos": [
+        {
+          "elementos": [
+            {
+              "id": "R1",
+              "origen": "plantilla"
+            },
+            {
+              "id": "R2",
+              "origen": "plantilla"
+            },
+            {
+              "id": "R3",
+              "origen": "plantilla"
+            },
+            {
+              "id": "R4",
+              "origen": "plantilla"
+            }
+          ],
+          "pasada": 1,
+          "respuesta": {
+            "idioma": "es",
+            "texto": "acepto"
+          },
+          "resultado": "aceptada"
+        }
+      ]
+    },
+    {
+      "ejemplo": {
+        "en": "“An undue denial shows when the final decision is deny and there was no human pause.”",
+        "es": "«La negación indebida se ve cuando la decisión final es negar y no hubo pausa humana.»"
+      },
+      "estado": "aceptada",
+      "id": "P09",
+      "obligatoria": false,
+      "pregunta": {
+        "en": "How do the traces show that a risk occurred?",
+        "es": "¿Cómo se sabe en las trazas que un riesgo ocurrió?"
+      },
+      "seccion": "riesgos",
+      "turnos": [
+        {
+          "elementos": [
+            {
+              "id": "R1",
+              "origen": "plantilla"
+            },
+            {
+              "id": "R2",
+              "origen": "plantilla"
+            },
+            {
+              "id": "R3",
+              "origen": "plantilla"
+            },
+            {
+              "id": "R4",
+              "origen": "plantilla"
+            }
+          ],
+          "pasada": 1,
+          "respuesta": {
+            "idioma": "es",
+            "texto": "Acepto."
+          },
+          "resultado": "aceptada"
+        }
+      ]
+    },
+    {
+      "ejemplo": {
+        "en": "“That the model extracts with calibrated confidence; I test it on the 20-case batch by measuring calibration.”",
+        "es": "«Que el modelo extrae con confianza calibrada; lo pruebo en el lote de 20 midiendo la calibración.»"
+      },
+      "estado": "respondida",
+      "id": "P10",
+      "obligatoria": true,
+      "pregunta": {
+        "en": "What do you take for granted that, if it turned out false, would change the design? How would you test it cheaply?",
+        "es": "¿Qué das por cierto que, si resultara falso, cambiaría el diseño? ¿Cómo lo probarías barato?"
+      },
+      "seccion": "supuestos",
+      "turnos": [
+        {
+          "costo_nominal_usd": 0,
+          "elementos": [
+            {
+              "id": "S1",
+              "origen": "usuario"
+            }
+          ],
+          "explicaciones": [],
+          "pasada": 1,
+          "redaccion": {
+            "en": "entrevistador",
+            "es": "usuario"
+          },
+          "respuesta": {
+            "idioma": "es",
+            "texto": "Que la similitud de nombre sola da demasiados falsos positivos; se prueba en el lote de 20."
+          },
+          "resultado": "redactada",
+          "tokens_entrada": 1599,
+          "tokens_salida": 122
+        }
+      ]
+    },
+    {
+      "ejemplo": {
+        "en": "“Always: no denial without a human pause. Rate: extraction accuracy of at least 90%.”",
+        "es": "«Siempre: ninguna negación sin pausa humana. Tasa: exactitud de extracción de al menos 90 %.»"
+      },
+      "estado": "respondida",
+      "id": "P11",
+      "obligatoria": false,
+      "pregunta": {
+        "en": "What must always hold, and what minimum rate do you accept? The interviewer proposes how to measure each one.",
+        "es": "¿Qué tiene que cumplirse siempre, y qué tasa mínima aceptas? El entrevistador propone cómo medir cada uno."
+      },
+      "seccion": "criterios",
+      "turnos": [
+        {
+          "costo_nominal_usd": 0,
+          "elementos": [
+            {
+              "id": "C1",
+              "origen": "plantilla"
+            },
+            {
+              "id": "C2",
+              "origen": "plantilla"
+            },
+            {
+              "id": "C3",
+              "origen": "plantilla"
+            },
+            {
+              "id": "C4",
+              "origen": "plantilla"
+            },
+            {
+              "id": "C5",
+              "origen": "usuario"
+            }
+          ],
+          "explicaciones": [
+            {
+              "elemento": "C5",
+              "en": "The agent records whether each case was extracted exactly (extraccion_exacta).",
+              "es": "El agente registra si cada caso se extrajo exacto (extraccion_exacta)."
+            }
+          ],
+          "pasada": 1,
+          "redaccion": {
+            "en": "entrevistador",
+            "es": "usuario"
+          },
+          "respuesta": {
+            "idioma": "es",
+            "texto": "Acepto los cuatro y agrego: exactitud de extracción de al menos 90 %."
+          },
+          "resultado": "redactada",
+          "tokens_entrada": 2088,
+          "tokens_salida": 574
+        }
+      ]
+    },
+    {
+      "ejemplo": {
+        "en": "“Minimum confidence 0.75: below it a person reviews. High cost: above 500 synthetic units.”",
+        "es": "«Confianza mínima 0,75: por debajo revisa una persona. Alto costo: por encima de 500 unidades sintéticas.»"
+      },
+      "estado": "respondida",
+      "id": "P12",
+      "obligatoria": true,
+      "pregunta": {
+        "en": "At what value does the agent stop at each proposed threshold? If there is a grey zone, where does it start and end?",
+        "es": "¿Con qué valor se detiene el agente en cada umbral propuesto? Si hay zona gris, ¿dónde empieza y dónde termina?"
+      },
+      "seccion": "umbrales",
+      "turnos": [
+        {
+          "costo_nominal_usd": 0,
+          "elementos": [
+            {
+              "id": "U1",
+              "origen": "usuario"
+            },
+            {
+              "id": "U2",
+              "origen": "usuario"
+            },
+            {
+              "id": "U3",
+              "origen": "usuario"
+            },
+            {
+              "id": "U4",
+              "origen": "usuario"
+            }
+          ],
+          "explicaciones": [
+            {
+              "elemento": "U1",
+              "en": "Measured with the threshold's declared signal.",
+              "es": "Se mide con la señal declarada en el umbral."
+            },
+            {
+              "elemento": "U2",
+              "en": "Measured with the threshold's declared signal.",
+              "es": "Se mide con la señal declarada en el umbral."
+            },
+            {
+              "elemento": "U3",
+              "en": "Measured with the threshold's declared signal.",
+              "es": "Se mide con la señal declarada en el umbral."
+            },
+            {
+              "elemento": "U4",
+              "en": "Measured with the threshold's declared signal.",
+              "es": "Se mide con la señal declarada en el umbral."
+            }
+          ],
+          "pasada": 1,
+          "redaccion": {
+            "en": "entrevistador",
+            "es": "usuario"
+          },
+          "respuesta": {
+            "idioma": "es",
+            "texto": "Similitud 0,9; escalamiento desde 70 puntos; tolero una inconsistencia; la zona gris empieza en 0,75."
+          },
+          "resultado": "redactada",
+          "tokens_entrada": 2218,
+          "tokens_salida": 643
+        }
+      ]
+    },
+    {
+      "ejemplo": {
+        "en": "“I accept the proposal, but the coverage check goes before the decision.”",
+        "es": "«Acepto la propuesta, pero la verificación de cobertura va antes de la decisión.»"
+      },
+      "estado": "aceptada",
+      "id": "P13",
+      "obligatoria": false,
+      "pregunta": {
+        "en": "Which steps does the agent follow and at which does it stop for the officer? Check the proposal: nodes, branches and pause.",
+        "es": "¿Qué pasos sigue el agente y en cuáles se detiene para el oficial? Revisa la propuesta: nodos, ramas y pausa."
+      },
+      "seccion": "contrato",
+      "turnos": [
+        {
+          "elementos": [],
+          "pasada": 1,
+          "respuesta": {
+            "idioma": "es",
+            "texto": "acepto"
+          },
+          "resultado": "aceptada"
+        }
+      ]
+    },
+    {
+      "ejemplo": {
+        "en": "“20 for testing and 200 in full, in sessions of 20, with sonnet through the subscription.”",
+        "es": "«20 de prueba y 200 completos, en sesiones de 20, con sonnet por la suscripción.»"
+      },
+      "estado": "aceptada",
+      "id": "P14",
+      "obligatoria": false,
+      "pregunta": {
+        "en": "How many cases are in the test batch and the full one, how many per session, and with which model?",
+        "es": "¿Cuántos casos tiene el lote de prueba y el completo, de a cuántos se corren y con qué modelo?"
+      },
+      "seccion": "lotes",
+      "turnos": [
+        {
+          "elementos": [],
+          "pasada": 1,
+          "respuesta": {
+            "idioma": "es",
+            "texto": "ok"
+          },
+          "resultado": "aceptada"
+        }
+      ]
+    }
+  ],
+  "proveedor": "simulado",
+  "senales_derivadas": [
+    {
+      "leida_por": [
+        "C5"
+      ],
+      "senal": "extraccion_exacta"
+    }
+  ]
+}
