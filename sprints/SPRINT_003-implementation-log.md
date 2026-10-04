@@ -194,19 +194,76 @@ La tercera pregunta (¿puede fallar siquiera?):
 - la de V5 necesitaba una prueba propia (un recorrido sin su último o su primer paso). La carnada de «pasos sin
   unión» no la cubría.
 
-### CI del PR #14 sobre `be317ef` y LCP de `/es/agente` (por medir antes de cerrar la fase 0)
+### CI del PR #14 y LCP de `/es/agente`: diagnóstico y arreglo
 
-`quality`, `e2e` y `python` quedaron en `success`. **`lighthouse` quedó en rojo:**
-- `/es/agente` dio un LCP de 2.631 ms contra 2.500 (`lhci assert` de presupuestos);
-- `lighthouse-margen` no llegó a correr, porque el paso se cortó antes;
-- en la colección local del S2, `/es/agente` daba 2.105 ms. Parece el mismo modo alto bimodal del ADR-011, ahora
-  en otra página.
+Sobre `be317ef` y sobre `f5280ff`, `quality`, `e2e` y `python` quedaron en `success`, y **`lighthouse` en rojo**:
+- en las tres corridas de cada push, `/es/agente` dio 2.627–2.634 ms de LCP contra 2.500;
+- no era bimodal: las tres corridas coinciden.
 
-Lo único de `be317ef` que viaja a todas las páginas es `src/lib/sentry-evento.ts`. **Antes de cerrar la fase 0:**
-- medir en local `/es/agente` con y sin esa importación (`lhci collect` en el puerto 3007, 3 corridas, luego
-  `lhci assert` + `lighthouse-margen`);
-- si no es la importación, es la deuda del LCP de la fase 4: se le reporta al usuario con las cifras, sin cambiar
-  presupuestos.
+**Diagnóstico:**
+1. **A/B local**, con la importación y sin ella, 12 corridas alternadas por variante en el puerto 3007: medianas de
+   2.176 y 2.182 ms. Las corridas altas salen en las dos variantes (2.611 · 2.471 y 3.139), así que en local no se
+   distinguen. La diferencia entre los dos builds es de 106 bytes (33 comprimidos) en un pedazo compartido.
+2. **Se relanzó solo el job `lighthouse` de `main` (`0190a62`): pasó.** Con el mismo runner del día, `main` cumple y
+   la rama no. Lo único de la rama que llega a todas las páginas es la importación **estática** de
+   `src/lib/sentry-evento.ts` en `instrumentation-client.ts`. El plan aprobado decía ponerla dentro de la importación
+   dinámica; la fase 0 la dejó estática por error.
+3. **Arreglo** (`9c1c5a6`):
+   - la limpieza llega con Sentry, detrás de `if (dsn)` (`Promise.all` de las dos importaciones);
+   - sin DSN, el pedazo de 335 bytes de `sentry-evento` ya no lo carga ninguna página;
+   - **resultado: los 4 checks en `success`, `lighthouse` incluido.**
+   - Guarda nueva en `sentry-evento.test.ts`: `instrumentation-client.ts` no lleva importaciones estáticas. Demo en
+     rojo con `demo-rojo.sh`: se reinserta `import { limpiarEvento } …` arriba → «expected '// Sentry client-only…'
+     not to match /^\s*import\s/m» → restaurado, 3/3.
+
+**Primera corrida de `lighthouse-margen` en CI** (no hay histórico con qué comparar). 6 avisos de LCP con margen menor
+al 10 %:
+
+| URL | Mediana | Presupuesto | Margen |
+|---|---|---|---|
+| `/es/agente` | 2.484 | 2.500 | 0,6 % |
+| `/es` | 2.393 | 2.500 | 4,3 % |
+| `/en` | 2.312 | 2.500 | 7,5 % |
+| `/es/fichas` | 2.314 | 2.500 | 7,5 % |
+| `/es/caso/A-004` | 2.309 | 2.500 | 7,6 % |
+| `/es/plan` | 2.294 | 2.500 | 8,2 % |
+
+Es la medición de partida de la deuda de LCP de la fase 4: ahí se mide y, si no alcanza, STOP con las cifras. No se
+cambió ningún presupuesto.
+
+### Plan v1.5 del A y su agente (paso 5)
+
+#### 5.1 · Plan de beneficios v2 y generador 1.1.0 (aprobación parcial)
+
+- **Plan de beneficios v2.0.0** (`data/plan-beneficios/demo-a-v2.json`, huella `aea5fe3a…`), con la enmienda
+  `scripts/enmienda-plan-beneficios-demo-a.ts` y su CLI `scripts/enmendar-plan-beneficios-demo-a.ts`. El v1.0.0 queda
+  intacto. El v2 trae:
+  - **topes por regla fija**: los servicios de imagen, diagnóstico y rehabilitación que requieren autorización y
+    cuestan entre 300 y U2 cubren el 70 % de su costo, redondeado hacia abajo a decenas;
+  - 6 servicios con tope: `SYN-P-001` 850→590, `-003` 600→420, `-016` 520→360, `-017` 350→240, `-019` 700→490 y
+    `-028` 480→330;
+  - **RB-08** («se aprueba hasta el tope y el excedente se niega; con el modo Texas, decide una persona»), y RB-07 ya
+    no dice «ninguna condición anterior».
+- **Esquema:**
+  - `tope_cobertura` opcional, solo en servicios que requieren autorización y siempre menor que el costo;
+  - `aprobar_parcial` entra a `DECISIONES`, `modo_texas` a los motivos y `normal_sobre_tope` a los subtipos.
+- **Generador 1.1.0:**
+  - con un plan de beneficios que trae topes, el subtipo `normal_sobre_tope` entra a la bolsa y a la garantía del
+    primer bloque;
+  - la verdad conocida decide `aprobar_parcial` cuando el costo pasa el tope;
+  - el motivo `modo_texas` se suma si U4 está encendido y la decisión no es `aprobar`;
+  - un «aprobable» nunca cae en un servicio con tope.
+  - **Sin topes, los bytes son los de la 1.0.0**: los tres lotes versionados se regeneran idénticos, y la prueba de
+    frescura sigue en verde.
+- **M-18 (lado TS):** `exigirTopeAltoCosto` lee el `tope_alto_costo` del plan de beneficios y exige que nombre el
+  umbral del costo estimado (U2). Si no, el lote no se genera.
+- **Pruebas:** `plan-beneficios-v2.test.ts` (6) y el ajuste de `generador.test.ts`. Hay 2.597 en verde.
+
+| Gate | Mutación | Rojo (a quién nombró) | Verde al restaurar |
+|---|---|---|---|
+| Deriva del plan de beneficios v2 | un tope 590 → 600 en el archivo | «es la enmienda del v1.0.0, sellada…» y «6 topes por la regla fija…» | 6/6 |
+| M-18, tope de alto costo leído | la condición de `exigirTopeAltoCosto` pasa a `if (false)` | «M-18: el tope de alto costo… tiene que ser el umbral del costo (U2)» | 6/6 |
+| Motivo `modo_texas` | `if (false && umbrales.U4)` | «siembra aprobaciones parciales que solo escalan con el modo Texas» | 6/6 |
 
 ## Desviación del plan
 

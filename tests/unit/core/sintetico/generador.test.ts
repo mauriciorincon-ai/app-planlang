@@ -15,6 +15,7 @@ import {
   generarLote,
   PROPORCIONES_POR_DEFECTO,
   RECETA_HUMO,
+  SUBTIPO_TOPE,
   textoEsperado,
   textoIntenta,
   umbralesDelPlan,
@@ -147,8 +148,11 @@ describe("lotes", () => {
 
   it("el lote de 200 cubre todo subtipo sorteable (inyección en orden adjunta y homónimo incluidos)", () => {
     const s = new Set(l200.casos.map((c) => c.subtipo));
+    // El subtipo de tope solo existe con un plan de beneficios que declara topes (v2; ver plan-beneficios-v2.test.ts).
     for (const sub of SUBTIPOS)
-      if (CATALOGO[sub].peso > 0) expect(s.has(sub), sub).toBe(true);
+      if (CATALOGO[sub].peso > 0 && sub !== SUBTIPO_TOPE)
+        expect(s.has(sub), sub).toBe(true);
+    expect(s.has(SUBTIPO_TOPE)).toBe(false);
   });
 
   it("la receta de humo: normal · empate en U1 y U2 · inyección con negación", () => {
