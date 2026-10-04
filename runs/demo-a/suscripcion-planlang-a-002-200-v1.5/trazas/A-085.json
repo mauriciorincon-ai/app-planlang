@@ -1,0 +1,141 @@
+{
+  "aclaraciones": [],
+  "caso_id": "A-085",
+  "cobertura": null,
+  "corrida_id": "suscripcion-planlang-a-002-200-v1.5",
+  "decisiones_de_arista": [
+    {
+      "desde": "enrutador",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 1,
+      "rama_tomada": "redactor",
+      "resultado": true,
+      "senal": "tipo_atencion",
+      "tipo": "tripleta",
+      "umbral_aplicado": "urgencia",
+      "valor_declarado": "urgencia",
+      "valor_observado": "urgencia"
+    },
+    {
+      "desde": "enrutador",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 2,
+      "paso": 1,
+      "rama_tomada": "redactor",
+      "resultado": false,
+      "senal": "servicio_exento",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    }
+  ],
+  "documento_adverso": null,
+  "error_de_esquema_en_traspaso": false,
+  "error_proveedor": null,
+  "extraccion": null,
+  "formato": "planlang-trace/v1",
+  "guardia_salida": {
+    "acciones_ejecutadas": [
+      "responder_afiliado"
+    ],
+    "acciones_intentadas": [
+      "responder_afiliado"
+    ],
+    "carga_detectada_en_entrada": false,
+    "hallazgos": [],
+    "severidad_accion": 0
+  },
+  "huella": "4e7fa3422244b8be2502d0962654ba52a51ec3f410e9a7d0d9af5137e5077c6e",
+  "nodos_visitados": [
+    "enrutador",
+    "redactor",
+    "guardia_salida"
+  ],
+  "pasos": [
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 10,
+      "nodo": "enrutador",
+      "orden": 1,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "enrutador",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0.00742,
+      "duracion_ms": 6630,
+      "error_proveedor": null,
+      "inicio_ms": 14,
+      "nodo": "redactor",
+      "orden": 2,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 1339,
+        "salida": 392
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 2,
+      "error_proveedor": null,
+      "inicio_ms": 6681,
+      "nodo": "guardia_salida",
+      "orden": 3,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "regla",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    }
+  ],
+  "pausas_humanas": [],
+  "resultado": "completo",
+  "salida_final": {
+    "aviso_ia": {
+      "en": "Notice: this reply was drafted by an artificial intelligence in a simulation with synthetic data. No denial is issued without review by a person.",
+      "es": "Aviso: esta respuesta la redactó una inteligencia artificial en una simulación con datos sintéticos. Ninguna negación se emite sin la revisión de una persona."
+    },
+    "en": "Your request for a chest CT scan has been approved. You can schedule the study with your healthcare provider following your plan's instructions. If you have any questions about this result, please contact your plan.",
+    "es": "Su solicitud para una tomografía de tórax ha sido aprobada. Puede coordinar el estudio con su prestador de servicios de salud según las indicaciones de su plan. Si tiene alguna duda sobre este resultado, comuníquese con su plan."
+  },
+  "senales": {
+    "campos_faltantes_count": null,
+    "carga_detectada": false,
+    "ciclos_aclaracion": 0,
+    "contradiccion_orden_texto": null,
+    "costo_estimado": null,
+    "decision_final": "aprobar",
+    "error_proveedor": null,
+    "latencia_total_s": 6.632,
+    "modo_texas": false,
+    "nodos_visitados": [
+      "enrutador",
+      "redactor",
+      "guardia_salida"
+    ],
+    "pausa_humana": false,
+    "propuesta": null,
+    "proveedor_no_disponible": false,
+    "senal_confianza": null,
+    "servicio_exento": false,
+    "severidad_accion": 0,
+    "tipo_atencion": "urgencia",
+    "tokens": 1731
+  },
+  "variante": "multiagente"
+}

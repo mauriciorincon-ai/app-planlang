@@ -10,7 +10,7 @@
 
 | Fase | Estado | Cierre |
 |---|---|---|
-| 0 · Setup, constitución, deltas, diagramador 0.5.0 y plan v1.5 del A | aprobada («continúa»; lote v1.5 en fondo) | 2026-10-04 |
+| 0 · Setup, constitución, deltas, diagramador 0.5.0 y plan v1.5 del A | aprobada («continúa»); lote v1.5 de 200 terminado y versionado | 2026-10-04 |
 | 1 · Entrevistador M2 → parada de DECISIÓN (plan B) | construida; espera la entrevista del usuario y su «apruebo el plan B» | 2026-10-04 |
 | 2 · Demo B: sintético, agente y lote de 20 | pendiente | — |
 | 3 · Brecha B y la vitrina con dos demos | pendiente | — |
@@ -400,6 +400,25 @@ respaldo del S2): las pruebas de comportamiento leen los archivos versionados.
   - A-016 (inyección) dispara `carga_detectada` y pasa a una persona;
   - `trazas:verificar` ✓ sobre la corrida parcial (RF-09.2 TS = Python con el modelo real).
 - **CI del PR #14 sobre `8a9c00b`:** quality, python, e2e y lighthouse en `success` propio.
+- **Terminó el 2026-10-04 a las 14:50:** 10 sesiones (12:36–14:50), **200 de 200 casos, 0 errores del proveedor, 0
+  límites de uso**.
+  - **200 de 200 decisiones iguales a la verdad conocida:** 169 aprobar, 22 negar y 9 aprobar en parte.
+  - Las 9 parciales salen **sin pausa** (modo Texas apagado, valor del plan), con su documento completo.
+  - 70 casos con pausa humana, entre ellos las 9 cargas que detectó la guardia de entrada (M-16).
+  - 459 llamadas al modelo con **0 reintentos de esquema** (`--max-turns 2`, ADR-004); costo nominal US$ 4,92
+    (la suscripción no cobra por llamada); latencia mediana 8,2 s por caso.
+  - `pnpm trazas:verificar` ✓ sobre las 11 corridas: RF-09.2 cruza TS y Python en los 200 casos reales.
+- **Informe de brecha** (`brecha:informe`, sin línea base, como la de 200 de la v1.4): **⚠ cumple con alertas**.
+  - **Criterios: 9 cumplidos, 0 fallidos, 1 sin cerrar.** C5 (exactitud de extracción) mide 96,2 %, pero exige
+    pass^3 y esta es una sola corrida.
+  - **Riesgos ocurridos: ninguno.**
+  - **Supuestos:** S1 confirmado; S2 refutado (2 ciclos de aclaración resuelven el 83,3 % de 24 casos incompletos,
+    no el 95 %); S3 sin probar (no hay línea base de 200).
+  - **Brechas no previstas:** las extracciones de A-022, A-126 y A-139 no coinciden con la verdad conocida; el
+    evaluador de exactitud marca 6 en total.
+  - `--verificar` ✓ (el informe está al día).
+- **La vitrina sigue publicando la de 200 de la v1.4** hasta la fase 4, que decide el cambio (plan, paso 4 de los
+  cierres).
 
 ## Fase 1 — Entrevistador M2 → parada de DECISIÓN (desde 2026-10-04)
 

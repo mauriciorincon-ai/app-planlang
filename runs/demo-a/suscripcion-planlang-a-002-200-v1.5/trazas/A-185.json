@@ -1,0 +1,545 @@
+{
+  "aclaraciones": [
+    {
+      "ciclo": 1,
+      "pregunta": "Para continuar con la solicitud de autorización de electromiografía, por favor indique el diagnóstico (con código CIE-10 si está disponible) que justifica el estudio y el costo estimado del procedimiento.",
+      "respuesta": "El paciente ya fue valorado."
+    },
+    {
+      "ciclo": 2,
+      "pregunta": "Para continuar con la solicitud de electromiografía, por favor indique el diagnóstico (con código CIE-10 si lo tiene) que justifica el estudio y el costo estimado del procedimiento.",
+      "respuesta": "El paciente ya fue valorado."
+    }
+  ],
+  "caso_id": "A-185",
+  "cobertura": null,
+  "corrida_id": "suscripcion-planlang-a-002-200-v1.5",
+  "decisiones_de_arista": [
+    {
+      "desde": "enrutador",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 1,
+      "rama_tomada": "extractor",
+      "resultado": false,
+      "senal": "tipo_atencion",
+      "tipo": "tripleta",
+      "umbral_aplicado": "urgencia",
+      "valor_declarado": "urgencia",
+      "valor_observado": "ambulatoria"
+    },
+    {
+      "desde": "enrutador",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 2,
+      "paso": 1,
+      "rama_tomada": "extractor",
+      "resultado": false,
+      "senal": "servicio_exento",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    },
+    {
+      "desde": "extractor",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 2,
+      "rama_tomada": "aclaracion",
+      "resultado": false,
+      "senal": "proveedor_no_disponible",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    },
+    {
+      "desde": "extractor",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "mayor_que",
+      "orden_arista": 2,
+      "paso": 2,
+      "rama_tomada": "aclaracion",
+      "resultado": true,
+      "senal": "campos_faltantes_count",
+      "tipo": "tripleta",
+      "umbral_aplicado": 0,
+      "valor_declarado": 0,
+      "valor_observado": 2
+    },
+    {
+      "desde": "aclaracion",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 3,
+      "rama_tomada": "extractor",
+      "resultado": false,
+      "senal": "proveedor_no_disponible",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    },
+    {
+      "desde": "aclaracion",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": true,
+      "operador": "mayor_o_igual_que",
+      "orden_arista": 2,
+      "paso": 3,
+      "rama_tomada": "extractor",
+      "resultado": false,
+      "senal": "ciclos_aclaracion",
+      "tipo": "tripleta",
+      "umbral_aplicado": 2,
+      "valor_declarado": "umbral.U3",
+      "valor_observado": 0
+    },
+    {
+      "desde": "extractor",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 4,
+      "rama_tomada": "aclaracion",
+      "resultado": false,
+      "senal": "proveedor_no_disponible",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    },
+    {
+      "desde": "extractor",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "mayor_que",
+      "orden_arista": 2,
+      "paso": 4,
+      "rama_tomada": "aclaracion",
+      "resultado": true,
+      "senal": "campos_faltantes_count",
+      "tipo": "tripleta",
+      "umbral_aplicado": 0,
+      "valor_declarado": 0,
+      "valor_observado": 2
+    },
+    {
+      "desde": "aclaracion",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 5,
+      "rama_tomada": "extractor",
+      "resultado": false,
+      "senal": "proveedor_no_disponible",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    },
+    {
+      "desde": "aclaracion",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": true,
+      "operador": "mayor_o_igual_que",
+      "orden_arista": 2,
+      "paso": 5,
+      "rama_tomada": "extractor",
+      "resultado": false,
+      "senal": "ciclos_aclaracion",
+      "tipo": "tripleta",
+      "umbral_aplicado": 2,
+      "valor_declarado": "umbral.U3",
+      "valor_observado": 1
+    },
+    {
+      "desde": "extractor",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 6,
+      "rama_tomada": "aclaracion",
+      "resultado": false,
+      "senal": "proveedor_no_disponible",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    },
+    {
+      "desde": "extractor",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "mayor_que",
+      "orden_arista": 2,
+      "paso": 6,
+      "rama_tomada": "aclaracion",
+      "resultado": true,
+      "senal": "campos_faltantes_count",
+      "tipo": "tripleta",
+      "umbral_aplicado": 0,
+      "valor_declarado": 0,
+      "valor_observado": 2
+    },
+    {
+      "desde": "aclaracion",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 7,
+      "rama_tomada": "pausa_humana",
+      "resultado": false,
+      "senal": "proveedor_no_disponible",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    },
+    {
+      "desde": "aclaracion",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": true,
+      "operador": "mayor_o_igual_que",
+      "orden_arista": 2,
+      "paso": 7,
+      "rama_tomada": "pausa_humana",
+      "resultado": true,
+      "senal": "ciclos_aclaracion",
+      "tipo": "tripleta",
+      "umbral_aplicado": 2,
+      "valor_declarado": "umbral.U3",
+      "valor_observado": 2
+    }
+  ],
+  "documento_adverso": null,
+  "error_de_esquema_en_traspaso": false,
+  "error_proveedor": null,
+  "extraccion": {
+    "campos": {
+      "costo_estimado": null,
+      "diagnostico": null,
+      "procedimiento": "SYN-P-021",
+      "urgencia": false
+    },
+    "campos_faltantes": [
+      "diagnostico",
+      "costo_estimado"
+    ],
+    "confianza": 0.85,
+    "costo_estimado": null,
+    "urgencia": false
+  },
+  "formato": "planlang-trace/v1",
+  "guardia_salida": {
+    "acciones_ejecutadas": [
+      "responder_afiliado"
+    ],
+    "acciones_intentadas": [
+      "responder_afiliado"
+    ],
+    "carga_detectada_en_entrada": false,
+    "hallazgos": [],
+    "severidad_accion": 0
+  },
+  "huella": "2191e86f91b0947ed5514fa8a024b6c77e5d03ead33d4bd219f2aaff2f94a4fe",
+  "nodos_visitados": [
+    "enrutador",
+    "extractor",
+    "aclaracion",
+    "extractor",
+    "aclaracion",
+    "extractor",
+    "aclaracion",
+    "pausa_humana",
+    "redactor",
+    "guardia_salida"
+  ],
+  "pasos": [
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 24,
+      "nodo": "enrutador",
+      "orden": 1,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "enrutador",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0.015281,
+      "duracion_ms": 3444,
+      "error_proveedor": null,
+      "inicio_ms": 25,
+      "nodo": "extractor",
+      "orden": 2,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 4013,
+        "salida": 304
+      }
+    },
+    {
+      "costo_nominal_usd": 0.004967,
+      "duracion_ms": 2862,
+      "error_proveedor": null,
+      "inicio_ms": 3472,
+      "nodo": "aclaracion",
+      "orden": 3,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 1154,
+        "salida": 124
+      }
+    },
+    {
+      "costo_nominal_usd": 0.015074,
+      "duracion_ms": 3258,
+      "error_proveedor": null,
+      "inicio_ms": 6337,
+      "nodo": "extractor",
+      "orden": 4,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 4026,
+        "salida": 280
+      }
+    },
+    {
+      "costo_nominal_usd": 0.004932,
+      "duracion_ms": 3098,
+      "error_proveedor": null,
+      "inicio_ms": 9598,
+      "nodo": "aclaracion",
+      "orden": 5,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 1154,
+        "salida": 121
+      }
+    },
+    {
+      "costo_nominal_usd": 0.015142,
+      "duracion_ms": 3595,
+      "error_proveedor": null,
+      "inicio_ms": 12700,
+      "nodo": "extractor",
+      "orden": 6,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 4049,
+        "salida": 276
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 16299,
+      "nodo": "aclaracion",
+      "orden": 7,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 16304,
+      "nodo": "pausa_humana",
+      "orden": 8,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "pausa_humana",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0.006881,
+      "duracion_ms": 3939,
+      "error_proveedor": null,
+      "inicio_ms": 16305,
+      "nodo": "redactor",
+      "orden": 9,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 1336,
+        "salida": 339
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 20247,
+      "nodo": "guardia_salida",
+      "orden": 10,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "regla",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    }
+  ],
+  "pausas_humanas": [
+    {
+      "nodo": "pausa_humana",
+      "paso": 8,
+      "payload": {
+        "aclaraciones": [
+          {
+            "ciclo": 1,
+            "pregunta": "Para continuar con la solicitud de autorización de electromiografía, por favor indique el diagnóstico (con código CIE-10 si está disponible) que justifica el estudio y el costo estimado del procedimiento.",
+            "respuesta": "El paciente ya fue valorado."
+          },
+          {
+            "ciclo": 2,
+            "pregunta": "Para continuar con la solicitud de electromiografía, por favor indique el diagnóstico (con código CIE-10 si lo tiene) que justifica el estudio y el costo estimado del procedimiento.",
+            "respuesta": "El paciente ya fue valorado."
+          }
+        ],
+        "cobertura": null,
+        "contraevidencia": [
+          {
+            "en": "Doubt about what a service covers is resolved in the member's favour (Law 1751, art. 8).",
+            "es": "La duda sobre el alcance de un servicio se resuelve a favor del afiliado (Ley 1751, art. 8)."
+          }
+        ],
+        "evidencia": [
+          {
+            "en": "Details still missing (diagnostico, costo_estimado) after 2 clarifications.",
+            "es": "Siguen faltando datos (diagnostico, costo_estimado) tras 2 aclaraciones."
+          }
+        ],
+        "extraccion": {
+          "campos": {
+            "costo_estimado": null,
+            "diagnostico": null,
+            "procedimiento": "SYN-P-021",
+            "urgencia": false
+          },
+          "campos_faltantes": [
+            "diagnostico",
+            "costo_estimado"
+          ],
+          "confianza": 0.85,
+          "costo_estimado": null,
+          "urgencia": false
+        },
+        "motivo": {
+          "desde": "aclaracion",
+          "en": "Edge 2 of aclaracion: ciclos_aclaracion (2) at least umbral.U3 (2).",
+          "es": "Arista 2 de aclaracion: ciclos_aclaracion (2) mayor o igual que umbral.U3 (2).",
+          "orden_arista": 2
+        },
+        "orden_adjunta": {
+          "codigo_procedimiento": "SYN-P-021",
+          "observaciones": {
+            "en": "Order signed by the treating doctor.",
+            "es": "Orden firmada por el médico tratante."
+          },
+          "tipo_atencion": "ambulatoria"
+        },
+        "senal": "ciclos_aclaracion",
+        "texto_original": {
+          "en": "Authorisation request. 39-year-old woman. No relevant history. Request: Electromyography. Sincerely, treating doctor.",
+          "es": "Solicitud de autorización. Paciente mujer de 39 años. Sin antecedentes relevantes. Se solicita: Electromiografía. Cordialmente, médico tratante."
+        },
+        "umbral": {
+          "aplicado": 2,
+          "declarado": "umbral.U3"
+        }
+      },
+      "respuesta_simulada": {
+        "decision": "aprobar",
+        "politica": "sigue_verdad_conocida"
+      },
+      "rol": "auditor"
+    }
+  ],
+  "resultado": "completo",
+  "salida_final": {
+    "aviso_ia": {
+      "en": "Notice: this reply was drafted by an artificial intelligence in a simulation with synthetic data. No denial is issued without review by a person.",
+      "es": "Aviso: esta respuesta la redactó una inteligencia artificial en una simulación con datos sintéticos. Ninguna negación se emite sin la revisión de una persona."
+    },
+    "en": "Your request for an electromyography (SYN-P-021) has been approved after review by a person. You can coordinate the study with your healthcare provider. If you have questions about the process, you can contact your health plan.",
+    "es": "Su solicitud para una electromiografía (SYN-P-021) fue aprobada después de la revisión de una persona. Puede coordinar la realización del estudio con su prestador de salud. Si tiene dudas sobre el proceso, puede contactar a su plan de salud."
+  },
+  "senales": {
+    "campos_faltantes_count": 2,
+    "carga_detectada": false,
+    "ciclos_aclaracion": 2,
+    "contradiccion_orden_texto": null,
+    "costo_estimado": null,
+    "decision_final": "aprobar",
+    "error_proveedor": null,
+    "latencia_total_s": 20.196,
+    "modo_texas": false,
+    "nodos_visitados": [
+      "enrutador",
+      "extractor",
+      "aclaracion",
+      "extractor",
+      "aclaracion",
+      "extractor",
+      "aclaracion",
+      "pausa_humana",
+      "redactor",
+      "guardia_salida"
+    ],
+    "pausa_humana": true,
+    "propuesta": null,
+    "proveedor_no_disponible": false,
+    "senal_confianza": 0.85,
+    "servicio_exento": false,
+    "severidad_accion": 0,
+    "tipo_atencion": "ambulatoria",
+    "tokens": 17176
+  },
+  "variante": "multiagente"
+}
