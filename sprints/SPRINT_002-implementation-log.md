@@ -1683,6 +1683,14 @@ homepage sigue apuntando al repo.
 
   Después de ese merge, el #9 se regenera (sin lucide) y lleva su entrada de `why-is-node-running`; tras mergearlo,
   el PR siguiente vacía la lista otra vez.
+- **PR #11 mergeado** (`70ec192`). Al leer la configuración nueva, dependabot cerró el #9 («no longer being
+  updated») y abrió el **#12** con 6 actualizaciones, sin lucide: `@sentry/nextjs` 11.1.0, `next` y
+  `eslint-config-next` 16.3.8, `vitest` y `@vitest/coverage-v8` 5.0.3, `ajv` 8.20.0. La salida de
+  `pnpm install --frozen-lockfile` coincidió con esas 6 subidas, sin ninguna directa por debajo. Se le sumó el commit
+  `f08782e` con la entrada de `why-is-node-running` 3.2.2 → 3.2.1; el job `quality` completo pasó en local
+  (2556 + 1 saltada), y en la CI los cuatro checks salieron en `success`. Mergeado por el usuario (`b88cc43`).
+- **PR siguiente (`sprint-002/vaciar-degradaciones`):** la lista vuelve a `[]`. Sobre `main`, `verificar-dependencias`
+  salía «tiene entradas que ya no aplican; bórralas: why-is-node-running 3.2.2 → 3.2.1»; con el cambio, en verde.
 
 ## Desviación del plan
 

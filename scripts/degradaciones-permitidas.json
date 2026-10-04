@@ -1,8 +1,1 @@
-[
-  {
-    "nombre": "why-is-node-running",
-    "de": "3.2.2",
-    "a": "3.2.1",
-    "razon": "vitest 5.0.3 la fija exacta en 3.2.1 (la 5.0.2 pedía ^3.2.1); sin aviso de seguridad sobre ninguna de las dos (PR #12 de dependabot)"
-  }
-]
+[]
