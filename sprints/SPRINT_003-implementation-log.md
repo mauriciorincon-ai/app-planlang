@@ -11,7 +11,7 @@
 | Fase | Estado | Cierre |
 |---|---|---|
 | 0 · Setup, constitución, deltas, diagramador 0.5.0 y plan v1.5 del A | aprobada («continúa»); lote v1.5 de 200 terminado y versionado | 2026-10-04 |
-| 1 · Entrevistador M2 → parada de DECISIÓN (plan B) | construida; entrevista corrida por delegación; espera «apruebo el plan B» | 2026-10-04 |
+| 1 · Entrevistador M2 → parada de DECISIÓN (plan B) | cerrada: plan B aprobado («apruebo el plan B») | 2026-10-04 |
 | 2 · Demo B: sintético, agente y lote de 20 | pendiente | — |
 | 3 · Brecha B y la vitrina con dos demos | pendiente | — |
 | 4 · Cierres de ciclo | pendiente | — |
@@ -593,8 +593,12 @@ respaldo del S2): las pruebas de comportamiento leen los archivos versionados.
      umbral de confirmación 0,8, contrato de 9 nodos; el código sumó `extraccion_correcta` e
      `inyeccion_neutralizada` a las señales obligatorias.
 - **Salida:** `plans/demo-b/{v0-borrador.json, transcripcion.json, contradicciones.json, revision.es.md,
-  revision.en.md}` (versionados). **Esperando «apruebo el plan B»** del usuario; entonces `pnpm plan:aprobar
-  --demo b --por "Mauricio Rincón" --el <fecha>` escribe `v1.json`.
+  revision.en.md}` (versionados).
+- **Aprobado.** El usuario escribió «apruebo el plan B» el 2026-10-04, después de recibir el resumen del borrador y
+  la ruta de `revision.es.md`. `pnpm plan:aprobar --demo b --por "Mauricio Rincón" --el 2026-10-04` volvió a
+  validar (M1 acepta, 0 contradicciones, 0 pendientes) y escribió **`plans/demo-b/v1.json`**: `plan-demo-b`
+  v1.0.0, huella `0cd6590ccbbb611091bf7acbd369874aa33fc7df95474c8c16f0f0beb9bb86dd`. `pnpm plan:validar
+  --verificar` ✓. Desde aquí existe el agente B (fase 2).
 
 ## Desviación del plan
 
@@ -667,6 +671,7 @@ respaldo del S2): las pruebas de comportamiento leen los archivos versionados.
 
 | Fecha | Mirada | Clase | Artefacto | Veredicto del usuario (textual) | Qué se construyó encima |
 |---|---|---|---|---|---|
+| 2026-10-04 | 1 · plan del demo B | DECISIÓN | `plans/demo-b/revision.es.md` (borrador de la entrevista corrida por delegación: «corre la entrevista con tus respuestas») | «apruebo el plan B» | `plans/demo-b/v1.json` (huella `0cd6590c…`); la fase 2 arranca sobre él |
 
 ## Bugs y fricciones
 
