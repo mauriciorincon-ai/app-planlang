@@ -12,8 +12,8 @@
 |---|---|---|
 | 0 · Setup, constitución, deltas, diagramador 0.5.0 y plan v1.5 del A | aprobada («continúa»); lote v1.5 de 200 terminado y versionado | 2026-10-04 |
 | 1 · Entrevistador M2 → parada de DECISIÓN (plan B) | cerrada: plan B aprobado («apruebo el plan B») | 2026-10-04 |
-| 2 · Demo B: sintético, agente y lote de 20 | construida: lote real de 20 (20/20 decisiones, 20/20 extracciones) y línea base con un defecto de prompt declarado; espera «continúa» y la decisión sobre volver a correr la línea base | 2026-10-04 |
-| 3 · Brecha B y la vitrina con dos demos | pendiente | — |
+| 2 · Demo B: sintético, agente y lote de 20 | aprobada («continúa»); la línea base se volvió a correr con el prompt corregido (decisión del usuario: «Correrla») | 2026-10-04 |
+| 3 · Brecha B y la vitrina con dos demos | en construcción | — |
 | 4 · Cierres de ciclo | pendiente | — |
 
 ## Decisiones previas a construir
@@ -667,16 +667,18 @@ nacionalidad) acertaría lo que hace el investigador.
 
 ### Pruebas y resultados
 
-- vitest: **124 archivos, 2.955 pruebas en verde** (cobertura del núcleo 97,6 %). Nuevos: `similitud.test.ts`
+- vitest: **124 archivos, 3.007 pruebas en verde** al cerrar la fase (cobertura del núcleo 97,6 %; la cifra de 2.955
+  era la del primer commit de la fase). Nuevos: `similitud.test.ts`
   (valores publicados de Jaro-Winkler), `reglas.test.ts` (permutación de nombres), `generador.test.ts` (regenera el
   lote), `casos-versionados-b.test.ts` (frescura), `traza-demo-b.test.ts` (contrato Python → TS), carnada B del gate
   de identificadores.
-- pytest: **211 pruebas en verde, cobertura 96,5 %** (venía de 74 % con el B sin pruebas). `test_demo_b.py` (21):
+- pytest: **212 pruebas en verde al cerrar la fase (211 en el primer commit), cobertura 96,5 %** (venía de 74 % con el B sin pruebas). `test_demo_b.py` (21):
   contrato del grafo, corrida versionada idéntica, investigador solo desde U4, el lote de 20 decide lo que dice la
   verdad, expediente con versión y fecha de cada lista, homónimo resuelto sin persona, el oficial corrige al
   investigador, las dos carnadas de arquitectura, inyección, datos de terceros, respuesta sin identificadores, guardia,
   gate TS↔Python, permutación, línea base de una llamada, medición del arnés, lote sin sus listas, CLI.
-- `pnpm trazas:verificar`: 13 corridas ✓ (las 11 del A y las 2 del B: huellas, esquema, umbrales del plan, RF-09.2).
+- `pnpm trazas:verificar`: 15 corridas ✓ al cerrar la fase (las 11 del A y las 4 del B: huellas, esquema, umbrales del
+  plan, RF-09.2).
 - Job `quality` completo en local: typecheck, lint, test, trazas, build, `verificar-export`, `diagrama:verificar`,
   `pnpm audit` (1 alta ignorada: `braces`, ADR-015), `verificar-dependencias`, `pnpm peers check`; ruff, pytest y
   `pip-audit --skip-editable` en `agents/`.
@@ -732,6 +734,67 @@ llamada.
   `titular_actividad`, un campo de documento que exige `SYN-`. No son identificadores reales: en los campos del B
   se acepta un nombre entero del diccionario cerrado; uno de fuera sigue en rojo (carnada y D21e).
 - `pnpm trazas:verificar` ✓ sobre las cuatro corridas del B.
+
+## Fase 3 — Brecha B y la vitrina con dos demos (desde 2026-10-04, tras «continúa»)
+
+### Línea base corregida (decisión del usuario: «Correrla (Recomendado)», 2026-10-04)
+
+`runs/demo-b/suscripcion-planlang-b-001-20-base-v2` (una sesión, 2 s entre casos, sin errores ni límites; LangSmith sin
+clave): **20/20 decisiones = verdad, 20/20 extracciones exactas (C5)**, 11 pausas, 20 llamadas, US$0,454 nominales. Con
+el prompt corregido (D33) el agente único extrae igual que el multiagente: el 1/20 de la primera línea base era el
+defecto del builder, no de la arquitectura. La primera (`-base`) queda versionada tal como corrió.
+
+### Verificador para el B (M-20) y plan B v1.1 (M-25)
+
+- **Lector por demo:** `core/sintetico/de-demo.ts` (`LoteDeDemo`, `CasoDeDemo`, `esquemaDeLote`, `mundoDe`,
+  `casosPorId`); `leerEntrada` valida el lote con el esquema de su demo; el contexto de las reglas usa el caso común.
+- **M-20, registro de evaluadores por dominio** (`core/brecha/evaluadores.ts`): las reglas del A salen de
+  `brechas-no-previstas.ts` sin cambiar un carácter; el B declara `pausas_cumplidas` (escalar ⇒ pausa; `rechazar` ⇒
+  pausa), `expediente_con_cita` (`conclusiones_sin_cita == 0`, atribuida al redactor) e `inyeccion_neutralizada`
+  (atribuida al enrutador, la guardia de entrada). Un dominio sin registro deja sus evaluadores «sin implementación».
+  Antes del registro, el informe B medía `pausas_cumplidas` con la regla del A (20 casos no evaluables: no existe
+  `modo_texas`) y decía «sin implementación» para `expediente_con_cita`.
+- **Casos ejemplares:** la severidad de acción se lee de la señal (A) o del registro de la guardia de salida (B); el
+  informe nombra los ataques del B (transliteración, documentos contradictorios).
+- **Tres huecos del plan B v1, encontrados al medirlo** (el v1 se aprobó con ellos y M1 no los ve):
+  1. 24 textos solo en español (opciones de D1, D3 y D4; mitigaciones de R1–R4), heredados de la plantilla;
+  2. S1 declara su mínimo con una clave que el verificador no decide (`proporcion_homonimos_resueltos_bien`): queda
+     «sin probar» aunque se midió 1 de 1;
+  3. ningún supuesto compara el multiagente con la línea base que el contrato exige (regla dura 10).
+  **Decisión del usuario (2026-10-04, AskUserQuestion): «v1.1 con los tres (Recomendado)»** → `plans/demo-b/v1.1.json`
+  (huella `30728d94…`), por `scripts/enmendar-plan-demo-b.ts` (función pura `enmendarBV11`, reproducida por test):
+  inglés de los 24 textos (el español del v1, palabra por palabra), S1 con `tasa_min: 0.8` (mismo mínimo, misma
+  condición), S2 nuevo con la regla estricta que el usuario eligió para el A (no peor en exactitud ni en latencia, a un
+  presupuesto no mayor). `mismaVerdad(v1, v1.1)`: umbrales, contrato de grafo y criterios intactos, así que las
+  corridas del B valen (ADR-005). **La redacción en inglés la revisa el usuario al cierre de la fase; si la objeta, se
+  rehace.**
+- **El origen se corrige también** (para que la próxima entrevista no repita los huecos):
+  - tres contradicciones nuevas en `core/plan/contradicciones.ts`, que impiden aprobar sin `--con-contradicciones`:
+    `SOLO_UN_IDIOMA` (por elemento, con las rutas), `SUPUESTO_NO_DECIDIBLE` (claves de `umbral_confirmacion` que el
+    verificador no decide, o ninguna fuera de la línea base) y `SIN_LINEA_BASE` (el contrato exige línea base y ningún
+    supuesto la compara). Las familias y claves decidibles viven en `core/plan/supuesto-medible.ts`, que el verificador
+    también usa;
+  - `data/dominios/dom-financiero.json` (huella `0af3185f…`): opciones y mitigaciones bilingües y
+    `supuestos_sugeridos` con la línea base (ST1); el esquema de plantilla suma `supuestos_sugeridos` y el entrevistador
+    los propone en la sección de supuestos;
+  - regla 10 del prompt de redacción: las tres formas de `medible_en_trazas` que el verificador decide;
+  - entrevista simulada regenerada: la respuesta a P10 conserva la línea base y suma la hipótesis del investigador; la
+    opción elegida va en los dos idiomas. Sigue con una sola contradicción real (R4 sin criterio).
+- **Informe B (borrador, en el scratchpad hasta la vitrina):** con la v1.1 y la línea base corregida, **cumple con
+  alertas**: 6/6 criterios, ningún riesgo ocurrido, 3 evaluadores sin fallas; **S1 confirmado** (1 de 1, muestra
+  pequeña) y **S2 refutado**: misma exactitud (100 % y 100 %), latencia mediana 6,005 s frente a 5,868 s, y la línea base
+  gastó MÁS (US$0,454 frente a 0,293): la comparación no fue a igual presupuesto, y el informe lo dice.
+
+#### Demos en rojo (con `scripts/demo-rojo.sh`; todas restauradas y en verde)
+
+| # | Gate | Mutación | Rojo (quién lo nombró) |
+|---|---|---|---|
+| D34 | `SOLO_UN_IDIOMA` | el filtro busca números en vez de cadenas | `contradicciones.test.ts › rojo: textos en un solo idioma…` y `enmienda-b-v1-1.test.ts › el v1 trae los tres huecos…` |
+| D35 | `SUPUESTO_NO_DECIDIBLE` | ninguna clave es ajena | `contradicciones.test.ts › rojo: un supuesto que el verificador no sabe decidir…` y la de la v1.1 |
+| D36 | `SIN_LINEA_BASE` | la condición `&& false` | `contradicciones.test.ts › rojo: el contrato exige línea base…` y la de la v1.1 |
+| D37 | registro del B (M-20) | quitar `dom-financiero` del registro | `evaluadores.test.ts` (las tres) |
+| D38 | atribución por dominio | `expediente_con_cita` atribuida al extractor | `evaluadores.test.ts › una falla del B se atribuye a un nodo del B…` |
+| D39 | el dominio sale del plan | el registro se consulta siempre con `dom-salud` | `evaluadores.test.ts` (dos) |
 
 ## Desviación del plan
 
@@ -818,6 +881,10 @@ llamada.
     big-d S2; el mismo commit trae el kit v1.39.0 y un «delta v1.39.0 en 4 apps»). La orden del S3 fija el 0.5.0 y
     la fase 0 ya lo fijó: planlang sigue en 0.5.0 y lo declara en el lock (`planeadora_adelante`, con huella y
     decisión), que es lo que pide la prueba local de `contratos-lock.test.ts`. La migración la ordena la planeadora.
+24. **Plan B v1.1 dentro de la fase 3** (decisión del usuario, 2026-10-04): el plan de la sesión de planeación no
+    preveía enmendar el plan B; medirlo destapó tres huecos que el v1 aprobado traía (24 textos solo en español, un S1
+    que el verificador no decide, ninguna comparación con la línea base). La v1.1 es de solo medición y redacción; la
+    vitrina y el informe B se miden con ella. La plantilla y el entrevistador se corrigen en el mismo cambio.
 
 ## Registro de miradas
 

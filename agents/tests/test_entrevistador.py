@@ -101,12 +101,13 @@ def test_aceptar_no_llama_al_modelo_y_lo_obligatorio_no_se_acepta_incompleto() -
     t = r.transcripcion
     assert t is not None and t["llamadas_al_modelo"] == 0
     estados = {p["id"]: p["estado"] for p in t["preguntas"]}
-    # Las obligatorias con huecos (problema y flujo sin texto, decisiones abiertas, sin supuestos, umbrales
-    # sin valor) no se aceptan: se repreguntan con aviso y, sin más respuestas, quedan pendientes.
-    huecos = ("P01", "P03", "P04", "P05", "P06", "P07", "P10", "P12")
+    # Las obligatorias con huecos (problema y flujo sin texto, decisiones abiertas, umbrales sin valor) no se
+    # aceptan: se repreguntan con aviso y, sin más respuestas, quedan pendientes. Los supuestos ya traen la
+    # línea base que propone la plantilla (regla dura 10): aceptarla basta.
+    huecos = ("P01", "P03", "P04", "P05", "P06", "P07", "P12")
     assert sum("solo tú puedes llenar" in s for s in salidas) == len(huecos)
     assert all(estados[p] == "pendiente" for p in huecos)
-    assert estados["P02"] == estados["P08"] == estados["P13"] == "aceptada"
+    assert estados["P02"] == estados["P08"] == estados["P10"] == estados["P13"] == "aceptada"
 
 
 def test_sin_modelo_la_respuesta_queda_literal_y_lo_estructurado_pendiente() -> None:
@@ -141,7 +142,8 @@ def test_sin_modelo_la_respuesta_queda_literal_y_lo_estructurado_pendiente() -> 
         "motivo": "sin_modelo",
         "redaccion": {"es": "usuario", "en": "pendiente"},
     }
-    assert b["supuestos"] == []
+    # Sin modelo, lo estructurado no se toca: queda la línea base que propuso la plantilla.
+    assert [(s["id"], s["origen"]) for s in b["supuestos"]] == [("S1", "plantilla")]
 
 
 def test_un_fallo_del_proveedor_deja_la_respuesta_literal_con_su_motivo() -> None:

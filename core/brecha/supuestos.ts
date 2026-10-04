@@ -13,6 +13,10 @@ import { IDIOMAS, type TextoBilingue } from "../formatos/bilingue";
 import type { Traza } from "../formatos/traza";
 import type { Plan, Supuesto } from "../plan/esquema";
 import { esAristaTripleta } from "../plan/esquema";
+import {
+  familiaDeSupuesto,
+  TOLERANCIA_LINEA_BASE,
+} from "../plan/supuesto-medible";
 import { resolverValor } from "../playground/interprete";
 import {
   auroc,
@@ -389,7 +393,7 @@ export function respuestaInservible(t: Traza): boolean {
  * = cuántas veces la latencia mediana de la base se tolera. Sin claves declaradas rige la regla por defecto
  * («no peor»: 0 y 1), y el informe lo dice.
  */
-const TOLERANCIA = ["exactitud_dif_min", "latencia_mediana_razon_max"] as const;
+const TOLERANCIA = TOLERANCIA_LINEA_BASE;
 
 function reglaDeclarada(dif: number, razon: number): TextoBilingue {
   const margen = (i: "es" | "en") =>
@@ -579,13 +583,10 @@ export function evaluarSupuestos(
         comparacion: null,
         limitaciones: [],
       };
-    if (m.comparacion === "linea_base_agente_unico")
+    const familia = familiaDeSupuesto(m);
+    if (familia === "linea_base")
       return { ...cabecera, ...comparacion(s, vistas, base) };
-    if (
-      m.metricas.some(
-        (x) => x === "ece" || x === "auroc" || x === "curva_riesgo_cobertura",
-      )
-    )
+    if (familia === "calibracion")
       return { ...cabecera, ...calibracion(s, plan, vistas) };
     return { ...cabecera, ...tasa(s, plan, vistas, umbrales) };
   });

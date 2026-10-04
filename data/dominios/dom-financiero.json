@@ -287,12 +287,24 @@
       "id": "DT1",
       "opciones": [
         {
-          "contras": "la homonimia escapa",
-          "nombre": "solo las exactas"
+          "contras": {
+            "en": "namesakes slip through",
+            "es": "la homonimia escapa"
+          },
+          "nombre": {
+            "en": "exact matches only",
+            "es": "solo las exactas"
+          }
         },
         {
-          "nombre": "toda coincidencia en lista vinculante y toda aproximada sobre el umbral",
-          "pros": "Ley 1121 art. 20; AMLR 76(5)"
+          "nombre": {
+            "en": "every match on a binding list and every approximate match above the threshold",
+            "es": "toda coincidencia en lista vinculante y toda aproximada sobre el umbral"
+          },
+          "pros": {
+            "en": "Law 1121 art. 20; AMLR 76(5)",
+            "es": "Ley 1121 art. 20; AMLR 76(5)"
+          }
         }
       ],
       "pregunta": {
@@ -313,12 +325,24 @@
       "id": "DT2",
       "opciones": [
         {
-          "contras": "rechazo por homonimia sin persona: prohibido",
-          "nombre": "rechazar"
+          "contras": {
+            "en": "rejection for homonymy without a person: prohibited",
+            "es": "rechazo por homonimia sin persona: prohibido"
+          },
+          "nombre": {
+            "en": "reject",
+            "es": "rechazar"
+          }
         },
         {
-          "nombre": "cascada: reglas → modelo de contexto → oficial humano",
-          "pros": "reduce falsos positivos sin decidir solo"
+          "nombre": {
+            "en": "cascade: rules → context model → human officer",
+            "es": "cascada: reglas → modelo de contexto → oficial humano"
+          },
+          "pros": {
+            "en": "cuts false positives without deciding alone",
+            "es": "reduce falsos positivos sin decidir solo"
+          }
         }
       ],
       "pregunta": {
@@ -339,12 +363,24 @@
       "id": "DT3",
       "opciones": [
         {
-          "contras": "sin trazabilidad",
-          "nombre": "solo la decisión"
+          "contras": {
+            "en": "no traceability",
+            "es": "sin trazabilidad"
+          },
+          "nombre": {
+            "en": "the decision only",
+            "es": "solo la decisión"
+          }
         },
         {
-          "nombre": "entradas, reglas, versión de lista, salida y revisor",
-          "pros": "AMLR art. 77; OFAC Framework"
+          "nombre": {
+            "en": "inputs, rules, list version, output and reviewer",
+            "es": "entradas, reglas, versión de lista, salida y revisor"
+          },
+          "pros": {
+            "en": "AMLR art. 77; OFAC Framework",
+            "es": "AMLR art. 77; OFAC Framework"
+          }
         }
       ],
       "pregunta": {
@@ -362,12 +398,24 @@
       "id": "DT4",
       "opciones": [
         {
-          "contras": "inauditable; la especificación (RF-04b.3) lo prohíbe",
-          "nombre": "puntaje que propone el modelo"
+          "contras": {
+            "en": "cannot be audited; the specification (RF-04b.3) forbids it",
+            "es": "inauditable; la especificación (RF-04b.3) lo prohíbe"
+          },
+          "nombre": {
+            "en": "a score proposed by the model",
+            "es": "puntaje que propone el modelo"
+          }
         },
         {
-          "nombre": "puntaje por reglas declaradas: actividad, jurisdicción y coherencia entre ingresos y actividad",
-          "pros": "auditable; sin atributos protegidos (Ley 1581 art. 5)"
+          "nombre": {
+            "en": "a score from declared rules: activity, jurisdiction and consistency between income and activity",
+            "es": "puntaje por reglas declaradas: actividad, jurisdicción y coherencia entre ingresos y actividad"
+          },
+          "pros": {
+            "en": "auditable; no protected attributes (Law 1581 art. 5)",
+            "es": "auditable; sin atributos protegidos (Ley 1581 art. 5)"
+          }
         }
       ],
       "pregunta": {
@@ -389,7 +437,7 @@
     "en": "High risk by analogy (AI Act, Annex III 5(b)); EU AMLR 2024/1624 applies from 2027-07-10; Colombia: SARLAFT in force. Simulation on synthetic data.",
     "es": "Alto riesgo por analogía (AI Act, Anexo III 5(b)); AMLR (UE) 2024/1624 aplica desde 2027-07-10; Colombia: SARLAFT vigente. Simulación con datos sintéticos."
   },
-  "huella": "16bc8ab96ac7ede83109495779e5753c2f91895a5f4859bf06e43f7faa1c9b65",
+  "huella": "0af3185fc663edd3ae7d3e91bf555d186b061a830ca657313308824f39204185",
   "id": "dom-financiero",
   "nombre": {
     "en": "Financial · customer onboarding with due diligence",
@@ -676,9 +724,18 @@
       "id": "RT1",
       "mitigaciones": [
         {
-          "accion": "lista con versión y fecha; bloqueo + escalamiento obligatorio",
-          "efecto_esperado": "ocurrencia → 1",
-          "momento": "diseño"
+          "accion": {
+            "en": "list with version and date; mandatory block + escalation",
+            "es": "lista con versión y fecha; bloqueo + escalamiento obligatorio"
+          },
+          "efecto_esperado": {
+            "en": "occurrence → 1",
+            "es": "ocurrencia → 1"
+          },
+          "momento": {
+            "en": "design",
+            "es": "diseño"
+          }
         }
       ],
       "modo": {
@@ -708,9 +765,18 @@
       "id": "RT2",
       "mitigaciones": [
         {
-          "accion": "toda salida rechazar pasa por el oficial; investigador de contexto antes",
-          "efecto_esperado": "ocurrencia → 2",
-          "momento": "diseño"
+          "accion": {
+            "en": "every reject output goes to the officer; the context investigator comes first",
+            "es": "toda salida rechazar pasa por el oficial; investigador de contexto antes"
+          },
+          "efecto_esperado": {
+            "en": "occurrence → 2",
+            "es": "ocurrencia → 2"
+          },
+          "momento": {
+            "en": "design",
+            "es": "diseño"
+          }
         }
       ],
       "modo": {
@@ -739,9 +805,18 @@
       "id": "RT3",
       "mitigaciones": [
         {
-          "accion": "cada conclusión cita regla o coincidencia por código",
-          "efecto_esperado": "detección → 1",
-          "momento": "diseño"
+          "accion": {
+            "en": "each conclusion cites its rule or match, by code",
+            "es": "cada conclusión cita regla o coincidencia por código"
+          },
+          "efecto_esperado": {
+            "en": "detection → 1",
+            "es": "detección → 1"
+          },
+          "momento": {
+            "en": "design",
+            "es": "diseño"
+          }
         }
       ],
       "modo": {
@@ -770,9 +845,18 @@
       "id": "RT4",
       "mitigaciones": [
         {
-          "accion": "separación control/datos; puntuación por reglas, no por el modelo",
-          "efecto_esperado": "ocurrencia → 2",
-          "momento": "diseño"
+          "accion": {
+            "en": "control/data separation; scoring by rules, not by the model",
+            "es": "separación control/datos; puntuación por reglas, no por el modelo"
+          },
+          "efecto_esperado": {
+            "en": "occurrence → 2",
+            "es": "ocurrencia → 2"
+          },
+          "momento": {
+            "en": "design",
+            "es": "diseño"
+          }
         }
       ],
       "modo": {
@@ -781,6 +865,33 @@
       },
       "ocurrencia": 5,
       "severidad": 9
+    }
+  ],
+  "supuestos_sugeridos": [
+    {
+      "criticidad": "media",
+      "enunciado": {
+        "en": "The multi-agent does no worse than a single agent at no larger budget.",
+        "es": "El multiagente no rinde peor que un agente único a un presupuesto no mayor."
+      },
+      "estado": "sin_probar",
+      "id": "ST1",
+      "medible_en_trazas": {
+        "comparacion": "linea_base_agente_unico",
+        "metricas": [
+          "exactitud",
+          "latencia_mediana"
+        ],
+        "poblacion": "todos",
+        "umbral_confirmacion": {
+          "exactitud_dif_min": 0,
+          "latencia_mediana_razon_max": 1
+        }
+      },
+      "prueba_barata": {
+        "en": "Single-agent baseline on the same 20-case batch; compare accuracy and latency.",
+        "es": "Línea base de agente único sobre el mismo lote de 20; comparar exactitud y latencia."
+      }
     }
   ],
   "umbrales_sugeridos": [

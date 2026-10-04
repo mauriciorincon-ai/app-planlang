@@ -76,6 +76,65 @@ describe("contradicciones de un borrador", () => {
     ]);
   });
 
+  it("rojo: textos en un solo idioma, agrupados por elemento (regla 20, M-25)", () => {
+    const b = borrador() as unknown as {
+      decisiones: { opciones: Record<string, unknown>[] }[];
+      riesgos: { mitigaciones: Record<string, unknown>[] }[];
+      umbrales: Record<string, unknown>[];
+    };
+    b.decisiones[0]!.opciones[1]!.nombre = "solo en español";
+    b.decisiones[0]!.opciones[0]!.contras = "también";
+    b.riesgos[2]!.mitigaciones[0]!.accion = "una acción";
+    b.umbrales[1]!.unidad = "puntos";
+    const malos = contradicciones(b).filter(
+      (x) => x.codigo === "SOLO_UN_IDIOMA",
+    );
+    expect(malos.map((x) => x.elemento)).toEqual(["D1", "R3", "U2"]);
+    expect(malos[0]!.mensaje.es).toMatch(
+      /2 texto\(s\) en un solo idioma \(opciones\[0\]\.contras, opciones\[1\]\.nombre\)/,
+    );
+    expect(malos[2]!.mensaje.en).toMatch(/\(unidad\)/);
+  });
+
+  it("rojo: un supuesto que el verificador no sabe decidir (clave ajena o sin umbral)", () => {
+    const b = borrador();
+    const s2 = b.supuestos.find((s) => s.id === "S2")!;
+    s2.medible_en_trazas = {
+      metricas: ["proporcion_bien"],
+      poblacion: "todos",
+      condicion: "decision_final == verdad_conocida.decision",
+      umbral_confirmacion: { proporcion_bien: 0.8 },
+    };
+    const [c] = contradicciones(b).filter(
+      (x) => x.codigo === "SUPUESTO_NO_DECIDIBLE",
+    );
+    expect(c?.elemento).toBe("S2");
+    expect(c?.mensaje.es).toMatch(/proporcion_bien.*tasa_min, tasa_max/);
+    s2.medible_en_trazas.umbral_confirmacion = { tasa_min: 0.8 };
+    expect(codigos(b)).not.toContain("SUPUESTO_NO_DECIDIBLE:S2");
+    delete s2.medible_en_trazas.umbral_confirmacion;
+    expect(codigos(b)).toContain("SUPUESTO_NO_DECIDIBLE:S2");
+    // La línea base sin claves decide con la regla por defecto («no peor»): no es contradicción.
+    delete b.supuestos.find((s) => s.id === "S1")!.medible_en_trazas!
+      .umbral_confirmacion;
+    expect(codigos(b)).not.toContain("SUPUESTO_NO_DECIDIBLE:S1");
+  });
+
+  it("rojo: el contrato exige línea base y ningún supuesto la compara (regla dura 10)", () => {
+    const b = borrador();
+    b.supuestos = b.supuestos.filter((s) => s.id !== "S1");
+    expect(codigos(b)).toContain(
+      "SIN_LINEA_BASE:contrato_de_grafo.linea_base",
+    );
+    b.contrato_de_grafo.linea_base = {
+      ...b.contrato_de_grafo.linea_base!,
+      agente_unico: false,
+    };
+    expect(codigos(b)).not.toContain(
+      "SIN_LINEA_BASE:contrato_de_grafo.linea_base",
+    );
+  });
+
   it("lo pendiente: preguntas, umbrales sin valor y textos con la marca", () => {
     const b = borrador() as unknown as Record<string, unknown> & {
       umbrales: { valor_en_plan: unknown }[];

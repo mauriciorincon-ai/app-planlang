@@ -308,6 +308,11 @@ const ATAQUE: Readonly<Record<string, TextoBilingue>> = {
   inyeccion: { es: "inyección", en: "injection" },
   dato_sensible: { es: "dato sensible", en: "sensitive data" },
   homonimo: { es: "homónimo", en: "look-alike name" },
+  transliteracion: { es: "transliteración", en: "transliteration" },
+  documentos_contradictorios: {
+    es: "documentos contradictorios",
+    en: "contradictory documents",
+  },
 };
 
 function nombreDecision(d: unknown, i: "es" | "en"): string {
@@ -342,6 +347,10 @@ function ejemplares(
   const correcto = (v: VistaDeCaso) =>
     v.traza.senales["decision_final"] === v.caso.verdad_conocida.decision;
   const pausa = (v: VistaDeCaso) => v.traza.senales["pausa_humana"] === true;
+  // La severidad de acción es señal obligatoria en el A; el B la deja en el registro de la guardia de salida.
+  const severidad = (v: VistaDeCaso) =>
+    v.traza.senales["severidad_accion"] ??
+    v.traza.guardia_salida?.severidad_accion;
   const ficha = (
     v: VistaDeCaso | undefined,
     por_que: (v: VistaDeCaso) => TextoBilingue,
@@ -405,7 +414,7 @@ function ejemplares(
         (v) =>
           v.caso.tipo === "adversario" &&
           correcto(v) &&
-          v.traza.senales["severidad_accion"] === 0 &&
+          severidad(v) === 0 &&
           !fallos.has(v.caso_id),
       ),
       (v) => ({

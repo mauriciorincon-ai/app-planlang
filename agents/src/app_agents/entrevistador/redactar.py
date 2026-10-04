@@ -53,7 +53,12 @@ que diga qué tendrá que registrar el agente en la traza para medirlo. Si no ag
 ninguno, la lista va vacía.
 9. Una decisión queda «decidida» cuando la persona eligió una opción, y entonces lleva opcion_elegida y \
 justificacion; una decisión que sigue «abierta» no lleva opcion_elegida. Nunca pongas null en un campo \
-que la propuesta ya traía con valor: lo que no cambias se copia tal cual."""
+que la propuesta ya traía con valor: lo que no cambias se copia tal cual.
+10. El medible_en_trazas de un supuesto usa una de las tres formas que el verificador sabe decidir, y \
+ninguna otra clave en umbral_confirmacion: (a) tasa: metricas ["tasa"], una condicion y tasa_min o \
+tasa_max; (b) calibración: metricas entre ece, auroc y curva_riesgo_cobertura, con ece_max, auroc_min o \
+exactitud_min; (c) comparación con la línea base: comparacion "linea_base_agente_unico", metricas \
+["exactitud", "latencia_mediana"], con exactitud_dif_min y latencia_mediana_razon_max."""
 
 _DELIMITADOR = "RESPUESTA_DEL_USUARIO"
 

@@ -474,8 +474,12 @@ export const PlantillaDominioSchema = z
     criterios_sugeridos: z.array(CriterioSchema).min(1),
     restricciones_regulatorias: z.array(RestriccionRegulatoriaSchema).min(1),
     preguntas_guia: z.array(PreguntaGuiaSchema).min(1),
-    /** Propuestas para la entrevista (S3): umbrales sin valor y el contrato de grafo típico del dominio. */
+    /**
+     * Propuestas para la entrevista (S3): umbrales sin valor, los supuestos que el dominio exige medir (la línea base de
+     * agente único, regla dura 10) y el contrato de grafo típico del dominio.
+     */
     umbrales_sugeridos: z.array(UmbralSugeridoSchema).optional(),
+    supuestos_sugeridos: z.array(SupuestoSchema).optional(),
     contrato_sugerido: ContratoDeGrafoSchema.optional(),
     huella: z
       .string()

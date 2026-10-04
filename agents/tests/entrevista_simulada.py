@@ -68,10 +68,17 @@ def _b(es: str, en: str) -> dict[str, str]:
 
 
 def _decidir(dec: list[dict[str, Any]], did: str, elegida: str, es: str, en: str) -> list[dict[str, Any]]:
+    """Elige la opción cuyo nombre en español es `elegida`; la elegida va en los dos idiomas (regla 5)."""
     salida = copy.deepcopy(dec)
     for d in salida:
         if d["id"] == did:
-            d.update(estado="decidida", opcion_elegida=elegida, justificacion=_b(es, en), origen="usuario")
+            nombre = next(o["nombre"] for o in d["opciones"] if o["nombre"]["es"] == elegida)
+            d.update(
+                estado="decidida",
+                opcion_elegida=copy.deepcopy(nombre),
+                justificacion=_b(es, en),
+                origen="usuario",
+            )
     return salida
 
 
@@ -136,9 +143,11 @@ def _parche(pid: str, actual: Any) -> tuple[Any, list[dict[str, str]]]:
             "Auditable and with no protected attributes.",
         ), []
     if pid == "P10":
+        # La propuesta trae la línea base de la plantilla (S1); la respuesta suma la del investigador.
         return [
+            *actual,
             {
-                "id": "S1",
+                "id": "S2",
                 "enunciado": _b(
                     "La similitud de nombre sola da demasiados falsos positivos y necesita el investigador.",
                     "Name similarity alone gives too many false positives and needs the investigator.",
@@ -150,7 +159,7 @@ def _parche(pid: str, actual: Any) -> tuple[Any, list[dict[str, str]]]:
                 ),
                 "estado": "sin_probar",
                 "origen": "usuario",
-            }
+            },
         ], []
     if pid == "P11":
         nuevo = {

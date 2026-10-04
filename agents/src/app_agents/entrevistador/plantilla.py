@@ -16,7 +16,7 @@ from typing import Any
 from app_agents.canonico import leer_verificando
 from app_agents.plan import RAIZ_REPO
 
-_ID_TIPICO = re.compile(r"^([DRCU])T(\d+)$")
+_ID_TIPICO = re.compile(r"^([DRSCU])T(\d+)$")
 _REF_UMBRAL = re.compile(r"\bumbral\.UT(\d+)\b")
 
 # Lo que el código propone para los lotes (regla 6: de 20, espaciados, fuera de CI, por la suscripción).
@@ -40,7 +40,13 @@ def id_de_plan(id_tipico: str) -> str:
 
 
 def _ids_tipicos(plantilla: dict[str, Any]) -> set[str]:
-    claves = ("decisiones_tipicas", "riesgos_tipicos", "criterios_sugeridos", "umbrales_sugeridos")
+    claves = (
+        "decisiones_tipicas",
+        "riesgos_tipicos",
+        "supuestos_sugeridos",
+        "criterios_sugeridos",
+        "umbrales_sugeridos",
+    )
     return {e["id"] for k in claves for e in plantilla.get(k) or []}
 
 
@@ -72,7 +78,7 @@ def propuestas(plantilla: dict[str, Any]) -> dict[str, Any]:
         "flujo": [],
         "decisiones": _con_origen(p["decisiones_tipicas"], "plantilla"),
         "riesgos": _con_origen(p["riesgos_tipicos"], "plantilla"),
-        "supuestos": [],
+        "supuestos": _con_origen(p.get("supuestos_sugeridos") or [], "plantilla"),
         "criterios": p["criterios_sugeridos"],
         "umbrales": _con_origen(p.get("umbrales_sugeridos") or [], "plantilla"),
         "contrato": {**contrato, "origen": "plantilla"} if contrato else None,

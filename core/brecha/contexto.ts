@@ -6,7 +6,7 @@
 import type { TextoBilingue } from "../formatos/bilingue";
 import type { JsonValor } from "../formatos/jcs";
 import type { Traza } from "../formatos/traza";
-import type { Caso } from "../sintetico/esquema";
+import type { CasoDeDemo as Caso } from "../sintetico/de-demo";
 import {
   contextoDesdeObjeto,
   ErrorEvaluacion,
