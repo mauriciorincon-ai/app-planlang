@@ -31,7 +31,7 @@
     }
   },
   "formato": "planlang-trace/v1",
-  "huella": "9337b83f6f76026a409867c817ae23800616e78369de63f3194f95c5d36b3c02",
+  "huella": "aa1d312e9f494ba533c8b5ee3a450fa01d4732b2c9e97942610899cfcd29b36c",
   "listas": {
     "archivo": "data/listas/demo-b.json",
     "huella": "08445155c778d3b098b60e94a54618958e9f453725d76a6a9955e71393766753",
@@ -73,25 +73,25 @@
     {
       "archivo": "trazas/BH-001.json",
       "caso_id": "BH-001",
-      "huella": "5b0cec08104947d0adc67f01753f923b8fdad76462ed5711e630305eb3593f72",
+      "huella": "b139fb8a21b0a757181b308e114c2d8778c29ca513a6e6f79a1cf1595cee01c6",
       "resultado": "completo"
     },
     {
       "archivo": "trazas/BH-002.json",
       "caso_id": "BH-002",
-      "huella": "cfac128015d81dd3a8a557e3fb711b6edd37643ca62c4c1d8afbed2d94e94943",
+      "huella": "6fdbf89bb5f6420a89af8b6a5246d30841e3057eda066de3e006042268466349",
       "resultado": "completo"
     },
     {
       "archivo": "trazas/BH-003.json",
       "caso_id": "BH-003",
-      "huella": "482d24894f0faa654fb85ce87ffcbb9bc9ffe5b7f8fa02568a66a409e7a84b30",
+      "huella": "8599777dc4d42a5caa1cb54ce4e9e8efc07625289fa3c0c50fa342969e1a81c2",
       "resultado": "completo"
     },
     {
       "archivo": "trazas/BH-004.json",
       "caso_id": "BH-004",
-      "huella": "37a49ba52f064786432cca1b97139a2fb172b5c920978f6f07b99f82072780c2",
+      "huella": "f96e9afae14619cce1608ad83c9bb8a54ce4c99571cc77d73418c0fa08dd8b1f",
       "resultado": "completo"
     }
   ],

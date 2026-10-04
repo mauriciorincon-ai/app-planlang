@@ -33,5 +33,11 @@
       "que": "Erratas de la copia 0.5.0: el título de CONTRATO.md y los `title` de los dos esquemas dicen 0.4.0; V17 falta en la tabla del § 7; el texto de V3 solo nombra fuentes `https` (no la de `codigo`); `lineas` es opcional en el esquema de la fuente `codigo` aunque el § 3.3 la pide.",
       "fuente": "S3 desviación 6; packages/diagramador/contrato/ (copia fijada 2026-10-04)"
     }
-  ]
+  ],
+  "planeadora_adelante": {
+    "version": "0.6.0",
+    "sha256": "39f7b54b0afc64b0f99f00ab3b74cca955aa0523643bec49f37a054e92ed50a9",
+    "desde": "2026-10-04 (commit c8d3957 de la planeadora, G-Metodo del cierre de big-d S2)",
+    "decision": "La orden del S3 fija el diagramador 0.5.0 y la 0.6.0 llegó a mitad del sprint, después de la fase 0. planlang sigue en 0.5.0 hasta que la planeadora ordene la migración (una orden de sprint o el /cierre-sprint); adoptarla aquí cambiaría el alcance aprobado. Bitácora S3, desviación 23."
+  }
 }

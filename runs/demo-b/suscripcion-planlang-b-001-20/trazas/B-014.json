@@ -1,6 +1,6 @@
 {
   "aclaraciones": [],
-  "caso_id": "BH-003",
+  "caso_id": "B-014",
   "cobertura": null,
   "coincidencias": {
     "listas_consultadas": [
@@ -18,15 +18,15 @@
       }
     ],
     "mejor": {
-      "entrada_id": "LV-01-007",
+      "entrada_id": "LV-01-008",
       "exacta": true,
       "lista_id": "LV-01",
-      "nombre_listado": "Nikolai Quertal Tazurek",
+      "nombre_listado": "Yevgeni Vosgrane Karvane",
       "similitud": 1,
       "vinculante": true
     }
   },
-  "corrida_id": "simulado-humo-base",
+  "corrida_id": "suscripcion-planlang-b-001-20",
   "decisiones_de_arista": [
     {
       "desde": "verificador_listas",
@@ -36,7 +36,7 @@
       "operador": "mayor_o_igual_que",
       "orden_arista": 1,
       "paso": 3,
-      "rama_tomada": "puntaje",
+      "rama_tomada": "investigador",
       "resultado": true,
       "senal": "similitud_max",
       "tipo": "tripleta",
@@ -51,7 +51,7 @@
       "inclusivo": false,
       "operador": "igual_a",
       "orden_arista": 1,
-      "paso": 5,
+      "paso": 6,
       "rama_tomada": "pausa_humana",
       "resultado": false,
       "senal": "carga_detectada",
@@ -67,7 +67,7 @@
       "inclusivo": true,
       "operador": "mayor_o_igual_que",
       "orden_arista": 2,
-      "paso": 5,
+      "paso": 6,
       "rama_tomada": "pausa_humana",
       "resultado": true,
       "senal": "similitud_max",
@@ -83,7 +83,7 @@
       "inclusivo": false,
       "operador": "igual_a",
       "orden_arista": 3,
-      "paso": 5,
+      "paso": 6,
       "rama_tomada": "pausa_humana",
       "resultado": true,
       "senal": "conclusion_investigador",
@@ -99,14 +99,14 @@
       "inclusivo": true,
       "operador": "mayor_o_igual_que",
       "orden_arista": 4,
-      "paso": 5,
+      "paso": 6,
       "rama_tomada": "pausa_humana",
       "resultado": false,
       "senal": "puntaje_riesgo",
       "tipo": "tripleta",
       "umbral_aplicado": 60,
       "valor_declarado": "umbral.U2",
-      "valor_observado": 55
+      "valor_observado": 45
     },
     {
       "desde": "decision",
@@ -115,7 +115,7 @@
       "inclusivo": false,
       "operador": "mayor_que",
       "orden_arista": 5,
-      "paso": 5,
+      "paso": 6,
       "rama_tomada": "pausa_humana",
       "resultado": false,
       "senal": "inconsistencias",
@@ -131,7 +131,7 @@
       "inclusivo": false,
       "operador": "igual_a",
       "orden_arista": 6,
-      "paso": 5,
+      "paso": 6,
       "rama_tomada": "pausa_humana",
       "resultado": true,
       "senal": "propuesta",
@@ -198,7 +198,7 @@
   "error_de_esquema_en_traspaso": false,
   "error_proveedor": null,
   "expediente": {
-    "caso_id": "BH-003",
+    "caso_id": "B-014",
     "conclusiones": [
       {
         "cita": {
@@ -208,8 +208,8 @@
         "id": "K1",
         "tema": "identidad",
         "texto": {
-          "en": "Declared identity: Nikolai Quertal Tazurek, document SYN-ID-830915, born in 1950, nationality Tarnis Confederation.",
-          "es": "Identidad declarada: Nikolai Quertal Tazurek, documento SYN-ID-830915, nacido en 1950, nacionalidad Confederación de Tarnis."
+          "en": "Declared identity: Yevgeni Vosgrane Karvane, document SYN-ID-198288, born in 1952, nationality Brisal Commonwealth.",
+          "es": "Identidad declarada: Yevgeni Vosgrane Karvane, documento SYN-ID-198288, nacido en 1952, nacionalidad Mancomunidad de Brisal."
         }
       },
       {
@@ -219,27 +219,27 @@
             "id": "LV-01",
             "version": "2026.09"
           },
-          "ref": "LV-01-007",
+          "ref": "LV-01-008",
           "regla": "RL-01",
           "tipo": "coincidencia"
         },
         "id": "K2",
         "tema": "listas",
         "texto": {
-          "en": "The highest similarity with the lists is 1.0, with entry LV-01-007 of binding list LV-01 (version 2026.09, September 2026; RL-01).",
-          "es": "La mayor similitud con las listas es 1.0, con la entrada LV-01-007 de la lista vinculante LV-01 (versión 2026.09, de septiembre de 2026; RL-01)."
+          "en": "The highest similarity with the lists is 1.0, with entry LV-01-008 of binding list LV-01 (version 2026.09, September 2026; RL-01).",
+          "es": "La mayor similitud con las listas es 1.0, con la entrada LV-01-008 de la lista vinculante LV-01 (versión 2026.09, de septiembre de 2026; RL-01)."
         }
       },
       {
         "cita": {
-          "ref": "LV-01-007",
+          "ref": "LV-01-008",
           "tipo": "coincidencia"
         },
         "id": "K3",
         "tema": "investigacion",
         "texto": {
-          "en": "The context investigator concluded “same person” against LV-01-007: The year of birth and nationality do not rule out that this is the listed person.",
-          "es": "El investigador de contexto concluyó «misma persona» frente a LV-01-007: El año de nacimiento y la nacionalidad no permiten descartar que sea la persona de la lista."
+          "en": "The context investigator concluded “same person” against LV-01-008: The birth year (1952) and nationality (Mancomunidad de Brisal) match between the applicant and the listed person, and the name is identical. Nothing in the context rules out that they are the same person, so the case should go to a human officer for review.",
+          "es": "El investigador de contexto concluyó «misma persona» frente a LV-01-008: El año de nacimiento (1952) y la nacionalidad (Mancomunidad de Brisal) coinciden entre el solicitante y la persona de la lista, y el nombre es idéntico. Nada en el contexto permite descartar que sean la misma persona, así que el caso debe pasar a revisión de un oficial."
         }
       },
       {
@@ -262,8 +262,8 @@
         "id": "K5",
         "tema": "puntaje",
         "texto": {
-          "en": "Risk score 55 out of 100: activity SYN-ACT-09 (high, 40; RP-01), jurisdiction of the funds SYN-J-05 (medium, 15; RP-02), income consistency (consistent, 0; RP-03). Name and nationality do not count (RP-04).",
-          "es": "Puntaje de riesgo 55 de 100: actividad SYN-ACT-09 (alto, 40; RP-01), jurisdicción de los fondos SYN-J-05 (medio, 15; RP-02), coherencia de los ingresos (coherente, 0; RP-03). El nombre y la nacionalidad no entran (RP-04)."
+          "en": "Risk score 45 out of 100: activity SYN-ACT-03 (low, 0; RP-01), jurisdiction of the funds SYN-J-04 (medium, 15; RP-02), income consistency (inconsistent, 30; RP-03). Name and nationality do not count (RP-04).",
+          "es": "Puntaje de riesgo 45 de 100: actividad SYN-ACT-03 (bajo, 0; RP-01), jurisdicción de los fondos SYN-J-04 (medio, 15; RP-02), coherencia de los ingresos (incoherente, 30; RP-03). El nombre y la nacionalidad no entran (RP-04)."
         }
       },
       {
@@ -340,19 +340,19 @@
       "id": "plan-demo-b",
       "version": "1.0.0"
     },
-    "solicitud": "SYN-SOL-620923"
+    "solicitud": "SYN-SOL-643076"
   },
   "extraccion": {
     "campos": {
-      "actividad": "SYN-ACT-09",
-      "documento": "SYN-ID-830915",
-      "ingresos_mensuales": 73900,
-      "jurisdiccion_fondos": "SYN-J-05",
-      "nacimiento": 1950,
-      "nacionalidad": "SYN-J-05",
-      "nombre": "Nikolai Quertal Tazurek",
-      "titular_actividad": "SYN-ID-830915",
-      "titular_fondos": "Nikolai Quertal Tazurek"
+      "actividad": "SYN-ACT-03",
+      "documento": "SYN-ID-198288",
+      "ingresos_mensuales": 11200,
+      "jurisdiccion_fondos": "SYN-J-04",
+      "nacimiento": 1952,
+      "nacionalidad": "SYN-J-03",
+      "nombre": "Yevgeni Vosgrane Karvane",
+      "titular_actividad": "SYN-ID-198288",
+      "titular_fondos": "Yevgeni Vosgrane Karvane"
     },
     "campos_faltantes": []
   },
@@ -370,19 +370,20 @@
     "hallazgos": [],
     "severidad_accion": 0
   },
-  "huella": "8599777dc4d42a5caa1cb54ce4e9e8efc07625289fa3c0c50fa342969e1a81c2",
+  "huella": "1a7e342a95561c90a510ae71f37db64ee67b4e739c8663ed8e06006c5a776e03",
   "investigacion": {
     "conclusion": "misma_persona",
-    "entrada_id": "LV-01-007",
+    "entrada_id": "LV-01-008",
     "razones": {
-      "en": "The year of birth and nationality do not rule out that this is the listed person.",
-      "es": "El año de nacimiento y la nacionalidad no permiten descartar que sea la persona de la lista."
+      "en": "The birth year (1952) and nationality (Mancomunidad de Brisal) match between the applicant and the listed person, and the name is identical. Nothing in the context rules out that they are the same person, so the case should go to a human officer for review.",
+      "es": "El año de nacimiento (1952) y la nacionalidad (Mancomunidad de Brisal) coinciden entre el solicitante y la persona de la lista, y el nombre es idéntico. Nada en el contexto permite descartar que sean la misma persona, así que el caso debe pasar a revisión de un oficial."
     }
   },
   "nodos_visitados": [
     "enrutador",
-    "agente_unico",
+    "extractor",
     "verificador_listas",
+    "investigador",
     "puntaje",
     "decision",
     "pausa_humana",
@@ -392,9 +393,9 @@
   "pasos": [
     {
       "costo_nominal_usd": 0,
-      "duracion_ms": 1,
+      "duracion_ms": 0,
       "error_proveedor": null,
-      "inicio_ms": 0,
+      "inicio_ms": 3,
       "nodo": "enrutador",
       "orden": 1,
       "reintentos_esquema": 0,
@@ -405,24 +406,24 @@
       }
     },
     {
-      "costo_nominal_usd": 0,
-      "duracion_ms": 1,
+      "costo_nominal_usd": 0.012859,
+      "duracion_ms": 4361,
       "error_proveedor": null,
-      "inicio_ms": 2,
-      "nodo": "agente_unico",
+      "inicio_ms": 4,
+      "nodo": "extractor",
       "orden": 2,
       "reintentos_esquema": 0,
       "tipo_nodo": "modelo",
       "tokens": {
-        "entrada": 1291,
-        "salida": 141
+        "entrada": 2892,
+        "salida": 610
       }
     },
     {
       "costo_nominal_usd": 0,
       "duracion_ms": 1,
       "error_proveedor": null,
-      "inicio_ms": 4,
+      "inicio_ms": 4367,
       "nodo": "verificador_listas",
       "orden": 3,
       "reintentos_esquema": 0,
@@ -433,12 +434,26 @@
       }
     },
     {
-      "costo_nominal_usd": 0,
-      "duracion_ms": 1,
+      "costo_nominal_usd": 0.007931,
+      "duracion_ms": 3774,
       "error_proveedor": null,
-      "inicio_ms": 6,
-      "nodo": "puntaje",
+      "inicio_ms": 4369,
+      "nodo": "investigador",
       "orden": 4,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 1465,
+        "salida": 388
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 8145,
+      "nodo": "puntaje",
+      "orden": 5,
       "reintentos_esquema": 0,
       "tipo_nodo": "regla",
       "tokens": {
@@ -448,11 +463,11 @@
     },
     {
       "costo_nominal_usd": 0,
-      "duracion_ms": 1,
+      "duracion_ms": 0,
       "error_proveedor": null,
-      "inicio_ms": 8,
+      "inicio_ms": 8146,
       "nodo": "decision",
-      "orden": 5,
+      "orden": 6,
       "reintentos_esquema": 0,
       "tipo_nodo": "enrutador",
       "tokens": {
@@ -462,11 +477,11 @@
     },
     {
       "costo_nominal_usd": 0,
-      "duracion_ms": 1,
+      "duracion_ms": 0,
       "error_proveedor": null,
-      "inicio_ms": 11,
+      "inicio_ms": 8151,
       "nodo": "pausa_humana",
-      "orden": 6,
+      "orden": 7,
       "reintentos_esquema": 0,
       "tipo_nodo": "pausa_humana",
       "tokens": {
@@ -476,11 +491,11 @@
     },
     {
       "costo_nominal_usd": 0,
-      "duracion_ms": 1,
+      "duracion_ms": 0,
       "error_proveedor": null,
-      "inicio_ms": 13,
+      "inicio_ms": 8151,
       "nodo": "redactor",
-      "orden": 7,
+      "orden": 8,
       "reintentos_esquema": 0,
       "tipo_nodo": "regla",
       "tokens": {
@@ -492,9 +507,9 @@
       "costo_nominal_usd": 0,
       "duracion_ms": 1,
       "error_proveedor": null,
-      "inicio_ms": 15,
+      "inicio_ms": 8152,
       "nodo": "guardia_salida",
-      "orden": 8,
+      "orden": 9,
       "reintentos_esquema": 0,
       "tipo_nodo": "regla",
       "tokens": {
@@ -506,7 +521,7 @@
   "pausas_humanas": [
     {
       "nodo": "pausa_humana",
-      "paso": 6,
+      "paso": 7,
       "payload": {
         "coincidencias": {
           "listas_consultadas": [
@@ -524,18 +539,18 @@
             }
           ],
           "mejor": {
-            "entrada_id": "LV-01-007",
+            "entrada_id": "LV-01-008",
             "exacta": true,
             "lista_id": "LV-01",
-            "nombre_listado": "Nikolai Quertal Tazurek",
+            "nombre_listado": "Yevgeni Vosgrane Karvane",
             "similitud": 1,
             "vinculante": true
           }
         },
         "contraevidencia": [
           {
-            "en": "Risk score 55, below the escalation threshold (60).",
-            "es": "Puntaje de riesgo 55, bajo el umbral de escalamiento (60)."
+            "en": "Risk score 45, below the escalation threshold (60).",
+            "es": "Puntaje de riesgo 45, bajo el umbral de escalamiento (60)."
           },
           {
             "en": "The documents are consistent.",
@@ -544,34 +559,34 @@
         ],
         "documentos": {
           "actividad": {
-            "en": "Statement of economic activity. I build and sell residential buildings, and have done so for 4 years. My income is 73900 synthetic units a month. Signed with document SYN-ID-830915.",
-            "es": "Declaración de actividad económica. Construyo y vendo edificios de vivienda desde hace 4 años. Mis ingresos son de 73900 unidades sintéticas al mes. Firmo con el documento SYN-ID-830915."
+            "en": "Statement of economic activity. I grow vegetables on a family farm, and have done so for 11 years. My income is 11200 synthetic units a month. Signed with document SYN-ID-198288.",
+            "es": "Declaración de actividad económica. Cultivo hortalizas en una finca familiar desde hace 11 años. Mis ingresos son de 11200 unidades sintéticas al mes. Firmo con el documento SYN-ID-198288."
           },
           "fondos": {
-            "en": "Source-of-funds statement. The funds come from a loan from a relative in the Tarnis Confederation. Holder of the funds: Nikolai Quertal Tazurek.",
-            "es": "Declaración de origen de fondos. Los fondos vienen de un préstamo de un familiar en la Confederación de Tarnis. Titular de los fondos: Nikolai Quertal Tazurek."
+            "en": "Source-of-funds statement. The funds come from the sale of a property in the Duchy of Velmora. Holder of the funds: Yevgeni Vosgrane Karvane.",
+            "es": "Declaración de origen de fondos. Los fondos vienen de la venta de un inmueble en el Ducado de Velmora. Titular de los fondos: Yevgeni Vosgrane Karvane."
           },
           "identidad": {
-            "en": "Synthetic identity document SYN-ID-830915. Holder: Nikolai Quertal Tazurek. Year of birth: 1950. Nationality: Tarnis Confederation.",
-            "es": "Documento de identidad sintético SYN-ID-830915. Titular: Nikolai Quertal Tazurek. Año de nacimiento: 1950. Nacionalidad: Confederación de Tarnis."
+            "en": "Synthetic identity document SYN-ID-198288. Holder: Yevgeni Vosgrane Karvane. Year of birth: 1952. Nationality: Brisal Commonwealth.",
+            "es": "Documento de identidad sintético SYN-ID-198288. Titular: Yevgeni Vosgrane Karvane. Año de nacimiento: 1952. Nacionalidad: Mancomunidad de Brisal."
           }
         },
         "evidencia": [
           {
-            "en": "The name is 1.0 similar to “Nikolai Quertal Tazurek” (LV-01-007), on binding list LV-01.",
-            "es": "El nombre se parece 1.0 a «Nikolai Quertal Tazurek» (LV-01-007), de la lista vinculante LV-01."
+            "en": "The name is 1.0 similar to “Yevgeni Vosgrane Karvane” (LV-01-008), on binding list LV-01.",
+            "es": "El nombre se parece 1.0 a «Yevgeni Vosgrane Karvane» (LV-01-008), de la lista vinculante LV-01."
           },
           {
-            "en": "The year of birth (1950) matches.",
-            "es": "El año de nacimiento (1950) es el de la entrada."
+            "en": "The year of birth (1952) matches.",
+            "es": "El año de nacimiento (1952) es el de la entrada."
           },
           {
-            "en": "The nationality (SYN-J-05) matches.",
-            "es": "La nacionalidad (SYN-J-05) es el de la entrada."
+            "en": "The nationality (SYN-J-03) matches.",
+            "es": "La nacionalidad (SYN-J-03) es el de la entrada."
           },
           {
-            "en": "The investigator concluded “misma_persona”: The year of birth and nationality do not rule out that this is the listed person.",
-            "es": "El investigador concluyó «misma_persona»: El año de nacimiento y la nacionalidad no permiten descartar que sea la persona de la lista."
+            "en": "The investigator concluded “misma_persona”: The birth year (1952) and nationality (Mancomunidad de Brisal) match between the applicant and the listed person, and the name is identical. Nothing in the context rules out that they are the same person, so the case should go to a human officer for review.",
+            "es": "El investigador concluyó «misma_persona»: El año de nacimiento (1952) y la nacionalidad (Mancomunidad de Brisal) coinciden entre el solicitante y la persona de la lista, y el nombre es idéntico. Nada en el contexto permite descartar que sean la misma persona, así que el caso debe pasar a revisión de un oficial."
           },
           {
             "en": "Propose rejection if the investigator concludes the applicant is the person on a binding-list entry. (RD-01)",
@@ -580,24 +595,24 @@
         ],
         "extraccion": {
           "campos": {
-            "actividad": "SYN-ACT-09",
-            "documento": "SYN-ID-830915",
-            "ingresos_mensuales": 73900,
-            "jurisdiccion_fondos": "SYN-J-05",
-            "nacimiento": 1950,
-            "nacionalidad": "SYN-J-05",
-            "nombre": "Nikolai Quertal Tazurek",
-            "titular_actividad": "SYN-ID-830915",
-            "titular_fondos": "Nikolai Quertal Tazurek"
+            "actividad": "SYN-ACT-03",
+            "documento": "SYN-ID-198288",
+            "ingresos_mensuales": 11200,
+            "jurisdiccion_fondos": "SYN-J-04",
+            "nacimiento": 1952,
+            "nacionalidad": "SYN-J-03",
+            "nombre": "Yevgeni Vosgrane Karvane",
+            "titular_actividad": "SYN-ID-198288",
+            "titular_fondos": "Yevgeni Vosgrane Karvane"
           },
           "campos_faltantes": []
         },
         "investigacion": {
           "conclusion": "misma_persona",
-          "entrada_id": "LV-01-007",
+          "entrada_id": "LV-01-008",
           "razones": {
-            "en": "The year of birth and nationality do not rule out that this is the listed person.",
-            "es": "El año de nacimiento y la nacionalidad no permiten descartar que sea la persona de la lista."
+            "en": "The birth year (1952) and nationality (Mancomunidad de Brisal) match between the applicant and the listed person, and the name is identical. Nothing in the context rules out that they are the same person, so the case should go to a human officer for review.",
+            "es": "El año de nacimiento (1952) y la nacionalidad (Mancomunidad de Brisal) coinciden entre el solicitante y la persona de la lista, y el nombre es idéntico. Nada en el contexto permite descartar que sean la misma persona, así que el caso debe pasar a revisión de un oficial."
           }
         },
         "motivo": {
@@ -610,31 +625,31 @@
           "componentes": [
             {
               "factor": "actividad",
-              "nivel": "alto",
-              "puntos": 40,
+              "nivel": "bajo",
+              "puntos": 0,
               "regla": "RP-01",
-              "valor": "SYN-ACT-09"
+              "valor": "SYN-ACT-03"
             },
             {
               "factor": "jurisdiccion",
               "nivel": "medio",
               "puntos": 15,
               "regla": "RP-02",
-              "valor": "SYN-J-05"
+              "valor": "SYN-J-04"
             },
             {
               "factor": "coherencia",
-              "nivel": "coherente",
-              "puntos": 0,
+              "nivel": "incoherente",
+              "puntos": 30,
               "regla": "RP-03",
-              "valor": "73900"
+              "valor": "11200"
             }
           ],
           "inconsistencias": [],
           "reglas_propuesta": [
             "RD-01"
           ],
-          "total": 55
+          "total": 45
         },
         "senal": "similitud_max",
         "umbral": {
@@ -653,31 +668,31 @@
     "componentes": [
       {
         "factor": "actividad",
-        "nivel": "alto",
-        "puntos": 40,
+        "nivel": "bajo",
+        "puntos": 0,
         "regla": "RP-01",
-        "valor": "SYN-ACT-09"
+        "valor": "SYN-ACT-03"
       },
       {
         "factor": "jurisdiccion",
         "nivel": "medio",
         "puntos": 15,
         "regla": "RP-02",
-        "valor": "SYN-J-05"
+        "valor": "SYN-J-04"
       },
       {
         "factor": "coherencia",
-        "nivel": "coherente",
-        "puntos": 0,
+        "nivel": "incoherente",
+        "puntos": 30,
         "regla": "RP-03",
-        "valor": "73900"
+        "valor": "11200"
       }
     ],
     "inconsistencias": [],
     "reglas_propuesta": [
       "RD-01"
     ],
-    "total": 55
+    "total": 45
   },
   "resultado": "completo",
   "salida_final": {
@@ -697,11 +712,12 @@
     "extraccion_correcta": true,
     "inconsistencias": 0,
     "inyeccion_neutralizada": false,
-    "latencia_total_s": 0.008,
+    "latencia_total_s": 8.137,
     "nodos_visitados": [
       "enrutador",
-      "agente_unico",
+      "extractor",
       "verificador_listas",
+      "investigador",
       "puntaje",
       "decision",
       "pausa_humana",
@@ -710,9 +726,9 @@
     ],
     "pausa_humana": true,
     "propuesta": "rechazar",
-    "puntaje_riesgo": 55,
+    "puntaje_riesgo": 45,
     "similitud_max": 1,
-    "tokens": 1432
+    "tokens": 5355
   },
-  "variante": "agente_unico"
+  "variante": "multiagente"
 }

@@ -46,7 +46,7 @@ describe("gate de identificadores (E-11)", () => {
       ).toContain(c.regla_esperada);
   });
 
-  it("demo B: un nombre fuera de los diccionarios en una lista o en una extracción se pone en rojo; la caja no importa", () => {
+  it("demo B: un nombre fuera de los diccionarios en una lista o en una extracción se pone en rojo; ni la caja ni las tildes importan", () => {
     const carnada = {
       listas: [
         { entradas: [{ nombre: "Juan Pérez García", alias: ["Juan Pérez"] }] },
@@ -54,7 +54,13 @@ describe("gate de identificadores (E-11)", () => {
       extraccion: {
         campos: {
           nombre: "LUCÍA VARNESA QUINDRAL",
+          titular_actividad: "SYN-ID-123456",
           titular_fondos: "Pedro Ramírez",
+        },
+        campos_extraidos: {
+          titular_actividad: "Julián Holvedo Tremolán",
+          documento: "Pedro Ramírez",
+          nombre: "Lucia Varnesa Quindral",
         },
       },
     };
@@ -62,6 +68,7 @@ describe("gate de identificadores (E-11)", () => {
       validarIdentificadores(carnada).map((h) => `${h.regla} ${h.fragmento}`),
     ).toEqual([
       "nombre_fuera_de_lista Pedro Ramírez",
+      "identificador_sin_prefijo_sintetico Pedro Ramírez",
       "nombre_fuera_de_lista Juan Pérez",
       "nombre_fuera_de_lista Juan Pérez García",
     ]);

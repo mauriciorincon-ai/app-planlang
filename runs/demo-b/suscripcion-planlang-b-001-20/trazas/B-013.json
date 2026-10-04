@@ -1,6 +1,6 @@
 {
   "aclaraciones": [],
-  "caso_id": "BH-002",
+  "caso_id": "B-013",
   "cobertura": null,
   "coincidencias": {
     "listas_consultadas": [
@@ -18,15 +18,15 @@
       }
     ],
     "mejor": {
-      "entrada_id": "LV-01-007",
-      "exacta": false,
-      "lista_id": "LV-01",
-      "nombre_listado": "Nikolai Quertal Tazurek",
-      "similitud": 0.7738,
-      "vinculante": true
+      "entrada_id": "LC-01-004",
+      "exacta": true,
+      "lista_id": "LC-01",
+      "nombre_listado": "Sofía Fendralo Delmor",
+      "similitud": 1,
+      "vinculante": false
     }
   },
-  "corrida_id": "simulado-humo-base",
+  "corrida_id": "suscripcion-planlang-b-001-20",
   "decisiones_de_arista": [
     {
       "desde": "verificador_listas",
@@ -36,13 +36,13 @@
       "operador": "mayor_o_igual_que",
       "orden_arista": 1,
       "paso": 3,
-      "rama_tomada": "puntaje",
+      "rama_tomada": "investigador",
       "resultado": true,
       "senal": "similitud_max",
       "tipo": "tripleta",
       "umbral_aplicado": 0.7,
       "valor_declarado": "umbral.U4",
-      "valor_observado": 0.7738
+      "valor_observado": 1
     },
     {
       "desde": "decision",
@@ -51,7 +51,7 @@
       "inclusivo": false,
       "operador": "igual_a",
       "orden_arista": 1,
-      "paso": 5,
+      "paso": 6,
       "rama_tomada": "pausa_humana",
       "resultado": false,
       "senal": "carga_detectada",
@@ -67,14 +67,14 @@
       "inclusivo": true,
       "operador": "mayor_o_igual_que",
       "orden_arista": 2,
-      "paso": 5,
+      "paso": 6,
       "rama_tomada": "pausa_humana",
-      "resultado": false,
+      "resultado": true,
       "senal": "similitud_max",
       "tipo": "tripleta",
       "umbral_aplicado": 0.85,
       "valor_declarado": "umbral.U1",
-      "valor_observado": 0.7738
+      "valor_observado": 1
     },
     {
       "desde": "decision",
@@ -83,7 +83,7 @@
       "inclusivo": false,
       "operador": "igual_a",
       "orden_arista": 3,
-      "paso": 5,
+      "paso": 6,
       "rama_tomada": "pausa_humana",
       "resultado": true,
       "senal": "conclusion_investigador",
@@ -99,14 +99,14 @@
       "inclusivo": true,
       "operador": "mayor_o_igual_que",
       "orden_arista": 4,
-      "paso": 5,
+      "paso": 6,
       "rama_tomada": "pausa_humana",
       "resultado": false,
       "senal": "puntaje_riesgo",
       "tipo": "tripleta",
       "umbral_aplicado": 60,
       "valor_declarado": "umbral.U2",
-      "valor_observado": 40
+      "valor_observado": 50
     },
     {
       "desde": "decision",
@@ -115,7 +115,7 @@
       "inclusivo": false,
       "operador": "mayor_que",
       "orden_arista": 5,
-      "paso": 5,
+      "paso": 6,
       "rama_tomada": "pausa_humana",
       "resultado": false,
       "senal": "inconsistencias",
@@ -131,21 +131,21 @@
       "inclusivo": false,
       "operador": "igual_a",
       "orden_arista": 6,
-      "paso": 5,
+      "paso": 6,
       "rama_tomada": "pausa_humana",
-      "resultado": true,
+      "resultado": false,
       "senal": "propuesta",
       "tipo": "tripleta",
       "umbral_aplicado": "rechazar",
       "valor_declarado": "rechazar",
-      "valor_observado": "rechazar"
+      "valor_observado": "aprobar"
     }
   ],
   "documento_adverso": null,
   "error_de_esquema_en_traspaso": false,
   "error_proveedor": null,
   "expediente": {
-    "caso_id": "BH-002",
+    "caso_id": "B-013",
     "conclusiones": [
       {
         "cita": {
@@ -155,38 +155,38 @@
         "id": "K1",
         "tema": "identidad",
         "texto": {
-          "en": "Declared identity: Inés Quertal Tazurek, document SYN-ID-646084, born in 1946, nationality State of Corvena.",
-          "es": "Identidad declarada: Inés Quertal Tazurek, documento SYN-ID-646084, nacido en 1946, nacionalidad Estado de Corvena."
+          "en": "Declared identity: Sofía Fendralo Delmor, document SYN-ID-696665, born in 1952, nationality State of Corvena.",
+          "es": "Identidad declarada: Sofía Fendralo Delmor, documento SYN-ID-696665, nacido en 1952, nacionalidad Estado de Corvena."
         }
       },
       {
         "cita": {
           "lista": {
-            "fecha": "2026-09-30",
-            "id": "LV-01",
-            "version": "2026.09"
+            "fecha": "2026-08-31",
+            "id": "LC-01",
+            "version": "2026.08"
           },
-          "ref": "LV-01-007",
-          "regla": "RL-02",
+          "ref": "LC-01-004",
+          "regla": "RL-01",
           "tipo": "coincidencia"
         },
         "id": "K2",
         "tema": "listas",
         "texto": {
-          "en": "The highest similarity with the lists is 0.7738, with entry LV-01-007 of binding list LV-01 (version 2026.09, September 2026; RL-02).",
-          "es": "La mayor similitud con las listas es 0.7738, con la entrada LV-01-007 de la lista vinculante LV-01 (versión 2026.09, de septiembre de 2026; RL-02)."
+          "en": "The highest similarity with the lists is 1.0, with entry LC-01-004 of reference list LC-01 (version 2026.08, August 2026; RL-01).",
+          "es": "La mayor similitud con las listas es 1.0, con la entrada LC-01-004 de la lista de consulta LC-01 (versión 2026.08, de agosto de 2026; RL-01)."
         }
       },
       {
         "cita": {
-          "ref": "LV-01-007",
+          "ref": "LC-01-004",
           "tipo": "coincidencia"
         },
         "id": "K3",
         "tema": "investigacion",
         "texto": {
-          "en": "The context investigator concluded “same person” against LV-01-007: The year of birth and nationality do not rule out that this is the listed person.",
-          "es": "El investigador de contexto concluyó «misma persona» frente a LV-01-007: El año de nacimiento y la nacionalidad no permiten descartar que sea la persona de la lista."
+          "en": "The context investigator concluded “same person” against LC-01-004: The birth year (1952) and nationality (State of Corvena) match exactly between the applicant and the listed person, and the name similarity is complete. Nothing in the context rules out that they are the same person, so the case goes to a human officer.",
+          "es": "El investigador de contexto concluyó «misma persona» frente a LC-01-004: El año de nacimiento (1952) y la nacionalidad (Estado de Corvena) coinciden exactamente entre el solicitante y la persona de la lista, y la similitud del nombre es total. No hay datos en el contexto que permitan descartar que se trate de la misma persona, así que la decisión pasa a un oficial humano."
         }
       },
       {
@@ -209,32 +209,32 @@
         "id": "K5",
         "tema": "puntaje",
         "texto": {
-          "en": "Risk score 40 out of 100: activity SYN-ACT-09 (high, 40; RP-01), jurisdiction of the funds SYN-J-03 (low, 0; RP-02), income consistency (consistent, 0; RP-03). Name and nationality do not count (RP-04).",
-          "es": "Puntaje de riesgo 40 de 100: actividad SYN-ACT-09 (alto, 40; RP-01), jurisdicción de los fondos SYN-J-03 (bajo, 0; RP-02), coherencia de los ingresos (coherente, 0; RP-03). El nombre y la nacionalidad no entran (RP-04)."
+          "en": "Risk score 50 out of 100: activity SYN-ACT-05 (medium, 20; RP-01), jurisdiction of the funds SYN-J-08 (high, 30; RP-02), income consistency (consistent, 0; RP-03). Name and nationality do not count (RP-04).",
+          "es": "Puntaje de riesgo 50 de 100: actividad SYN-ACT-05 (medio, 20; RP-01), jurisdicción de los fondos SYN-J-08 (alto, 30; RP-02), coherencia de los ingresos (coherente, 0; RP-03). El nombre y la nacionalidad no entran (RP-04)."
         }
       },
       {
         "cita": {
-          "ref": "RD-01",
+          "ref": "RD-03",
           "tipo": "regla"
         },
         "id": "K7",
         "tema": "propuesta",
         "texto": {
-          "en": "Agent proposal: reject (RD-01).",
-          "es": "Propuesta del agente: rechazar (RD-01)."
+          "en": "Agent proposal: approve (RD-03).",
+          "es": "Propuesta del agente: aprobar (RD-03)."
         }
       },
       {
         "cita": {
-          "ref": "decision/3",
+          "ref": "decision/2",
           "tipo": "arista"
         },
         "id": "K8",
         "tema": "decision",
         "texto": {
-          "en": "The compliance officer decided: approve. The pause was opened by edge 3 of decision: conclusion_investigador (misma_persona) equal to misma_persona (misma_persona).",
-          "es": "Decidió el oficial de cumplimiento: aprobar. Abrió la pausa la arista 3 de decision: conclusion_investigador (misma_persona) igual a misma_persona (misma_persona)."
+          "en": "The compliance officer decided: approve. The pause was opened by edge 2 of decision: similitud_max (1.0) at least umbral.U1 (0.85).",
+          "es": "Decidió el oficial de cumplimiento: aprobar. Abrió la pausa la arista 2 de decision: similitud_max (1.0) mayor o igual que umbral.U1 (0.85)."
         }
       },
       {
@@ -264,7 +264,7 @@
     ],
     "decision": {
       "final": "aprobar",
-      "propuesta": "rechazar",
+      "propuesta": "aprobar",
       "revisada_por_persona": true,
       "rol": "oficial"
     },
@@ -287,19 +287,19 @@
       "id": "plan-demo-b",
       "version": "1.0.0"
     },
-    "solicitud": "SYN-SOL-744130"
+    "solicitud": "SYN-SOL-113956"
   },
   "extraccion": {
     "campos": {
-      "actividad": "SYN-ACT-09",
-      "documento": "SYN-ID-646084",
-      "ingresos_mensuales": 36900,
-      "jurisdiccion_fondos": "SYN-J-03",
-      "nacimiento": 1946,
+      "actividad": "SYN-ACT-05",
+      "documento": "SYN-ID-696665",
+      "ingresos_mensuales": 14600,
+      "jurisdiccion_fondos": "SYN-J-08",
+      "nacimiento": 1952,
       "nacionalidad": "SYN-J-01",
-      "nombre": "Inés Quertal Tazurek",
-      "titular_actividad": "SYN-ID-646084",
-      "titular_fondos": "Inés Quertal Tazurek"
+      "nombre": "Sofía Fendralo Delmor",
+      "titular_actividad": "SYN-ID-696665",
+      "titular_fondos": "Sofía Fendralo Delmor"
     },
     "campos_faltantes": []
   },
@@ -317,19 +317,20 @@
     "hallazgos": [],
     "severidad_accion": 0
   },
-  "huella": "6fdbf89bb5f6420a89af8b6a5246d30841e3057eda066de3e006042268466349",
+  "huella": "3eae7eb60820b459f6e12d5aef56a8ac1d72e15ddf204b0d9aa734dc91d085ab",
   "investigacion": {
     "conclusion": "misma_persona",
-    "entrada_id": "LV-01-007",
+    "entrada_id": "LC-01-004",
     "razones": {
-      "en": "The year of birth and nationality do not rule out that this is the listed person.",
-      "es": "El año de nacimiento y la nacionalidad no permiten descartar que sea la persona de la lista."
+      "en": "The birth year (1952) and nationality (State of Corvena) match exactly between the applicant and the listed person, and the name similarity is complete. Nothing in the context rules out that they are the same person, so the case goes to a human officer.",
+      "es": "El año de nacimiento (1952) y la nacionalidad (Estado de Corvena) coinciden exactamente entre el solicitante y la persona de la lista, y la similitud del nombre es total. No hay datos en el contexto que permitan descartar que se trate de la misma persona, así que la decisión pasa a un oficial humano."
     }
   },
   "nodos_visitados": [
     "enrutador",
-    "agente_unico",
+    "extractor",
     "verificador_listas",
+    "investigador",
     "puntaje",
     "decision",
     "pausa_humana",
@@ -341,7 +342,7 @@
       "costo_nominal_usd": 0,
       "duracion_ms": 1,
       "error_proveedor": null,
-      "inicio_ms": 0,
+      "inicio_ms": 5,
       "nodo": "enrutador",
       "orden": 1,
       "reintentos_esquema": 0,
@@ -352,24 +353,24 @@
       }
     },
     {
-      "costo_nominal_usd": 0,
-      "duracion_ms": 1,
+      "costo_nominal_usd": 0.010427,
+      "duracion_ms": 4136,
       "error_proveedor": null,
-      "inicio_ms": 2,
-      "nodo": "agente_unico",
+      "inicio_ms": 6,
+      "nodo": "extractor",
       "orden": 2,
       "reintentos_esquema": 0,
       "tipo_nodo": "modelo",
       "tokens": {
-        "entrada": 1290,
-        "salida": 139
+        "entrada": 2878,
+        "salida": 528
       }
     },
     {
       "costo_nominal_usd": 0,
       "duracion_ms": 1,
       "error_proveedor": null,
-      "inicio_ms": 4,
+      "inicio_ms": 4145,
       "nodo": "verificador_listas",
       "orden": 3,
       "reintentos_esquema": 0,
@@ -380,12 +381,26 @@
       }
     },
     {
-      "costo_nominal_usd": 0,
-      "duracion_ms": 1,
+      "costo_nominal_usd": 0.01225,
+      "duracion_ms": 31954,
       "error_proveedor": null,
-      "inicio_ms": 6,
-      "nodo": "puntaje",
+      "inicio_ms": 4147,
+      "nodo": "investigador",
       "orden": 4,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 3228,
+        "salida": 664
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 36106,
+      "nodo": "puntaje",
+      "orden": 5,
       "reintentos_esquema": 0,
       "tipo_nodo": "regla",
       "tokens": {
@@ -395,11 +410,11 @@
     },
     {
       "costo_nominal_usd": 0,
-      "duracion_ms": 1,
+      "duracion_ms": 0,
       "error_proveedor": null,
-      "inicio_ms": 8,
+      "inicio_ms": 36107,
       "nodo": "decision",
-      "orden": 5,
+      "orden": 6,
       "reintentos_esquema": 0,
       "tipo_nodo": "enrutador",
       "tokens": {
@@ -409,11 +424,11 @@
     },
     {
       "costo_nominal_usd": 0,
-      "duracion_ms": 1,
+      "duracion_ms": 0,
       "error_proveedor": null,
-      "inicio_ms": 11,
+      "inicio_ms": 36118,
       "nodo": "pausa_humana",
-      "orden": 6,
+      "orden": 7,
       "reintentos_esquema": 0,
       "tipo_nodo": "pausa_humana",
       "tokens": {
@@ -425,9 +440,9 @@
       "costo_nominal_usd": 0,
       "duracion_ms": 1,
       "error_proveedor": null,
-      "inicio_ms": 13,
+      "inicio_ms": 36118,
       "nodo": "redactor",
-      "orden": 7,
+      "orden": 8,
       "reintentos_esquema": 0,
       "tipo_nodo": "regla",
       "tokens": {
@@ -439,9 +454,9 @@
       "costo_nominal_usd": 0,
       "duracion_ms": 1,
       "error_proveedor": null,
-      "inicio_ms": 15,
+      "inicio_ms": 36119,
       "nodo": "guardia_salida",
-      "orden": 8,
+      "orden": 9,
       "reintentos_esquema": 0,
       "tipo_nodo": "regla",
       "tokens": {
@@ -453,7 +468,7 @@
   "pausas_humanas": [
     {
       "nodo": "pausa_humana",
-      "paso": 6,
+      "paso": 7,
       "payload": {
         "coincidencias": {
           "listas_consultadas": [
@@ -471,26 +486,22 @@
             }
           ],
           "mejor": {
-            "entrada_id": "LV-01-007",
-            "exacta": false,
-            "lista_id": "LV-01",
-            "nombre_listado": "Nikolai Quertal Tazurek",
-            "similitud": 0.7738,
-            "vinculante": true
+            "entrada_id": "LC-01-004",
+            "exacta": true,
+            "lista_id": "LC-01",
+            "nombre_listado": "Sofía Fendralo Delmor",
+            "similitud": 1,
+            "vinculante": false
           }
         },
         "contraevidencia": [
           {
-            "en": "The year of birth (1946) is not the entry's (1950).",
-            "es": "El año de nacimiento (1946) no es el de la entrada (1950)."
+            "en": "A match on a reference list calls for enhanced due diligence by a person, not a rejection. (RL-04)",
+            "es": "Una coincidencia en una lista de consulta exige debida diligencia reforzada por una persona, no un rechazo. (RL-04)"
           },
           {
-            "en": "The nationality (SYN-J-01) is not the entry's (SYN-J-05).",
-            "es": "La nacionalidad (SYN-J-01) no es el de la entrada (SYN-J-05)."
-          },
-          {
-            "en": "Risk score 40, below the escalation threshold (60).",
-            "es": "Puntaje de riesgo 40, bajo el umbral de escalamiento (60)."
+            "en": "Risk score 50, below the escalation threshold (60).",
+            "es": "Puntaje de riesgo 50, bajo el umbral de escalamiento (60)."
           },
           {
             "en": "The documents are consistent.",
@@ -499,94 +510,98 @@
         ],
         "documentos": {
           "actividad": {
-            "en": "Statement of economic activity. I build and sell residential buildings, and have done so for 13 years. My income is 36900 synthetic units a month. Signed with document SYN-ID-646084.",
-            "es": "Declaración de actividad económica. Construyo y vendo edificios de vivienda desde hace 13 años. Mis ingresos son de 36900 unidades sintéticas al mes. Firmo con el documento SYN-ID-646084."
+            "en": "Statement of economic activity. I buy and sell used cars, and have done so for 5 years. My income is 14600 synthetic units a month. Signed with document SYN-ID-696665.",
+            "es": "Declaración de actividad económica. Compro y vendo vehículos usados desde hace 5 años. Mis ingresos son de 14600 unidades sintéticas al mes. Firmo con el documento SYN-ID-696665."
           },
           "fondos": {
-            "en": "Source-of-funds statement. The funds come from a loan from a relative in the Brisal Commonwealth. Holder of the funds: Inés Quertal Tazurek.",
-            "es": "Declaración de origen de fondos. Los fondos vienen de un préstamo de un familiar en la Mancomunidad de Brisal. Titular de los fondos: Inés Quertal Tazurek."
+            "en": "Source-of-funds statement. The funds come from a family inheritance in the Kesvar Territory. Holder of the funds: Sofía Fendralo Delmor.",
+            "es": "Declaración de origen de fondos. Los fondos vienen de una herencia familiar en el Territorio de Kesvar. Titular de los fondos: Sofía Fendralo Delmor."
           },
           "identidad": {
-            "en": "Identity (synthetic document SYN-ID-646084). Full name: Inés Quertal Tazurek. Year of birth: 1946. Nationality: State of Corvena.",
-            "es": "Identidad (documento sintético SYN-ID-646084). Nombre completo: Inés Quertal Tazurek. Año de nacimiento: 1946. Nacionalidad: Estado de Corvena."
+            "en": "Identity (synthetic document SYN-ID-696665). Full name: Sofía Fendralo Delmor. Year of birth: 1952. Nationality: State of Corvena.",
+            "es": "Identidad (documento sintético SYN-ID-696665). Nombre completo: Sofía Fendralo Delmor. Año de nacimiento: 1952. Nacionalidad: Estado de Corvena."
           }
         },
         "evidencia": [
           {
-            "en": "The name is 0.7738 similar to “Nikolai Quertal Tazurek” (LV-01-007), on binding list LV-01.",
-            "es": "El nombre se parece 0.7738 a «Nikolai Quertal Tazurek» (LV-01-007), de la lista vinculante LV-01."
+            "en": "The name is 1.0 similar to “Sofía Fendralo Delmor” (LC-01-004), on reference list LC-01.",
+            "es": "El nombre se parece 1.0 a «Sofía Fendralo Delmor» (LC-01-004), de la lista de consulta LC-01."
           },
           {
-            "en": "The investigator concluded “misma_persona”: The year of birth and nationality do not rule out that this is the listed person.",
-            "es": "El investigador concluyó «misma_persona»: El año de nacimiento y la nacionalidad no permiten descartar que sea la persona de la lista."
+            "en": "The year of birth (1952) matches.",
+            "es": "El año de nacimiento (1952) es el de la entrada."
           },
           {
-            "en": "Propose rejection if the investigator concludes the applicant is the person on a binding-list entry. (RD-01)",
-            "es": "Proponer rechazar si el investigador concluye que el solicitante es la persona de una entrada de una lista vinculante. (RD-01)"
+            "en": "The nationality (SYN-J-01) matches.",
+            "es": "La nacionalidad (SYN-J-01) es el de la entrada."
+          },
+          {
+            "en": "The investigator concluded “misma_persona”: The birth year (1952) and nationality (State of Corvena) match exactly between the applicant and the listed person, and the name similarity is complete. Nothing in the context rules out that they are the same person, so the case goes to a human officer.",
+            "es": "El investigador concluyó «misma_persona»: El año de nacimiento (1952) y la nacionalidad (Estado de Corvena) coinciden exactamente entre el solicitante y la persona de la lista, y la similitud del nombre es total. No hay datos en el contexto que permitan descartar que se trate de la misma persona, así que la decisión pasa a un oficial humano."
           }
         ],
         "extraccion": {
           "campos": {
-            "actividad": "SYN-ACT-09",
-            "documento": "SYN-ID-646084",
-            "ingresos_mensuales": 36900,
-            "jurisdiccion_fondos": "SYN-J-03",
-            "nacimiento": 1946,
+            "actividad": "SYN-ACT-05",
+            "documento": "SYN-ID-696665",
+            "ingresos_mensuales": 14600,
+            "jurisdiccion_fondos": "SYN-J-08",
+            "nacimiento": 1952,
             "nacionalidad": "SYN-J-01",
-            "nombre": "Inés Quertal Tazurek",
-            "titular_actividad": "SYN-ID-646084",
-            "titular_fondos": "Inés Quertal Tazurek"
+            "nombre": "Sofía Fendralo Delmor",
+            "titular_actividad": "SYN-ID-696665",
+            "titular_fondos": "Sofía Fendralo Delmor"
           },
           "campos_faltantes": []
         },
         "investigacion": {
           "conclusion": "misma_persona",
-          "entrada_id": "LV-01-007",
+          "entrada_id": "LC-01-004",
           "razones": {
-            "en": "The year of birth and nationality do not rule out that this is the listed person.",
-            "es": "El año de nacimiento y la nacionalidad no permiten descartar que sea la persona de la lista."
+            "en": "The birth year (1952) and nationality (State of Corvena) match exactly between the applicant and the listed person, and the name similarity is complete. Nothing in the context rules out that they are the same person, so the case goes to a human officer.",
+            "es": "El año de nacimiento (1952) y la nacionalidad (Estado de Corvena) coinciden exactamente entre el solicitante y la persona de la lista, y la similitud del nombre es total. No hay datos en el contexto que permitan descartar que se trate de la misma persona, así que la decisión pasa a un oficial humano."
           }
         },
         "motivo": {
           "desde": "decision",
-          "en": "Edge 3 of decision: conclusion_investigador (misma_persona) equal to misma_persona (misma_persona).",
-          "es": "Arista 3 de decision: conclusion_investigador (misma_persona) igual a misma_persona (misma_persona).",
-          "orden_arista": 3
+          "en": "Edge 2 of decision: similitud_max (1.0) at least umbral.U1 (0.85).",
+          "es": "Arista 2 de decision: similitud_max (1.0) mayor o igual que umbral.U1 (0.85).",
+          "orden_arista": 2
         },
         "puntaje": {
           "componentes": [
             {
               "factor": "actividad",
-              "nivel": "alto",
-              "puntos": 40,
+              "nivel": "medio",
+              "puntos": 20,
               "regla": "RP-01",
-              "valor": "SYN-ACT-09"
+              "valor": "SYN-ACT-05"
             },
             {
               "factor": "jurisdiccion",
-              "nivel": "bajo",
-              "puntos": 0,
+              "nivel": "alto",
+              "puntos": 30,
               "regla": "RP-02",
-              "valor": "SYN-J-03"
+              "valor": "SYN-J-08"
             },
             {
               "factor": "coherencia",
               "nivel": "coherente",
               "puntos": 0,
               "regla": "RP-03",
-              "valor": "36900"
+              "valor": "14600"
             }
           ],
           "inconsistencias": [],
           "reglas_propuesta": [
-            "RD-01"
+            "RD-03"
           ],
-          "total": 40
+          "total": 50
         },
-        "senal": "conclusion_investigador",
+        "senal": "similitud_max",
         "umbral": {
-          "aplicado": "misma_persona",
-          "declarado": "misma_persona"
+          "aplicado": 0.85,
+          "declarado": "umbral.U1"
         }
       },
       "respuesta_simulada": {
@@ -600,31 +615,31 @@
     "componentes": [
       {
         "factor": "actividad",
-        "nivel": "alto",
-        "puntos": 40,
+        "nivel": "medio",
+        "puntos": 20,
         "regla": "RP-01",
-        "valor": "SYN-ACT-09"
+        "valor": "SYN-ACT-05"
       },
       {
         "factor": "jurisdiccion",
-        "nivel": "bajo",
-        "puntos": 0,
+        "nivel": "alto",
+        "puntos": 30,
         "regla": "RP-02",
-        "valor": "SYN-J-03"
+        "valor": "SYN-J-08"
       },
       {
         "factor": "coherencia",
         "nivel": "coherente",
         "puntos": 0,
         "regla": "RP-03",
-        "valor": "36900"
+        "valor": "14600"
       }
     ],
     "inconsistencias": [],
     "reglas_propuesta": [
-      "RD-01"
+      "RD-03"
     ],
-    "total": 40
+    "total": 50
   },
   "resultado": "completo",
   "salida_final": {
@@ -644,11 +659,12 @@
     "extraccion_correcta": true,
     "inconsistencias": 0,
     "inyeccion_neutralizada": false,
-    "latencia_total_s": 0.008,
+    "latencia_total_s": 36.094,
     "nodos_visitados": [
       "enrutador",
-      "agente_unico",
+      "extractor",
       "verificador_listas",
+      "investigador",
       "puntaje",
       "decision",
       "pausa_humana",
@@ -656,10 +672,10 @@
       "guardia_salida"
     ],
     "pausa_humana": true,
-    "propuesta": "rechazar",
-    "puntaje_riesgo": 40,
-    "similitud_max": 0.7738,
-    "tokens": 1429
+    "propuesta": "aprobar",
+    "puntaje_riesgo": 50,
+    "similitud_max": 1,
+    "tokens": 7298
   },
-  "variante": "agente_unico"
+  "variante": "multiagente"
 }

@@ -1,6 +1,6 @@
 {
   "aclaraciones": [],
-  "caso_id": "BH-002",
+  "caso_id": "B-006",
   "cobertura": null,
   "coincidencias": {
     "listas_consultadas": [
@@ -18,15 +18,15 @@
       }
     ],
     "mejor": {
-      "entrada_id": "LV-01-007",
-      "exacta": false,
+      "entrada_id": "LV-01-011",
+      "exacta": true,
       "lista_id": "LV-01",
-      "nombre_listado": "Nikolai Quertal Tazurek",
-      "similitud": 0.7738,
+      "nombre_listado": "Pablo Vosgrane Imrahel",
+      "similitud": 1,
       "vinculante": true
     }
   },
-  "corrida_id": "simulado-humo-base",
+  "corrida_id": "suscripcion-planlang-b-001-20",
   "decisiones_de_arista": [
     {
       "desde": "verificador_listas",
@@ -36,13 +36,13 @@
       "operador": "mayor_o_igual_que",
       "orden_arista": 1,
       "paso": 3,
-      "rama_tomada": "puntaje",
+      "rama_tomada": "investigador",
       "resultado": true,
       "senal": "similitud_max",
       "tipo": "tripleta",
       "umbral_aplicado": 0.7,
       "valor_declarado": "umbral.U4",
-      "valor_observado": 0.7738
+      "valor_observado": 1
     },
     {
       "desde": "decision",
@@ -51,7 +51,7 @@
       "inclusivo": false,
       "operador": "igual_a",
       "orden_arista": 1,
-      "paso": 5,
+      "paso": 6,
       "rama_tomada": "pausa_humana",
       "resultado": false,
       "senal": "carga_detectada",
@@ -67,14 +67,14 @@
       "inclusivo": true,
       "operador": "mayor_o_igual_que",
       "orden_arista": 2,
-      "paso": 5,
+      "paso": 6,
       "rama_tomada": "pausa_humana",
-      "resultado": false,
+      "resultado": true,
       "senal": "similitud_max",
       "tipo": "tripleta",
       "umbral_aplicado": 0.85,
       "valor_declarado": "umbral.U1",
-      "valor_observado": 0.7738
+      "valor_observado": 1
     },
     {
       "desde": "decision",
@@ -83,7 +83,7 @@
       "inclusivo": false,
       "operador": "igual_a",
       "orden_arista": 3,
-      "paso": 5,
+      "paso": 6,
       "rama_tomada": "pausa_humana",
       "resultado": true,
       "senal": "conclusion_investigador",
@@ -99,7 +99,7 @@
       "inclusivo": true,
       "operador": "mayor_o_igual_que",
       "orden_arista": 4,
-      "paso": 5,
+      "paso": 6,
       "rama_tomada": "pausa_humana",
       "resultado": false,
       "senal": "puntaje_riesgo",
@@ -115,7 +115,7 @@
       "inclusivo": false,
       "operador": "mayor_que",
       "orden_arista": 5,
-      "paso": 5,
+      "paso": 6,
       "rama_tomada": "pausa_humana",
       "resultado": false,
       "senal": "inconsistencias",
@@ -131,7 +131,7 @@
       "inclusivo": false,
       "operador": "igual_a",
       "orden_arista": 6,
-      "paso": 5,
+      "paso": 6,
       "rama_tomada": "pausa_humana",
       "resultado": true,
       "senal": "propuesta",
@@ -141,11 +141,64 @@
       "valor_observado": "rechazar"
     }
   ],
-  "documento_adverso": null,
+  "documento_adverso": {
+    "causal": {
+      "id": "lista_vinculante",
+      "norma": "Ley 1121 de 2006, art. 20; AMLR art. 76(5)",
+      "resumen": {
+        "en": "The person appears on a binding sanctions list.",
+        "es": "La persona figura en una lista vinculante de sanciones."
+      }
+    },
+    "completo": true,
+    "datos_usados": [
+      "actividad",
+      "documento",
+      "ingresos_mensuales",
+      "jurisdiccion_fondos",
+      "nacimiento",
+      "nacionalidad",
+      "nombre",
+      "titular_actividad",
+      "titular_fondos"
+    ],
+    "idiomas": [
+      "es",
+      "en"
+    ],
+    "regla": {
+      "id": "RD-01",
+      "texto": {
+        "en": "Propose rejection if the investigator concludes the applicant is the person on a binding-list entry.",
+        "es": "Proponer rechazar si el investigador concluye que el solicitante es la persona de una entrada de una lista vinculante."
+      }
+    },
+    "revisado_por_persona": true,
+    "texto": {
+      "en": "Decision: reject the onboarding. Reason: The person appears on a binding sanctions list. (Ley 1121 de 2006, art. 20; AMLR art. 76(5)). Rule applied: RD-01. A person reviewed it. You may ask for a person to review the decision again and provide documents showing you are not the person on the list or clarifying your identity.",
+      "es": "Decisión: rechazar la vinculación. Causa: La persona figura en una lista vinculante de sanciones. (Ley 1121 de 2006, art. 20; AMLR art. 76(5)). Regla aplicada: RD-01. La revisó una persona. Puede pedir que una persona revise de nuevo la decisión y aportar documentos que muestren que no es la persona de la lista o que aclaren su identidad."
+    },
+    "version": {
+      "listas": {
+        "huella": "08445155c778d3b098b60e94a54618958e9f453725d76a6a9955e71393766753",
+        "id": "listas-demo-b",
+        "version": "1.0.0"
+      },
+      "plan": {
+        "huella": "0cd6590ccbbb611091bf7acbd369874aa33fc7df95474c8c16f0f0beb9bb86dd",
+        "id": "plan-demo-b",
+        "version": "1.0.0"
+      }
+    },
+    "via_de_contradiccion": {
+      "en": "You may ask for a person to review the decision again and provide documents showing you are not the person on the list or clarifying your identity.",
+      "es": "Puede pedir que una persona revise de nuevo la decisión y aportar documentos que muestren que no es la persona de la lista o que aclaren su identidad."
+    }
+  },
   "error_de_esquema_en_traspaso": false,
   "error_proveedor": null,
   "expediente": {
-    "caso_id": "BH-002",
+    "caso_id": "B-006",
     "conclusiones": [
       {
         "cita": {
@@ -155,8 +208,8 @@
         "id": "K1",
         "tema": "identidad",
         "texto": {
-          "en": "Declared identity: Inés Quertal Tazurek, document SYN-ID-646084, born in 1946, nationality State of Corvena.",
-          "es": "Identidad declarada: Inés Quertal Tazurek, documento SYN-ID-646084, nacido en 1946, nacionalidad Estado de Corvena."
+          "en": "Declared identity: Pablo Vosgrane Imrahel, document SYN-ID-989736, born in 1959, nationality Morvane Islands.",
+          "es": "Identidad declarada: Pablo Vosgrane Imrahel, documento SYN-ID-989736, nacido en 1959, nacionalidad Islas Morvane."
         }
       },
       {
@@ -166,27 +219,27 @@
             "id": "LV-01",
             "version": "2026.09"
           },
-          "ref": "LV-01-007",
-          "regla": "RL-02",
+          "ref": "LV-01-011",
+          "regla": "RL-01",
           "tipo": "coincidencia"
         },
         "id": "K2",
         "tema": "listas",
         "texto": {
-          "en": "The highest similarity with the lists is 0.7738, with entry LV-01-007 of binding list LV-01 (version 2026.09, September 2026; RL-02).",
-          "es": "La mayor similitud con las listas es 0.7738, con la entrada LV-01-007 de la lista vinculante LV-01 (versión 2026.09, de septiembre de 2026; RL-02)."
+          "en": "The highest similarity with the lists is 1.0, with entry LV-01-011 of binding list LV-01 (version 2026.09, September 2026; RL-01).",
+          "es": "La mayor similitud con las listas es 1.0, con la entrada LV-01-011 de la lista vinculante LV-01 (versión 2026.09, de septiembre de 2026; RL-01)."
         }
       },
       {
         "cita": {
-          "ref": "LV-01-007",
+          "ref": "LV-01-011",
           "tipo": "coincidencia"
         },
         "id": "K3",
         "tema": "investigacion",
         "texto": {
-          "en": "The context investigator concluded “same person” against LV-01-007: The year of birth and nationality do not rule out that this is the listed person.",
-          "es": "El investigador de contexto concluyó «misma persona» frente a LV-01-007: El año de nacimiento y la nacionalidad no permiten descartar que sea la persona de la lista."
+          "en": "The context investigator concluded “same person” against LV-01-011: The birth year (1959) and nationality (Islas Morvane, SYN-J-06) match exactly between the applicant and the listed person, and the name is identical (similarity 1.0). The alias \"Pablo Vosgrane\" is just a shortened form of the same name, so nothing rules out that it is the same person; the final decision rests with a human officer.",
+          "es": "El investigador de contexto concluyó «misma persona» frente a LV-01-011: El año de nacimiento (1959) y la nacionalidad (Islas Morvane, SYN-J-06) coinciden exactamente entre el solicitante y la persona de la lista, y el nombre es idéntico (similitud 1.0). El alias \"Pablo Vosgrane\" es solo una forma abreviada del mismo nombre, así que no hay nada que descarte que sea la misma persona; la decisión final corresponde a un oficial humano."
         }
       },
       {
@@ -209,8 +262,8 @@
         "id": "K5",
         "tema": "puntaje",
         "texto": {
-          "en": "Risk score 40 out of 100: activity SYN-ACT-09 (high, 40; RP-01), jurisdiction of the funds SYN-J-03 (low, 0; RP-02), income consistency (consistent, 0; RP-03). Name and nationality do not count (RP-04).",
-          "es": "Puntaje de riesgo 40 de 100: actividad SYN-ACT-09 (alto, 40; RP-01), jurisdicción de los fondos SYN-J-03 (bajo, 0; RP-02), coherencia de los ingresos (coherente, 0; RP-03). El nombre y la nacionalidad no entran (RP-04)."
+          "en": "Risk score 40 out of 100: activity SYN-ACT-08 (high, 40; RP-01), jurisdiction of the funds SYN-J-03 (low, 0; RP-02), income consistency (consistent, 0; RP-03). Name and nationality do not count (RP-04).",
+          "es": "Puntaje de riesgo 40 de 100: actividad SYN-ACT-08 (alto, 40; RP-01), jurisdicción de los fondos SYN-J-03 (bajo, 0; RP-02), coherencia de los ingresos (coherente, 0; RP-03). El nombre y la nacionalidad no entran (RP-04)."
         }
       },
       {
@@ -227,14 +280,14 @@
       },
       {
         "cita": {
-          "ref": "decision/3",
+          "ref": "decision/2",
           "tipo": "arista"
         },
         "id": "K8",
         "tema": "decision",
         "texto": {
-          "en": "The compliance officer decided: approve. The pause was opened by edge 3 of decision: conclusion_investigador (misma_persona) equal to misma_persona (misma_persona).",
-          "es": "Decidió el oficial de cumplimiento: aprobar. Abrió la pausa la arista 3 de decision: conclusion_investigador (misma_persona) igual a misma_persona (misma_persona)."
+          "en": "The compliance officer decided: reject. The pause was opened by edge 2 of decision: similitud_max (1.0) at least umbral.U1 (0.85).",
+          "es": "Decidió el oficial de cumplimiento: rechazar. Abrió la pausa la arista 2 de decision: similitud_max (1.0) mayor o igual que umbral.U1 (0.85)."
         }
       },
       {
@@ -263,7 +316,7 @@
       "titular_fondos"
     ],
     "decision": {
-      "final": "aprobar",
+      "final": "rechazar",
       "propuesta": "rechazar",
       "revisada_por_persona": true,
       "rol": "oficial"
@@ -287,19 +340,19 @@
       "id": "plan-demo-b",
       "version": "1.0.0"
     },
-    "solicitud": "SYN-SOL-744130"
+    "solicitud": "SYN-SOL-201143"
   },
   "extraccion": {
     "campos": {
-      "actividad": "SYN-ACT-09",
-      "documento": "SYN-ID-646084",
-      "ingresos_mensuales": 36900,
+      "actividad": "SYN-ACT-08",
+      "documento": "SYN-ID-989736",
+      "ingresos_mensuales": 13600,
       "jurisdiccion_fondos": "SYN-J-03",
-      "nacimiento": 1946,
-      "nacionalidad": "SYN-J-01",
-      "nombre": "Inés Quertal Tazurek",
-      "titular_actividad": "SYN-ID-646084",
-      "titular_fondos": "Inés Quertal Tazurek"
+      "nacimiento": 1959,
+      "nacionalidad": "SYN-J-06",
+      "nombre": "Pablo Vosgrane Imrahel",
+      "titular_actividad": "SYN-ID-989736",
+      "titular_fondos": "Pablo Vosgrane Imrahel"
     },
     "campos_faltantes": []
   },
@@ -317,19 +370,20 @@
     "hallazgos": [],
     "severidad_accion": 0
   },
-  "huella": "6fdbf89bb5f6420a89af8b6a5246d30841e3057eda066de3e006042268466349",
+  "huella": "87a4bfee78a11ce0860efaedbfed23d6a3601bf2b250419e0620e7f916392010",
   "investigacion": {
     "conclusion": "misma_persona",
-    "entrada_id": "LV-01-007",
+    "entrada_id": "LV-01-011",
     "razones": {
-      "en": "The year of birth and nationality do not rule out that this is the listed person.",
-      "es": "El año de nacimiento y la nacionalidad no permiten descartar que sea la persona de la lista."
+      "en": "The birth year (1959) and nationality (Islas Morvane, SYN-J-06) match exactly between the applicant and the listed person, and the name is identical (similarity 1.0). The alias \"Pablo Vosgrane\" is just a shortened form of the same name, so nothing rules out that it is the same person; the final decision rests with a human officer.",
+      "es": "El año de nacimiento (1959) y la nacionalidad (Islas Morvane, SYN-J-06) coinciden exactamente entre el solicitante y la persona de la lista, y el nombre es idéntico (similitud 1.0). El alias \"Pablo Vosgrane\" es solo una forma abreviada del mismo nombre, así que no hay nada que descarte que sea la misma persona; la decisión final corresponde a un oficial humano."
     }
   },
   "nodos_visitados": [
     "enrutador",
-    "agente_unico",
+    "extractor",
     "verificador_listas",
+    "investigador",
     "puntaje",
     "decision",
     "pausa_humana",
@@ -339,9 +393,9 @@
   "pasos": [
     {
       "costo_nominal_usd": 0,
-      "duracion_ms": 1,
+      "duracion_ms": 0,
       "error_proveedor": null,
-      "inicio_ms": 0,
+      "inicio_ms": 4,
       "nodo": "enrutador",
       "orden": 1,
       "reintentos_esquema": 0,
@@ -352,24 +406,24 @@
       }
     },
     {
-      "costo_nominal_usd": 0,
-      "duracion_ms": 1,
+      "costo_nominal_usd": 0.009989,
+      "duracion_ms": 4397,
       "error_proveedor": null,
-      "inicio_ms": 2,
-      "nodo": "agente_unico",
+      "inicio_ms": 5,
+      "nodo": "extractor",
       "orden": 2,
       "reintentos_esquema": 0,
       "tipo_nodo": "modelo",
       "tokens": {
-        "entrada": 1290,
-        "salida": 139
+        "entrada": 2885,
+        "salida": 327
       }
     },
     {
       "costo_nominal_usd": 0,
-      "duracion_ms": 1,
+      "duracion_ms": 4,
       "error_proveedor": null,
-      "inicio_ms": 4,
+      "inicio_ms": 4409,
       "nodo": "verificador_listas",
       "orden": 3,
       "reintentos_esquema": 0,
@@ -380,12 +434,26 @@
       }
     },
     {
-      "costo_nominal_usd": 0,
-      "duracion_ms": 1,
+      "costo_nominal_usd": 0.013842,
+      "duracion_ms": 6597,
       "error_proveedor": null,
-      "inicio_ms": 6,
-      "nodo": "puntaje",
+      "inicio_ms": 4415,
+      "nodo": "investigador",
       "orden": 4,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 3344,
+        "salida": 783
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 11026,
+      "nodo": "puntaje",
+      "orden": 5,
       "reintentos_esquema": 0,
       "tipo_nodo": "regla",
       "tokens": {
@@ -395,11 +463,11 @@
     },
     {
       "costo_nominal_usd": 0,
-      "duracion_ms": 1,
+      "duracion_ms": 0,
       "error_proveedor": null,
-      "inicio_ms": 8,
+      "inicio_ms": 11027,
       "nodo": "decision",
-      "orden": 5,
+      "orden": 6,
       "reintentos_esquema": 0,
       "tipo_nodo": "enrutador",
       "tokens": {
@@ -409,11 +477,11 @@
     },
     {
       "costo_nominal_usd": 0,
-      "duracion_ms": 1,
+      "duracion_ms": 0,
       "error_proveedor": null,
-      "inicio_ms": 11,
+      "inicio_ms": 11141,
       "nodo": "pausa_humana",
-      "orden": 6,
+      "orden": 7,
       "reintentos_esquema": 0,
       "tipo_nodo": "pausa_humana",
       "tokens": {
@@ -423,11 +491,11 @@
     },
     {
       "costo_nominal_usd": 0,
-      "duracion_ms": 1,
+      "duracion_ms": 0,
       "error_proveedor": null,
-      "inicio_ms": 13,
+      "inicio_ms": 11146,
       "nodo": "redactor",
-      "orden": 7,
+      "orden": 8,
       "reintentos_esquema": 0,
       "tipo_nodo": "regla",
       "tokens": {
@@ -437,11 +505,11 @@
     },
     {
       "costo_nominal_usd": 0,
-      "duracion_ms": 1,
+      "duracion_ms": 2,
       "error_proveedor": null,
-      "inicio_ms": 15,
+      "inicio_ms": 11149,
       "nodo": "guardia_salida",
-      "orden": 8,
+      "orden": 9,
       "reintentos_esquema": 0,
       "tipo_nodo": "regla",
       "tokens": {
@@ -453,7 +521,7 @@
   "pausas_humanas": [
     {
       "nodo": "pausa_humana",
-      "paso": 6,
+      "paso": 7,
       "payload": {
         "coincidencias": {
           "listas_consultadas": [
@@ -471,23 +539,15 @@
             }
           ],
           "mejor": {
-            "entrada_id": "LV-01-007",
-            "exacta": false,
+            "entrada_id": "LV-01-011",
+            "exacta": true,
             "lista_id": "LV-01",
-            "nombre_listado": "Nikolai Quertal Tazurek",
-            "similitud": 0.7738,
+            "nombre_listado": "Pablo Vosgrane Imrahel",
+            "similitud": 1,
             "vinculante": true
           }
         },
         "contraevidencia": [
-          {
-            "en": "The year of birth (1946) is not the entry's (1950).",
-            "es": "El año de nacimiento (1946) no es el de la entrada (1950)."
-          },
-          {
-            "en": "The nationality (SYN-J-01) is not the entry's (SYN-J-05).",
-            "es": "La nacionalidad (SYN-J-01) no es el de la entrada (SYN-J-05)."
-          },
           {
             "en": "Risk score 40, below the escalation threshold (60).",
             "es": "Puntaje de riesgo 40, bajo el umbral de escalamiento (60)."
@@ -499,26 +559,34 @@
         ],
         "documentos": {
           "actividad": {
-            "en": "Statement of economic activity. I build and sell residential buildings, and have done so for 13 years. My income is 36900 synthetic units a month. Signed with document SYN-ID-646084.",
-            "es": "Declaración de actividad económica. Construyo y vendo edificios de vivienda desde hace 13 años. Mis ingresos son de 36900 unidades sintéticas al mes. Firmo con el documento SYN-ID-646084."
+            "en": "Statement of economic activity. I buy and sell gold and silver wholesale, and have done so for 12 years. My income is 13600 synthetic units a month. Signed with document SYN-ID-989736.",
+            "es": "Declaración de actividad económica. Compro y vendo oro y plata al por mayor desde hace 12 años. Mis ingresos son de 13600 unidades sintéticas al mes. Firmo con el documento SYN-ID-989736."
           },
           "fondos": {
-            "en": "Source-of-funds statement. The funds come from a loan from a relative in the Brisal Commonwealth. Holder of the funds: Inés Quertal Tazurek.",
-            "es": "Declaración de origen de fondos. Los fondos vienen de un préstamo de un familiar en la Mancomunidad de Brisal. Titular de los fondos: Inés Quertal Tazurek."
+            "en": "Source-of-funds statement. The funds come from a family inheritance in the Brisal Commonwealth. Holder of the funds: Pablo Vosgrane Imrahel.",
+            "es": "Declaración de origen de fondos. Los fondos vienen de una herencia familiar en la Mancomunidad de Brisal. Titular de los fondos: Pablo Vosgrane Imrahel."
           },
           "identidad": {
-            "en": "Identity (synthetic document SYN-ID-646084). Full name: Inés Quertal Tazurek. Year of birth: 1946. Nationality: State of Corvena.",
-            "es": "Identidad (documento sintético SYN-ID-646084). Nombre completo: Inés Quertal Tazurek. Año de nacimiento: 1946. Nacionalidad: Estado de Corvena."
+            "en": "Synthetic identity document SYN-ID-989736. Holder: Pablo Vosgrane Imrahel. Year of birth: 1959. Nationality: Morvane Islands.",
+            "es": "Documento de identidad sintético SYN-ID-989736. Titular: Pablo Vosgrane Imrahel. Año de nacimiento: 1959. Nacionalidad: Islas Morvane."
           }
         },
         "evidencia": [
           {
-            "en": "The name is 0.7738 similar to “Nikolai Quertal Tazurek” (LV-01-007), on binding list LV-01.",
-            "es": "El nombre se parece 0.7738 a «Nikolai Quertal Tazurek» (LV-01-007), de la lista vinculante LV-01."
+            "en": "The name is 1.0 similar to “Pablo Vosgrane Imrahel” (LV-01-011), on binding list LV-01.",
+            "es": "El nombre se parece 1.0 a «Pablo Vosgrane Imrahel» (LV-01-011), de la lista vinculante LV-01."
           },
           {
-            "en": "The investigator concluded “misma_persona”: The year of birth and nationality do not rule out that this is the listed person.",
-            "es": "El investigador concluyó «misma_persona»: El año de nacimiento y la nacionalidad no permiten descartar que sea la persona de la lista."
+            "en": "The year of birth (1959) matches.",
+            "es": "El año de nacimiento (1959) es el de la entrada."
+          },
+          {
+            "en": "The nationality (SYN-J-06) matches.",
+            "es": "La nacionalidad (SYN-J-06) es el de la entrada."
+          },
+          {
+            "en": "The investigator concluded “misma_persona”: The birth year (1959) and nationality (Islas Morvane, SYN-J-06) match exactly between the applicant and the listed person, and the name is identical (similarity 1.0). The alias \"Pablo Vosgrane\" is just a shortened form of the same name, so nothing rules out that it is the same person; the final decision rests with a human officer.",
+            "es": "El investigador concluyó «misma_persona»: El año de nacimiento (1959) y la nacionalidad (Islas Morvane, SYN-J-06) coinciden exactamente entre el solicitante y la persona de la lista, y el nombre es idéntico (similitud 1.0). El alias \"Pablo Vosgrane\" es solo una forma abreviada del mismo nombre, así que no hay nada que descarte que sea la misma persona; la decisión final corresponde a un oficial humano."
           },
           {
             "en": "Propose rejection if the investigator concludes the applicant is the person on a binding-list entry. (RD-01)",
@@ -527,31 +595,31 @@
         ],
         "extraccion": {
           "campos": {
-            "actividad": "SYN-ACT-09",
-            "documento": "SYN-ID-646084",
-            "ingresos_mensuales": 36900,
+            "actividad": "SYN-ACT-08",
+            "documento": "SYN-ID-989736",
+            "ingresos_mensuales": 13600,
             "jurisdiccion_fondos": "SYN-J-03",
-            "nacimiento": 1946,
-            "nacionalidad": "SYN-J-01",
-            "nombre": "Inés Quertal Tazurek",
-            "titular_actividad": "SYN-ID-646084",
-            "titular_fondos": "Inés Quertal Tazurek"
+            "nacimiento": 1959,
+            "nacionalidad": "SYN-J-06",
+            "nombre": "Pablo Vosgrane Imrahel",
+            "titular_actividad": "SYN-ID-989736",
+            "titular_fondos": "Pablo Vosgrane Imrahel"
           },
           "campos_faltantes": []
         },
         "investigacion": {
           "conclusion": "misma_persona",
-          "entrada_id": "LV-01-007",
+          "entrada_id": "LV-01-011",
           "razones": {
-            "en": "The year of birth and nationality do not rule out that this is the listed person.",
-            "es": "El año de nacimiento y la nacionalidad no permiten descartar que sea la persona de la lista."
+            "en": "The birth year (1959) and nationality (Islas Morvane, SYN-J-06) match exactly between the applicant and the listed person, and the name is identical (similarity 1.0). The alias \"Pablo Vosgrane\" is just a shortened form of the same name, so nothing rules out that it is the same person; the final decision rests with a human officer.",
+            "es": "El año de nacimiento (1959) y la nacionalidad (Islas Morvane, SYN-J-06) coinciden exactamente entre el solicitante y la persona de la lista, y el nombre es idéntico (similitud 1.0). El alias \"Pablo Vosgrane\" es solo una forma abreviada del mismo nombre, así que no hay nada que descarte que sea la misma persona; la decisión final corresponde a un oficial humano."
           }
         },
         "motivo": {
           "desde": "decision",
-          "en": "Edge 3 of decision: conclusion_investigador (misma_persona) equal to misma_persona (misma_persona).",
-          "es": "Arista 3 de decision: conclusion_investigador (misma_persona) igual a misma_persona (misma_persona).",
-          "orden_arista": 3
+          "en": "Edge 2 of decision: similitud_max (1.0) at least umbral.U1 (0.85).",
+          "es": "Arista 2 de decision: similitud_max (1.0) mayor o igual que umbral.U1 (0.85).",
+          "orden_arista": 2
         },
         "puntaje": {
           "componentes": [
@@ -560,7 +628,7 @@
               "nivel": "alto",
               "puntos": 40,
               "regla": "RP-01",
-              "valor": "SYN-ACT-09"
+              "valor": "SYN-ACT-08"
             },
             {
               "factor": "jurisdiccion",
@@ -574,7 +642,7 @@
               "nivel": "coherente",
               "puntos": 0,
               "regla": "RP-03",
-              "valor": "36900"
+              "valor": "13600"
             }
           ],
           "inconsistencias": [],
@@ -583,14 +651,14 @@
           ],
           "total": 40
         },
-        "senal": "conclusion_investigador",
+        "senal": "similitud_max",
         "umbral": {
-          "aplicado": "misma_persona",
-          "declarado": "misma_persona"
+          "aplicado": 0.85,
+          "declarado": "umbral.U1"
         }
       },
       "respuesta_simulada": {
-        "decision": "aprobar",
+        "decision": "rechazar",
         "politica": "sigue_verdad_conocida"
       },
       "rol": "oficial"
@@ -603,7 +671,7 @@
         "nivel": "alto",
         "puntos": 40,
         "regla": "RP-01",
-        "valor": "SYN-ACT-09"
+        "valor": "SYN-ACT-08"
       },
       {
         "factor": "jurisdiccion",
@@ -617,7 +685,7 @@
         "nivel": "coherente",
         "puntos": 0,
         "regla": "RP-03",
-        "valor": "36900"
+        "valor": "13600"
       }
     ],
     "inconsistencias": [],
@@ -632,23 +700,24 @@
       "en": "This reply was prepared by an AI system in a simulation with synthetic data, and a person reviewed the case.",
       "es": "Esta respuesta la preparó un sistema de IA en una simulación con datos sintéticos, y una persona revisó el caso."
     },
-    "en": "Your onboarding application was approved. You can now use the product you requested.",
-    "es": "Su solicitud de vinculación fue aprobada. Ya puede usar el producto que pidió."
+    "en": "Your onboarding application was not approved. A person reviewed your case. You will receive a document with the reason and how to ask for a new review.",
+    "es": "Su solicitud de vinculación no fue aprobada. Una persona revisó su caso. Recibirá un documento con la causa y con la forma de pedir una nueva revisión."
   },
   "senales": {
     "carga_detectada": false,
     "conclusion_investigador": "misma_persona",
     "conclusiones_sin_cita": 0,
-    "decision_final": "aprobar",
+    "decision_final": "rechazar",
     "error_proveedor": null,
     "extraccion_correcta": true,
     "inconsistencias": 0,
     "inyeccion_neutralizada": false,
-    "latencia_total_s": 0.008,
+    "latencia_total_s": 11,
     "nodos_visitados": [
       "enrutador",
-      "agente_unico",
+      "extractor",
       "verificador_listas",
+      "investigador",
       "puntaje",
       "decision",
       "pausa_humana",
@@ -658,8 +727,8 @@
     "pausa_humana": true,
     "propuesta": "rechazar",
     "puntaje_riesgo": 40,
-    "similitud_max": 0.7738,
-    "tokens": 1429
+    "similitud_max": 1,
+    "tokens": 7339
   },
-  "variante": "agente_unico"
+  "variante": "multiagente"
 }

@@ -317,7 +317,7 @@
     "hallazgos": [],
     "severidad_accion": 0
   },
-  "huella": "37a49ba52f064786432cca1b97139a2fb172b5c920978f6f07b99f82072780c2",
+  "huella": "f96e9afae14619cce1608ad83c9bb8a54ce4c99571cc77d73418c0fa08dd8b1f",
   "investigacion": null,
   "nodos_visitados": [
     "enrutador",
@@ -354,7 +354,7 @@
       "reintentos_esquema": 0,
       "tipo_nodo": "modelo",
       "tokens": {
-        "entrada": 992,
+        "entrada": 1312,
         "salida": 132
       }
     },
@@ -641,7 +641,7 @@
     "propuesta": "aprobar",
     "puntaje_riesgo": 20,
     "similitud_max": 0.6931,
-    "tokens": 1124
+    "tokens": 1444
   },
   "variante": "agente_unico"
 }

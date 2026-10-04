@@ -14,6 +14,7 @@
  */
 import * as D from "./diccionarios";
 import { VOCABULARIO_PERSONAS_B } from "./demo-b/diccionarios";
+import { normalizarNombre } from "./demo-b/similitud";
 
 export type ReglaIdentificador =
   | "cedula_rango_real"
@@ -224,11 +225,14 @@ const PRESTADORES = new Set<string>(D.PRESTADORES);
 /** Demo B: claves que llevan el nombre de una persona y los padres donde aparecen. */
 const CLAVES_NOMBRE_B = new Set(["nombre", "titular_fondos", "alias"]);
 const PADRES_NOMBRE_B = new Set(["entradas", "campos", "campos_extraidos"]);
-const VOCABULARIO_B = new Set(VOCABULARIO_PERSONAS_B.map((p) => p.toLowerCase()));
+/** Sin tildes ni mayúsculas (la normalización de la similitud): un modelo que devuelve «SORBELIN» no inventó a nadie. */
+const VOCABULARIO_B = new Set(VOCABULARIO_PERSONAS_B.map(normalizarNombre));
 
 function nombreEnListaB(nombre: string): boolean {
-  const tokens = nombre.split(/[\s,]+/).filter((t) => t.length > 0);
-  return tokens.length > 0 && tokens.every((t) => VOCABULARIO_B.has(t.toLowerCase()));
+  const tokens = normalizarNombre(nombre)
+    .split(" ")
+    .filter((t) => t.length > 0);
+  return tokens.length > 0 && tokens.every((t) => VOCABULARIO_B.has(t));
 }
 
 function nombreEnLista(padre: string | undefined, nombre: string): boolean {
@@ -261,7 +265,14 @@ export function validarIdentificadores(
     if (
       clave !== undefined &&
       CLAVES_IDENTIFICADOR.has(clave) &&
-      !PREFIJO_SINTETICO.test(valor)
+      !PREFIJO_SINTETICO.test(valor) &&
+      // Demo B: un modelo puede escribir un NOMBRE donde iba un documento (la línea base del lote real lo hizo).
+      // Si el nombre entero sale del diccionario cerrado, no es un identificador real; uno de fuera sigue en rojo.
+      !(
+        padre !== undefined &&
+        PADRES_NOMBRE_B.has(padre) &&
+        nombreEnListaB(valor)
+      )
     )
       salida.push({
         regla: "identificador_sin_prefijo_sintetico",

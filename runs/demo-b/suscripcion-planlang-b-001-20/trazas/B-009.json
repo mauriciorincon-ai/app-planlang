@@ -1,6 +1,6 @@
 {
   "aclaraciones": [],
-  "caso_id": "BH-001",
+  "caso_id": "B-009",
   "cobertura": null,
   "coincidencias": {
     "listas_consultadas": [
@@ -18,15 +18,15 @@
       }
     ],
     "mejor": {
-      "entrada_id": "LC-01-009",
+      "entrada_id": "LV-01-011",
       "exacta": false,
-      "lista_id": "LC-01",
-      "nombre_listado": "Pablo Delmor Ostavane",
-      "similitud": 0.6777,
-      "vinculante": false
+      "lista_id": "LV-01",
+      "nombre_listado": "Pablo Vosgrane Imrahel",
+      "similitud": 0.6902,
+      "vinculante": true
     }
   },
-  "corrida_id": "simulado-humo-base",
+  "corrida_id": "suscripcion-planlang-b-001-20",
   "decisiones_de_arista": [
     {
       "desde": "verificador_listas",
@@ -42,7 +42,7 @@
       "tipo": "tripleta",
       "umbral_aplicado": 0.7,
       "valor_declarado": "umbral.U4",
-      "valor_observado": 0.6777
+      "valor_observado": 0.6902
     },
     {
       "desde": "decision",
@@ -74,7 +74,7 @@
       "tipo": "tripleta",
       "umbral_aplicado": 0.85,
       "valor_declarado": "umbral.U1",
-      "valor_observado": 0.6777
+      "valor_observado": 0.6902
     },
     {
       "desde": "decision",
@@ -106,7 +106,7 @@
       "tipo": "tripleta",
       "umbral_aplicado": 60,
       "valor_declarado": "umbral.U2",
-      "valor_observado": 30
+      "valor_observado": 0
     },
     {
       "desde": "decision",
@@ -145,7 +145,7 @@
   "error_de_esquema_en_traspaso": false,
   "error_proveedor": null,
   "expediente": {
-    "caso_id": "BH-001",
+    "caso_id": "B-009",
     "conclusiones": [
       {
         "cita": {
@@ -155,26 +155,26 @@
         "id": "K1",
         "tema": "identidad",
         "texto": {
-          "en": "Declared identity: Elena Sorbelín Tescolar, document SYN-ID-108069, born in 1987, nationality Principality of Ostrel.",
-          "es": "Identidad declarada: Elena Sorbelín Tescolar, documento SYN-ID-108069, nacido en 1987, nacionalidad Principado de Ostrel."
+          "en": "Declared identity: Camila Murenzo Jornalés, document SYN-ID-287591, born in 1992, nationality Morvane Islands.",
+          "es": "Identidad declarada: Camila Murenzo Jornalés, documento SYN-ID-287591, nacido en 1992, nacionalidad Islas Morvane."
         }
       },
       {
         "cita": {
           "lista": {
-            "fecha": "2026-08-31",
-            "id": "LC-01",
-            "version": "2026.08"
+            "fecha": "2026-09-30",
+            "id": "LV-01",
+            "version": "2026.09"
           },
-          "ref": "LC-01-009",
+          "ref": "LV-01-011",
           "regla": "RL-02",
           "tipo": "coincidencia"
         },
         "id": "K2",
         "tema": "listas",
         "texto": {
-          "en": "The highest similarity with the lists is 0.6777, with entry LC-01-009 of reference list LC-01 (version 2026.08, August 2026; RL-02).",
-          "es": "La mayor similitud con las listas es 0.6777, con la entrada LC-01-009 de la lista de consulta LC-01 (versión 2026.08, de agosto de 2026; RL-02)."
+          "en": "The highest similarity with the lists is 0.6902, with entry LV-01-011 of binding list LV-01 (version 2026.09, September 2026; RL-02).",
+          "es": "La mayor similitud con las listas es 0.6902, con la entrada LV-01-011 de la lista vinculante LV-01 (versión 2026.09, de septiembre de 2026; RL-02)."
         }
       },
       {
@@ -197,8 +197,8 @@
         "id": "K5",
         "tema": "puntaje",
         "texto": {
-          "en": "Risk score 30 out of 100: activity SYN-ACT-01 (low, 0; RP-01), jurisdiction of the funds SYN-J-07 (high, 30; RP-02), income consistency (consistent, 0; RP-03). Name and nationality do not count (RP-04).",
-          "es": "Puntaje de riesgo 30 de 100: actividad SYN-ACT-01 (bajo, 0; RP-01), jurisdicción de los fondos SYN-J-07 (alto, 30; RP-02), coherencia de los ingresos (coherente, 0; RP-03). El nombre y la nacionalidad no entran (RP-04)."
+          "en": "Risk score 0 out of 100: activity SYN-ACT-01 (low, 0; RP-01), jurisdiction of the funds SYN-J-03 (low, 0; RP-02), income consistency (consistent, 0; RP-03). Name and nationality do not count (RP-04).",
+          "es": "Puntaje de riesgo 0 de 100: actividad SYN-ACT-01 (bajo, 0; RP-01), jurisdicción de los fondos SYN-J-03 (bajo, 0; RP-02), coherencia de los ingresos (coherente, 0; RP-03). El nombre y la nacionalidad no entran (RP-04)."
         }
       },
       {
@@ -275,19 +275,19 @@
       "id": "plan-demo-b",
       "version": "1.0.0"
     },
-    "solicitud": "SYN-SOL-608557"
+    "solicitud": "SYN-SOL-465969"
   },
   "extraccion": {
     "campos": {
       "actividad": "SYN-ACT-01",
-      "documento": "SYN-ID-108069",
-      "ingresos_mensuales": 1900,
-      "jurisdiccion_fondos": "SYN-J-07",
-      "nacimiento": 1987,
-      "nacionalidad": "SYN-J-07",
-      "nombre": "Elena Sorbelín Tescolar",
-      "titular_actividad": "SYN-ID-108069",
-      "titular_fondos": "Elena Sorbelín Tescolar"
+      "documento": "SYN-ID-287591",
+      "ingresos_mensuales": 3600,
+      "jurisdiccion_fondos": "SYN-J-03",
+      "nacimiento": 1992,
+      "nacionalidad": "SYN-J-06",
+      "nombre": "Camila Murenzo Jornalés",
+      "titular_actividad": "SYN-ID-287591",
+      "titular_fondos": "Camila Murenzo Jornalés"
     },
     "campos_faltantes": []
   },
@@ -305,11 +305,11 @@
     "hallazgos": [],
     "severidad_accion": 0
   },
-  "huella": "b139fb8a21b0a757181b308e114c2d8778c29ca513a6e6f79a1cf1595cee01c6",
+  "huella": "ffc58b94d2f45c73b5a215af5f4f550e5e06c0b88552d096fc52356cd5aef640",
   "investigacion": null,
   "nodos_visitados": [
     "enrutador",
-    "agente_unico",
+    "extractor",
     "verificador_listas",
     "puntaje",
     "decision",
@@ -319,9 +319,9 @@
   "pasos": [
     {
       "costo_nominal_usd": 0,
-      "duracion_ms": 1,
+      "duracion_ms": 0,
       "error_proveedor": null,
-      "inicio_ms": 0,
+      "inicio_ms": 11,
       "nodo": "enrutador",
       "orden": 1,
       "reintentos_esquema": 0,
@@ -332,24 +332,24 @@
       }
     },
     {
-      "costo_nominal_usd": 0,
-      "duracion_ms": 1,
+      "costo_nominal_usd": 0.010003,
+      "duracion_ms": 6365,
       "error_proveedor": null,
-      "inicio_ms": 2,
-      "nodo": "agente_unico",
+      "inicio_ms": 12,
+      "nodo": "extractor",
       "orden": 2,
       "reintentos_esquema": 0,
       "tipo_nodo": "modelo",
       "tokens": {
-        "entrada": 1294,
-        "salida": 132
+        "entrada": 2890,
+        "salida": 323
       }
     },
     {
       "costo_nominal_usd": 0,
       "duracion_ms": 1,
       "error_proveedor": null,
-      "inicio_ms": 4,
+      "inicio_ms": 6381,
       "nodo": "verificador_listas",
       "orden": 3,
       "reintentos_esquema": 0,
@@ -361,9 +361,9 @@
     },
     {
       "costo_nominal_usd": 0,
-      "duracion_ms": 1,
+      "duracion_ms": 0,
       "error_proveedor": null,
-      "inicio_ms": 6,
+      "inicio_ms": 6383,
       "nodo": "puntaje",
       "orden": 4,
       "reintentos_esquema": 0,
@@ -375,9 +375,9 @@
     },
     {
       "costo_nominal_usd": 0,
-      "duracion_ms": 1,
+      "duracion_ms": 0,
       "error_proveedor": null,
-      "inicio_ms": 8,
+      "inicio_ms": 6384,
       "nodo": "decision",
       "orden": 5,
       "reintentos_esquema": 0,
@@ -389,9 +389,9 @@
     },
     {
       "costo_nominal_usd": 0,
-      "duracion_ms": 1,
+      "duracion_ms": 0,
       "error_proveedor": null,
-      "inicio_ms": 10,
+      "inicio_ms": 6385,
       "nodo": "redactor",
       "orden": 6,
       "reintentos_esquema": 0,
@@ -405,7 +405,7 @@
       "costo_nominal_usd": 0,
       "duracion_ms": 1,
       "error_proveedor": null,
-      "inicio_ms": 12,
+      "inicio_ms": 6386,
       "nodo": "guardia_salida",
       "orden": 7,
       "reintentos_esquema": 0,
@@ -428,24 +428,24 @@
       },
       {
         "factor": "jurisdiccion",
-        "nivel": "alto",
-        "puntos": 30,
+        "nivel": "bajo",
+        "puntos": 0,
         "regla": "RP-02",
-        "valor": "SYN-J-07"
+        "valor": "SYN-J-03"
       },
       {
         "factor": "coherencia",
         "nivel": "coherente",
         "puntos": 0,
         "regla": "RP-03",
-        "valor": "1900"
+        "valor": "3600"
       }
     ],
     "inconsistencias": [],
     "reglas_propuesta": [
       "RD-03"
     ],
-    "total": 30
+    "total": 0
   },
   "resultado": "completo",
   "salida_final": {
@@ -465,10 +465,10 @@
     "extraccion_correcta": true,
     "inconsistencias": 0,
     "inyeccion_neutralizada": false,
-    "latencia_total_s": 0.007,
+    "latencia_total_s": 6.367,
     "nodos_visitados": [
       "enrutador",
-      "agente_unico",
+      "extractor",
       "verificador_listas",
       "puntaje",
       "decision",
@@ -477,9 +477,9 @@
     ],
     "pausa_humana": false,
     "propuesta": "aprobar",
-    "puntaje_riesgo": 30,
-    "similitud_max": 0.6777,
-    "tokens": 1426
+    "puntaje_riesgo": 0,
+    "similitud_max": 0.6902,
+    "tokens": 3213
   },
-  "variante": "agente_unico"
+  "variante": "multiagente"
 }

@@ -1,6 +1,6 @@
 {
   "aclaraciones": [],
-  "caso_id": "BH-001",
+  "caso_id": "B-010",
   "cobertura": null,
   "coincidencias": {
     "listas_consultadas": [
@@ -18,15 +18,15 @@
       }
     ],
     "mejor": {
-      "entrada_id": "LC-01-009",
+      "entrada_id": "LV-01-011",
       "exacta": false,
-      "lista_id": "LC-01",
-      "nombre_listado": "Pablo Delmor Ostavane",
-      "similitud": 0.6777,
-      "vinculante": false
+      "lista_id": "LV-01",
+      "nombre_listado": "Pablo Vosgrane Imrahel",
+      "similitud": 0.814,
+      "vinculante": true
     }
   },
-  "corrida_id": "simulado-humo-base",
+  "corrida_id": "suscripcion-planlang-b-001-20",
   "decisiones_de_arista": [
     {
       "desde": "verificador_listas",
@@ -36,13 +36,13 @@
       "operador": "mayor_o_igual_que",
       "orden_arista": 1,
       "paso": 3,
-      "rama_tomada": "puntaje",
-      "resultado": false,
+      "rama_tomada": "investigador",
+      "resultado": true,
       "senal": "similitud_max",
       "tipo": "tripleta",
       "umbral_aplicado": 0.7,
       "valor_declarado": "umbral.U4",
-      "valor_observado": 0.6777
+      "valor_observado": 0.814
     },
     {
       "desde": "decision",
@@ -51,7 +51,7 @@
       "inclusivo": false,
       "operador": "igual_a",
       "orden_arista": 1,
-      "paso": 5,
+      "paso": 6,
       "rama_tomada": "redactor",
       "resultado": false,
       "senal": "carga_detectada",
@@ -67,14 +67,14 @@
       "inclusivo": true,
       "operador": "mayor_o_igual_que",
       "orden_arista": 2,
-      "paso": 5,
+      "paso": 6,
       "rama_tomada": "redactor",
       "resultado": false,
       "senal": "similitud_max",
       "tipo": "tripleta",
       "umbral_aplicado": 0.85,
       "valor_declarado": "umbral.U1",
-      "valor_observado": 0.6777
+      "valor_observado": 0.814
     },
     {
       "desde": "decision",
@@ -83,14 +83,14 @@
       "inclusivo": false,
       "operador": "igual_a",
       "orden_arista": 3,
-      "paso": 5,
+      "paso": 6,
       "rama_tomada": "redactor",
       "resultado": false,
       "senal": "conclusion_investigador",
       "tipo": "tripleta",
       "umbral_aplicado": "misma_persona",
       "valor_declarado": "misma_persona",
-      "valor_observado": null
+      "valor_observado": "homonimo"
     },
     {
       "desde": "decision",
@@ -99,7 +99,7 @@
       "inclusivo": true,
       "operador": "mayor_o_igual_que",
       "orden_arista": 4,
-      "paso": 5,
+      "paso": 6,
       "rama_tomada": "redactor",
       "resultado": false,
       "senal": "puntaje_riesgo",
@@ -115,7 +115,7 @@
       "inclusivo": false,
       "operador": "mayor_que",
       "orden_arista": 5,
-      "paso": 5,
+      "paso": 6,
       "rama_tomada": "redactor",
       "resultado": false,
       "senal": "inconsistencias",
@@ -131,7 +131,7 @@
       "inclusivo": false,
       "operador": "igual_a",
       "orden_arista": 6,
-      "paso": 5,
+      "paso": 6,
       "rama_tomada": "redactor",
       "resultado": false,
       "senal": "propuesta",
@@ -145,7 +145,7 @@
   "error_de_esquema_en_traspaso": false,
   "error_proveedor": null,
   "expediente": {
-    "caso_id": "BH-001",
+    "caso_id": "B-010",
     "conclusiones": [
       {
         "cita": {
@@ -155,26 +155,38 @@
         "id": "K1",
         "tema": "identidad",
         "texto": {
-          "en": "Declared identity: Elena Sorbelín Tescolar, document SYN-ID-108069, born in 1987, nationality Principality of Ostrel.",
-          "es": "Identidad declarada: Elena Sorbelín Tescolar, documento SYN-ID-108069, nacido en 1987, nacionalidad Principado de Ostrel."
+          "en": "Declared identity: Pablo Vosgrane Nudrega, document SYN-ID-994886, born in 1975, nationality Kesvar Territory.",
+          "es": "Identidad declarada: Pablo Vosgrane Nudrega, documento SYN-ID-994886, nacido en 1975, nacionalidad Territorio de Kesvar."
         }
       },
       {
         "cita": {
           "lista": {
-            "fecha": "2026-08-31",
-            "id": "LC-01",
-            "version": "2026.08"
+            "fecha": "2026-09-30",
+            "id": "LV-01",
+            "version": "2026.09"
           },
-          "ref": "LC-01-009",
+          "ref": "LV-01-011",
           "regla": "RL-02",
           "tipo": "coincidencia"
         },
         "id": "K2",
         "tema": "listas",
         "texto": {
-          "en": "The highest similarity with the lists is 0.6777, with entry LC-01-009 of reference list LC-01 (version 2026.08, August 2026; RL-02).",
-          "es": "La mayor similitud con las listas es 0.6777, con la entrada LC-01-009 de la lista de consulta LC-01 (versión 2026.08, de agosto de 2026; RL-02)."
+          "en": "The highest similarity with the lists is 0.814, with entry LV-01-011 of binding list LV-01 (version 2026.09, September 2026; RL-02).",
+          "es": "La mayor similitud con las listas es 0.814, con la entrada LV-01-011 de la lista vinculante LV-01 (versión 2026.09, de septiembre de 2026; RL-02)."
+        }
+      },
+      {
+        "cita": {
+          "ref": "LV-01-011",
+          "tipo": "coincidencia"
+        },
+        "id": "K3",
+        "tema": "investigacion",
+        "texto": {
+          "en": "The context investigator concluded “namesake” against LV-01-011: The birth years do not match (1975 versus 1959) and the nationalities are also different (Territory of Kesvar versus Morvane Islands), so the context clearly rules out that they are the same person. The name similarity is explained by the shared first name and surname.",
+          "es": "El investigador de contexto concluyó «homónimo» frente a LV-01-011: El año de nacimiento no coincide (1975 frente a 1959) y la nacionalidad también es distinta (Territorio de Kesvar frente a Islas Morvane), así que el contexto descarta con claridad que sea la misma persona. La similitud de nombres se explica por el primer nombre y el apellido compartidos."
         }
       },
       {
@@ -197,8 +209,8 @@
         "id": "K5",
         "tema": "puntaje",
         "texto": {
-          "en": "Risk score 30 out of 100: activity SYN-ACT-01 (low, 0; RP-01), jurisdiction of the funds SYN-J-07 (high, 30; RP-02), income consistency (consistent, 0; RP-03). Name and nationality do not count (RP-04).",
-          "es": "Puntaje de riesgo 30 de 100: actividad SYN-ACT-01 (bajo, 0; RP-01), jurisdicción de los fondos SYN-J-07 (alto, 30; RP-02), coherencia de los ingresos (coherente, 0; RP-03). El nombre y la nacionalidad no entran (RP-04)."
+          "en": "Risk score 30 out of 100: activity SYN-ACT-01 (low, 0; RP-01), jurisdiction of the funds SYN-J-08 (high, 30; RP-02), income consistency (consistent, 0; RP-03). Name and nationality do not count (RP-04).",
+          "es": "Puntaje de riesgo 30 de 100: actividad SYN-ACT-01 (bajo, 0; RP-01), jurisdicción de los fondos SYN-J-08 (alto, 30; RP-02), coherencia de los ingresos (coherente, 0; RP-03). El nombre y la nacionalidad no entran (RP-04)."
         }
       },
       {
@@ -275,19 +287,19 @@
       "id": "plan-demo-b",
       "version": "1.0.0"
     },
-    "solicitud": "SYN-SOL-608557"
+    "solicitud": "SYN-SOL-944156"
   },
   "extraccion": {
     "campos": {
       "actividad": "SYN-ACT-01",
-      "documento": "SYN-ID-108069",
-      "ingresos_mensuales": 1900,
-      "jurisdiccion_fondos": "SYN-J-07",
-      "nacimiento": 1987,
-      "nacionalidad": "SYN-J-07",
-      "nombre": "Elena Sorbelín Tescolar",
-      "titular_actividad": "SYN-ID-108069",
-      "titular_fondos": "Elena Sorbelín Tescolar"
+      "documento": "SYN-ID-994886",
+      "ingresos_mensuales": 3700,
+      "jurisdiccion_fondos": "SYN-J-08",
+      "nacimiento": 1975,
+      "nacionalidad": "SYN-J-08",
+      "nombre": "Pablo Vosgrane Nudrega",
+      "titular_actividad": "SYN-ID-994886",
+      "titular_fondos": "Pablo Vosgrane Nudrega"
     },
     "campos_faltantes": []
   },
@@ -305,12 +317,20 @@
     "hallazgos": [],
     "severidad_accion": 0
   },
-  "huella": "b139fb8a21b0a757181b308e114c2d8778c29ca513a6e6f79a1cf1595cee01c6",
-  "investigacion": null,
+  "huella": "4b74d6bf76df8b28da0be89d1f1d7d26d881e30c503314990356861c82ab5691",
+  "investigacion": {
+    "conclusion": "homonimo",
+    "entrada_id": "LV-01-011",
+    "razones": {
+      "en": "The birth years do not match (1975 versus 1959) and the nationalities are also different (Territory of Kesvar versus Morvane Islands), so the context clearly rules out that they are the same person. The name similarity is explained by the shared first name and surname.",
+      "es": "El año de nacimiento no coincide (1975 frente a 1959) y la nacionalidad también es distinta (Territorio de Kesvar frente a Islas Morvane), así que el contexto descarta con claridad que sea la misma persona. La similitud de nombres se explica por el primer nombre y el apellido compartidos."
+    }
+  },
   "nodos_visitados": [
     "enrutador",
-    "agente_unico",
+    "extractor",
     "verificador_listas",
+    "investigador",
     "puntaje",
     "decision",
     "redactor",
@@ -321,7 +341,7 @@
       "costo_nominal_usd": 0,
       "duracion_ms": 1,
       "error_proveedor": null,
-      "inicio_ms": 0,
+      "inicio_ms": 10,
       "nodo": "enrutador",
       "orden": 1,
       "reintentos_esquema": 0,
@@ -332,24 +352,24 @@
       }
     },
     {
-      "costo_nominal_usd": 0,
-      "duracion_ms": 1,
+      "costo_nominal_usd": 0.01002,
+      "duracion_ms": 4157,
       "error_proveedor": null,
-      "inicio_ms": 2,
-      "nodo": "agente_unico",
+      "inicio_ms": 12,
+      "nodo": "extractor",
       "orden": 2,
       "reintentos_esquema": 0,
       "tipo_nodo": "modelo",
       "tokens": {
-        "entrada": 1294,
-        "salida": 132
+        "entrada": 2891,
+        "salida": 327
       }
     },
     {
       "costo_nominal_usd": 0,
       "duracion_ms": 1,
       "error_proveedor": null,
-      "inicio_ms": 4,
+      "inicio_ms": 4172,
       "nodo": "verificador_listas",
       "orden": 3,
       "reintentos_esquema": 0,
@@ -360,12 +380,26 @@
       }
     },
     {
-      "costo_nominal_usd": 0,
-      "duracion_ms": 1,
+      "costo_nominal_usd": 0.009383,
+      "duracion_ms": 6447,
       "error_proveedor": null,
-      "inicio_ms": 6,
-      "nodo": "puntaje",
+      "inicio_ms": 4174,
+      "nodo": "investigador",
       "orden": 4,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 1455,
+        "salida": 542
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 10624,
+      "nodo": "puntaje",
+      "orden": 5,
       "reintentos_esquema": 0,
       "tipo_nodo": "regla",
       "tokens": {
@@ -375,11 +409,11 @@
     },
     {
       "costo_nominal_usd": 0,
-      "duracion_ms": 1,
+      "duracion_ms": 0,
       "error_proveedor": null,
-      "inicio_ms": 8,
+      "inicio_ms": 10625,
       "nodo": "decision",
-      "orden": 5,
+      "orden": 6,
       "reintentos_esquema": 0,
       "tipo_nodo": "enrutador",
       "tokens": {
@@ -389,11 +423,11 @@
     },
     {
       "costo_nominal_usd": 0,
-      "duracion_ms": 1,
+      "duracion_ms": 0,
       "error_proveedor": null,
-      "inicio_ms": 10,
+      "inicio_ms": 10626,
       "nodo": "redactor",
-      "orden": 6,
+      "orden": 7,
       "reintentos_esquema": 0,
       "tipo_nodo": "regla",
       "tokens": {
@@ -405,9 +439,9 @@
       "costo_nominal_usd": 0,
       "duracion_ms": 1,
       "error_proveedor": null,
-      "inicio_ms": 12,
+      "inicio_ms": 10627,
       "nodo": "guardia_salida",
-      "orden": 7,
+      "orden": 8,
       "reintentos_esquema": 0,
       "tipo_nodo": "regla",
       "tokens": {
@@ -431,14 +465,14 @@
         "nivel": "alto",
         "puntos": 30,
         "regla": "RP-02",
-        "valor": "SYN-J-07"
+        "valor": "SYN-J-08"
       },
       {
         "factor": "coherencia",
         "nivel": "coherente",
         "puntos": 0,
         "regla": "RP-03",
-        "valor": "1900"
+        "valor": "3700"
       }
     ],
     "inconsistencias": [],
@@ -458,18 +492,19 @@
   },
   "senales": {
     "carga_detectada": false,
-    "conclusion_investigador": null,
+    "conclusion_investigador": "homonimo",
     "conclusiones_sin_cita": 0,
     "decision_final": "aprobar",
     "error_proveedor": null,
     "extraccion_correcta": true,
     "inconsistencias": 0,
     "inyeccion_neutralizada": false,
-    "latencia_total_s": 0.007,
+    "latencia_total_s": 10.607,
     "nodos_visitados": [
       "enrutador",
-      "agente_unico",
+      "extractor",
       "verificador_listas",
+      "investigador",
       "puntaje",
       "decision",
       "redactor",
@@ -478,8 +513,8 @@
     "pausa_humana": false,
     "propuesta": "aprobar",
     "puntaje_riesgo": 30,
-    "similitud_max": 0.6777,
-    "tokens": 1426
+    "similitud_max": 0.814,
+    "tokens": 5215
   },
-  "variante": "agente_unico"
+  "variante": "multiagente"
 }

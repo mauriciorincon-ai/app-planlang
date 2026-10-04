@@ -318,3 +318,15 @@ def test_la_cli_corre_el_demo_b_con_sus_valores_por_defecto(tmp_path: Path, caps
     manifiesto = json.loads((tmp_path / "simulado-planlang-b-humo-4" / "corrida.json").read_text("utf-8"))
     assert manifiesto["demo_id"] == "demo-b" and manifiesto["listas"]["archivo"] == "data/listas/demo-b.json"
     assert "plan_beneficios" not in manifiesto
+
+
+def test_la_linea_base_recibe_las_mismas_instrucciones_que_el_multiagente() -> None:
+    """ADR-006: a igual presupuesto, iguales instrucciones. Cada regla de campo del extractor y cada regla de
+    contexto del investigador está, palabra por palabra, en el prompt de la línea base (la primera versión las
+    resumía y no decía qué es `titular_actividad`)."""
+    from app_agents.demo_b import prompts
+
+    reglas = [*prompts.REGLAS_EXTRACCION.split("\n"), *prompts.REGLAS_CONTEXTO.split("\n")]
+    assert len([r for r in reglas if r.strip()]) == 12
+    for regla in reglas:
+        assert regla in prompts.AGENTE_UNICO, regla

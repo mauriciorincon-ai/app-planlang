@@ -12,7 +12,7 @@
 |---|---|---|
 | 0 · Setup, constitución, deltas, diagramador 0.5.0 y plan v1.5 del A | aprobada («continúa»); lote v1.5 de 200 terminado y versionado | 2026-10-04 |
 | 1 · Entrevistador M2 → parada de DECISIÓN (plan B) | cerrada: plan B aprobado («apruebo el plan B») | 2026-10-04 |
-| 2 · Demo B: sintético, agente y lote de 20 | en curso: sintético, agente, línea base y corridas simuladas construidos y verdes; falta el lote real de 20 (espera el «sí» del usuario por la cuota) | 2026-10-04 |
+| 2 · Demo B: sintético, agente y lote de 20 | construida: lote real de 20 (20/20 decisiones, 20/20 extracciones) y línea base con un defecto de prompt declarado; espera «continúa» y la decisión sobre volver a correr la línea base | 2026-10-04 |
 | 3 · Brecha B y la vitrina con dos demos | pendiente | — |
 | 4 · Cierres de ciclo | pendiente | — |
 
@@ -702,6 +702,36 @@ nacionalidad) acertaría lo que hace el investigador.
 | D30 | RF-09.2 cruzado TS ↔ Python | `igual_a` invertido en el intérprete TS | `pnpm trazas:verificar`: las 13 corridas ✗, incluidas `runs/demo-b/simulado-humo` y `-base` |
 | D31 | medición del arnés (C5) | `extraccion_correcta = True` | `test_el_arnes_mide_la_extraccion…` |
 | D32 | contrato Python → TS de la traza B | `"expediente"` → `"expedient"` en una traza | `traza-demo-b.test.ts` (Zod: clave no reconocida) y el lector |
+| D21c | nombres del B sin tildes ni caja | el vocabulario sin normalizar | `identificadores-en-datos.test.ts › demo B`: «Lucia Varnesa Quindral» |
+| D21e | un nombre del diccionario en un campo de documento (B) | la excepción acepta cualquier valor | `identificadores-en-datos.test.ts › demo B`: «Pedro Ramírez» en `documento` deja de marcarse |
+| D33 | la línea base recibe las mismas instrucciones | las reglas de extracción → una frase | `test_la_linea_base_recibe_las_mismas_instrucciones…` |
+
+### Humo real y lote real de 20 (aprobado por el usuario: «Humo + 20 + base», 2026-10-04)
+
+LangSmith: sin clave en el entorno (comprobado sin imprimirla): el espejo queda **declarado fuera**. Estimación dada
+antes de pedir permiso, con la corrida de 200 del A: ~50 llamadas, 4,1 s de mediana y US$0,0105 nominales por
+llamada.
+
+- **Humo de 2 casos** (fuera de `runs/`, en el scratchpad: B-010 homónimo en la zona gris y B-019 inyección; 3
+  llamadas, US$0,049): extracción idéntica a la verdad en los dos; el investigador concluyó «homónimo» por la
+  diferencia de 16 años y la otra nacionalidad; la inyección se detectó, fue al oficial y quedó neutralizada.
+- **`runs/demo-b/suscripcion-planlang-b-001-20`** (multiagente, una sesión, sin errores ni límites): **20/20
+  decisiones = verdad**, **20/20 extracciones exactas** (C5), el investigador vio 6 casos y acertó los 6 (el homónimo
+  de la zona gris y cinco personas listadas), 11 pausas, 0 conclusiones sin cita, severidad 0 en los 20. **26
+  llamadas, US$0,293.**
+- **`runs/demo-b/suscripcion-planlang-b-001-20-base`** (línea base de agente único, una sesión, sin errores):
+  **20/20 decisiones = verdad**, pero **1/20 extracciones exactas**. 20 llamadas, US$0,550. **Defecto del builder,
+  no del agente único:** su prompt resumía las reglas de campo y no decía qué es `titular_actividad` (el número con
+  que se firma la declaración de actividad): quedó vacía en 16 casos y con un NOMBRE en 3 (B-001, B-009, B-020).
+  En esos 3, RI-02 volvió «no verificable» la identidad, la propuesta fue rechazar y el oficial corrigió. La corrida
+  se versiona tal cual (append-only: es lo que corrió) y la comparación multiagente ↔ línea base de esta corrida
+  **no mide la arquitectura**: lo dirá el informe B. Corrección: el prompt de la línea base ahora trae, palabra por
+  palabra, las reglas del extractor y las del investigador, con su prueba (D33). Volver a correr la línea base con
+  el prompt corregido cuesta 20 llamadas más: **se pregunta al usuario** al cerrar la fase.
+- El gate E-11 se puso en rojo sobre la línea base: el modelo escribió nombres del diccionario en
+  `titular_actividad`, un campo de documento que exige `SYN-`. No son identificadores reales: en los campos del B
+  se acepta un nombre entero del diccionario cerrado; uno de fuera sigue en rojo (carnada y D21e).
+- `pnpm trazas:verificar` ✓ sobre las cuatro corridas del B.
 
 ## Desviación del plan
 
@@ -784,6 +814,10 @@ nacionalidad) acertaría lo que hace el investigador.
     vitrina del B, junto con su manifiesto; `exportar_grafo.py` sigue siendo del A por ahora.
 22. **Niveles medios del puntaje estimados por el builder** (actividad media 20, jurisdicción media 15). D4 fija los
     máximos 40/30/30 por delegación explícita; los intermedios no estaban y se marcan «estimado» en RP-01 y RP-02.
+23. **La planeadora publicó el diagramador 0.6.0 a mitad del sprint** (2026-10-04, commit `c8d3957`, del cierre de
+    big-d S2; el mismo commit trae el kit v1.39.0 y un «delta v1.39.0 en 4 apps»). La orden del S3 fija el 0.5.0 y
+    la fase 0 ya lo fijó: planlang sigue en 0.5.0 y lo declara en el lock (`planeadora_adelante`, con huella y
+    decisión), que es lo que pide la prueba local de `contratos-lock.test.ts`. La migración la ordena la planeadora.
 
 ## Registro de miradas
 
@@ -804,3 +838,5 @@ nacionalidad) acertaría lo que hace el investigador.
 | 2026-10-04 | el expediente escribía la fecha completa de cada lista en su texto | D3 pide versión y fecha; el gate E-11 marca toda fecha con día y mes en texto libre | el texto dice mes y año; la fecha completa viaja en la cita estructurada (lo cazó el gate durante la D21) |
 | 2026-10-04 | la prueba de bandas del generador no podía fallar | leía el lote versionado en vez de regenerarlo; una primera corrección no se aplicó porque Prettier había partido la línea | regenera en `beforeAll`; verificado con la D19f |
 | 2026-10-04 | `test_lotes.py` y `respaldo_simulado.py` parcheaban `lotes.RespondedorSimulado` | el respondedor vive ahora en el registro de demos | parchean `app_agents.demo_a.simulacion` |
+| 2026-10-04 | la línea base real del B extrajo bien 1 de 20 casos | su prompt resumía las reglas de campo y no definía `titular_actividad` | el prompt reutiliza las reglas del extractor y del investigador, con prueba (D33); la corrida queda versionada tal cual y el informe lo dirá |
+| 2026-10-04 | el gate E-11 marcó 3 trazas de la línea base | nombres del diccionario en un campo de documento (`titular_actividad`) | en los campos del B, un nombre entero del diccionario cerrado no es un identificador real; uno de fuera sigue en rojo (D21e) |
