@@ -209,6 +209,8 @@ export const SENAL: Record<string, TextoBilingue> = {
   tipo_atencion: tb("tipo de atención", "type of care"),
   servicio_exento: tb("servicio exento", "exempt service"),
   modo_texas: tb("modo Texas", "Texas mode"),
+  // AU-9 (plan v1.4): el modelo no respondió y el caso va a una persona.
+  proveedor_no_disponible: tb("sin respuesta del modelo", "no model response"),
   // Demo B (plan B v1): las señales que leen sus aristas.
   carga_detectada: tb("instrucción escondida", "hidden instruction"),
   similitud_max: tb("parecido con una lista", "resemblance to a list"),
@@ -339,6 +341,7 @@ export const EFECTO = {
   }>,
   no_observado: tb("no observado", "not observed"),
   traza: tb("ver su traza", "see its trace"),
+  sinPagina: tb("sin página propia", "no page of its own"),
 };
 
 export const JUEGO = {
@@ -687,8 +690,8 @@ export const CURVA = {
     tb(`real · S1, n = ${n}`, `real · S1, n = ${n}`)) as Plantilla<number>,
   lecturaSinRiesgo: ((n: number) =>
     tb(
-      `Subir la confianza mínima (U1) manda más casos a una persona: baja la cobertura. En esta corrida el riesgo quedó en 0 % en todo el rango, porque los ${n} casos medidos fueron aciertos: la curva no puede mostrar dónde se equilibra. La corrida de 200 del plan v1.4 confirmó S1 y entra a la vitrina en el sprint 3.`,
-      `Raising the minimum confidence (U1) sends more cases to a person: coverage drops. In this run risk stayed at 0% across the whole range, because all ${n} measured cases were correct: the curve cannot show where it balances. The 200-case run of plan v1.4 confirmed S1 and joins the showcase in sprint 3.`,
+      `Subir la confianza mínima (U1) manda más casos a una persona: baja la cobertura. En esta corrida el riesgo quedó en 0 % en todo el rango, porque los ${n} casos medidos fueron aciertos: la curva no puede mostrar dónde se equilibra.`,
+      `Raising the minimum confidence (U1) sends more cases to a person: coverage drops. In this run risk stayed at 0% across the whole range, because all ${n} measured cases were correct: the curve cannot show where it balances.`,
     )) as Plantilla<number>,
   lectura: tb(
     "Subir la confianza mínima (U1) manda más casos a una persona: baja la cobertura y, si la confianza está calibrada, también el riesgo.",

@@ -4,31 +4,22 @@
   "demos": {
     "demo-a": {
       "plan": {
-        "archivo": "plans/demo-a/v1.3.json",
-        "huella": "bbe1b9c4e3241c58c6245c1eeb7b04488058e8553ac318b51c5e5059c8386e92"
+        "archivo": "plans/demo-a/v1.5.json",
+        "huella": "e1dc89c72a37bf780bd3ddd5225dff84284da6bedabe6aae9f8b3bc670c57ee1"
       },
       "corrida": {
-        "ruta": "runs/demo-a/suscripcion-planlang-a-001-20-v1.2",
-        "huella": "60b272f60e46fa23d95e23add14292a74b74733fb8ad7ba83dd49420ff55f3f1",
-        "sprint": 1
+        "ruta": "runs/demo-a/suscripcion-planlang-a-002-200-v1.5",
+        "huella": "fdbffe765fc0e8309284bbc5c606dc67bc80b61b53cbf8a3772b3447eb8d71a0",
+        "sprint": 3
       },
-      "repeticiones": [
-        {
-          "ruta": "runs/demo-a/suscripcion-planlang-a-001-20-v1.2-r2",
-          "huella": "0f5257d5265a5bdb40e788cd1818123b3de8ef43518a41b0649433f0a989dd38"
-        },
-        {
-          "ruta": "runs/demo-a/suscripcion-planlang-a-001-20-v1.2-r3",
-          "huella": "4380307cf1505bcd0b07302a22a5c99ea84bdf026ed7619e50a8672125025d87"
-        }
-      ],
+      "repeticiones": [],
       "linea_base": {
-        "ruta": "runs/demo-a/suscripcion-planlang-a-001-20-v1.2-base",
-        "huella": "c280b82a4c12874d8e43f9ccf39c72d506174a49c6f8bbe21a1827b8e68e3491"
+        "ruta": "runs/demo-a/suscripcion-planlang-a-002-200-v1.5-base",
+        "huella": "a51ee88979589768c87736e1b46aa7d3d447d3ecced2d6146d6e2d06d35c2564"
       },
       "informe": {
-        "archivo": "data/vitrina/demo-a/suscripcion-planlang-a-001-20-v1.2/informe.json",
-        "huella": "ca000282398e1e248b5f8ce86c99206e7c1fdedb99742169164bebf3126fdd9f"
+        "archivo": "data/vitrina/demo-a/suscripcion-planlang-a-002-200-v1.5/informe.json",
+        "huella": "047a10a4f36655234ae6f6564a401c10eb42415fc98dd1378e67648091cb1ff9"
       },
       "playground": {
         "senal_propuesta": "propuesta",

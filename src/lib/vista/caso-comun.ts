@@ -39,6 +39,8 @@ export interface PausaLeida {
   evidencia: TextoBilingue[];
   contraevidencia: TextoBilingue[];
   leyo: string;
+  /** El resto del caso que viajó en la pausa (M-8: orden, cobertura, aclaraciones); vacío si la traza no lo trae. */
+  caso: string[];
   nota: string;
 }
 
@@ -48,6 +50,8 @@ export interface PerfilCaso {
   decision: (x: string) => TextoBilingue;
   /** El veredicto cuando la decisión final no es aprobar. */
   noAprobado: TextoBilingue;
+  /** El valor de una decisión en parte y su veredicto (A, plan v1.5: `aprobar_parcial`); sin él, el demo no la tiene. */
+  parcial?: { valor: string; veredicto: TextoBilingue };
   recibe: VistaCaso["recibe"];
   /** Qué hizo el nodo de un paso y el diálogo, si lo hubo (puede llevar estado: la n-ésima visita). */
   hizo: (p: Traza["pasos"][number]) => {

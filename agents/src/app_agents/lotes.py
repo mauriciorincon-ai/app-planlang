@@ -173,9 +173,10 @@ def ejecutar_lote(
     pausa_s: float = 0.0,
     reloj: str = "real",
     demo_clave: str = "a",
+    caso: str | None = None,
 ) -> ResumenSesion:
     """`beneficios_ruta` es el mundo del demo (el plan de beneficios del A, las listas del B); por defecto, el
-    del lote por su huella."""
+    del lote por su huella. `caso` corre solo ese caso del lote (la parada 1 del ⭐⭐: un homónimo)."""
     if variante not in VARIANTES:
         raise ValueError(f"variante desconocida: {variante}")
     d = demo(demo_clave)
@@ -258,8 +259,11 @@ def ejecutar_lote(
     app, contrato = d.construir(variante, plan, pb, checkpointer)
     sesion_n = len(previo["sesiones"]) + 1 if previo else 1
     orden_lote = [c["id"] for c in lote["casos"]]
+    if caso is not None and caso not in orden_lote:
+        raise ValueError(f"el caso {caso} no está en el lote {lote_ruta.name}")
     pendientes = [c for c in lote["casos"] if c["id"] not in trazas]
-    a_correr = pendientes if n is None else pendientes[:n]
+    elegibles = [c for c in pendientes if caso is None or c["id"] == caso]
+    a_correr = elegibles if n is None else elegibles[:n]
     resumen = ResumenSesion(corrida_id=corrida_id, directorio=directorio)
     modelo_real = (
         None
@@ -429,6 +433,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--corrida", default=None)
     p.add_argument("--variante", default="multiagente", choices=VARIANTES)
     p.add_argument("--n", type=int, default=None)
+    p.add_argument("--caso", default=None, help="corre solo ese caso del lote (p. ej. B-010)")
     p.add_argument("--fecha", default=None, help="fecha declarada de la sesión (YYYY-MM-DD)")
     p.add_argument("--pausa-s", type=float, default=0.0)
     p.add_argument("--reloj", default=None, choices=["real", "fijo"])
@@ -454,6 +459,7 @@ def main(argv: list[str] | None = None) -> int:
         pausa_s=a.pausa_s,
         reloj=reloj,
         demo_clave=a.demo,
+        caso=a.caso,
     )
     print(
         f"corrida {r.corrida_id}: {len(r.ejecutados)} casos en esta sesión"

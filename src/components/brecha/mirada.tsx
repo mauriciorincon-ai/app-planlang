@@ -44,6 +44,7 @@ import { AvisoPerfil } from "../perfil/aviso-perfil";
 import { LeerComo } from "../perfil/leer-como";
 import { SinProbar } from "../sin-probar";
 import { Veredicto } from "../veredicto";
+import { ChipCaso } from "./chip-caso";
 
 const ET =
   "block font-letra text-dato leading-[1.4] text-tinta-2 escritorio:hidden";
@@ -269,13 +270,7 @@ function RenglonFallo({ f, idioma }: { f: FilaFallo; idioma: Idioma }) {
             <span className="flex flex-wrap items-center gap-1.5 text-dato text-tinta-2">
               {col.casos}
               {f.casos.map((c) => (
-                <a
-                  key={c.id}
-                  href={c.href}
-                  className="rounded-chip border border-linea bg-sup-1 px-1.5 py-px font-mono text-tinta-1 no-underline hover:border-tinta-2"
-                >
-                  {c.id}
-                </a>
+                <ChipCaso key={c.id} c={c} idioma={idioma} />
               ))}
             </span>
           ) : null}

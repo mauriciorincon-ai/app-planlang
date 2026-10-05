@@ -995,7 +995,7 @@ export function Juego({ datos }: { datos: DatosIsla }) {
                           className="col-start-2 grid justify-items-start gap-1 escritorio:col-start-auto [&>span]:h-auto [&>span]:min-h-5 [&>span]:py-0.5 [&>span]:leading-[1.3] [&>span]:whitespace-normal"
                         >
                           <Efecto x={x} minutos={minutos} i={i} />
-                          {caso ? (
+                          {caso?.href ? (
                             <a
                               href={`${caso.href}#paso-${x.paso}`}
                               className="inline-flex items-center gap-1 text-dato text-tinta-1 underline underline-offset-3"
@@ -1008,6 +1008,11 @@ export function Juego({ datos }: { datos: DatosIsla }) {
                               {EFECTO.traza[i]}
                               <span className="sr-only"> {x.id}</span>
                             </a>
+                          ) : caso ? (
+                            // Con la corrida de 200, no todo caso tiene página (decisión del usuario, S3).
+                            <span className="text-dato text-tinta-2">
+                              {EFECTO.sinPagina[i]}
+                            </span>
                           ) : null}
                         </span>
                       </div>

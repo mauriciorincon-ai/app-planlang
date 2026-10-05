@@ -58,11 +58,12 @@ describe("disposición", () => {
     });
   });
 
-  it("una línea por par con reglas agrupadas, más los dos terminales: 13, como las aristas de LangGraph", () => {
-    expect(geo.lineas).toHaveLength(13);
+  it("una línea por par con reglas agrupadas, más los dos terminales: 14, como las aristas de LangGraph", () => {
+    // Plan v1.5 (S3): la carga suma una regla de decision a la pausa y el respaldo sin modelo, extractor → pausa.
+    expect(geo.lineas).toHaveLength(14);
     expect(
       geo.lineas.find((l) => l.id === "l-decision-a-pausa-humana")?.reglas,
-    ).toBe(5);
+    ).toBe(6);
     expect(
       geo.lineas.find((l) => l.id === "l-enrutador-a-redactor")?.reglas,
     ).toBe(2);
@@ -89,7 +90,7 @@ describe("dibujo sin encimar", () => {
     const etiquetas = geo.lineas.flatMap((l) =>
       l.etiqueta ? [l.etiqueta.caja] : [],
     );
-    expect(etiquetas.length).toBe(9);
+    expect(etiquetas.length).toBe(10);
     for (const e of etiquetas) {
       expect(
         e.x >= 0 &&

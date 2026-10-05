@@ -111,7 +111,9 @@ function Cabecera({ v, idioma }: { v: VistaCaso; idioma: Idioma }) {
           </h2>
         </div>
         <div className="flex flex-wrap items-center gap-1.5">
-          <Veredicto clase={v.aprobado ? "cumple" : "no-cumple"}>
+          <Veredicto
+            clase={v.aprobado ? "cumple" : v.parcial ? "alerta" : "no-cumple"}
+          >
             {v.veredicto}
           </Veredicto>
           <span className="inline-flex h-5 items-center gap-1.25 rounded-chip border border-tinta-3 px-1.75 text-dato leading-none font-medium whitespace-nowrap text-tinta-2">
@@ -448,6 +450,17 @@ export function Caso({ v, idioma }: { v: VistaCaso; idioma: Idioma }) {
               <GrupoT icono={Braces} titulo={PAUSA.leyo[idioma]}>
                 <p className={RELIGUITA}>{v.pausa.leyo}</p>
               </GrupoT>
+              {v.pausa.caso.length ? (
+                <GrupoT icono={FileText} titulo={PAUSA.casoCompleto[idioma]}>
+                  <ul className="grid gap-1">
+                    {v.pausa.caso.map((l) => (
+                      <li key={l} className={RELIGUITA}>
+                        {l}
+                      </li>
+                    ))}
+                  </ul>
+                </GrupoT>
+              ) : null}
               <div className={CAJA}>
                 <span className={ET}>{v.textos.pausaRespondio}</span>
                 <p>

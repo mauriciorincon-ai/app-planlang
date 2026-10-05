@@ -158,6 +158,21 @@ export interface LecturaDeFalla {
 }
 
 const LECTURA_SUPUESTO_A: Record<string, LecturaDeFalla> = {
+  "S2:refutado": {
+    frase: tb(
+      "dos ciclos de aclaración no completaron los datos en tantos casos como el plan esperaba (S2)",
+      "two clarification cycles did not complete the data in as many cases as the plan expected (S2)",
+    ),
+    titulo: tb("Las preguntas al médico", "The questions to the physician"),
+    planeo: tb(
+      "Dos ciclos de aclaración bastan para completar los datos en el 95 % de los casos incompletos. En eso se apoya el tope de aclaraciones U3 ({plan:U3}).",
+      "Two clarification cycles are enough to complete the data in 95% of incomplete cases. The clarification cap U3 ({plan:U3}) relies on it.",
+    ),
+    significa: tb(
+      "Más casos de los planeados llegan a una persona con datos incompletos. O el plan acepta esa carga, o el tope U3 sube, o las preguntas tienen que pedir mejor lo que falta.",
+      "More cases than planned reach a person with incomplete data. Either the plan accepts that load, or cap U3 goes up, or the questions have to ask better for what is missing.",
+    ),
+  },
   "S3:refutado": {
     frase: tb(
       "repartir el trabajo entre varios agentes resultó más lento que un solo agente (S3)",
@@ -187,8 +202,8 @@ const LECTURA_SUPUESTO_A: Record<string, LecturaDeFalla> = {
       "The confidence the model declares when extracting separates its hits from its errors. Threshold U1 ({plan:U1}) relies on it to decide when to call a person.",
     ),
     significa: tb(
-      "En esta corrida el umbral U1 quedó sin respaldo medido: faltaron casos donde el modelo se equivocara. La corrida de 200 del plan v1.4 confirmó S1 y entra a la vitrina en el sprint 3.",
-      "In this run threshold U1 was left without measured backing: there were no cases where the model got things wrong. The 200-case run of plan v1.4 confirmed S1 and joins the showcase in sprint 3.",
+      "En esta corrida el umbral U1 quedó sin respaldo medido: faltaron casos donde el modelo se equivocara.",
+      "In this run threshold U1 was left without measured backing: there were no cases where the model got things wrong.",
     ),
   },
 };
@@ -227,6 +242,27 @@ export const LECTURA_BRECHA: Record<
     significa: tb(
       "Cada reintento suma tiempo y costo. El plan debe sumarlo como riesgo nuevo, con su detector.",
       "Every retry adds time and cost. The plan should add it as a new risk, with its detector.",
+    ),
+  },
+  // M-20: una falla que nombra un evaluador del dominio y que ningún detector de riesgo del plan mira.
+  evaluador: {
+    frase: ((n: number) =>
+      tb(
+        `${n} ${n === 1 ? "caso tuvo una falla" : "casos tuvieron una falla"} que vio un evaluador y ningún riesgo del plan cubría`,
+        `${n} ${n === 1 ? "case had a failure" : "cases had a failure"} that an evaluator saw and no risk in the plan covered`,
+      )) as Plantilla<number>,
+    titulo: tb(
+      "Fallas que solo vio un evaluador",
+      "Failures only an evaluator saw",
+    ),
+    planeo: ((riesgos: number) =>
+      tb(
+        `Nada: ninguno de los ${riesgos} riesgos del plan tiene un detector que mire esta falla; la midió un evaluador del dominio.`,
+        `Nothing: none of the plan’s ${riesgos} risks has a detector that looks at this failure; a domain evaluator measured it.`,
+      )) as Plantilla<number>,
+    significa: tb(
+      "El evaluador mide algo que el plan no vigila como riesgo. El plan debe sumarlo como riesgo, con su detector, o decir por qué lo acepta.",
+      "The evaluator measures something the plan does not watch as a risk. The plan should add it as a risk, with its detector, or say why it accepts it.",
     ),
   },
 };
@@ -1004,6 +1040,17 @@ export const SUPUESTOS = {
           `Los ${p.n} casos con datos faltantes que recibieron respuesta se cerraron en ${p.u} aclaraciones o menos.`,
           `The ${p.n} cases with missing data that got an answer were closed in ${p.u} clarifications or fewer.`,
         )) as Plantilla<{ n: number; u: number }>,
+      // Corrida de 200 del plan v1.5 (S3).
+      "S2:refutado": ((p: { n: number; u: number; a: number }) =>
+        tb(
+          `De los ${p.n} casos con datos faltantes que recibieron respuesta, ${p.a} se cerraron en ${p.u} aclaraciones o menos: menos de los que el plan suponía.`,
+          `Of the ${p.n} cases with missing data that got an answer, ${p.a} were closed in ${p.u} clarifications or fewer: fewer than the plan assumed.`,
+        )) as Plantilla<{ n: number; u: number; a: number }>,
+      "S1:confirmado": ((n: number) =>
+        tb(
+          `La prueba pedía medir si la confianza del modelo separa aciertos de errores. Sobre ${n} casos medidos, sí: el umbral U1 tiene respaldo medido.`,
+          `The test asked whether the model’s confidence separates hits from errors. Over ${n} measured cases it does: threshold U1 has measured backing.`,
+        )) as Plantilla<number>,
     },
     "demo-b": DIO_SUPUESTO_B,
   } as Record<IdDemo, Record<string, (p: never) => TextoBilingue>>,

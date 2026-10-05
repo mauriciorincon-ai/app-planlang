@@ -304,6 +304,17 @@ export function TablaTrazas({
           </VerMas>
         ) : null}
       </div>
+      {t.total > t.filas.length ? (
+        <p className="mt-2.5 text-dato text-tinta-2">
+          {
+            PANEL.trazas_.soloElBloque({
+              n: t.filas.length,
+              total: t.total,
+              bloque: t.bloque,
+            })[idioma]
+          }
+        </p>
+      ) : null}
       <p className="mt-2.5 flex flex-wrap items-center gap-1.5 text-dato text-tinta-2">
         {t.nota} {chip}
       </p>

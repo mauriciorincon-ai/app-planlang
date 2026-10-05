@@ -73,11 +73,16 @@ export const MIRADA = {
     "demo-b": MIRADA_B.avisoExperto,
   } as Record<IdDemo, TextoBilingue>,
   selector: tb("Casos", "Cases"),
-  casosDeLaCorrida: ((n: number) =>
-    tb(
-      `Los ${n} casos de la corrida:`,
-      `The run’s ${n} cases:`,
-    )) as Plantilla<number>,
+  casosDeLaCorrida: ((p: { conPagina: number; total: number; primeros: number }) =>
+    p.conPagina === p.total
+      ? tb(
+          `Los ${p.total} casos de la corrida:`,
+          `The run’s ${p.total} cases:`,
+        )
+      : tb(
+          `${p.conPagina} de los ${p.total} casos de la corrida tienen su página: los ${p.primeros} primeros del lote y los que nombra el informe. La Brecha y el Playground miden sobre los ${p.total}.`,
+          `${p.conPagina} of the run’s ${p.total} cases have their own page: the first ${p.primeros} in the batch and those the report names. The Gap and the Playground measure all ${p.total}.`,
+        )) as Plantilla<{ conPagina: number; total: number; primeros: number }>,
   indiceGuia: tb(
     "Elige un caso: se abre con todo lo que dejó su traza.",
     "Pick a case: it opens with everything its trace recorded.",
@@ -143,6 +148,7 @@ export const EJEMPLAR: Record<string, TextoBilingue> = {
 export const CABECERA = {
   aprobado: tb("Aprobado", "Approved"),
   negado: tb("Negado", "Denied"),
+  parcial: tb("Aprobado en parte", "Partially approved"),
   conPersona: tb("con una persona", "with a person"),
   sinPersona: tb("sin persona", "no person"),
   coincide: tb("coincide con la verdad conocida", "matches the known truth"),
@@ -318,6 +324,10 @@ export const MOTIVO: Record<string, TextoBilingue> = {
   proveedor: tb(
     "el modelo no respondió al leer o al preguntar, y el plan manda el caso a una persona",
     "the model did not respond while reading or asking, and the plan sends the case to a person",
+  ),
+  carga: tb(
+    "el texto del médico traía una instrucción escondida para el sistema, y la guardia de entrada la marcó antes de que la leyera un modelo",
+    "the doctor’s text carried a hidden instruction for the system, and the input guard flagged it before any model read it",
   ),
 };
 
@@ -561,6 +571,10 @@ export const RAMA = {
       "modo Texas y la propuesta no es aprobar: pasa a una persona",
       "Texas mode and the proposal is not to approve: on to a person",
     ),
+    carga: tb(
+      "la guardia de entrada marcó una instrucción escondida: pasa a una persona",
+      "the input guard flagged a hidden instruction: on to a person",
+    ),
   },
 };
 
@@ -604,6 +618,33 @@ export const PAUSA = {
     "nothing: the extractor did not respond",
   ),
   respondio: tb("Lo que respondió el auditor", "What the auditor answered"),
+  // M-8 (plan v1.5): lo que el auditor recibe además del texto y la extracción.
+  casoCompleto: tb("El resto del caso que recibió", "The rest of the case it received"),
+  orden: tb("Orden", "Order"),
+  cobertura: tb("Cobertura", "Coverage"),
+  altoCosto: tb("alto costo", "high cost"),
+  reglas: tb("reglas", "rules"),
+  sinCobertura: tb(
+    "Cobertura: todavía sin verificar cuando el agente se detuvo",
+    "Coverage: not yet checked when the agent stopped",
+  ),
+  estadoServicio: {
+    requiere_autorizacion: tb("requiere autorización", "requires authorization"),
+    excluido: tb("excluido", "excluded"),
+    exento: tb("no requiere autorización", "needs no authorization"),
+  } as Record<string, TextoBilingue>,
+  aclaraciones: ((n: number) =>
+    n === 0
+      ? tb("Aclaraciones: ninguna", "Clarifications: none")
+      : n === 1
+        ? tb(
+            "Aclaraciones: 1, con su pregunta y su respuesta",
+            "Clarifications: 1, with its question and answer",
+          )
+        : tb(
+            `Aclaraciones: ${n}, con sus preguntas y respuestas`,
+            `Clarifications: ${n}, with their questions and answers`,
+          )) as Plantilla<number>,
   simulado: ((politica: string) =>
     tb(
       `Auditor simulado: en esta corrida por lotes sigue la verdad conocida del caso (política ${politica}). En producción lo decide una persona con este mismo payload.`,
@@ -649,6 +690,26 @@ export const DOCUMENTO = {
   servicio: tb("Servicio", "Service"),
   decision: tb("Decisión", "Decision"),
   negada: tb("Negada", "Denied"),
+  parcial: tb(
+    "Aprobada en parte: se niega lo que supera el tope",
+    "Partially approved: what exceeds the cap is denied",
+  ),
+  monto: tb("Monto", "Amount"),
+  montoDetalle: ((p: {
+    solicitado: number;
+    aprobado: number;
+    negado: number;
+    unidad: TextoBilingue;
+  }) =>
+    tb(
+      `solicitado ${p.solicitado} · aprobado ${p.aprobado} · negado ${p.negado} (${p.unidad.es})`,
+      `requested ${p.solicitado} · approved ${p.aprobado} · denied ${p.negado} (${p.unidad.en})`,
+    )) as Plantilla<{
+    solicitado: number;
+    aprobado: number;
+    negado: number;
+    unidad: TextoBilingue;
+  }>,
   causal: tb("Causal", "Ground"),
   regla: tb("Regla aplicada", "Rule applied"),
   datos: tb("Datos usados", "Data used"),

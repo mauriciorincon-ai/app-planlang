@@ -229,6 +229,27 @@ export const PayloadPausaSchema = z
     texto_original: Bilingue,
     evidencia: z.array(Bilingue),
     contraevidencia: z.array(Bilingue),
+    // M-8 (plan v1.5): el auditor recibe el caso completo. Las corridas anteriores a la v1.5 no lo traen.
+    orden_adjunta: z
+      .object({
+        codigo_procedimiento: z.string(),
+        tipo_atencion: z.string(),
+        observaciones: Bilingue,
+      })
+      .strict()
+      .optional(),
+    /** Nula si la pausa llega antes del verificador de cobertura (la guardia de entrada, una aclaración). */
+    cobertura: z
+      .object({
+        estado_servicio: z.string(),
+        alto_costo: z.boolean(),
+        reglas_disparadas: z.array(z.string()),
+        causal: z.string().nullable(),
+      })
+      .loose()
+      .nullable()
+      .optional(),
+    aclaraciones: z.array(AclaracionTrazaSchema).optional(),
   })
   .strict();
 export type PayloadPausa = z.infer<typeof PayloadPausaSchema>;
@@ -264,6 +285,16 @@ export const DocumentoAdversoVistaSchema = z
     decidido_por: Bilingue,
     via_de_contradiccion: Bilingue,
     aviso_ia: Bilingue,
+    /** M-15 (plan v1.5): solo en la aprobación parcial. */
+    monto: z
+      .object({
+        solicitado: z.number(),
+        aprobado: z.number(),
+        negado: z.number(),
+        unidad: Bilingue,
+      })
+      .strict()
+      .optional(),
   })
   .loose();
 export type DocumentoAdversoVista = z.infer<typeof DocumentoAdversoVistaSchema>;

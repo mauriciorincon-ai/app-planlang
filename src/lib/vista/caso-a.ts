@@ -11,6 +11,7 @@ import {
   DocumentoAdversoVistaSchema,
   leerParaVista,
   PayloadPausaSchema,
+  type PayloadPausa,
 } from "@/lib/datos/esquemas";
 import type { DatosDemoA } from "@/lib/datos/vitrina";
 import { VALORES } from "@/textos/agente";
@@ -274,6 +275,7 @@ export function perfilCasoA(
   return {
     decision: decisionTb,
     noAprobado: CABECERA.negado,
+    parcial: { valor: "aprobar_parcial", veredicto: CABECERA.parcial },
     recibe: {
       documentos: [{ titulo: X(RECIBE.texto, i), partes }],
       datos: [
@@ -319,6 +321,7 @@ export function perfilCasoA(
                     " · ",
                   )} · ${X(PAUSA.confianza, i)} ${decimal(payload.extraccion.confianza, 2, i)}`
               : X(PAUSA.sinExtraccion, i),
+            caso: casoDeLaPausa(payload, i),
             nota: X(PAUSA.simulado(pausa.respuesta_simulada.politica), i),
           }
         : null,
@@ -330,7 +333,19 @@ export function perfilCasoA(
               k: X(DOCUMENTO.servicio, i),
               v: `${X(doc.servicio.nombre, i)} · \`${doc.servicio.codigo}\``,
             },
-            { k: X(DOCUMENTO.decision, i), v: X(DOCUMENTO.negada, i) },
+            {
+              k: X(DOCUMENTO.decision, i),
+              v: X(doc.monto ? DOCUMENTO.parcial : DOCUMENTO.negada, i),
+            },
+            // M-15 (plan v1.5): la aprobación parcial dice cuánto se pidió, cuánto se aprobó y cuánto se negó.
+            ...(doc.monto
+              ? [
+                  {
+                    k: X(DOCUMENTO.monto, i),
+                    v: X(DOCUMENTO.montoDetalle(doc.monto), i),
+                  },
+                ]
+              : []),
             {
               k: X(DOCUMENTO.causal, i),
               v: X(doc.causal.resumen, i),
@@ -383,4 +398,25 @@ export function perfilCasoA(
       documentoCabecera: X(DOCUMENTO.cabecera, i),
     },
   };
+}
+
+/** M-8 (plan v1.5): la orden, la cobertura y las aclaraciones que viajaron en la pausa, una línea cada una. */
+function casoDeLaPausa(p: PayloadPausa, i: Idioma): string[] {
+  if (!p.orden_adjunta) return [];
+  const o = p.orden_adjunta;
+  const c = p.cobertura;
+  const cobertura = c
+    ? [
+        `${X(PAUSA.cobertura, i)}: ${X(PAUSA.estadoServicio[c.estado_servicio] ?? { es: c.estado_servicio, en: c.estado_servicio }, i)}`,
+        ...(c.alto_costo ? [X(PAUSA.altoCosto, i)] : []),
+        ...(c.reglas_disparadas.length
+          ? [`${X(PAUSA.reglas, i)} ${c.reglas_disparadas.join(", ")}`]
+          : []),
+      ].join(" · ")
+    : X(PAUSA.sinCobertura, i);
+  return [
+    `${X(PAUSA.orden, i)}: ${o.codigo_procedimiento} · ${X(RECIBE.atencion, i)} ${valorLeido(o.tipo_atencion, i)} · ${X(o.observaciones, i)}`,
+    cobertura,
+    X(PAUSA.aclaraciones((p.aclaraciones ?? []).length), i),
+  ];
 }

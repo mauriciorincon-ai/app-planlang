@@ -47,6 +47,7 @@ import {
   type ClaseDeEstado,
   type RiesgoDelInforme,
 } from "./plan-comun";
+import { primerosDelLote, PRIMEROS_CON_PAGINA } from "./paginas-caso";
 import { delVocabulario } from "./vocabulario";
 import { GRAMATICA, grafoParaMapa, lienzo, type Lienzo } from "./visor";
 
@@ -149,7 +150,10 @@ export interface PanelNodo {
   codigoFuente: string;
   trazas: {
     columnas: string[];
+    /** El primer bloque del lote (`paginas-caso.ts`); `total` cuenta todos los que pasaron por el nodo. */
     filas: FilaTraza[];
+    total: number;
+    bloque: number;
     visibles: number;
     nota: string;
   };
@@ -691,6 +695,8 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
           ? MODO_ARISTA.reanudacion
           : MODO_ARISTA.secuencia,
     );
+  // Con la corrida de 200, las tablas por nodo listan el primer bloque del lote (todos con página) y cuentan el resto.
+  const primeros = primerosDelLote(d);
   const filaTraza = (t: Traza, nodo: string): FilaTraza => {
     const f = perfil.filaTraza(t, nodo);
     return {
@@ -924,7 +930,11 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
         ),
         trazas: {
           columnas,
-          filas: con(x.id).map((tr) => filaTraza(tr, x.id)),
+          filas: con(x.id)
+            .filter((tr) => primeros.has(tr.caso_id))
+            .map((tr) => filaTraza(tr, x.id)),
+          total: con(x.id).length,
+          bloque: PRIMEROS_CON_PAGINA,
           visibles: VISIBLES,
           nota: perfil.notaTrazas(x.id),
         },

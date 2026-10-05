@@ -29,6 +29,8 @@ export type CategoriaRegla =
   | "rechazar";
 
 const POR_SENAL_A: Readonly<Record<string, CategoriaRegla>> = {
+  // M-16 (plan v1.5): la guardia de entrada deja la señal y la decisión la manda a una persona.
+  carga_detectada: "carga",
   tipo_atencion: "urgencia",
   servicio_exento: "exento",
   campos_faltantes_count: "faltantes",
@@ -81,6 +83,7 @@ export const CATEGORIAS: Readonly<Record<IdDemo, readonly CategoriaRegla[]>> = {
     "contradiccion",
     "negar",
     "texas",
+    "carga",
   ],
   "demo-b": [
     "carga",

@@ -316,6 +316,8 @@ export function perfilCasoB(
                   .map(([k, x]) => `${k} ${valorLeido(x, i)}`)
                   .join(" · ")
               : X(PAUSA_B.sinExtraccion, i),
+            // El B muestra sus documentos, coincidencias y puntaje en sus propias secciones.
+            caso: [],
             nota: X(PAUSA_B.simulado(pausa.respuesta_simulada.politica), i),
           }
         : null,

@@ -14,7 +14,9 @@ function carnada(m: Mapa, id: string): NodoMapa {
 }
 
 describe("diagrama = grafo", () => {
-  it("el demo A: 8 de 8 nodos, 9 de 9 reglas, 0 fuera del contrato, 11 pares de aristas", () => {
+  // Plan v1.5 (S3): 12 reglas (la carga y el respaldo sin modelo de la v1.4 entran a la vitrina); 14 aristas de
+  // LangGraph, 12 pares dibujados (sin las dos terminales).
+  it("el demo A: 8 de 8 nodos, 12 de 12 reglas, 0 fuera del contrato, 12 pares de aristas", () => {
     const c = diagramaIgualGrafo(mapaDemo(), GRAFO, CONTRATO);
     expect(c.fallas).toEqual([]);
     expect(c.ok).toBe(true);
@@ -26,11 +28,11 @@ describe("diagrama = grafo", () => {
       fueraDelContrato: [],
     });
     expect(c.reglas).toEqual({
-      contrato: 9,
-      dibujadas: 9,
+      contrato: 12,
+      dibujadas: 12,
       exigidasAusentes: [],
     });
-    expect(c.aristas).toEqual({ grafo: 13, dibujadas: 11 });
+    expect(c.aristas).toEqual({ grafo: 14, dibujadas: 12 });
   });
 
   it("rojo si el dibujo pierde un nodo (la demo de la orden: guardia_salida fuera del mapa)", () => {

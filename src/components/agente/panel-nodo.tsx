@@ -243,7 +243,7 @@ export function PanelNodo({
           lider={PANEL.lider[idioma]}
           experto={PANEL.experto[idioma]}
           codigo={PANEL.codigo[idioma]}
-          trazas={`${PANEL.trazas[idioma]} · ${p.trazas.filas.length}`}
+          trazas={`${PANEL.trazas[idioma]} · ${p.trazas.total}`}
         />
         <PanelVista id="perfil" className="mt-1 min-w-0">
           <div className="solo-lider cambia-perfil">

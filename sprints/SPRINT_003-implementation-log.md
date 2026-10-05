@@ -1183,6 +1183,16 @@ tres mediciones por URL corrieron.
   La de 20 tiene su línea base y es la que describen las vistas «no vistas» y el ⭐⭐; la de 200 queda versionada como
   dato y la vitrina lo dice.
 
+- **Páginas de caso del A con la corrida de 200** (AskUserQuestion, 2026-10-04): «Solo los que se nombran
+  (Recomendado)». Llevan página los 20 primeros casos del lote y los que nombran el informe, la Brecha y la portada de
+  Casos; Playground y Brecha miden sobre los 200; un caso sin página se lista sin enlace y la vitrina lo dice. Medido
+  antes de decidir: hoy los 20 casos del A pesan 8,5 MB en el paquete (dos idiomas); los 200 llevarían el paquete de
+  32 MB a unos 110 MB, y cada entrega se copia a la historia del repo de hoja-de-vida.
+- **Los cambios de forma del A van a la mirada 3** («no vista», con su matriz, junto al BLUEPRINT y al expediente):
+  «Sumarlos a la mirada 3 (Recomendado)». Son la pausa con el caso completo (M-8), la aprobación parcial con su
+  documento y su monto, el modo Texas que ya mueve casos en el Playground y las listas de 200. Es un cambio del plan de
+  miradas aprobado antes de construirlo (regla 10, kit v1.21.0).
+
 ### Línea base de 200 del A (en fondo)
 
 - Prueba con el proveedor simulado antes de gastar cuota: `--variante agente_unico`, plan v1.5, lote 002, 20 de 20
@@ -1191,6 +1201,40 @@ tres mediciones por URL corrieron.
   (comprobado sin imprimir la clave): la corrida va sin espejo.
 - **Corrida `suscripcion-planlang-a-002-200-v1.5-base`:** plan v1.5, lote 002, `sonnet`, sesiones de 20, 2 s entre
   casos y 10 min entre sesiones, fuera de CI; el ciclo se detiene ante un límite de uso o un error.
+
+### LCP: medición de la fase 4 (paso del plan «medir, recortar, medir»)
+
+Sobre el build con el A en la corrida de 200 (informe provisional con la línea base a medias; los bytes de las páginas
+no dependen de ella), Lighthouse local con el procedimiento de la CI (3 corridas por URL, mediana), puerto 3007:
+
+| URL | Corridas (ms) | Mediana |
+|---|---|---|
+| `/es/playground` | 1.956 · 2.611 · 2.619 | 2.611 |
+| `/en/playground` | 1.958 · 2.617 · 2.619 | 2.617 |
+| `/es/agente` | 2.104 · 2.107 · 2.111 | 2.107 |
+| `/es/caso/A-006` | 2.307 · 2.308 · 2.314 | 2.308 |
+| `/es/brecha` | 1.954 · 2.462 · 2.468 | 2.462 |
+
+El playground sigue bimodal (ADR-011): ~1,96 s o ~2,61 s con los mismos bytes. Los 200 casos no lo empeoraron (la isla
+pesa 40 KB comprimidos de HTML frente a 27 KB con la de 20).
+
+**Recortes del plan, medidos:**
+1. **Chunk de la isla fuera de la primera carga** (`next/dynamic` con `ssr: true`): los 18,8 KB comprimidos de la isla
+   salen de los scripts iniciales, y el LCP no se mueve: `/es/playground` 1.960 · 2.610 · 2.621, `/en/playground`
+   2.608 · 2.609 · 2.637. Revertido: cambia la hidratación sin ganar nada.
+2. **Textos de la isla por idioma:** no se intentó aparte. Recortan dentro del mismo chunk (unos 5 KB comprimidos) que
+   el recorte 1 ya sacó entero de la carga inicial sin efecto.
+- El HTML no explica la diferencia: el Playground del B pesa 24 KB comprimidos (menos que la Brecha, 70 KB) y da
+  2.609 · 2.610 · 2.649. Lo decide la carrera de React en localhost que describe el ADR-011.
+- `/es/brecha` también es bimodal y en el modo alto queda a 2.461–2.536 ms (una corrida sobre 2.500).
+
+**Resultado: no se alcanza 2,5 s en el playground con los recortes del plan. STOP con las mediciones: decide el
+usuario** (el plan y la orden: «si no alcanza, medición + STOP + tu decisión», ningún umbral lo fija el builder).
+
+**Decisión del usuario (2026-10-04, AskUserQuestion): «Mantener 2,8 s y deuda (Recomendado)».** El ADR-011 gana su
+adenda del S3 con estas mediciones; `perf-budget.json` no cambia; la deuda pasa al próximo ciclo (frente de
+performance: menos JavaScript compartido o hidratación parcial) y el summary declara sin cumplir el criterio «LCP 2,5 s
+en todas las rutas».
 
 ### Los cinco defectos del agente B, antes de su lote de 200
 
@@ -1230,6 +1274,139 @@ corridas nuevas.
 | D55 | la vista pinta el aviso | `aviso: null` en `caso-b.ts` | `traza-demo-b.test.ts › el documento de rechazo que escribe Python…`: «expected null to be 'Este documento lo preparó…'» |
 
 Todas con `scripts/demo-rojo.sh`: restauradas (grep + cmp) y en verde.
+
+### `lotes --caso` para la parada 1 del ⭐⭐
+
+`pnpm lote:demo-b --caso B-010 …` corre un solo caso del lote (un homónimo que el investigador resolvió sin persona); el
+resto queda pendiente y la corrida sigue siendo acumulable. Prueba `test_un_solo_caso_del_lote_con_caso` (también un
+caso que no está en el lote → error con su nombre).
+
+| # | Gate | Mutación | Rojo (quién lo nombró) |
+|---|---|---|---|
+| D56 | `--caso` corre solo ese caso | `elegibles = list(pendientes)` | `test_un_solo_caso_del_lote_con_caso`: «… 20 casos en esta sesión … pendientes 0» |
+
+**CI del PR #14 sobre `f47a665`** (los arreglos del B): `quality`, `python`, `e2e` y `lighthouse` en `success` propio.
+
+### Auditoría del `CLAUDE.md` contra el código (2-bis; subagente Explore, solo lectura, sobre `f47a665`)
+
+Unas 75 afirmaciones revisadas: **17 derivas** (5 menores), **14 incompletas**, unas 45 verificadas. El `CLAUDE.md` es la
+copia que regenera la planeadora: van al summary como propuesta de corrección, no se editan aquí.
+- **Derivas:**
+  - D1 L6-7: «la app la sincroniza en la fase 0» (ya se hizo, `be317ef`).
+  - D2 L143-146/L11: demo B y entrevistador «en construcción» (ya se publican; en el roadmap quedan 3).
+  - D3 L119-122: gramática `agentes-ia` v1.0.0 (es 1.2.0, diagramador 0.5.0).
+  - D4: «SVG cuando exista el piloto de big-d, si no mermaid» (el SVG es `core/visor/svg.ts`).
+  - D5 L29/L203: `packages/diagramador` solo guarda el contrato; la implementación vive en `core/visor`.
+  - D6 L159: shadcn/ui no existe.
+  - D7 L183: «Pino + Sentry + PostHog» (sin PostHog; Pino instalado sin uso).
+  - D8 L715: «solo `_io.ts` y `_corridas.ts` leen el disco» (muchos CLI y `src/lib/datos` al compilar).
+  - D9 L199: la curva riesgo-cobertura vive en `core/brecha/calibracion.ts`.
+  - D10 L201: `core/formatos` no tiene informe ni mapa.
+  - D11 L207: `src/types/` no existe (sí `textos/`, `styles/`).
+  - D12 L209: `docs/BROCHURE.html` no existe (excepción del G-Plan).
+  - D13 L727: idioma (código, nombres y comentarios en español; ADR en español con Summary EN).
+  - D14 L88-90: la línea literal combina `--max-turns 1` con `--json-schema`.
+  - D15 L205: los lotes son `<semilla>-<n>.json`.
+  - D16 L222: `engine/` no existe (glob `src/engine/**` en `vitest.config.ts:87`).
+  - D17 L4: v1.30.1 frente a v1.30.0 del commit de estampado (dudosa).
+- **Incompletas:**
+  - I1 regla 6 (el entrevistador y el demo B ya usan modelo).
+  - I2 ADR código primero 001/012/013.
+  - I3 la IA del Stack más el entrevistador.
+  - I4 regla 14 (viaja también la ficha del agente B).
+  - I5 la ruleset exige también `python`.
+  - I6 el árbol de `agents/`.
+  - I7 cobertura del 90 % también en `plan/` y `visor/`.
+  - I8 las pantallas de `src/app`.
+  - I9 `data/`, `plans/demo-b`, `tests/`.
+  - I10 `scripts/`, `content/agentes`, `githooks`, `docs/*`.
+  - I11 ADR 001…016.
+  - I12 pines `pydantic`, `rfc8785`, `constraints.txt`.
+  - I13 Sentry dinámico y `reportError` sin llamadores.
+  - I14 Pydantic al emitir y Zod al leer.
+- **Fuera del `CLAUDE.md`:**
+  - `core/brecha/lector.ts:6` todavía dice «IndexedDB»;
+  - `packages/diagramador/README.md` dice contrato 0.3.0 y gramática 1.1.0 y cita una ruta de prueba vieja.
+
+### Punto de control para retomar (2026-10-04, 21:30; el usuario pidió parar hasta mañana)
+
+**Commit local de trabajo en curso, sin empujar** (la CI quedaría en rojo: el A está a medio cambiar). Lo empujado
+y en verde es `f47a665`.
+
+**Corriendo en fondo:** la línea base de 200 del A (`runs/demo-a/suscripcion-planlang-a-002-200-v1.5-base`, sin
+comitear), sesión 5 de 10 a las 21:25; termina sola hacia las 22:25. Si se cortó (al cerrar la sesión), se retoma
+igual que se lanzó, y salta los casos ya exportados:
+`agents/.venv/bin/python -m app_agents.lotes --proveedor suscripcion --variante agente_unico --plan plans/demo-a/v1.5.json --casos data/casos/demo-a/planlang-a-002-200.json --corrida suscripcion-planlang-a-002-200-v1.5-base --n 20 --pausa-s 2`
+(de 20 en 20, con 10 minutos entre sesiones, hasta 200 trazas).
+
+**Hecho en la fase 4 (en este commit, además de lo ya empujado):**
+- `docs/BLUEPRINT.html` (mirada 3, «no vista»; sin URL; «qué ve quién sin sesión» comprobado con peticiones anónimas);
+- la vitrina del A apuntando a la corrida de 200 de la v1.5:
+  - el manifiesto y un informe **provisional**, con la base a medias;
+  - páginas de caso solo para los 20 primeros más los que el informe señala (`src/lib/vista/paginas-caso.ts`): hoy 48;
+  - el Agente lista el primer bloque de 20 con su cuenta total;
+  - Playground y Brecha listan sin enlace el caso sin página (`ChipCaso`, borde punteado y texto para lector de
+    pantalla);
+- la pausa con el caso completo (M-8), el veredicto «Aprobado en parte» con su documento y su monto, y la categoría
+  «carga» del A;
+- las lecturas S1 confirmado y S2 refutado, la categoría de brecha `evaluador` y el nombre de `proveedor_no_disponible`;
+- las frases «entra a la vitrina en el sprint 3» quitadas;
+- `lotes --caso`;
+- la adenda del ADR-011 (decisión del LCP);
+- la paridad del núcleo reanclada a la corrida de 200 (80/80);
+- el visor: goldens SVG regenerados y cuentas del plan v1.5 (12 reglas, 14 aristas, 5 líneas con reglas).
+
+**Siguiente, en este orden:**
+1. Con la base completa (200 trazas):
+   - regenerar el informe de la vitrina:
+     `pnpm brecha:informe --corrida runs/demo-a/suscripcion-planlang-a-002-200-v1.5 --plan plans/demo-a/v1.5.json --base runs/demo-a/suscripcion-planlang-a-002-200-v1.5-base --salida data/vitrina/demo-a/suscripcion-planlang-a-002-200-v1.5`;
+   - regenerar el de la carpeta de la corrida (`pnpm brecha:informe --corrida runs/demo-a/suscripcion-planlang-a-002-200-v1.5`);
+   - poner al día en `data/vitrina/manifiesto.json` las huellas de la base y del informe;
+   - `pnpm trazas:verificar`;
+   - comitear la corrida de la base.
+2. Revisar el S3 del A con la base completa:
+   - `SUPUESTOS.dio["demo-a"]["S3:refutado"]` afirma «acertó más pero tardó más» y `LECTURA_SUPUESTO_A["S3:refutado"]`
+     dice «la exactitud extra se paga en tiempo»;
+   - hay que comprobarlo con las cifras nuevas o hacer que la frase dependa de ellas;
+   - si S3 sale confirmado, falta su lectura.
+3. Las pruebas que quedan en rojo (unidad; todas por la corrida de 20 → 200):
+   - visor: 4 (`igualdad` ×2, `mapa` ×1, `diagrama-igual-grafo` ×1);
+   - vitrina: `plan`, `entrada`, `brecha`, `playground`, `datos`, `caso`, `agente`, `playground-componentes`,
+     `copia-contra-plan`, `caso-componentes`, `fichas`, `playground-paridad` (golden de la isla A:
+     `PARIDAD_GOLDEN=escribir`), `plan-componentes`, `fichas-vista`, `reproducibilidad`, `fichas-componentes`,
+     `errores-con-nombre`, `componentes`, `brecha-componentes`, `agente-componentes`;
+   - integración: `informes-versionados` (se arregla con el paso 1).
+   Casos de referencia de la corrida de 200, con página:
+   - A-006 y A-018: aprobadas en parte;
+   - A-016: la carga;
+   - A-013: cambia con U1 = 0,90;
+   - A-002: con U3 = 1, una aclaración menos;
+   - A-007: error con U2 = 1600.
+4. e2e y arneses:
+   - `tests/e2e/caso.spec.ts` (A-004, A-006, A-008, A-001) y `playground.spec.ts` (A-008, A-010);
+   - `scripts/capturar-vitrina.mjs` y `registro-cierre.mjs` (A-006, A-008, A-010);
+   - el golden de la isla A en 3 motores (`tests/golden/playground/isla.demo-a.*`);
+   - el conteo de páginas de `tests/e2e-paquete`;
+   - luego build, `verificar-export`, `diagrama:verificar` y la e2e completa.
+5. `pnpm fichas` (ADR-011 cambió; la corrida del A cambió). Sumar a `APP.grupos` las funcionalidades del demo B y del
+   entrevistador.
+6. **Lote de 200 del B** (aprobado: «Arreglar y correr», con los arreglos ya en `f47a665`), después de la base del A:
+   - humo real 3/3 y luego sesiones de 20;
+   - plan `plans/demo-b/v1.1.json`, lote `data/casos/demo-b/planlang-b-001-200.json`, `--demo b`, `--pausa-s 2`;
+   - la vitrina del B sigue en la de 20 y lo dice.
+7. Guía acumulativa (`planlang-s3`, ⭐⭐ de 4 paradas):
+   - parada 1: `pnpm lote:demo-b --caso B-010`;
+   - parada 2: teléfono, entrada y Brecha del B;
+   - parada 3: modo Texas del A (mueve las 9 aprobaciones en parte) y un umbral del B;
+   - parada 4: el expediente de `/es/demo-b/caso/B-010`.
+   Además:
+   - las pruebas del S2 con casos de la corrida de 20 pasan a «Mejorado en S3» con los casos nuevos;
+   - el manual ES/EN (entrevistar, demo B, expediente, publicar el design system, la corrida de 200 y las páginas de caso);
+   - el README del kit de prueba;
+   - `design-sync/` sin publicar;
+   - las capturas de la mirada 3 con su matriz (BLUEPRINT, expediente, informe B, textos del entrevistador y los
+     cambios de forma del A).
+8. `/audita-sprint` (con segundo auditor), luego la parada del usuario, luego `/deploy-check --python` y el summary.
 
 ## Desviación del plan
 

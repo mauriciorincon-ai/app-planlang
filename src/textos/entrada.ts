@@ -283,6 +283,17 @@ export const CATEGORIA_DE_BRECHA: Record<
     uno: tb("respuesta fuera de formato", "off-format answer"),
     varios: tb("respuestas fuera de formato", "off-format answers"),
   },
+  // Una falla que nombra un evaluador del dominio (M-20) y que ningún riesgo del plan cubría.
+  evaluador: {
+    uno: tb(
+      "falla que solo vio un evaluador",
+      "failure only an evaluator saw",
+    ),
+    varios: tb(
+      "fallas que solo vio un evaluador",
+      "failures only an evaluator saw",
+    ),
+  },
 };
 
 /** El bloque del experto: cómo se sostiene cada afirmación. Las cifras entran por la vista. */

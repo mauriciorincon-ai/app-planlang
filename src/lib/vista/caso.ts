@@ -35,6 +35,7 @@ import { decimal, entero } from "./formato";
 import { categoriaDeRegla, textoDeCategoria } from "./motivo-pausa";
 import { pausaUnica } from "./plan-comun";
 import type { Fila } from "./agente";
+import { casosConPagina } from "./paginas-caso";
 
 export interface ChipCaso {
   id: string;
@@ -69,6 +70,8 @@ export interface VistaCaso {
   descriptor: string;
   ejemplar: string | null;
   aprobado: boolean;
+  /** Aprobado en parte (una determinación adversa parcial): ni «cumple» ni «no cumple», se pinta como alerta. */
+  parcial: boolean;
   veredicto: string;
   persona: boolean;
   personaTexto: string;
@@ -102,6 +105,8 @@ export interface VistaCaso {
     evidencia: string[];
     contraevidencia: string[];
     leyo: string;
+    /** M-8: el resto del caso que viajó en la pausa (vacío en las corridas anteriores a la v1.5). */
+    caso: string[];
     respuesta: string;
     nota: string;
   } | null;
@@ -185,7 +190,8 @@ export function chipsDeCasos(d: DatosDemo, i: Idioma): ChipCaso[] {
   const subtipos = new Map<string, string>(
     d.lote.casos.map((c) => [c.id, c.subtipo] as [string, string]),
   );
-  return d.corrida.trazas.map((t) => {
+  const conPagina = casosConPagina(d);
+  return d.corrida.trazas.filter((t) => conPagina.has(t.caso_id)).map((t) => {
     const subtipo = subtipos.get(t.caso_id)!;
     return {
       id: t.caso_id,
@@ -195,8 +201,9 @@ export function chipsDeCasos(d: DatosDemo, i: Idioma): ChipCaso[] {
   });
 }
 
+/** Los casos que tienen página (`casosConPagina`): uno por traza en una corrida de 20, una selección en la de 200. */
 export function idsDeCasos(d: DatosDemo): string[] {
-  return d.corrida.trazas.map((t) => t.caso_id);
+  return [...casosConPagina(d)];
 }
 
 /** El pie de las páginas que leen la corrida (Casos, Plan): qué corrida, de qué sprint, cuántos casos y con qué modelo. */
@@ -282,6 +289,7 @@ export function vistaCaso(d: DatosDemo, id: string, i: Idioma): VistaCaso {
   const s = t.senales;
   const final = String(s.decision_final);
   const aprobado = final === "aprobar";
+  const parcial = perfil.parcial !== undefined && final === perfil.parcial.valor;
   const persona = s.pausa_humana === true;
   const v = c.verdad_conocida;
   const coincide = final === v.decision && persona === v.debe_escalar;
@@ -443,7 +451,15 @@ export function vistaCaso(d: DatosDemo, id: string, i: Idioma): VistaCaso {
     ),
     ejemplar: ejemplar && EJEMPLAR[ejemplar] ? X(EJEMPLAR[ejemplar]!, i) : null,
     aprobado,
-    veredicto: X(aprobado ? CABECERA.aprobado : perfil.noAprobado, i),
+    parcial,
+    veredicto: X(
+      aprobado
+        ? CABECERA.aprobado
+        : parcial
+          ? perfil.parcial!.veredicto
+          : perfil.noAprobado,
+      i,
+    ),
     persona,
     personaTexto: X(persona ? CABECERA.conPersona : CABECERA.sinPersona, i),
     coincide,
@@ -491,6 +507,7 @@ export function vistaCaso(d: DatosDemo, id: string, i: Idioma): VistaCaso {
             evidencia: pl.evidencia.map((x) => X(x, i)),
             contraevidencia: pl.contraevidencia.map((x) => X(x, i)),
             leyo: pl.leyo,
+            caso: pl.caso,
             respuesta: valorLeido(pausa.respuesta_simulada.decision, i),
             nota: pl.nota,
           }

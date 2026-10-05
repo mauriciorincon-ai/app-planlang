@@ -28,6 +28,7 @@ function Pagina({ id, idioma }: { id: string; idioma: Idioma }) {
     <>
       <MiradaCaso
         chips={chipsDeCasos(d, idioma)}
+        total={d.corrida.trazas.length}
         actual={id}
         idioma={idioma}
         demo="demo-a"

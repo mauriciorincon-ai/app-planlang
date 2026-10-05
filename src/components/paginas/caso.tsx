@@ -35,6 +35,7 @@ export async function PaginaCasos({
         <Oraculo idioma={idioma} demo={demo} />
         <MiradaCaso
           chips={chipsDeCasos(d, idioma)}
+          total={d.corrida.trazas.length}
           actual={null}
           idioma={idioma}
           demo={demo}
@@ -70,6 +71,7 @@ export async function PaginaCaso({
         <Oraculo idioma={idioma} demo={demo} />
         <MiradaCaso
           chips={chipsDeCasos(d, idioma)}
+          total={d.corrida.trazas.length}
           actual={id}
           idioma={idioma}
           demo={demo}

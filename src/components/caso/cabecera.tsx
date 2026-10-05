@@ -2,6 +2,7 @@ import { UserCheck } from "lucide-react";
 import type { Idioma } from "@core/formatos/bilingue";
 import type { IdDemo } from "@/lib/demos";
 import type { ChipCaso } from "@/lib/vista/caso";
+import { PRIMEROS_CON_PAGINA } from "@/lib/vista/paginas-caso";
 import { MIRADA, ORACULO, PORTADA } from "@/textos/caso";
 import { PERFIL } from "@/textos/comun";
 import { cx } from "../cx";
@@ -54,11 +55,14 @@ export function MiradaCaso({
   actual,
   idioma,
   demo,
+  total,
 }: {
   chips: readonly ChipCaso[];
   actual: string | null;
   idioma: Idioma;
   demo: IdDemo;
+  /** Cuántos casos tiene la corrida (los chips son solo los que tienen página). */
+  total: number;
 }) {
   return (
     <section aria-labelledby="c-mirada" className="pt-8">
@@ -89,7 +93,7 @@ export function MiradaCaso({
         className="mt-4 flex flex-wrap items-center gap-x-2.5 gap-y-2 text-chico"
       >
         <span className="text-tinta-2">
-          {MIRADA.casosDeLaCorrida(chips.length)[idioma]}
+          {MIRADA.casosDeLaCorrida({ conPagina: chips.length, total, primeros: PRIMEROS_CON_PAGINA })[idioma]}
         </span>
         {chips.map((c) => (
           <a

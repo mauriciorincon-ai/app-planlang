@@ -392,6 +392,16 @@ def test_la_cli_corre_el_demo_b_con_sus_valores_por_defecto(tmp_path: Path, caps
     assert "plan_beneficios" not in manifiesto
 
 
+def test_un_solo_caso_del_lote_con_caso(tmp_path: Path, capsys) -> None:
+    """La parada 1 del ⭐⭐ corre un solo caso (un homónimo) con `--caso`; el resto queda pendiente."""
+    assert main(["--demo", "b", "--proveedor", "simulado", "--salida", str(tmp_path), "--caso", "B-010"]) == 0
+    assert "1 casos en esta sesión (0 con error) · pendientes 19" in capsys.readouterr().out
+    trazas = list((tmp_path / "simulado-planlang-b-001-20" / "trazas").glob("*.json"))
+    assert [t.stem for t in trazas] == ["B-010"]
+    with pytest.raises(ValueError, match="B-999 no está en el lote"):
+        main(["--demo", "b", "--proveedor", "simulado", "--salida", str(tmp_path), "--caso", "B-999"])
+
+
 def test_la_linea_base_recibe_las_mismas_instrucciones_que_el_multiagente() -> None:
     """ADR-006: a igual presupuesto, iguales instrucciones. Cada regla de campo del extractor y cada regla de
     contexto del investigador está, palabra por palabra, en el prompt de la línea base (la primera versión las

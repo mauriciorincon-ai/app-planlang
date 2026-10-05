@@ -900,6 +900,7 @@ export const REGLA_CORTA: Record<string, TextoBilingue> = {
   negar: tb("negar", "deny"),
   texas: tb("Texas", "Texas"),
   proveedor: tb("sin respuesta", "no response"),
+  carga: tb("instrucción escondida", "hidden instruction"),
 };
 
 export const PANEL = {
@@ -994,6 +995,12 @@ export const PANEL = {
         `See ${p.n} more: ${p.casos}`,
       )) as Plantilla<{ n: number; casos: string }>,
     verMenos: tb("Ver menos", "See less"),
+    // Corrida de 200: solo los casos con página se listan (decisión del usuario, S3; `paginas-caso.ts`).
+    soloElBloque: ((p: { n: number; total: number; bloque: number }) =>
+      tb(
+        `Pasaron ${p.total} casos; se listan los ${p.n} de los ${p.bloque} primeros del lote.`,
+        `${p.total} cases went through; the ${p.n} among the first ${p.bloque} in the batch are listed.`,
+      )) as Plantilla<{ n: number; total: number; bloque: number }>,
     reglaQueDecidio: tb("Regla que decidió", "Rule that decided"),
     porDefecto: tb("ninguna: rama por defecto", "none: default branch"),
     ninguna: tb("ninguna", "none"),
@@ -1778,8 +1785,8 @@ export const EXTRACTOR_S1 = {
   rotulo: tb("Lo que aún no se sabe", "What is not known yet"),
   texto: ((p: { medidos: number }) =>
     tb(
-      `Si su confianza es confiable: en esta corrida acertó los ${p.medidos} casos medidos y, sin un solo error, no hay con qué calibrarla; aquí S1 quedó sin probar. La corrida de 200 del plan v1.4 lo confirmó y entra a la vitrina en el sprint 3.`,
-      `Whether its confidence can be trusted: in this run it got all ${p.medidos} measured cases right and, without a single error, there is nothing to calibrate against; here S1 stayed untested. The 200-case run of plan v1.4 confirmed it and joins the showcase in sprint 3.`,
+      `Si su confianza es confiable: en esta corrida acertó los ${p.medidos} casos medidos y, sin un solo error, no hay con qué calibrarla; aquí S1 quedó sin probar.`,
+      `Whether its confidence can be trusted: in this run it got all ${p.medidos} measured cases right and, without a single error, there is nothing to calibrate against; here S1 stayed untested.`,
     )) as Plantilla<{ medidos: number }>,
 };
 
@@ -2069,6 +2076,10 @@ export const MOTIVO_PAUSA: Record<string, TextoBilingue> = {
   texas: tb("modo Texas (U4)", "Texas mode (U4)"),
   tope: tb("tope de aclaraciones (U3)", "clarification cap (U3)"),
   proveedor: tb("sin respuesta del modelo", "no model response"),
+  carga: tb(
+    "instrucción escondida en el texto",
+    "hidden instruction in the text",
+  ),
 };
 
 /** Columnas y rótulos de la tabla de trazas de cada nodo. */
@@ -2212,6 +2223,8 @@ export const UNIDADES = {
 /** Palabras del dominio que aparecen como valor en una celda (decisión, estado de cobertura). */
 export const VALORES: Record<string, TextoBilingue> = {
   aprobar: tb("aprobar", "approve"),
+  // Plan v1.5: se aprueba hasta el tope del plan de beneficios y se niega el excedente.
+  aprobar_parcial: tb("aprobar en parte", "approve in part"),
   negar: tb("negar", "deny"),
   escalar: tb("escalar", "escalate"),
   requiere_autorizacion: tb("cubierto", "covered"),

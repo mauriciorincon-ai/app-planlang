@@ -70,6 +70,9 @@ export const VEREDICTOS = {
   en_construccion: tb("En construcción", "Under construction"),
 };
 
+/** Un caso que se nombra sin enlace: la corrida de 200 publica página solo de algunos casos (S3). */
+export const SIN_PAGINA = tb("sin página propia", "no page of its own");
+
 export const PIE = {
   simulacion: tb("Simulación · no operativo.", "Simulation · not operational."),
   /** Por demo; `ambos` es el de la entrada, que presenta los dos. */

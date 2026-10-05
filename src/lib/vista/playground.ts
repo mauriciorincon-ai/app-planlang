@@ -14,7 +14,6 @@ import type { Compacto } from "@core/playground/compacto";
 import { consecuencias, umbralesDelPlan } from "@core/playground/consecuencias";
 import { esAristaTripleta } from "@core/plan/esquema";
 import type { DatosDemo } from "@/lib/datos/vitrina";
-import { ruta } from "@/lib/ruta";
 import { DEMO_TEXTO } from "@/textos/demo";
 
 import {
@@ -34,6 +33,7 @@ import type { Fila } from "./agente";
 import type { PuntoCurva } from "./brecha";
 import { nombreDeSubtipo, pieDeCorrida } from "./caso";
 import { decimal, enumerar, versionCorta } from "./formato";
+import { enlaceACaso } from "./paginas-caso";
 
 const X = (t: TextoBilingue, i: Idioma) => t[i];
 
@@ -55,7 +55,8 @@ export interface DatosIsla {
   compacto: Compacto;
   umbrales: UmbralIsla[];
   criterios: { id: string; regla: string }[];
-  casos: { id: string; tipo: string; href: string }[];
+  /** `href` nulo: el caso no tiene página (corrida de 200; `paginas-caso.ts`). */
+  casos: { id: string; tipo: string; href: string | null }[];
   /** Columnas de la tabla de las decisiones: las señales que leen las aristas de los nodos jugables. */
   columnas: { senal: string; nodo: string; titulo: string }[];
   /** Los nodos que deciden, en el orden del grafo del plan (el compacto los guarda en orden canónico). */
@@ -361,7 +362,7 @@ export function vistaPlayground(d: DatosDemo, i: Idioma): VistaPlayground {
       casos: c.casos.map((k) => ({
         id: k.id,
         tipo: X(nombreDeSubtipo(d.id, k.subtipo), i),
-        href: ruta(i, "caso", k.id, d.id),
+        href: enlaceACaso(d, k.id, i),
       })),
       columnas,
       nodosEnOrden: orden,

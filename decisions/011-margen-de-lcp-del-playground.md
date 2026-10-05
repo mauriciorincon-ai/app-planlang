@@ -67,3 +67,25 @@ que ya había aceptado para este borde.
   primera pintura, y volver la entrada a 2.500. Si el S3 mide el playground con el demo B, la entrada se revisa con
   él.
 - Una ruta nueva en `lighthouse-urls.json` exige su entrada de LCP en el mismo PR (la prueba lo pide).
+
+## Adenda del S3 (2026-10-04): el pago no se alcanzó y el margen sigue, por decisión del usuario
+
+**Summary (EN):** S3 measured the planned cuts and none brings the playground's high mode under 2.5 s. Moving the
+island's chunk out of the first load took its 18.8 KB (gzip) off the initial scripts and the LCP did not move; demo B's
+playground, with lighter HTML than the gap page, sits at the same 2.61 s. The user kept the 2.8 s budget for
+`/*/playground` and moved the debt to the next cycle.
+
+- **Mediciones** (Lighthouse local con el procedimiento de la CI, 3 corridas por URL, A en la corrida de 200 de la
+  v1.5): `/es/playground` 1.956 · 2.611 · 2.619 ms; `/en/playground` 1.958 · 2.617 · 2.619; `/es/demo-b/playground`
+  2.609 · 2.610 · 2.649; `/es/brecha` 1.954 · 2.462 · 2.468 (en otra tanda, 2.461 · 2.470 · 2.536).
+- **Recorte medido:** la isla con `next/dynamic` y `ssr: true` saca sus 18,8 KB comprimidos de los scripts iniciales y
+  deja el LCP igual (1.960 · 2.610 · 2.621 en `/es/playground`). Se revirtió. Partir los textos de la isla por idioma
+  recorta dentro de ese mismo chunk y no se intentó aparte.
+- **Lo que decide el modo alto** no es el peso de la página: el Playground del B pesa 24 KB comprimidos de HTML (la
+  Brecha, 70 KB) y da lo mismo. Es la carrera de React en localhost descrita arriba.
+- **Decisión del usuario (2026-10-04, AskUserQuestion): «Mantener 2,8 s y deuda (Recomendado)».** La entrada de
+  `/*/playground` queda en 2.800 ms; las demás rutas siguen en 2.500. La deuda pasa al próximo ciclo como frente de
+  performance (menos JavaScript compartido o hidratación parcial). El criterio de la orden del S3 «LCP ≤ 2,5 s en
+  todas las URL medidas» queda sin cumplir por esta decisión, con su medición.
+- **Riesgo declarado:** `/*/brecha` también es bimodal y en el modo alto queda a menos del 2 % de su presupuesto
+  (`lighthouse-margen` lo avisa). Un rojo de la CI en esa ruta sería la misma carrera, no una regresión del código.
