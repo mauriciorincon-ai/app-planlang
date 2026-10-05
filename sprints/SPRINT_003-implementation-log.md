@@ -949,6 +949,59 @@ Instantáneas del A para repetir la comparación (en el scratchpad de la sesión
 `instantanea-a-antes.json`, `caso-html-antes.json` y las pruebas que las generan (`_instantanea-a.test.ts`,
 `_instantanea-caso-html.test.tsx`). Se sacan del commit `3b494b5` exportado con `git archive` en `scratchpad/base/`.
 
+### Vitrina con dos demos — Fichas del B (tras compactar, 2026-10-04)
+
+**Fichas por demo.**
+- `src/lib/fichas/rutas.ts`: slug y ruta de la ficha de cada agente (`content/agentes/planlang-demo-{a,b}.ficha-tecnica.json`
+  y su `.en.json` en `docs/fichas/`); `archivosDeFichas(ds, repo)` escribe las dos y exige que el slug de cada ficha
+  sea el de su ruta;
+- `datosDeLosDemos()` en `src/lib/datos/vitrina.ts`: lo que cuenta la app entera;
+- `scripts/fichas.ts` y `scripts/paquete-vitrina.ts` (copia y manifiesto) con las dos fichas de agente.
+
+**La ficha de la app cuenta los dos demos** (`brochureExport(ds, …)`, `complementoPropuesto(ds, …)`):
+- criterios cumplidos 15 de 15 (9 del A, 6 del B), decisiones cruzadas 313 en 6 corridas, 40 casos sintéticos con
+  respuesta conocida y el costo nominal de correr una vez cada demo (US$ 0,9634); cada detalle dice cuánto puso cada
+  demo, y ninguna etiqueta asume que los dos tienen el mismo número de casos (la cifra `casos_por_corrida` pasa a
+  `casos_sinteticos`, que suma: la corrida de 200 del A no la rompería);
+- frases caducadas arregladas: «El demo B y el entrevistador llegan después» (límites), «todo caso, afiliado y médico»
+  (nunca: suma solicitante y lista de control), «Niega un caso» (→ «Niega o rechaza»), la privacidad, «el agente del
+  demo A» (stack), «la del agente A» (funcionalidad de fichas) y los dos `brochure_*` que prometían `BROCHURE.html` y
+  `/conoce` en el sprint 3 (el G-Plan decidió que la vitrina y sus fichas hacen de brochure);
+- los grupos de funcionalidades (`APP.grupos`, la línea «el demo A y las corridas por lotes» incluida) se mueven en la
+  fase 4 con el manual: cada funcionalidad apunta a una sección real del manual (AU-S2-4).
+
+**La página de Fichas, por demo** (`vistaFichas(ds, demo, repo, i)`): antetítulo, cuadro de reproducibilidad, título de
+la sección del agente y lo que se entrega salen del demo; la ficha de la app es la misma en las dos páginas (prueba).
+
+**«Cómo repetirla» con los comandos de verdad.** Los pasos del S2 decían `pnpm plan:validar`, `pnpm casos:generar` y
+`pnpm brecha:informe` sin argumentos: el primero y el último salen con «uso:» y código 2 sin hacer nada. Ahora
+`pasosDeRepro(d, i)` los arma con los archivos del manifiesto (plan con que se mide, corrida, salida) y nombra la línea
+base y las repeticiones solo si no siguen la convención de `brecha:informe` (la del B es `-base-v2`; `-base` es la
+primera, descartada). El último paso rehace el informe y lo compara con el publicado (`--verificar`). Se corrieron los
+cinco pasos de los dos demos (salvo el lote) y pasan; una prueba exige que cada script exista, cada archivo exista y que
+línea base y repeticiones resueltas sean las del manifiesto. `package.json` gana `lote:demo-b`.
+
+**El pie, por demo.** «Todo caso, afiliado, médico y plan de beneficios… las tomaría un auditor médico» salía en las
+seis páginas del B. `PIE.sintetico` es por demo; la entrada (sin demo) dice los dos. Con prueba.
+
+**El reparto de columnas de las trazas, por demo.** `PRESENTACION` (`src/components/agente/trazas.tsx`) estaba por
+nombre de nodo: el B comparte `enrutador`, `decision`… con otras columnas, y `verificador_listas` no tenía entrada (el
+build se detenía en `/en/demo-b/agente`; la sonda probaba la vista, no el componente). Ahora es por demo; las columnas
+del B son mirada de FORMA «no vista» y van a la matriz.
+
+**El A no se movió (HTML del build).** El commit `3b494b5` se construyó en el scratchpad (copia de `node_modules` por
+clon APFS: Turbopack rechaza el enlace simbólico) y se comparó página por página con el build nuevo, sin scripts, sin
+rutas de chunks y sin los separadores `<!-- -->` que React intercala según cómo parte el streaming (el árbol RSC es el
+mismo):
+- 53 de 57 páginas del A idénticas;
+- Agente (es, en): solo «contrato 0.3.0» → «0.5.0» (frase caducada, ya anotada);
+- Fichas (es, en): la ficha de la app con los dos demos y los pasos con sus argumentos, lo declarado arriba.
+- Un `{texto}: ` que Prettier había partido en dos nodos (la etiqueta de la instrucción escondida) se devolvió a un
+  nodo: el HTML vuelve a ser el de antes.
+
+Pruebas: `pnpm test` 3.531 en verde (128 archivos); `pnpm typecheck`, `pnpm lint`, `pnpm fichas --verificar` y
+`pnpm build` (110 páginas) en verde.
+
 ## Desviación del plan
 
 1. **Rutas de la orden** (`SPRINT_003-orden.md:65`): `audita-sprint` y `plan-sprint` viven en
@@ -1063,3 +1116,6 @@ Instantáneas del A para repetir la comparación (en el scratchpad de la sesión
 | 2026-10-04 | el commit de punto de control `wip(vitrina)` se hizo con `--no-verify`, que salta el hook de gitleaks | desliz del builder al comitear un árbol que sabía en rojo | `gitleaks git --log-opts="HEAD~1..HEAD"` a mano sobre ese commit: «no leaks found». Ningún commit más sin el hook |
 | 2026-10-04 | las páginas del B decían «auditor», «afiliados» y «plan de beneficios» en la franja del oráculo, y «El spike tenía 3 de 8» | textos del A pintados por el componente o por la vista sin pasar por el demo | texto por demo (`ORACULO.texto`, `MIRADA.aviso*`, `nodosDetalleSinSpike`); la guardia de vocabulario por demo sobre `out/` lo vigilará |
 | 2026-10-04 | `{plan:lista.decision}` del B detenía el build | el resolvedor nombraba las reglas con el vocabulario del A | `conPlan` recibe el demo |
+| 2026-10-04 | el build se detenía en `/en/demo-b/agente` | `PRESENTACION` de las trazas estaba por nombre de nodo y no tenía `verificador_listas`; la sonda del B probaba la vista, no el componente | reparto por demo (`trazas.tsx`) |
+| 2026-10-04 | las seis páginas del B decían en el pie «afiliado, médico y plan de beneficios… un auditor médico» | `PIE.sintetico` era uno solo | pie por demo; la entrada dice los dos (prueba en `componentes.test.tsx`) |
+| 2026-10-04 | «Cómo repetirla» daba comandos que no corren (S2) | `pnpm plan:validar` y `pnpm brecha:informe` sin argumentos salen con «uso:» | comandos armados con el manifiesto, corridos en los dos demos, con prueba |

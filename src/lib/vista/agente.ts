@@ -11,6 +11,7 @@ import { esAristaTripleta } from "@core/plan/esquema";
 import { idDeMapa } from "@core/visor/ids";
 import { BANDA_DE_TIPO } from "@core/visor/mapa";
 import type { DatosDemo } from "@/lib/datos/vitrina";
+import type { IdDemo } from "@/lib/demos";
 import { ruta } from "@/lib/ruta";
 import {
   ARISTA_U1,
@@ -179,6 +180,8 @@ export interface VistaSpike {
   citas: { rotulo: string; refs: Array<{ que: string; donde: string }> };
 }
 export interface VistaAgente {
+  /** El demo de la vista: los componentes eligen con él lo que es de presentación (el reparto de las trazas). */
+  demo: IdDemo;
   portada: { antetitulo: string; titulo: string; guia: string };
   ficha: {
     objetivo: string;
@@ -1134,6 +1137,7 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
   }
 
   return {
+    demo: d.id,
     portada: {
       antetitulo: X(PORTADA.antetitulo({ demo, corrida, sprint, fecha })),
       titulo: X(perfil.portadaTitulo),

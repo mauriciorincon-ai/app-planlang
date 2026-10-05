@@ -154,7 +154,7 @@ export function Reproducibilidad({
         <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
           <h3 className="flex items-center gap-2 text-sub font-semibold">
             <Icono de={Fingerprint} tam={17} className="text-tinta-2" />
-            {REPRO.cuadro[idioma]}
+            {v.textos.cuadro}
           </h3>
           <Chip procedencia="real">{v.repro.chip}</Chip>
         </div>

@@ -185,7 +185,7 @@ async function main() {
     mkdirSync(dirname(join(DESTINO, a)), { recursive: true });
     cpSync(join(RAIZ, de), join(DESTINO, a));
   };
-  copiar(RUTA_FICHA_AGENTE, RUTA_FICHA_AGENTE);
+  for (const ruta of Object.values(RUTA_FICHA_AGENTE)) copiar(ruta, ruta);
   copiar(RUTA_EXPORT, RUTA_EXPORT_EN_HOJA_DE_VIDA);
   const complemento = JSON.parse(
     readFileSync(join(RAIZ, RUTA_COMPLEMENTO), "utf8"),
@@ -292,8 +292,10 @@ async function main() {
     copiar_a_hoja_de_vida: {
       "public/piezas/planlang/":
         "la vitrina (export estático, enlaces .html); borrar la carpeta en hoja-de-vida antes de copiar",
-      [RUTA_FICHA_AGENTE]:
+      [RUTA_FICHA_AGENTE["demo-a"]]:
         "la ficha del agente A (contrato ficha técnica 1.3.1)",
+      [RUTA_FICHA_AGENTE["demo-b"]]:
+        "la ficha del agente B (contrato ficha técnica 1.3.1)",
       [RUTA_EXPORT_EN_HOJA_DE_VIDA]:
         "los hechos de la app (contrato brochure-export 1.0.0)",
       [RUTA_COMPLEMENTO_EN_HOJA_DE_VIDA]:

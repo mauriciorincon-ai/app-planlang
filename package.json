@@ -21,6 +21,7 @@
     "m9:reporte": "tsx scripts/m9-reporte.ts",
     "lote:demo": "agents/.venv/bin/python -m app_agents.lotes --demo a --pausa-s 2",
     "lote:base": "agents/.venv/bin/python -m app_agents.lotes --demo a --pausa-s 2 --variante agente_unico",
+    "lote:demo-b": "agents/.venv/bin/python -m app_agents.lotes --demo b --pausa-s 2",
     "capturas:maqueta": "node scripts/capturar-maqueta.mjs",
     "capturas:vitrina": "node scripts/capturar-vitrina.mjs",
     "export:verificar": "node scripts/verificar-export.mjs",

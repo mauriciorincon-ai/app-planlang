@@ -146,6 +146,7 @@ function Cabecera({ v, idioma }: { v: VistaCaso; idioma: Idioma }) {
 const ICONO_DATO = { orden: ClipboardList, persona: Users } as const;
 
 function Ipo({ v, idioma }: { v: VistaCaso; idioma: Idioma }) {
+  const inyeccion = RECIBE.inyeccion[idioma];
   return (
     <div className="mt-6 grid grid-cols-1 amplio:grid-cols-[minmax(0,4fr)_28px_minmax(0,5fr)_28px_minmax(0,4fr)]">
       <ColumnaIpo icono={Inbox} titulo={RECIBE.titulo[idioma]} sub="">
@@ -162,9 +163,7 @@ function Ipo({ v, idioma }: { v: VistaCaso; idioma: Idioma }) {
                         tam={12}
                         className="mr-1 inline align-[-1px]"
                       />
-                      <span className="sr-only">
-                        {RECIBE.inyeccion[idioma]}:{" "}
-                      </span>
+                      <span className="sr-only">{inyeccion}: </span>
                       {carga}
                     </mark>
                   ) : null}

@@ -11,15 +11,15 @@ import { afterEach, beforeAll, describe, expect, it } from "vitest";
 import { SeccionFicha } from "@/components/fichas/ficha-cv";
 import { MiradaFichas, Reproducibilidad } from "@/components/fichas/mirada";
 import { hechosDelRepo, type HechosDelRepo } from "@/lib/datos/repo";
-import { datosDemo, type DatosDemo } from "@/lib/datos/vitrina";
+import { datosDeLosDemos, type DatosDeLosDemos } from "@/lib/datos/vitrina";
 import { vistaFichas } from "@/lib/vista/fichas";
 import type { Idioma } from "@core/formatos/bilingue";
 
 const html = document.documentElement;
-let d: DatosDemo;
+let ds: DatosDeLosDemos;
 let repo: HechosDelRepo;
 beforeAll(async () => {
-  d = await datosDemo();
+  ds = await datosDeLosDemos();
   repo = hechosDelRepo();
 });
 afterEach(() => {
@@ -28,13 +28,23 @@ afterEach(() => {
 });
 
 function Pagina({ idioma }: { idioma: Idioma }) {
-  const v = vistaFichas(d, repo, idioma);
+  const v = vistaFichas(ds, "demo-a", repo, idioma);
   return (
     <>
       <MiradaFichas v={v} idioma={idioma} />
       <Reproducibilidad v={v} idioma={idioma} />
-      <SeccionFicha n={2} f={v.app} idioma={idioma} />
-      <SeccionFicha n={3} f={v.agente} idioma={idioma} />
+      <SeccionFicha
+        n={2}
+        f={v.app}
+        titulo={v.textos.seccionApp}
+        idioma={idioma}
+      />
+      <SeccionFicha
+        n={3}
+        f={v.agente}
+        titulo={v.textos.seccionAgente}
+        idioma={idioma}
+      />
     </>
   );
 }

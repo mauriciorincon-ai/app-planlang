@@ -1,10 +1,11 @@
 /**
  * Textos de P7 Fichas (maqueta `docs/diseno/07-fichas.html`, aprobada en la mirada 4 de la Etapa de Diseño) y el
- * contenido de lo que viaja a hoja-de-vida: la ficha del agente A (contrato ficha técnica v1.3.1, frente Agentes), el
- * `brochure-export.json` (contrato 1.0.0) y el complemento que planlang propone para la ficha de la app (la arma
- * hoja-de-vida). Las cifras no viven aquí: las ponen `src/lib/fichas/` desde el informe, la corrida y el repositorio.
+ * contenido de lo que viaja a hoja-de-vida: la ficha del agente A (contrato ficha técnica v1.3.1, frente Agentes; la
+ * del B vive en `src/textos/demo-b/fichas.ts`), el `brochure-export.json` (contrato 1.0.0) y el complemento que planlang
+ * propone para la ficha de la app (la arma hoja-de-vida). Las cifras no viven aquí: las ponen `src/lib/fichas/` desde el informe, la corrida y el repositorio.
  */
 import { tb, type TextoBilingue } from "@core/formatos/bilingue";
+import type { IdDemo } from "@/lib/demos";
 
 type Plantilla<P> = (p: P) => TextoBilingue;
 
@@ -12,16 +13,28 @@ export const TITULO_PAGINA = tb(
   "Las fichas · planlang",
   "The records · planlang",
 );
-export const DESCRIPCION_PAGINA = tb(
-  "La ficha de reproducibilidad del demo A y las dos fichas que viajan a la vitrina personal: la de la app y la del agente A, comprobadas contra su contrato. Simulación · no operativo.",
-  "Demo A's reproducibility record and the two records that travel to the personal showcase: the app's and agent A's, checked against their contract. Simulation · not operational.",
-);
+export const DESCRIPCION_PAGINA: Record<IdDemo, TextoBilingue> = {
+  "demo-a": tb(
+    "La ficha de reproducibilidad del demo A y las dos fichas que viajan a la vitrina personal: la de la app y la del agente A, comprobadas contra su contrato. Simulación · no operativo.",
+    "Demo A's reproducibility record and the two records that travel to the personal showcase: the app's and agent A's, checked against their contract. Simulation · not operational.",
+  ),
+  "demo-b": tb(
+    "La ficha de reproducibilidad del demo B y las dos fichas que viajan a la vitrina personal: la de la app y la del agente B, comprobadas contra su contrato. Simulación · no operativo.",
+    "Demo B's reproducibility record and the two records that travel to the personal showcase: the app's and agent B's, checked against their contract. Simulation · not operational.",
+  ),
+};
 
 export const PORTADA = {
-  antetitulo: tb(
-    "Demo A · lo que viaja a la vitrina personal",
-    "Demo A · what travels to the personal showcase",
-  ),
+  antetitulo: {
+    "demo-a": tb(
+      "Demo A · lo que viaja a la vitrina personal",
+      "Demo A · what travels to the personal showcase",
+    ),
+    "demo-b": tb(
+      "Demo B · lo que viaja a la vitrina personal",
+      "Demo B · what travels to the personal showcase",
+    ),
+  } as Record<IdDemo, TextoBilingue>,
   titulo: tb(
     "Las fichas: repetirla, y contarla en dos minutos",
     "The records: repeat it, and tell it in two minutes",
@@ -102,10 +115,16 @@ export const MIRADA = {
       "los hechos de la app, de los que hoja-de-vida arma su ficha",
       "the app's facts, from which hoja-de-vida builds its record",
     ),
-    agente: tb(
-      "la ficha del agente A, para el frente Agentes",
-      "agent A's record, for the Agents front",
-    ),
+    agente: {
+      "demo-a": tb(
+        "la ficha del agente A, para el frente Agentes",
+        "agent A's record, for the Agents front",
+      ),
+      "demo-b": tb(
+        "la ficha del agente B, para el frente Agentes",
+        "agent B's record, for the Agents front",
+      ),
+    } as Record<IdDemo, TextoBilingue>,
     nunca: {
       titulo: tb("Ningún enlace", "No link"),
       detalle: tb(
@@ -122,50 +141,42 @@ export const REPRO = {
     "Todo lo que hace falta para obtener otra vez este mismo informe, byte a byte: versiones, huellas, semilla, modelo y fecha. Sin enlaces: las huellas bastan para comprobar que un archivo es el que dice ser.",
     "Everything it takes to get this same report again, byte for byte: versions, fingerprints, seed, model and date. No links: the fingerprints are enough to check that a file is what it claims to be.",
   ),
-  cuadro: tb(
-    "Ficha de reproducibilidad · demo A",
-    "Reproducibility record · demo A",
-  ),
+  cuadro: {
+    "demo-a": tb(
+      "Ficha de reproducibilidad · demo A",
+      "Reproducibility record · demo A",
+    ),
+    "demo-b": tb(
+      "Ficha de reproducibilidad · demo B",
+      "Reproducibility record · demo B",
+    ),
+  } as Record<IdDemo, TextoBilingue>,
   chip: ((v: string) =>
     tb(`real · corrida ${v}`, `real · run ${v}`)) as Plantilla<string>,
   repetir: tb("Cómo repetirla, en orden", "How to repeat it, in order"),
-  pasos: [
-    {
-      comando: "pnpm plan:validar",
-      texto: tb(
-        "valida el plan y comprueba su huella",
-        "validates the plan and checks its fingerprint",
-      ),
-    },
-    {
-      comando: "pnpm casos:generar",
-      texto: tb(
-        "regenera los casos desde la semilla; la huella debe coincidir",
-        "regenerates the cases from the seed; the fingerprint must match",
-      ),
-    },
-    {
-      comando: "pnpm lote:demo",
-      texto: tb(
-        "corre el lote en la máquina del autor, fuera de CI, con su suscripción",
-        "runs the batch on the author's machine, outside CI, with their subscription",
-      ),
-    },
-    {
-      comando: "pnpm trazas:verificar",
-      texto: tb(
-        "comprueba huellas, umbrales aplicados y RF-09.2",
-        "checks fingerprints, applied thresholds and RF-09.2",
-      ),
-    },
-    {
-      comando: "pnpm brecha:informe",
-      texto: tb(
-        "emite el informe: sale idéntico byte a byte",
-        "emits the report: it comes out identical byte for byte",
-      ),
-    },
-  ],
+  /** Qué hace cada paso; el comando lo arma la vista con los archivos que declara el manifiesto del demo. */
+  pasos: {
+    plan: tb(
+      "valida el plan y comprueba su huella",
+      "validates the plan and checks its fingerprint",
+    ),
+    casos: tb(
+      "regenera los casos desde la semilla; la huella debe coincidir",
+      "regenerates the cases from the seed; the fingerprint must match",
+    ),
+    lote: tb(
+      "corre el lote en la máquina del autor, fuera de CI, con su suscripción",
+      "runs the batch on the author's machine, outside CI, with their subscription",
+    ),
+    trazas: tb(
+      "comprueba huellas, umbrales aplicados y RF-09.2",
+      "checks fingerprints, applied thresholds and RF-09.2",
+    ),
+    informe: tb(
+      "rehace el informe y lo compara con el publicado: sale idéntico byte a byte",
+      "redoes the report and compares it with the published one: it comes out identical byte for byte",
+    ),
+  },
   pie: tb(
     "Scripts del repositorio. Solo el lote necesita el modelo; todo lo demás es determinista y corre igual en cualquier máquina.",
     "Repository scripts. Only the batch needs the model; everything else is deterministic and runs the same on any machine.",
@@ -178,7 +189,10 @@ export const SECCION = {
     "para el frente Apps de la vitrina",
     "for the showcase's Apps front",
   ),
-  agente: tb("La ficha del agente A", "Agent A's record"),
+  agente: {
+    "demo-a": tb("La ficha del agente A", "Agent A's record"),
+    "demo-b": tb("La ficha del agente B", "Agent B's record"),
+  } as Record<IdDemo, TextoBilingue>,
   agenteNota: tb(
     "para el frente Agentes de la vitrina",
     "for the showcase's Agents front",
@@ -745,27 +759,35 @@ export const AGENTE = {
  */
 export const METRICAS_APP = {
   criteriosCumplidos: {
-    etiqueta: ((n: number) =>
+    etiqueta: ((p: { n: number; demos: number }) =>
       tb(
-        `criterios del plan cumplidos, de ${n}`,
-        `plan criteria met, of ${n}`,
-      )) as Plantilla<number>,
+        `criterios cumplidos en los planes de ${p.demos} demos, de ${p.n}`,
+        `criteria met across the plans of ${p.demos} demos, of ${p.n}`,
+      )) as Plantilla<{ n: number; demos: number }>,
     unidad: tb("criterios", "criteria"),
-    detalle: ((p: {
+    /** Una frase por demo; `detalle` las une. */
+    deUnDemo: ((p: {
+      demo: string;
       verificador: string;
       corrida: string;
       cumplen: number;
       n: number;
     }) =>
       tb(
-        `Del informe del verificador ${p.verificador} sobre la corrida ${p.corrida}: ${p.cumplen} de ${p.n} criterios cumplidos.`,
-        `From verifier ${p.verificador}'s report on run ${p.corrida}: ${p.cumplen} of ${p.n} criteria met.`,
+        `${p.demo}: ${p.cumplen} de ${p.n}, en el informe del verificador ${p.verificador} sobre la corrida ${p.corrida}.`,
+        `${p.demo}: ${p.cumplen} of ${p.n}, in verifier ${p.verificador}'s report on run ${p.corrida}.`,
       )) as Plantilla<{
+      demo: string;
       verificador: string;
       corrida: string;
       cumplen: number;
       n: number;
     }>,
+    detalle: ((demos: TextoBilingue[]) =>
+      tb(
+        demos.map((d) => d.es).join(" "),
+        demos.map((d) => d.en).join(" "),
+      )) as Plantilla<TextoBilingue[]>,
   },
   decisionesCruzadas: {
     etiqueta: ((diferencias: number) =>
@@ -774,24 +796,42 @@ export const METRICAS_APP = {
         `decisions redone in another language, with ${diferencias} differences`,
       )) as Plantilla<number>,
     unidad: tb("decisiones", "decisions"),
-    detalle: ((corridas: number) =>
+    detalle: ((p: { corridas: number; demos: number }) =>
       tb(
-        `Prueba cruzada RF-09.2 sobre ${corridas} corridas: el intérprete de aristas de TypeScript rehace cada decisión que registró Python.`,
-        `RF-09.2 cross-check over ${corridas} runs: the TypeScript edge interpreter redoes every decision Python recorded.`,
-      )) as Plantilla<number>,
+        `Prueba cruzada RF-09.2 sobre ${p.corridas} corridas de ${p.demos} demos: el intérprete de aristas de TypeScript rehace cada decisión que registró Python.`,
+        `RF-09.2 cross-check over ${p.corridas} runs of ${p.demos} demos: the TypeScript edge interpreter redoes every decision Python recorded.`,
+      )) as Plantilla<{ corridas: number; demos: number }>,
   },
-  casosPorCorrida: {
-    etiqueta: ((corridas: number) =>
+  casosSinteticos: {
+    etiqueta: ((demos: number) =>
       tb(
-        `casos por corrida, en ${corridas} corridas y una línea base`,
-        `cases per run, over ${corridas} runs and a baseline`,
+        `casos sintéticos con respuesta conocida, en ${demos} demos`,
+        `synthetic cases with a known answer, across ${demos} demos`,
       )) as Plantilla<number>,
     unidad: tb("casos", "cases"),
-    detalle: ((p: { corrida: string; repeticiones: number }) =>
+    /** Una frase por demo: su corrida, sus repeticiones (pass^k) si las hay y su línea base si la hay. */
+    deUnDemo: ((p: {
+      demo: string;
+      n: number;
+      corrida: string;
+      repeticiones: number;
+      base: boolean;
+    }) =>
       tb(
-        `Corrida ${p.corrida} con sus ${p.repeticiones} repeticiones (pass^k) y la línea base de agente único a igual presupuesto.`,
-        `Run ${p.corrida} with its ${p.repeticiones} repetitions (pass^k) and the single-agent baseline at equal budget.`,
-      )) as Plantilla<{ corrida: string; repeticiones: number }>,
+        `${p.demo}: ${p.n} casos en la corrida ${p.corrida}${p.repeticiones ? `, ${p.repeticiones === 1 ? "1 repetición" : `${p.repeticiones} repeticiones`} (pass^k)` : ""}${p.base ? " y la línea base de agente único" : ""}.`,
+        `${p.demo}: ${p.n} cases in run ${p.corrida}${p.repeticiones ? `, ${p.repeticiones === 1 ? "1 repetition" : `${p.repeticiones} repetitions`} (pass^k)` : ""}${p.base ? " and the single-agent baseline" : ""}.`,
+      )) as Plantilla<{
+      demo: string;
+      n: number;
+      corrida: string;
+      repeticiones: number;
+      base: boolean;
+    }>,
+    detalle: ((demos: TextoBilingue[]) =>
+      tb(
+        demos.map((d) => d.es).join(" "),
+        demos.map((d) => d.en).join(" "),
+      )) as Plantilla<TextoBilingue[]>,
   },
   llamadasEnLaVitrina: {
     etiqueta: tb(
@@ -807,13 +847,19 @@ export const METRICAS_APP = {
   costoDeUnaCorrida: {
     etiqueta: ((n: number) =>
       tb(
-        `costo nominal de una corrida de ${n} casos`,
-        `nominal cost of a ${n}-case run`,
+        `costo nominal de correr una vez cada demo (${n} casos)`,
+        `nominal cost of running each demo once (${n} cases)`,
       )) as Plantilla<number>,
-    detalle: tb(
-      "Suma del costo nominal que el CLI declara por llamada, en las trazas de la corrida; por la suscripción no se pagó aparte.",
-      "Sum of the nominal cost the CLI declares per call, over the run's traces; through the subscription it was not paid separately.",
-    ),
+    deUnDemo: ((p: { demo: string; costo: string; n: number }) =>
+      tb(
+        `${p.demo}: US$ ${p.costo} por ${p.n} casos.`,
+        `${p.demo}: US$ ${p.costo} for ${p.n} cases.`,
+      )) as Plantilla<{ demo: string; costo: string; n: number }>,
+    detalle: ((demos: TextoBilingue[]) =>
+      tb(
+        `${demos.map((d) => d.es).join(" ")} Suma del costo nominal que el CLI declara por llamada, en las trazas de cada corrida; por la suscripción no se pagó aparte.`,
+        `${demos.map((d) => d.en).join(" ")} Sum of the nominal cost the CLI declares per call, over each run's traces; through the subscription it was not paid separately.`,
+      )) as Plantilla<TextoBilingue[]>,
   },
   funcionalidades: {
     etiqueta: tb("funcionalidades construidas", "built features"),
@@ -862,8 +908,8 @@ export const APP = {
       "It is a simulation: it handles no real cases and decides on no one.",
     ),
     tb(
-      "El demo B y el entrevistador llegan después; hasta entonces dicen «en construcción».",
-      "Demo B and the interviewer come later; until then they say “under construction”.",
+      "El entrevistador corre en la consola, no en la vitrina: aquí se ve el plan que propuso para el demo B, revisado y aprobado por una persona.",
+      "The interviewer runs in the console, not in the showcase: here you see the plan it drafted for demo B, reviewed and approved by a person.",
     ),
     tb(
       "Mide lo que el plan declaró; lo que no previó aparece como brecha, no como veredicto.",
@@ -872,16 +918,16 @@ export const APP = {
   ],
   nunca: [
     tb(
-      "Usa datos reales: todo caso, afiliado y médico es sintético.",
-      "Uses real data: every case, member and physician is synthetic.",
+      "Usa datos reales: todo caso, afiliado, médico, solicitante y lista de control es sintético.",
+      "Uses real data: every case, member, physician, applicant and watchlist is synthetic.",
     ),
     tb(
       "Deja que un modelo decida si el agente acertó.",
       "Lets a model decide whether the agent got it right.",
     ),
     tb(
-      "Niega un caso sin que lo revise una persona.",
-      "Denies a case without a person reviewing it.",
+      "Niega o rechaza un caso sin que lo revise una persona.",
+      "Denies or rejects a case without a person reviewing it.",
     ),
     tb("Esconde un resultado desfavorable.", "Hides an unfavorable result."),
   ],
@@ -895,18 +941,18 @@ export const APP = {
       "The repository is not linked from the showcase (the portfolio's zero-links rule).",
     ),
     brochure_archivo: tb(
-      "pendiente: docs/BROCHURE.html nace al cierre del ciclo H1 (sprint 3)",
-      "pending: docs/BROCHURE.html is born at the H1 cycle close (sprint 3)",
+      "sin archivo propio: la vitrina y sus fichas hacen de brochure (decisión del sprint 3)",
+      "no file of its own: the showcase and its records serve as the brochure (sprint 3 decision)",
     ),
     brochure_ruta_local: tb(
-      "pendiente: la ruta /conoce nace con el brochure (sprint 3)",
-      "pending: the /conoce route is born with the brochure (sprint 3)",
+      "sin ruta /conoce: la vitrina es la presentación de la app (decisión del sprint 3)",
+      "no /conoce route: the showcase is the app's presentation (sprint 3 decision)",
     ),
   },
   privacidad: {
     detalle: tb(
-      "Todo caso, afiliado, médico y plan de beneficios es sintético, con semilla, y un validador de identificadores en CI rechaza cualquiera con forma real. La vitrina es estática: ningún visitante lanza llamadas a modelos ni a servicios.",
-      "Every case, member, physician and benefit plan is synthetic, from a seed, and an identifier validator in CI rejects any with a real-looking form. The showcase is static: no visitor triggers calls to models or services.",
+      "Todo caso, afiliado, médico, plan de beneficios, solicitante y lista de control es sintético, con semilla, y un validador de identificadores en CI rechaza cualquiera con forma real. La vitrina es estática: ningún visitante lanza llamadas a modelos ni a servicios.",
+      "Every case, member, physician, benefit plan, applicant and watchlist is synthetic, from a seed, and an identifier validator in CI rejects any with a real-looking form. The showcase is static: no visitor triggers calls to models or services.",
     ),
     datos_sinteticos: true,
     llamadas_a_modelos_en_la_vitrina: false,
@@ -1165,8 +1211,8 @@ export const APP = {
             "Records and package for the personal showcase",
           ),
           que_hace: tb(
-            "La ficha de reproducibilidad, la del agente A y estos hechos de la app, con el paquete estático que hoja-de-vida publica sin un solo enlace.",
-            "The reproducibility record, agent A's record and these app facts, with the static package hoja-de-vida publishes without a single link.",
+            "La ficha de reproducibilidad de cada demo, la de cada agente y estos hechos de la app, con el paquete estático que hoja-de-vida publica sin un solo enlace.",
+            "Each demo's reproducibility record, each agent's record and these app facts, with the static package hoja-de-vida publishes without a single link.",
           ),
           seccion_manual: tb(
             "Entregar el paquete a hoja-de-vida",
@@ -1194,8 +1240,8 @@ export const APP = {
     {
       nombre: tb("Python 3.12 · LangGraph 1.2", "Python 3.12 · LangGraph 1.2"),
       papel: tb(
-        "el agente del demo A, con la pausa humana como interrupt",
-        "demo A's agent, with the human pause as an interrupt",
+        "los agentes de los dos demos, con la pausa humana como interrupt",
+        "both demos' agents, with the human pause as an interrupt",
       ),
     },
     {

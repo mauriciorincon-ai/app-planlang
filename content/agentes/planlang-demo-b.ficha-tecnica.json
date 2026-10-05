@@ -1,0 +1,356 @@
+{
+  "schema_version": "1.3.1",
+  "actualizado": "2026-10-04",
+  "pieza": {
+    "slug": "planlang-demo-b",
+    "nombre": "Agente B · vinculación con debida diligencia",
+    "frente": "agentes",
+    "estado": "inicial",
+    "ciclo": "H1",
+    "version": "1.1.0",
+    "sellado_en": null,
+    "sprints_cerrados": 2
+  },
+  "promesa": {
+    "tagline": "Aprueba lo limpio; toda coincidencia, riesgo alto o rechazo va a una persona.",
+    "intro": "El agente lee los tres documentos de la solicitud, cruza el nombre con las listas, investiga el contexto solo en la zona gris y puntúa el riesgo con reglas que no miran el nombre; aprueba solo lo limpio, lleva lo demás al oficial con la evidencia y deja un expediente que cita la regla o la coincidencia de cada conclusión.",
+    "para_quien": "Para una entidad financiera —sintética— que vincula clientes con debida diligencia: hoy un analista cruza a mano cada nombre con las listas de control y no sabe cuáles alarmas eran homónimos ni deja escrito por qué decidió."
+  },
+  "titular": "Un agente de vinculación cuyo plan salió de una entrevista y se verifica caso por caso: ninguna coincidencia en listas ni ningún rechazo sale sin una persona, y cada conclusión del expediente cita su regla.",
+  "stack": [
+    {
+      "nombre": "LangGraph 1.2",
+      "papel": "el grafo del agente: estado tipado, aristas condicionales y la pausa del oficial con interrupt"
+    },
+    {
+      "nombre": "LangChain 1.4",
+      "papel": "el adaptador del modelo y la salida estructurada por esquema"
+    },
+    {
+      "nombre": "Python 3.12",
+      "papel": "los nodos, las guardias, la similitud de nombres y el exportador de trazas"
+    },
+    {
+      "nombre": "Claude Code · sonnet",
+      "papel": "extrae los documentos e investiga la zona gris; el binario oficial, por la suscripción del autor"
+    },
+    {
+      "nombre": "Reglas deterministas",
+      "papel": "listas, puntaje, expediente y guardias, sin modelo"
+    },
+    {
+      "nombre": "planlang-trace/v1",
+      "papel": "el formato propio de las trazas, con huella; lo único que lee el verificador"
+    }
+  ],
+  "cifras": [
+    {
+      "clave": "exactitud_extraccion",
+      "valor": 100,
+      "unidad": "%",
+      "etiqueta": "exactitud de extracción, una corrida",
+      "fuente": "medido",
+      "detalle": "Criterio C5 del plan B, medido por el verificador: los campos extraídos de los tres documentos son los de la verdad conocida en los 20 casos, en una sola corrida."
+    },
+    {
+      "clave": "casos_con_persona",
+      "valor": 11,
+      "etiqueta": "de 20 casos pasaron por el oficial",
+      "fuente": "medido",
+      "detalle": "Pausas humanas registradas en las trazas: el oficial vio los documentos, las coincidencias, la investigación y el puntaje antes de decidir."
+    },
+    {
+      "clave": "coincidencias_sin_persona",
+      "valor": 0,
+      "etiqueta": "coincidencias en listas sin una persona",
+      "fuente": "medido",
+      "detalle": "Criterio C1 del plan B sobre los 5 casos que están en una lista: todos pasaron por el oficial."
+    },
+    {
+      "clave": "rechazos_sin_persona",
+      "valor": 0,
+      "etiqueta": "rechazos sin una persona",
+      "fuente": "medido",
+      "detalle": "Criterio C2 del plan B sobre 20 casos: todo rechazo, y toda aprobación con riesgo alto, pasó por el oficial."
+    },
+    {
+      "clave": "costo_por_caso",
+      "valor": 0.015,
+      "unidad": "US$",
+      "etiqueta": "costo nominal por caso",
+      "fuente": "calculada",
+      "detalle": "US$ 0,293 de la corrida entre 20 casos: el costo nominal que el CLI declara por llamada, sumado en las trazas. Por la suscripción no se pagó aparte."
+    }
+  ],
+  "bloques": [
+    {
+      "orden": 1,
+      "nombre": "Guardia de entrada",
+      "linea": "Marca las instrucciones escondidas en los documentos antes de que las lea un modelo.",
+      "cuenta": 0
+    },
+    {
+      "orden": 2,
+      "nombre": "Extractor",
+      "linea": "Convierte los tres documentos en campos, con los códigos del catálogo.",
+      "cuenta": 0
+    },
+    {
+      "orden": 3,
+      "nombre": "Verificador de listas",
+      "linea": "Cruza el nombre con las listas, exacto y aproximado, sin modelo.",
+      "cuenta": 0
+    },
+    {
+      "orden": 4,
+      "nombre": "Investigador de contexto",
+      "linea": "Solo en la zona gris: ¿homónimo o la misma persona? Concluye, no decide.",
+      "cuenta": 0
+    },
+    {
+      "orden": 5,
+      "nombre": "Puntaje de riesgo",
+      "linea": "Reglas declaradas sobre actividad, fondos e ingresos; el nombre no cuenta.",
+      "cuenta": 0
+    },
+    {
+      "orden": 6,
+      "nombre": "Decisión",
+      "linea": "Las reglas escritas en el plan deciden si el caso va al oficial.",
+      "cuenta": 0
+    },
+    {
+      "orden": 7,
+      "nombre": "Pausa humana",
+      "linea": "El oficial de cumplimiento ve el caso completo antes de decidir.",
+      "cuenta": 0
+    },
+    {
+      "orden": 8,
+      "nombre": "Expediente",
+      "linea": "Cada conclusión con su cita, la respuesta y, si es rechazo, su documento.",
+      "cuenta": 0
+    },
+    {
+      "orden": 9,
+      "nombre": "Guardia de salida",
+      "linea": "Reglas fijas: ningún dato del solicitante, ninguna acción fuera de la lista.",
+      "cuenta": 0
+    }
+  ],
+  "proceso": {
+    "titulo": "Una solicitud de vinculación",
+    "carriles": [
+      {
+        "id": "solicitante",
+        "nombre": "Solicitante"
+      },
+      {
+        "id": "agente",
+        "nombre": "El agente"
+      },
+      {
+        "id": "oficial",
+        "nombre": "Oficial de cumplimiento"
+      }
+    ],
+    "pasos": [
+      {
+        "id": "inicio",
+        "tipo": "inicio",
+        "carril": "solicitante",
+        "texto": "Una solicitud"
+      },
+      {
+        "id": "entrega",
+        "tipo": "tarea",
+        "carril": "solicitante",
+        "texto": "Entrega sus tres documentos"
+      },
+      {
+        "id": "marca",
+        "tipo": "tarea",
+        "carril": "agente",
+        "texto": "Busca instrucciones escondidas"
+      },
+      {
+        "id": "extrae",
+        "tipo": "tarea",
+        "carril": "agente",
+        "texto": "Extrae los campos"
+      },
+      {
+        "id": "cruza",
+        "tipo": "tarea",
+        "carril": "agente",
+        "texto": "Cruza el nombre con las listas"
+      },
+      {
+        "id": "gris",
+        "tipo": "decision",
+        "carril": "agente",
+        "texto": "¿Zona gris?"
+      },
+      {
+        "id": "investiga",
+        "tipo": "tarea",
+        "carril": "agente",
+        "texto": "Compara el contexto"
+      },
+      {
+        "id": "puntua",
+        "tipo": "tarea",
+        "carril": "agente",
+        "texto": "Puntúa el riesgo sin el nombre"
+      },
+      {
+        "id": "escala",
+        "tipo": "decision",
+        "carril": "agente",
+        "texto": "¿Al oficial?"
+      },
+      {
+        "id": "revisa",
+        "tipo": "tarea",
+        "carril": "oficial",
+        "texto": "Revisa el caso completo y decide"
+      },
+      {
+        "id": "expediente",
+        "tipo": "tarea",
+        "carril": "agente",
+        "texto": "Arma el expediente con sus citas"
+      },
+      {
+        "id": "filtra",
+        "tipo": "tarea",
+        "carril": "agente",
+        "texto": "La guardia filtra la salida"
+      },
+      {
+        "id": "recibe",
+        "tipo": "tarea",
+        "carril": "solicitante",
+        "texto": "Recibe la respuesta"
+      },
+      {
+        "id": "fin",
+        "tipo": "fin",
+        "carril": "solicitante",
+        "texto": ""
+      }
+    ],
+    "flujos": [
+      {
+        "de": "inicio",
+        "a": "entrega"
+      },
+      {
+        "de": "entrega",
+        "a": "marca"
+      },
+      {
+        "de": "marca",
+        "a": "extrae"
+      },
+      {
+        "de": "extrae",
+        "a": "cruza"
+      },
+      {
+        "de": "cruza",
+        "a": "gris"
+      },
+      {
+        "de": "gris",
+        "a": "investiga",
+        "etiqueta": "sí"
+      },
+      {
+        "de": "gris",
+        "a": "puntua",
+        "etiqueta": "no"
+      },
+      {
+        "de": "investiga",
+        "a": "puntua"
+      },
+      {
+        "de": "puntua",
+        "a": "escala"
+      },
+      {
+        "de": "escala",
+        "a": "revisa",
+        "etiqueta": "sí"
+      },
+      {
+        "de": "escala",
+        "a": "expediente",
+        "etiqueta": "no"
+      },
+      {
+        "de": "revisa",
+        "a": "expediente"
+      },
+      {
+        "de": "expediente",
+        "a": "filtra"
+      },
+      {
+        "de": "filtra",
+        "a": "recibe"
+      },
+      {
+        "de": "recibe",
+        "a": "fin"
+      }
+    ],
+    "anotaciones": [
+      {
+        "paso": "revisa",
+        "texto": "Ningún rechazo ni coincidencia en listas sale sin el oficial; en esta demo, el oficial se simuló en lote."
+      },
+      {
+        "paso": "investiga",
+        "texto": "El investigador concluye, no decide: si dice «misma persona», el caso va al oficial."
+      },
+      {
+        "paso": "filtra",
+        "texto": "Un documento nunca decide qué acción se ejecuta."
+      }
+    ]
+  },
+  "procedencia_proceso": "app",
+  "limites": [
+    "Decide sobre casos sintéticos: es una demostración, no un servicio.",
+    "Su oficial de cumplimiento se simuló en lote siguiendo la verdad conocida.",
+    "Corre en lotes de 20 casos, fuera de CI y con pausas entre lotes.",
+    "Su plan no declara minutos de oficial por caso: se cuentan casos, no minutos."
+  ],
+  "nunca": [
+    "Rechaza sin que una persona lo revise.",
+    "Aprueba solo a alguien que coincide con una lista.",
+    "Usa el nombre o la nacionalidad para puntuar el riesgo.",
+    "Deja que un documento cambie lo que hace.",
+    "Escribe una conclusión sin citar su regla o su coincidencia."
+  ],
+  "hitos": [
+    {
+      "valor": "v1.1",
+      "etiqueta": "versión del plan"
+    },
+    {
+      "valor": "2026-10-04",
+      "etiqueta": "primera corrida real"
+    },
+    {
+      "valor": "9 de 9",
+      "etiqueta": "piezas del contrato"
+    },
+    {
+      "valor": "80",
+      "etiqueta": "decisiones verificadas"
+    }
+  ]
+}

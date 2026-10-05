@@ -422,3 +422,14 @@ export function datosDemo(id: IdDemo = DEMO_PUBLICADO): Promise<DatosDemo> {
   }
   return p;
 }
+
+/** Los datos de todos los demos, por id: lo que cuenta la app entera (la ficha de la app y su export). */
+export interface DatosDeLosDemos {
+  "demo-a": DatosDemoA;
+  "demo-b": DatosDemoB;
+}
+
+export async function datosDeLosDemos(): Promise<DatosDeLosDemos> {
+  const [a, b] = await Promise.all([datosDemo("demo-a"), datosDemo("demo-b")]);
+  return { "demo-a": a, "demo-b": b };
+}

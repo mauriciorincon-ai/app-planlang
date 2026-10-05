@@ -132,6 +132,29 @@ describe("marco: rótulo, barra y pie", () => {
     expect(region.textContent).toContain("Simulation · not operational");
   });
 
+  it("el pie dice lo sintético y quién decidiría en producción según el demo; la entrada, los dos", () => {
+    const pie = (demo?: "demo-a" | "demo-b") => {
+      const { container, unmount } = render(
+        <Marco idioma="es" pagina="plan" demo={demo}>
+          <p>contenido</p>
+        </Marco>,
+      );
+      const t = container.querySelector("footer")!.textContent!;
+      unmount();
+      return t;
+    };
+    const a = pie("demo-a");
+    const b = pie("demo-b");
+    const ambos = pie();
+    expect(a).toContain("un auditor médico con el caso completo");
+    expect(a).not.toMatch(/solicitante|oficial de cumplimiento/);
+    expect(b).toContain("un oficial de cumplimiento con el caso completo");
+    expect(b).not.toMatch(/afiliado|médico|plan de beneficios/);
+    expect(ambos).toContain(
+      "un auditor médico en el A, un oficial de cumplimiento en el B",
+    );
+  });
+
   it("el conmutador de tema cambia el atributo y marca el botón pulsado", async () => {
     render(
       <Marco idioma="en" pagina="plan">

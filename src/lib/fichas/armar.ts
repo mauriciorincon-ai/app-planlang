@@ -2,17 +2,20 @@
  * Arma lo que planlang entrega a hoja-de-vida, desde los datos del demo y los hechos del repositorio:
  * - la ficha de cada agente (contrato ficha técnica v1.3.1, frente Agentes): el texto redactado de `src/textos/fichas.ts`
  *   (A) o `src/textos/demo-b/fichas.ts` (B) y las cifras del informe, la corrida y el plan de su demo;
- * - el `brochure-export.json` (contrato 1.0.0): los hechos de la app, de los que hoja-de-vida arma su ficha;
+ * - el `brochure-export.json` (contrato 1.0.0): los hechos de la app, que cuentan todos los demos, de los que
+ *   hoja-de-vida arma su ficha;
  * - el complemento que planlang propone para la ficha de la app (titular, cifras destacadas, límites, nunca);
  * - y la ficha de la app tal como la arma hoja-de-vida en su build: réplica de su `armarFichaTecnica`
  *   (export + complemento; huella de ese código en `docs/contratos/hoja-de-vida/CONTRATO.lock`).
  * Un idioma por ficha, como pide el contrato; se entrega el español y el inglés queda para la vitrina.
  */
 import type { Idioma, TextoBilingue } from "@core/formatos/bilingue";
-import type { DatosDemo } from "@/lib/datos/vitrina";
+import { DEMOS } from "@/lib/demos";
+import type { DatosDeLosDemos, DatosDemo } from "@/lib/datos/vitrina";
 import type { HechosDelRepo } from "@/lib/datos/repo";
 import { numeroTal, versionCorta } from "@/lib/vista/formato";
 import { AGENTE_B } from "@/textos/demo-b/fichas";
+import { DEMO_TEXTO } from "@/textos/demo";
 import { AGENTE, APP, METRICAS_APP as M } from "@/textos/fichas";
 import { VERSION_EXPORT, VERSION_FICHA } from "./contrato";
 import type { BrochureExport, CifraFicha, FichaTecnica } from "./tipos";
@@ -315,20 +318,37 @@ export function fichaAgente(
 
 // ------------------------------------------------------------------------------------------- la app
 
-/** Los hechos de la app (contrato brochure-export 1.0.0). Lo cuenta todo desde los datos: nada se escribe a mano. */
+/**
+ * Los hechos de la app (contrato brochure-export 1.0.0), con todos los demos de la vitrina: los criterios, las
+ * decisiones cruzadas, los casos y el costo se suman, y cada detalle dice cuánto puso cada demo. Lo cuenta todo desde
+ * los datos: nada se escribe a mano.
+ */
 export function brochureExport(
-  d: DatosDemo,
+  ds: DatosDeLosDemos,
   repo: HechosDelRepo,
   i: Idioma,
 ): BrochureExport {
-  const inf = d.informe;
-  const rep = inf.ficha_reproducibilidad;
-  const ct = inf.contrato_de_grafo;
-  const decisiones = ct.rf_09_2.reduce((s, r) => s + r.visitas, 0);
-  const diferencias = ct.rf_09_2.reduce((s, r) => s + r.discrepancias, 0);
-  const cumplen = inf.criterios.filter((c) => c.estado === "cumple").length;
-  const n = rep.corrida.casos_ejecutados;
-  const corridas = 1 + rep.repeticiones.length;
+  const todos = DEMOS.map((id) => ({ id, d: ds[id] as DatosDemo }));
+  const nombre = (id: (typeof DEMOS)[number]) => X(DEMO_TEXTO[id].corto, i);
+  const rf = todos.flatMap(({ d }) => d.informe.contrato_de_grafo.rf_09_2);
+  const decisiones = rf.reduce((s, r) => s + r.visitas, 0);
+  const diferencias = rf.reduce((s, r) => s + r.discrepancias, 0);
+  const criterios = todos.flatMap(({ d }) => d.informe.criterios);
+  const cumplen = criterios.filter((c) => c.estado === "cumple").length;
+  const casos = todos.reduce(
+    (s, { d }) => s + d.informe.ficha_reproducibilidad.corrida.casos_ejecutados,
+    0,
+  );
+  const costos = todos.map(({ id, d }) => ({
+    id,
+    d,
+    costo: costoDeLaCorrida(d),
+  }));
+  // Redondeo a 4 decimales: la suma de dos flotantes no debe dejar colas como 0,96339999.
+  const costo = red(
+    costos.reduce((s, c) => s + c.costo, 0),
+    4,
+  );
   const grupos = APP.grupos.map((g, k) => ({
     orden: k + 1,
     estrella: g.estrella,
@@ -342,13 +362,14 @@ export function brochureExport(
     })),
   }));
   const total = grupos.reduce((s, g) => s + g.features.length, 0);
-  const costo = costoDeLaCorrida(d);
   return {
     _schema: repo.bloqueSchema,
     schema_version: VERSION_EXPORT,
     actualizado: masReciente(
-      rep.corrida.fecha,
-      d.plan.aprobado_el,
+      ...todos.flatMap(({ d }) => [
+        d.informe.ficha_reproducibilidad.corrida.fecha,
+        d.plan.aprobado_el,
+      ]),
       repo.ultimaFecha,
     ),
     app: {
@@ -375,17 +396,30 @@ export function brochureExport(
     metricas: [
       {
         clave: "criterios_cumplidos",
-        etiqueta: X(M.criteriosCumplidos.etiqueta(inf.criterios.length), i),
+        etiqueta: X(
+          M.criteriosCumplidos.etiqueta({
+            n: criterios.length,
+            demos: todos.length,
+          }),
+          i,
+        ),
         valor: cumplen,
         unidad: X(M.criteriosCumplidos.unidad, i),
         fuente: "medido",
         detalle: X(
-          M.criteriosCumplidos.detalle({
-            verificador: inf.version_verificador,
-            corrida: inf.corrida_id,
-            cumplen,
-            n: inf.criterios.length,
-          }),
+          M.criteriosCumplidos.detalle(
+            todos.map(({ id, d }) =>
+              M.criteriosCumplidos.deUnDemo({
+                demo: nombre(id),
+                verificador: d.informe.version_verificador,
+                corrida: d.informe.corrida_id,
+                cumplen: d.informe.criterios.filter(
+                  (c) => c.estado === "cumple",
+                ).length,
+                n: d.informe.criterios.length,
+              }),
+            ),
+          ),
           i,
         ),
       },
@@ -395,19 +429,33 @@ export function brochureExport(
         valor: decisiones,
         unidad: X(M.decisionesCruzadas.unidad, i),
         fuente: "medido",
-        detalle: X(M.decisionesCruzadas.detalle(ct.rf_09_2.length), i),
+        detalle: X(
+          M.decisionesCruzadas.detalle({
+            corridas: rf.length,
+            demos: todos.length,
+          }),
+          i,
+        ),
       },
       {
-        clave: "casos_por_corrida",
-        etiqueta: X(M.casosPorCorrida.etiqueta(corridas), i),
-        valor: n,
-        unidad: X(M.casosPorCorrida.unidad, i),
+        clave: "casos_sinteticos",
+        etiqueta: X(M.casosSinteticos.etiqueta(todos.length), i),
+        valor: casos,
+        unidad: X(M.casosSinteticos.unidad, i),
         fuente: "medido",
         detalle: X(
-          M.casosPorCorrida.detalle({
-            corrida: rep.corrida.id,
-            repeticiones: rep.repeticiones.length,
-          }),
+          M.casosSinteticos.detalle(
+            todos.map(({ id, d }) => {
+              const rep = d.informe.ficha_reproducibilidad;
+              return M.casosSinteticos.deUnDemo({
+                demo: nombre(id),
+                n: rep.corrida.casos_ejecutados,
+                corrida: rep.corrida.id,
+                repeticiones: rep.repeticiones.length,
+                base: rep.linea_base !== null,
+              });
+            }),
+          ),
           i,
         ),
       },
@@ -421,11 +469,22 @@ export function brochureExport(
       },
       {
         clave: "costo_de_una_corrida",
-        etiqueta: X(M.costoDeUnaCorrida.etiqueta(n), i),
+        etiqueta: X(M.costoDeUnaCorrida.etiqueta(casos), i),
         valor: costo,
         unidad: "US$",
         fuente: "calculada",
-        detalle: X(M.costoDeUnaCorrida.detalle, i),
+        detalle: X(
+          M.costoDeUnaCorrida.detalle(
+            costos.map(({ id, d, costo: c }) =>
+              M.costoDeUnaCorrida.deUnDemo({
+                demo: nombre(id),
+                costo: numeroTal(c, i),
+                n: d.informe.ficha_reproducibilidad.corrida.casos_ejecutados,
+              }),
+            ),
+          ),
+          i,
+        ),
       },
       {
         clave: "funcionalidades",
@@ -482,17 +541,25 @@ export interface Complemento {
 export const CIFRAS_DESTACADAS = [
   "criterios_cumplidos",
   "decisiones_cruzadas",
-  "casos_por_corrida",
+  "casos_sinteticos",
   "llamadas_a_modelos_en_la_vitrina",
   "costo_de_una_corrida",
 ];
 
-/** El complemento que planlang propone para su ficha (en hoja-de-vida vive en `data/fichas/<slug>.yaml`). */
-export function complementoPropuesto(d: DatosDemo, i: Idioma): Complemento {
+/**
+ * El complemento que planlang propone para su ficha (en hoja-de-vida vive en `data/fichas/<slug>.yaml`); se declara
+ * en la fecha de la corrida más reciente de los demos.
+ */
+export function complementoPropuesto(
+  ds: DatosDeLosDemos,
+  i: Idioma,
+): Complemento {
   return {
     schema_version: "1.0.0",
     app: APP.slug,
-    declarado_en: d.informe.ficha_reproducibilidad.corrida.fecha,
+    declarado_en: masReciente(
+      ...DEMOS.map((id) => ds[id].informe.ficha_reproducibilidad.corrida.fecha),
+    ),
     titular: X(APP.titular, i),
     cifras_destacadas: CIFRAS_DESTACADAS,
     limites: APP.limites.map((t) => X(t, i)),

@@ -172,7 +172,7 @@
           {
             "id": "fichas",
             "nombre": "Fichas y paquete para la vitrina personal",
-            "que_hace": "La ficha de reproducibilidad, la del agente A y estos hechos de la app, con el paquete estático que hoja-de-vida publica sin un solo enlace.",
+            "que_hace": "La ficha de reproducibilidad de cada demo, la de cada agente y estos hechos de la app, con el paquete estático que hoja-de-vida publica sin un solo enlace.",
             "seccion_manual": "Entregar el paquete a hoja-de-vida"
           }
         ]
@@ -182,27 +182,27 @@
   "metricas": [
     {
       "clave": "criterios_cumplidos",
-      "etiqueta": "criterios del plan cumplidos, de 9",
-      "valor": 9,
+      "etiqueta": "criterios cumplidos en los planes de 2 demos, de 15",
+      "valor": 15,
       "unidad": "criterios",
       "fuente": "medido",
-      "detalle": "Del informe del verificador 1.2.0 sobre la corrida suscripcion-planlang-a-001-20-v1.2: 9 de 9 criterios cumplidos."
+      "detalle": "Demo A: 9 de 9, en el informe del verificador 1.2.0 sobre la corrida suscripcion-planlang-a-001-20-v1.2. Demo B: 6 de 6, en el informe del verificador 1.2.0 sobre la corrida suscripcion-planlang-b-001-20."
     },
     {
       "clave": "decisiones_cruzadas",
       "etiqueta": "decisiones rehechas en otro lenguaje, con 0 diferencias",
-      "valor": 233,
+      "valor": 313,
       "unidad": "decisiones",
       "fuente": "medido",
-      "detalle": "Prueba cruzada RF-09.2 sobre 4 corridas: el intérprete de aristas de TypeScript rehace cada decisión que registró Python."
+      "detalle": "Prueba cruzada RF-09.2 sobre 6 corridas de 2 demos: el intérprete de aristas de TypeScript rehace cada decisión que registró Python."
     },
     {
-      "clave": "casos_por_corrida",
-      "etiqueta": "casos por corrida, en 3 corridas y una línea base",
-      "valor": 20,
+      "clave": "casos_sinteticos",
+      "etiqueta": "casos sintéticos con respuesta conocida, en 2 demos",
+      "valor": 40,
       "unidad": "casos",
       "fuente": "medido",
-      "detalle": "Corrida suscripcion-planlang-a-001-20-v1.2 con sus 2 repeticiones (pass^k) y la línea base de agente único a igual presupuesto."
+      "detalle": "Demo A: 20 casos en la corrida suscripcion-planlang-a-001-20-v1.2, 2 repeticiones (pass^k) y la línea base de agente único. Demo B: 20 casos en la corrida suscripcion-planlang-b-001-20 y la línea base de agente único."
     },
     {
       "clave": "llamadas_a_modelos_en_la_vitrina",
@@ -214,11 +214,11 @@
     },
     {
       "clave": "costo_de_una_corrida",
-      "etiqueta": "costo nominal de una corrida de 20 casos",
-      "valor": 0.6704,
+      "etiqueta": "costo nominal de correr una vez cada demo (40 casos)",
+      "valor": 0.9634,
       "unidad": "US$",
       "fuente": "calculada",
-      "detalle": "Suma del costo nominal que el CLI declara por llamada, en las trazas de la corrida; por la suscripción no se pagó aparte."
+      "detalle": "Demo A: US$ 0,6704 por 20 casos. Demo B: US$ 0,293 por 20 casos. Suma del costo nominal que el CLI declara por llamada, en las trazas de cada corrida; por la suscripción no se pagó aparte."
     },
     {
       "clave": "funcionalidades",
@@ -248,7 +248,7 @@
     },
     {
       "nombre": "Python 3.12 · LangGraph 1.2",
-      "papel": "el agente del demo A, con la pausa humana como interrupt"
+      "papel": "los agentes de los dos demos, con la pausa humana como interrupt"
     },
     {
       "nombre": "Claude Code por suscripción",
@@ -264,7 +264,7 @@
     }
   ],
   "privacidad": {
-    "detalle": "Todo caso, afiliado, médico y plan de beneficios es sintético, con semilla, y un validador de identificadores en CI rechaza cualquiera con forma real. La vitrina es estática: ningún visitante lanza llamadas a modelos ni a servicios.",
+    "detalle": "Todo caso, afiliado, médico, plan de beneficios, solicitante y lista de control es sintético, con semilla, y un validador de identificadores en CI rechaza cualquiera con forma real. La vitrina es estática: ningún visitante lanza llamadas a modelos ni a servicios.",
     "datos_sinteticos": true,
     "llamadas_a_modelos_en_la_vitrina": false,
     "red_saliente_en_la_vitrina": false
@@ -274,7 +274,7 @@
     "razon": "La app privada no se publica. La vitrina viaja a hoja-de-vida como paquete estático, rotulado «Simulación · no operativo», y se muestra allí.",
     "repositorio": null,
     "razon_repositorio": "El repositorio no se enlaza desde la vitrina (regla de cero enlaces del portafolio).",
-    "brochure_archivo": "pendiente: docs/BROCHURE.html nace al cierre del ciclo H1 (sprint 3)",
-    "brochure_ruta_local": "pendiente: la ruta /conoce nace con el brochure (sprint 3)"
+    "brochure_archivo": "sin archivo propio: la vitrina y sus fichas hacen de brochure (decisión del sprint 3)",
+    "brochure_ruta_local": "sin ruta /conoce: la vitrina es la presentación de la app (decisión del sprint 3)"
   }
 }

@@ -13,13 +13,16 @@ export function Marco({
   pagina,
   id,
   corrida,
-  demo = "demo-a",
+  demo,
   children,
 }: {
   idioma: Idioma;
   pagina: Pantalla;
   id?: string;
-  /** El demo de la pantalla: las pestañas y el idioma enlazan dentro de él (ADR-014). */
+  /**
+   * El demo de la pantalla: las pestañas y el idioma enlazan dentro de él (ADR-014) y el pie dice lo suyo. Sin demo
+   * (la entrada), las pestañas son las del A y el pie habla de los dos.
+   */
   demo?: IdDemo;
   /** De qué corrida salen los datos de la pantalla (va al pie). */
   corrida?: string;
@@ -35,11 +38,11 @@ export function Marco({
         {SALTO[idioma]}
       </a>
       <Rotulo idioma={idioma} />
-      <Barra idioma={idioma} pagina={pagina} id={id} demo={demo} />
+      <Barra idioma={idioma} pagina={pagina} id={id} demo={demo ?? "demo-a"} />
       <main id="contenido" tabIndex={-1} className="outline-none">
         {children}
       </main>
-      <Pie idioma={idioma} corrida={corrida} />
+      <Pie idioma={idioma} demo={demo} corrida={corrida} />
     </>
   );
 }

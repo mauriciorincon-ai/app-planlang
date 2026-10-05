@@ -28,7 +28,12 @@ export function Detalle({
       <AnuncioSeleccion anuncios={anuncios} />
       {vista.paneles.map((p) => (
         <PanelSeleccion key={p.id} id={p.id}>
-          <PanelNodo p={p} tipoDe={vista.tipoDe} idioma={idioma} />
+          <PanelNodo
+            p={p}
+            demo={vista.demo}
+            tipoDe={vista.tipoDe}
+            idioma={idioma}
+          />
         </PanelSeleccion>
       ))}
       <PanelSeleccion id={vista.arista.id}>

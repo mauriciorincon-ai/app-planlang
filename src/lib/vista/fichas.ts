@@ -1,12 +1,13 @@
 /**
  * Vista de P7 Fichas (maqueta `07-fichas.html`): la ficha de reproducibilidad del demo y las dos fichas que viajan a
- * hoja-de-vida, pintadas como las pinta su componente (piel de CV Viva) y comprobadas campo por campo contra el
- * contrato fijado. Las fichas son las mismas que escribe `pnpm fichas` (`src/lib/fichas/`), en el idioma de la ruta:
+ * hoja-de-vida —la de la app, que cuenta todos los demos y es la misma en las dos páginas, y la del agente del demo—,
+ * pintadas como las pinta su componente (piel de CV Viva) y comprobadas campo por campo contra el contrato fijado. Las fichas son las mismas que escribe `pnpm fichas` (`src/lib/fichas/`), en el idioma de la ruta:
  * la vista no redacta ninguna, solo las ordena para leerlas. Server-only: corre al compilar.
  */
 import type { Idioma } from "@core/formatos/bilingue";
 import type { HechosDelRepo } from "@/lib/datos/repo";
-import type { DatosDemo } from "@/lib/datos/vitrina";
+import type { IdDemo } from "@/lib/demos";
+import type { DatosDeLosDemos, DatosDemo } from "@/lib/datos/vitrina";
 import {
   armarFichaApp,
   brochureExport,
@@ -21,7 +22,15 @@ import {
   VERSION_FICHA,
 } from "@/lib/fichas/contrato";
 import type { FichaTecnica, Fuente, PasoBpmn } from "@/lib/fichas/tipos";
-import { APP, CV, MIRADA, REPRO, SECCION, TABLA } from "@/textos/fichas";
+import {
+  APP,
+  CV,
+  MIRADA,
+  PORTADA,
+  REPRO,
+  SECCION,
+  TABLA,
+} from "@/textos/fichas";
 import type { Fila } from "./agente";
 import { pieDeCorrida } from "./caso";
 import { entero, ESPACIO_DURO, versionCorta } from "./formato";
@@ -102,6 +111,13 @@ export interface FichaCv {
 }
 
 export interface VistaFichas {
+  /** Los textos que cambian con el demo de la página. */
+  textos: {
+    antetitulo: string;
+    cuadro: string;
+    seccionApp: string;
+    seccionAgente: string;
+  };
   mirada: {
     recibe: { titulo: string; detalle: string }[];
     hace: string[];
@@ -118,6 +134,56 @@ export interface VistaFichas {
 }
 
 const base = (ruta: string) => ruta.slice(ruta.lastIndexOf("/") + 1);
+const carpeta = (ruta: string) => ruta.slice(0, ruta.lastIndexOf("/"));
+
+/** Lo que no sale del manifiesto: cómo se regeneran los casos y cómo corre el lote de cada demo (`package.json`). */
+const COMANDOS: Readonly<Record<IdDemo, { casos: string; lote: string }>> = {
+  "demo-a": {
+    casos: "pnpm casos:generar --versionados",
+    lote: "pnpm lote:demo",
+  },
+  "demo-b": {
+    casos: "pnpm casos:generar --versionados --demo b",
+    lote: "pnpm lote:demo-b",
+  },
+};
+
+/**
+ * Los pasos para repetir la corrida del demo, con los archivos que declara su manifiesto: el plan con que se mide, la
+ * corrida y, si no siguen la convención de `brecha:informe` (`<corrida>-base`, `<corrida>-r2`…), su línea base y sus
+ * repeticiones. El último paso rehace el informe y lo compara con el publicado.
+ */
+export function pasosDeRepro(
+  d: DatosDemo,
+  i: Idioma,
+): { comando: string; texto: string }[] {
+  const m = d.manifiesto;
+  const corrida = m.corrida.ruta;
+  const reps = m.repeticiones.map((r) => r.ruta);
+  const baseArg =
+    m.linea_base === null || m.linea_base === undefined
+      ? " --sin-base"
+      : m.linea_base.ruta === `${corrida}-base`
+        ? ""
+        : ` --base ${m.linea_base.ruta}`;
+  const repsArg = reps.every((r, k) => r === `${corrida}-r${k + 2}`)
+    ? ""
+    : ` --repeticiones ${reps.join(",")}`;
+  const P = REPRO.pasos;
+  return [
+    {
+      comando: `pnpm plan:validar --verificar ${m.plan.archivo}`,
+      texto: P.plan[i],
+    },
+    { comando: COMANDOS[d.id].casos, texto: P.casos[i] },
+    { comando: COMANDOS[d.id].lote, texto: P.lote[i] },
+    { comando: "pnpm trazas:verificar", texto: P.trazas[i] },
+    {
+      comando: `pnpm brecha:informe --corrida ${corrida} --plan ${m.plan.archivo}${baseArg}${repsArg} --salida ${carpeta(m.informe.archivo)} --verificar`,
+      texto: P.informe[i],
+    },
+  ];
+}
 
 /** Largo como lo mide JSON Schema (`maxLength`): en puntos de código, no en unidades UTF-16. */
 const largo = (s: string) => [...s].length;
@@ -347,20 +413,29 @@ function fichaCv(
 }
 
 export function vistaFichas(
-  d: DatosDemo,
+  ds: DatosDeLosDemos,
+  demo: IdDemo,
   repo: HechosDelRepo,
   i: Idioma,
 ): VistaFichas {
+  const d: DatosDemo = ds[demo];
   const otro: Idioma = i === "es" ? "en" : "es";
   const appDe = (x: Idioma) =>
-    armarFichaApp(brochureExport(d, repo, x), complementoPropuesto(d, x));
+    armarFichaApp(brochureExport(ds, repo, x), complementoPropuesto(ds, x));
   const app = appDe(i);
   const agente = fichaAgente(d, repo, i);
   const E = MIRADA.entregaItems;
+  const rutaAgente = RUTA_FICHA_AGENTE[demo];
   const vCorrida = versionCorta(
     d.informe.ficha_reproducibilidad.corrida.plan_de_ejecucion.version,
   );
   return {
+    textos: {
+      antetitulo: PORTADA.antetitulo[demo][i],
+      cuadro: REPRO.cuadro[demo][i],
+      seccionApp: SECCION.app[i],
+      seccionAgente: SECCION.agente[demo][i],
+    },
     mirada: {
       recibe: MIRADA.recibeItems.map((x) => ({
         titulo: x.titulo[i],
@@ -370,17 +445,14 @@ export function vistaFichas(
       entrega: [
         { titulo: E.repro.titulo[i], detalle: E.repro.detalle[i] },
         { titulo: base(RUTA_EXPORT), detalle: E.export[i] },
-        { titulo: base(RUTA_FICHA_AGENTE), detalle: E.agente[i] },
+        { titulo: base(rutaAgente), detalle: E.agente[demo][i] },
         { titulo: E.nunca.titulo[i], detalle: E.nunca.detalle[i] },
       ],
     },
     repro: {
       chip: REPRO.chip(vCorrida)[i],
       filas: filasDeReproducibilidad(d, i, "fichas"),
-      pasos: REPRO.pasos.map((p) => ({
-        comando: p.comando,
-        texto: p.texto[i],
-      })),
+      pasos: pasosDeRepro(d, i),
     },
     app: fichaCv("app", app, appDe(otro), i, {
       ids: APP.grupos.map((g) => g.id),
@@ -397,8 +469,8 @@ export function vistaFichas(
     }),
     agente: fichaCv("agente", agente, fichaAgente(d, repo, otro), i, {
       ids: d.plan.contrato_de_grafo.nodos_esperados.map((n) => n.id),
-      archivo: base(RUTA_FICHA_AGENTE),
-      entrega: RUTA_FICHA_AGENTE,
+      archivo: base(rutaAgente),
+      entrega: rutaAgente,
       comprobado: TABLA.comprobado({ version: VERSION_FICHA })[i],
       notas: [],
     }),

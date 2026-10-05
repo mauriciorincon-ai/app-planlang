@@ -3,6 +3,7 @@
  * mapa `{ es, en }` y se redactan en los dos idiomas (regla 20): ninguno se traduce al pintar.
  */
 import { tb, type TextoBilingue } from "@core/formatos/bilingue";
+import type { IdDemo } from "@/lib/demos";
 import type { Pantalla } from "@/lib/ruta";
 
 export const MARCA = "planlang";
@@ -71,10 +72,21 @@ export const VEREDICTOS = {
 
 export const PIE = {
   simulacion: tb("Simulación · no operativo.", "Simulation · not operational."),
-  sintetico: tb(
-    "Todo caso, afiliado, médico y plan de beneficios es sintético. Las decisiones humanas de este demo se simularon en lote siguiendo la verdad conocida; en producción las tomaría un auditor médico con el caso completo.",
-    "Every case, member, physician and benefit plan is synthetic. This demo's human decisions were simulated in batch following the known truth; in production a medical auditor would make them with the full case.",
-  ),
+  /** Por demo; `ambos` es el de la entrada, que presenta los dos. */
+  sintetico: {
+    "demo-a": tb(
+      "Todo caso, afiliado, médico y plan de beneficios es sintético. Las decisiones humanas de este demo se simularon en lote siguiendo la verdad conocida; en producción las tomaría un auditor médico con el caso completo.",
+      "Every case, member, physician and benefit plan is synthetic. This demo's human decisions were simulated in batch following the known truth; in production a medical auditor would make them with the full case.",
+    ),
+    "demo-b": tb(
+      "Todo caso, solicitante, documento y lista de control es sintético. Las decisiones humanas de este demo se simularon en lote siguiendo la verdad conocida; en producción las tomaría un oficial de cumplimiento con el caso completo.",
+      "Every case, applicant, document and watchlist is synthetic. This demo's human decisions were simulated in batch following the known truth; in production a compliance officer would make them with the full case.",
+    ),
+    ambos: tb(
+      "Todo caso, afiliado, médico, plan de beneficios, solicitante y lista de control es sintético. Las decisiones humanas de los dos demos se simularon en lote siguiendo la verdad conocida; en producción las tomaría una persona con el caso completo: un auditor médico en el A, un oficial de cumplimiento en el B.",
+      "Every case, member, physician, benefit plan, applicant and watchlist is synthetic. Both demos' human decisions were simulated in batch following the known truth; in production a person would make them with the full case: a medical auditor in A, a compliance officer in B.",
+    ),
+  } as Record<IdDemo | "ambos", TextoBilingue>,
   modelo: tb(
     "El modelo de los agentes corrió con la suscripción de Claude Code del autor. Ningún visitante lanza llamadas a modelos: esta página es estática. LangChain, LangGraph, LangSmith y Anthropic son marcas de sus titulares; aquí solo se nombran.",
     "The agents' model ran on the author's Claude Code subscription. No visitor triggers model calls: this page is static. LangChain, LangGraph, LangSmith and Anthropic are trademarks of their owners; they are only named here.",

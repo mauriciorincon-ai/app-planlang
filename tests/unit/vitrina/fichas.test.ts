@@ -1,12 +1,17 @@
 /**
  * Las fichas que viajan a hoja-de-vida: los archivos versionados son exactamente los que generaría `pnpm fichas`
  * (nadie los edita a mano); cada uno pasa su contrato; las reglas que hoja-de-vida tiene solo en su Zod (el proceso
- * BPMN, el total del export, los enlaces) se cumplen y fallan cuando deben; y las cifras salen de los datos.
+ * BPMN, el total del export, los enlaces) se cumplen y fallan cuando deben; y las cifras salen de los datos: las de
+ * cada agente, de su demo, y las de la app, de los dos demos sumados.
  */
 import { readdirSync, readFileSync } from "node:fs";
 import { beforeAll, describe, expect, it } from "vitest";
 import { hechosDelRepo, type HechosDelRepo } from "@/lib/datos/repo";
-import { datosDemo, type DatosDemo } from "@/lib/datos/vitrina";
+import {
+  datosDeLosDemos,
+  type DatosDeLosDemos,
+  type DatosDemo,
+} from "@/lib/datos/vitrina";
 import {
   armarFichaApp,
   brochureExport,
@@ -21,19 +26,27 @@ import {
   problemasDeFicha,
 } from "@/lib/fichas/contrato";
 import type { FichaTecnica } from "@/lib/fichas/tipos";
+import { AGENTE_B } from "@/textos/demo-b/fichas";
 import { AGENTE } from "@/textos/fichas";
 
+let ds: DatosDeLosDemos;
+/** El demo A: las reglas del proceso se ejercitan sobre su ficha. */
 let d: DatosDemo;
 let repo: HechosDelRepo;
 beforeAll(async () => {
-  d = await datosDemo();
+  ds = await datosDeLosDemos();
+  d = ds["demo-a"];
   repo = hechosDelRepo();
 });
 
 describe("los archivos entregados son los que se generan", () => {
   it("cada archivo versionado es byte a byte el de `pnpm fichas`", () => {
-    const archivos = archivosDeFichas(d, repo);
-    expect(Object.keys(archivos)).toHaveLength(8);
+    const archivos = archivosDeFichas(ds, repo);
+    // Por idioma: la ficha de cada agente, el export, el complemento y la ficha de la app.
+    expect(Object.keys(archivos)).toHaveLength(10);
+    expect(Object.keys(archivos)).toContain(
+      "content/agentes/planlang-demo-b.ficha-tecnica.json",
+    );
     for (const [ruta, contenido] of Object.entries(archivos))
       expect(readFileSync(ruta, "utf8"), ruta).toBe(contenido);
   });
@@ -41,15 +54,16 @@ describe("los archivos entregados son los que se generan", () => {
 
 describe("cada ficha pasa su contrato, en los dos idiomas", () => {
   it.each(["es", "en"] as const)(
-    "%s: agente, export y la ficha de la app",
+    "%s: los dos agentes, el export y la ficha de la app",
     (i) => {
-      const exp = brochureExport(d, repo, i);
-      expect(problemasDeFicha(fichaAgente(d, repo, i))).toEqual([]);
+      const exp = brochureExport(ds, repo, i);
+      expect(problemasDeFicha(fichaAgente(ds["demo-a"], repo, i))).toEqual([]);
+      expect(problemasDeFicha(fichaAgente(ds["demo-b"], repo, i))).toEqual([]);
       expect(problemasDeExport(exp)).toEqual([]);
       expect(
-        problemasDeFicha(armarFichaApp(exp, complementoPropuesto(d, i))),
+        problemasDeFicha(armarFichaApp(exp, complementoPropuesto(ds, i))),
       ).toEqual([]);
-      expect(problemasDelComplemento(complementoPropuesto(d, i))).toEqual([]);
+      expect(problemasDelComplemento(complementoPropuesto(ds, i))).toEqual([]);
     },
   );
 });
@@ -108,11 +122,11 @@ describe("las reglas que el esquema no puede decir (el Zod de hoja-de-vida)", ()
   });
 
   it("el export: el total cuadra con los grupos y producción va en null", () => {
-    const exp = structuredClone(brochureExport(d, repo, "es"));
+    const exp = structuredClone(brochureExport(ds, repo, "es"));
     exp.funcionalidades.total += 1;
     expect(problemasDeExport(exp).join(" ")).toMatch(/total declarado 17 ≠ 16/);
     const conEnlace = structuredClone(
-      brochureExport(d, repo, "es"),
+      brochureExport(ds, repo, "es"),
     ) as unknown as {
       enlaces: { produccion: string };
     };
@@ -123,7 +137,7 @@ describe("las reglas que el esquema no puede decir (el Zod de hoja-de-vida)", ()
   });
 
   it("el complemento: una procedencia sin proceso sobra (hoja-de-vida lo rechaza)", () => {
-    const comp = { ...complementoPropuesto(d, "es"), procedencia: "app" };
+    const comp = { ...complementoPropuesto(ds, "es"), procedencia: "app" };
     expect(problemasDelComplemento(comp)).toContain(
       "/procedencia: «procedencia» sin proceso: sobra",
     );
@@ -133,12 +147,12 @@ describe("las reglas que el esquema no puede decir (el Zod de hoja-de-vida)", ()
   });
 
   it("la ficha de la app no inventa una cifra: una destacada que el export no trae detiene el armado", () => {
-    const comp = complementoPropuesto(d, "es");
+    const comp = complementoPropuesto(ds, "es");
     comp.cifras_destacadas = [
       ...comp.cifras_destacadas.slice(0, 4),
       "inventada",
     ];
-    expect(() => armarFichaApp(brochureExport(d, repo, "es"), comp)).toThrow(
+    expect(() => armarFichaApp(brochureExport(ds, repo, "es"), comp)).toThrow(
       /la cifra destacada «inventada» no existe en el export/,
     );
   });
@@ -170,8 +184,57 @@ describe("lo que dicen las fichas sale de los datos", () => {
     expect(nodos.filter((n) => !conPaso.has(n))).toEqual([]);
   });
 
+  it("las cifras del agente B son las de su informe, y no inventa una latencia que su plan no fija", () => {
+    const b = ds["demo-b"];
+    const f = fichaAgente(b, repo, "es");
+    const valor = (k: string) => f.cifras.find((c) => c.clave === k)?.valor;
+    expect(f.pieza.slug).toBe("planlang-demo-b");
+    expect(valor("casos_con_persona")).toBe(
+      b.informe.contrato_de_grafo.pausas.casos_con_pausa,
+    );
+    expect(valor("coincidencias_sin_persona")).toBe(0);
+    expect(valor("rechazos_sin_persona")).toBe(0);
+    expect(valor("costo_por_caso")).toBe(0.015);
+    expect(valor("latencia_mediana")).toBeUndefined();
+    const nodos = b.plan.contrato_de_grafo.nodos_esperados.map((n) => n.id);
+    expect(f.bloques.map((x) => x.orden)).toEqual(nodos.map((_, k) => k + 1));
+    const conPaso = new Set(AGENTE_B.proceso.pasos.map((p) => p.nodo));
+    expect(nodos.filter((n) => !conPaso.has(n))).toEqual([]);
+  });
+
+  it("las cifras de la app suman los dos demos, y cada detalle dice cuánto puso cada uno", () => {
+    const exp = brochureExport(ds, repo, "es");
+    const m = (k: string) => exp.metricas.find((x) => x.clave === k)!;
+    const a = ds["demo-a"].informe;
+    const b = ds["demo-b"].informe;
+    const visitas = (x: typeof a) =>
+      x.contrato_de_grafo.rf_09_2.reduce((s, r) => s + r.visitas, 0);
+    expect(m("criterios_cumplidos").valor).toBe(
+      a.criterios.filter((c) => c.estado === "cumple").length +
+        b.criterios.filter((c) => c.estado === "cumple").length,
+    );
+    expect(m("criterios_cumplidos").etiqueta).toBe(
+      `criterios cumplidos en los planes de 2 demos, de ${a.criterios.length + b.criterios.length}`,
+    );
+    expect(m("decisiones_cruzadas").valor).toBe(visitas(a) + visitas(b));
+    expect(m("casos_sinteticos").valor).toBe(
+      a.ficha_reproducibilidad.corrida.casos_ejecutados +
+        b.ficha_reproducibilidad.corrida.casos_ejecutados,
+    );
+    expect(m("costo_de_una_corrida").valor).toBe(0.9634);
+    for (const k of [
+      "criterios_cumplidos",
+      "casos_sinteticos",
+      "costo_de_una_corrida",
+    ])
+      expect(m(k).detalle, k).toMatch(/Demo A: .+ Demo B: /);
+    expect(m("costo_de_una_corrida").detalle).toContain(
+      "Demo A: US$ 0,6704 por 20 casos. Demo B: US$ 0,293 por 20 casos.",
+    );
+  });
+
   it("el export cuenta lo construido: 16 funcionalidades en 6 grupos, una cifra por ADR", () => {
-    const exp = brochureExport(d, repo, "es");
+    const exp = brochureExport(ds, repo, "es");
     expect(exp.funcionalidades.grupos.map((g) => g.features.length)).toEqual([
       3, 4, 4, 1, 1, 3,
     ]);
@@ -198,7 +261,7 @@ describe("AU-S2-4: cada funcionalidad del export apunta a una sección real del 
   it("toda `seccion_manual` es un encabezado de su mitad del manual, en los dos idiomas", () => {
     for (const i of ["es", "en"] as const) {
       const secciones = seccionesDelManual(i);
-      const exp = brochureExport(d, repo, i);
+      const exp = brochureExport(ds, repo, i);
       expect(exp.funcionalidades.fuente_del_conteo).toBe(
         "docs/MANUAL-DE-USO.md",
       );
@@ -218,8 +281,8 @@ describe("AU-S2-4: cada funcionalidad del export apunta a una sección real del 
 });
 
 describe("«actualizado» es la fecha más reciente de lo que la ficha cuenta (AU-S2-B41)", () => {
-  it("el export no es anterior a ningún ADR que cuenta, ni a la corrida, ni al plan", () => {
-    const e = brochureExport(d, repo, "es");
+  it("el export no es anterior a ningún ADR que cuenta, ni a la corrida ni al plan de ningún demo", () => {
+    const e = brochureExport(ds, repo, "es");
     const adrs = readdirSync("decisions")
       .filter((f) => /^\d{3}-.+\.md$/.test(f))
       .map(
@@ -232,17 +295,23 @@ describe("«actualizado» es la fecha más reciente de lo que la ficha cuenta (A
     expect(adrs.length).toBe(repo.adrs);
     for (const f of [
       ...adrs,
-      d.plan.aprobado_el,
-      d.informe.ficha_reproducibilidad.corrida.fecha,
+      ...Object.values(ds).flatMap((x) => [
+        x.plan.aprobado_el,
+        x.informe.ficha_reproducibilidad.corrida.fecha,
+      ]),
     ])
       expect(e.actualizado >= f!, `${e.actualizado} frente a ${f}`).toBe(true);
   });
 
-  it("la del agente no es anterior a la corrida ni a la aprobación del plan", () => {
-    const f = fichaAgente(d, repo, "es");
-    expect(f.actualizado >= d.plan.aprobado_el!).toBe(true);
-    expect(
-      f.actualizado >= d.informe.ficha_reproducibilidad.corrida.fecha,
-    ).toBe(true);
-  });
+  it.each(["demo-a", "demo-b"] as const)(
+    "la del agente de %s no es anterior a su corrida ni a la aprobación de su plan",
+    (demo) => {
+      const x = ds[demo];
+      const f = fichaAgente(x, repo, "es");
+      expect(f.actualizado >= x.plan.aprobado_el!).toBe(true);
+      expect(
+        f.actualizado >= x.informe.ficha_reproducibilidad.corrida.fecha,
+      ).toBe(true);
+    },
+  );
 });

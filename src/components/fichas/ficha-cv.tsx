@@ -527,14 +527,17 @@ function Comprobacion({ f, idioma }: { f: FichaCv; idioma: Idioma }) {
   );
 }
 
+/** `titulo`: el de la sección; el del agente nombra al agente del demo de la página. */
 export function SeccionFicha({
   n,
   f,
+  titulo,
   idioma,
   className,
 }: {
   n: number;
   f: FichaCv;
+  titulo: string;
   idioma: Idioma;
   className?: string;
 }) {
@@ -542,12 +545,7 @@ export function SeccionFicha({
   return (
     <Seccion
       id={`f-${f.clave}`}
-      titulo={
-        <TituloNumerado
-          n={n}
-          titulo={(app ? SECCION.app : SECCION.agente)[idioma]}
-        />
-      }
+      titulo={<TituloNumerado n={n} titulo={titulo} />}
       nota={(app ? SECCION.appNota : SECCION.agenteNota)[idioma]}
       className={className}
     >
