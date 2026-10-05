@@ -104,8 +104,8 @@ export const CAPACIDAD = {
 export const LO_QUE_NINGUNA = {
   titulo: tb("Lo que ninguna herramienta muestra", "What no tool shows"),
   nota: tb(
-    "Las tres se ven en el demo A, sobre corridas reales.",
-    "All three are visible in demo A, on real runs.",
+    "Las tres se ven en los dos demos, sobre corridas reales.",
+    "All three are visible in both demos, on real runs.",
   ),
   informe: tb(
     "El informe de brecha, con sus fallas",
@@ -139,7 +139,6 @@ export const DEMOS = {
     "B · Vinculación con debida diligencia",
     "B · Customer onboarding with due diligence",
   ),
-  demoBLlega: tb("Llega en el sprint 3.", "Arrives in sprint 3."),
   brecha: tb("Brecha", "Gap"),
   agente: tb("Agente", "Agent"),
   unCaso: tb("Un caso", "A case"),
@@ -147,24 +146,18 @@ export const DEMOS = {
 };
 
 /**
- * Lo que sigue del roadmap, «en construcción» en la Entrada (regla dura 15: el entrevistador y lo demás del roadmap
- * aparecen desde el primer día; AU-S2-6). Son los ids estables del bloque `roadmap:` de la ficha que define la
- * planeadora (`SPRINT_002.md`), menos el demo B, que tiene su fila en la tabla. Ninguno se simula.
+ * Lo que sigue del roadmap, «en construcción» en la Entrada (regla dura 15: lo del roadmap aparece desde el primer día;
+ * AU-S2-6). Son los ids estables del bloque `roadmap:` de la ficha que define la planeadora (`SPRINT_002.md`), menos lo
+ * que ya corrió en el S3: el demo B, que tiene su fila en la tabla, y el entrevistador, que propuso su plan. Ninguno se
+ * simula.
  */
 export const EN_CONSTRUCCION = {
   titulo: tb("También en construcción", "Also under construction"),
   nota: tb(
-    "Del roadmap, desde el sprint 3 en adelante.",
-    "From the roadmap, from sprint 3 on.",
+    "Del roadmap. Nada de esto se simula aquí.",
+    "From the roadmap. None of it is simulated here.",
   ),
   items: [
-    {
-      id: "entrevistador-que-propone-el-plan",
-      titulo: tb(
-        "Entrevistador que propone el plan",
-        "Interviewer that drafts the plan",
-      ),
-    },
     {
       id: "comparar-dos-corridas",
       titulo: tb(
@@ -207,8 +200,8 @@ export const LIDER = {
     "planlang writes an agent's plan as a contract that code can verify, builds the agent to that contract, runs it on cases with a known answer, and publishes the gap between what was planned and what happened, failures in plain sight.",
   ),
   avisoLider: tb(
-    "Ves qué hace planlang y qué dio con el demo A, en palabras llanas.",
-    "You see what planlang does and what it gave with demo A, in plain words.",
+    "Ves qué hace planlang y qué dieron sus demos, en palabras llanas.",
+    "You see what planlang does and what its demos gave, in plain words.",
   ),
   avisoExperto: tb(
     "Se suman cómo se sostiene cada afirmación —núcleo sin IA, trazas propias con huella, prueba cruzada entre dos lenguajes— y la fuente completa del gancho.",
@@ -243,8 +236,8 @@ export const LIDER = {
     "A router, an extractor, a rule-based coverage checker and a writer decide to approve, deny with a stated ground, or escalate to a human auditor. No denial goes out without a person.",
   ),
   demoB: tb(
-    "Extractor de documentos, verificación contra listas de control por reglas y modelo en cascada, investigador de contexto para homónimos.",
-    "Document extractor, watchlist screening by rules and a cascaded model, a context investigator for namesakes.",
+    "Un enrutador, un extractor, un verificador de listas por reglas, un investigador de contexto para homónimos y un puntaje de riesgo deciden aprobar, rechazar o escalar al oficial de cumplimiento. Ningún rechazo sale sin una persona.",
+    "A router, an extractor, a rule-based watchlist checker, a context investigator for namesakes and a risk score decide to approve, reject or escalate to the compliance officer. No rejection goes out without a person.",
   ),
   respuesta: tb(
     "Con un verificador determinista sobre casos con verdad conocida y adversarios sembrados: ningún modelo de lenguaje decide si el agente acertó. Y con la brecha publicada aunque no favorezca.",

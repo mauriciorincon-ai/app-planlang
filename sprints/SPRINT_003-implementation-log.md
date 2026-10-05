@@ -1042,6 +1042,26 @@ dos demos; la entrada se rehace en el punto siguiente).
 
 Pruebas: `pnpm test` en verde (129 archivos), `pnpm lint`, `pnpm typecheck`, `pnpm build` y `verificar-export` en verde.
 
+### Vitrina con dos demos — la entrada con las dos filas reales (2026-10-04)
+
+- `filaDeDemo(d, i)` (`src/lib/vista/entrada.ts`): veredicto, balance (criterios, riesgos, fallas, supuestos sin
+  probar) y corrida de cualquier demo, del informe y el manifiesto; `vistaEntrada` la usa para el A, así que las dos
+  filas salen de la misma función. La del B: «Cumple con alertas · 6 de 6 criterios · 0 de 4 riesgos · 1 falla» y su
+  corrida real del sprint 3.
+- `Demos` pinta una fila por demo (`data-demo`), con sus enlaces dentro de su demo; el B deja de ser «en construcción»
+  y se va «Llega en el sprint 3».
+- El entrevistador sale de «También en construcción» (ya corrió: propuso el plan B); quedan tres del roadmap. La nota
+  ya no promete el sprint 3: «Del roadmap. Nada de esto se simula aquí.»
+- Frases que cambiaron con el B: el texto de la fila del B (describía un «modelo en cascada»: el verificador de listas
+  es por reglas y el modelo solo investiga la zona gris), «Las tres se ven en el demo A» → «en los dos demos», y el
+  aviso de líder («qué dio con el demo A» → «qué dieron sus demos»). La portada, «Cómo funciona» y «Lo que ninguna
+  herramienta muestra» siguen dibujando el A y lo dicen («plan del demo A», «Capacidad medida con el demo A»).
+- Pruebas: AU-S2-6 reescrita (dos filas reales, ninguna en construcción, los enlaces del B en el B, tres del roadmap);
+  la e2e de la entrada mira el veredicto en cada fila (con dos «Cumple con alertas», el localizador de antes habría
+  sido ambiguo): 17 en verde a 380 px y en escritorio, sobre el export servido.
+
+La entrada es mirada de FORMA «no vista» (va a la matriz).
+
 ## Desviación del plan
 
 1. **Rutas de la orden** (`SPRINT_003-orden.md:65`): `audita-sprint` y `plan-sprint` viven en
