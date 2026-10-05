@@ -32,8 +32,8 @@ export const SUFIJO_RUTA = PAQUETE ? ".html" : "";
 export function ruta(
   idioma: Idioma,
   pantalla: Pantalla,
-  id?: string,
-  demo: IdDemo = "demo-a",
+  id: string | undefined,
+  demo: IdDemo,
 ): string {
   const segmento = SEGMENTO_DEMO[demo];
   const base = segmento ? `/${idioma}/${segmento}` : `/${idioma}`;
@@ -44,6 +44,11 @@ export function ruta(
         ? `${base}/${pantalla}`
         : `${base}/${pantalla}/${id}`;
   return `${BASE_RUTA}${camino}${SUFIJO_RUTA}`;
+}
+
+/** La Entrada: una sola para los dos demos (`/es`). */
+export function rutaEntrada(idioma: Idioma): string {
+  return ruta(idioma, "entrada", undefined, "demo-a");
 }
 
 export function otroIdioma(idioma: Idioma): Idioma {

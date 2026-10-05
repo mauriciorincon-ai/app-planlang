@@ -548,6 +548,7 @@ export function SeccionFicha({
       titulo={<TituloNumerado n={n} titulo={titulo} />}
       nota={(app ? SECCION.appNota : SECCION.agenteNota)[idioma]}
       className={className}
+      ambosDemos={app}
     >
       <div className="overflow-hidden rounded-control border border-tinta-3">
         <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1.5 border-b border-tinta-3 bg-sup-1 px-4 py-2.5 text-chico text-tinta-2">

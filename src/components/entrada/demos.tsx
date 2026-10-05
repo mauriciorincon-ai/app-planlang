@@ -124,32 +124,36 @@ export function Demos({
             <Chip procedencia="real">{vista.corrida.chip}</Chip>
           </Celda>
           <Celda etiqueta={c.abrir[idioma]}>
-            <BotonEnlace href={ruta(idioma, "brecha")} principal chico>
+            <BotonEnlace
+              href={ruta(idioma, "brecha", undefined, "demo-a")}
+              principal
+              chico
+            >
               {DEMOS.brecha[idioma]}
               <Icono de={ArrowRight} tam={15} />
             </BotonEnlace>
             <span className="flex flex-wrap gap-x-3.5 gap-y-0.5 text-chico">
               <a
                 className="text-tinta-2 hover:text-tinta-1"
-                href={ruta(idioma, "plan")}
+                href={ruta(idioma, "plan", undefined, "demo-a")}
               >
                 {PESTANAS.plan[idioma]}
               </a>
               <a
                 className="text-tinta-2 hover:text-tinta-1"
-                href={ruta(idioma, "agente")}
+                href={ruta(idioma, "agente", undefined, "demo-a")}
               >
                 {DEMOS.agente[idioma]}
               </a>
               <a
                 className="text-tinta-2 hover:text-tinta-1"
-                href={ruta(idioma, "playground")}
+                href={ruta(idioma, "playground", undefined, "demo-a")}
               >
                 {PESTANAS.playground[idioma]}
               </a>
               <a
                 className="text-tinta-2 hover:text-tinta-1"
-                href={ruta(idioma, "caso")}
+                href={ruta(idioma, "caso", undefined, "demo-a")}
               >
                 {DEMOS.unCaso[idioma]}
               </a>

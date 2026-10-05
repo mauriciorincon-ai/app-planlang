@@ -1002,6 +1002,46 @@ mismo):
 Pruebas: `pnpm test` 3.531 en verde (128 archivos); `pnpm typecheck`, `pnpm lint`, `pnpm fichas --verificar` y
 `pnpm build` (110 páginas) en verde.
 
+### Vitrina con dos demos — guardia de vocabulario por demo y enlaces que se quedan en su demo (2026-10-04)
+
+**Regla 7 de `scripts/verificar-export.mjs`** (corre en `quality` después del build, sobre `out/`): ninguna pantalla
+del B dice palabras que solo son del A (afiliado, auditor, médico, Texas, plan de beneficios · member, physician,
+benefit plan) ni una del A las que solo son del B (oficial de cumplimiento, lista vinculante, homónimo, vinculación ·
+applicant, compliance officer, binding list, namesake, onboarding). Lee lo que lee una persona: el texto pintado, el
+`<title>`, la descripción y los `aria-label`, `title` y `alt`, con palabra entera y tildes. Decisiones:
+- la entrada queda fuera (presenta los dos demos);
+- la ficha de la app también: es la misma en las dos páginas de Fichas y habla de los dos a propósito. Se marca
+  `data-vocabulario="ambos-demos"` (`Seccion.ambosDemos`) y la regla quita ese elemento entero antes de leer; un
+  elemento marcado que no cierra es falla. La ficha del agente y la de reproducibilidad sí se leen;
+- «solicitante» no entra en la lista: el A dice «médico solicitante».
+
+Al nacer encontró, en el B: «minutos de auditor» en la lectura de Umbrales del Plan (con el número vacío: el plan B no
+declara costo humano) y en lo que entrega el Playground. Arreglados con textos propios (`lecturaSinCosto`,
+`entregaItems[].sinCosto`), que siguen siendo literales que `textos.test.ts` recorre (una primera versión los metió en
+funciones y la prueba de textos perdió 8 casos; se vio comparando la cuenta por archivo contra `HEAD`).
+
+**`ruta()` exige el demo.** El build con la regla nueva salió en rojo por la regla 3 (que ya existía): la Brecha del B
+enlazaba sus casos a `/es/caso/B-…`, que no existen. La causa era el demo A por omisión de `ruta()`. Con el demo
+obligatorio el compilador señaló además enlaces que en el B llevaban al A **sin romperse** (la regla 3 no los ve):
+Plan → Playground, Brecha → Playground (dos) y Playground → casos. La entrada usa `rutaEntrada()`; la fila del A en la
+entrada y la portada lo dicen explícito (`"demo-a"`) hasta que la entrada tenga sus dos filas.
+`tests/unit/vitrina/enlaces-por-demo.test.ts`: toda ruta interna de las vistas de un demo (Plan, Agente, Brecha,
+Playground, un Caso, Fichas) se queda en su demo, en los dos idiomas.
+
+| # | Gate | Mutación | Rojo (quién lo nombró) |
+|---|---|---|---|
+| D42 | `verificar-export` regla 7, dirección B | «Producto pedido» → «Producto pedido por el afiliado» en `src/textos/demo-b/agente.ts` | `es/demo-b/agente.html: pantalla del demo-b dice «afiliado», palabra del demo-a: …B-001 Producto pedido por el afiliado cuenta corriente…`; verde tras restaurar (build + regla) |
+| D43 | `verificar-export` regla 7, dirección A | «Escalation to the medical auditor» → «…, namesake or not» en `src/textos/agente.ts` | `en/agente.html: pantalla del demo-a dice «namesake», palabra del demo-b`; verde tras restaurar |
+| D44 | `enlaces-por-demo.test.ts` | el enlace del Plan al Playground vuelve a `"demo-a"` (`src/lib/vista/plan.ts`) | `demo-b › es` y `› en`: «plan: /es/playground» ×4; verde tras restaurar |
+
+Las tres con `scripts/demo-rojo.sh` (mutación literal, respaldo único verificado con `grep` y `cmp`).
+
+El A, contra el build de `3b494b5`: 51 de 57 páginas idénticas; cambian Agente (la frase del contrato 0.5.0), Fichas
+(la ficha de la app con los dos demos, los comandos y el atributo `data-vocabulario`) y la entrada (el pie habla de los
+dos demos; la entrada se rehace en el punto siguiente).
+
+Pruebas: `pnpm test` en verde (129 archivos), `pnpm lint`, `pnpm typecheck`, `pnpm build` y `verificar-export` en verde.
+
 ## Desviación del plan
 
 1. **Rutas de la orden** (`SPRINT_003-orden.md:65`): `audita-sprint` y `plan-sprint` viven en
@@ -1119,3 +1159,5 @@ Pruebas: `pnpm test` 3.531 en verde (128 archivos); `pnpm typecheck`, `pnpm lint
 | 2026-10-04 | el build se detenía en `/en/demo-b/agente` | `PRESENTACION` de las trazas estaba por nombre de nodo y no tenía `verificador_listas`; la sonda del B probaba la vista, no el componente | reparto por demo (`trazas.tsx`) |
 | 2026-10-04 | las seis páginas del B decían en el pie «afiliado, médico y plan de beneficios… un auditor médico» | `PIE.sintetico` era uno solo | pie por demo; la entrada dice los dos (prueba en `componentes.test.tsx`) |
 | 2026-10-04 | «Cómo repetirla» daba comandos que no corren (S2) | `pnpm plan:validar` y `pnpm brecha:informe` sin argumentos salen con «uso:» | comandos armados con el manifiesto, corridos en los dos demos, con prueba |
+| 2026-10-04 | la Brecha del B enlazaba sus casos a `/es/caso/B-…` (rotos) y el Plan, la Brecha y el Playground del B enlazaban al Playground y a casos del A | `ruta()` tomaba el demo A por omisión | demo obligatorio; prueba `enlaces-por-demo` (D44) |
+| 2026-10-04 | el Plan y el Playground del B decían «minutos de auditor» (el Plan, sin número) | textos del A sin variante para un plan sin costo humano | textos propios; los vio la regla 7 al nacer |

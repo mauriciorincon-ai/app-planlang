@@ -381,7 +381,7 @@ export function vistaPlan(d: DatosDemo, i: Idioma): VistaPlan {
   });
 
   // ── umbrales ───────────────────────────────────────────────────────────────────────────────────
-  const playground = ruta(i, "playground");
+  const playground = ruta(i, "playground", undefined, d.id);
   const umbrales: FilaPlan[] = p.umbrales.map((u) => {
     const rango =
       "tipo" in u.rango_jugable
@@ -684,7 +684,9 @@ export function vistaPlan(d: DatosDemo, i: Idioma): VistaPlan {
         "p-umb",
         5,
         SECCIONES.umbrales,
-        SECCIONES.umbrales.lectura(minutos.join("–")),
+        minutos.length
+          ? SECCIONES.umbrales.lectura(minutos.join("–"))
+          : SECCIONES.umbrales.lecturaSinCosto,
         chipPlan,
         umbrales,
       ),

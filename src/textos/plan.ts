@@ -297,6 +297,11 @@ export const SECCIONES = {
         `Dónde el agente deja de decidir solo y pasa el caso a una persona. Cada umbral es una regla escrita —señal, operador, valor— que el grafo y el playground evalúan igual. Cada caso que pasa a una persona cuesta ${min} minutos de auditor.`,
         `Where the agent stops deciding alone and hands the case to a person. Each threshold is a written rule —signal, operator, value— that the graph and the playground evaluate the same way. Each case that goes to a person costs ${min} auditor minutes.`,
       )) as Plantilla<string>,
+    /** Cuando el plan no declara el costo humano por caso (el B). */
+    lecturaSinCosto: tb(
+      "Dónde el agente deja de decidir solo y pasa el caso a una persona. Cada umbral es una regla escrita —señal, operador, valor— que el grafo y el playground evalúan igual. El plan no declara cuánto le cuesta a la persona cada caso.",
+      "Where the agent stops deciding alone and hands the case to a person. Each threshold is a written rule —signal, operator, value— that the graph and the playground evaluate the same way. The plan does not declare what each case costs the person.",
+    ),
   },
   contrato: {
     titulo: tb("El contrato del grafo", "The graph contract"),

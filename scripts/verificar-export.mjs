@@ -9,6 +9,13 @@
 //      trae (AU-S2-B30), y la 404 ya no está exenta (AU-S2-13).
 //   5. La maqueta no viaja (ADR-007): ni `diseno/` ni documentos `.md`.
 //   6. Cero enlaces (regla 17): ningún dominio de despliegue en el export.
+//   7. Vocabulario por demo (S3, ADR-014): ninguna pantalla del B dice palabras que solo son del A (afiliado,
+//      auditor, médico, Texas, plan de beneficios · member, physician, benefit plan) ni una del A las que solo son
+//      del B (oficial de cumplimiento, lista vinculante, homónimo, vinculación · applicant, compliance officer,
+//      binding list, namesake, onboarding). Lee el texto pintado, el `<title>`, la descripción y los `aria-label`,
+//      `title` y `alt`. Quedan fuera la entrada (presenta los dos demos) y lo marcado `data-vocabulario="ambos-demos"`
+//      (la ficha de la app, igual en las dos páginas de Fichas). Nació porque las páginas del B heredaban textos del A
+//      (la franja del oráculo, el pie, «minutos de auditor») sin que ninguna prueba de vista los viera.
 // Uso: node scripts/verificar-export.mjs [dir]   (por defecto out/)
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative, resolve } from "node:path";
@@ -58,6 +65,80 @@ function textoDelRotulo(html) {
   return ventana.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
 }
 
+/** Palabras que solo dice cada demo: una pantalla del otro demo no las dice (regla 7). */
+const SOLO_DE = {
+  "demo-a": [
+    "afiliad[oa]s?",
+    "auditor(?:es|as?)?",
+    "médic[oa]s?",
+    "texas",
+    "planes? de beneficios",
+    "members?",
+    "physicians?",
+    "benefits? plans?",
+  ],
+  "demo-b": [
+    "oficial(?:es)? de cumplimiento",
+    "listas? vinculantes?",
+    "homónim[oa]s?",
+    "vinculación",
+    "applicants?",
+    "compliance officers?",
+    "binding lists?",
+    "namesakes?",
+    "onboarding",
+  ],
+};
+/** Una palabra entera (sin letras ni dígitos pegados, con tildes incluidas), sin mayúsculas que importen. */
+const comoPalabra = (p) =>
+  new RegExp(`(?<![\\p{L}\\p{N}])(?:${p})(?![\\p{L}\\p{N}])`, "iu");
+
+/** El demo de una pantalla por su ruta (ADR-014): `<idioma>/demo-b/…` es del B; la entrada, de ninguno. */
+function demoDePantalla(r) {
+  if (/^(es|en)\/demo-b(\.html|\/)/.test(r)) return "demo-b";
+  if (/^(es|en)\//.test(r)) return "demo-a";
+  return null;
+}
+
+/** Quita los elementos marcados `data-vocabulario="ambos-demos"` con todo su contenido; null si uno no cierra. */
+function sinLoDeAmbos(html) {
+  let s = html;
+  for (;;) {
+    const m =
+      /<([a-z][a-z0-9]*)\b[^>]*\bdata-vocabulario="ambos-demos"[^>]*>/i.exec(s);
+    if (!m) return s;
+    const etiqueta = new RegExp(`<(/?)${m[1]}\\b[^>]*>`, "gi");
+    etiqueta.lastIndex = m.index + m[0].length;
+    let nivel = 1;
+    let x;
+    while (nivel > 0 && (x = etiqueta.exec(s))) nivel += x[1] ? -1 : 1;
+    if (nivel > 0) return null;
+    s = s.slice(0, m.index) + s.slice(etiqueta.lastIndex);
+  }
+}
+
+/** Lo que lee una persona de la página: el texto pintado, el título, la descripción y las etiquetas accesibles. */
+function textoLeido(html) {
+  const atributos = [
+    ...html.matchAll(/\b(?:aria-label|title|alt)="([^"]*)"/g),
+    ...html.matchAll(
+      /<meta\b[^>]*\bname="description"[^>]*\bcontent="([^"]*)"/g,
+    ),
+  ].map((m) => m[1]);
+  const pintado = html
+    .replace(/<script\b[\s\S]*?<\/script>/g, " ")
+    .replace(/<style\b[\s\S]*?<\/style>/g, " ")
+    .replace(/<[^>]+>/g, " ");
+  return [pintado, ...atributos]
+    .join(" ")
+    .replace(/&#x27;|&#39;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&amp;/g, "&")
+    .replace(/\s+/g, " ");
+}
+
 for (const f of htmls) {
   const html = readFileSync(f, "utf8");
   if (/localhost|127\.0\.0\.1/.test(html))
@@ -91,6 +172,28 @@ for (const f of htmls) {
     for (const i of m ? [m[1]] : ["es", "en"])
       if (pintado === null || !pintado.includes(ROTULO[i]))
         fallas.push(`${rel(f)}: sin el rótulo pintado «${ROTULO[i]}»`);
+  }
+}
+
+// 7. Vocabulario por demo.
+for (const f of htmls) {
+  const demo = demoDePantalla(rel(f));
+  if (!demo) continue;
+  const html = sinLoDeAmbos(readFileSync(f, "utf8"));
+  if (html === null) {
+    fallas.push(
+      `${rel(f)}: un elemento data-vocabulario="ambos-demos" no cierra`,
+    );
+    continue;
+  }
+  const texto = textoLeido(html);
+  const otro = demo === "demo-a" ? "demo-b" : "demo-a";
+  for (const p of SOLO_DE[otro]) {
+    const m = comoPalabra(p).exec(texto);
+    if (m)
+      fallas.push(
+        `${rel(f)}: pantalla del ${demo} dice «${m[0]}», palabra del ${otro}: …${texto.slice(Math.max(0, m.index - 60), m.index + m[0].length + 40).trim()}…`,
+      );
   }
 }
 

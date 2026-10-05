@@ -22,6 +22,12 @@ import type { BrochureExport, CifraFicha, FichaTecnica } from "./tipos";
 
 const X = (t: TextoBilingue, i: Idioma) => t[i];
 
+/** Frases redactadas en cada idioma, una tras otra (el detalle de una cifra que suma los demos). */
+const unir = (frases: TextoBilingue[]): TextoBilingue => ({
+  es: frases.map((f) => f.es).join(" "),
+  en: frases.map((f) => f.en).join(" "),
+});
+
 /**
  * «Actualizado»: la fecha más reciente de lo que la ficha cuenta (la corrida, la aprobación del plan y, en la de la
  * app, los ADR y los summaries), no solo la de la corrida (AU-S2-B41). Fechas ISO: se comparan como texto.
@@ -407,7 +413,7 @@ export function brochureExport(
         unidad: X(M.criteriosCumplidos.unidad, i),
         fuente: "medido",
         detalle: X(
-          M.criteriosCumplidos.detalle(
+          unir(
             todos.map(({ id, d }) =>
               M.criteriosCumplidos.deUnDemo({
                 demo: nombre(id),
@@ -444,7 +450,7 @@ export function brochureExport(
         unidad: X(M.casosSinteticos.unidad, i),
         fuente: "medido",
         detalle: X(
-          M.casosSinteticos.detalle(
+          unir(
             todos.map(({ id, d }) => {
               const rep = d.informe.ficha_reproducibilidad;
               return M.casosSinteticos.deUnDemo({
@@ -474,15 +480,16 @@ export function brochureExport(
         unidad: "US$",
         fuente: "calculada",
         detalle: X(
-          M.costoDeUnaCorrida.detalle(
-            costos.map(({ id, d, costo: c }) =>
+          unir([
+            ...costos.map(({ id, d, costo: c }) =>
               M.costoDeUnaCorrida.deUnDemo({
                 demo: nombre(id),
                 costo: numeroTal(c, i),
                 n: d.informe.ficha_reproducibilidad.corrida.casos_ejecutados,
               }),
             ),
-          ),
+            M.costoDeUnaCorrida.detalle,
+          ]),
           i,
         ),
       },

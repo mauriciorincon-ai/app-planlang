@@ -370,8 +370,8 @@ const NO_MEDIDOS_RIESGO = new Set([
 ]);
 const MENOR_ES_MEJOR = new Set(["latencia", "costo"]);
 
-function casosEnlazados(ids: readonly string[], i: Idioma) {
-  return ids.map((id) => ({ id, href: ruta(i, "caso", id) }));
+function casosEnlazados(ids: readonly string[], demo: IdDemo, i: Idioma) {
+  return ids.map((id) => ({ id, href: ruta(i, "caso", id, demo) }));
 }
 
 /** «C1–C9» si son los del plan en orden y sin huecos; si no, la lista. */
@@ -894,7 +894,8 @@ export function vistaBrecha(d: DatosDemo, i: Idioma): VistaBrecha {
   for (const s of supRefutados)
     fallos.push(filaSupuesto(s, "fallo", plan, vCorrida, d.id, i));
   for (const c of criteriosFallan) fallos.push(filaCriterioFallido(c, d.id, i));
-  for (const r of riesgosOcurridos) fallos.push(filaRiesgoOcurrido(r, plan, i));
+  for (const r of riesgosOcurridos)
+    fallos.push(filaRiesgoOcurrido(r, plan, d.id, i));
   for (const [cat, bs] of porCategoria)
     fallos.push(
       filaBrecha(
@@ -1164,7 +1165,7 @@ export function vistaBrecha(d: DatosDemo, i: Idioma): VistaBrecha {
       }),
       i,
     ),
-    filas: inf.criterios.map((c) => filaCriterio(c, latenciaDe, i)),
+    filas: inf.criterios.map((c) => filaCriterio(c, latenciaDe, d.id, i)),
   };
 
   // --------------------------------------------------------------------- § 4 riesgos
@@ -1192,7 +1193,7 @@ export function vistaBrecha(d: DatosDemo, i: Idioma): VistaBrecha {
       }),
       i,
     ),
-    filas: inf.riesgos.map((r) => filaRiesgo(r, plan, i)),
+    filas: inf.riesgos.map((r) => filaRiesgo(r, plan, d.id, i)),
     construidoNota: X(
       RIESGOS.construidoNota({
         n: ct.nodos.length,
@@ -1259,7 +1260,7 @@ export function vistaBrecha(d: DatosDemo, i: Idioma): VistaBrecha {
       caso: b.caso_id,
       href:
         b.caso_id && b.corrida_id === corridaId
-          ? ruta(i, "caso", b.caso_id)
+          ? ruta(i, "caso", b.caso_id, d.id)
           : null,
       corrida:
         b.corrida_id === corridaId
@@ -1357,7 +1358,7 @@ export function vistaBrecha(d: DatosDemo, i: Idioma): VistaBrecha {
             : EJEMPLARES.sinPersona,
           i,
         ),
-        href: ruta(i, "caso", e.caso_id),
+        href: ruta(i, "caso", e.caso_id, d.id),
         etiquetaCadena: X(EJEMPLARES.cadena(e.caso_id), i),
       };
     }),
@@ -1408,11 +1409,11 @@ export function vistaBrecha(d: DatosDemo, i: Idioma): VistaBrecha {
           o.verdaderos !== null
             ? X(PLAYGROUND.verdaderos({ a: o.verdaderos, b: o.n }), i)
             : `${o.min === null ? "—" : numeroDato(o.min, i)} · ${o.mediana === null ? "—" : numeroDato(o.mediana, i)} · ${o.max === null ? "—" : numeroDato(o.max, i)} (n = ${o.n})`,
-        justo: casosEnlazados(u.casos_en_el_umbral, i),
+        justo: casosEnlazados(u.casos_en_el_umbral, d.id, i),
       };
     }),
     limites: inf.playground.limites.map((l) => X(l, i)),
-    href: ruta(i, "playground"),
+    href: ruta(i, "playground", undefined, d.id),
   };
 
   // --------------------------------------------------------------------- § 9 ficha
@@ -1737,7 +1738,7 @@ function filaSupuesto(
     titulo: X(l.titulo, i),
     lider: [planeo, paso, X(l.significa, i)],
     experto: [regla, medido, evidencia],
-    casos: casosEnlazados(casos, i),
+    casos: casosEnlazados(casos, demo, i),
     enlaces: [{ href: "#b6", texto: `§ 6 ${X(SECCIONES.b6, i)}` }],
   };
 }
@@ -1765,7 +1766,7 @@ function filaCriterioFallido(
       `${valorDe(c, i)} · n = ${c.n_poblacion}`,
       c.casos_que_incumplen.join(", ") || "—",
     ],
-    casos: casosEnlazados(c.casos_que_incumplen, i),
+    casos: casosEnlazados(c.casos_que_incumplen, demo, i),
     enlaces: [{ href: "#b3", texto: `§ 3 ${X(SECCIONES.b3, i)}` }],
   };
 }
@@ -1773,6 +1774,7 @@ function filaCriterioFallido(
 function filaRiesgoOcurrido(
   r: ResultadoRiesgo,
   plan: Plan,
+  demo: IdDemo,
   i: Idioma,
 ): FilaFallo {
   const p = plan.riesgos.find((x) => x.id === r.id);
@@ -1796,7 +1798,7 @@ function filaRiesgoOcurrido(
       `${r.valor ?? "—"} · ${r.ocurre_si ?? ""}`,
       r.casos.join(", "),
     ],
-    casos: casosEnlazados(r.casos, i),
+    casos: casosEnlazados(r.casos, demo, i),
     enlaces: [{ href: "#b4", texto: `§ 4 ${X(SECCIONES.b4, i)}` }],
   };
 }
@@ -1889,7 +1891,7 @@ function filaBrecha(
         i,
       ),
     ],
-    casos: casos.map((id) => ({ id, href: ruta(i, "caso", id) })),
+    casos: casos.map((id) => ({ id, href: ruta(i, "caso", id, demo) })),
     enlaces: [{ href: "#b5", texto: `§ 5 ${X(SECCIONES.b5, i)}` }],
   };
 }
@@ -1995,10 +1997,17 @@ function filaConNota(
           ? X(EXPERTO.notaVerificador(X(c.nota, i)), i)
           : "—",
     ],
-    casos: casosEnlazados(c.casos_que_incumplen, i),
+    casos: casosEnlazados(c.casos_que_incumplen, demo, i),
     enlaces: [
       { href: "#b3", texto: `§ 3 ${X(SECCIONES.b3, i)}` },
-      ...(rompe ? [{ href: ruta(i, "playground"), texto: "Playground" }] : []),
+      ...(rompe
+        ? [
+            {
+              href: ruta(i, "playground", undefined, demo),
+              texto: "Playground",
+            },
+          ]
+        : []),
     ],
   };
 }
@@ -2006,6 +2015,7 @@ function filaConNota(
 function filaCriterio(
   c: ResultadoCriterio,
   latenciaDe: ReadonlyMap<string, number>,
+  demo: IdDemo,
   i: Idioma,
 ): FilaCriterio {
   const estado = estadoDeCriterio(c.estado, i, "informe");
@@ -2106,11 +2116,16 @@ function filaCriterio(
     },
     ejes,
     estado,
-    casos: casosEnlazados(c.casos_que_incumplen, i),
+    casos: casosEnlazados(c.casos_que_incumplen, demo, i),
   };
 }
 
-function filaRiesgo(r: ResultadoRiesgo, plan: Plan, i: Idioma): FilaRiesgo {
+function filaRiesgo(
+  r: ResultadoRiesgo,
+  plan: Plan,
+  demo: IdDemo,
+  i: Idioma,
+): FilaRiesgo {
   const p = plan.riesgos.find((x) => x.id === r.id);
   const det = p?.detector_en_trazas;
   const tasa = r.tipo_detector === "tasa";
@@ -2133,7 +2148,7 @@ function filaRiesgo(r: ResultadoRiesgo, plan: Plan, i: Idioma): FilaRiesgo {
     rpn: `S${r.severidad} · O${r.ocurrencia} · D${r.deteccion} · RPN ${r.rpn}`,
     legal: controlLegal(r, i),
     estado: estadoDeRiesgo(r.estado, i),
-    casos: casosEnlazados(r.casos, i),
+    casos: casosEnlazados(r.casos, demo, i),
   };
 }
 

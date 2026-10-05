@@ -143,6 +143,7 @@ export const IPO = {
       "Measures the criteria again with the plan’s rule",
     ),
   ]) as (min: number | null) => TextoBilingue[],
+  /** `sinCosto`: el título cuando el plan no declara el costo humano (el B): se cuentan casos, no minutos. */
   entregaItems: [
     {
       titulo: tb(
@@ -155,6 +156,10 @@ export const IPO = {
       titulo: tb(
         "Errores evitados e introducidos, y minutos de auditor",
         "Errors avoided and introduced, and auditor minutes",
+      ),
+      sinCosto: tb(
+        "Errores evitados e introducidos, y casos que pasan a una persona",
+        "Errors avoided and introduced, and cases that go to a person",
       ),
       detalle: tb(
         "frente a lo que hizo el agente",
@@ -178,7 +183,11 @@ export const IPO = {
         "with the plan’s point and yours",
       ),
     },
-  ],
+  ] as {
+    titulo: TextoBilingue;
+    sinCosto?: TextoBilingue;
+    detalle: TextoBilingue;
+  }[],
   nunca: tb(
     "Nunca vuelve a llamar al modelo",
     "It never calls the model again",

@@ -765,7 +765,7 @@ export const METRICAS_APP = {
         `criteria met across the plans of ${p.demos} demos, of ${p.n}`,
       )) as Plantilla<{ n: number; demos: number }>,
     unidad: tb("criterios", "criteria"),
-    /** Una frase por demo; `detalle` las une. */
+    /** Una frase por demo: el detalle las pone una tras otra (`src/lib/fichas/armar.ts`). */
     deUnDemo: ((p: {
       demo: string;
       verificador: string;
@@ -783,11 +783,6 @@ export const METRICAS_APP = {
       cumplen: number;
       n: number;
     }>,
-    detalle: ((demos: TextoBilingue[]) =>
-      tb(
-        demos.map((d) => d.es).join(" "),
-        demos.map((d) => d.en).join(" "),
-      )) as Plantilla<TextoBilingue[]>,
   },
   decisionesCruzadas: {
     etiqueta: ((diferencias: number) =>
@@ -809,7 +804,10 @@ export const METRICAS_APP = {
         `synthetic cases with a known answer, across ${demos} demos`,
       )) as Plantilla<number>,
     unidad: tb("casos", "cases"),
-    /** Una frase por demo: su corrida, sus repeticiones (pass^k) si las hay y su línea base si la hay. */
+    /**
+     * Una frase por demo: su corrida, sus repeticiones (pass^k) si las hay y su línea base si la hay. El detalle las
+     * pone una tras otra.
+     */
     deUnDemo: ((p: {
       demo: string;
       n: number;
@@ -827,11 +825,6 @@ export const METRICAS_APP = {
       repeticiones: number;
       base: boolean;
     }>,
-    detalle: ((demos: TextoBilingue[]) =>
-      tb(
-        demos.map((d) => d.es).join(" "),
-        demos.map((d) => d.en).join(" "),
-      )) as Plantilla<TextoBilingue[]>,
   },
   llamadasEnLaVitrina: {
     etiqueta: tb(
@@ -855,11 +848,11 @@ export const METRICAS_APP = {
         `${p.demo}: US$ ${p.costo} por ${p.n} casos.`,
         `${p.demo}: US$ ${p.costo} for ${p.n} cases.`,
       )) as Plantilla<{ demo: string; costo: string; n: number }>,
-    detalle: ((demos: TextoBilingue[]) =>
-      tb(
-        `${demos.map((d) => d.es).join(" ")} Suma del costo nominal que el CLI declara por llamada, en las trazas de cada corrida; por la suscripción no se pagó aparte.`,
-        `${demos.map((d) => d.en).join(" ")} Sum of the nominal cost the CLI declares per call, over each run's traces; through the subscription it was not paid separately.`,
-      )) as Plantilla<TextoBilingue[]>,
+    /** Va después de la frase de cada demo. */
+    detalle: tb(
+      "Suma del costo nominal que el CLI declara por llamada, en las trazas de cada corrida; por la suscripción no se pagó aparte.",
+      "Sum of the nominal cost the CLI declares per call, over each run's traces; through the subscription it was not paid separately.",
+    ),
   },
   funcionalidades: {
     etiqueta: tb("funcionalidades construidas", "built features"),

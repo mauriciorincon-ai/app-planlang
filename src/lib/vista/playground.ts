@@ -277,7 +277,7 @@ export function vistaPlayground(d: DatosDemo, i: Idioma): VistaPlayground {
     }).map((x) => ({ titulo: X(x.titulo, i), detalle: X(x.detalle, i) })),
     hace: IPO.haceItems(minutos).map((t) => X(t, i)),
     entrega: IPO.entregaItems.map((x) => ({
-      titulo: X(x.titulo, i),
+      titulo: X(minutos === null && x.sinCosto ? x.sinCosto : x.titulo, i),
       detalle: X(x.detalle, i),
     })),
     ejemplo: ejemplo(c, d, i),
@@ -361,7 +361,7 @@ export function vistaPlayground(d: DatosDemo, i: Idioma): VistaPlayground {
       casos: c.casos.map((k) => ({
         id: k.id,
         tipo: X(SUBTIPO[k.subtipo] ?? { es: k.subtipo, en: k.subtipo }, i),
-        href: ruta(i, "caso", k.id),
+        href: ruta(i, "caso", k.id, d.id),
       })),
       columnas,
       nodosEnOrden: orden,

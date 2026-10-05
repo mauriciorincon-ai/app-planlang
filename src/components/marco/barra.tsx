@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import type { Idioma } from "@core/formatos/bilingue";
 import type { IdDemo } from "@/lib/demos";
-import { PANTALLAS, ruta, type Pantalla } from "@/lib/ruta";
+import { PANTALLAS, ruta, rutaEntrada, type Pantalla } from "@/lib/ruta";
 import { BARRA, MARCA, PESTANAS } from "@/textos/comun";
 import { CONT, cx } from "../cx";
 import { Icono } from "../icono";
@@ -56,7 +56,7 @@ export function Barra({
         )}
       >
         <a
-          href={ruta(idioma, "entrada")}
+          href={rutaEntrada(idioma)}
           aria-label={BARRA.inicio[idioma]}
           className="inline-flex items-center gap-2 text-sub font-semibold tracking-apretado no-underline"
         >
