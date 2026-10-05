@@ -7,6 +7,26 @@
  * Sin dependencias de Playwright ni de Node: la importan la prueba de vitest y el spec.
  */
 
+/**
+ * La isla de cada demo: dónde vive (sin idioma delante), su golden y cuántas huellas da el barrido (el plan más un valor
+ * por paso de cada deslizador y uno por interruptor). A: 10 valores de U1, 49 de U2, 5 de U3 y el interruptor de Texas.
+ * B: 41 de U1 y 41 de U4 (similitud de 0,6 a 1,0 de a 0,01), 101 de U2 (puntaje de 0 a 100) y 3 de U3 (inconsistencias
+ * de 0 a 2); sin interruptor. El golden del A conserva su nombre del S2. `playground-paridad.test.tsx` comprueba que
+ * cada ruta es la de `SEGMENTO_DEMO`.
+ */
+export const ISLAS = [
+  { demo: "demo-a", ruta: "playground", golden: "isla", huellas: 66 },
+  {
+    demo: "demo-b",
+    ruta: "demo-b/playground",
+    golden: "isla.demo-b",
+    huellas: 187,
+  },
+] as const;
+
+export const archivoGolden = (golden: string, idioma: "es" | "en") =>
+  `tests/golden/playground/${golden}.${idioma}.json`;
+
 export type Movimiento =
   | { umbral: string; tipo: "rango"; plan: string; valores: string[] }
   | { umbral: string; tipo: "interruptor" };

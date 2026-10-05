@@ -1062,6 +1062,47 @@ Pruebas: `pnpm test` en verde (129 archivos), `pnpm lint`, `pnpm typecheck`, `pn
 
 La entrada es mirada de FORMA «no vista» (va a la matriz).
 
+### Vitrina con dos demos — ADR-014, el B en Lighthouse, e2e, paridad, visor y paquete (2026-10-04)
+
+- **ADR-014** (`decisions/014-rutas-por-demo.md`): el A conserva sus URL, el B cuelga de `/demo-b/`, `ruta()` exige el
+  demo, despachos exhaustivos, las tres guardias y las alternativas descartadas. Con él, los despachos por demo que
+  eran ternarios (`=== "demo-a" ? A : B`, un tercer demo caería en el B sin avisar) pasan a `switch` sin `default` o
+  `Record<IdDemo, …>` (perfil de Agente y de Caso, textos y cifras de la ficha del agente, conmutador de la barra, que
+  recorría una lista fija). `pnpm fichas` sube las decisiones registradas a 16.
+- **«Diagrama = grafo» no miraba el B.** `scripts/diagrama-igual-grafo.ts` recorría los dos demos del manifiesto pero
+  leía siempre `out/<idioma>/agente.html`: comparaba el grafo del B con el dibujo del A y salía en rojo (no lo vio la
+  CI porque el B no se ha empujado). Ahora lee la página de cada demo por su segmento. El B: 9 nodos, 12 aristas y 7
+  reglas, en los dos idiomas, también sobre el export del paquete.
+- **`exportar_grafo` con el B** (`agents/tests/test_exportar_grafo.py`): frescura del archivo del B, cada nodo con su
+  función y líneas, `--verificar` del B, y que **toda señal por la que enruta una arista del plan B la escriba algún
+  nodo** (regla dura 3). De paso, un orden de imports de ese módulo que `ruff check` (job `python`) habría puesto rojo.
+- **Lighthouse:** `lighthouse-urls.json` suma las seis pantallas del B (un caso: B-005) y el playground del B en inglés.
+  Los patrones de `perf-budget.json` (`/*/plan`, `/*/caso/`…) ya las cubren: el `*` casa con `es/demo-b`
+  (`lighthouse-urls.test.ts`, 20/20). Corrida local, 3 por URL, mediana, puerto 3007: presupuestos y las cuatro
+  categorías ≥ 90 en verde; `lighthouse-margen` avisa en cinco (LCP 2,31 s contra 2,5 s en Plan, Brecha, Caso y
+  Fichas; 2,61 s contra 2,8 s en el Playground): entran al trabajo de LCP de la fase 4.
+- **Paridad del playground B en tres motores:** la prueba de Node barre las dos islas (el golden del A conserva su
+  archivo; el del B es `isla.demo-b.<idioma>.json`, 187 huellas: 41 de U1, 101 de U2, 3 de U3, 41 de U4 y el plan) y
+  la tabla de islas vive en `tests/e2e/_paridad.ts`, compartida con el spec. 12 de 12 (2 demos × 2 idiomas × Chromium,
+  Firefox y WebKit).
+- **e2e del B** (`tests/e2e/demo-b.spec.ts`): las siete pantallas del B (un caso incluido) en los dos idiomas y temas
+  como experto, sin desplazamiento lateral, sin violaciones de axe y con la consola limpia; pestañas dentro del B y el
+  conmutador a la misma pantalla del A (y sin conmutador en las del A); el expediente de B-019 con cada conclusión
+  citada y la instrucción plantada marcada como dato; movimiento reducido. 34 de 34 a 380 px y en escritorio, sin
+  reintentos.
+- **Paquete para hoja-de-vida con los dos demos:** `pnpm paquete:vitrina` arma 109 páginas y 139 archivos (la ficha del
+  agente B incluida) y pasa su verificación; su e2e exige ahora las 26 páginas del B por idioma: 3 de 3.
+
+| # | Gate | Mutación | Rojo (quién lo nombró) |
+|---|---|---|---|
+| D45 | `test_exportar_grafo` · señales del plan B | quitar `"propuesta"` de lo que escribe `puntaje` en `data/vitrina/demo-b/grafo-codigo.json` | `assert {'propuesta'} == set()`; verde tras restaurar |
+| D46 | paridad del playground B (WebKit) | una huella del golden `isla.demo-b.es.json` cambiada | `paridad-webkit › la isla de demo-b … (es)`: la huella esperada contra la pintada; verde tras restaurar |
+| D47 | e2e del expediente del B | toda conclusión pintada «sin cita» (`{k.citada ? null : (` → `{false ? null : (`) | `expect(… ol > li small svg).toHaveCount(0)`: recibió 8; verde tras restaurar (con build) |
+| D48 | «diagrama = grafo» del B | `data-destino="puntaje"` → `"decision"` en la línea de `investigador` de `out/es/demo-b/agente.html` | `demo-b/es: arista del grafo sin línea: investigador → puntaje` y la línea que no es arista; verde tras restaurar |
+
+Pruebas: vitest 3.549 en verde (129 archivos); pytest 216 (97 % de cobertura); `ruff check` y `ruff format --check`;
+typecheck y lint.
+
 ## Desviación del plan
 
 1. **Rutas de la orden** (`SPRINT_003-orden.md:65`): `audita-sprint` y `plan-sprint` viven en
@@ -1181,3 +1222,5 @@ La entrada es mirada de FORMA «no vista» (va a la matriz).
 | 2026-10-04 | «Cómo repetirla» daba comandos que no corren (S2) | `pnpm plan:validar` y `pnpm brecha:informe` sin argumentos salen con «uso:» | comandos armados con el manifiesto, corridos en los dos demos, con prueba |
 | 2026-10-04 | la Brecha del B enlazaba sus casos a `/es/caso/B-…` (rotos) y el Plan, la Brecha y el Playground del B enlazaban al Playground y a casos del A | `ruta()` tomaba el demo A por omisión | demo obligatorio; prueba `enlaces-por-demo` (D44) |
 | 2026-10-04 | el Plan y el Playground del B decían «minutos de auditor» (el Plan, sin número) | textos del A sin variante para un plan sin costo humano | textos propios; los vio la regla 7 al nacer |
+| 2026-10-04 | «diagrama = grafo» comparaba el grafo del B con el dibujo del A | el script leía siempre `out/<idioma>/agente.html` | página por segmento del demo; D48 |
+| 2026-10-04 | `ruff check` en rojo en `exportar_grafo.py` (orden de imports) | quedó del WIP de la vitrina con dos demos; el job `python` no lo ha visto porque no se ha empujado | `ruff check --fix` |

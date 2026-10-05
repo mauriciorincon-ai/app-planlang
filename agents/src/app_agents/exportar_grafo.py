@@ -18,10 +18,9 @@ import inspect
 import json
 import sys
 import textwrap
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
-
-from dataclasses import dataclass
 
 from app_agents.canonico import con_huella
 from app_agents.demo_a import estado as estado_mod

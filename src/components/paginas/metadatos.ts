@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import type { Idioma, TextoBilingue } from "@core/formatos/bilingue";
-import type { IdDemo } from "@/lib/demos";
+import { SEGMENTO_DEMO, type IdDemo } from "@/lib/demos";
 import { DEMO_TEXTO } from "@/textos/demo";
 
 /** Un texto común a los dos demos, o uno redactado para cada demo. */
@@ -21,7 +21,7 @@ export function metadatos(
 ): Metadata {
   const t = delDemo(titulo, demo)[idioma];
   return {
-    title: demo === "demo-a" ? t : `${DEMO_TEXTO[demo].corto[idioma]} · ${t}`,
+    title: SEGMENTO_DEMO[demo] ? `${DEMO_TEXTO[demo].corto[idioma]} · ${t}` : t,
     description: delDemo(descripcion, demo)[idioma],
   };
 }

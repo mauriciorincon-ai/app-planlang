@@ -231,7 +231,7 @@
     {
       "clave": "decisiones_registradas",
       "etiqueta": "decisiones de arquitectura registradas",
-      "valor": 15,
+      "valor": 16,
       "unidad": "ADR",
       "fuente": "medido",
       "detalle": "Archivos de decisions/."

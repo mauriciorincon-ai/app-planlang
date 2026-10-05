@@ -51,9 +51,13 @@ test("desde la raíz, todos los enlaces de la vitrina cargan dentro del paquete 
         pendientes.push(h.split("#")[0]!);
     }
   }
-  // Por idioma: la Entrada, las 6 pestañas (el índice de casos incluido) y los 20 casos. La raíz entra con ?elegir.
+  // Por idioma: la Entrada y, por demo, sus 6 pestañas (el índice de casos incluido) y sus 20 casos (ADR-014). La
+  // raíz entra con ?elegir.
   const paginas = [...vistas].filter((v) => !v.includes("?"));
-  expect(paginas.length).toBeGreaterThanOrEqual(2 * (1 + 6 + 20));
+  expect(paginas.length).toBeGreaterThanOrEqual(2 * (1 + 2 * (6 + 20)));
+  expect(paginas.filter((v) => v.includes("/demo-b/")).length).toBe(
+    2 * (6 + 20),
+  );
   expect(fallas).toEqual([]);
 });
 

@@ -10,7 +10,7 @@
  * Un idioma por ficha, como pide el contrato; se entrega el español y el inglés queda para la vitrina.
  */
 import type { Idioma, TextoBilingue } from "@core/formatos/bilingue";
-import { DEMOS } from "@/lib/demos";
+import { DEMOS, type IdDemo } from "@/lib/demos";
 import type { DatosDeLosDemos, DatosDemo } from "@/lib/datos/vitrina";
 import type { HechosDelRepo } from "@/lib/datos/repo";
 import { numeroTal, versionCorta } from "@/lib/vista/formato";
@@ -203,16 +203,32 @@ function cifrasAgenteB(d: DatosDemo, i: Idioma): CifraFicha[] {
   ];
 }
 
+/** Los textos de la ficha de cada agente (un demo nuevo no compila sin los suyos). */
+const TEXTOS_FICHA: Readonly<Record<IdDemo, TextosFicha>> = {
+  "demo-a": AGENTE,
+  "demo-b": AGENTE_B,
+};
+
+/** Las cifras de cada agente. Un `switch` sin `default`: un demo nuevo no compila hasta tener las suyas. */
+function cifrasDe(d: DatosDemo, i: Idioma): CifraFicha[] {
+  switch (d.id) {
+    case "demo-a":
+      return cifrasAgenteA(d, i);
+    case "demo-b":
+      return cifrasAgenteB(d, i);
+  }
+}
+
 /** La ficha del agente del demo: sus textos y sus cifras; la forma es la misma en los dos. */
 export function fichaAgente(
   d: DatosDemo,
   repo: HechosDelRepo,
   i: Idioma,
 ): FichaTecnica {
-  const AG: TextosFicha = d.id === "demo-a" ? AGENTE : AGENTE_B;
+  const AG = TEXTOS_FICHA[d.id];
   const inf = d.informe;
   const rep = inf.ficha_reproducibilidad;
-  const cifras = d.id === "demo-a" ? cifrasAgenteA(d, i) : cifrasAgenteB(d, i);
+  const cifras = cifrasDe(d, i);
   const nodos = nodosDelPlan(d);
   // `cuenta` en 0: hoja-de-vida la pinta como «N funcionalidades» y un nodo del grafo no las tiene; con 0 la calla.
   const bloques = nodos.map((id, k) => {

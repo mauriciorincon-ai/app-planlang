@@ -9,8 +9,8 @@ import {
   Workflow,
   type LucideIcon,
 } from "lucide-react";
-import type { Idioma } from "@core/formatos/bilingue";
-import type { IdDemo } from "@/lib/demos";
+import type { Idioma, TextoBilingue } from "@core/formatos/bilingue";
+import { DEMOS, type IdDemo } from "@/lib/demos";
 import { PANTALLAS, ruta, rutaEntrada, type Pantalla } from "@/lib/ruta";
 import { BARRA, MARCA, PESTANAS } from "@/textos/comun";
 import { CONT, cx } from "../cx";
@@ -27,6 +27,14 @@ const ICONO: Record<Pantalla, LucideIcon> = {
   playground: SlidersHorizontal,
   caso: Route,
   fichas: Fingerprint,
+};
+
+/** La letra y el nombre de cada demo en el conmutador (un demo nuevo no compila sin los suyos). */
+const OPCION_DEMO: Readonly<
+  Record<IdDemo, { letra: string; nombre: TextoBilingue }>
+> = {
+  "demo-a": { letra: "A", nombre: BARRA.demoA },
+  "demo-b": { letra: "B", nombre: BARRA.demoB },
 };
 
 /**
@@ -89,17 +97,15 @@ export function Barra({
         <div className="ml-auto flex gap-2">
           {demo !== "demo-a" && (
             <div className={SEG} role="group" aria-label={BARRA.demo[idioma]}>
-              {(["demo-a", "demo-b"] as const).map((d) => (
+              {DEMOS.map((d) => (
                 <a
                   key={d}
                   href={ruta(idioma, pagina, undefined, d)}
-                  aria-label={
-                    (d === "demo-a" ? BARRA.demoA : BARRA.demoB)[idioma]
-                  }
+                  aria-label={OPCION_DEMO[d].nombre[idioma]}
                   aria-current={d === demo ? "true" : undefined}
                   className={SEG_OPCION}
                 >
-                  {d === "demo-a" ? "A" : "B"}
+                  {OPCION_DEMO[d].letra}
                 </a>
               ))}
             </div>

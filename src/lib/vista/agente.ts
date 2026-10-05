@@ -32,6 +32,7 @@ import {
   contextoAgente,
   valorDeUmbral,
   visitas,
+  type ContextoAgente,
   type PerfilAgente,
 } from "./agente-comun";
 import { decimal, entero, enumerar, versionCorta } from "./formato";
@@ -233,10 +234,19 @@ const SIN_PLAN_DE_NODO = {
   umbrales: [],
 };
 
+/** El perfil del demo. Un `switch` sin `default`: un demo nuevo no compila hasta tener el suyo. */
+function perfilDe(d: DatosDemo, ctx: ContextoAgente): PerfilAgente {
+  switch (d.id) {
+    case "demo-a":
+      return perfilDemoA(d, ctx);
+    case "demo-b":
+      return perfilDemoB(d, ctx);
+  }
+}
+
 export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
   const ctx = contextoAgente(d, i);
-  const perfil: PerfilAgente =
-    d.id === "demo-a" ? perfilDemoA(d, ctx) : perfilDemoB(d, ctx);
+  const perfil = perfilDe(d, ctx);
   const { X, XP, trazas, n, corrida, sprint, fecha, modelo, con, pasosDe } =
     ctx;
   const demo = d.corrida.manifiesto.ficha.nombre;

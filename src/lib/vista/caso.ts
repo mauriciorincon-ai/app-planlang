@@ -248,14 +248,19 @@ function perfilDe(
   i: Idioma,
 ): { perfil: PerfilCaso; caso: CasoComun; t: Traza } {
   const falta = () => new Error(`vitrina: la corrida no trae el caso «${id}»`);
-  if (d.id === "demo-a") {
-    const c = d.lote.casos.find((x) => x.id === id);
-    if (!t || !c) throw falta();
-    return { perfil: perfilCasoA(d, t, c, i), caso: c, t };
+  // Un `switch` sin `default`: un demo nuevo no compila hasta tener su perfil.
+  switch (d.id) {
+    case "demo-a": {
+      const c = d.lote.casos.find((x) => x.id === id);
+      if (!t || !c) throw falta();
+      return { perfil: perfilCasoA(d, t, c, i), caso: c, t };
+    }
+    case "demo-b": {
+      const c = d.lote.casos.find((x) => x.id === id);
+      if (!t || !c) throw falta();
+      return { perfil: perfilCasoB(d, t, c, i), caso: c, t };
+    }
   }
-  const c = d.lote.casos.find((x) => x.id === id);
-  if (!t || !c) throw falta();
-  return { perfil: perfilCasoB(d, t, c, i), caso: c, t };
 }
 
 export function vistaCaso(d: DatosDemo, id: string, i: Idioma): VistaCaso {
