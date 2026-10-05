@@ -13,7 +13,7 @@
 | 0 · Setup, constitución, deltas, diagramador 0.5.0 y plan v1.5 del A | aprobada («continúa»); lote v1.5 de 200 terminado y versionado | 2026-10-04 |
 | 1 · Entrevistador M2 → parada de DECISIÓN (plan B) | cerrada: plan B aprobado («apruebo el plan B») | 2026-10-04 |
 | 2 · Demo B: sintético, agente y lote de 20 | aprobada («continúa»); la línea base se volvió a correr con el prompt corregido (decisión del usuario: «Correrla») | 2026-10-04 |
-| 3 · Brecha B y la vitrina con dos demos | en construcción | — |
+| 3 · Brecha B y la vitrina con dos demos | cerrada; espera «continúa» (CI del PR #14 en verde sobre `07bd876`) | 2026-10-04 |
 | 4 · Cierres de ciclo | pendiente | — |
 
 ## Decisiones previas a construir
@@ -1259,6 +1259,14 @@ tres mediciones por URL corrieron.
     preveía enmendar el plan B; medirlo destapó tres huecos que el v1 aprobado traía (24 textos solo en español, un S1
     que el verificador no decide, ninguna comparación con la línea base). La v1.1 es de solo medición y redacción; la
     vitrina y el informe B se miden con ella. La plantilla y el entrevistador se corrigen en el mismo cambio.
+25. **El Playground del B mueve cuatro umbrales, no tres.** El plan de la sesión de planeación decía «similitud ·
+    riesgo · inconsistencias». El plan B aprobado declara también U4, el inicio de la zona gris del investigador (la
+    misma señal `similitud_max`, 0,6–1,0). La isla mueve los umbrales que el plan declara: 187 huellas por idioma en la
+    paridad (41 + 101 + 3 + 41 valores, más el plan).
+26. **El plan B no declara costo humano por caso.** El A cuenta minutos de auditor; el B, no. La isla y la lectura de
+    Umbrales del Plan cuentan casos y no inventan minutos (`minutos_por_persona: null`, textos `sinCosto` y
+    `lecturaSinCosto`). Si el usuario quiere el costo humano en el B, es una enmienda del plan B, no un número del
+    builder.
 
 ## Registro de miradas
 
