@@ -81,6 +81,25 @@ test("las pestañas del B se quedan en el B y el conmutador lleva a la misma pan
   await expect(page.getByRole("group", { name: "Demo" })).toHaveCount(0);
 });
 
+test("a 1280 px las siete pestañas caben sin deslizarse, en el A y en el B", async ({
+  page,
+}, info) => {
+  // En el teléfono las pestañas se deslizan a propósito (su propia fila, design-system § 5).
+  test.skip(info.project.name !== "escritorio", "solo en escritorio");
+  for (const ruta of [
+    "/es/brecha",
+    "/en/brecha",
+    "/es/demo-b/brecha",
+    "/en/demo-b/brecha",
+  ]) {
+    await page.goto(ruta);
+    const falta = await page
+      .getByRole("navigation", { name: /^(Secciones|Sections)$/ })
+      .evaluate((nav) => nav.scrollWidth - nav.clientWidth);
+    expect(falta, ruta).toBeLessThanOrEqual(0);
+  }
+});
+
 test("un caso del B: el expediente con cada conclusión citada y la instrucción escondida marcada como dato", async ({
   page,
 }) => {

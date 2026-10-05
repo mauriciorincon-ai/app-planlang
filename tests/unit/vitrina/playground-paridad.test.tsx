@@ -14,7 +14,6 @@ import { Juego } from "@/components/playground/juego";
 import { datosDeLosDemos, type DatosDeLosDemos } from "@/lib/datos/vitrina";
 import { DEMOS, SEGMENTO_DEMO } from "@/lib/demos";
 import { vistaPlayground } from "@/lib/vista/playground";
-import type { Idioma } from "@core/formatos/bilingue";
 import {
   archivoGolden,
   huellaDeLaIsla,

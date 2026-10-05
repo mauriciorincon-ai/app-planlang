@@ -686,8 +686,8 @@ export const PIE_CASO = ((p: {
   modelo: string;
 }) =>
   tb(
-    `Datos de la corrida ${p.corrida} del sprint ${p.sprint} (${p.fecha}): ${p.n} casos, ${p.repeticiones} repeticiones${p.base ? " y una línea base de agente único" : ""}, modelo ${p.modelo} por la suscripción de Claude Code del autor. Ningún visitante lanza llamadas a modelos.`,
-    `Data from sprint ${p.sprint} run ${p.corrida} (${p.fecha}): ${p.n} cases, ${p.repeticiones} repetitions${p.base ? " and a single-agent baseline" : ""}, ${p.modelo} model via the author’s Claude Code subscription. No visitor triggers model calls.`,
+    `Datos de la corrida ${p.corrida} del sprint ${p.sprint} (${p.fecha}): ${p.n} casos, ${p.repeticiones === 1 ? "sin repetir" : `${p.repeticiones} repeticiones`}${p.base ? " y una línea base de agente único" : ""}, modelo ${p.modelo} por la suscripción de Claude Code del autor. Ningún visitante lanza llamadas a modelos.`,
+    `Data from sprint ${p.sprint} run ${p.corrida} (${p.fecha}): ${p.n} cases, ${p.repeticiones === 1 ? "not repeated" : `${p.repeticiones} repetitions`}${p.base ? " and a single-agent baseline" : ""}, ${p.modelo} model via the author’s Claude Code subscription. No visitor triggers model calls.`,
   )) as Plantilla<{
   corrida: string;
   sprint: number;

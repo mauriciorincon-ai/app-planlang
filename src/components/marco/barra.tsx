@@ -54,13 +54,18 @@ export function Barra({
   id?: string;
   demo?: IdDemo;
 }) {
+  // Con el conmutador de demo, las siete pestañas no caben en una fila a ningún ancho de escritorio (el contenedor
+  // llega a 1.120 px): van en su propia fila, como en el teléfono. En el A la barra es la del S2.
+  const conConmutador = demo !== "demo-a";
+  const pestanasEnSuFila = conConmutador;
   return (
     <header className="border-b border-linea">
       <div
         className={cx(
           CONT,
           "flex min-h-14 flex-wrap items-center gap-x-4 pt-2.5",
-          "escritorio:flex-nowrap escritorio:gap-x-7 escritorio:gap-y-2 escritorio:pt-0",
+          !pestanasEnSuFila &&
+            "escritorio:flex-nowrap escritorio:gap-x-7 escritorio:gap-y-2 escritorio:pt-0",
         )}
       >
         <a
@@ -75,7 +80,8 @@ export function Barra({
           aria-label={BARRA.secciones[idioma]}
           className={cx(
             "order-3 mt-1.5 flex basis-full gap-1 self-stretch overflow-x-auto [scrollbar-width:none]",
-            "escritorio:order-none escritorio:mt-0 escritorio:basis-auto",
+            !pestanasEnSuFila &&
+              "escritorio:order-none escritorio:mt-0 escritorio:basis-auto",
           )}
         >
           {PANTALLAS.map((p) => (
@@ -85,7 +91,7 @@ export function Barra({
               aria-current={p === pagina ? "page" : undefined}
               className={cx(
                 "-mb-px flex items-center gap-1.75 border-b-2 border-transparent px-2.5 pt-2.5 pb-3 text-apoyo whitespace-nowrap text-tinta-2 no-underline first:pl-0 hover:text-tinta-1",
-                "escritorio:py-0 escritorio:first:pl-2.5",
+                !pestanasEnSuFila && "escritorio:py-0 escritorio:first:pl-2.5",
                 "aria-[current=page]:border-tinta-1 aria-[current=page]:font-medium aria-[current=page]:text-tinta-1",
               )}
             >
@@ -95,7 +101,7 @@ export function Barra({
           ))}
         </nav>
         <div className="ml-auto flex gap-2">
-          {demo !== "demo-a" && (
+          {conConmutador && (
             <div className={SEG} role="group" aria-label={BARRA.demo[idioma]}>
               {DEMOS.map((d) => (
                 <a

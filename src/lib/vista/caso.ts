@@ -150,6 +150,11 @@ const SUBTIPOS: Readonly<Record<IdDemo, Record<string, TextoBilingue>>> = {
   "demo-b": SUBTIPO_B,
 };
 
+/** El nombre de un subtipo en su demo (el Caso y el Playground lo dicen igual); sin nombre, el id tal cual. */
+export function nombreDeSubtipo(demo: IdDemo, subtipo: string): TextoBilingue {
+  return SUBTIPOS[demo][subtipo] ?? { es: subtipo, en: subtipo };
+}
+
 /** El documento de decisión adversa como lo escribe el grafo (`planlang-documento-adverso/v1`). */
 const OPERADOR: Record<string, string> = {
   menor_que: "<",

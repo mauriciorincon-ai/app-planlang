@@ -1103,6 +1103,42 @@ La entrada es mirada de FORMA «no vista» (va a la matriz).
 Pruebas: vitest 3.549 en verde (129 archivos); pytest 216 (97 % de cobertura); `ruff check` y `ruff format --check`;
 typecheck y lint.
 
+### Vitrina con dos demos — pasada de capturas del B con techo y la mirada de FORMA «no vista» (2026-10-04)
+
+**Arnés:** `scripts/capturas-demo-b.mjs` (regla 17-bis b: declara los árboles que lee y escribe, aborta si una ruta
+sale de `out/` o si `--pasada` cae dentro del repo).
+- La pasada completa: cada pantalla del B y la entrada, a 380 y 1280 px, en español en los dos temas y en inglés en
+  oscuro: 48 capturas enteras, fuera del repo (el scratchpad), cada una con su huella SHA-256 y una miniatura.
+- Nueve recortes de las decisiones de forma, cada uno con su fila de matriz (archivo · botón/estado · qué mirar ·
+  respuesta esperada), en `docs/fidelidad/s3-demo-b/index.html` (autocontenido, sin enlaces) y `registro.json`.
+- La pasada de interacción (regla 22 b): los recortes que piden tocar algo (el nodo del lienzo y su pestaña «Trazas»,
+  mover U2 en el Playground) comprueban que la página cambió; si no, el arnés aborta.
+- **Techo:** la carpeta no pasa de 2 MB o el arnés sale con 1. La primera pasada lo pasó sola (2,09 MB, por un recorte
+  de la ficha de 1.400 px a doble densidad): los recortes se limitan a 1.100 px de alto. Queda en 1,97 MB.
+
+**Leí los nueve recortes como imagen** (y dos miniaturas de teléfono) antes de registrarlos. Encontré y arreglé:
+- **La barra del B cortaba «Fichas»:** con el conmutador, a la fila de pestañas le faltaban 56 px (11 en inglés) a
+  cualquier ancho de escritorio, porque el contenedor no pasa de 1.120 px; el A cabe justo (0 px). En las pantallas
+  del B las pestañas van en su propia fila también en escritorio, como en el teléfono; el A no cambia (HTML idéntico).
+  Ninguna prueba lo veía: la e2e mide el desborde de la página, no el de la fila de pestañas. Prueba nueva (D49).
+- **El Playground del B mostraba el subtipo crudo** (`borde_casi_zona_gris`) en «Tipo», montado sobre la columna
+  siguiente: usaba el mapa de subtipos del A. Ahora `nombreDeSubtipo(demo, subtipo)`, el mismo de la página de Caso.
+  El golden de la isla del B se regeneró (el del A no cambió).
+- **«20 casos, 1 repeticiones»** en el pie de la corrida del B: «sin repetir» cuando la corrida no se repitió (el A
+  dice «3 repeticiones», igual que antes).
+
+**Hallazgos del B que no son de la vitrina** (las trazas versionadas no se reescriben; van al summary con los otros):
+- el expediente que escribe Python pone «0.6988» con punto en el texto en español (K2 de B-019);
+- los ids de las conclusiones saltan (K1, K2, K4…) cuando una conclusión no aplica (sin investigador, no hay K3): es
+  el id fijo por clase de conclusión, pero se lee como un hueco.
+
+| # | Gate | Mutación | Rojo (quién lo nombró) |
+|---|---|---|---|
+| D49 | e2e «a 1280 px las siete pestañas caben» (A y B) | `const pestanasEnSuFila = false;` en `src/components/marco/barra.tsx` | `/es/demo-b/brecha`: faltaban 56 px; verde tras restaurar (con build) |
+| D50 | techo de la pasada de capturas | el techo por omisión a 1 MB en `scripts/capturas-demo-b.mjs` | «2019304 bytes pasan el techo de 1048576»; verde tras restaurar. La primera pasada real ya lo había puesto rojo sola (2,09 MB) |
+
+e2e del B, entrada y paridad tras los arreglos: 63 en verde (1 omitida, la de siempre).
+
 ## Desviación del plan
 
 1. **Rutas de la orden** (`SPRINT_003-orden.md:65`): `audita-sprint` y `plan-sprint` viven en
@@ -1198,6 +1234,7 @@ typecheck y lint.
 | Fecha | Mirada | Clase | Artefacto | Veredicto del usuario (textual) | Qué se construyó encima |
 |---|---|---|---|---|---|
 | 2026-10-04 | 1 · plan del demo B | DECISIÓN | `plans/demo-b/revision.es.md` (borrador de la entrevista corrida por delegación: «corre la entrevista con tus respuestas») | «apruebo el plan B» | `plans/demo-b/v1.json` (huella `0cd6590c…`); la fase 2 arranca sobre él |
+| 2026-10-04 | 2 · vistas del demo B | FORMA «no vista» | `docs/fidelidad/s3-demo-b/index.html` (matriz de 9 filas: entrada con dos filas, barra del B, trazas del verificador de listas, «Recibe» y expediente de B-019, Playground, Umbrales del Plan, ficha del agente B, pie) | sin respuesta: viaja al ⭐⭐ (parada 2) | la fase 3 sigue; las vistas se construyeron antes de esta mirada, como prevé el plan de miradas |
 
 ## Bugs y fricciones
 
@@ -1224,3 +1261,6 @@ typecheck y lint.
 | 2026-10-04 | el Plan y el Playground del B decían «minutos de auditor» (el Plan, sin número) | textos del A sin variante para un plan sin costo humano | textos propios; los vio la regla 7 al nacer |
 | 2026-10-04 | «diagrama = grafo» comparaba el grafo del B con el dibujo del A | el script leía siempre `out/<idioma>/agente.html` | página por segmento del demo; D48 |
 | 2026-10-04 | `ruff check` en rojo en `exportar_grafo.py` (orden de imports) | quedó del WIP de la vitrina con dos demos; el job `python` no lo ha visto porque no se ha empujado | `ruff check --fix` |
+| 2026-10-04 | la barra del B cortaba la pestaña «Fichas» a cualquier ancho de escritorio | el conmutador A · B le quitaba 68 px a una fila que en el A cabe justa | pestañas en su propia fila en el B; prueba D49 |
+| 2026-10-04 | el Playground del B mostraba el subtipo crudo, montado sobre la columna siguiente | usaba el mapa de subtipos del A | `nombreDeSubtipo(demo, …)` compartido con la página de Caso |
+| 2026-10-04 | «20 casos, 1 repeticiones» en el pie del B | la plantilla no tenía el caso de una corrida sin repetir | «sin repetir» |

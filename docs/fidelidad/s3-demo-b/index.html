@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Demo B · mirada de forma (S3)</title>
+<style>
+:root{--fondo:#0f1115;--sup:#171a21;--t1:#eceef2;--t2:#a9afbb;--linea:#2a2f3a}
+@media (prefers-color-scheme: light){:root{--fondo:#f7f7f5;--sup:#fff;--t1:#16181d;--t2:#4a505c;--linea:#d9dbe0}}
+body{margin:0;background:var(--fondo);color:var(--t1);font:15px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1200px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:24px;margin:0 0 8px}h2{font-size:19px;margin:40px 0 8px}h3{font-size:16px;margin:0}
+p{color:var(--t2);max-width:80ch;margin:4px 0}code{font:12px ui-monospace,monospace}
+.pregunta{color:var(--t1);font-size:17px;font-weight:600}
+table{border-collapse:collapse;width:100%;font-size:13px;margin-top:8px}th,td{border-top:1px solid var(--linea);padding:8px;text-align:left;vertical-align:top}th{color:var(--t2);font-weight:500}
+.forma{margin-top:28px}.forma img{max-width:100%;height:auto;border:1px solid var(--linea);border-radius:6px;display:block;margin-top:8px}
+.minis{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:12px}
+.minis figure{margin:0}.minis img{width:100%;height:auto;border:1px solid var(--linea);border-radius:4px;display:block}.minis figcaption{font-size:11px;color:var(--t2);margin-top:4px;line-height:1.4}
+</style>
+</head>
+<body><main>
+<p class="pregunta">¿Las pantallas del demo B tienen la forma que esperas? Mira cada fila de la tabla con su recorte.</p>
+<h1>Demo B · mirada de forma «no vista» (S3, fase 3)</h1>
+<p>Vitrina construida con el commit en curso, servida desde <code>out/</code>. Clase de mirada: FORMA, registrada «no vista»; su veredicto viaja al gate ⭐⭐ (parada 2). Las capturas enteras no se versionan: cada una se identifica por su huella SHA-256.</p>
+<h2>La matriz</h2>
+<table><thead><tr><th>#</th><th>Archivo / pantalla</th><th>Botón o estado</th><th>Qué mirar</th><th>Respuesta esperada</th><th>Tu respuesta</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Entrada (/es), sección «Los demos»</td><td>tal como abre</td><td>Las dos filas de la tabla y la lista de abajo.</td><td>Cada demo con su veredicto real y su corrida; la fila del B ya no dice «en construcción»; abajo quedan tres funciones del roadmap.</td><td>sin respuesta</td></tr>
+<tr><td>2</td><td>Cualquier pantalla del B (/es/demo-b/brecha), barra de arriba</td><td>tal como abre</td><td>La barra del B: la marca y los controles arriba, las siete pestañas en su propia fila (en el A siguen en una sola fila).</td><td>La B marcada; las siete pestañas completas (con el conmutador ya no cabían en una fila a ningún ancho de escritorio); tocar A lleva a la misma pantalla del A. En el teléfono, los controles bajan bajo la marca.</td><td>sin respuesta</td></tr>
+<tr><td>3</td><td>Agente del B (/es/demo-b/agente), detalle del nodo</td><td>tocar «verificador_listas» en el lienzo → pestaña «Trazas»</td><td>Las columnas de la tabla de trazas del verificador de listas (el reparto de ancho es nuevo en el B).</td><td>La similitud con su barra y la marca del umbral U4; la entrada de la lista en mono; el camino con el glifo del nodo; nada se corta ni se monta.</td><td>sin respuesta</td></tr>
+<tr><td>4</td><td>Caso B-019 (/es/demo-b/caso/B-019), columna «Recibe»</td><td>tal como abre</td><td>Los tres documentos de la solicitud y la instrucción plantada.</td><td>Identidad, actividad y origen de fondos; la instrucción escondida va marcada (borde discontinuo y ⚠) como dato del caso: el agente no la siguió.</td><td>sin respuesta</td></tr>
+<tr><td>5</td><td>Caso B-019, sección «Expediente»</td><td>tal como abre</td><td>Las conclusiones numeradas y la cita bajo cada una.</td><td>Cada conclusión con su cita en mono debajo (documento, regla o coincidencia con versión de la lista); ninguna con ⚠; la cuenta al pie.</td><td>sin respuesta</td></tr>
+<tr><td>6</td><td>Playground del B (/es/demo-b/playground), el juego</td><td>mover U2 (puntaje de riesgo) a 40</td><td>Los cuatro deslizadores y las cifras de arriba.</td><td>U1 a U4 con su rango; al mover U2 cambian los casos que cambian de camino; la cifra de personas cuenta casos, no minutos (el plan B no declara costo humano).</td><td>sin respuesta</td></tr>
+<tr><td>7</td><td>Plan del B (/es/demo-b/plan), sección «Umbrales»</td><td>tal como abre</td><td>La lectura de la sección y las cuatro filas.</td><td>La lectura dice que el plan no declara cuánto le cuesta a la persona cada caso; U1–U4 con señal, operador y valor.</td><td>sin respuesta</td></tr>
+<tr><td>8</td><td>Fichas del B (/es/demo-b/fichas), la ficha del agente B</td><td>tal como abre</td><td>La parte de arriba de la ficha del agente B: nombre, lema, stack y cifras.</td><td>«Agente B · vinculación con debida diligencia»; cinco cifras (exactitud, casos con el oficial, coincidencias y rechazos sin persona, costo por caso), sin latencia.</td><td>sin respuesta</td></tr>
+<tr><td>9</td><td>Cualquier pantalla del B, el pie (teléfono, claro)</td><td>tal como abre</td><td>El aviso de simulación del pie.</td><td>Solicitantes, documentos y listas de control sintéticos; en producción decidiría un oficial de cumplimiento (no un auditor médico).</td><td>sin respuesta</td></tr>
+</tbody></table>
+<h2>Los recortes</h2>
+<section class="forma" id="entrada-dos-filas"><h3>1. Entrada (/es), sección «Los demos»</h3><p>tal como abre · 1280 px · oscuro</p><img loading="lazy" src="forma-entrada-dos-filas.jpg" alt="Las dos filas de la tabla y la lista de abajo."></section>
+<section class="forma" id="barra-conmutador"><h3>2. Cualquier pantalla del B (/es/demo-b/brecha), barra de arriba</h3><p>tal como abre · 1280 px · oscuro</p><img loading="lazy" src="forma-barra-conmutador.jpg" alt="La barra del B: la marca y los controles arriba, las siete pestañas en su propia fila (en el A siguen en una sola fila)."></section>
+<section class="forma" id="agente-trazas-listas"><h3>3. Agente del B (/es/demo-b/agente), detalle del nodo</h3><p>tocar «verificador_listas» en el lienzo → pestaña «Trazas» · 1280 px · oscuro · la interacción cambió la página</p><img loading="lazy" src="forma-agente-trazas-listas.jpg" alt="Las columnas de la tabla de trazas del verificador de listas (el reparto de ancho es nuevo en el B)."></section>
+<section class="forma" id="caso-recibe-carga"><h3>4. Caso B-019 (/es/demo-b/caso/B-019), columna «Recibe»</h3><p>tal como abre · 1280 px · oscuro</p><img loading="lazy" src="forma-caso-recibe-carga.jpg" alt="Los tres documentos de la solicitud y la instrucción plantada."></section>
+<section class="forma" id="caso-expediente"><h3>5. Caso B-019, sección «Expediente»</h3><p>tal como abre · 1280 px · oscuro</p><img loading="lazy" src="forma-caso-expediente.jpg" alt="Las conclusiones numeradas y la cita bajo cada una."></section>
+<section class="forma" id="playground-umbrales"><h3>6. Playground del B (/es/demo-b/playground), el juego</h3><p>mover U2 (puntaje de riesgo) a 40 · 1280 px · oscuro · la interacción cambió la página</p><img loading="lazy" src="forma-playground-umbrales.jpg" alt="Los cuatro deslizadores y las cifras de arriba."></section>
+<section class="forma" id="plan-umbrales"><h3>7. Plan del B (/es/demo-b/plan), sección «Umbrales»</h3><p>tal como abre · 1280 px · oscuro</p><img loading="lazy" src="forma-plan-umbrales.jpg" alt="La lectura de la sección y las cuatro filas."></section>
+<section class="forma" id="fichas-agente-b"><h3>8. Fichas del B (/es/demo-b/fichas), la ficha del agente B</h3><p>tal como abre · 1280 px · oscuro</p><img loading="lazy" src="forma-fichas-agente-b.jpg" alt="La parte de arriba de la ficha del agente B: nombre, lema, stack y cifras."></section>
+<section class="forma" id="pie-b"><h3>9. Cualquier pantalla del B, el pie (teléfono, claro)</h3><p>tal como abre · 380 px · claro</p><img loading="lazy" src="forma-pie-b.jpg" alt="El aviso de simulación del pie."></section>
+<h2>La pasada completa (48 capturas)</h2>
+<p>Cada pantalla del B y la entrada, a 380 y 1280 px: en español en los dos temas, en inglés en oscuro. La miniatura es la parte de arriba; la huella identifica la captura entera que se leyó.</p>
+<div class="minis">
+<figure><img loading="lazy" src="mini-entrada-380-oscuro-es.jpg" alt="entrada 380 px oscuro es"><figcaption>entrada · 380 · oscuro · es<br><code title="SHA-256 de la captura entera">83b0e345425b…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-entrada-1280-oscuro-es.jpg" alt="entrada 1280 px oscuro es"><figcaption>entrada · 1280 · oscuro · es<br><code title="SHA-256 de la captura entera">463ff03921d5…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-entrada-380-claro-es.jpg" alt="entrada 380 px claro es"><figcaption>entrada · 380 · claro · es<br><code title="SHA-256 de la captura entera">688342ea6201…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-entrada-1280-claro-es.jpg" alt="entrada 1280 px claro es"><figcaption>entrada · 1280 · claro · es<br><code title="SHA-256 de la captura entera">e9ce40e454ef…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-entrada-380-oscuro-en.jpg" alt="entrada 380 px oscuro en"><figcaption>entrada · 380 · oscuro · en<br><code title="SHA-256 de la captura entera">87ee15031b16…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-entrada-1280-oscuro-en.jpg" alt="entrada 1280 px oscuro en"><figcaption>entrada · 1280 · oscuro · en<br><code title="SHA-256 de la captura entera">5c035d01e2d4…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-plan-380-oscuro-es.jpg" alt="plan 380 px oscuro es"><figcaption>plan · 380 · oscuro · es<br><code title="SHA-256 de la captura entera">c6ed15e24b3e…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-plan-1280-oscuro-es.jpg" alt="plan 1280 px oscuro es"><figcaption>plan · 1280 · oscuro · es<br><code title="SHA-256 de la captura entera">59d8c9ef6e25…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-plan-380-claro-es.jpg" alt="plan 380 px claro es"><figcaption>plan · 380 · claro · es<br><code title="SHA-256 de la captura entera">4ec44eeb49d1…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-plan-1280-claro-es.jpg" alt="plan 1280 px claro es"><figcaption>plan · 1280 · claro · es<br><code title="SHA-256 de la captura entera">82b3bd97a2f0…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-plan-380-oscuro-en.jpg" alt="plan 380 px oscuro en"><figcaption>plan · 380 · oscuro · en<br><code title="SHA-256 de la captura entera">1d088346ac5e…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-plan-1280-oscuro-en.jpg" alt="plan 1280 px oscuro en"><figcaption>plan · 1280 · oscuro · en<br><code title="SHA-256 de la captura entera">b67efd352233…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-agente-380-oscuro-es.jpg" alt="agente 380 px oscuro es"><figcaption>agente · 380 · oscuro · es<br><code title="SHA-256 de la captura entera">41c67e8a0c29…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-agente-1280-oscuro-es.jpg" alt="agente 1280 px oscuro es"><figcaption>agente · 1280 · oscuro · es<br><code title="SHA-256 de la captura entera">b41b59c68220…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-agente-380-claro-es.jpg" alt="agente 380 px claro es"><figcaption>agente · 380 · claro · es<br><code title="SHA-256 de la captura entera">57f7d7e87821…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-agente-1280-claro-es.jpg" alt="agente 1280 px claro es"><figcaption>agente · 1280 · claro · es<br><code title="SHA-256 de la captura entera">89a0f8b1dab4…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-agente-380-oscuro-en.jpg" alt="agente 380 px oscuro en"><figcaption>agente · 380 · oscuro · en<br><code title="SHA-256 de la captura entera">61d61b45e1ec…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-agente-1280-oscuro-en.jpg" alt="agente 1280 px oscuro en"><figcaption>agente · 1280 · oscuro · en<br><code title="SHA-256 de la captura entera">8e9c2607db77…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-brecha-380-oscuro-es.jpg" alt="brecha 380 px oscuro es"><figcaption>brecha · 380 · oscuro · es<br><code title="SHA-256 de la captura entera">45e5c20e5098…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-brecha-1280-oscuro-es.jpg" alt="brecha 1280 px oscuro es"><figcaption>brecha · 1280 · oscuro · es<br><code title="SHA-256 de la captura entera">b1485ffce853…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-brecha-380-claro-es.jpg" alt="brecha 380 px claro es"><figcaption>brecha · 380 · claro · es<br><code title="SHA-256 de la captura entera">fc29b92ee69d…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-brecha-1280-claro-es.jpg" alt="brecha 1280 px claro es"><figcaption>brecha · 1280 · claro · es<br><code title="SHA-256 de la captura entera">3fe16315db02…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-brecha-380-oscuro-en.jpg" alt="brecha 380 px oscuro en"><figcaption>brecha · 380 · oscuro · en<br><code title="SHA-256 de la captura entera">524042c5c5d1…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-brecha-1280-oscuro-en.jpg" alt="brecha 1280 px oscuro en"><figcaption>brecha · 1280 · oscuro · en<br><code title="SHA-256 de la captura entera">e0f75bc068b5…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-playground-380-oscuro-es.jpg" alt="playground 380 px oscuro es"><figcaption>playground · 380 · oscuro · es<br><code title="SHA-256 de la captura entera">0da3d72c8972…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-playground-1280-oscuro-es.jpg" alt="playground 1280 px oscuro es"><figcaption>playground · 1280 · oscuro · es<br><code title="SHA-256 de la captura entera">fad7ad13dc06…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-playground-380-claro-es.jpg" alt="playground 380 px claro es"><figcaption>playground · 380 · claro · es<br><code title="SHA-256 de la captura entera">57735d0688d8…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-playground-1280-claro-es.jpg" alt="playground 1280 px claro es"><figcaption>playground · 1280 · claro · es<br><code title="SHA-256 de la captura entera">1be75faae0d3…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-playground-380-oscuro-en.jpg" alt="playground 380 px oscuro en"><figcaption>playground · 380 · oscuro · en<br><code title="SHA-256 de la captura entera">5f2398009531…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-playground-1280-oscuro-en.jpg" alt="playground 1280 px oscuro en"><figcaption>playground · 1280 · oscuro · en<br><code title="SHA-256 de la captura entera">9345fa1a1789…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-casos-380-oscuro-es.jpg" alt="casos 380 px oscuro es"><figcaption>casos · 380 · oscuro · es<br><code title="SHA-256 de la captura entera">793df8d9551a…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-casos-1280-oscuro-es.jpg" alt="casos 1280 px oscuro es"><figcaption>casos · 1280 · oscuro · es<br><code title="SHA-256 de la captura entera">ffc8345d9724…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-casos-380-claro-es.jpg" alt="casos 380 px claro es"><figcaption>casos · 380 · claro · es<br><code title="SHA-256 de la captura entera">f89bc9ac6b47…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-casos-1280-claro-es.jpg" alt="casos 1280 px claro es"><figcaption>casos · 1280 · claro · es<br><code title="SHA-256 de la captura entera">b0a14b7513c4…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-casos-380-oscuro-en.jpg" alt="casos 380 px oscuro en"><figcaption>casos · 380 · oscuro · en<br><code title="SHA-256 de la captura entera">912a42ed5e49…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-casos-1280-oscuro-en.jpg" alt="casos 1280 px oscuro en"><figcaption>casos · 1280 · oscuro · en<br><code title="SHA-256 de la captura entera">45036db21334…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-caso-B-019-380-oscuro-es.jpg" alt="caso-B-019 380 px oscuro es"><figcaption>caso-B-019 · 380 · oscuro · es<br><code title="SHA-256 de la captura entera">7948f09534db…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-caso-B-019-1280-oscuro-es.jpg" alt="caso-B-019 1280 px oscuro es"><figcaption>caso-B-019 · 1280 · oscuro · es<br><code title="SHA-256 de la captura entera">6857e4253791…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-caso-B-019-380-claro-es.jpg" alt="caso-B-019 380 px claro es"><figcaption>caso-B-019 · 380 · claro · es<br><code title="SHA-256 de la captura entera">b5e5c07a4899…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-caso-B-019-1280-claro-es.jpg" alt="caso-B-019 1280 px claro es"><figcaption>caso-B-019 · 1280 · claro · es<br><code title="SHA-256 de la captura entera">549c5a822831…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-caso-B-019-380-oscuro-en.jpg" alt="caso-B-019 380 px oscuro en"><figcaption>caso-B-019 · 380 · oscuro · en<br><code title="SHA-256 de la captura entera">4f792b97b95d…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-caso-B-019-1280-oscuro-en.jpg" alt="caso-B-019 1280 px oscuro en"><figcaption>caso-B-019 · 1280 · oscuro · en<br><code title="SHA-256 de la captura entera">afb03936185e…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-fichas-380-oscuro-es.jpg" alt="fichas 380 px oscuro es"><figcaption>fichas · 380 · oscuro · es<br><code title="SHA-256 de la captura entera">c714b02ffde8…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-fichas-1280-oscuro-es.jpg" alt="fichas 1280 px oscuro es"><figcaption>fichas · 1280 · oscuro · es<br><code title="SHA-256 de la captura entera">aee3264c8ea9…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-fichas-380-claro-es.jpg" alt="fichas 380 px claro es"><figcaption>fichas · 380 · claro · es<br><code title="SHA-256 de la captura entera">c6b3d7d607e0…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-fichas-1280-claro-es.jpg" alt="fichas 1280 px claro es"><figcaption>fichas · 1280 · claro · es<br><code title="SHA-256 de la captura entera">528621cac452…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-fichas-380-oscuro-en.jpg" alt="fichas 380 px oscuro en"><figcaption>fichas · 380 · oscuro · en<br><code title="SHA-256 de la captura entera">433bd78a3300…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-fichas-1280-oscuro-en.jpg" alt="fichas 1280 px oscuro en"><figcaption>fichas · 1280 · oscuro · en<br><code title="SHA-256 de la captura entera">020d95f44973…</code></figcaption></figure>
+</div>
+</main></body>
+</html>

@@ -16,7 +16,7 @@ import { esAristaTripleta } from "@core/plan/esquema";
 import type { DatosDemo } from "@/lib/datos/vitrina";
 import { ruta } from "@/lib/ruta";
 import { DEMO_TEXTO } from "@/textos/demo";
-import { SUBTIPO } from "@/textos/caso";
+
 import {
   CURVA,
   EJEMPLO,
@@ -32,7 +32,7 @@ import {
 } from "@/textos/playground";
 import type { Fila } from "./agente";
 import type { PuntoCurva } from "./brecha";
-import { pieDeCorrida } from "./caso";
+import { nombreDeSubtipo, pieDeCorrida } from "./caso";
 import { decimal, enumerar, versionCorta } from "./formato";
 
 const X = (t: TextoBilingue, i: Idioma) => t[i];
@@ -360,7 +360,7 @@ export function vistaPlayground(d: DatosDemo, i: Idioma): VistaPlayground {
       }),
       casos: c.casos.map((k) => ({
         id: k.id,
-        tipo: X(SUBTIPO[k.subtipo] ?? { es: k.subtipo, en: k.subtipo }, i),
+        tipo: X(nombreDeSubtipo(d.id, k.subtipo), i),
         href: ruta(i, "caso", k.id, d.id),
       })),
       columnas,
