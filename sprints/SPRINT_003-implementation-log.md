@@ -1139,6 +1139,37 @@ sale de `out/` o si `--pasada` cae dentro del repo).
 
 e2e del B, entrada y paridad tras los arreglos: 63 en verde (1 omitida, la de siempre).
 
+### Cierre de la fase 3 (2026-10-04)
+
+**Criterio de fase completa, comprobado:**
+- verificador por demo (M-20, M-25 con la v1.1 del plan B), informe sin fragmentos (JSON y Markdown publicados del A
+  idénticos) e informe B ES/EN;
+- vitrina con dos demos: las seis pantallas del B y la entrada con dos filas, en los dos idiomas (ADR-014); el A, 51 de
+  57 páginas idénticas al build anterior y las 6 restantes por cambios declarados;
+- playground B con paridad exacta en Node, Chromium, Firefox y WebKit; visor B con «diagrama = grafo»; casos B con su
+  expediente; ficha de reproducibilidad, ficha del agente B y la ficha de la app con los dos demos;
+- Lighthouse del B en local (presupuestos y categorías en verde; cinco avisos de margen de LCP para la fase 4);
+- pasada de capturas con techo y la mirada de FORMA «no vista» con su matriz (`docs/fidelidad/s3-demo-b/index.html`);
+- guardias nuevas con su demo en rojo: D41–D50.
+
+**Job de calidad completo en local antes del push** (los comandos del `ci.yml`): `peers check`, verificar-dependencias
+contra `origin/main`, typecheck, lint sin avisos, `pnpm test` (3.547 en verde, umbrales de cobertura cumplidos),
+`trazas:verificar`, build, `verificar-export`, `diagrama:verificar` y `pnpm audit --audit-level high` (el aviso de
+`braces`, ignorado por id, ADR-015); e2e completa 193 en verde y 3 omitidas por diseño, sin reintentos; paquete para
+hoja-de-vida con el árbol limpio y su e2e (3/3); job `python`: ruff, formato, pytest 216 (97 %) y `pip-audit`.
+Empujado: `5dd76fb..07bd876` (PR #14). Sondas temporales borradas.
+
+**CI del PR #14 sobre `07bd876`:** `quality`, `python`, `e2e` y `lighthouse` con conclusión propia `SUCCESS` (más Vercel y
+su comentario). Es la primera corrida de la CI con las rutas del B: las siete URL del B en Lighthouse, el e2e del B y la
+paridad del Playground B en Firefox y WebKit no tienen histórico con el que comparar. `lighthouse-margen` dio siete avisos
+de LCP con margen menor al 10 % (ninguno en rojo): `/es` 2.405 ms, `/en` 2.297, `/es/agente` 2.484, `/es/caso/A-004`
+2.294, `/es/demo-b/agente` 2.476, `/es/demo-b/caso/B-005` 2.301 y `/es/demo-b/plan` 2.297, contra 2.500. Van a la fase 4
+con el LCP. El aviso «Timed out waiting for the server to start listening» de LHCI ya salía en la corrida anterior y las
+tres mediciones por URL corrieron.
+
+**Para revisar al cierre:** el inglés de la v1.1 del plan B, lado a lado con el español, en
+`plans/demo-b/v1.1-ingles.md` (26 textos: los 24 que el v1 traía solo en español y los dos del supuesto nuevo S2).
+
 ## Desviación del plan
 
 1. **Rutas de la orden** (`SPRINT_003-orden.md:65`): `audita-sprint` y `plan-sprint` viven en
