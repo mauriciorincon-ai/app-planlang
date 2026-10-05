@@ -13,8 +13,8 @@
 | 0 · Setup, constitución, deltas, diagramador 0.5.0 y plan v1.5 del A | aprobada («continúa»); lote v1.5 de 200 terminado y versionado | 2026-10-04 |
 | 1 · Entrevistador M2 → parada de DECISIÓN (plan B) | cerrada: plan B aprobado («apruebo el plan B») | 2026-10-04 |
 | 2 · Demo B: sintético, agente y lote de 20 | aprobada («continúa»); la línea base se volvió a correr con el prompt corregido (decisión del usuario: «Correrla») | 2026-10-04 |
-| 3 · Brecha B y la vitrina con dos demos | cerrada; espera «continúa» (CI del PR #14 en verde sobre `07bd876`) | 2026-10-04 |
-| 4 · Cierres de ciclo | pendiente | — |
+| 3 · Brecha B y la vitrina con dos demos | aprobada («Continua») | 2026-10-04 |
+| 4 · Cierres de ciclo | en construcción | — |
 
 ## Decisiones previas a construir
 
@@ -1169,6 +1169,67 @@ tres mediciones por URL corrieron.
 
 **Para revisar al cierre:** el inglés de la v1.1 del plan B, lado a lado con el español, en
 `plans/demo-b/v1.1-ingles.md` (26 textos: los 24 que el v1 traía solo en español y los dos del supuesto nuevo S2).
+
+## Fase 4 — Cierres de ciclo (desde 2026-10-04, tras «Continua»)
+
+### Decisiones del usuario al abrir la fase (AskUserQuestion, 2026-10-04)
+
+- **La vitrina del A pasa a la corrida de 200 de la v1.5, con su línea base de 200:** «Sí, correr la base
+  (Recomendado)». La de 20 de la v1.3 tenía su comparación con el agente único; la de 200 la tendrá también (S3
+  medido a 200 casos, regla dura 10).
+- **El lote de 200 del B, después de arreglar los cinco defectos del agente B** que dejó la fase 3: «Arreglar y correr
+  (Recomendado)». Corre después de la base del A, nunca a la vez.
+- **La vitrina del B sigue en la de 20** aunque la de 200 termine antes del merge: «Sigue en la de 20 (Recomendado)».
+  La de 20 tiene su línea base y es la que describen las vistas «no vistas» y el ⭐⭐; la de 200 queda versionada como
+  dato y la vitrina lo dice.
+
+### Línea base de 200 del A (en fondo)
+
+- Prueba con el proveedor simulado antes de gastar cuota: `--variante agente_unico`, plan v1.5, lote 002, 20 de 20
+  sin error (fuera del repo).
+- **Humo real del adaptador: 3/3** (`PLANLANG_HUMO_REAL=1`, CLI 2.1.282, 6,9 s). LangSmith sigue sin aprovisionar
+  (comprobado sin imprimir la clave): la corrida va sin espejo.
+- **Corrida `suscripcion-planlang-a-002-200-v1.5-base`:** plan v1.5, lote 002, `sonnet`, sesiones de 20, 2 s entre
+  casos y 10 min entre sesiones, fuera de CI; el ciclo se detiene ante un límite de uso o un error.
+
+### Los cinco defectos del agente B, antes de su lote de 200
+
+Los vio la fase 3 al leer el B en la vitrina. Las trazas versionadas no se reescriben: los arreglos llegan con las
+corridas nuevas.
+
+- **Aviso de IA en el documento de rechazo** (regla dura 12): `documento_adverso` trae `aviso_ia` en ES/EN («Este
+  documento lo preparó un sistema de IA…», con o sin persona). La vista del B lo pinta cuando la traza lo trae
+  (`DocumentoRechazoVistaSchema.aviso_ia` opcional); la corrida de 20 no lo trae y la vista sigue sin inventarlo.
+- **Valores como los escribe el plan:** `valor_en_texto` (`nodos_base.py`) escribe `true`, `false` y `null`, y la coma
+  decimal en español, en el motivo de la pausa y en la similitud del expediente y de la evidencia. Antes: «carga_detectada
+  (True) igual a True (True)» y «0.6988».
+- **Concordancia:** «La nacionalidad (…) coincide con la de la entrada» / «El año de nacimiento (…) coincide con el de
+  la entrada»; en inglés, «matches the entry's» y «does not match the entry's».
+- **Conclusiones sin huecos:** el expediente numera K1…Kn en el orden en que las escribe; lo que identifica a cada una es
+  su `tema`.
+- **El A no se toca:** su `_motivo` (en `demo_a/nodos.py`, aparte de `nodos_base.py`) escribe igual «(True)», pero la
+  línea base de 200 del A corre ahora con ese código y la vitrina va a publicar la corrida de 200 que lo produjo.
+  Cambiarlo a mitad dejaría la corrida y su línea base con dos códigos distintos. Va como deuda al summary, con el
+  próximo lote del A.
+- **Corridas simuladas nuevas:** `runs/demo-b/simulado-humo-2` y `-2-base` (4 casos, reloj fijo), escritas por el agente
+  arreglado. `simulado-humo` y su base ya no se regeneran iguales (cambian el texto y el documento): `runs/` es solo de
+  agregar, así que quedan como lo que corrió. La prueba de regeneración apunta a las nuevas y el contrato TS lee las
+  cuatro.
+- `data/vitrina/demo-b/grafo-codigo.json` regenerado (el código del verificador de listas se movió).
+- **Pruebas:** pytest 221 en verde (96,4 %), ruff limpio; `trazas:verificar` ✓ en todas las corridas, incluida la base
+  de 200 del A a medio camino; el contrato TS cruza de Python a la vista: el documento de BH-003 de `simulado-humo-2`
+  lleva su aviso y `perfilCasoB` lo pinta en los dos idiomas.
+
+| # | Gate | Mutación | Rojo (quién lo nombró) |
+|---|---|---|---|
+| D51 | conclusiones sin huecos | se quita la renumeración | `test_los_ids_de_las_conclusiones_no_dejan_huecos`: «B-001 [K1, K2, K4, K5, K7, K8…]» |
+| D52 | valores como el plan | `if isinstance(valor, bool)` → `if False` | `test_el_motivo_y_el_expediente_escriben_los_valores…`: «B-019 … carga_detectada (True) igual a True (True)» |
+| D52b | coma decimal en español | `valor_en_texto` sin el reemplazo de la coma | la misma prueba: «B-001 La mayor similitud con las listas es 0.6513…» |
+| D53 | concordancia | vuelve «es el de la entrada» | `test_la_evidencia_concuerda_con_el_campo` |
+| D54 | aviso del documento de rechazo | se quita `aviso_ia` del documento | `test_el_documento_de_rechazo_lleva_su_aviso_de_ia` (`KeyError: 'aviso_ia'`) |
+| D55 | la vista pinta el aviso | `aviso: null` en `caso-b.ts` | `traza-demo-b.test.ts › el documento de rechazo que escribe Python…`: «expected null to be 'Este documento lo preparó…'» |
+
+Todas con `scripts/demo-rojo.sh`: restauradas (grep + cmp) y en verde.
 
 ## Desviación del plan
 

@@ -347,8 +347,9 @@ export function perfilCasoB(
               v: X(doc.via_de_contradiccion, i),
             },
           ],
-          // El documento del B no trae aviso de IA propio: la vista no lo inventa (hallazgo en la bitácora del S3).
-          aviso: null,
+          // El de la corrida de 20 no trae aviso de IA propio (el agente lo escribe desde la fase 4 del S3): la vista
+          // pinta el que venga y no inventa el que falta.
+          aviso: doc.aviso_ia ? X(doc.aviso_ia, i) : null,
           completo: X(
             DOCUMENTO_B.completo({
               completo: doc.completo,

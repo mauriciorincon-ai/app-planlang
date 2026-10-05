@@ -32,7 +32,7 @@ from app_agents.demo_b.guardia import carga_en_documentos, minimizar, revisar_sa
 from app_agents.demo_b.mundo import Listas
 from app_agents.demo_b.reglas import CAMPOS, CAMPOS_EXIGIDOS, inconsistencias, propuesta, puntaje_de_campos
 from app_agents.demo_b.similitud import mejor_coincidencia
-from app_agents.nodos_base import NodosBase, como_json
+from app_agents.nodos_base import NodosBase, como_json, valor_en_texto
 from app_agents.plan import ContratoDeGrafo, PlanCargado
 from app_agents.reglas_arista import ErrorArista, comparar
 
@@ -201,30 +201,36 @@ class NodosDemoB(NodosBase):
             t_es, t_en = ("vinculante", "binding") if mejor["vinculante"] else ("de consulta", "reference")
             ev.append(
                 {
-                    "es": f"El nombre se parece {mejor['similitud']} a «{mejor['nombre_listado']}» "
+                    "es": f"El nombre se parece {valor_en_texto(mejor['similitud'], 'es')} a "
+                    f"«{mejor['nombre_listado']}» "
                     f"({mejor['entrada_id']}), de la lista {t_es} {mejor['lista_id']}.",
-                    "en": f"The name is {mejor['similitud']} similar to “{mejor['nombre_listado']}” "
+                    "en": f"The name is {valor_en_texto(mejor['similitud'], 'en')} similar to "
+                    f"“{mejor['nombre_listado']}” "
                     f"({mejor['entrada_id']}), on {t_en} list {mejor['lista_id']}.",
                 }
             )
             if not mejor["vinculante"]:
                 contra.append(self._regla("RL-04"))
-            for campo, de_lista, es, en in (
-                ("nacimiento", e.get("nacimiento"), "El año de nacimiento", "The year of birth"),
-                ("nacionalidad", e.get("nacionalidad"), "La nacionalidad", "The nationality"),
+            # El artículo concuerda con el campo: «el (año) de la entrada», «la (nacionalidad) de la entrada».
+            for campo, de_lista, es, art, en in (
+                ("nacimiento", e.get("nacimiento"), "El año de nacimiento", "el", "The year of birth"),
+                ("nacionalidad", e.get("nacionalidad"), "La nacionalidad", "la", "The nationality"),
             ):
                 propio = campos.get(campo)
                 if propio is None:
                     continue
                 if propio == de_lista:
                     ev.append(
-                        {"es": f"{es} ({propio}) es el de la entrada.", "en": f"{en} ({propio}) matches."}
+                        {
+                            "es": f"{es} ({propio}) coincide con {art} de la entrada.",
+                            "en": f"{en} ({propio}) matches the entry's.",
+                        }
                     )
                 else:
                     contra.append(
                         {
-                            "es": f"{es} ({propio}) no es el de la entrada ({de_lista}).",
-                            "en": f"{en} ({propio}) is not the entry's ({de_lista}).",
+                            "es": f"{es} ({propio}) no coincide con {art} de la entrada ({de_lista}).",
+                            "en": f"{en} ({propio}) does not match the entry's ({de_lista}).",
                         }
                     )
         else:

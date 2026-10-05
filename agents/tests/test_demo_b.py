@@ -2,10 +2,13 @@
 impide lo que la ley prohíbe aunque un plan mal escrito lo permita, y el lado Python reproduce exactamente la
 verdad que escribió el generador TypeScript (gate de contrato entre lenguajes, regla 19).
 
-Corrida versionada: `runs/demo-b/simulado-humo` (y su línea base `-base`) se regenera con los mismos bytes.
+Corrida versionada: `runs/demo-b/simulado-humo-2` (y su línea base `-base`) se regenera con los mismos bytes.
 Regenerar: `agents/.venv/bin/python -m app_agents.lotes --demo b --proveedor simulado \\
-  --casos data/casos/demo-b/planlang-b-humo-4.json --corrida simulado-humo --fecha 2026-10-04`
-(y con `--variante agente_unico --corrida simulado-humo-base`).
+  --casos data/casos/demo-b/planlang-b-humo-4.json --corrida simulado-humo-2 \\
+  --fecha 2026-10-04 --reloj fijo` (y con `--variante agente_unico --corrida simulado-humo-2-base`).
+`simulado-humo` y su base son las de la fase 2: `runs/` es solo de agregar y los arreglos de la fase 4
+(aviso de IA del rechazo, valores como el plan, conclusiones sin huecos) cambian sus bytes, así que quedan
+como lo que corrió y las lee `tests/contrato/traza-demo-b.test.ts`.
 """
 
 from __future__ import annotations
@@ -13,6 +16,7 @@ from __future__ import annotations
 import copy
 import json
 import random
+import re
 from pathlib import Path
 from typing import Any
 
@@ -99,7 +103,7 @@ def test_el_grafo_implementa_los_nodos_y_aristas_del_plan() -> None:
     assert ("decision", "pausa_humana") in aristas and ("decision", "redactor") in aristas
 
 
-@pytest.mark.parametrize("corrida", ["simulado-humo", "simulado-humo-base"])
+@pytest.mark.parametrize("corrida", ["simulado-humo-2", "simulado-humo-2-base"])
 def test_la_corrida_simulada_versionada_se_regenera_identica(tmp_path: Path, corrida: str) -> None:
     ejecutar_lote(
         corrida_id=corrida,
@@ -148,6 +152,74 @@ def test_el_expediente_cita_version_y_fecha_de_cada_lista_consultada() -> None:
     }
     k2 = next(c for c in final["expediente"]["conclusiones"] if c["id"] == "K2")
     assert k2["cita"]["lista"]["version"] and k2["cita"]["lista"]["fecha"]
+
+
+# ── lo que se lee (S3, fase 4: los cinco hallazgos de leer el B en la vitrina) ─────────────────
+
+
+def _textos(final: dict[str, Any]) -> list[str]:
+    """Todo texto en español que el caso deja para una persona: expediente, evidencia, motivos, documento."""
+    out = [c["texto"]["es"] for c in final["expediente"]["conclusiones"]]
+    for p in final.get("pausas") or []:
+        pl = p["payload"]
+        out += [pl["motivo"]["es"], *(e["es"] for e in pl["evidencia"])]
+        out += [e["es"] for e in pl["contraevidencia"]]
+    if final.get("documento_adverso"):
+        out.append(final["documento_adverso"]["texto"]["es"])
+    return out
+
+
+def test_los_ids_de_las_conclusiones_no_dejan_huecos() -> None:
+    """Sin investigador no hay conclusión de investigación: la cuenta sigue K1, K2, K3… sin saltar."""
+    for caso in LOTE20["casos"]:
+        final, _ = correr(caso)
+        ids = [c["id"] for c in final["expediente"]["conclusiones"]]
+        assert ids == [f"K{n}" for n in range(1, len(ids) + 1)], (caso["id"], ids)
+        temas = [c["tema"] for c in final["expediente"]["conclusiones"]]
+        assert ("investigacion" in temas) == (final.get("investigacion") is not None), caso["id"]
+
+
+def test_el_motivo_y_el_expediente_escriben_los_valores_como_el_plan_y_con_coma_en_espanol() -> None:
+    """Python escribía «carga_detectada (True) igual a True» y «0.6988» en el texto en español."""
+    vistos = 0
+    for caso in LOTE20["casos"]:
+        final, _ = correr(caso)
+        for t in _textos(final):
+            assert "True" not in t and "False" not in t and "None" not in t, (caso["id"], t)
+            assert not re.search(r"\b0\.\d", t), (caso["id"], t)
+        for p in final.get("pausas") or []:
+            m = p["payload"]["motivo"]
+            if "carga_detectada" in m["es"]:
+                assert "(true) igual a true (true)" in m["es"] and "(true) equal to true (true)" in m["en"]
+                vistos += 1
+    assert vistos > 0, "ningún caso del lote de 20 abrió la pausa por la guardia de entrada"
+    mejor = next(
+        c
+        for c in correr(subtipo("adversario_homonimo_zona_gris", LOTE20))[0]["expediente"]["conclusiones"]
+        if c["tema"] == "listas"
+    )
+    assert re.search(r"es 0,\d+, con la entrada", mejor["texto"]["es"]), mejor["texto"]["es"]
+    assert re.search(r"is 0\.\d+, with entry", mejor["texto"]["en"]), mejor["texto"]["en"]
+
+
+def test_la_evidencia_concuerda_con_el_campo() -> None:
+    """«La nacionalidad (…) es el de la entrada» no concordaba: cada campo lleva su artículo."""
+    frases = [t for caso in LOTE20["casos"] for t in _textos(correr(caso)[0])]
+    assert not any("es el de la entrada" in t for t in frases)
+    assert not any(re.search(r"La nacionalidad .* el de la entrada", t) for t in frases)
+    patron = r"(La nacionalidad|El año de nacimiento) \(.+\) (no )?coincide con"
+    assert any(re.search(patron, t) for t in frases)
+
+
+def test_el_documento_de_rechazo_lleva_su_aviso_de_ia() -> None:
+    """Regla dura 12: toda salida al solicitante lleva el aviso de IA, también el documento de rechazo."""
+    final, _ = correr(subtipo("normal_lista_vinculante"))
+    doc = final["documento_adverso"]
+    assert final["decision_final"] == "rechazar" and doc is not None
+    assert set(doc["aviso_ia"]) == {"es", "en"}
+    assert doc["aviso_ia"]["es"].startswith("Este documento lo preparó un sistema de IA")
+    assert "una persona revisó el caso" in doc["aviso_ia"]["es"]
+    assert doc["aviso_ia"]["en"].startswith("This document was prepared by an AI system")
 
 
 def test_un_homonimo_en_la_zona_gris_lo_resuelve_el_investigador_sin_persona() -> None:

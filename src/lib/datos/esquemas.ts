@@ -312,6 +312,8 @@ export const DocumentoRechazoVistaSchema = z
     texto: Bilingue,
     version: z.object({ plan: Version, listas: Version }).strict(),
     via_de_contradiccion: Bilingue,
+    // Desde la fase 4 del S3 el agente B lo escribe (regla dura 12); la corrida de 20 no lo trae.
+    aviso_ia: Bilingue.optional(),
   })
   .strict();
 

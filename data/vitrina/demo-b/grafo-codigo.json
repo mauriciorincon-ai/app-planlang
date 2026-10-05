@@ -7,7 +7,7 @@
     "hasta": 51
   },
   "formato": "planlang-grafo-codigo/v1",
-  "huella": "b31f17598e2de7daae2e4732511a0385c75fe69ca907b124171f727022f81ab3",
+  "huella": "d916f2fe43182fb61a6f100abe8375ab6db9c03fc5eee115a05393606b9c7439",
   "nodos": {
     "decision": {
       "archivo": "agents/src/app_agents/demo_b/nodos.py",
@@ -43,7 +43,7 @@
     "guardia_salida": {
       "archivo": "agents/src/app_agents/demo_b/nodos.py",
       "codigo": "def guardia_salida(self, estado: EstadoB, runtime: Runtime[ContextoCasoB]) -> dict[str, Any]:\n    reloj = runtime.context.reloj\n    inicio = reloj.ahora_ms()\n    propios = {estado[\"entrada\"][\"solicitud\"][\"id\"]}\n    documento = self._campos(estado).get(\"documento\")\n    if documento:\n        propios.add(str(documento))\n    r = revisar_salida(\n        estado[\"respuesta\"] or {\"es\": \"\", \"en\": \"\"},\n        estado[\"expediente\"] or {\"conclusiones\": []},\n        list(ACCIONES),\n        estado[\"entrada\"],\n        propios,\n    )\n    guardia = {\n        k: r[k]\n        for k in (\n            \"acciones_ejecutadas\",\n            \"acciones_intentadas\",\n            \"carga_detectada_en_entrada\",\n            \"hallazgos\",\n            \"severidad_accion\",\n        )\n    }\n    return {\n        \"salida_final\": {**r[\"salida\"], \"aviso_ia\": aviso_ia(bool(estado.get(\"pausa_humana\")))},\n        \"expediente\": r[\"expediente\"],\n        \"guardia_salida\": guardia,\n        \"severidad_accion\": r[\"severidad_accion\"],\n        \"inyeccion_neutralizada\": bool(estado.get(\"carga_detectada\")) and r[\"severidad_accion\"] == 0,\n        \"pasos\": [self._paso(estado, \"guardia_salida\", inicio, reloj.ahora_ms())],\n    }",
-      "desde": 347,
+      "desde": 353,
       "escribe": [
         "expediente",
         "guardia_salida",
@@ -52,7 +52,7 @@
         "salida_final",
         "severidad_accion"
       ],
-      "hasta": 378
+      "hasta": 384
     },
     "investigador": {
       "archivo": "agents/src/app_agents/demo_b/nodos.py",
@@ -68,7 +68,7 @@
     "pausa_humana": {
       "archivo": "agents/src/app_agents/demo_b/nodos.py",
       "codigo": "def pausa_humana(self, estado: EstadoB, runtime: Runtime[ContextoCasoB]) -> dict[str, Any]:\n    reloj = runtime.context.reloj\n    inicio = reloj.ahora_ms()\n    ultimo = max(d[\"paso\"] for d in estado[\"decisiones_de_arista\"])\n    disparo = next(d for d in estado[\"decisiones_de_arista\"] if d[\"paso\"] == ultimo and d[\"resultado\"])\n    evidencia, contraevidencia = self._evidencias(estado)\n    pausa = self.plan.contrato[\"pausas_humanas\"][0]\n    completo = {\n        \"motivo\": self.motivo(disparo),\n        \"senal\": disparo[\"senal\"] or disparo[\"funcion\"],\n        \"umbral\": {\"declarado\": disparo[\"valor_declarado\"], \"aplicado\": disparo[\"umbral_aplicado\"]},\n        \"extraccion\": estado.get(\"extraccion\"),\n        \"documentos\": estado[\"entrada\"][\"documentos\"],\n        \"coincidencias\": estado.get(\"coincidencias\"),\n        \"investigacion\": estado.get(\"investigacion\"),\n        \"puntaje\": estado.get(\"puntaje\"),\n        \"evidencia\": evidencia,\n        \"contraevidencia\": contraevidencia,\n    }\n    # M-8: el caso completo que pide el plan, ni una clave menos.\n    payload = {k: completo[k] for k in completo if k in pausa[\"payload_minimo\"]}\n    respuesta = interrupt(payload)\n    return {\n        \"pausa_humana\": True,\n        \"decision_final\": respuesta[\"decision\"],\n        \"revision\": respuesta,\n        \"pausas\": [\n            {\n                \"paso\": len(estado[\"pasos\"]) + 1,\n                \"nodo\": \"pausa_humana\",\n                \"rol\": pausa[\"rol\"],\n                \"payload\": payload,\n                \"respuesta_simulada\": {\n                    \"decision\": respuesta[\"decision\"],\n                    \"politica\": respuesta[\"politica\"],\n                },\n            }\n        ],\n        \"pasos\": [self._paso(estado, \"pausa_humana\", inicio, reloj.ahora_ms())],\n    }",
-      "desde": 284,
+      "desde": 290,
       "escribe": [
         "decision_final",
         "pasos",
@@ -76,7 +76,7 @@
         "pausas",
         "revision"
       ],
-      "hasta": 323
+      "hasta": 329
     },
     "puntaje": {
       "archivo": "agents/src/app_agents/demo_b/nodos.py",
@@ -94,7 +94,7 @@
     "redactor": {
       "archivo": "agents/src/app_agents/demo_b/nodos.py",
       "codigo": "def redactor(self, estado: EstadoB, runtime: Runtime[ContextoCasoB]) -> dict[str, Any]:\n    \"\"\"El expediente, la respuesta y el documento adverso, por código (tipo «regla» en el plan B).\"\"\"\n    reloj = runtime.context.reloj\n    inicio = reloj.ahora_ms()\n    decision = estado.get(\"decision_final\") or estado.get(\"propuesta\") or \"aprobar\"\n    self.exigir_persona(decision, estado)\n    vista = {**estado, \"decision_final\": decision}\n    expediente = construir_expediente(vista, self.listas, self.plan_ref)\n    doc = (\n        documento_adverso(vista, self.listas, self.plan_ref, expediente)\n        if decision == \"rechazar\"\n        else None\n    )\n    return {\n        \"decision_final\": decision,\n        \"expediente\": expediente,\n        \"conclusiones_sin_cita\": expediente[\"conclusiones_sin_cita\"],\n        \"respuesta\": respuesta_al_solicitante(decision),\n        \"documento_adverso\": doc,\n        \"pasos\": [self._paso(estado, \"redactor\", inicio, reloj.ahora_ms())],\n    }",
-      "desde": 325,
+      "desde": 331,
       "escribe": [
         "conclusiones_sin_cita",
         "decision_final",
@@ -103,7 +103,7 @@
         "pasos",
         "respuesta"
       ],
-      "hasta": 345
+      "hasta": 351
     },
     "verificador_listas": {
       "archivo": "agents/src/app_agents/demo_b/nodos.py",
@@ -121,7 +121,7 @@
   "ruta": {
     "archivo": "agents/src/app_agents/nodos_base.py",
     "codigo": "def ruta(self, nodo: str) -> Callable[[dict[str, Any]], str]:\n    def _ruta(estado: dict[str, Any]) -> str:\n        propias = [d for d in estado[\"decisiones_de_arista\"] if d[\"desde\"] == nodo]\n        paso = max(d[\"paso\"] for d in propias)\n        rama, _ = self._decidir(nodo, dict(estado), paso)\n        registrada = next(d[\"rama_tomada\"] for d in propias if d[\"paso\"] == paso)\n        if rama != registrada:\n            raise ErrorArista(f\"{nodo}: el enrutamiento ({rama}) difiere de lo registrado ({registrada})\")\n        return rama\n\n    _ruta.__name__ = f\"ruta_{nodo}\"\n    return _ruta",
-    "desde": 90,
-    "hasta": 101
+    "desde": 101,
+    "hasta": 112
   }
 }

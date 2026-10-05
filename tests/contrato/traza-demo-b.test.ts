@@ -18,8 +18,18 @@ import {
   leerCorridaVerificada,
 } from "../../core/brecha/lector";
 import { archivosDeCorrida } from "../../scripts/_corridas";
+import { datosDemo } from "../../src/lib/datos/vitrina";
+import { perfilCasoB } from "../../src/lib/vista/caso-b";
+import type { CasoB } from "../../core/sintetico/demo-b/esquema";
 
-const CORRIDAS = ["runs/demo-b/simulado-humo", "runs/demo-b/simulado-humo-base"];
+// `simulado-humo` es la corrida de la fase 2; `simulado-humo-2`, la del agente con los arreglos de la fase 4 (aviso de
+// IA en el documento de rechazo, valores como el plan, conclusiones sin huecos). Las dos se leen.
+const CORRIDAS = [
+  "runs/demo-b/simulado-humo",
+  "runs/demo-b/simulado-humo-base",
+  "runs/demo-b/simulado-humo-2",
+  "runs/demo-b/simulado-humo-2-base",
+];
 const json = (ruta: string): unknown => JSON.parse(readFileSync(ruta, "utf8"));
 
 describe("trazas del demo B escritas por Python", () => {
@@ -61,5 +71,20 @@ describe("trazas del demo B escritas por Python", () => {
     expect((error as ErrorDeLectura).motivos.map((x) => x.detalle.es)).toContain(
       "la corrida usó otras listas de control que las del lote de casos",
     );
+  });
+
+  it("el documento de rechazo que escribe Python lleva su aviso de IA y la vista del caso lo pinta", async () => {
+    // De punta a punta (regla 19): el exportador de Python lo escribió, Zod lo lee y la vista del B lo pinta.
+    const t = TrazaSchema.parse(json("runs/demo-b/simulado-humo-2/trazas/BH-003.json"));
+    const lote = json("data/casos/demo-b/planlang-b-humo-4.json") as { casos: CasoB[] };
+    const c = lote.casos.find((x) => x.id === "BH-003")!;
+    const d = await datosDemo("demo-b");
+    for (const i of ["es", "en"] as const) {
+      const aviso = (t.documento_adverso as unknown as { aviso_ia: Record<typeof i, string> }).aviso_ia[i];
+      expect(perfilCasoB(d, t, c, i).documento?.aviso).toBe(aviso);
+    }
+    // La corrida de la fase 2 no lo trae: la vista no inventa uno.
+    const vieja = TrazaSchema.parse(json("runs/demo-b/simulado-humo/trazas/BH-003.json"));
+    expect(perfilCasoB(d, vieja, c, "es").documento?.aviso).toBeNull();
   });
 });

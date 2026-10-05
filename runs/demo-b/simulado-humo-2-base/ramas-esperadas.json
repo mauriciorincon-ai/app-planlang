@@ -1,0 +1,106 @@
+{
+  "corrida_id": "simulado-humo-2-base",
+  "formato": "planlang-ramas/v1",
+  "fuente": "python · app_agents.reglas_arista",
+  "huella": "1f7af94bd66a84a5b595b34c7c0900c3adf620ad7ff461ca1874c50c93ca59a6",
+  "umbrales_aplicados": {
+    "U1": 0.85,
+    "U2": 60,
+    "U3": 0,
+    "U4": 0.7
+  },
+  "visitas": [
+    {
+      "caso_id": "BH-001",
+      "desde": "verificador_listas",
+      "paso": 3,
+      "rama_tomada": "puntaje",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "BH-001",
+      "desde": "decision",
+      "paso": 5,
+      "rama_tomada": "redactor",
+      "resultados": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "BH-002",
+      "desde": "verificador_listas",
+      "paso": 3,
+      "rama_tomada": "puntaje",
+      "resultados": [
+        true
+      ]
+    },
+    {
+      "caso_id": "BH-002",
+      "desde": "decision",
+      "paso": 5,
+      "rama_tomada": "pausa_humana",
+      "resultados": [
+        false,
+        false,
+        true,
+        false,
+        false,
+        true
+      ]
+    },
+    {
+      "caso_id": "BH-003",
+      "desde": "verificador_listas",
+      "paso": 3,
+      "rama_tomada": "puntaje",
+      "resultados": [
+        true
+      ]
+    },
+    {
+      "caso_id": "BH-003",
+      "desde": "decision",
+      "paso": 5,
+      "rama_tomada": "pausa_humana",
+      "resultados": [
+        false,
+        true,
+        true,
+        false,
+        false,
+        true
+      ]
+    },
+    {
+      "caso_id": "BH-004",
+      "desde": "verificador_listas",
+      "paso": 3,
+      "rama_tomada": "puntaje",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "BH-004",
+      "desde": "decision",
+      "paso": 5,
+      "rama_tomada": "pausa_humana",
+      "resultados": [
+        true,
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    }
+  ]
+}

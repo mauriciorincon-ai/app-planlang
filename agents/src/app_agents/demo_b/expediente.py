@@ -11,6 +11,7 @@ from __future__ import annotations
 from typing import Any
 
 from app_agents.demo_b.mundo import Listas
+from app_agents.nodos_base import valor_en_texto
 
 CONSERVACION = {
     "es": "El expediente se conserva cinco años (decisión D3 del plan; plazo estimado, AMLR art. 77).",
@@ -125,14 +126,15 @@ def construir_expediente(estado: dict[str, Any], listas: Listas, plan_ref: dict[
         regla = "RL-01" if mejor["exacta"] else "RL-02"
         tipo_es, tipo_en = ("vinculante", "binding") if mejor["vinculante"] else ("de consulta", "reference")
         mes_es, mes_en = mes_y_anio(lista["fecha"])
+        sim_es, sim_en = valor_en_texto(mejor["similitud"], "es"), valor_en_texto(mejor["similitud"], "en")
         conclusiones.append(
             _c(
                 "K2",
                 "listas",
-                f"La mayor similitud con las listas es {mejor['similitud']}, con la entrada "
+                f"La mayor similitud con las listas es {sim_es}, con la entrada "
                 f"{mejor['entrada_id']} de la lista {tipo_es} {mejor['lista_id']} (versión "
                 f"{lista['version']}, de {mes_es}; {regla}).",
-                f"The highest similarity with the lists is {mejor['similitud']}, with entry "
+                f"The highest similarity with the lists is {sim_en}, with entry "
                 f"{mejor['entrada_id']} of {tipo_en} list {mejor['lista_id']} (version {lista['version']}, "
                 f"{mes_en}; {regla}).",
                 {
@@ -285,6 +287,10 @@ def construir_expediente(estado: dict[str, Any], listas: Listas, plan_ref: dict[
             {"tipo": "decision_del_plan", "ref": "D3"},
         )
     )
+    # Numeradas en el orden en que se escriben: una conclusión que no aplica (sin investigador no hay
+    # investigación) no deja un hueco en la cuenta. Lo que identifica a cada una es su `tema`.
+    for n, c in enumerate(conclusiones, start=1):
+        c["id"] = f"K{n}"
     sin_cita = sum(1 for c in conclusiones if not (c["cita"] or {}).get("ref"))
     return {
         "caso_id": estado["caso_id"],
@@ -319,7 +325,23 @@ def respuesta_al_solicitante(decision: str) -> dict[str, str]:
     }
 
 
-def aviso_ia(con_persona: bool) -> dict[str, str]:
+def aviso_ia(con_persona: bool, documento: bool = False) -> dict[str, str]:
+    """El aviso de IA de la respuesta al solicitante o, con `documento`, el del documento de rechazo
+    (regla dura 12: toda salida al solicitante lo lleva)."""
+    if documento:
+        if con_persona:
+            return {
+                "es": "Este documento lo preparó un sistema de IA en una simulación con datos sintéticos, y "
+                "una persona revisó el caso.",
+                "en": "This document was prepared by an AI system in a simulation with synthetic data, and a "
+                "person reviewed the case.",
+            }
+        return {
+            "es": "Este documento lo preparó un sistema de IA en una simulación con datos sintéticos; "
+            "ninguna persona revisó el caso.",
+            "en": "This document was prepared by an AI system in a simulation with synthetic data; no person "
+            "reviewed the case.",
+        }
     if con_persona:
         return {
             "es": "Esta respuesta la preparó un sistema de IA en una simulación con datos sintéticos, y una "
@@ -369,6 +391,7 @@ def documento_adverso(
     texto_es = f"Decisión: rechazar la vinculación. {causa_es}{revisado_es}. {VIA_DE_CONTRADICCION['es']}"
     texto_en = f"Decision: reject the onboarding. {causa_en}{revisado_en}. {VIA_DE_CONTRADICCION['en']}"
     return {
+        "aviso_ia": aviso_ia(con_persona, documento=True),
         "causal": causal,
         "completo": causal is not None and regla is not None and con_persona,
         "datos_usados": expediente["datos_usados"],

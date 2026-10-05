@@ -28,6 +28,17 @@ OPERADOR_TEXTO = {
 }
 
 
+def valor_en_texto(valor: Any, idioma: str) -> str:
+    """Un valor de señal o de umbral dentro de una frase: los booleanos y el vacío como los escribe el plan
+    (`true`, `false`, `null`), y la coma decimal en español. `str()` de Python escribía «True» y «0.6988»."""
+    if isinstance(valor, bool):
+        return "true" if valor else "false"
+    if valor is None:
+        return "null"
+    texto = str(valor)
+    return texto.replace(".", ",") if idioma == "es" and isinstance(valor, float) else texto
+
+
 def como_json(valor: Any) -> Any:
     return valor.model_dump(mode="json") if hasattr(valor, "model_dump") else valor
 
@@ -105,20 +116,30 @@ class NodosBase:
         """El motivo legible de una pausa: la arista que se cumplió, con lo observado y el umbral aplicado."""
         n, desde = registro["orden_arista"], registro["desde"]
         if registro["tipo"] == "funcion":
-            args = ", ".join(f"{k}={registro['entradas'][k]}" for k in sorted(registro["entradas"]))
-            texto = f"{registro['funcion']}({args})"
+
+            def llamada(idioma: str) -> str:
+                ent = registro["entradas"]
+                args = ", ".join(f"{k}={valor_en_texto(ent[k], idioma)}" for k in sorted(ent))
+                return f"{registro['funcion']}({args})"
+
             return {
                 "desde": desde,
                 "orden_arista": n,
-                "es": f"Arista {n} de {desde}: {texto}.",
-                "en": f"Edge {n} of {desde}: {texto}.",
+                "es": f"Arista {n} de {desde}: {llamada('es')}.",
+                "en": f"Edge {n} of {desde}: {llamada('en')}.",
             }
         es, en = OPERADOR_TEXTO[registro["operador"]]
-        obs, dec, apl = registro["valor_observado"], registro["valor_declarado"], registro["umbral_aplicado"]
         senal = registro["senal"]
+
+        def valores(idioma: str) -> tuple[str, str, str]:
+            claves = ("valor_observado", "valor_declarado", "umbral_aplicado")
+            obs, dec, apl = (valor_en_texto(registro[k], idioma) for k in claves)
+            return obs, dec, apl
+
+        (o_es, d_es, a_es), (o_en, d_en, a_en) = valores("es"), valores("en")
         return {
             "desde": desde,
             "orden_arista": n,
-            "es": f"Arista {n} de {desde}: {senal} ({obs}) {es} {dec} ({apl}).",
-            "en": f"Edge {n} of {desde}: {senal} ({obs}) {en} {dec} ({apl}).",
+            "es": f"Arista {n} de {desde}: {senal} ({o_es}) {es} {d_es} ({a_es}).",
+            "en": f"Edge {n} of {desde}: {senal} ({o_en}) {en} {d_en} ({a_en}).",
         }
