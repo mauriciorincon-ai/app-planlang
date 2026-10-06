@@ -14,7 +14,7 @@
 | 1 · Entrevistador M2 → parada de DECISIÓN (plan B) | cerrada: plan B aprobado («apruebo el plan B») | 2026-10-04 |
 | 2 · Demo B: sintético, agente y lote de 20 | aprobada («continúa»); la línea base se volvió a correr con el prompt corregido (decisión del usuario: «Correrla») | 2026-10-04 |
 | 3 · Brecha B y la vitrina con dos demos | aprobada («Continua») | 2026-10-04 |
-| 4 · Cierres de ciclo | en construcción | — |
+| 4 · Cierres de ciclo | construcción cerrada: `/audita-sprint` con sus dos pasadas pagadas (`e02d220`), `/deploy-check --python` corrido y `SPRINT_003-summary.md` final; queda el merge del usuario (Acto 1) y el ⭐⭐ del Acto 2 | 2026-10-05 |
 
 ## Decisiones previas a construir
 

@@ -10,9 +10,9 @@ pr: https://github.com/mauriciorincon-ai/app-planlang/pull/14
 
 # Sprint 003 Summary — planlang «Demo B y el cierre del ciclo»
 
-> Estado de este documento: **BORRADOR** (condición de merge: viaja dentro del PR #14). Las marcas «[POR COMPLETAR: …]»
-> dependen de corridas que faltan: conteos finales, CI del commit final, `/deploy-check --python` y la segunda pasada de
-> la casilla 4.
+> Estado de este documento: **final para el merge** (condición de merge: viaja dentro del PR #14). La auditoría tiene
+> sus dos pasadas pagadas y `/deploy-check --python` está corrido (DoD, abajo); las conclusiones de la CI del commit final
+> van en el cuerpo del PR.
 > **Acto de ciclo: el Acto 1 (de construcción) ocurre con este merge.** El S3 es el sprint 3 de 3 del ciclo H1 y lo
 > cierra. **El Acto 2 queda pendiente y lo corre el usuario cuando decida:** el gate ⭐⭐ de 4 paradas, el sello del
 > brochure (en planlang, la vitrina y sus fichas: excepción del G-Plan, sin `docs/BROCHURE.html` ni `/conoce`) y
@@ -41,7 +41,7 @@ pr: https://github.com/mauriciorincon-ai/app-planlang/pull/14
     decidió mantener 2,8 s y dejarlo como deuda (adenda del ADR-011).
 - **Terciario — Sí.** El lote de 200 del B (200/200, sin errores del proveedor) queda como registro y publica su falla,
   B-180. La ficha de la app cuenta los dos demos y está la del agente B; el paquete para hoja-de-vida lleva los dos
-  (195 archivos con su manifiesto; `paquete:verificar` y su e2e 3/3 en verde sobre `909227d`). El PR de contenido
+  (195 archivos con su manifiesto: en local sobre `909227d` y en el job `e2e` de la CI sobre `fb22a72`, con su e2e 3/3). El PR de contenido
   (roadmap de 3 ids) es del usuario.
 
 ## Qué se construyó
@@ -70,17 +70,17 @@ pr: https://github.com/mauriciorincon-ai/app-planlang/pull/14
   decisión del usuario) y `ChipCaso` sin enlace para el resto; reanclar las pruebas destapó 18 defectos (D57–D74). Los
   cinco defectos del agente B (D51–D55) y `lotes --caso` para la parada 1. `docs/BLUEPRINT.html`, manual ES/EN con
   cuatro secciones nuevas, kit de prueba por demo, fichas y guía. El LCP medido con STOP; la 2-bis; `/audita-sprint`.
-- **ADR:** 012, 013, 014, 015 y 016 nuevos; adendas al 001, al 011 y al 014; sección «Protecciones del sistema» en el 002.
+- **ADR:** 012, 013, 014, 015 y 016 nuevos; adendas al 001, al 010, al 011 y al 014; sección «Protecciones del sistema» en el 002.
 
 ## DoD — checklist
 
 | Estándar              | Estado                      | Evidencia                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | --------------------- | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Testing               | ✓                           | vitest **4.098** + 1 saltada (134 archivos) con los umbrales de cobertura: total 97,1 % sentencias · 88,3 % ramas · 97,6 % líneas; `core/brecha` 98,4 % · 93,6 % ramas, `core/playground` 99,7 % · 96,8 %, `core/visor` 97,4 % · 91,8 % · pytest **226** + 3 saltadas (96,6 %) · Playwright **193** + 3 saltadas en local, sin reintentos (teléfono, escritorio, `paridad-firefox`, `paridad-webkit`) · e2e del paquete 3/3 · cada gate nuevo con su demo en rojo en la bitácora (tablas de la fase 0, D1–D56, D57–D60 y F2-D1…F2-D21)                                                                                                             |
-| CI/CD                 | [POR COMPLETAR]             | `quality · e2e · lighthouse · python` con conclusión propia `success` en `8a9c00b`, `07bd876` y `f47a665`. Rojos leídos y pagados: `lighthouse` en `be317ef`/`f5280ff` (importación estática de Sentry, `9c1c5a6`), avisos nuevos del calendario en `525f5d1` (`31ee86c`), `python` en `d44a2ad`, `quality` en `d44a2ad`–`97f9b43` (`d30e5b0`) y **e2e en `785bd0c`, `5ffb8e4` y `9f3c5ac`, sin leer** (`6a8b962`). [POR COMPLETAR: `gh pr checks 14` sobre el commit final]                                                                                       |
-| Observabilidad        | ✓ con deuda                 | sin runtime en la vitrina; `limpiarEvento` (solo el tipo de cada excepción), importado detrás de `if (dsn)`; `pnpm trazas:verificar` sobre todas las corridas, con RF-09.2 cruzado en los 200 casos reales del A y en los 200 del B (0 discrepancias en 400 visitas); **LangSmith sin aprovisionar**: las corridas no tienen espejo                                                                                                                                                                                                                                |
+| Testing               | ✓                           | vitest en la CI de `fb22a72`: **4.094** + 5 saltadas (134 archivos; en local, 4.098 + 1, y 4.102 + 1 en 135 archivos tras la segunda pasada) con los umbrales de cobertura: total 97,1 % sentencias · 88,3 % ramas · 97,6 % líneas; `core/brecha` 98,4 % · 93,6 % ramas, `core/playground` 99,7 % · 96,8 %, `core/visor` 97,4 % · 91,8 % · pytest **226** + 3 saltadas (96,6 %, CI de `fb22a72`) · Playwright **193** + 3 saltadas, sin reintentos (en local y en la CI de `fb22a72`) (teléfono, escritorio, `paridad-firefox`, `paridad-webkit`) · e2e del paquete 3/3 · cada gate nuevo con su demo en rojo en la bitácora (tablas de la fase 0, D1–D56, D57–D60 y F2-D1…F2-D21)                                                                                                             |
+| CI/CD                 | ✓                           | `quality · e2e · lighthouse · python` con conclusión propia `success` en `8a9c00b`, `07bd876` y `f47a665`. Rojos leídos y pagados: `lighthouse` en `be317ef`/`f5280ff` (importación estática de Sentry, `9c1c5a6`), avisos nuevos del calendario en `525f5d1` y `814a6f4` (`31ee86c`), `python` en `d44a2ad`, `quality` en `d44a2ad`–`97f9b43` (`d30e5b0`) y **e2e en `785bd0c`, `5ffb8e4`, `9f3c5ac` y `374728d`, sin leer** (`6a8b962`). Sobre `fb22a72` (el summary ya dentro), los cuatro con `success` propio: e2e 193 en verde y 3 saltadas, 0 reintentos, más el paquete 3/3; el commit final solo toca el summary y la bitácora (ver el cuerpo del PR)                                                                                       |
+| Observabilidad        | ✓ con deuda                 | sin runtime en la vitrina; `limpiarEvento` (solo el tipo de cada excepción), importado detrás de `if (dsn)`; `pnpm trazas:verificar` sobre todas las corridas, con RF-09.2 cruzado en los 200 casos reales del A y en los 200 del B (0 discrepancias: 624 visitas en el A y 400 en el B); **LangSmith sin aprovisionar**: las corridas no tienen espejo                                                                                                                                                                                                                                |
 | Seguridad             | ✓ con un aviso aceptado     | gitleaks en cada commit (el único `--no-verify`, `03788b9`, se revisó a mano: «no leaks found»); `braces` ignorado por id (ADR-015); `source-map-js` y `compression` subidos; el servidor de los arneses ya no sirve la carpeta hermana (AU-S3-15); `.entrevistas/` 700/600 (17-bis); BLUEPRINT sin URL; matriz del Llavero en el ADR-002 (regla 24); barrido de cero enlaces después del último `git add` con 0 coincidencias (el comando, abajo en «Cómo probar»); `pnpm audit --audit-level high` sale con 0 (1 alto, el ignorado); `pip-audit --skip-editable` sin vulnerabilidades |
-| Performance           | ✗ en un criterio, con deuda | LCP ≤ 2,5 s en todas las rutas salvo `/*/playground` (2,8 s, ADR-011 y su adenda); `/*/brecha` también es bimodal y queda a menos del 2 % de su presupuesto; `lighthouse-margen` avisa sin rojo [POR COMPLETAR: avisos del commit final]                                                                                                                                                                                                                                                                                                                           |
+| Performance           | ✗ en un criterio, con deuda | LCP ≤ 2,5 s en todas las rutas salvo `/*/playground` (2,8 s, ADR-011 y su adenda); `/*/brecha` también es bimodal; `lighthouse-margen` en la CI de `6a8b962`: 7 avisos, ningún rojo — `/es` 2.323 ms y `/en` 2.307 (7 %), `/es/caso/A-004` 2.320, y del B `plan` 2.298, `fichas` 2.303, `caso/B-005` 2.306 y **`agente` 2.492 ms frente a 2.500 (0,3 % de margen)**                                                                                                                                                                                                                                                                                                                           |
 | UX/A11y (+6-B)        | ✓ (miradas pendientes)      | las vistas del B usan los componentes canon del 1.0.0; axe sin violaciones en las siete pantallas del B, en los dos idiomas y temas; 380 px sin desplazamiento (D49: la fila de pestañas del B); vocabulario y enlaces por demo; `reduced-motion` con visibilidad real; las miradas de FORMA siguen «no vistas» y van al ⭐⭐/⭐                                                                                                                                                                                                                                   |
 | IA embebida (7 + 7-S) | ✓                           | ADR-012 y ADR-013 de código primero; humo real 3/3 antes de cada lote; lotes fuera de CI, de 20 en 20 y espaciados (A: 200 + 200 de base; B: 20 + 20 + 20 de base + 200); 459 llamadas en el A de 200 con 0 reintentos de esquema; regla 25: el humo real solo corre con `PLANLANG_HUMO_REAL=1`                                                                                                                                                                                                                                                                    |
 | Manual de uso         | ✓                           | `docs/MANUAL-DE-USO.md` ES/EN: «Entrevistar un plan», «Correr el demo B», «Leer un expediente» y «Publicar el design system», y seis secciones al día; fila S3 en el historial; barrido de promesas aplazadas                                                                                                                                                                                                                                                                                                                                                      |
@@ -101,14 +101,14 @@ pr: https://github.com/mauriciorincon-ai/app-planlang/pull/14
 | `docs/BLUEPRINT.html` autocontenido, sin red ni URL                                                                              | ✓                                                                                                                                                                                      |
 | Guía: ⭐⭐ final de 4 paradas; ⭐ acumulado ofrecido; las 46 del S2 heredadas                                                    | ✓ 46 + 13 = 59; ⭐ 23 (S1: 5 · S2: 10 · S3: 8)                                                                                                                                         |
 | LCP ≤ 2,5 s, o ADR-011 enmendado con medición y decisión del usuario; `lighthouse-margen` sin rojo                               | ✗ en 2,5 s · ✓ por la vía alternativa: adenda del ADR-011 con mediciones y «Mantener 2,8 s y deuda»                                                                                    |
-| Ficha del agente B válida (v1.3.1); `brochure-export.json` con los dos demos; paquete regenerado                                 | ✓ `tests/unit/vitrina/fichas.test.ts` › «cada ficha pasa su contrato, en los dos idiomas» · paquete de 195 archivos con su manifiesto, `paquete:verificar` y e2e 3/3 sobre `909227d` |
-| 4 checks `success` propios; primeras corridas anotadas; 2-bis; ⭐⭐ pendiente del Acto 2                                         | [POR COMPLETAR: checks del commit final] · ✓ el resto                                                                                                                                  |
+| Ficha del agente B válida (v1.3.1); `brochure-export.json` con los dos demos; paquete regenerado                                 | ✓ `tests/unit/vitrina/fichas.test.ts` › «cada ficha pasa su contrato, en los dos idiomas» · paquete de 195 archivos con su manifiesto, `paquete:verificar` y e2e 3/3 (en local sobre `909227d`; en la CI sobre `fb22a72`) |
+| 4 checks `success` propios; primeras corridas anotadas; 2-bis; ⭐⭐ pendiente del Acto 2                                         | ✓ `quality · e2e · lighthouse · python` en `success` propio sobre `fb22a72` · ✓ el resto                                                                                                                                  |
 
 **Corridas reales del sprint** (fuera de CI, con trazas verificadas):
 
 | Corrida                                            | Resultado                                                                                                         | Informe                                                                                                                                                                                                           |
 | -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| A, 200 casos, plan v1.5                            | 200/200 decisiones = verdad (169 aprobar · 22 negar · 9 en parte); 70 pausas; US$4,92 nominales; 8,2 s de mediana | cumple con alertas: 10/10 criterios desde el verificador 1.3.0; S1 confirmado; S2 refutado (83,3 % frente a ≥ 95 %); S3 refutado (98 % frente a 90 %, pero 8,1 s frente a 5,0 s); 3 brechas (A-022, A-126, A-139) |
+| A, 200 casos, plan v1.5                            | 200/200 decisiones = verdad (169 aprobar · 22 negar · 9 en parte); 70 pausas; US$4,92 nominales; 8,1 s de mediana | cumple con alertas: 10/10 criterios desde el verificador 1.3.0; S1 confirmado; S2 refutado (83,3 % frente a ≥ 95 %); S3 refutado (98 % frente a 90 %, pero 8,1 s frente a 5,0 s); 3 brechas (A-022, A-126, A-139) |
 | B, 20 casos, plan v1.1 (la que publica la vitrina) | 20/20 decisiones y extracciones; 26 llamadas, US$0,293                                                            | cumple con alertas: 6/6; S1 confirmado; S2 refutado (la línea base gastó más: US$0,454)                                                                                                                           |
 | B, 200 casos, plan v1.1 (registro)                 | 200/200, sin errores del proveedor; 4,0 s de mediana; US$2,89 nominales (con el humo previo)                      | cumple con alertas: 6/6 (C5 99,5 %); 99 pausas; S2 sin probar; 5 brechas, entre ellas **B-180**                                                                                                                   |
 
@@ -147,8 +147,8 @@ usuario aprobó sumar a la mirada 3 los cambios de forma del A («Sumarlos a la 
 | 3   | FORMA y TEXTO, **no vista** | `docs/fidelidad/s3-mirada-3/index.html` (matriz de **10 filas** desde la segunda vuelta: BLUEPRINT, expediente de B-010, informe del B, «Medí la brecha» del A con 10 de 10, modo Texas, «Lo que falló» del A, documento de A-006, la marca «Aviso inexacto» de A-017, nodo `decision` en los 200 casos, textos del entrevistador) | sin respuesta; viaja al ⭐ del ciclo con su matriz, y las paradas 2 a 4 del ⭐⭐ la recorren en parte. Segunda vuelta el 2026-10-05, después de los pagos, sin parada |
 
 Ninguna de las miradas 2 y 3 se dio por aprobada. Los cambios de forma de la Fase 2 sobre artefactos de la mirada 3 son
-segundas vueltas sin parada, y se ven al cierre: el expediente completo (AU-S3-14), la marca «Aviso inexacto» (F22) y
-el chip «Sin aviso de IA» (AU-S3-07).
+segundas vueltas sin parada, y se ven al cierre: el expediente completo (AU-S3-14) y la marca «Aviso inexacto» (F22).
+El chip «Sin aviso de IA» (B-005, B-006 y B-014, AU-S3-07) no tiene fila en ninguna matriz; se ve en el ⭐ del ciclo.
 
 ## Auditoría final (`/audita-sprint`)
 
@@ -160,7 +160,7 @@ AU-S3-22; F11/F12 ⊃ AU-S3-02/03). Recomendación de los dos: «requiere ajuste
 
 **Decisiones del usuario** (2026-10-05, textuales): Fase 1 y plan de pagos, «Sí, paga todo (Recomendado)»; C5 y su
 `k_aplica_a`, «Respetar el plan (Recomendado)»; textos en archivos con huella (F8), «Corregir los dos (Recomendado)»;
-matriz del Llavero, «Sí, regístrala».
+matriz del Llavero, «Sí, regístrala»; y, en la segunda pasada, el enunciado de C1, «Plan v1.5.2 (Recomendado)».
 
 **Pagados: todos.**
 
@@ -175,19 +175,36 @@ matriz del Llavero, «Sí, regístrala».
 | `785bd0c`             | las decisiones: verificador 1.3.0 (`k_aplica_a`; C5 cumple y el A pasa a 10/10) y plan v1.5.1 de solo redacción (F8); AU-S3-26, F7, F19 y AU-S3-29                                                      |
 | `9f3c5ac`             | textos: F1–F6, F9–F21 y F23; AU-S3-02 a 05, 08, 09, 18 y 22                                                                                                                                             |
 | `374728d`             | AU-S3-16, 17, 20, 21, 23 (desviación 29), 24, 25 y F22                                                                                                                                                  |
-| `6a8b962`             | la medida de C5 que desbordaba 45 px a 380 px (los tres rojos de e2e sin leer)                                                                                                                          |
+| `6a8b962`             | la medida de C5 que desbordaba 45 px a 380 px (los cuatro rojos de e2e sin leer)                                                                                                                          |
+| `909227d` · `fb22a72` | la segunda vuelta de la mirada 3 (10 filas) y este summary, con las fichas que lo cuentan                                                                                                               |
+| `e02d220`             | la segunda pasada de la casilla 4: plan v1.5.2 (A1), A2, A3, M1–M3 y B1–B10                                                                                                                              |
 
-**Demos en rojo F2-D1…F2-D21** (`scripts/demo-rojo.sh`, todas restauradas y en verde). Las primeras mutaciones de F2-D8
+**Demos en rojo F2-D1…F2-D22** (`scripts/demo-rojo.sh`, todas restauradas y en verde). Las primeras mutaciones de F2-D8
 (`estado` también exigía el criterio) y de F2-D14 (la prueba solo llamaba a la función) pasaron en verde: la tercera
 pregunta de la regla 15 las cazó, y se repitieron con un fallo real.
 
 **Lo que destapó y vale contar:** unas 18 frases publicadas decían «ninguna negación sin persona» cuando 9 aprobaciones
-en parte salieron solas; el contrato de la transcripción se rompía justo en el camino que ya había ocurrido en la
+en parte salieron solas (la segunda pasada halló dos más: el nodo de la pausa en Agente y el enunciado de C1 en el
+plan); el contrato de la transcripción se rompía justo en el camino que ya había ocurrido en la
 entrevista real; `pnpm entrevistar` sobrescribía en silencio el registro del plan aprobado; el servidor de los arneses
 servía con 200 una carpeta hermana; y la lectura de C5 sobre el lote de 200 contradecía el `k_aplica_a` del plan.
 
-Segunda pasada de la casilla 4 (otro auditor): [PENDIENTE — la corre el builder].
-Veredicto tras la Fase 2: [POR COMPLETAR: «listo para cierre» o lo que quede tras la segunda pasada].
+**Segunda pasada de la casilla 4** (otro subagente independiente, en solo lectura, sobre `origin/main...fb22a72` con
+este summary dentro): barrido por promesa aplazada en ES y EN y cada frase de evidencia contra su corrida. **3 Altos ·
+3 Medios · 10 Bajos**, todos pagados (detalle en la bitácora, «Segunda pasada de la casilla 4»):
+- **A1:** el enunciado de C1 prometía de más → plan **v1.5.2** de solo redacción, con la que mide la vitrina.
+- **A2:** el nodo de la pausa decía «ninguna negación ni rechazo sin una persona».
+- **A3:** las garantías del B que B-180 desmiente → hablan del puntaje, y B-180 es un límite declarado en la ficha B y
+  el manual.
+- **M1–M3:** la marca de F22 prometía «corridas nuevas» que no existen; el cuarto rojo de e2e; el aviso que falta en
+  los rechazos del B, sin declarar en el manual.
+- **B1–B10:** cifras y citas del summary, la versión en el manual, la guía m10, el ADR-002 y dos frases latentes.
+
+Lo revisado sin hallazgo: los conteos de la guía, C5, «en construcción», los 52 hallazgos, el mapa de pagos, las
+desviaciones y las filas 1–7 y 9 de la mirada 3.
+
+**Veredicto tras la Fase 2: listo para cierre.** Todos los hallazgos de las dos pasadas están pagados y sus controles
+corrieron en verde (abajo, la DoD).
 
 ## B-180: la falla del lote de 200 del B y un riesgo nuevo propuesto para el plan B
 
@@ -199,7 +216,9 @@ Veredicto tras la Fase 2: [POR COMPLETAR: «listo para cierre» o lo que quede t
   que lee el puntaje del agente; C5 lo lista como su único caso fuera (99,5 %). Lo destapó el evaluador
   `pausas_cumplidas` contra la verdad conocida, y por eso figura como brecha no prevista.
 - **Dónde está publicada** (regla dura 9): en el informe del lote
-  (`runs/demo-b/suscripcion-planlang-b-001-200-v1.1/informe.{es,en}.md`), en el kit de prueba y aquí. La vitrina del B
+  (`runs/demo-b/suscripcion-planlang-b-001-200-v1.1/informe.{es,en}.md`), en el kit de prueba, como límite en la ficha
+  del agente B y en el manual, y aquí. Las garantías del B que publica la vitrina ya hablan del puntaje («nada que el
+  puntaje marque de riesgo alto se aprueba solo»), que es lo que el agente cumple. La vitrina del B
   sigue sobre la corrida de 20 por decisión del usuario; este lote es registro.
 - **Propuesta para la planeadora (el builder no enmienda el plan):** un riesgo nuevo para el plan B, _un error de
   extracción del modelo en un campo que alimenta el puntaje por reglas (aquí, la jurisdicción de los fondos), que la
@@ -214,10 +233,11 @@ Veredicto tras la Fase 2: [POR COMPLETAR: «listo para cierre» o lo que quede t
 - **El arreglo, por versión del plan:** desde el plan **v1.5.1** dice «Ninguna negación completa…» / «No full
   denial…». `AVISO_IA_HASTA_V15` conserva el texto que escribieron las corridas hasta el v1.5, y así las corridas
   versionadas siguen regenerándose byte a byte (F2-D19…D21).
-- **En la vitrina:** las respuestas de la corrida publicada del A con el aviso viejo (191; los documentos de las
-  negaciones con persona) llevan al lado la marca **«Aviso inexacto»**: «promete de más: con el modo Texas apagado, 9
-  aprobaciones en parte de esta corrida salieron sin una persona». Las 9 aprobaciones en parte traen su propio aviso,
-  que es exacto, y no la llevan. Es texto en un artefacto de la mirada 3 y va «no visto» a su matriz.
+- **En la vitrina:** las 191 respuestas con el aviso viejo (169 aprobaciones y 22 negaciones) y los 22 documentos de
+  esas negaciones llevan al lado la marca **«Aviso inexacto»** (46 de las 48 páginas de caso; A-006 y A-018 son
+  parciales): «promete de más: con el modo Texas apagado, 9 aprobaciones en parte de esta corrida salieron sin una
+  persona. Vale para la negación completa: desde el plan v1.5.1 el agente lo escribe así, y esta corrida es del v1.5».
+  Las 9 aprobaciones en parte traen su propio aviso, que es exacto, y no la llevan. Es texto en un artefacto de la mirada 3 y va «no visto» a su matriz.
 
 ## Gate ⭐ — diferimiento y contrapesos
 
@@ -233,19 +253,20 @@ cuáles 19 deja fuera el ⭐⭐ y por qué.
 | Contrapeso                     | Evidencia (archivo, cuenta medida, corrida)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Pasada de capturas del builder | **Mirada 2** (2026-10-04, `scripts/capturas-demo-b.mjs`): 48 capturas enteras por huella SHA-256 fuera del repo; 9 recortes y 2 miniaturas de teléfono leídos como imagen; pasada de interacción; 1,97 MB (techo 2 MB). Encontró y se arreglaron la pestaña «Fichas» cortada en la barra del B (D49), el subtipo crudo del Playground del B y «1 repeticiones». **Mirada 3** (2026-10-05): 48 capturas por huella; 9 recortes leídos como imagen; 2.042 KB. Encontró «Cerrado (Acto 1)» en el BLUEPRINT, «parada 1 del ⭐⭐» para LangSmith y «causal de ley» en una aprobación en parte. **Mirada 3, segunda vuelta** (2026-10-05, después de la Fase 2): 48 capturas por huella; los 9 recortes con imagen leídos uno por uno después de la corrida, cada uno igual a su fila; 2.039 KB (recortes a calidad 52 y miniaturas a 45 en este conjunto) |
-| e2e de `reduced-motion`        | 8 pruebas «movimiento reducido» (7 pantallas del A y la Brecha del B, `tests/e2e/demo-b.spec.ts:119`) × teléfono y escritorio = 16 ejecuciones con `reducedMotion: "reduce"`: visibilidad real de lo del experto, 0 animaciones y axe. [POR COMPLETAR: corrida en la CI del commit final]                                                                                                                                                                                                                                                                                                                                                                                           |
+| e2e de `reduced-motion`        | 8 pruebas «movimiento reducido» (7 pantallas del A y la Brecha del B, `tests/e2e/demo-b.spec.ts:119`) × teléfono y escritorio = 16 ejecuciones con `reducedMotion: "reduce"`: visibilidad real de lo del experto, 0 animaciones y axe. En la CI de `fb22a72`: las 16 en verde, sin reintentos                                                                                                                                                                                                                                                                                                                                                                                           |
 
 ## Decisiones no anticipadas
 
 - **ADR:** **012** y **013** (código primero del entrevistador y del demo B); **014** (rutas por demo, con adenda por
   AU-S3-12); **015** (`braces` ignorado por id); **016** (aprobación en parte y modo Texas); adendas al **001** (M-17
-  medido) y al **011** (LCP); **002**, sección «Protecciones del sistema» con el Llavero.
+  medido), al **010** (contrato 0.5.0) y al **011** (LCP); **002**, sección «Protecciones del sistema» con el Llavero.
 - **Del usuario durante el sprint** (AskUserQuestion, textuales): «Tope por servicio» (la aprobación en parte nace de
   un tope de cobertura); «v1.1 con los tres» (plan B v1.1); «Correrla» (la línea base del B corregida); «Sí, correr la
   base» (línea base de 200 del A); «Arreglar y correr» (lote de 200 del B); «Sigue en la de 20» (vitrina del B); «Solo
   los que se nombran» (páginas de caso del A); «Sumarlos a la mirada 3»; «Mantener 2,8 s y deuda». Todas llevaban
   «(Recomendado)», salvo «Tope por servicio».
-- **Verificador 1.3.0 y plan v1.5.1 del A**, por las decisiones de la auditoría, con la misma verdad (ADR-005). En F22,
+- **Verificador 1.3.0 y planes v1.5.1 y v1.5.2 del A**, por las decisiones de la auditoría, con la misma verdad
+  (ADR-005). En F22,
   el aviso se elige por la versión del plan y la vitrina marca el inexacto, en lugar de declararlo deuda.
 
 ## Desviaciones del plan
@@ -299,8 +320,8 @@ Detalle en la tabla «Bugs y fricciones» y en D57–D74 de la bitácora. Los de
   completas (E-11); la línea base del B extrajo 1 de 20 por un prompt del builder (D33, vuelta a correr: 20/20); M1
   aceptaba texto con la marca de pendiente (D13); `pnpm entrevistar` salía con 1 sin decir nada; `KeyError: anyOf`.
 - **CI:** Lighthouse rojo en `/es/agente` por la importación estática de Sentry (`9c1c5a6`); `python` rojo en `d44a2ad`
-  (ruff con `-q` se tragó la salida); `quality` rojo por dos pruebas que rompió el builder; **tres rojos de e2e sin
-  leer** (`785bd0c`, `5ffb8e4`, `9f3c5ac`) por los 45 px de la medida de C5.
+  (ruff con `-q` se tragó la salida); `quality` rojo por dos pruebas que rompió el builder; **cuatro rojos de e2e
+  sin leer** (`785bd0c`, `5ffb8e4`, `9f3c5ac` y `374728d`) por los 45 px de la medida de C5.
 - **Gates que no podían fallar, vistos al exigirles el rojo:** las enmiendas de planes comparaban huellas y no
   contenido (`huellas-de-planes.test.ts`); D6, D12 y D19; el «aviso sin ADR» de la fase 0; F2-D8 y F2-D14. Y el commit
   `03788b9` se hizo con `--no-verify`: gitleaks a mano dio «no leaks found» y no hubo otro.
@@ -311,7 +332,7 @@ Detalle en la tabla «Bugs y fricciones» y en D57–D74 de la bitácora. Los de
   `pausas_cumplidas` lo nombró); la generalización a dos demos no movió el A (entre 51 y 53 de 57 páginas idénticas al
   build anterior; el resto, por razones declaradas); los rechazos de M1 en la entrevista real destaparon huecos que el
   humo no tocaba; los lotes corrieron sin errores ni límites de uso; `demo-rojo.sh` atrapó demos que no podían fallar.
-- **Fricción:** tres e2e en rojo sin leer porque «pending» se leyó como verde, y pushes tras suites sueltas en lugar de
+- **Fricción:** cuatro e2e en rojo sin leer porque «pending» se leyó como verde, y pushes tras suites sueltas en lugar de
   `pnpm test`; el LCP sigue bimodal, también en `/*/brecha`; la base de 200 del A murió con la sesión y se retomó; la
   corrida de 20 que publica la vitrina del B es anterior a los arreglos de su agente.
 
@@ -320,7 +341,7 @@ Detalle en la tabla «Bugs y fricciones» y en D57–D74 de la bitácora. Los de
 1. **Antes de cada push, el comando del CI entero** (`pnpm test`, no suites sueltas) y ruff sin `-q`: la salida es el
    gate (`d44a2ad`, `d30e5b0`).
 2. **«Un pendiente no es verde»:** antes de empujar se lee la conclusión de la corrida anterior, y si se tocó la
-   vitrina, el e2e completo corre en local. Tres rojos de e2e (`785bd0c`, `5ffb8e4`, `9f3c5ac`) pasaron sin mirar porque
+   vitrina, el e2e completo corre en local. Cuatro rojos de e2e (`785bd0c`, `5ffb8e4`, `9f3c5ac`, `374728d`) pasaron sin mirar porque
    `gh pr checks` decía «pending».
 3. **Kit, regresiones y enmiendas:** restaurar en `plan-sprint.md` el paso 10, «`gh pr checks` tras CADA push» y la
    matriz de una fila (desv. 2); `lighthouse-margen.mjs` con la semántica de LHCI, todas las entradas que casan y LCP
@@ -340,7 +361,8 @@ Detalle en la tabla «Bugs y fricciones» y en D57–D74 de la bitácora. Los de
    (M-17: 152/153 frente a 150/153) porque las notas salen de plantillas. El modelo se sostiene por la confianza
    calibrada y la resistencia a la inyección, no por una exactitud mayor medida.
 8. **Design system 1.1** (mirada de FORMA del usuario, desv. 27): el conmutador de demo, el caso sin página con borde
-   punteado y el expediente; siguen pendientes los tamaños 14 · 22 · 11 px y la interlínea 1,6 del S2.
+   punteado y el expediente; siguen pendientes los tamaños 14 · 22 · 11 px y la interlínea 1,6 del S2. Y el ejemplo
+   de `design-system.md:263`, que todavía pone al demo B «en construcción».
 
 ## Correcciones propuestas al `CLAUDE.md`
 
@@ -363,6 +385,8 @@ La constitución la regenera la planeadora; el builder solo propone. Auditoría 
   `visor/` · I8 las pantallas de `src/app` · I9 `data/`, `plans/demo-b` y `tests/` · I10 `scripts/`, `content/agentes`,
   `githooks` y `docs/*` · I11 ADR 001…016 · I12 pines de `pydantic` y `rfc8785`, y `constraints.txt` · I13 Sentry
   dinámico y `reportError` sin llamadores · I14 Pydantic al emitir y Zod al leer.
+- **Regla dura 4:** «NINGUNA NEGACIÓN NI RECHAZO SIN PAUSA HUMANA» → «ninguna negación **completa** ni rechazo»: la
+  misma regla ya dice que el modo Texas (la parcial a una persona) es un umbral jugable del plan.
 - **De la sincronización (desv. 5):** numerar la regla 26 (worktrees) y llevar `lighthouse-margen`, el hook que falla
   cerrado y las degradaciones declaradas al cuerpo, no solo a la cabecera.
 - **Fuera del `CLAUDE.md`, ya corregidos en este PR** (AU-S3-17): `core/brecha/lector.ts` («IndexedDB») y
@@ -374,8 +398,8 @@ La constitución la regenera la planeadora; el builder solo propone. Auditoría 
 | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
 | ⭐⭐ de 4 paradas y ⭐ acumulado de 23 (S1: 5 · S2: 10 · S3: 8)                                                                                                                                                  | cierre en dos actos; lo corre el usuario                                                                                                                                                                                  | Acto 2 del cierre del ciclo                                                              |
 | LCP del playground en 2,8 s (ADR-011 y su adenda)                                                                                                                                                                | la simulación de Lighthouse es bimodal en localhost; diferir el chunk de la isla no movió el LCP (1.960 · 2.610 · 2.621 ms) y el playground del B, más liviano, da lo mismo (2.609 · 2.610 · 2.649); decisión del usuario | próximo ciclo, frente de performance (menos JavaScript compartido o hidratación parcial) |
-| `/*/brecha` bimodal, a menos del 2 % de su presupuesto                                                                                                                                                           | la misma carrera de React; un rojo ahí no sería una regresión                                                                                                                                                             | con el LCP                                                                               |
-| La corrida de 20 del B que publica la vitrina es anterior a los arreglos de su agente: B-005, B-006 y B-014 sin aviso de IA (con el chip «Sin aviso de IA»), K2 con «0.814» y la numeración que salta de K5 a K7 | `runs/` es solo de agregar y la vitrina del B se queda en la de 20 (decisión del usuario); la guía y la mirada 3 lo declaran                                                                                              | cuando la vitrina del B publique una corrida posterior (la de 200 ya trae los arreglos)  |
+| `/*/brecha` bimodal, y siete rutas con menos del 10 % de margen de LCP (`/es/demo-b/agente` con 0,3 %, CI de `6a8b962`)                                                                                         | la misma carrera de React; un rojo ahí no sería una regresión, y `lighthouse-margen` lo avisa en cada corrida                                                                                                            | con el LCP                                                                               |
+| La corrida de 20 del B que publica la vitrina es anterior a los arreglos de su agente: B-005, B-006 y B-014 sin aviso de IA (con el chip «Sin aviso de IA»), K2 con «0.814» y la numeración que salta de K5 a K7 | `runs/` es solo de agregar y la vitrina del B se queda en la de 20 (decisión del usuario); la guía (parada 4) y la mirada 3 (fila 2) declaran el «0.814» y el salto de K5 a K7; el aviso que falta lo declaran la vitrina y el manual                                                                                              | cuando la vitrina del B publique una corrida posterior (la de 200 ya trae los arreglos)  |
 | El `_motivo` de Python del A escribe «(True)»                                                                                                                                                                    | la base de 200 corrió con ese código; la vitrina arma el motivo desde la arista registrada (AU-S3-06)                                                                                                                     | con el próximo lote del A                                                                |
 | Las corridas del A hasta el v1.5 llevan el aviso de IA viejo (F22), marcado «Aviso inexacto»                                                                                                                     | `runs/` es solo de agregar                                                                                                                                                                                                | con la próxima corrida del A bajo el v1.5.1                                              |
 | LangSmith sin aprovisionar                                                                                                                                                                                       | la clave no está en el entorno; el espejo queda declarado fuera de la parada 1                                                                                                                                            | cuando el usuario lo configure                                                           |
