@@ -62,11 +62,12 @@ const destino = resolve(
 );
 const BLUEPRINT = join(raiz, "docs", "BLUEPRINT.html");
 const TECHO = Number(arg("techo", String(2 * 1024 * 1024)));
-// La calidad JPEG de los recortes: la mirada 3 trae recortes más altos (el BLUEPRINT, el expediente) y baja a 58 para
-// caber en el techo; la de la mirada 2 queda en 70, como se registró.
+// La calidad JPEG de los recortes: la mirada 3 trae recortes más altos (el BLUEPRINT, el expediente) y diez decisiones
+// (la del aviso inexacto, F22, es la décima): baja a 52 y sus miniaturas a 45 para caber en el techo; la mirada 2 queda
+// en 70 y 55, como se registró.
 const CALIDAD = Number(arg("calidad", CONJUNTO_CALIDAD()));
 function CONJUNTO_CALIDAD() {
-  return arg("conjunto", "forma-b") === "forma-b" ? "70" : "58";
+  return arg("conjunto", "forma-b") === "forma-b" ? "70" : "52";
 }
 if (!pasada) {
   console.error(
@@ -367,7 +368,7 @@ const DECISIONES_MIRADA_3 = [
     mirar:
       "Las conclusiones numeradas, la del investigador y la cita bajo cada una.",
     esperada:
-      "K1 la identidad declarada, K2 la mayor similitud con su entrada de lista (versión y fecha), K3 el investigador («homónimo») y la decisión; cada una con su cita en mono. K2 escribe «0.814» con punto y la numeración salta de K5 a K7: esta corrida es anterior a los arreglos D51 y D55 (deuda declarada).",
+      "Cada conclusión con su tema: K1 la identidad declarada, K2 la mayor similitud con su entrada de lista (versión, fecha y la regla RL-02), K3 el investigador («homónimo») y la decisión; cada una con su cita en mono, y al pie las listas consultadas, quién decidió, los datos usados y el plan. K2 escribe «0.814» con punto y la numeración salta de K5 a K7: esta corrida es anterior a los arreglos D51 y D55 (deuda declarada).",
   },
   {
     clave: "b-informe",
@@ -387,7 +388,7 @@ const DECISIONES_MIRADA_3 = [
       "El veredicto del B con sus dos lecturas y el balance de criterios, riesgos y supuestos, con lo que falló al frente.",
   },
   {
-    clave: "a-entrada-incompleto",
+    clave: "a-entrada-balance",
     archivo: "Entrada (/es), «Medí la brecha» del demo A",
     estado: "tal como abre",
     ruta: "/es",
@@ -396,14 +397,14 @@ const DECISIONES_MIRADA_3 = [
     recorte: (page) =>
       marco(
         page
-          .getByRole("img", { name: /criterios: .*incompleto/ })
+          .getByRole("img", { name: /^\d+ criterios: / })
           .locator(
             "xpath=ancestor::*[self::section or self::article or self::li][1]",
           ),
       ),
     mirar: "Los cuadros de los criterios y la lista de lo que falló.",
     esperada:
-      "Diez cuadros, el de C5 discontinuo; «10 criterios: 9 cumplen, 1 incompleto (C5)»; fallaron S2, S3 y lo no previsto, e «Incompleto C5» al final, sin callarlo.",
+      "Diez cuadros llenos y «10 de 10 criterios cumplen · 0 de 10 riesgos ocurrieron» (C5 se mide en una corrida: el plan pide tres solo en lotes de 20); fallaron S2, S3 y lo no previsto, sin callarlo.",
   },
   {
     clave: "a-texas",
@@ -456,6 +457,19 @@ const DECISIONES_MIRADA_3 = [
     mirar: "El documento de una aprobación en parte.",
     esperada:
       "«Aprobada en parte: se niega lo que supera el tope», el monto solicitado, aprobado y negado, la regla RB-08 y la vía para contradecirla.",
+  },
+  {
+    clave: "a-aviso-inexacto",
+    archivo: "Caso A-017 (/es/caso/A-017), la respuesta",
+    estado: "tal como abre",
+    ruta: "/es/caso/A-017",
+    ancho: 1280,
+    tema: "oscuro",
+    recorte: (page) =>
+      marco(page.locator('section[aria-labelledby="c-salida"]')),
+    mirar: "La marca al lado del aviso de IA (también va en el documento).",
+    esperada:
+      "Bajo el aviso que escribió el agente, «Aviso inexacto» (alerta) y la frase: promete de más, porque con el modo Texas apagado 9 aprobaciones en parte de esta corrida salieron sin una persona; vale para la negación completa, y así lo dicen las corridas nuevas.",
   },
   {
     clave: "a-agente-decision",
@@ -550,7 +564,7 @@ for (const c of capturas) {
     path: join(destino, c.miniatura),
     clip: { x: 0, y: 0, width: 240, height: 400 },
     type: "jpeg",
-    quality: 55,
+    quality: CONJUNTO === "forma-b" ? 55 : 45,
   });
 }
 await mini.close();
