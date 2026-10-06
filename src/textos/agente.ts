@@ -53,8 +53,8 @@ export const FICHA = {
   objetivo: {
     rotulo: tb("Objetivo", "Goal"),
     texto: tb(
-      "Resolver solicitudes de autorización de procedimientos médicos: aprobar en segundos las que son claras y llevar a un auditor humano toda negación y todo caso dudoso. Nunca niega por su cuenta, nunca revela datos del afiliado y nunca obedece instrucciones escondidas en la solicitud.",
-      "Resolve prior-authorization requests for medical procedures: approve the clear ones in seconds and bring every denial and every doubtful case to a human auditor. It never denies on its own, never reveals member data and never obeys instructions hidden in the request.",
+      "Resolver solicitudes de autorización de procedimientos médicos: aprobar en segundos las que son claras, del todo o hasta el tope del servicio, y llevar a un auditor humano toda negación completa y todo caso dudoso. Nunca niega del todo por su cuenta, nunca revela datos del afiliado y nunca obedece instrucciones escondidas en la solicitud.",
+      "Resolve prior-authorization requests for medical procedures: approve the clear ones in seconds, in full or up to the service's cap, and bring every full denial and every doubtful case to a human auditor. It never fully denies on its own, never reveals member data and never obeys instructions hidden in the request.",
     ),
   },
   recibe: {
@@ -106,7 +106,7 @@ export const FICHA = {
   },
   entrega: {
     rotulo: tb("Entrega", "Delivers"),
-    sub: tb("tres respuestas y la traza", "three answers and the trace"),
+    sub: tb("cuatro respuestas y la traza", "four answers and the trace"),
     aprobacion: {
       titulo: tb("Aprobación", "Approval"),
       detalle: ((p: { n: number; de: number }) =>
@@ -138,6 +138,14 @@ export const FICHA = {
         aprobo: number;
         nego: number;
       }>,
+    },
+    aprobacionParcial: {
+      titulo: tb("Aprobación en parte", "Partial approval"),
+      detalle: ((p: { n: number; de: number }) =>
+        tb(
+          `Hasta el tope del servicio; el excedente lo niega una regla (RB-08), con su documento en ES y EN: ${p.n} de ${p.de}. Con el modo Texas, la decide una persona.`,
+          `Up to the service's cap; a rule (RB-08) denies the excess, with its document in ES and EN: ${p.n} of ${p.de}. With Texas mode on, a person decides it.`,
+        )) as Plantilla<{ n: number; de: number }>,
     },
     negacion: {
       titulo: tb(
@@ -174,8 +182,8 @@ export const FICHA = {
     items: [
       {
         titulo: tb(
-          "Negar sin que lo revise una persona",
-          "Deny without a person reviewing it",
+          "Negar del todo sin que lo revise una persona",
+          "Fully deny without a person reviewing it",
         ),
         refs: tb(
           "D2 · C1 · CA SB 1120 · TX SB 815 · AI Act art. 14",
@@ -310,6 +318,12 @@ export const FICHA = {
         `en serie, con el promedio de esta corrida (${p.promedio} s por caso); ≈ ${p.usd} USD nominales`,
         `in series, at this run's average (${p.promedio} s per case); ≈ ${p.usd} USD nominal`,
       )) as Plantilla<{ promedio: string; usd: string }>,
+    /** Cuando la corrida ya es el lote completo: la cifra se mide, no se estima (F21). */
+    loteMedido: ((p: { n: number; promedio: string; usd: string }) =>
+      tb(
+        `en serie, sumando los ${p.n} casos de esta corrida (${p.promedio} s por caso); ${p.usd} USD nominales`,
+        `in series, adding up this run's ${p.n} cases (${p.promedio} s per case); ${p.usd} USD nominal`,
+      )) as Plantilla<{ n: number; promedio: string; usd: string }>,
     estimacion: tb("estimación", "estimate"),
   },
   fuente: ((p: {
@@ -1168,6 +1182,8 @@ export interface CifrasDeNodo {
   topeAclaraciones: number;
   excluidos: number;
   altoCosto: number;
+  /** Casos cuyo costo supera el tope de cobertura del servicio (RB-08): salen como aprobación en parte. */
+  sobreTope: number;
   contradicciones: number;
   solos: number;
   aPersona: number;
@@ -1455,8 +1471,8 @@ export const NODOS: Record<
     ),
     enLaCorrida: (c) =>
       tb(
-        `Revisó ${c.casos} casos: ${c.excluidos} excluidos con causal, ${c.altoCosto} de alto costo y ${c.contradicciones} ${c.contradicciones === 1 ? "contradicción" : "contradicciones"} entre el texto y la orden; los demás, cubiertos. Sin modelo: 0 tokens.`,
-        `It checked ${c.casos} cases: ${c.excluidos} excluded with a cause, ${c.altoCosto} high-cost and ${c.contradicciones} ${c.contradicciones === 1 ? "contradiction" : "contradictions"} between text and order; the rest, covered. No model: 0 tokens.`,
+        `Revisó ${c.casos} casos: ${c.excluidos} excluidos con causal, ${c.altoCosto} de alto costo, ${c.sobreTope} sobre el tope del servicio y ${c.contradicciones} ${c.contradicciones === 1 ? "contradicción" : "contradicciones"} entre el texto y la orden; los demás, cubiertos. Sin modelo: 0 tokens.`,
+        `It checked ${c.casos} cases: ${c.excluidos} excluded with a cause, ${c.altoCosto} high-cost, ${c.sobreTope} above the service's cap and ${c.contradicciones} ${c.contradicciones === 1 ? "contradiction" : "contradictions"} between text and order; the rest, covered. No model: 0 tokens.`,
       ),
     lee: tb(
       "la extracción, la orden adjunta y el plan de beneficios",
@@ -1513,8 +1529,8 @@ export const NODOS: Record<
         "The path: to the writer, or to the human pause",
       ),
       sub: tb(
-        "ninguna negación sale sin una persona",
-        "no denial goes out without a person",
+        "ninguna negación completa sale sin una persona",
+        "no full denial goes out without a person",
       ),
     },
     paraQue: tb(
@@ -1530,8 +1546,8 @@ export const NODOS: Record<
       "It would issue a denial with no human (risk R1) or let a doubtful case through alone (R5).",
     ),
     seMide: tb(
-      "Ninguna negación sin revisión humana (C1) y todo caso de alto costo pasa por una persona (C3).",
-      "No denial without human review (C1) and every high-cost case goes through a person (C3).",
+      "Ninguna negación completa sin revisión humana (C1) y todo caso de alto costo pasa por una persona (C3).",
+      "No full denial without human review (C1) and every high-cost case goes through a person (C3).",
     ),
     enLaCorrida: (c) => {
       const r = c.porRegla;
@@ -1650,8 +1666,8 @@ export const NODOS: Record<
       "A denial would go out unreviewed (risk R1), or the auditor would decide without the full evidence.",
     ),
     seMide: tb(
-      "Toda negación pasa por aquí (C1) y el auditor ve el caso completo, con evidencia y contraevidencia (C9).",
-      "Every denial goes through here (C1) and the auditor sees the full case, with evidence and counter-evidence (C9).",
+      "Toda negación completa pasa por aquí (C1), también la parcial con el modo Texas (C10), y el auditor ve el caso completo, con evidencia y contraevidencia (C9).",
+      "Every full denial goes through here (C1), partial ones too with Texas mode on (C10), and the auditor sees the full case, with evidence and counter-evidence (C9).",
     ),
     extra: {
       falta: true,
@@ -1893,7 +1909,7 @@ export const CRITERIOS_NUNCA = ["C1", "C2", "C4", "C6"] as const;
 /**
  * La lectura del plan por nodo (matriz «Qué del plan toca a cada nodo» y «Lo que el plan le exige»). La hace el
  * autor; `textos.test.ts` la comprueba contra el plan: cada id existe y todo elemento del plan cae en algún
- * nodo. Calcularla desde el plan exige que el plan declare la relación (propuesta para el S3).
+ * nodo. Calcularla desde el plan exige que el plan declare la relación (el plan v1.5 no declara esa relación: la lectura es del autor).
  */
 export const PLAN_POR_NODO: Record<
   string,
@@ -2047,18 +2063,16 @@ export const SPIKE = {
     total: number;
     ausentes: number;
     fuera: number;
-    sprint: number;
   }) =>
     tb(
-      `Así se ve lo que el plan exige y el grafo todavía no tiene. El spike del ${p.fecha} corrió con ${p.presentes} de las ${p.total} piezas y ${p.fuera === 1 ? "un nodo" : `${p.fuera} nodos`} fuera del contrato; las otras ${p.ausentes} aparecen con borde discontinuo y la marca «exigido». El sprint ${p.sprint} las construyó todas: es el grafo de arriba.`,
-      `This is how what the plan requires and the graph does not have yet looks. The ${p.fecha} spike ran with ${p.presentes} of the ${p.total} pieces and ${p.fuera === 1 ? "one node" : `${p.fuera} nodes`} outside the contract; the other ${p.ausentes} appear with a dashed border and the “required” mark. Sprint ${p.sprint} built them all: it is the graph above.`,
+      `Así se ve lo que el plan exige y el grafo del spike no tenía. El spike del ${p.fecha} corrió con ${p.presentes} de las ${p.total} piezas y ${p.fuera === 1 ? "un nodo" : `${p.fuera} nodos`} fuera del contrato; las otras ${p.ausentes} aparecen con borde discontinuo y la marca «exigido». El grafo de arriba, el de la corrida publicada, las tiene todas.`,
+      `This is what the plan requires and the spike's graph did not have. The ${p.fecha} spike ran with ${p.presentes} of the ${p.total} pieces and ${p.fuera === 1 ? "one node" : `${p.fuera} nodes`} outside the contract; the other ${p.ausentes} appear with a dashed border and the “required” mark. The graph above, the published run's, has them all.`,
     )) as Plantilla<{
     fecha: string;
     presentes: number;
     total: number;
     ausentes: number;
     fuera: number;
-    sprint: number;
   }>,
   nodos: tb("nodos del contrato", "contract nodes"),
   faltaban: ((ids: string) =>

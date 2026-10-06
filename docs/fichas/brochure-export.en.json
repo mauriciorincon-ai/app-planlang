@@ -80,13 +80,13 @@
           {
             "id": "demo-a",
             "nombre": "Demo A: medical prior authorizations",
-            "que_hace": "A router, an extractor, a rule-based coverage checker and a drafter approve, deny with a stated cause or escalate to an auditor; no denial goes out without a person.",
+            "que_hace": "A router, an extractor, a rule-based coverage checker and a drafter approve, approve in part, deny with a stated cause or escalate to an auditor; no full denial goes out without a person.",
             "seccion_manual": "Run a batch"
           },
           {
             "id": "demo-b",
             "nombre": "Demo B: onboarding with due diligence",
-            "que_hace": "An extractor, a list checker, an investigator that acts only in the gray zone and a rule-based risk score approve, review or reject; no rejection goes out without the compliance officer.",
+            "que_hace": "An extractor, a list checker, an investigator that acts from the start of the gray zone and a rule-based risk score approve, review or reject; no rejection goes out without the compliance officer.",
             "seccion_manual": "Run demo B"
           },
           {
@@ -244,7 +244,7 @@
       "valor": 19,
       "unidad": "features",
       "fuente": "medido",
-      "detalle": "Those of the product vision marked for the two-week cut, counted against docs/MANUAL-DE-USO.md; roadmap ones do not count."
+      "detalle": "The product vision's features that work today: the two-week cut's and the roadmap ones built in S3 (the interviewer, demo B and its case file), counted against docs/MANUAL-DE-USO.md; what remains on the roadmap does not count."
     },
     {
       "clave": "decisiones_registradas",

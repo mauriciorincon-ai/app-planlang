@@ -228,12 +228,12 @@ export const LIDER = {
     "The plan says what should happen; the traces, what did. A verifier that uses no AI lists, criterion by criterion, what was met and what was not. Nothing is hidden.",
   ),
   umbral: tb(
-    "Sube la confianza mínima o enciende el modo Texas y mira, sobre las corridas reales, cuántos casos cambian de camino y cuántos minutos de revisión humana cuesta.",
-    "Raise the minimum confidence or switch on Texas mode and see, on the real runs, how many cases change path and how many minutes of human review it costs.",
+    "Mueve un umbral del plan —en el demo A, también el modo Texas— y mira, sobre las corridas reales, cuántos casos cambian de camino y cuántos pasan a una persona; en el A, también los minutos de revisión que cuesta.",
+    "Move one of the plan’s thresholds —in demo A, Texas mode too— and see, on the real runs, how many cases change path and how many go to a person; in demo A, also the minutes of review it costs.",
   ),
   demoA: tb(
-    "Un enrutador, un extractor, un verificador de cobertura por reglas y un redactor deciden aprobar, negar con causal o escalar a un auditor humano. Ninguna negación sale sin una persona.",
-    "A router, an extractor, a rule-based coverage checker and a writer decide to approve, deny with a stated ground, or escalate to a human auditor. No denial goes out without a person.",
+    "Un enrutador, un extractor, un verificador de cobertura por reglas y un redactor deciden aprobar, aprobar en parte, negar con causal o escalar a un auditor humano. Ninguna negación completa sale sin una persona.",
+    "A router, an extractor, a rule-based coverage checker and a writer decide to approve, approve in part, deny with a stated ground, or escalate to a human auditor. No full denial goes out without a person.",
   ),
   demoB: tb(
     "Un enrutador, un extractor, un verificador de listas por reglas, un investigador de contexto para homónimos y un puntaje de riesgo deciden aprobar, rechazar o escalar al oficial de cumplimiento. Ningún rechazo sale sin una persona.",
@@ -314,8 +314,8 @@ export const SOSTIENE = {
   humanas: {
     dt: tb("Decisiones humanas", "Human decisions"),
     dd: tb(
-      "simuladas en lote: el auditor sigue la verdad conocida de cada caso (DA-04), y la vitrina lo dice en cada pantalla",
-      "simulated in batch: the auditor follows each case’s known truth (DA-04), and the showcase says so on every screen",
+      "simuladas en lote: quien revisa —el auditor en el A, el oficial en el B— sigue la verdad conocida de cada caso (DA-04), y la vitrina lo dice en cada pantalla",
+      "simulated in batch: the reviewer —the auditor in A, the officer in B— follows each case’s known truth (DA-04), and the showcase says so on every screen",
     ),
   },
   pila: {

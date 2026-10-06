@@ -1582,6 +1582,7 @@ casilla 4 por otro auditor.
 | F19 | «no corrió (opcional; el plan no lo exige)» en el informe (verificador 1.3.0) | este |
 | F7 | la entradilla de Criterios dice el estado del más exigente: incompleto con sus corridas, o, como ahora, «pide 3 corridas seguidas solo en los lotes de 20 casos: en este se midió en una corrida» | este |
 | F8 (decisión «Corregir los dos») | **plan v1.5.1** de solo redacción (`enmendarAV151`, aprobado por la respuesta del usuario del 2026-10-05): S1 y S3 dicen «el lote medido» y el problema «sin negar jamás del todo por su cuenta». Misma verdad que el v1.5 (ADR-005, prueba `enmienda-v1-5-1.test.ts`); la vitrina lo publica y mide con él la corrida de la v1.5, y la ficha de reproducibilidad suma la fila «Plan con que corrió: 1.5.0». La página del Plan muestra además `k_aplica_a` en la regla técnica de C5 | este |
+| Textos (lote 1) | F1 (spike: «el grafo de arriba, el de la corrida publicada, las tiene todas»), F2 (sin «16 señales»), F3 a–r («negación completa» y la aprobación en parte nombrada en Entrada, fichas, Agente, Plan, Caso y manual), F4 (la Entrega del A con cuatro respuestas y «9 sobre el tope del servicio»), F5 (la tarjeta «Mover un umbral» por demo), F6 (rótulo «de los demos» y «quien revisa —el auditor en el A, el oficial en el B—»), F9 («construcción cerrada»), F10 y AU-S3-09 (lo que cuenta el export), F11 y AU-S3-02 (bloque B de la guía sobre el informe que publica la vitrina), F12 y AU-S3-03 (bloque D: PR #14, cifras y «Ver N más»), F13 y AU-S3-22 (manual: la Entrada y lo que publica el design system), F14 (README), F15 y AU-S3-18 (BLUEPRINT), F16 (ADR-011), F17 (ADR-001), F18, F19 en la vitrina, F20 (concordancia con k = 1), F21 (la capacidad del lote completo se mide, no se estima), F23 (g2), AU-S3-04 (por qué A, B y C quedan fuera del ⭐⭐), AU-S3-05 (el conmutador «A · B» vive en las pantallas del B), AU-S3-08 (el investigador entra desde el inicio de la zona gris). La guía: 20 mejoradas, 13 nuevas, 26 heredadas (59) | este |
 
 **Demos en rojo de la Fase 2** (`scripts/demo-rojo.sh`):
 
@@ -1621,6 +1622,32 @@ fallaba: con `v1.json` del B en el repo, la guarda nueva se adelanta a lo que es
    otro auditor.
 5. Integrar el lote de 200 del B (corre en fondo; comando de retomar más arriba) y seguir los pasos 4–6 del punto de
    control anterior.
+
+### Punto de control de la Fase 2 (2026-10-05, pedido del usuario: compactar)
+
+**F22 queda pendiente, con una decisión de por medio.** Cambiar el `AVISO_IA` de `documento_adverso.py` («Ninguna
+negación completa se emite…») rompe tres pruebas de pytest, porque las corridas simuladas versionadas
+(`runs/demo-a/simulado-*`, append-only) ya no se regeneran byte a byte. Se revirtió.
+
+Dos caminos:
+- una constante nueva que solo usan las corridas nuevas, con versión del documento adverso;
+- o declararlo deuda hasta el próximo lote.
+
+**Sigue, en orden:**
+1. **Textos que faltan:**
+   - AU-S3-16: `TITULO_CODIGO` de `src/lib/vista/visor.ts:117` a `src/textos/agente.ts`;
+   - AU-S3-17: el README de `packages/diagramador` y `core/brecha/lector.ts:6`;
+   - AU-S3-20: la guía h2 cita `tests/unit/core/playground/interprete.test.ts` y `agents/tests/test_reglas_arista.py`;
+   - AU-S3-21: guía j1;
+   - AU-S3-23: desviación 29;
+   - AU-S3-24: literales del B en el núcleo y los scripts;
+   - AU-S3-25: código muerto de `lotes.py`;
+   - F22.
+2. **Riesgo nuevo del plan B (B-180):** se propone en el summary; no se enmienda.
+3. **Cierre:**
+   - `pnpm build`, las capturas de la mirada 3 otra vez y los controles sobre el árbol entero;
+   - segunda pasada de la casilla 4 por otro auditor;
+   - `/deploy-check --python` y el summary.
 
 ### Lote de 200 del B: integrado (2026-10-05, 21:28)
 

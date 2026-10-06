@@ -457,8 +457,8 @@ export const EXPERTO_B = {
     "input guard + extractor and context investigator (models) + list checker, scoring and writer (rules)",
   ),
   decision: tb(
-    "D2, de dos vías: el investigador solo entra en la zona gris y se puede retirar",
-    "D2, two-way: the investigator only steps in within the gray zone and can be removed",
+    "D2, de dos vías: el investigador entra desde el inicio de la zona gris y se puede retirar",
+    "D2, two-way: the investigator steps in from the start of the gray zone and can be removed",
   ),
   lineaBaseTexto: ((refutado: boolean) =>
     refutado

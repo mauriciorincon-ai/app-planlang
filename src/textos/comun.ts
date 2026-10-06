@@ -11,8 +11,8 @@ export const MARCA = "planlang";
 export const ROTULO = {
   simulacion: tb("Simulación · no operativo", "Simulation · not operational"),
   divulgacion: tb(
-    "Datos 100 % sintéticos · las decisiones humanas de este demo se simularon en lote",
-    "100% synthetic data · this demo’s human decisions were simulated in batch",
+    "Datos 100 % sintéticos · las decisiones humanas de los demos se simularon en lote",
+    "100% synthetic data · the demos’ human decisions were simulated in batch",
   ),
   /** El nombre de su región: el rótulo vive dentro de un landmark (AU-S2-B24). */
   region: tb("Aviso de simulación", "Simulation notice"),

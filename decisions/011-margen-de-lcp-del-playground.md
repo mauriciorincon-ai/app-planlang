@@ -1,11 +1,11 @@
-# ADR-011 — Margen de LCP para el playground: 2,8 s por ruta, con pago en el S3
+# ADR-011 — Margen de LCP para el playground: 2,8 s por ruta; el pago no se alcanzó en el S3 (adenda)
 
 **Summary (EN):** Lighthouse's simulated LCP for the playground (`/*/playground`) is bimodal on the CI's localhost
 server: about 1.96 s when React boots after the first paint and about 2.65 s when it boots before it, with the same
 bytes. The rest of the code cannot decide that race, and the cuts within reach save at most ~0.13 s. The playground
 alone gets a 2.8 s LCP budget; every other route keeps 2.5 s, and every other metric keeps its budget on every
 route. A test checks that each measured URL falls under exactly one LCP budget and that no route exceeds 2.5 s
-without being listed here. Paid back in S3.
+without being listed here. Not paid back in S3: the user kept the margin and left it as declared debt (S3 addendum).
 
 **Estado:** aceptado · **Fecha:** 2026-10-04 · **Sprint:** S2 «La vitrina» (cierre)
 **Cítese por tema:** «ADR del margen de LCP del playground».
@@ -62,7 +62,7 @@ que ya había aceptado para este borde.
 
 - El playground puede publicarse con un LCP simulado de hasta 2,8 s en localhost. El LCP real no cambia: la
   entradilla se pinta cuando llegan el HTML y el CSS, y los scripts son `async`.
-- Es deuda declarada (`sprints/SPRINT_002-summary.md`), con pago en el S3: que el modo alto del playground baje
+- Es deuda declarada (`sprints/SPRINT_002-summary.md`), con pago previsto para el S3, que no se alcanzó (ver la adenda): que el modo alto del playground baje
   de 2,5 s, partiendo los textos de la isla por idioma, aligerando su DOM o difiriendo su chunk hasta después de la
   primera pintura, y volver la entrada a 2.500. Si el S3 mide el playground con el demo B, la entrada se revisa con
   él.

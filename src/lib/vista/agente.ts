@@ -1083,7 +1083,6 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
           total: cs.nodos.contrato,
           ausentes: cs.nodos.exigidosAusentes.length,
           fuera: cs.nodos.fueraDelContrato.length,
-          sprint,
         }),
       ),
       cifras: [

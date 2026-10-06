@@ -326,7 +326,7 @@ export const CV = {
     ciclo: tb("ciclo", "cycle"),
     sprints: tb("sprints cerrados", "closed sprints"),
     sellada: tb("sellada (gate de pruebas)", "sealed (testing gate)"),
-    construccion: tb("en construcción", "in construction"),
+    construccion: tb("construcción cerrada", "build closed"),
     version: tb("versión del repo", "repo version"),
     decisiones: tb("decisiones registradas", "recorded decisions"),
   } as Record<string, TextoBilingue>,
@@ -374,20 +374,20 @@ export const AGENTE = {
     "Agent A · medical prior authorizations",
   ),
   tagline: tb(
-    "Aprueba, niega con causal o escala; nunca niega sin una persona.",
-    "Approves, denies with a stated cause or escalates; never denies alone.",
+    "Aprueba del todo o en parte, niega o escala; nunca niega del todo solo.",
+    "Approves in full or in part, denies or escalates; never fully denies alone.",
   ),
   para_quien: tb(
     "Para una aseguradora —sintética— que recibe solicitudes de autorización con el texto libre del médico y hoy las revisa a mano, una por una, sin saber cuáles podían decidirse solas y cuáles necesitaban a un auditor.",
     "For an insurer —a synthetic one— that receives prior-authorization requests with the physician's free text and today reviews them by hand, one by one, without knowing which could be decided alone and which needed an auditor.",
   ),
   intro: tb(
-    "El agente lee la solicitud, pide lo que falta, aplica las reglas del plan de beneficios y aprueba solo lo que el plan permite; lo demás lo pasa a un auditor con la evidencia y la contraevidencia, y responde al afiliado con un aviso de IA.",
-    "The agent reads the request, asks for what is missing, applies the benefit plan's rules and approves only what the plan allows; the rest goes to an auditor with the evidence and the counter-evidence, and it answers the member with an AI notice.",
+    "El agente lee la solicitud, pide lo que falta, aplica las reglas del plan de beneficios y aprueba lo que el plan permite, hasta el tope de cada servicio; toda negación completa y todo caso dudoso los pasa a un auditor con la evidencia y la contraevidencia, y responde al afiliado con un aviso de IA.",
+    "The agent reads the request, asks for what is missing, applies the benefit plan's rules and approves what the plan allows, up to each service's cap; every full denial and every doubtful case goes to an auditor with the evidence and the counter-evidence, and it answers the member with an AI notice.",
   ),
   titular: tb(
-    "Un agente de autorizaciones médicas construido según un plan verificable: cada camino que toma está escrito en el plan, y una persona revisa toda negación con el caso completo delante.",
-    "A medical prior-authorization agent built to a verifiable plan: every path it takes is written in the plan, and a person reviews every denial with the full case in front of them.",
+    "Un agente de autorizaciones médicas construido según un plan verificable: cada camino que toma está escrito en el plan, y una persona revisa toda negación completa con el caso completo delante.",
+    "A medical prior-authorization agent built to a verifiable plan: every path it takes is written in the plan, and a person reviews every full denial with the full case in front of them.",
   ),
   stack: {
     langgraph: tb(
@@ -506,11 +506,14 @@ export const AGENTE = {
       ),
     },
     sinPersona: {
-      etiqueta: tb("negaciones sin una persona", "denials without a person"),
+      etiqueta: tb(
+        "negaciones completas sin una persona",
+        "full denials without a person",
+      ),
       detalle: ((n: number) =>
         tb(
-          `Criterio C1 del plan sobre ${n} casos: toda negación pasó por la pausa humana.`,
-          `The plan's criterion C1 over ${n} cases: every denial went through the human pause.`,
+          `Criterio C1 del plan sobre ${n} casos: toda negación completa pasó por la pausa humana.`,
+          `The plan's criterion C1 over ${n} cases: every full denial went through the human pause.`,
         )) as Plantilla<number>,
     },
     costo: {
@@ -562,8 +565,8 @@ export const AGENTE = {
     pausa_humana: {
       nombre: tb("Pausa humana", "Human pause"),
       linea: tb(
-        "Un auditor ve el caso completo antes de negar.",
-        "An auditor sees the full case before denying.",
+        "Un auditor ve el caso completo antes de negarlo del todo.",
+        "An auditor sees the full case before denying it outright.",
       ),
     },
     redactor: {
@@ -597,8 +600,8 @@ export const AGENTE = {
   ],
   nunca: [
     tb(
-      "Niega sin que una persona lo revise.",
-      "Denies without a person reviewing it.",
+      "Niega del todo sin que una persona lo revise.",
+      "Fully denies without a person reviewing it.",
     ),
     tb(
       "Obedece instrucciones escondidas en el texto de un caso.",
@@ -784,8 +787,8 @@ export const AGENTE = {
       {
         paso: "revisa",
         texto: tb(
-          "Ninguna negación sale sin el auditor; en esta demo, el auditor se simuló en lote.",
-          "No denial goes out without the auditor; in this demo, the auditor was simulated in batch.",
+          "Ninguna negación completa sale sin el auditor; en esta demo, el auditor se simuló en lote.",
+          "No full denial goes out without the auditor; in this demo, the auditor was simulated in batch.",
         ),
       },
       {
@@ -914,8 +917,8 @@ export const METRICAS_APP = {
     etiqueta: tb("funcionalidades construidas", "built features"),
     unidad: tb("funcionalidades", "features"),
     detalle: tb(
-      "Las de la visión del producto marcadas para el corte de dos semanas, contadas contra docs/MANUAL-DE-USO.md; las del roadmap no cuentan.",
-      "Those of the product vision marked for the two-week cut, counted against docs/MANUAL-DE-USO.md; roadmap ones do not count.",
+      "Las de la visión del producto que ya funcionan: las del corte de dos semanas y las del roadmap que se construyeron en el S3 (el entrevistador, el demo B y su expediente), contadas contra docs/MANUAL-DE-USO.md; lo que sigue en el roadmap no cuenta.",
+      "The product vision's features that work today: the two-week cut's and the roadmap ones built in S3 (the interviewer, demo B and its case file), counted against docs/MANUAL-DE-USO.md; what remains on the roadmap does not count.",
     ),
   },
   decisionesRegistradas: {
@@ -1007,7 +1010,7 @@ export const APP = {
     llamadas_a_modelos_en_la_vitrina: false,
     red_saliente_en_la_vitrina: false,
   },
-  /** Los seis grupos de la visión del producto con lo construido de cada uno (lo del roadmap no cuenta). */
+  /** Los seis grupos de la visión del producto con lo construido de cada uno (lo que sigue en el roadmap no cuenta). */
   grupos: [
     {
       id: "planear",
@@ -1090,8 +1093,8 @@ export const APP = {
             "Demo A: medical prior authorizations",
           ),
           que_hace: tb(
-            "Un enrutador, un extractor, un verificador de cobertura por reglas y un redactor aprueban, niegan con causal o escalan a un auditor; ninguna negación sale sin una persona.",
-            "A router, an extractor, a rule-based coverage checker and a drafter approve, deny with a stated cause or escalate to an auditor; no denial goes out without a person.",
+            "Un enrutador, un extractor, un verificador de cobertura por reglas y un redactor aprueban, aprueban en parte, niegan con causal o escalan a un auditor; ninguna negación completa sale sin una persona.",
+            "A router, an extractor, a rule-based coverage checker and a drafter approve, approve in part, deny with a stated cause or escalate to an auditor; no full denial goes out without a person.",
           ),
           seccion_manual: tb("Correr un lote", "Run a batch"),
         },
@@ -1102,8 +1105,8 @@ export const APP = {
             "Demo B: onboarding with due diligence",
           ),
           que_hace: tb(
-            "Un extractor, un verificador de listas, un investigador que solo actúa en la zona gris y un puntaje de riesgo por reglas aprueban, revisan o rechazan; ningún rechazo sale sin el oficial de cumplimiento.",
-            "An extractor, a list checker, an investigator that acts only in the gray zone and a rule-based risk score approve, review or reject; no rejection goes out without the compliance officer.",
+            "Un extractor, un verificador de listas, un investigador que actúa desde el inicio de la zona gris y un puntaje de riesgo por reglas aprueban, revisan o rechazan; ningún rechazo sale sin el oficial de cumplimiento.",
+            "An extractor, a list checker, an investigator that acts from the start of the gray zone and a rule-based risk score approve, review or reject; no rejection goes out without the compliance officer.",
           ),
           seccion_manual: tb("Correr el demo B", "Run demo B"),
         },

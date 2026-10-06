@@ -80,13 +80,13 @@
           {
             "id": "demo-a",
             "nombre": "Demo A: autorizaciones médicas",
-            "que_hace": "Un enrutador, un extractor, un verificador de cobertura por reglas y un redactor aprueban, niegan con causal o escalan a un auditor; ninguna negación sale sin una persona.",
+            "que_hace": "Un enrutador, un extractor, un verificador de cobertura por reglas y un redactor aprueban, aprueban en parte, niegan con causal o escalan a un auditor; ninguna negación completa sale sin una persona.",
             "seccion_manual": "Correr un lote"
           },
           {
             "id": "demo-b",
             "nombre": "Demo B: vinculación con debida diligencia",
-            "que_hace": "Un extractor, un verificador de listas, un investigador que solo actúa en la zona gris y un puntaje de riesgo por reglas aprueban, revisan o rechazan; ningún rechazo sale sin el oficial de cumplimiento.",
+            "que_hace": "Un extractor, un verificador de listas, un investigador que actúa desde el inicio de la zona gris y un puntaje de riesgo por reglas aprueban, revisan o rechazan; ningún rechazo sale sin el oficial de cumplimiento.",
             "seccion_manual": "Correr el demo B"
           },
           {
@@ -244,7 +244,7 @@
       "valor": 19,
       "unidad": "funcionalidades",
       "fuente": "medido",
-      "detalle": "Las de la visión del producto marcadas para el corte de dos semanas, contadas contra docs/MANUAL-DE-USO.md; las del roadmap no cuentan."
+      "detalle": "Las de la visión del producto que ya funcionan: las del corte de dos semanas y las del roadmap que se construyeron en el S3 (el entrevistador, el demo B y su expediente), contadas contra docs/MANUAL-DE-USO.md; lo que sigue en el roadmap no cuenta."
     },
     {
       "clave": "decisiones_registradas",

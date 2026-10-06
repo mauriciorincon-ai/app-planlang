@@ -172,7 +172,7 @@ describe("cada ficha, como la pinta hoja-de-vida", () => {
     expect(es.app.hitos.map((h) => h.etiqueta)).toEqual([
       "ciclo",
       "sprints cerrados",
-      "en construcción",
+      "construcción cerrada",
       "versión del repo",
       "decisiones registradas",
     ]);

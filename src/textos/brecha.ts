@@ -875,8 +875,8 @@ export const PLAN_EN_BREVE = {
 export const CRITERIOS = {
   chip: ((p: { n: number; k: number }) =>
     tb(
-      `real · ${p.n} casos × ${p.k} corridas`,
-      `real · ${p.n} cases × ${p.k} runs`,
+      `real · ${p.n} casos × ${p.k} ${p.k === 1 ? "corrida" : "corridas"}`,
+      `real · ${p.n} cases × ${p.k} ${p.k === 1 ? "run" : "runs"}`,
     )) as Plantilla<{ n: number; k: number }>,
   lectura: ((p: {
     n: number;
@@ -1130,8 +1130,8 @@ export const TIPO_EVALUADOR: Record<string, TextoBilingue> = {
 export const ESTADO_EVALUADOR: Record<string, TextoBilingue> = {
   ejecutado: tb("ejecutado", "run"),
   no_ejecutado_opcional: tb(
-    "no corrió (opcional en este corte)",
-    "did not run (optional in this cut)",
+    "no corrió (opcional; el plan no lo exige)",
+    "did not run (optional; the plan does not require it)",
   ),
   no_ejecutado: tb("no corrió", "did not run"),
   sin_implementacion: tb("sin implementación", "not implemented"),
@@ -1538,8 +1538,8 @@ export const EXPERTO = {
     juezSinCorrer: boolean;
   }) =>
     tb(
-      `${p.corridas} corridas · ${p.ejecutados} evaluadores de regla ejecutados, ${p.fallas} ${p.fallas === 1 ? "falla" : "fallas"}${p.juezSinCorrer ? " · el juez con modelo no corrió (opcional en este corte)" : ""}`,
-      `${p.corridas} runs · ${p.ejecutados} rule evaluators run, ${p.fallas} ${p.fallas === 1 ? "failure" : "failures"}${p.juezSinCorrer ? " · the model judge did not run (optional in this cut)" : ""}`,
+      `${p.corridas} ${p.corridas === 1 ? "corrida" : "corridas"} · ${p.ejecutados} evaluadores de regla ejecutados, ${p.fallas} ${p.fallas === 1 ? "falla" : "fallas"}${p.juezSinCorrer ? " · el juez con modelo no corrió (opcional; el plan no lo exige)" : ""}`,
+      `${p.corridas} ${p.corridas === 1 ? "run" : "runs"} · ${p.ejecutados} rule evaluators run, ${p.fallas} ${p.fallas === 1 ? "failure" : "failures"}${p.juezSinCorrer ? " · the model judge did not run (optional; the plan does not require it)" : ""}`,
     )) as Plantilla<{
     corridas: number;
     ejecutados: number;

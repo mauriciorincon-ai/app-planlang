@@ -13,7 +13,7 @@
   },
   "promesa": {
     "tagline": "Aprueba lo limpio; toda coincidencia, riesgo alto o rechazo va a una persona.",
-    "intro": "El agente lee los tres documentos de la solicitud, cruza el nombre con las listas, investiga el contexto solo en la zona gris y puntúa el riesgo con reglas que no miran el nombre; aprueba solo lo limpio, lleva lo demás al oficial con la evidencia y deja un expediente que cita la regla o la coincidencia de cada conclusión.",
+    "intro": "El agente lee los tres documentos de la solicitud, cruza el nombre con las listas, investiga el contexto desde el inicio de la zona gris y puntúa el riesgo con reglas que no miran el nombre; aprueba solo lo limpio, lleva lo demás al oficial con la evidencia y deja un expediente que cita la regla o la coincidencia de cada conclusión.",
     "para_quien": "Para una entidad financiera —sintética— que vincula clientes con debida diligencia: hoy un analista cruza a mano cada nombre con las listas de control y no sabe cuáles alarmas eran homónimos ni deja escrito por qué decidió."
   },
   "titular": "Un agente de vinculación cuyo plan salió de una entrevista y se verifica caso por caso: ninguna coincidencia en listas ni ningún rechazo sale sin una persona, y cada conclusión del expediente cita su regla.",
@@ -104,7 +104,7 @@
     {
       "orden": 4,
       "nombre": "Investigador de contexto",
-      "linea": "Solo en la zona gris: ¿homónimo o la misma persona? Concluye, no decide.",
+      "linea": "Desde el inicio de la zona gris: ¿homónimo o la misma persona? Concluye, no decide.",
       "cuenta": 0
     },
     {
@@ -189,7 +189,7 @@
         "id": "gris",
         "tipo": "decision",
         "carril": "agente",
-        "texto": "¿Zona gris?"
+        "texto": "¿Parecido desde la zona gris?"
       },
       {
         "id": "investiga",

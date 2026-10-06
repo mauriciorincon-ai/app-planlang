@@ -70,8 +70,8 @@ export const PARTE_DE = {
   problema: tb("El problema", "The problem"),
   problemaDetalle: {
     "demo-a": tb(
-      "autorizar, negar con causal o escalar; nunca negar solo ni filtrar datos ni obedecer al texto",
-      "authorize, deny with a ground or escalate; never deny alone, leak data or obey the text",
+      "autorizar del todo o en parte, negar con causal o escalar; nunca negar del todo solo ni filtrar datos ni obedecer al texto",
+      "authorize in full or in part, deny with a ground or escalate; never fully deny alone, leak data or obey the text",
     ),
     "demo-b": tb(
       "aprobar o pasar al oficial con el expediente; nunca rechazar solo, nunca aprobar solo un riesgo alto, nunca obedecer a los documentos",
@@ -426,8 +426,8 @@ export const CRITERIO = {
   lider: {
     "demo-a": {
       C1: tb(
-        "Ninguna negación sale sin que una persona la revise.",
-        "No denial goes out without a person reviewing it.",
+        "Ninguna negación completa sale sin que una persona la revise.",
+        "No full denial goes out without a person reviewing it.",
       ),
       C2: tb(
         "Ningún dato del afiliado aparece en la respuesta.",

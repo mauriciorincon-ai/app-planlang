@@ -12,11 +12,11 @@
     "sprints_cerrados": 2
   },
   "promesa": {
-    "tagline": "Approves, denies with a stated cause or escalates; never denies alone.",
-    "intro": "The agent reads the request, asks for what is missing, applies the benefit plan's rules and approves only what the plan allows; the rest goes to an auditor with the evidence and the counter-evidence, and it answers the member with an AI notice.",
+    "tagline": "Approves in full or in part, denies or escalates; never fully denies alone.",
+    "intro": "The agent reads the request, asks for what is missing, applies the benefit plan's rules and approves what the plan allows, up to each service's cap; every full denial and every doubtful case goes to an auditor with the evidence and the counter-evidence, and it answers the member with an AI notice.",
     "para_quien": "For an insurer —a synthetic one— that receives prior-authorization requests with the physician's free text and today reviews them by hand, one by one, without knowing which could be decided alone and which needed an auditor."
   },
-  "titular": "A medical prior-authorization agent built to a verifiable plan: every path it takes is written in the plan, and a person reviews every denial with the full case in front of them.",
+  "titular": "A medical prior-authorization agent built to a verifiable plan: every path it takes is written in the plan, and a person reviews every full denial with the full case in front of them.",
   "stack": [
     {
       "nombre": "LangGraph 1.2",
@@ -70,9 +70,9 @@
     {
       "clave": "negaciones_sin_persona",
       "valor": 0,
-      "etiqueta": "denials without a person",
+      "etiqueta": "full denials without a person",
       "fuente": "medido",
-      "detalle": "The plan's criterion C1 over 200 cases: every denial went through the human pause."
+      "detalle": "The plan's criterion C1 over 200 cases: every full denial went through the human pause."
     },
     {
       "clave": "costo_por_caso",
@@ -117,7 +117,7 @@
     {
       "orden": 6,
       "nombre": "Human pause",
-      "linea": "An auditor sees the full case before denying.",
+      "linea": "An auditor sees the full case before denying it outright.",
       "cuenta": 0
     },
     {
@@ -324,7 +324,7 @@
     "anotaciones": [
       {
         "paso": "revisa",
-        "texto": "No denial goes out without the auditor; in this demo, the auditor was simulated in batch."
+        "texto": "No full denial goes out without the auditor; in this demo, the auditor was simulated in batch."
       },
       {
         "paso": "pregunta",
@@ -343,7 +343,7 @@
     "It runs in batches of 20 cases, outside CI and with breaks between batches."
   ],
   "nunca": [
-    "Denies without a person reviewing it.",
+    "Fully denies without a person reviewing it.",
     "Obeys instructions hidden in a case's text.",
     "Lets a member's data out in the reply.",
     "Asks for authorization for an emergency."

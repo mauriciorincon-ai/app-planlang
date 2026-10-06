@@ -69,8 +69,8 @@ export const MIRADA = {
   } as Record<IdDemo, TextoBilingue>,
   avisoExperto: {
     "demo-a": tb(
-      "Cada paso suma sus tokens, milisegundos y costo; cada decisión, la tabla de aristas con la regla del plan y el valor observado; al final, la ficha técnica y las 16 señales de la traza.",
-      "Each step adds its tokens, milliseconds and cost; each decision, the edge table with the plan’s rule and the observed value; at the end, the technical record and the trace’s 16 signals.",
+      "Cada paso suma sus tokens, milisegundos y costo; cada decisión, la tabla de aristas con la regla del plan y el valor observado; al final, la ficha técnica y las señales de la traza.",
+      "Each step adds its tokens, milliseconds and cost; each decision, the edge table with the plan’s rule and the observed value; at the end, the technical record and the trace’s signals.",
     ),
     "demo-b": MIRADA_B.avisoExperto,
   } as Record<IdDemo, TextoBilingue>,
@@ -663,8 +663,8 @@ export const PAUSA = {
   ),
   chip: tb("real · payload del interrupt", "real · interrupt payload"),
   lectura: tb(
-    "Ninguna negación sale sin una persona. El agente se detiene y le entrega al auditor el caso completo: por qué se detuvo, lo que leyó, el texto original, la evidencia y la contraevidencia.",
-    "No denial goes out without a person. The agent stops and hands the auditor the full case: why it stopped, what it read, the original text, the evidence and the counter-evidence.",
+    "Ninguna negación completa sale sin una persona. El agente se detiene y le entrega al auditor el caso completo: por qué se detuvo, lo que leyó, el texto original, la evidencia y la contraevidencia.",
+    "No full denial goes out without a person. The agent stops and hands the auditor the full case: why it stopped, what it read, the original text, the evidence and the counter-evidence.",
   ),
   porQue: tb("Por qué se detuvo", "Why it stopped"),
   motivo: tb("payload.motivo:", "payload.motivo:"),

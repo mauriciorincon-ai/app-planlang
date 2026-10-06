@@ -22,8 +22,8 @@ export const AGENTE_B = {
     "For a financial institution —a synthetic one— that onboards customers with due diligence: today an analyst checks every name against the control lists by hand, cannot tell which alarms were namesakes and leaves no written reason for each decision.",
   ),
   intro: tb(
-    "El agente lee los tres documentos de la solicitud, cruza el nombre con las listas, investiga el contexto solo en la zona gris y puntúa el riesgo con reglas que no miran el nombre; aprueba solo lo limpio, lleva lo demás al oficial con la evidencia y deja un expediente que cita la regla o la coincidencia de cada conclusión.",
-    "The agent reads the application's three documents, checks the name against the lists, investigates the context only in the gray zone and scores the risk with rules that ignore the name; it approves only the clean ones, brings the rest to the officer with the evidence and leaves a file that cites the rule or match behind each conclusion.",
+    "El agente lee los tres documentos de la solicitud, cruza el nombre con las listas, investiga el contexto desde el inicio de la zona gris y puntúa el riesgo con reglas que no miran el nombre; aprueba solo lo limpio, lleva lo demás al oficial con la evidencia y deja un expediente que cita la regla o la coincidencia de cada conclusión.",
+    "The agent reads the application's three documents, checks the name against the lists, investigates the context from the start of the gray zone and scores the risk with rules that ignore the name; it approves only the clean ones, brings the rest to the officer with the evidence and leaves a file that cites the rule or match behind each conclusion.",
   ),
   titular: tb(
     "Un agente de vinculación cuyo plan salió de una entrevista y se verifica caso por caso: ninguna coincidencia en listas ni ningún rechazo sale sin una persona, y cada conclusión del expediente cita su regla.",
@@ -136,8 +136,8 @@ export const AGENTE_B = {
     investigador: {
       nombre: tb("Investigador de contexto", "Context investigator"),
       linea: tb(
-        "Solo en la zona gris: ¿homónimo o la misma persona? Concluye, no decide.",
-        "Only in the gray zone: a namesake or the same person? It concludes, it does not decide.",
+        "Desde el inicio de la zona gris: ¿homónimo o la misma persona? Concluye, no decide.",
+        "From the start of the gray zone: a namesake or the same person? It concludes, it does not decide.",
       ),
     },
     puntaje: {
@@ -271,7 +271,10 @@ export const AGENTE_B = {
         tipo: "decision",
         carril: "agente",
         nodo: "verificador_listas",
-        texto: tb("¿Zona gris?", "Gray zone?"),
+        texto: tb(
+          "¿Parecido desde la zona gris?",
+          "Similarity from the gray zone up?",
+        ),
       },
       {
         id: "investiga",

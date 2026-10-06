@@ -29,8 +29,8 @@ la que decidió.
 
 - **Entra en:** `extractor` (texto libre → campos + confianza verbalizada), `aclaracion` (formular la
   pregunta cuando faltan campos; ≤ U3 ciclos) y `redactor` (párrafo explicativo de la respuesta, ES/EN).
-  Más adelante: el entrevistador (S3), el demo B (S3) y un juez selectivo para «calidad de redacción»
-  (nunca fuente única del veredicto, E-8).
+  Desde el S3, también el entrevistador (ADR-012) y el demo B (ADR-013). El juez selectivo de «calidad de
+  redacción» es opcional y no corrió en ninguna corrida publicada (nunca sería fuente única del veredicto, E-8).
 - **NO entra en:** enrutador, verificador de cobertura, decisión (nodo escritor de señales), pausa
   humana, guardia de salida, documento adverso, generador sintético, validador de identificadores,
   planeador, verificador de brecha, playground y visor. **El núcleo jamás invoca un modelo** (regla dura 1).

@@ -12,11 +12,11 @@
     "sprints_cerrados": 2
   },
   "promesa": {
-    "tagline": "Aprueba, niega con causal o escala; nunca niega sin una persona.",
-    "intro": "El agente lee la solicitud, pide lo que falta, aplica las reglas del plan de beneficios y aprueba solo lo que el plan permite; lo demás lo pasa a un auditor con la evidencia y la contraevidencia, y responde al afiliado con un aviso de IA.",
+    "tagline": "Aprueba del todo o en parte, niega o escala; nunca niega del todo solo.",
+    "intro": "El agente lee la solicitud, pide lo que falta, aplica las reglas del plan de beneficios y aprueba lo que el plan permite, hasta el tope de cada servicio; toda negación completa y todo caso dudoso los pasa a un auditor con la evidencia y la contraevidencia, y responde al afiliado con un aviso de IA.",
     "para_quien": "Para una aseguradora —sintética— que recibe solicitudes de autorización con el texto libre del médico y hoy las revisa a mano, una por una, sin saber cuáles podían decidirse solas y cuáles necesitaban a un auditor."
   },
-  "titular": "Un agente de autorizaciones médicas construido según un plan verificable: cada camino que toma está escrito en el plan, y una persona revisa toda negación con el caso completo delante.",
+  "titular": "Un agente de autorizaciones médicas construido según un plan verificable: cada camino que toma está escrito en el plan, y una persona revisa toda negación completa con el caso completo delante.",
   "stack": [
     {
       "nombre": "LangGraph 1.2",
@@ -70,9 +70,9 @@
     {
       "clave": "negaciones_sin_persona",
       "valor": 0,
-      "etiqueta": "negaciones sin una persona",
+      "etiqueta": "negaciones completas sin una persona",
       "fuente": "medido",
-      "detalle": "Criterio C1 del plan sobre 200 casos: toda negación pasó por la pausa humana."
+      "detalle": "Criterio C1 del plan sobre 200 casos: toda negación completa pasó por la pausa humana."
     },
     {
       "clave": "costo_por_caso",
@@ -117,7 +117,7 @@
     {
       "orden": 6,
       "nombre": "Pausa humana",
-      "linea": "Un auditor ve el caso completo antes de negar.",
+      "linea": "Un auditor ve el caso completo antes de negarlo del todo.",
       "cuenta": 0
     },
     {
@@ -324,7 +324,7 @@
     "anotaciones": [
       {
         "paso": "revisa",
-        "texto": "Ninguna negación sale sin el auditor; en esta demo, el auditor se simuló en lote."
+        "texto": "Ninguna negación completa sale sin el auditor; en esta demo, el auditor se simuló en lote."
       },
       {
         "paso": "pregunta",
@@ -343,7 +343,7 @@
     "Corre en lotes de 20 casos, fuera de CI y con pausas entre lotes."
   ],
   "nunca": [
-    "Niega sin que una persona lo revise.",
+    "Niega del todo sin que una persona lo revise.",
     "Obedece instrucciones escondidas en el texto de un caso.",
     "Deja salir un dato del afiliado en la respuesta.",
     "Pide autorización para una urgencia."

@@ -11,22 +11,22 @@ un validador en CI lo comprueba.
 
 ## Qué hay en este repositorio
 
-| Carpeta                      | Qué es                                                                                                                                                                                                               |
-| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `core/`                      | Núcleo determinista en TypeScript (planeador, generador sintético, verificador de brecha, intérprete de aristas, formatos). Jamás invoca un modelo de lenguaje. Corre en Node y en el navegador con los mismos bytes |
-| `agents/`                    | Agentes en Python 3.12 con LangGraph 1.x: el demo A (autorizaciones médicas simuladas), el adaptador de modelo y el exportador de trazas `planlang-trace/v1`                                                         |
-| `packages/`                  | Implementaciones de los dos reusables de la casa (instrumentos de plan · diagramador), con su contrato fijado                                                                                                        |
-| `plans/` · `data/` · `runs/` | El plan aprobado con huella, las plantillas de dominio, los casos sintéticos y las corridas exportadas                                                                                                               |
-| `src/`                       | La vitrina estática bilingüe (Next.js exportado): siete pantallas (Entrada, Plan, Agente, Brecha, Playground, Casos, Fichas), construida en el S2 sobre la maqueta aprobada en la Etapa de Diseño                  |
-| `docs/`                      | Manual de uso, guía de prueba y kit de prueba (el brochure y el blueprint nacen al cierre del ciclo)                                                                                                                 |
-| `decisions/`                 | ADRs: código primero · proveedor y cumplimiento · pines de Python · salida estructurada · enmiendas de medición · línea base · ruteo del export · i18n por ruta · paquete para hoja-de-vida · conversión grafo → mapa |
-| `sprints/`                   | Bitácora y summary de cada sprint                                                                                                                                                                                    |
+| Carpeta                      | Qué es                                                                                                                                                                                                                                                                                                                                                       |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `core/`                      | Núcleo determinista en TypeScript (planeador, generador sintético, verificador de brecha, intérprete de aristas, formatos). Jamás invoca un modelo de lenguaje. Corre en Node y en el navegador con los mismos bytes                                                                                                                                         |
+| `agents/`                    | Agentes en Python 3.12 con LangGraph 1.x: el demo A (autorizaciones médicas simuladas), el demo B (vinculación con debida diligencia), el entrevistador que redacta el plan del B, el adaptador de modelo y el exportador de trazas `planlang-trace/v1`                                                                                                      |
+| `packages/`                  | Implementaciones de los dos reusables de la casa (instrumentos de plan · diagramador), con su contrato fijado                                                                                                                                                                                                                                                |
+| `plans/` · `data/` · `runs/` | El plan aprobado con huella, las plantillas de dominio, los casos sintéticos y las corridas exportadas                                                                                                                                                                                                                                                       |
+| `src/`                       | La vitrina estática bilingüe (Next.js exportado) con dos demos: la entrada, común, y seis pantallas por demo (Plan, Agente, Brecha, Playground, Casos, Fichas), construida en el S2 sobre la maqueta aprobada en la Etapa de Diseño; el demo B llegó en el S3                                                                                                |
+| `docs/`                      | Manual de uso, guía de prueba, kit de prueba y el blueprint de infraestructura (`docs/BLUEPRINT.html`); la vitrina y sus fichas hacen de brochure                                                                                                                                                                                                            |
+| `decisions/`                 | ADRs: código primero · proveedor y cumplimiento · pines de Python · salida estructurada · enmiendas de medición · línea base · ruteo del export · i18n por ruta · paquete para hoja-de-vida · conversión grafo → mapa · margen de LCP · código primero del entrevistador y del demo B · rutas por demo · aviso de `braces` · aprobación parcial y modo Texas |
+| `sprints/`                   | Bitácora y summary de cada sprint                                                                                                                                                                                                                                                                                                                            |
 
 ## Cómo se usa
 
 ```bash
 pnpm install                                          # también re-aplica el hook de git (gitleaks)
-pnpm plan:validar --verificar plans/demo-a/v1.4.json  # el último plan del demo A, con su huella (la vitrina publica el v1.3)
+pnpm plan:validar --verificar plans/demo-a/v1.5.1.json  # el plan del demo A que publica la vitrina, con su huella
 pnpm build && pnpm start                              # la vitrina en local (export estático servido con serve)
 pnpm paquete:vitrina                                  # el paquete para hoja-de-vida (ver el manual)
 pnpm casos:generar --versionados                      # regenera los lotes sintéticos versionados (misma semilla, mismos bytes)
@@ -43,5 +43,6 @@ El detalle para usuarios está en `docs/MANUAL-DE-USO.md`; las pruebas manuales,
 ## Principios (constitución en `CLAUDE.md`)
 
 El núcleo es determinista y jamás llama a un modelo · el plan es el código de la arista · toda decisión
-del agente deja su señal · ninguna negación sin pausa humana · la guardia determinista es arquitectura ·
+del agente deja su señal · ninguna negación completa ni rechazo sin pausa humana (la aprobación en parte, también con
+el modo Texas) · la guardia determinista es arquitectura ·
 cero datos reales · la brecha se publica con sus fallas · bilingüe español/inglés en todo.

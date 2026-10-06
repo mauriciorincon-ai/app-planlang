@@ -156,6 +156,9 @@ export function perfilDemoA(d: DatosDemoA, ctx: ContextoAgente): PerfilAgente {
     altoCosto: con("verificador_cobertura").filter(
       (t) => cobertura(t).alto_costo === true,
     ).length,
+    sobreTope: con("verificador_cobertura").filter(
+      (t) => cobertura(t).propuesta === "aprobar_parcial",
+    ).length,
     contradicciones: con("verificador_cobertura").filter(
       (t) => cobertura(t).contradiccion === true,
     ).length,
@@ -224,6 +227,9 @@ export function perfilDemoA(d: DatosDemoA, ctx: ContextoAgente): PerfilAgente {
   const decisionFinal = (t: Traza) => senal(t, "decision_final");
   const aprobadas = trazas.filter((t) => decisionFinal(t) === "aprobar").length;
   const negadas = trazas.filter((t) => decisionFinal(t) === "negar").length;
+  const parciales = trazas.filter(
+    (t) => decisionFinal(t) === "aprobar_parcial",
+  ).length;
   const campos = pausaDelPlan(d.plan.contrato_de_grafo.pausas_humanas)
     .payload_minimo.length;
   // Cifra y «corrió» por clave de actividad, no por posición (C-3): el tipo exige una por cada clave.
@@ -361,6 +367,13 @@ export function perfilDemoA(d: DatosDemoA, ctx: ContextoAgente): PerfilAgente {
         corrio: pausas.length > 0,
       },
       {
+        titulo: X(FICHA.entrega.aprobacionParcial.titulo),
+        detalle: X(
+          FICHA.entrega.aprobacionParcial.detalle({ n: parciales, de: n }),
+        ),
+        corrio: parciales > 0,
+      },
+      {
         titulo: X(FICHA.entrega.negacion.titulo),
         detalle: X(FICHA.entrega.negacion.detalle({ n: negadas, de: n })),
         corrio: negadas > 0,
@@ -454,13 +467,20 @@ export function perfilDemoA(d: DatosDemoA, ctx: ContextoAgente): PerfilAgente {
       {
         cifra: `≈ ${Math.round((promedio * loteCompleto) / 60)} min`,
         texto: X(FICHA.capacidad.lote(loteCompleto)),
+        // Si la corrida ya es el lote completo, la cifra es la suma medida, no una estimación (F21).
         detalle: X(
-          FICHA.capacidad.loteDetalle({
-            promedio: decimal(promedio, 1, i),
-            usd: decimal((costoTotal / n) * loteCompleto, 1, i),
-          }),
+          n === loteCompleto
+            ? FICHA.capacidad.loteMedido({
+                n,
+                promedio: decimal(promedio, 1, i),
+                usd: decimal(costoTotal, 1, i),
+              })
+            : FICHA.capacidad.loteDetalle({
+                promedio: decimal(promedio, 1, i),
+                usd: decimal((costoTotal / n) * loteCompleto, 1, i),
+              }),
         ),
-        estimacion: true,
+        estimacion: n !== loteCompleto,
       },
     ],
     fuente: X(

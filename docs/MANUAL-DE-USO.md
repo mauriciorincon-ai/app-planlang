@@ -117,9 +117,9 @@ Se usa de dos maneras:
 
 ### Correr un lote · desde el sprint 1 (mejorado en el sprint 3)
 
-- **Qué hace:** el agente del demo A decide cada caso: aprobar, negar o pasar a un auditor humano.
-  Toda negación pasa por una persona; en el lote, esa persona se simula siguiendo la respuesta correcta
-  del caso. Cada caso deja una traza con cada decisión, su señal y el umbral aplicado.
+- **Qué hace:** el agente del demo A decide cada caso: aprobar, aprobar en parte (hasta el tope del servicio), negar
+  o pasar a un auditor humano. Toda negación completa pasa por una persona, y la parcial también cuando el modo Texas
+  está encendido; en el lote, esa persona se simula siguiendo la respuesta correcta del caso. Cada caso deja una traza con cada decisión, su señal y el umbral aplicado.
 - **Cómo se usa:**
   1. Revisa en tu cuenta de Claude cuánta cuota te queda.
   2. `pnpm lote:demo --corrida <nombre-nuevo> --fecha <AAAA-MM-DD>`: corre los 20 casos con tu
@@ -151,7 +151,9 @@ data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar l
   - un extractor lee los documentos;
   - el verificador de listas busca el nombre en listas vinculantes y de consulta, por coincidencia exacta y por
     parecido;
-  - un investigador mira el contexto, pero solo cuando el parecido cae en la zona gris del plan;
+  - un investigador mira el contexto cuando el parecido llega al inicio de la zona gris del plan (U4) o lo pasa; por
+    encima del umbral de coincidencia (U1) el caso va igual al oficial, y la conclusión del investigador es evidencia
+    para él;
   - un puntaje de riesgo se calcula por reglas, sin leer atributos protegidos;
   - con eso propone aprobar, revisar o rechazar.
 
@@ -178,7 +180,7 @@ data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar l
     fecha;
   - la decisión;
   - si fue un rechazo, el documento con su aviso de IA y cómo contradecirlo.
-- **Cómo se lee:** en la vitrina, abre el demo B (el conmutador «A · B» de la barra) y luego «Casos». Por ejemplo,
+- **Cómo se lee:** en la vitrina, entra al demo B desde su fila en la entrada y abre «Casos». Por ejemplo,
   `/es/demo-b/caso/B-010`. «Recibe» muestra los documentos tal como llegaron, con la instrucción escondida marcada
   aparte si la hay. El expediente va al final del recorrido.
 - **Limitaciones:** el texto del investigador lo escribió el modelo y se muestra en el idioma en que lo escribió.
@@ -216,15 +218,16 @@ data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar l
 
 - **Qué hace:** muestra los dos demos de punta a punta, siete pantallas cada uno, en español y en inglés, con tema
   oscuro y claro y en el teléfono o el escritorio. Toda pantalla lleva el rótulo «Simulación · no operativo ·
-  datos sintéticos». La entrada tiene una fila por demo. Dentro de un demo, el conmutador «A · B» de la barra cambia
-  de demo: el A vive en `/es/plan`, `/es/agente`…, y el B en `/es/demo-b/plan`, `/es/demo-b/agente`…
+  datos sintéticos». La entrada tiene una fila por demo y desde ella se entra a cada uno. En las pantallas del B, el
+  conmutador «A · B» de la barra lleva a la misma pantalla del A: el A vive en `/es/plan`, `/es/agente`…, y el B en `/es/demo-b/plan`, `/es/demo-b/agente`…
 - **Cómo se abre:**
   1. `pnpm build` y después `pnpm start`. Abre en el navegador la dirección local que imprime.
   2. La portada elige el idioma de tu navegador. Puedes cambiarlo arriba a la derecha, igual que el tema.
   3. «Ver como líder» y «Ver como experto» cambian el nivel de detalle sin cambiar la pantalla: el líder lee
      frases cortas y el experto ve además las reglas, las señales y de dónde sale cada cifra.
 - **Las siete pantallas:**
-  - **Entrada:** qué es planlang, el veredicto del demo A y la capacidad medida, cada cifra con su origen.
+  - **Entrada:** qué es planlang, una fila por demo con su veredicto y su corrida, y la capacidad medida con el demo A,
+    cada cifra con su origen.
   - **Plan:** las decisiones, los riesgos con su prioridad (y cuáles son control legal), los supuestos con su
     estado, los criterios con su regla, los umbrales con su señal y el contrato del grafo.
   - **Agente:** primero la ficha del agente y después el diagrama dibujado desde el grafo que corrió. Al tocar
@@ -303,8 +306,9 @@ data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar l
 
 ### Publicar el design system · desde el sprint 3
 
-- **Qué hace:** publica en Claude Design el sistema de diseño consolidado de la app (colores, tipografía,
-  componentes y las vistas de los dos demos), como activo estable entre ciclos.
+- **Qué hace:** publica en Claude Design el sistema de diseño consolidado de la app (colores, tipografía, espacio,
+  movimiento y los componentes canon que fijan su gramática visual), como activo estable entre ciclos. Las pantallas no
+  viajan: viven en la vitrina.
 - **Cómo se usa:**
   1. Se hace **después** del gate corto ⭐⭐ del cierre: no se publica un sistema que el autor no ha juzgado.
   2. En Claude Code, el autor escribe `/design-sync`; el constructor arma y publica.
@@ -434,8 +438,9 @@ There are two ways to use it:
 
 ### Run a batch · since sprint 1 (improved in sprint 3)
 
-- **What it does:** demo A's agent decides each case: approve, deny or hand it to a human auditor. Every
-  denial goes to a person; in a batch, that person is simulated and follows the case's right answer.
+- **What it does:** demo A's agent decides each case: approve, approve in part (up to the service's cap), deny or
+  hand it to a human auditor. Every full denial goes to a person, and a partial one too when Texas mode is on; in a
+  batch, that person is simulated and follows the case's right answer.
   Each case leaves a trace with every decision, its signal and the threshold applied.
 - **How to use it:**
   1. Check how much quota you have left in your Claude account.
@@ -469,7 +474,9 @@ There are two ways to use it:
   documents:
   - an extractor reads the documents;
   - the list checker looks the name up in binding and reference lists, by exact match and by similarity;
-  - an investigator looks at the context, but only when the similarity falls in the plan's gray zone;
+  - an investigator looks at the context when the similarity reaches the start of the plan's gray zone (U4) or goes
+    past it; above the match threshold (U1) the case goes to the officer anyway, and the investigator's conclusion is
+    evidence for them;
   - a risk score is computed by rules, without reading protected attributes;
   - with all that, it proposes to approve, review or reject.
 
@@ -495,7 +502,7 @@ There are two ways to use it:
   - the conclusions, numbered: each one cites the plan rule or the list match, with its version and date;
   - the decision;
   - if it was a rejection, the document with its AI notice and how to appeal it.
-- **How to read it:** in the showcase, open demo B (the "A · B" switch in the bar), then "Cases". For example,
+- **How to read it:** in the showcase, go into demo B from its row on the home page and open "Cases". For example,
   `/en/demo-b/caso/B-010`. "Receives" shows the documents as they arrived, with any hidden instruction marked
   apart. The case file comes at the end of the path.
 - **Limitations:** the investigator's text was written by the model and is shown in the language it was written in.
@@ -533,7 +540,8 @@ There are two ways to use it:
 
 - **What it does:** shows both demos end to end, seven screens each, in Spanish and English, in dark and light
   themes, on a phone or a desktop. Every screen carries the label "Simulation · not operational · synthetic data".
-  The home page has one row per demo. Inside a demo, the "A · B" switch in the bar changes demo: A lives at
+  The home page has one row per demo, and each demo is entered from it. On demo B's screens, the "A · B" switch in
+  the bar takes you to the same screen of demo A: A lives at
   `/en/plan`, `/en/agente`…, and B at `/en/demo-b/plan`, `/en/demo-b/agente`…
 - **How to open it:**
   1. `pnpm build`, then `pnpm start`. Open the local address it prints in your browser.
@@ -541,7 +549,8 @@ There are two ways to use it:
   3. "View as lead" and "View as expert" change the level of detail without changing the screen: the lead
      reads short sentences and the expert also sees the rules, the signals and where each figure comes from.
 - **The seven screens:**
-  - **Home:** what planlang is, demo A's verdict and its measured capability, each figure with its source.
+  - **Home:** what planlang is, one row per demo with its verdict and its run, and the capability measured with demo A,
+    each figure with its source.
   - **Plan:** the decisions, the risks with their priority (and which ones are legal controls), the
     assumptions with their status, the criteria with their rule, the thresholds with their signal and the
     graph contract.
@@ -622,8 +631,9 @@ There are two ways to use it:
 
 ### Publish the design system · since sprint 3
 
-- **What it does:** publishes the app's consolidated design system to Claude Design (colors, type, components and
-  the screens of both demos), as an asset that stays stable between cycles.
+- **What it does:** publishes the app's consolidated design system to Claude Design (colors, type, spacing, motion
+  and the canon components that set its visual grammar), as an asset that stays stable between cycles. The screens do
+  not travel: they live in the showcase.
 - **How to use it:**
   1. It happens **after** the short ⭐⭐ gate at closing: a system the author has not judged is never published.
   2. In Claude Code, the author types `/design-sync`; the builder assembles and publishes it.

@@ -60,7 +60,7 @@ describe("P3 Agente: las cifras salen de las trazas", () => {
       /^30 casos incompletos, 47 preguntas\./,
     );
     expect(campo(es, "verificador_cobertura", /En los 200/)).toMatch(
-      /^Revisó 155 casos: 21 excluidos con causal, 39 de alto costo y 8 contradicciones/,
+      /^Revisó 155 casos: 21 excluidos con causal, 39 de alto costo, 9 sobre el tope del servicio y 8 contradicciones/,
     );
     // El desglose, en el orden de las reglas del plan, suma los 60 que pasaron a una persona (9 + 4 + 34 + 7 + 6).
     expect(campo(es, "decision", /En los 200/)).toMatch(
@@ -287,8 +287,15 @@ describe("AU-S2-2: el lote, el eje y el umbral de confianza salen del plan", () 
     expect(lote.cifra).toBe(`≈ ${Math.round((promedio * 100) / 60)} min`);
     expect(lote.texto).toBe("un lote de 100 casos");
     expect(
-      vistaAgente(d, "en").ficha.capacidad.find((c) => c.estimacion)!.texto,
-    ).toBe(`a batch of ${d.plan.lotes.completo} cases`);
+      vistaAgente(otro, "en").ficha.capacidad.find((c) => c.estimacion)!.texto,
+    ).toBe("a batch of 100 cases");
+    // Con la corrida publicada, que ya es el lote completo, la cifra se mide y no se estima (F21).
+    const real = vistaAgente(d, "es").ficha.capacidad;
+    expect(real.some((c) => c.estimacion)).toBe(false);
+    expect(
+      real.find((c) => c.texto === `un lote de ${d.plan.lotes.completo} casos`)!
+        .detalle,
+    ).toMatch(/^en serie, sumando los 200 casos de esta corrida/);
   });
 
   it("el eje del panel de U1 cubre todo valor observado", () => {
