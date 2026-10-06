@@ -10,7 +10,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import type { Idioma, TextoBilingue } from "@core/formatos/bilingue";
-import { DEMOS, type IdDemo } from "@/lib/demos";
+import { CONMUTADOR_EN, DEMOS, type IdDemo } from "@/lib/demos";
 import { PANTALLAS, ruta, rutaEntrada, type Pantalla } from "@/lib/ruta";
 import { BARRA, MARCA, PESTANAS } from "@/textos/comun";
 import { CONT, cx } from "../cx";
@@ -47,16 +47,16 @@ export function Barra({
   idioma,
   pagina,
   id,
-  demo = "demo-a",
+  demo,
 }: {
   idioma: Idioma;
   pagina: Pantalla;
   id?: string;
-  demo?: IdDemo;
+  demo: IdDemo;
 }) {
   // Con el conmutador de demo, las siete pestañas no caben en una fila a ningún ancho de escritorio (el contenedor
   // llega a 1.120 px): van en su propia fila, como en el teléfono. En el A la barra es la del S2.
-  const conConmutador = demo !== "demo-a";
+  const conConmutador = CONMUTADOR_EN[demo];
   const pestanasEnSuFila = conConmutador;
   return (
     <header className="border-b border-linea">

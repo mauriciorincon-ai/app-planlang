@@ -106,7 +106,7 @@ export interface ReglaNombrada {
 /** La categoría de una regla en su demo. Una regla sin categoría detiene el build nombrándola. */
 export function categoriaDeRegla(
   r: ReglaNombrada,
-  demo: IdDemo = "demo-a",
+  demo: IdDemo,
 ): CategoriaRegla {
   const m = REGLAS[demo];
   const c =
@@ -185,7 +185,7 @@ export function reglaDeLaPausa<D extends DecisionRegistrada>(
 export function umbralDeCategoria(
   plan: Plan,
   c: CategoriaRegla,
-  demo: IdDemo = "demo-a",
+  demo: IdDemo,
 ): Umbral {
   const a = plan.contrato_de_grafo.aristas_condicionales.find(
     (x) => categoriaDeRegla(reglaDelPlan(x), demo) === c,

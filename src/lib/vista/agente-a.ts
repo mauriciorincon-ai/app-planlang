@@ -101,7 +101,8 @@ export function perfilDemoA(d: DatosDemoA, ctx: ContextoAgente): PerfilAgente {
   const porRegla = Object.fromEntries(
     CATEGORIAS["demo-a"].map((c) => [c, 0]),
   ) as Record<CategoriaRegla, number>;
-  for (const { v } of dec) if (v.regla) porRegla[categoriaDeRegla(v.regla)]++;
+  for (const { v } of dec)
+    if (v.regla) porRegla[categoriaDeRegla(v.regla, "demo-a")]++;
   const pausaPor = (c: CategoriaRegla) =>
     pausas.filter(({ t, p }) => motivoDe(t, p) === c);
   const aclaracionPor = (c: CategoriaRegla) =>
@@ -111,7 +112,7 @@ export function perfilDemoA(d: DatosDemoA, ctx: ContextoAgente): PerfilAgente {
           (v) =>
             v.rama === "pausa_humana" &&
             v.regla !== undefined &&
-            categoriaDeRegla(v.regla) === c,
+            categoriaDeRegla(v.regla, "demo-a") === c,
         ),
       )
       .map((t) => t.caso_id);
@@ -145,7 +146,9 @@ export function perfilDemoA(d: DatosDemoA, ctx: ContextoAgente): PerfilAgente {
       )
       .map((t) => t.caso_id),
     tope: aclaracionPor("tope"),
-    topeAclaraciones: Number(umbralDeCategoria(d.plan, "tope").valor_en_plan),
+    topeAclaraciones: Number(
+      umbralDeCategoria(d.plan, "tope", "demo-a").valor_en_plan,
+    ),
     sinModeloAcl: aclaracionPor("proveedor"),
     excluidos: con("verificador_cobertura").filter(
       (t) => cobertura(t).estado_servicio === "excluido",

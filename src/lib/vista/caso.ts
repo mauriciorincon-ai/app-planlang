@@ -162,11 +162,17 @@ const SUBTIPOS: Readonly<Record<IdDemo, Record<string, TextoBilingue>>> = {
  * detiene el build nombrándolo: antes salía el id tal cual y cuatro subtipos del lote de 200 lo hicieron sin que nadie
  * lo viera (S3).
  */
+/** Dónde vive el nombre de los subtipos de cada demo (lo cita el error que detiene el build). */
+const TEXTOS_DE_SUBTIPOS: Readonly<Record<IdDemo, string>> = {
+  "demo-a": "caso.ts",
+  "demo-b": "demo-b/caso.ts",
+};
+
 export function nombreDeSubtipo(demo: IdDemo, subtipo: string): TextoBilingue {
   const t = (SUBTIPOS[demo] as Record<string, TextoBilingue>)[subtipo];
   if (!t)
     throw new Error(
-      `vitrina: el subtipo «${subtipo}» del ${demo} no tiene nombre (src/textos/${demo === "demo-a" ? "caso.ts" : "demo-b/caso.ts"}).`,
+      `vitrina: el subtipo «${subtipo}» del ${demo} no tiene nombre (src/textos/${TEXTOS_DE_SUBTIPOS[demo]}).`,
     );
   return t;
 }

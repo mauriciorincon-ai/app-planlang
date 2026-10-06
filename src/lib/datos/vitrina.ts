@@ -18,7 +18,6 @@ import { sha256Hex, verificarHuella } from "@core/formatos/huella";
 import type { JsonValor } from "@core/formatos/jcs";
 import { PlanSchema, type Plan } from "@core/plan/esquema";
 import {
-  DEMO_B,
   ListasSchema,
   LoteBSchema,
   type ListasB as Listas,
@@ -26,7 +25,13 @@ import {
 } from "@core/sintetico/demo-b/esquema";
 import { LoteSchema, type Lote } from "@core/sintetico/esquema";
 import type { GrafoParaMapa } from "@core/visor/mapa";
-import { DEMOS, type IdDemo } from "@/lib/demos";
+import {
+  DEMO_PUBLICADO,
+  DEMOS,
+  demoSinDespacho,
+  esIdDemo,
+  type IdDemo,
+} from "@/lib/demos";
 import type { z } from "zod";
 import {
   EntornoCorridaSchema,
@@ -207,7 +212,8 @@ export async function cargarDemo(
       `vitrina: el manifiesto declara ${desconocidos.map((x) => `«${x}»`).join(", ")}, que la vitrina no sabe pintar (${DEMOS_DE_LA_VITRINA.join(", ")}); un demo nuevo exige sus rutas (ADR-014) y sus textos de dominio antes de entrar al manifiesto.`,
     );
   const demo = manifiesto.demos[id];
-  if (!demo) throw new Error(`vitrina: el manifiesto no declara «${id}».`);
+  if (!demo || !esIdDemo(id))
+    throw new Error(`vitrina: el manifiesto no declara «${id}».`);
 
   const planCrudo = leer(demo.plan.archivo);
   await conHuellaDeclarada(demo.plan.archivo, planCrudo, demo.plan.huella);
@@ -330,39 +336,45 @@ export async function cargarDemo(
     codigo,
     spike,
   };
-  if (id === DEMO_B) {
-    if (!m.listas)
-      throw new Error(
-        `vitrina: la corrida de «${id}» (${demo.corrida.ruta}) no declara sus listas de control; la vitrina las necesita para P3 y P6.`,
+  switch (id) {
+    case "demo-b": {
+      if (!m.listas)
+        throw new Error(
+          `vitrina: la corrida de «${id}» (${demo.corrida.ruta}) no declara sus listas de control; la vitrina las necesita para P3 y P6.`,
+        );
+      const listasCrudas = leer(m.listas.archivo);
+      await conHuellaDeclarada(m.listas.archivo, listasCrudas, m.listas.huella);
+      return {
+        ...comunes,
+        id: "demo-b",
+        lote: LoteBSchema.parse(casos),
+        listas: ListasSchema.parse(listasCrudas),
+      };
+    }
+    case "demo-a": {
+      if (!m.plan_beneficios)
+        throw new Error(
+          `vitrina: la corrida de «${id}» (${demo.corrida.ruta}) no declara su plan de beneficios; la vitrina lo necesita para P3 y P6.`,
+        );
+      const planBeneficiosRef = m.plan_beneficios;
+      const pbCrudo = leer(planBeneficiosRef.archivo);
+      await conHuellaDeclarada(
+        planBeneficiosRef.archivo,
+        pbCrudo,
+        planBeneficiosRef.huella,
       );
-    const listasCrudas = leer(m.listas.archivo);
-    await conHuellaDeclarada(m.listas.archivo, listasCrudas, m.listas.huella);
-    return {
-      ...comunes,
-      id: "demo-b",
-      lote: LoteBSchema.parse(casos),
-      listas: ListasSchema.parse(listasCrudas),
-    };
+      const planBeneficios = PlanBeneficiosMinimoSchema.parse(pbCrudo);
+      esElPlanDeBeneficiosDeLaCorrida(planBeneficiosRef, planBeneficios, id);
+      return {
+        ...comunes,
+        id: "demo-a",
+        lote: LoteSchema.parse(casos),
+        planBeneficios,
+      };
+    }
+    default:
+      return demoSinDespacho(id, "cargarDemo");
   }
-  if (!m.plan_beneficios)
-    throw new Error(
-      `vitrina: la corrida de «${id}» (${demo.corrida.ruta}) no declara su plan de beneficios; la vitrina lo necesita para P3 y P6.`,
-    );
-  const planBeneficiosRef = m.plan_beneficios;
-  const pbCrudo = leer(planBeneficiosRef.archivo);
-  await conHuellaDeclarada(
-    planBeneficiosRef.archivo,
-    pbCrudo,
-    planBeneficiosRef.huella,
-  );
-  const planBeneficios = PlanBeneficiosMinimoSchema.parse(pbCrudo);
-  esElPlanDeBeneficiosDeLaCorrida(planBeneficiosRef, planBeneficios, id);
-  return {
-    ...comunes,
-    id: "demo-a",
-    lote: LoteSchema.parse(casos),
-    planBeneficios,
-  };
 }
 
 function archivosDeCorrida(
@@ -406,7 +418,7 @@ function planDelLote(
 }
 
 /** El demo de las rutas sin prefijo (`/es/plan`…): el A conserva sus URL del S2 (ADR-014). */
-export const DEMO_PUBLICADO = "demo-a";
+export { DEMO_PUBLICADO };
 
 const memoria = new Map<string, Promise<DatosDemo>>();
 
@@ -423,13 +435,18 @@ export function datosDemo(id: IdDemo = DEMO_PUBLICADO): Promise<DatosDemo> {
   return p;
 }
 
-/** Los datos de todos los demos, por id: lo que cuenta la app entera (la ficha de la app y su export). */
-export interface DatosDeLosDemos {
+/** Los datos de cada demo por su id: un demo nuevo en `DEMOS` sin su tipo aquí no compila (ADR-014). */
+interface DatosPorDemo {
   "demo-a": DatosDemoA;
   "demo-b": DatosDemoB;
 }
 
+/** Los datos de todos los demos, por id: lo que cuenta la app entera (la ficha de la app y su export). */
+export type DatosDeLosDemos = { [K in IdDemo]: DatosPorDemo[K] };
+
 export async function datosDeLosDemos(): Promise<DatosDeLosDemos> {
-  const [a, b] = await Promise.all([datosDemo("demo-a"), datosDemo("demo-b")]);
-  return { "demo-a": a, "demo-b": b };
+  const pares = await Promise.all(
+    DEMOS.map(async (id) => [id, await datosDemo(id)] as const),
+  );
+  return Object.fromEntries(pares) as DatosDeLosDemos;
 }

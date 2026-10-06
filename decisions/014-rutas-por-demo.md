@@ -29,10 +29,13 @@ sin romper lo publicado del A.
   (`src/app/[idioma]/<pantalla>`) y las del B (`src/app/[idioma]/demo-b/<pantalla>`) son envoltorios de una línea con
   sus metadatos; el título del B antepone «Demo B ·» (`metadatos()`).
 - **Datos.** `datosDemo(id)` lee y verifica el demo que declara el manifiesto; un demo del manifiesto que la vitrina no
-  sabe pintar detiene el build con su nombre. `datosDeLosDemos()` da los dos, para lo que cuenta la app entera (la
+  sabe pintar detiene el build con su nombre. `datosDeLosDemos()` da todos, por id, para lo que cuenta la app entera (la
   ficha de la app, la entrada).
 - **Vistas.** Un esqueleto común por pantalla y un perfil por demo donde el dominio cambia (Agente, Caso). Todo
-  despacho por demo es un `switch` sin `default` o un `Record<IdDemo, …>`: un demo nuevo no compila hasta tener lo suyo.
+  despacho por demo es un `switch` cuyo `default` llama a `demoSinDespacho(x: never)`, o un `Record<IdDemo, …>`: un demo
+  nuevo no compila hasta tener lo suyo. Ninguna función toma «demo-a» por omisión; las dos preferencias del A que sí
+  existen son constantes declaradas con su razón en `src/lib/demos.ts` (`DEMO_PUBLICADO`, el de las rutas sin prefijo
+  y de las pantallas que no son de un demo; `CONMUTADOR_EN`, qué barras llevan el conmutador).
 - **Textos.** La copia propia del B vive en `src/textos/demo-b/`; un texto común que cambia por demo es un
   `Record<IdDemo, TextoBilingue>`. El pie dice lo sintético y quién decidiría en producción según el demo.
 - **Barra.** En las pantallas del B, las pestañas enlazan dentro del B y un conmutador A · B lleva a la misma pantalla
@@ -69,3 +72,12 @@ Las tres nacieron con su demo en rojo (bitácora del S3: D41, D42–D44).
   puede depender de la consulta sin pintarse en el cliente, y la vitrina no hace llamadas ni lee datos en el navegador.
 - **Una sola pantalla con los dos demos lado a lado.** Duplica la densidad de cada pantalla (ya al límite en un
   teléfono de 380 px) y mezcla vocabularios que la regla 7 separa a propósito.
+
+## Adenda (S3, auditoría, AU-S3-12)
+
+La primera versión de este ADR afirmaba despachos exhaustivos y quedaban comparaciones binarias (`d.id === "demo-a"` en
+la vista del Plan, la Brecha, el Caso, la barra y `verificar-export.mjs`) y valores por omisión «demo-a»
+(`categoriaDeRegla`, `umbralDeCategoria`, la barra). Se reemplazaron por `switch` con `never`, `Record<IdDemo, …>` y las
+dos constantes de arriba; `scripts/verificar-export.mjs` recorre todos los demos de `SOLO_DE`. La demo en rojo (añadir
+«demo-c» a `DEMOS`) hace que el typecheck nombre 47 sitios, entre ellos `cargarDemo`, `DatosPorDemo` y cada registro de
+textos; con la lista restaurada, verde (bitácora del S3, F2-D6).

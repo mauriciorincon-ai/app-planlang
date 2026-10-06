@@ -97,8 +97,20 @@ describe("revisión de un borrador", () => {
     expect(es).toContain("_abierta_");
     expect(es).toContain("booleano");
     expect(es).not.toContain(MARCA_PENDIENTE);
-    expect(es.match(/^Ninguna\.$/gm)?.length).toBe(2);
-    expect(en.match(/^None\.$/gm)?.length).toBe(2);
+    // Vacías: lo redactado por el entrevistador, las señales derivadas y, desde AU-S3-01/13, las advertencias de M1
+    // y lo que el código restauró.
+    expect(es.match(/^Ninguna\.$/gm)?.length).toBe(4);
+    expect(en.match(/^None\.$/gm)?.length).toBe(4);
+    for (const [texto, vacio] of [
+      [es, "Ninguna."],
+      [en, "None."],
+    ] as const)
+      expect(
+        texto
+          .split(/^## /m)
+          .filter((x) => x.trimEnd().endsWith(`\n\n${vacio}`))
+          .map((x) => x.split("\n")[0]),
+      ).toHaveLength(4);
     // Sin borrador legible el documento igual sale.
     expect(textoDeRevision(null, r, "es")).toContain("### Problema");
   });

@@ -20,7 +20,7 @@ import type { DatosDemo } from "@/lib/datos/vitrina";
 import type { IdDemo } from "@/lib/demos";
 import { DEMO_TEXTO } from "@/textos/demo";
 import { ruta } from "@/lib/ruta";
-import { umbralDeCategoria } from "./motivo-pausa";
+import { umbralDeCategoria, type CategoriaRegla } from "./motivo-pausa";
 import { delVocabulario } from "./vocabulario";
 import { conPlan } from "./plan-en-texto";
 import {
@@ -92,6 +92,15 @@ const X = (t: TextoBilingue, i: Idioma) => t[i];
  * `IMPLICA`: es código, igual en los dos idiomas.
  */
 const TODOS_EN_EL_PLAN = "todos";
+
+/**
+ * La regla del plan cuyo umbral acota la tasa de un supuesto (§ 3 de la Brecha), por demo: el A la ata al tope de
+ * aclaraciones; el B no ata su tasa a ningún tope.
+ */
+const TOPE_DE_LA_TASA: Readonly<Record<IdDemo, CategoriaRegla | null>> = {
+  "demo-a": "tope",
+  "demo-b": null,
+};
 
 /** El veredicto en palabras, en minúscula para la línea del experto; uno sin nombre detiene el build. */
 function textoDeVeredicto(valor: string, i: Idioma): string {
@@ -2444,8 +2453,8 @@ function vistaSupuesto(
   } else {
     // En el A, el tope de aclaraciones lo dice la regla del plan que lo aplica; sin ella, la página no inventa un
     // «0» (AU-S2-16). El B no ata su tasa a ningún tope: la cifra dice cuántos se resolvieron como dice la verdad.
-    const tope =
-      demo === "demo-a" ? umbralDeCategoria(plan, "tope", demo) : null;
+    const categoria = TOPE_DE_LA_TASA[demo];
+    const tope = categoria ? umbralDeCategoria(plan, categoria, demo) : null;
     // Un tope que no sea número no llega aquí: el intérprete de aristas lo rechaza al compactar las señales.
     const topeValor = tope ? (tope.valor_en_plan as number) : null;
     const tasaMedida =

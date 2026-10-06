@@ -12,6 +12,7 @@ import {
 } from "@core/formatos/bilingue";
 import { esAristaTripleta } from "@core/plan/esquema";
 import type { DatosDemo } from "@/lib/datos/vitrina";
+import { demoSinDespacho } from "@/lib/demos";
 import { DEMO_TEXTO } from "@/textos/demo";
 import { ruta } from "@/lib/ruta";
 import {
@@ -167,46 +168,25 @@ export function vistaPlan(d: DatosDemo, i: Idioma): VistaPlan {
   // Lo que un plan aprobado trae siempre: sin ello la página no se arma (el build falla nombrando el campo).
   const aprobadoEl = p.aprobado_el;
   const huella = p.huella;
-  // El plan de beneficios es el mundo del A; el B cita sus listas desde el lote y la corrida (desviación 17).
-  const beneficios = p.plan_beneficios_sintetico;
   const etiquetaRiesgo = p.etiqueta_riesgo;
   const lineaBase = cg.linea_base;
-  const faltan = Object.entries({
-    aprobado_el: aprobadoEl,
-    huella,
-    ...(d.id === "demo-a" ? { plan_beneficios_sintetico: beneficios } : {}),
-    etiqueta_riesgo: etiquetaRiesgo,
-    "contrato_de_grafo.linea_base": lineaBase,
-  })
-    .filter(([, v]) => v === undefined || v === null)
-    .map(([k]) => k);
-  if (
-    !aprobadoEl ||
-    !huella ||
-    (d.id === "demo-a" && !beneficios) ||
-    !etiquetaRiesgo ||
-    !lineaBase
-  )
+  const m = mundoDelPlan(d);
+  const faltan = [
+    ...Object.entries({
+      aprobado_el: aprobadoEl,
+      huella,
+      etiqueta_riesgo: etiquetaRiesgo,
+      "contrato_de_grafo.linea_base": lineaBase,
+    })
+      .filter(([, v]) => v === undefined || v === null)
+      .map(([k]) => k),
+    ...m.faltan,
+  ];
+  if (!aprobadoEl || !huella || !m.texto || !etiquetaRiesgo || !lineaBase)
     throw new Error(
       `vitrina: el plan ${p.id} ${p.version} no trae lo que trae un plan aprobado: ${faltan.join(", ")}`,
     );
-  const mundo =
-    d.id === "demo-a"
-      ? PARTE_DE.dominioDetalle({
-          procedimientos: beneficios!.procedimientos,
-          exentos: beneficios!.exentos_de_autorizacion,
-          exclusiones: beneficios!.exclusiones_con_causal,
-        })
-      : PARTE_DE.dominioDetalleB({
-          vinculantes: d.listas.listas.filter((l) => l.vinculante).length,
-          entradasV: d.listas.listas
-            .filter((l) => l.vinculante)
-            .reduce((n, l) => n + l.entradas.length, 0),
-          consulta: d.listas.listas.filter((l) => !l.vinculante).length,
-          entradasC: d.listas.listas
-            .filter((l) => !l.vinculante)
-            .reduce((n, l) => n + l.entradas.length, 0),
-        });
+  const mundo = m.texto;
   const vPlan = versionCorta(p.version);
   const vCorrida = versionCorta(
     informe.ficha_reproducibilidad.corrida.plan_de_ejecucion.version,
@@ -731,4 +711,43 @@ export function vistaPlan(d: DatosDemo, i: Idioma): VistaPlan {
     },
     pie: pieDeCorrida(d, i),
   };
+}
+
+/**
+ * El mundo de cada demo como lo dice P3 (exhaustivo por demo, ADR-014): el plan de beneficios del A viaja en su plan;
+ * el B cita sus listas desde el lote y la corrida (desviación 17). Sin su mundo, `texto` es `null` y `faltan` lo nombra.
+ */
+function mundoDelPlan(d: DatosDemo): {
+  texto: TextoBilingue | null;
+  faltan: string[];
+} {
+  switch (d.id) {
+    case "demo-a": {
+      const b = d.plan.plan_beneficios_sintetico;
+      if (!b) return { texto: null, faltan: ["plan_beneficios_sintetico"] };
+      return {
+        texto: PARTE_DE.dominioDetalle({
+          procedimientos: b.procedimientos,
+          exentos: b.exentos_de_autorizacion,
+          exclusiones: b.exclusiones_con_causal,
+        }),
+        faltan: [],
+      };
+    }
+    case "demo-b": {
+      const vinculantes = d.listas.listas.filter((l) => l.vinculante);
+      const consulta = d.listas.listas.filter((l) => !l.vinculante);
+      return {
+        texto: PARTE_DE.dominioDetalleB({
+          vinculantes: vinculantes.length,
+          entradasV: vinculantes.reduce((n, l) => n + l.entradas.length, 0),
+          consulta: consulta.length,
+          entradasC: consulta.reduce((n, l) => n + l.entradas.length, 0),
+        }),
+        faltan: [],
+      };
+    }
+    default:
+      return demoSinDespacho(d, "vistaPlan (el mundo del demo)");
+  }
 }

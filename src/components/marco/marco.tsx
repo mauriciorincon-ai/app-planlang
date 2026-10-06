@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import type { Idioma } from "@core/formatos/bilingue";
-import type { IdDemo } from "@/lib/demos";
+import { DEMO_PUBLICADO, type IdDemo } from "@/lib/demos";
 import type { Pantalla } from "@/lib/ruta";
 import { SALTO } from "@/textos/comun";
 import { Barra } from "./barra";
@@ -38,7 +38,12 @@ export function Marco({
         {SALTO[idioma]}
       </a>
       <Rotulo idioma={idioma} />
-      <Barra idioma={idioma} pagina={pagina} id={id} demo={demo ?? "demo-a"} />
+      <Barra
+        idioma={idioma}
+        pagina={pagina}
+        id={id}
+        demo={demo ?? DEMO_PUBLICADO}
+      />
       <main id="contenido" tabIndex={-1} className="outline-none">
         {children}
       </main>

@@ -187,14 +187,15 @@ for (const f of htmls) {
     continue;
   }
   const texto = textoLeido(html);
-  const otro = demo === "demo-a" ? "demo-b" : "demo-a";
-  for (const p of SOLO_DE[otro]) {
-    const m = comoPalabra(p).exec(texto);
-    if (m)
-      fallas.push(
-        `${rel(f)}: pantalla del ${demo} dice «${m[0]}», palabra del ${otro}: …${texto.slice(Math.max(0, m.index - 60), m.index + m[0].length + 40).trim()}…`,
-      );
-  }
+  // Las palabras de cada uno de los OTROS demos (todos los que declara `SOLO_DE`, no un binario).
+  for (const otro of Object.keys(SOLO_DE).filter((x) => x !== demo))
+    for (const p of SOLO_DE[otro]) {
+      const m = comoPalabra(p).exec(texto);
+      if (m)
+        fallas.push(
+          `${rel(f)}: pantalla del ${demo} dice «${m[0]}», palabra del ${otro}: …${texto.slice(Math.max(0, m.index - 60), m.index + m[0].length + 40).trim()}…`,
+        );
+    }
 }
 
 for (const f of todos) {

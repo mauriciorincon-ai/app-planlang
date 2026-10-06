@@ -167,6 +167,7 @@ export function perfilCasoA(
   const categoriaPausa = (): string =>
     categoriaDeRegla(
       reglaDeLaPausa(t.caso_id, pausa?.payload.motivo, t.decisiones_de_arista),
+      "demo-a",
     );
   const motivoPausa = (): TextoBilingue =>
     textoDeCategoria(MOTIVO, categoriaPausa(), "MOTIVO (src/textos/caso.ts)");

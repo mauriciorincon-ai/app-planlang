@@ -11,6 +11,9 @@ import { vistaPlan } from "@/lib/vista/plan";
 import { vistaPlayground } from "@/lib/vista/playground";
 import { delVocabulario } from "@/lib/vista/vocabulario";
 import { SENAL_DE_CONFIANZA } from "@core/brecha/contexto";
+import type { DecisionDeArista } from "@core/formatos/traza";
+import { demoSinDespacho } from "@/lib/demos";
+import { motivoTecnico } from "@/lib/vista/caso-comun";
 
 let d: DatosDemo;
 beforeAll(async () => {
@@ -116,6 +119,86 @@ describe("P2 Plan: la criticidad", () => {
     (otro.plan.supuestos[0]! as { criticidad: string }).criticidad = "extrema";
     expect(() => vistaPlan(otro, "en")).toThrow(
       "la criticidad «extrema» no tiene nombre",
+    );
+  });
+});
+
+describe("despachos por demo (AU-S3-12)", () => {
+  it("un plan del A sin su plan de beneficios se detiene nombrándolo", () => {
+    const otro = conPlan();
+    delete (otro.plan as { plan_beneficios_sintetico?: unknown })
+      .plan_beneficios_sintetico;
+    expect(() => vistaPlan(otro, "es")).toThrow(
+      "no trae lo que trae un plan aprobado: plan_beneficios_sintetico",
+    );
+  });
+
+  it("un demo que ningún despacho atiende se detiene con su nombre", () => {
+    expect(() => demoSinDespacho("demo-z" as never, "cargarDemo")).toThrow(
+      "cargarDemo no sabe atender el demo «demo-z»",
+    );
+    expect(() => vistaPlan({ ...d, id: "demo-z" } as never, "es")).toThrow(
+      "no sabe atender el demo",
+    );
+  });
+});
+
+describe("el motivo técnico de una pausa (AU-S3-06)", () => {
+  const base: DecisionDeArista = {
+    desde: "decision",
+    orden_arista: 2,
+    paso: 5,
+    tipo: "tripleta",
+    senal: "senal_confianza",
+    valor_observado: 0.6988,
+    operador: "menor_que",
+    valor_declarado: "umbral.U1",
+    umbral_aplicado: 0.75,
+    inclusivo: false,
+    funcion: null,
+    entradas: null,
+    resultado: true,
+    rama_tomada: "pausa_humana",
+  };
+
+  it("una tripleta: decimales con coma en español y con punto en inglés", () => {
+    expect(motivoTecnico(base)).toEqual({
+      es: "Arista 2 de decision: senal_confianza (0,6988) menor que umbral.U1 (0,75).",
+      en: "Edge 2 of decision: senal_confianza (0.6988) less than umbral.U1 (0.75).",
+    });
+  });
+
+  it("un valor vacío o compuesto se escribe como en el plan, sin `None`", () => {
+    expect(
+      motivoTecnico({ ...base, valor_observado: null, umbral_aplicado: [1, 2] })
+        .es,
+    ).toBe(
+      "Arista 2 de decision: senal_confianza (null) menor que umbral.U1 ([1,2]).",
+    );
+  });
+
+  it("una función nombrada: sus entradas en orden, con `true` y no `True`", () => {
+    const f: DecisionDeArista = {
+      ...base,
+      tipo: "funcion",
+      senal: null,
+      operador: null,
+      valor_declarado: null,
+      funcion: "texas_y_no_aprobar",
+      entradas: { propuesta: "negar", modo_texas: true },
+    };
+    expect(motivoTecnico(f)).toEqual({
+      es: "Arista 2 de decision: texas_y_no_aprobar(modo_texas=true, propuesta=negar).",
+      en: "Edge 2 of decision: texas_y_no_aprobar(modo_texas=true, propuesta=negar).",
+    });
+    expect(motivoTecnico({ ...f, entradas: null }).en).toBe(
+      "Edge 2 of decision: texas_y_no_aprobar().",
+    );
+  });
+
+  it("una tripleta sin señal u operador en la traza se detiene nombrando la arista", () => {
+    expect(() => motivoTecnico({ ...base, operador: null })).toThrow(
+      "la arista 2 de decision es una tripleta sin señal u operador",
     );
   });
 });
