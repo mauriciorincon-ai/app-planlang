@@ -57,8 +57,8 @@ def test_la_entrevista_simulada_se_regenera_con_los_mismos_bytes(tmp_path: Path)
 
 
 def test_la_transcripcion_con_elementos_restaurados_se_regenera_y_los_nombra(tmp_path: Path) -> None:
-    """AU-S3-01: cuando el modelo descarta elementos, el turno dice cuáles devolvió el código; TypeScript lee el
-    fixture con el esquema estricto (`tests/contrato/entrevista-borrador.test.ts`)."""
+    """AU-S3-01: cuando el modelo descarta elementos, el turno dice cuáles devolvió el código; TypeScript lee
+    el fixture con el esquema estricto (`tests/contrato/entrevista-borrador.test.ts`)."""
     generar_con_restaurados(tmp_path)
     archivo = "transcripcion-con-restaurados.json"
     assert (tmp_path / archivo).read_bytes() == (FIXTURE / archivo).read_bytes()
@@ -316,17 +316,22 @@ def test_la_consola_sale_con_su_codigo_sin_escribir_en_el_repo(
     monkeypatch.setenv("PLANLANG_PROVEEDOR", "simulado")
     salir = tmp_path / "salir.json"
     salir.write_text(json.dumps({"_nota": "solo sale", "P01": "salir"}), encoding="utf-8")
-    assert consola.main(["--demo", "b", "--retomar"]) == 2
+    # El plan B del repo ya está aprobado (AU-S3-10): sin --salida la consola se niega antes de preguntar.
+    assert consola.main(["--demo", "b", "--respuestas", str(salir)]) == 2
+    assert "--salida" in capsys.readouterr().err
+    otra = ["--salida", str(tmp_path / "otra")]
+    assert consola.main(["--demo", "b", "--retomar", *otra]) == 2
     assert "No hay entrevista guardada" in capsys.readouterr().err
     assert (
-        consola.main(["--demo", "b", "--respuestas", str(salir), "--fecha", "2026-10-04"])
+        consola.main(["--demo", "b", "--respuestas", str(salir), "--fecha", "2026-10-04", *otra])
         == consola.SALIDA_GUARDADA
     )
     assert "--retomar" in capsys.readouterr().out
-    assert consola.main(["--demo", "b", "--sin-modelo", "--respuestas", str(salir)]) == 2
+    assert consola.main(["--demo", "b", "--sin-modelo", "--respuestas", str(salir), *otra]) == 2
     assert "Ya hay una entrevista guardada" in capsys.readouterr().err
     assert (tmp_path / ".entrevistas" / "demo-b.sqlite").exists()
     assert not (tmp_path / "plans").exists()
+    assert not (tmp_path / "otra").exists()
 
 
 def test_rf_02_3_el_codigo_suma_las_senales_que_el_plan_lee_y_nadie_declaro() -> None:
@@ -440,8 +445,8 @@ def test_el_modelo_no_descarta_elementos_de_la_propuesta() -> None:
 
 
 def test_con_el_plan_aprobado_la_entrevista_no_sobrescribe_su_registro(tmp_path: Path) -> None:
-    """AU-S3-10: `plans/demo-b/` es el registro del plan B aprobado (borrador, transcripción y la revisión que el
-    usuario leyó). Con `v1.json` presente, la entrevista exige otra carpeta; con ella, escribe allí."""
+    """AU-S3-10: `plans/demo-b/` es el registro del plan B aprobado (borrador, transcripción y la revisión que
+    el usuario leyó). Con `v1.json` presente, la entrevista exige otra carpeta; con ella, escribe allí."""
     from app_agents.adaptador import crear_modelo
     from app_agents.entrevistador.cli import DEMOS, Lector, PlanYaAprobado, ejecutar
 

@@ -212,8 +212,9 @@ def respondedor(peticion: dict[str, Any]) -> dict[str, Any]:
 
 
 def respondedor_que_descarta(peticion: dict[str, Any]) -> dict[str, Any]:
-    """Como `respondedor`, pero al redactar P05 devuelve solo la decisión que tocó (D2), como hizo el modelo real en
-    la segunda corrida del B: el código devuelve las demás desde la propuesta y lo deja escrito en `restaurados`."""
+    """Como `respondedor`, pero al redactar P05 devuelve solo la decisión que tocó (D2), como hizo el modelo
+    real en la segunda corrida del B: el código devuelve las demás desde la propuesta y lo deja escrito en
+    `restaurados`."""
     r = respondedor(peticion)
     if _pregunta(peticion["prompt"]) == "P05":
         r["valor"] = [d for d in r["valor"] if d["id"] == "D2"]
@@ -245,8 +246,8 @@ def generar(directorio: Path = FIXTURE) -> Resultado:
 
 
 def generar_con_restaurados(directorio: Path = FIXTURE) -> Resultado:
-    """La carnada de AU-S3-01: la transcripción de una entrevista en la que el modelo descartó elementos, escrita
-    con el serializador real para que TypeScript la valide (el turno lleva `restaurados`)."""
+    """La carnada de AU-S3-01: la transcripción de una entrevista en la que el modelo descartó elementos,
+    escrita con el serializador real para que TypeScript la valide (el turno lleva `restaurados`)."""
     r = entrevistar(modelo=crear_modelo("simulado", respondedor=respondedor_que_descarta))
     assert r.transcripcion is not None
     escribir_con_huella(directorio / "transcripcion-con-restaurados.json", r.transcripcion)

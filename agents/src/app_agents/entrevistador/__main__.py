@@ -81,7 +81,8 @@ def main(argv: list[str] | None = None) -> int:
         )
     except PlanYaAprobado:
         print(
-            f"{demo.directorio}/v1.json ya está aprobado: la entrevista nueva va a la carpeta que indiques con --salida.",
+            f"{demo.directorio}/v1.json ya está aprobado: "
+            "la entrevista nueva va a la carpeta que indiques con --salida.",
             file=sys.stderr,
         )
         return 2

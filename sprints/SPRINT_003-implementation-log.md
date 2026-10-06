@@ -1552,23 +1552,32 @@ usuario:
 Además, la CI salió roja por el calendario sobre `525f5d1`: dos avisos altos nuevos con parche (`source-map-js`
 < 1.2.2 y `compression` < 1.8.2). Es el primer pago de la Fase 2 (regla 18: se sube la dependencia, sin excepción).
 
-### Punto de control de la Fase 2 de la auditoría (2026-10-05, a pedido del usuario: límite de contexto)
+### `/audita-sprint` Fase 2: los pagos (registro vivo)
 
-**Pagado y comiteado:**
-- Dependencias: `source-map-js` y `compression`, más el override acotado (`31ee86c`).
-- **AU-S3-01:** `restaurados` declarado en `TurnoSchema`, con su lector en la revisión y su carnada (fixture
-  `transcripcion-con-restaurados.json`, escrito por Python, y pruebas pytest y vitest). Demo en rojo con
-  `demo-rojo.sh`: «Unrecognized key: restaurados» al borrarlo, verde al restaurar.
-- **AU-S3-13:** la revisión trae la entrevista pregunta por pregunta, la cabecera y las advertencias de M1.
-- **AU-S3-10 (lado Python y CLI):** `PlanYaAprobado` y `--salida`, con su prueba pytest.
+Orden de la Fase 2: primero los hallazgos que crean o extienden un control (cada uno con su demo en rojo), después las
+decisiones del usuario y luego los textos. Al final, todos los controles sobre el árbol entero y la segunda pasada de la
+casilla 4 por otro auditor.
 
-**Falta de AU-S3-10:**
-- `tests/unit/guardias/procedencia-plan-b.test.ts`: (a) `aprobarPlan(v0-borrador, {por: "Mauricio Rincón", el:
-  "2026-10-04"})` reproduce `plans/demo-b/v1.json`; (b) las huellas de `contradicciones.json` coinciden con las del
-  borrador y la transcripción;
-- la línea del manual (ES/EN) sobre `--salida`.
+| Hallazgo | Pago | Commit |
+|---|---|---|
+| CI roja por el calendario | `source-map-js` y `compression` (override acotado `compression@<1.8.2`) | `31ee86c` |
+| AU-S3-01 | `restaurados` declarado en `TurnoSchema`, la revisión lo nombra; carnada escrita por Python (`transcripcion-con-restaurados.json`) | `d44a2ad` |
+| AU-S3-13 | la revisión trae cabecera, advertencias de M1 y la entrevista pregunta por pregunta | `d44a2ad` |
+| AU-S3-10 | la consola se niega a escribir en `plans/demo-b/` con `v1.json` presente (`PlanYaAprobado`, `--salida`); guarda de procedencia del plan B; paso 5 del manual | `d44a2ad` + este |
 
-**Siguiente, en orden** (todo detallado con su ajuste en `sprints/SPRINT_003-auditoria.md`):
+**Demos en rojo de la Fase 2** (`scripts/demo-rojo.sh`):
+
+| # | Control | Mutación | Rojo nombrado | Verde al restaurar |
+|---|---|---|---|---|
+| F2-D1 | contrato de la transcripción (AU-S3-01) | se borra `restaurados` de `TurnoSchema` | «Unrecognized key: "restaurados"» sobre el fixture que escribió Python | sí |
+| F2-D2 | procedencia del plan B (AU-S3-10) | `v0-borrador.json`: «solo las exactas» → «… (entrevista nueva)» | las dos pruebas: `aprobarPlan` da `58b0eac5…` en vez de `0cd6590c…` (la huella de `v1.json`), y `contradicciones.json` apunta a `823bfba5…` cuando el borrador ya es `24ff6c14…` | sí |
+
+**Un tropiezo de la CI:** el push de `d44a2ad` salió rojo en `python`. Ruff marcó nueve líneas de más de 110 columnas
+(la verificación local había corrido con `-q` y su salida se perdió en la tubería). Además, la prueba de la consola
+fallaba: con `v1.json` del B en el repo, la guarda nueva se adelanta a lo que esa prueba medía. La prueba ahora lo dice
+(sin `--salida` la consola se niega) y corre con `--salida` en una carpeta temporal que nunca se crea.
+
+**Lo que sigue, en orden** (cada ajuste, detallado en `sprints/SPRINT_003-auditoria.md`):
 1. Controles: AU-S3-06, 07, 11, 12 (con su demo en rojo: añadir «demo-c» a `DEMOS`), 14, 27, 28, 19 y 15.
 2. Decisiones del usuario:
    - C5 respeta `k_aplica_a` en el verificador (versión nueva del verificador);

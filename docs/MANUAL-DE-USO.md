@@ -84,6 +84,9 @@ Se usa de dos maneras:
      con su huella.
   4. Si quedan contradicciones, el comando se niega a aprobar. Aceptarlas es tu decisión: se hace con
      `--con-contradicciones` y queda registrado.
+  5. Si el plan ya está aprobado (`v1.json` existe), la entrevista no escribe en `plans/demo-b/`: esa carpeta es el
+     registro de lo que aprobaste. Indícale otra con `--salida <carpeta>` y allí quedan el borrador, las
+     contradicciones y la revisión. `plan:aprobar` no la convierte en `v1.json`, que ya existe.
 - **Los idiomas:** tu respuesta queda tal cual, en el idioma en que la escribiste. El otro idioma lo redacta el
   modelo y queda marcado como suyo, para que lo revises antes de aprobar. Sin modelo (`--sin-modelo`), el otro
   idioma queda pendiente.
@@ -397,6 +400,9 @@ There are two ways to use it:
      with its fingerprint.
   4. If contradictions remain, the command refuses to approve. Accepting them is your call: you do it with
      `--con-contradicciones`, and it gets recorded.
+  5. If the plan is already approved (`v1.json` exists), the interview does not write to `plans/demo-b/`: that
+     folder is the record of what you approved. Give it another one with `--salida <folder>` and the draft, the
+     contradictions and the review land there. `plan:aprobar` does not turn it into `v1.json`, which already exists.
 - **Languages:** your answer stays as you wrote it, in your language. The model drafts the other language and it is
   marked as the model's, so you review it before approving. Without a model (`--sin-modelo`), the other language
   stays pending.

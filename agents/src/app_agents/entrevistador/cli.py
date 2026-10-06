@@ -54,8 +54,9 @@ class SinEntrevista(RuntimeError):
 
 
 class PlanYaAprobado(RuntimeError):
-    """El plan del demo ya tiene su `v1.json`: el borrador, la transcripción y la revisión que el usuario leyó al
-    aprobarlo son su registro y no se sobrescriben (AU-S3-10). Una entrevista nueva va a otra carpeta (`salida`)."""
+    """El plan del demo ya tiene su `v1.json`: el borrador, la transcripción y la revisión que el usuario
+    leyó al aprobarlo son su registro y no se sobrescriben (AU-S3-10). Una entrevista nueva va a otra
+    carpeta (`salida`)."""
 
 
 @dataclass
@@ -190,7 +191,8 @@ def ejecutar(
         escribir_bonito(directorio / ARCHIVO_BORRADOR, borrador)
         registro = escribir_con_huella(directorio / ARCHIVO_TRANSCRIPCION, registro)
         visible = directorio.relative_to(raiz) if directorio.is_relative_to(raiz) else directorio
-        salida(t["archivos"].format(b=f"{visible}/{ARCHIVO_BORRADOR}", t=f"{visible}/{ARCHIVO_TRANSCRIPCION}"))
+        ruta_b, ruta_t = f"{visible}/{ARCHIVO_BORRADOR}", f"{visible}/{ARCHIVO_TRANSCRIPCION}"
+        salida(t["archivos"].format(b=ruta_b, t=ruta_t))
     estados = list((final.get("estados") or {}).values())
     salida(
         t["fin"].format(
