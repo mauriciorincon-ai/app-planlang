@@ -4,6 +4,7 @@
  * con la cita de cada conclusión.
  */
 import type { Idioma, TextoBilingue } from "@core/formatos/bilingue";
+import { jcs } from "@core/formatos/jcs";
 import type { Traza } from "@core/formatos/traza";
 import type { CasoB } from "@core/sintetico/demo-b/esquema";
 import {
@@ -72,6 +73,10 @@ export function perfilCasoB(
   const faltan = t.extraccion?.campos_faltantes.length ?? 0;
   const pt = t.puntaje;
   const exp = t.expediente;
+  if (exp && exp.caso_id !== t.caso_id)
+    throw new Error(
+      `vitrina: el expediente de la traza ${t.caso_id} dice ser del caso ${exp.caso_id} (AU-S3-14).`,
+    );
   const carga = s.carga_detectada === true;
   const visito = (n: string) => t.nodos_visitados.includes(n);
 
@@ -243,6 +248,7 @@ export function perfilCasoB(
         `el payload de la pausa de ${id}`,
       )
     : undefined;
+  if (payload) payloadIgualALaTraza(id, payload, t, c);
   const doc = t.documento_adverso
     ? leerParaVista(
         DocumentoRechazoVistaSchema,
@@ -327,6 +333,7 @@ export function perfilCasoB(
       ? {
           encabezado: `${id} · ${doc.causal.id}`,
           filas: [
+            { k: X(DOCUMENTO_B.carta, i), v: X(doc.texto, i) },
             { k: X(DOCUMENTO_B.decision, i), v: X(DOCUMENTO_B.rechazada, i) },
             {
               k: X(DOCUMENTO_B.causa, i),
@@ -380,23 +387,83 @@ export function perfilCasoB(
           conclusiones: exp.conclusiones.map((k) => {
             const lista = k.cita?.lista as
               { id: string; version: string; fecha: string } | undefined;
+            const regla =
+              typeof k.cita?.regla === "string" ? k.cita.regla : null;
             const cita = k.cita
-              ? `${X(
-                  delVocabulario(
-                    EXPEDIENTE_B.cita,
-                    k.cita.tipo,
-                    "EXPEDIENTE_B.cita (src/textos/demo-b/caso.ts)",
-                  )(k.cita.ref),
-                  i,
-                )}${lista ? ` · ${X(EXPEDIENTE_B.lista(lista), i)}` : ""}`
+              ? [
+                  X(
+                    delVocabulario(
+                      EXPEDIENTE_B.cita,
+                      k.cita.tipo,
+                      "EXPEDIENTE_B.cita (src/textos/demo-b/caso.ts)",
+                    )(k.cita.ref),
+                    i,
+                  ),
+                  ...(regla ? [X(EXPEDIENTE_B.reglaDeCita(regla), i)] : []),
+                  ...(lista ? [X(EXPEDIENTE_B.lista(lista), i)] : []),
+                ].join(" · ")
               : X(EXPEDIENTE_B.sinCita, i);
             return {
               id: k.id,
+              tema: X(
+                delVocabulario(
+                  EXPEDIENTE_B.tema,
+                  k.tema,
+                  "EXPEDIENTE_B.tema (src/textos/demo-b/caso.ts)",
+                ),
+                i,
+              ),
               texto: X(k.texto, i),
               cita,
               citada: k.cita !== null,
             };
           }),
+          pie: [
+            {
+              k: X(EXPEDIENTE_B.pie.listas, i),
+              v: exp.listas_consultadas
+                .map((l) =>
+                  X(
+                    EXPEDIENTE_B.pie.lista(
+                      l as {
+                        id: string;
+                        version: string;
+                        fecha: string;
+                        vinculante: boolean;
+                      },
+                    ),
+                    i,
+                  ),
+                )
+                .join(" · "),
+            },
+            {
+              k: X(EXPEDIENTE_B.pie.decidio, i),
+              v: X(
+                EXPEDIENTE_B.pie.decision({
+                  final: decisionTb(exp.decision.final),
+                  propuesta: decisionTb(exp.decision.propuesta),
+                  rol:
+                    exp.decision.revisada_por_persona && exp.decision.rol
+                      ? delVocabulario(
+                          EXPEDIENTE_B.pie.rol,
+                          exp.decision.rol,
+                          "EXPEDIENTE_B.pie.rol (src/textos/demo-b/caso.ts)",
+                        )
+                      : null,
+                }),
+                i,
+              ),
+            },
+            {
+              k: X(EXPEDIENTE_B.pie.datos, i),
+              v: exp.datos_usados.join(" · "),
+            },
+            {
+              k: X(EXPEDIENTE_B.pie.plan, i),
+              v: `${String(exp.plan.id)} ${String(exp.plan.version)} ${huella(String(exp.plan.huella))}`,
+            },
+          ],
           cuenta: X(
             EXPEDIENTE_B.cuenta({
               n: exp.conclusiones.length,
@@ -421,4 +488,44 @@ export function perfilCasoB(
       documentoCabecera: X(DOCUMENTO_B.cabecera, i),
     },
   };
+}
+
+/**
+ * Lo que vio el oficial en la pausa es lo que registró la traza y lo que trae el lote (AU-S3-27): el esquema solo exige
+ * que viaje; aquí se compara pieza por pieza y, si una difiere, el build se detiene nombrando el caso y la clave.
+ */
+export function payloadIgualALaTraza(
+  id: string,
+  payload: {
+    documentos: unknown;
+    coincidencias: unknown;
+    investigacion: unknown;
+    puntaje: unknown;
+    extraccion: { campos: unknown; campos_faltantes: unknown } | null;
+  },
+  t: Traza,
+  c: CasoB,
+): void {
+  const ext = t.extraccion as {
+    campos?: unknown;
+    campos_faltantes?: unknown;
+  } | null;
+  const pares: Array<[string, unknown, unknown]> = [
+    ["documentos", payload.documentos, c.entrada.documentos],
+    ["coincidencias", payload.coincidencias, t.coincidencias],
+    ["investigacion", payload.investigacion, t.investigacion],
+    ["puntaje", payload.puntaje, t.puntaje],
+    [
+      "extraccion",
+      payload.extraccion,
+      ext === null
+        ? null
+        : { campos: ext.campos, campos_faltantes: ext.campos_faltantes },
+    ],
+  ];
+  for (const [clave, visto, registrado] of pares)
+    if (jcs(visto ?? null) !== jcs(registrado ?? null))
+      throw new Error(
+        `vitrina: en la pausa de ${id}, «${clave}» no es lo que registró la traza (o el lote): el oficial habría visto otra cosa.`,
+      );
 }

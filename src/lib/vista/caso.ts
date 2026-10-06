@@ -131,10 +131,14 @@ export interface VistaCaso {
     encabezado: string;
     conclusiones: Array<{
       id: string;
+      /** El rótulo del tema de la conclusión (identidad, listas, puntaje…). */
+      tema: string;
       texto: string;
       cita: string;
       citada: boolean;
     }>;
+    /** Con qué listas, qué se decidió y quién, con qué datos y con qué plan (AU-S3-14). */
+    pie: Fila[];
     cuenta: string;
   } | null;
   /** Los rótulos de sección que dependen del dominio (quién revisa, a quién se responde, qué documento). */

@@ -1571,6 +1571,10 @@ casilla 4 por otro auditor.
 | AU-S3-12 | despachos por demo exhaustivos: `cargarDemo` con `switch` y `demoSinDespacho(x: never)`; `DatosDeLosDemos` mapeado sobre `IdDemo`; `mundoDelPlan` en la vista del Plan; `TOPE_DE_LA_TASA`, `TEXTOS_DE_SUBTIPOS`, `CONMUTADOR_EN` y `DEMO_PUBLICADO` como registros o constantes con su razón; sin «demo-a» por omisión en `categoriaDeRegla`, `umbralDeCategoria` ni la barra; `de-demo.ts` con `switch` y registro de esquemas; `verificar-export.mjs` recorre todos los demos; adenda al ADR-014. `grep -rnE '(id|demo)\s*(===|!==)\s*"demo-[ab]"' src core scripts` da 0 | este |
 | CI roja en `d44a2ad`–`97f9b43` | dos pruebas que yo mismo rompí: la de la revisión contaba dos «Ninguna.» y AU-S3-13 añadió dos secciones (ahora cuenta cuatro y nombra cuáles); y el aviso nuevo del B citaba «bitácora del S3, D54», que la guarda de copia contra plan leyó como un supuesto S3 y una decisión D54 (la frase ya no cita la bitácora). Las dos se escaparon porque corrí suites sueltas en vez de `pnpm test`; desde aquí cada push va precedido del comando del CI | este |
 | cobertura | las ramas nuevas bajaron `src/lib` a 79,84 % de ramas: pruebas del motivo de una función nombrada, de los decimales por idioma, de la tripleta sin operador, del demo sin despacho y del plan del A sin su mundo | este |
+| AU-S3-15 | `servidor-estatico.mjs` compara con el separador (`raiz + sep`) y aborta por `abortar`, que la prueba reemplaza. Con el código viejo, `/..%2Fout-x/secreto` servía la carpeta hermana con 200 | este |
+| AU-S3-19 | `cumple` y `estado` exigen el criterio (un id que el informe no trae detiene el build); `supuestoDeLineaBase()` elige el supuesto por `comparacion === COMPARACION_LINEA_BASE` en el plan (el B lo tiene en S2, el A en S3), en las vistas del A y del B | este |
+| AU-S3-27 | `payloadIgualALaTraza`: lo que vio el oficial (documentos, coincidencias, investigación, puntaje, extracción) es lo que registró la traza y trae el lote, o el build se detiene nombrando caso y clave | este |
+| AU-S3-14 | el expediente del B nombra el tema de cada conclusión, la regla de la coincidencia y un pie con listas consultadas, quién decidió, datos usados y plan; el documento abre con la carta al solicitante; comprobación de build `expediente.caso_id === traza.caso_id`. Es forma en un artefacto de la mirada 3: segunda vuelta, sin parada (se ve al cierre) | este |
 
 **Demos en rojo de la Fase 2** (`scripts/demo-rojo.sh`):
 
@@ -1582,6 +1586,12 @@ casilla 4 por otro auditor.
 | F2-D4 | aviso de IA del B (AU-S3-07) | `avisoFalta: doc.aviso_ia` → `avisoFalta: true` | «B-005 (es): expected null not to be null» | sí |
 | F2-D5 | parcial del playground A (AU-S3-11) | `manifiesto.json`: `"aprobar_parcial"` → `"aprobar_en_parte"` | la prueba del compacto: `propuesta` no es la declarada | sí |
 | F2-D6 | despachos por demo (AU-S3-12) | `DEMOS` gana «demo-c» | `tsc` nombra 47 sitios: el `switch` de `cargarDemo` («"demo-c"» no es `never`), `DatosPorDemo`, `CONMUTADOR_EN`, `SEGMENTO_DEMO`, `TOPE_DE_LA_TASA`, `TEXTOS_DE_SUBTIPOS` y cada registro de textos y vistas | sí |
+| F2-D7 | servidor de los arneses (AU-S3-15) | la comparación vuelve a `!pedido.startsWith(raiz)` | «expected 200 to be 403»: la carpeta hermana se servía | sí |
+| F2-D8 | criterio citado (AU-S3-19) | primer intento: `cumple` sin exigir; **el control pasó** (`estado` también exige el criterio). Segundo: la guarda calla (`criterio(id) ?? { estado: "sin_dato" }`) | el segundo, rojo: la prueba esperaba «cita el criterio C6» y llegó otro error. El primero queda anotado: la tercera pregunta de la regla 15 lo cazó | sí |
+| F2-D9 | línea base por medición (AU-S3-19) | `delPlan.length === 1` → `true` | «expected … 'declara 0 supuestos de línea base' but got 'Cannot read properties of undefined'» | sí |
+| F2-D10 | payload del B (AU-S3-27) | se quita la llamada a `payloadIgualALaTraza` | «expected [Function] to throw an error» | sí |
+| F2-D11 | cita con su regla (AU-S3-14) | se quita la regla de la cita | K2 sin «regla RL-01» | sí |
+| F2-D12 | expediente del caso (AU-S3-14) | `if (exp && false)` | «expected [Function] to throw an error» | sí |
 
 **Un tropiezo de la CI:** el push de `d44a2ad` salió rojo en `python`. Ruff marcó nueve líneas de más de 110 columnas
 (la verificación local había corrido con `-q` y su salida se perdió en la tubería). Además, la prueba de la consola

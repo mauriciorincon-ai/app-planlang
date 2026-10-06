@@ -5,6 +5,7 @@
  */
 import { beforeAll, describe, expect, it } from "vitest";
 import { datosDemo, type DatosDemo } from "@/lib/datos/vitrina";
+import { vistaAgente } from "@/lib/vista/agente";
 import { vistaBrecha } from "@/lib/vista/brecha";
 import { vistaCaso } from "@/lib/vista/caso";
 import { vistaPlan } from "@/lib/vista/plan";
@@ -199,6 +200,72 @@ describe("el motivo técnico de una pausa (AU-S3-06)", () => {
   it("una tripleta sin señal u operador en la traza se detiene nombrando la arista", () => {
     expect(() => motivoTecnico({ ...base, operador: null })).toThrow(
       "la arista 2 de decision es una tripleta sin señal u operador",
+    );
+  });
+});
+
+describe("P3 Agente: lo que la vista cita por id (AU-S3-19)", () => {
+  it("un criterio que el informe no trae detiene el build nombrándolo", async () => {
+    const b = await datosDemo("demo-b");
+    const otro = { ...b, informe: structuredClone(b.informe) };
+    otro.informe.criterios = otro.informe.criterios.filter(
+      (c) => c.id !== "C6",
+    );
+    expect(() => vistaAgente(otro, "es")).toThrow(
+      "cita el criterio C6, que el informe de demo-b no trae",
+    );
+  });
+
+  it("la línea base se elige por su medición en el plan; sin ella (o con dos) se detiene", async () => {
+    const b = await datosDemo("demo-b");
+    // El B la declara en S2 y el A en S3: el id no importa, la comparación sí.
+    expect(() => vistaAgente(b, "es")).not.toThrow();
+    const sinLineaBase = { ...b, plan: structuredClone(b.plan) };
+    for (const s of sinLineaBase.plan.supuestos)
+      delete (s.medible_en_trazas as { comparacion?: string }).comparacion;
+    expect(() => vistaAgente(sinLineaBase, "es")).toThrow(
+      "declara 0 supuestos de línea base",
+    );
+  });
+});
+
+describe("P6 Caso del B: lo que vio el oficial (AU-S3-27)", () => {
+  it("un payload de pausa que no es lo que registró la traza detiene el build nombrando caso y clave", async () => {
+    const b = await datosDemo("demo-b");
+    expect(() => vistaCaso(b, "B-001", "es")).not.toThrow();
+    // Valores que el esquema acepta (solo exige que viajen) y que no son los registrados.
+    const distinto = {
+      puntaje: { otro: true },
+      coincidencias: { otro: true },
+      documentos: { actividad: null },
+    };
+    for (const clave of ["puntaje", "coincidencias", "documentos"] as const) {
+      const otro = {
+        ...b,
+        corrida: { ...b.corrida, trazas: structuredClone(b.corrida.trazas) },
+      };
+      const t = otro.corrida.trazas.find((x) => x.caso_id === "B-001")!;
+      (t.pausas_humanas[0]!.payload as Record<string, unknown>)[clave] =
+        distinto[clave];
+      expect(() => vistaCaso(otro, "B-001", "es")).toThrow(
+        `en la pausa de B-001, «${clave}» no es lo que registró la traza`,
+      );
+    }
+  });
+});
+
+describe("P6 Caso del B: el expediente es del caso (AU-S3-14)", () => {
+  it("un expediente con otro caso_id detiene el build", async () => {
+    const b = await datosDemo("demo-b");
+    const otro = {
+      ...b,
+      corrida: { ...b.corrida, trazas: structuredClone(b.corrida.trazas) },
+    };
+    otro.corrida.trazas.find(
+      (x) => x.caso_id === "B-005",
+    )!.expediente!.caso_id = "B-006";
+    expect(() => vistaCaso(otro, "B-005", "es")).toThrow(
+      "el expediente de la traza B-005 dice ser del caso B-006",
     );
   });
 });

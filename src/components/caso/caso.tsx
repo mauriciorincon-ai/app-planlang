@@ -620,6 +620,9 @@ function Expediente({ e }: { e: NonNullable<VistaCaso["expediente"]> }) {
             >
               <span className="font-mono text-dato text-tinta-2">{k.id}</span>
               <span>
+                <span className="mb-0.5 block text-dato font-semibold text-tinta-2">
+                  {k.tema}
+                </span>
                 {k.texto}
                 <small
                   className={cx(
@@ -640,6 +643,28 @@ function Expediente({ e }: { e: NonNullable<VistaCaso["expediente"]> }) {
             </li>
           ))}
         </ol>
+        <dl className="m-0 grid grid-cols-1 border-t border-linea px-4.5 py-1.5 chico:grid-cols-[minmax(0,170px)_minmax(0,1fr)]">
+          {e.pie.map((f, k) => (
+            <div key={f.k} className="contents">
+              <dt
+                className={cx(
+                  "py-2.25 pr-3 text-chico leading-[1.55] text-tinta-2",
+                  k > 0 && "border-t border-linea",
+                )}
+              >
+                {f.k}
+              </dt>
+              <dd
+                className={cx(
+                  "m-0 pb-2.25 text-chico leading-[1.55] chico:pt-2.25",
+                  k > 0 && "chico:border-t chico:border-linea",
+                )}
+              >
+                <ConCodigo texto={f.v} />
+              </dd>
+            </div>
+          ))}
+        </dl>
       </article>
       <p className={cx("mt-3", RELIGUITA)}>{e.cuenta}</p>
     </Seccion>

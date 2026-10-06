@@ -461,6 +461,7 @@ export const DOCUMENTO_B = {
   decision: tb("Decisión", "Decision"),
   rechazada: tb("Rechazada", "Rejected"),
   causa: tb("Causa", "Reason"),
+  carta: tb("La carta al solicitante", "The letter to the applicant"),
   regla: tb("Regla aplicada", "Rule applied"),
   datos: tb("Datos usados", "Data used"),
   version: tb("Versión", "Version"),
@@ -506,6 +507,60 @@ export const EXPEDIENTE_B = {
       `list ${p.id}, version ${p.version} of ${p.fecha}`,
     )) as Plantilla<{ id: string; version: string; fecha: string }>,
   sinCita: tb("sin cita", "uncited"),
+  /** La regla que aplicó una cita (la de coincidencia en lista). */
+  reglaDeCita: ((r: string) =>
+    tb(`regla ${r}`, `rule ${r}`)) as Plantilla<string>,
+  /** El rótulo de cada conclusión, por su tema. */
+  tema: {
+    identidad: tb("Identidad", "Identity"),
+    listas: tb("Listas", "Lists"),
+    investigacion: tb("Investigación", "Investigation"),
+    documentos: tb("Documentos", "Documents"),
+    puntaje: tb("Puntaje", "Score"),
+    propuesta: tb("Propuesta", "Proposal"),
+    decision: tb("Decisión", "Decision"),
+    guardia: tb("Guardia", "Guard"),
+    conservacion: tb("Conservación", "Retention"),
+  } as Record<string, TextoBilingue>,
+  /** El pie del expediente: con qué listas, qué decidió quién, con qué datos y con qué plan. */
+  pie: {
+    listas: tb("Listas consultadas", "Lists consulted"),
+    lista: ((p: {
+      id: string;
+      version: string;
+      fecha: string;
+      vinculante: boolean;
+    }) =>
+      tb(
+        `${p.id} ${p.version} del ${p.fecha} (${p.vinculante ? "vinculante" : "de consulta"})`,
+        `${p.id} ${p.version} of ${p.fecha} (${p.vinculante ? "binding" : "reference"})`,
+      )) as Plantilla<{
+      id: string;
+      version: string;
+      fecha: string;
+      vinculante: boolean;
+    }>,
+    decidio: tb("Decidió", "Decided"),
+    decision: ((p: {
+      final: TextoBilingue;
+      propuesta: TextoBilingue;
+      rol: TextoBilingue | null;
+    }) =>
+      tb(
+        `${p.final.es} (el agente propuso ${p.propuesta.es}) · ${p.rol ? `la revisó ${p.rol.es}` : "sin persona"}`,
+        `${p.final.en} (the agent proposed ${p.propuesta.en}) · ${p.rol ? `reviewed by ${p.rol.en}` : "no person"}`,
+      )) as Plantilla<{
+      final: TextoBilingue;
+      propuesta: TextoBilingue;
+      rol: TextoBilingue | null;
+    }>,
+    /** Quién revisó, por el rol que registra el expediente. */
+    rol: {
+      oficial: tb("el oficial de cumplimiento", "the compliance officer"),
+    } as Record<string, TextoBilingue>,
+    datos: tb("Datos usados", "Data used"),
+    plan: tb("Plan", "Plan"),
+  },
   cuenta: ((p: { n: number; sinCita: number }) =>
     p.sinCita === 0
       ? tb(

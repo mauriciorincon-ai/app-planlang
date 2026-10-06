@@ -3,7 +3,7 @@
 // una petición sale de su árbol. Lo usan scripts/capturar-vitrina.mjs y scripts/capturar-maqueta.mjs.
 import { createReadStream, existsSync, statSync } from "node:fs";
 import { createServer } from "node:http";
-import { extname, join, normalize } from "node:path";
+import { extname, join, normalize, sep } from "node:path";
 
 const TIPOS = {
   ".html": "text/html; charset=utf-8",
@@ -17,22 +17,31 @@ const TIPOS = {
   ".md": "text/plain; charset=utf-8",
 };
 
-/** Servidor estático con URL limpias (como `serve` y `cleanUrls` de Vercel): /es → es.html. */
-export function servidor(base, arnes) {
+/**
+ * Servidor estático con URL limpias (como `serve` y `cleanUrls` de Vercel): /es → es.html. Una petición que sale de
+ * `base` recibe 403 y aborta el arnés (`abortar`; la prueba lo reemplaza para no cerrar su proceso). La comparación
+ * lleva el separador: sin él, `/..%2Fout-x` salía a la carpeta hermana `out-x` y pasaba por dentro de `out` (AU-S3-15).
+ */
+export function servidor(
+  base,
+  arnes,
+  { abortar = () => process.exit(1) } = {},
+) {
+  const raiz = normalize(base);
   return createServer((req, res) => {
     const ruta = decodeURIComponent(new URL(req.url, "http://x").pathname);
-    const pedido = normalize(join(base, ruta));
-    if (!pedido.startsWith(base)) {
+    const pedido = normalize(join(raiz, ruta));
+    if (pedido !== raiz && !pedido.startsWith(raiz + sep)) {
       res.writeHead(403).end();
       console.error(`${arnes}: ${ruta} sale de ${base}. Aborto.`);
-      process.exit(1);
+      return abortar();
     }
     const candidatos = [pedido, `${pedido}.html`, join(pedido, "index.html")];
     const archivo = candidatos.find(
       (c) => existsSync(c) && statSync(c).isFile(),
     );
     if (!archivo) {
-      const nf = join(base, "404.html");
+      const nf = join(raiz, "404.html");
       res.writeHead(404, { "content-type": TIPOS[".html"] });
       return existsSync(nf) ? createReadStream(nf).pipe(res) : res.end("404");
     }

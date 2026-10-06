@@ -82,6 +82,7 @@ export function perfilDemoB(d: DatosDemoB, ctx: ContextoAgente): PerfilAgente {
     marca,
     cumple,
     estado,
+    supuestoDeLineaBase,
     con,
     pasosDe,
     senal,
@@ -444,7 +445,7 @@ export function perfilDemoB(d: DatosDemoB, ctx: ContextoAgente): PerfilAgente {
   };
 
   // ── arquitectura (experto) ──────────────────────────────────────────────────────────────────────
-  const s2 = informe.supuestos.find((s) => s.id === "S2");
+  const lineaBase = supuestoDeLineaBase();
   const arquitectura: Grupo = {
     rotulo: X(EXPERTO.arquitectura.rotulo),
     filas: [
@@ -452,7 +453,7 @@ export function perfilDemoB(d: DatosDemoB, ctx: ContextoAgente): PerfilAgente {
       { k: X(EXPERTO.arquitectura.decision[0]!), v: X(EXPERTO_B.decision) },
       {
         k: X(EXPERTO.arquitectura.lineaBase),
-        v: X(EXPERTO_B.lineaBaseTexto(s2?.estado === "refutado")),
+        v: X(EXPERTO_B.lineaBaseTexto(lineaBase.estado === "refutado")),
       },
       {
         k: X(EXPERTO.arquitectura.orquestacion[0]!),

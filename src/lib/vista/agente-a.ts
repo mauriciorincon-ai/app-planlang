@@ -478,7 +478,7 @@ export function perfilDemoA(d: DatosDemoA, ctx: ContextoAgente): PerfilAgente {
   };
 
   // ── arquitectura (experto) ──────────────────────────────────────────────────────────────────────
-  const s3 = informe.supuestos.find((s) => s.id === "S3");
+  const lineaBase = ctx.supuestoDeLineaBase();
   const arquitectura: Grupo = {
     rotulo: X(EXPERTO.arquitectura.rotulo),
     filas: [
@@ -492,7 +492,9 @@ export function perfilDemoA(d: DatosDemoA, ctx: ContextoAgente): PerfilAgente {
       },
       {
         k: X(EXPERTO.arquitectura.lineaBase),
-        v: X(EXPERTO.arquitectura.lineaBaseTexto(s3?.estado === "refutado")),
+        v: X(
+          EXPERTO.arquitectura.lineaBaseTexto(lineaBase.estado === "refutado"),
+        ),
       },
       {
         k: X(EXPERTO.arquitectura.orquestacion[0]!),

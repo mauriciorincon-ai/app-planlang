@@ -6,6 +6,7 @@
 import type { Idioma, TextoBilingue } from "@core/formatos/bilingue";
 import type { Traza } from "@core/formatos/traza";
 import type { AristaTripleta, Umbral } from "@core/plan/esquema";
+import { COMPARACION_LINEA_BASE } from "@core/plan/supuesto-medible";
 import type { DatosDemo } from "@/lib/datos/vitrina";
 import { APAGADO, ENCENDIDO } from "@/textos/plan-comun";
 import {
@@ -77,9 +78,12 @@ export interface ContextoAgente {
   criterio: (
     id: string,
   ) => DatosDemo["informe"]["criterios"][number] | undefined;
+  /** Si el criterio cumple; un criterio que la vista cita y el informe no trae detiene el build (AU-S3-19). */
   cumple: (id: string) => boolean;
-  /** El estado del criterio en el informe (cumple · incumple · incompleto). */
-  estado: (id: string) => string | undefined;
+  /** El estado del criterio en el informe (cumple · incumple · incompleto); detiene el build si falta. */
+  estado: (id: string) => string;
+  /** El supuesto que compara con la línea base de agente único, elegido por su medición en el plan (no por su id). */
+  supuestoDeLineaBase: () => DatosDemo["informe"]["supuestos"][number];
   con: (nodo: string) => Traza[];
   pasosDe: (nodo: string) => Traza["pasos"];
   senal: (t: Traza, k: string) => unknown;
@@ -91,6 +95,28 @@ export interface ContextoAgente {
 export function contextoAgente(d: DatosDemo, i: Idioma): ContextoAgente {
   const trazas = d.corrida.trazas;
   const criterio = (id: string) => d.informe.criterios.find((c) => c.id === id);
+  const exigirCriterio = (id: string) => {
+    const c = criterio(id);
+    if (!c)
+      throw new Error(
+        `vitrina: la vista del agente cita el criterio ${id}, que el informe de ${d.id} no trae.`,
+      );
+    return c;
+  };
+  const supuestoDeLineaBase = () => {
+    const delPlan = d.plan.supuestos.filter(
+      (s) => s.medible_en_trazas?.comparacion === COMPARACION_LINEA_BASE,
+    );
+    const s =
+      delPlan.length === 1
+        ? d.informe.supuestos.find((x) => x.id === delPlan[0]!.id)
+        : undefined;
+    if (!s)
+      throw new Error(
+        `vitrina: el plan de ${d.id} declara ${delPlan.length} supuestos de línea base (${COMPARACION_LINEA_BASE}) con su medida en el informe; la vista del agente necesita exactamente uno.`,
+      );
+    return s;
+  };
   const corrida = versionCorta(d.corrida.manifiesto.plan.version);
   return {
     i,
@@ -104,8 +130,9 @@ export function contextoAgente(d: DatosDemo, i: Idioma): ContextoAgente {
     modelo: d.corrida.manifiesto.modelo,
     marca: MARCA_CORRIO(corrida)[i],
     criterio,
-    cumple: (id) => criterio(id)?.estado === "cumple",
-    estado: (id) => criterio(id)?.estado,
+    cumple: (id) => exigirCriterio(id).estado === "cumple",
+    estado: (id) => exigirCriterio(id).estado,
+    supuestoDeLineaBase,
     con: (nodo) => trazas.filter((t) => t.nodos_visitados.includes(nodo)),
     pasosDe: (nodo) =>
       trazas.flatMap((t) => t.pasos.filter((p) => p.nodo === nodo)),

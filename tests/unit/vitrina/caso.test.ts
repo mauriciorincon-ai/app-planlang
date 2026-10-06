@@ -363,3 +363,61 @@ describe("el motivo técnico de la pausa (AU-S3-06)", () => {
     );
   });
 });
+
+describe("el expediente y el documento del B leen todos sus campos (AU-S3-14)", () => {
+  it("B-005: tema por conclusión, la regla de la coincidencia, el pie con listas, decisión, datos y plan, y la carta primero", async () => {
+    const b = await datosDemo("demo-b");
+    const es = vistaCaso(b, "B-005", "es");
+    const e = es.expediente!;
+    expect(e.conclusiones.map((k) => k.tema)).toEqual(
+      expect.arrayContaining(["Identidad", "Listas", "Puntaje", "Propuesta"]),
+    );
+    expect(e.conclusiones.find((k) => k.id === "K2")!.cita).toBe(
+      "coincidencia: LV-01-005 · regla RL-01 · lista LV-01, versión 2026.09 del 2026-09-30",
+    );
+    expect(e.pie.map((f) => f.k)).toEqual([
+      "Listas consultadas",
+      "Decidió",
+      "Datos usados",
+      "Plan",
+    ]);
+    expect(e.pie[0]!.v).toBe(
+      "LV-01 2026.09 del 2026-09-30 (vinculante) · LC-01 2026.08 del 2026-08-31 (de consulta)",
+    );
+    expect(e.pie[1]!.v).toMatch(
+      /\(el agente propuso .+\) · la revisó el oficial de cumplimiento$/,
+    );
+    expect(e.pie[2]!.v).toContain("nacionalidad");
+    expect(e.pie[3]!.v).toMatch(/^plan-demo-b 1\.0\.0 `0cd6590ccbbb…`$/);
+    expect(es.documento!.filas[0]!.k).toBe("La carta al solicitante");
+    expect(es.documento!.filas[0]!.v).toMatch(
+      /^Decisión: rechazar la vinculación\./,
+    );
+
+    const en = vistaCaso(b, "B-005", "en");
+    expect(en.expediente!.pie.map((f) => f.k)).toEqual([
+      "Lists consulted",
+      "Decided",
+      "Data used",
+      "Plan",
+    ]);
+    expect(en.expediente!.pie[1]!.v).toMatch(
+      /reviewed by the compliance officer$/,
+    );
+    expect(en.documento!.filas[0]!.v).toMatch(
+      /^Decision: reject the onboarding\./,
+    );
+  });
+
+  it("un caso que salió solo dice «sin persona», y ningún tema queda sin nombre en los 20", async () => {
+    const b = await datosDemo("demo-b");
+    for (const id of idsDeCasos(b)) {
+      const t = b.corrida.trazas.find((x) => x.caso_id === id)!;
+      const v = vistaCaso(b, id, "es").expediente;
+      if (!v) continue;
+      if (!t.expediente!.decision.revisada_por_persona)
+        expect(v.pie[1]!.v, id).toMatch(/· sin persona$/);
+      for (const k of v.conclusiones) expect(k.tema, id).not.toMatch(/_/);
+    }
+  });
+});
