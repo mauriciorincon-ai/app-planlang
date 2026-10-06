@@ -5,7 +5,8 @@ import { consolaLimpia, desbordeLateral, sinViolacionesAxe } from "./_comun";
  * P4 Brecha en el export servido (S2 fase 3): se llega por su pestaña y se lee en los dos idiomas, temas y perfiles
  * sin desplazar la página de lado y sin violaciones de axe (críticas, serias ni moderadas); lo que falló y lo sin probar están al frente y el
  * balance lleva a cada uno; las nueve secciones del informe tienen su ancla; el informe abre el playground; y con
- * movimiento reducido lo del experto aparece visible.
+ * movimiento reducido lo del experto aparece visible. Desde el S3, sobre la corrida de 200 del plan v1.5: fallaron S2 y
+ * S3 y lo que vio un evaluador; C5 quedó incompleto.
  */
 
 const T = {
@@ -48,7 +49,7 @@ for (const idioma of ["es", "en"] as const) {
           await expect(
             page.getByRole("heading", { name: t.mirada }),
           ).toBeVisible();
-          for (const id of ["f-S3", "f-np", "f-S1"])
+          for (const id of ["f-S2", "f-S3", "f-np", "f-C5"])
             await expect(page.locator(`#${id}`)).toBeVisible();
           for (let n = 1; n <= 9; n++)
             await expect(page.locator(`h2#b${n}`)).toBeVisible();
@@ -57,15 +58,15 @@ for (const idioma of ["es", "en"] as const) {
           expect(errores).toEqual([]);
         });
 
-    test("el balance lleva a S3 y a S1; el informe abre el playground", async ({
+    test("el balance lleva a lo que falló (S2) y a lo incompleto (C5); el informe abre el playground", async ({
       page,
     }) => {
       await page.goto(`/${idioma}/brecha`);
-      await page.locator('a[href="#f-S3"]').first().click();
-      await expect(page).toHaveURL(/#f-S3$/);
-      await expect(page.locator("#f-S3")).toBeInViewport();
-      await page.locator('a[href="#f-S1"]').first().click();
-      await expect(page.locator("#f-S1")).toBeInViewport();
+      await page.locator('a[href="#f-S2"]').first().click();
+      await expect(page).toHaveURL(/#f-S2$/);
+      await expect(page.locator("#f-S2")).toBeInViewport();
+      await page.locator('a[href="#f-C5"]').first().click();
+      await expect(page.locator("#f-C5")).toBeInViewport();
       await page.getByRole("link", { name: t.abrir }).click();
       await expect(page).toHaveURL(new RegExp(`/${idioma}/playground$`));
     });
