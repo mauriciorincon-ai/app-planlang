@@ -1479,6 +1479,63 @@ A-142, A-191). Visor: la numeración de reglas del plan v1.5 (la carga es la reg
   la página lo muestra así; un caso corrido hoy (la parada 1) ya escribe «0,814» y numera sin saltos. Queda como deuda
   visible hasta que la vitrina del B publique una corrida posterior (la de 200, en curso, ya trae los dos arreglos).
 
+### Pasos 1–5 cerrados y la verificación de punta a punta (2026-10-05)
+
+- **Paso 1:** la línea base terminó (sesión 5 de las de hoy, 200 trazas, 19:31); el informe de la vitrina y el de la
+  carpeta de la corrida salen con la misma huella (`6747fe37…`); el manifiesto declara la base y el informe;
+  `pnpm trazas:verificar` ✓ en todas las corridas; comiteada (`1a2ab1c`). La instantánea temporal se borró.
+- **Paso 2:** con la base completa, **S3 sigue refutado y por lo mismo**: 98 % frente a 90 % de exactitud, 8,1 s frente a
+  5,0 s de latencia mediana, 18 casos distintos. La lectura editorial («la exactitud extra se paga en tiempo») se
+  sostiene, y una prueba nueva la ata a las cifras; la frase de `SUPUESTOS.dio` ya sale del sentido de las cifras y
+  la de «S3:confirmado» quedó preparada.
+- **Paso 3–4:** `pnpm test` ✓ (128 archivos, 3.852 pruebas; ramas de `src/lib` sobre el 80 % con
+  `brecha-lecturas.test.ts`, que prueba las ramas nuevas); `pnpm lint` y `pnpm typecheck` ✓; `pnpm build` ✓;
+  `pnpm export:verificar` ✓ (165 HTML, 851 archivos); `pnpm diagrama:verificar` ✓ en los dos demos y los dos idiomas;
+  e2e 205 ✓ con el puerto 3007 (las 24 de Brecha y Plan, reancladas, en una segunda corrida: 36/36); paquete
+  (`--permitir-arbol-sucio`, porque el lote del B escribe en `runs/`) ✓ con 195 archivos y 52 MB, y su e2e 3/3; agentes:
+  `ruff` limpio y `pytest` 222 ✓ con 96 % de cobertura.
+- **Paso 5 (`pnpm fichas`):** dos frases falsas de la ficha del agente A, arregladas antes de comitear: «exactitud de
+  extracción, 3 de 3 corridas» (se midió con 1 de 3: ahora la etiqueta sale de las corridas medidas y dice
+  «(incompleto)») y el hito «primera corrida real: 2026-10-04» (era la publicada; ahora «corrida publicada»). Y en
+  «Cómo repetirla», el paso del lote corría `pnpm lote:demo` a secas (el plan v1.2 sobre el lote de 20): ahora lleva el
+  plan y los casos con que corrió la corrida publicada, y dice que son 10 sesiones de 20.
+- **Paso 6:** el lote de 200 del B corre en fondo (humo 3/3 sin errores a las 19:31; sesiones de 20 cada 10 minutos).
+  La vitrina del B sigue en la de 20.
+
+### Punto de control para compactar (2026-10-05, 20:06)
+
+**Todo comiteado y empujado** hasta `a1b1bbe` (más este registro). CI del PR #14 sobre `a1b1bbe`: quality ✓, python ✓,
+e2e ✓, Vercel ✓; **lighthouse pendiente** al escribir esto: leer `gh pr checks 14` al retomar (conclusión propia de cada
+check, regla 15).
+
+**Corriendo en fondo:**
+1. **Lote de 200 del B** (`runs/demo-b/suscripcion-planlang-b-001-200-v1.1`, sin comitear): 60 trazas a las 20:01,
+   sesiones de 20 cada 10 minutos; termina hacia las 21:30. Registro: `<scratchpad>/b-200.log`; script
+   `<scratchpad>/b-200.sh`. Si se corta, se retoma con
+   `agents/.venv/bin/python -m app_agents.lotes --demo b --proveedor suscripcion --plan plans/demo-b/v1.1.json --casos data/casos/demo-b/planlang-b-001-200.json --corrida suscripcion-planlang-b-001-200-v1.1 --n 20 --pausa-s 2`
+   (de 20 en 20, 10 minutos entre sesiones; salta lo ya exportado). Al completar: `pnpm brecha:informe --corrida
+   runs/demo-b/suscripcion-planlang-b-001-200-v1.1 --plan plans/demo-b/v1.1.json` (sin base: no hay línea base de 200
+   del B), `pnpm trazas:verificar`, comitear la corrida y su informe y anotar sus cifras aquí; la vitrina del B sigue
+   en la de 20.
+2. **Fase 1 de `/audita-sprint`, dos auditores independientes en solo lectura** (subagentes): uno de alcance, código y
+   casillas 5–8; otro de la casilla 4 (frases caducadas, por promesa aplazada, en todas las superficies y en `out/`).
+   Sus informes llegan como notificación; si el compact los pierde, se relanzan con el mismo encargo.
+
+**Siguiente, en este orden:**
+1. Juntar los dos informes en `sprints/SPRINT_003-auditoria.md` (todos los hallazgos con `archivo:línea` y su ajuste
+   ejecutable) y **detenerse**: el usuario aprueba la Fase 1 y fija el modelo de la Fase 2 (decisiones en llano).
+2. Fase 2: pagar todos los hallazgos (memoria «auditoria-ajustar-todo»): primero los que crean o amplían gates, luego el
+   resto, los gates al final sobre el árbol entero; demos en rojo con `scripts/demo-rojo.sh`; segunda pasada de la
+   casilla 4 por OTRO auditor independiente sobre el diff completo, incluido el summary.
+3. Integrar el lote de 200 del B (punto 1 de arriba).
+4. `/deploy-check --python` (12 secciones; cada comando, el del `ci.yml`).
+5. `sprints/SPRINT_003-summary.md`: los hallazgos 2-bis de la constitución (17 falsas y 14 incompletas), la deuda del
+   LCP (ADR-011), el ⭐⭐ pendiente del Acto 2, la parada de DECISIÓN con su frase, las tres miradas «no vistas» con
+   su matriz, los contrapesos (pasada de capturas: 9 recortes leídos como imagen y 48 capturas por huella en la mirada
+   3; e2e de movimiento reducido), las desviaciones 1–28, las deudas declaradas (la corrida de 20 del B anterior a D51
+   y D55; `design-sync/` sin las piezas nuevas, propuestas para un DS 1.1) y la auditoría con sus pagos.
+6. Push, `gh pr checks 14` después de cada push, barrido de cero enlaces después del último `git add`.
+
 ## Desviación del plan
 
 1. **Rutas de la orden** (`SPRINT_003-orden.md:65`): `audita-sprint` y `plan-sprint` viven en
