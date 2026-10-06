@@ -213,6 +213,15 @@
         "huella_typescript": "0c9e289e32ef72d3613617c1fffe47b2037a8ca77374d4578ce0a3629ca3e0e4",
         "variante": "multiagente",
         "visitas": 624
+      },
+      {
+        "coincide": true,
+        "corrida_id": "suscripcion-planlang-a-002-200-v1.5-base",
+        "discrepancias": 0,
+        "huella_python": "4bf55bfb81545a390cc3299fce323b49b79fe3965ddb8ab9ad70e4e973ed3774",
+        "huella_typescript": "4bf55bfb81545a390cc3299fce323b49b79fe3965ddb8ab9ad70e4e973ed3774",
+        "variante": "agente_unico",
+        "visitas": 500
       }
     ],
     "senales": [
@@ -580,7 +589,10 @@
       "variante": "multiagente",
       "version_grafo": "056407bf4c1238ca0448c11575ea9228d050596d02162cd0613f8c5090cc9117"
     },
-    "linea_base": null,
+    "linea_base": {
+      "corrida_id": "suscripcion-planlang-a-002-200-v1.5-base",
+      "huella": "1ab219ded7ae9d1ce14f4d7ff0e699b517926564afda1ac73c74301ea6cff5f7"
+    },
     "plan": {
       "archivo": "plans/demo-a/v1.5.json",
       "huella": "e1dc89c72a37bf780bd3ddd5225dff84284da6bedabe6aae9f8b3bc670c57ee1",
@@ -610,7 +622,7 @@
     }
   },
   "formato": "planlang-informe/v1",
-  "huella": "7503af8f6427198b3a31ee8cb97ad74f11f5ba3eef233a8e623039567b6f58c7",
+  "huella": "6747fe37df3e72f4f4d8299e4340d848a4bfd48649497bfba326c69a861df49d",
   "plan_en_breve": {
     "decisiones_una_via": [
       {
@@ -842,8 +854,8 @@
       "C2"
     ],
     "recomendacion": {
-      "en": "You may go on, carefully: this is already the full 200-case batch; before extending the agent, review C5, S2 and the unforeseen gaps.",
-      "es": "Puede seguir, con cuidado: este ya es el lote completo de 200 casos; antes de ampliar el agente, revise C5, S2 y las brechas no previstas."
+      "en": "You may go on, carefully: this is already the full 200-case batch; before extending the agent, review C5, S2, S3 and the unforeseen gaps.",
+      "es": "Puede seguir, con cuidado: este ya es el lote completo de 200 casos; antes de ampliar el agente, revise C5, S2, S3 y las brechas no previstas."
     },
     "riesgos_ocurridos": [],
     "texto": {
@@ -1229,21 +1241,69 @@
       "n": 24
     },
     {
-      "comparacion": null,
+      "comparacion": {
+        "casos_distintos": [
+          "A-003",
+          "A-013",
+          "A-031",
+          "A-047",
+          "A-052",
+          "A-055",
+          "A-072",
+          "A-078",
+          "A-089",
+          "A-113",
+          "A-130",
+          "A-135",
+          "A-144",
+          "A-147",
+          "A-154",
+          "A-167",
+          "A-170",
+          "A-190"
+        ],
+        "corrida_base": "suscripcion-planlang-a-002-200-v1.5-base",
+        "exactitud": {
+          "agente_unico": 0.9,
+          "multiagente": 0.98
+        },
+        "latencia_mediana_s": {
+          "agente_unico": 4.964,
+          "multiagente": 8.117
+        },
+        "presupuesto": {
+          "agente_unico": {
+            "costo_nominal_usd": 3.3601,
+            "llamadas_al_modelo": 166,
+            "tokens": 845994
+          },
+          "multiagente": {
+            "costo_nominal_usd": 4.9206,
+            "llamadas_al_modelo": 459,
+            "tokens": 1326270
+          }
+        },
+        "presupuesto_respetado": true
+      },
       "criticidad": "media",
       "curva": null,
       "enunciado": {
         "en": "The router with three specialists does no worse than a single agent at no larger budget.",
         "es": "El enrutador con tres especializados no rinde peor que un agente único a un presupuesto no mayor."
       },
-      "estado": "sin_probar",
+      "estado": "refutado",
       "estado_en_plan": "sin_probar",
       "id": "S3",
       "limitaciones": [],
-      "metricas": {},
+      "metricas": {
+        "exactitud": 0.98,
+        "exactitud_base": 0.9,
+        "latencia_mediana": 8.117,
+        "latencia_mediana_base": 4.964
+      },
       "motivo": {
-        "en": "There is no single-agent baseline run to compare with.",
-        "es": "No hay corrida de línea base de agente único con la que comparar."
+        "en": "The multi-agent run does worse than the single agent in median latency. Tolerance declared in the plan: multi-agent accuracy ≥ the baseline's and median latency ≤ 1 × the baseline's.",
+        "es": "El multiagente rinde peor que el agente único en latencia mediana. Tolerancia declarada en el plan: exactitud del multiagente ≥ la de la línea base y latencia mediana ≤ 1 × la de la línea base."
       },
       "n": 200
     }
@@ -1257,6 +1317,10 @@
       {
         "en": "S2: assumption refuted.",
         "es": "S2: supuesto refutado."
+      },
+      {
+        "en": "S3: assumption refuted.",
+        "es": "S3: supuesto refutado."
       },
       {
         "en": "3 gap(s) the plan did not foresee.",

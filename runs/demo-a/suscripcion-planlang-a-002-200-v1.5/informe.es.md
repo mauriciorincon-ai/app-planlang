@@ -8,7 +8,7 @@
 
 El plan se cumplió con alertas. Se midieron 200 casos sintéticos. Criterios: 9 cumplidos, 0 fallidos y 1 sin cerrar, de 10. Riesgos ocurridos: ninguno. Las decisiones humanas se simularon.
 
-**Recomendación:** Puede seguir, con cuidado: este ya es el lote completo de 200 casos; antes de ampliar el agente, revise C5, S2 y las brechas no previstas.
+**Recomendación:** Puede seguir, con cuidado: este ya es el lote completo de 200 casos; antes de ampliar el agente, revise C5, S2, S3 y las brechas no previstas.
 
 **Los tres criterios más relevantes**
 
@@ -24,6 +24,7 @@ El plan se cumplió con alertas. Se midieron 200 casos sintéticos. Criterios: 9
 
 - Alerta: C5: medido con menos corridas de las exigidas.
 - Alerta: S2: supuesto refutado.
+- Alerta: S3: supuesto refutado.
 - Alerta: 3 brecha(s) no prevista(s) por el plan.
 
 ## 2. El plan en breve
@@ -105,6 +106,7 @@ Señales obligatorias: 18 de 18 presentes en todas las trazas. Pausas humanas: 7
 | Corrida | Variante | Visitas | Discrepancias | Misma huella que Python |
 | --- | --- | --- | --- | --- |
 | suscripcion-planlang-a-002-200-v1.5 | multiagente | 624 | 0 | ✓ |
+| suscripcion-planlang-a-002-200-v1.5-base | agente único | 500 | 0 | ✓ |
 
 Sin hallazgos.
 
@@ -159,7 +161,19 @@ Medidas (n = 24): tasa = 0,8333.
 
 ### S3 — El enrutador con tres especializados no rinde peor que un agente único a un presupuesto no mayor.
 
-**◌ sin probar** (criticidad media). No hay corrida de línea base de agente único con la que comparar.
+**✗ refutado** (criticidad media). El multiagente rinde peor que el agente único en latencia mediana. Tolerancia declarada en el plan: exactitud del multiagente ≥ la de la línea base y latencia mediana ≤ 1 × la de la línea base.
+
+Medidas (n = 200): exactitud = 0,98 · exactitud de la línea base = 0,9 · latencia mediana = 8,117 · latencia mediana de la línea base = 4,964.
+
+|  | Multiagente | Agente único (suscripcion-planlang-a-002-200-v1.5-base) |
+| --- | --- | --- |
+| Casos resueltos bien (decisión y pausa) | 98 % | 90 % |
+| Latencia mediana | 8,117 s | 4,964 s |
+| Llamadas al modelo (con reintentos) | 459 | 166 |
+| Tokens | 1326270 | 845994 |
+| Costo nominal (US$) | 4,9206 | 3,3601 |
+
+Casos donde difieren: A-003, A-013, A-031, A-047, A-052, A-055, A-072, A-078, A-089, A-113, A-130, A-135, A-144, A-147, A-154, A-167, A-170, A-190. Presupuesto de la línea base dentro del multiagente: sí.
 
 ## 7. Casos ejemplares
 
@@ -189,6 +203,7 @@ Medidas (n = 24): tasa = 0,8333.
 | Casos | planlang-a-002-200 · semilla planlang-a-002 · n = 200 · generado con el plan 1.5.0 | `5e76ef4cf562852c25aab2e041d55f17f809043450fe48e35c045cb419c8e62f` |
 | Corrida | suscripcion-planlang-a-002-200-v1.5 · 2026-10-04 · suscripcion/sonnet · multiagente · ejecutada con el plan 1.5.0 | `fdbffe765fc0e8309284bbc5c606dc67bc80b61b53cbf8a3772b3447eb8d71a0` |
 | Grafo | versión del grafo exportado | `056407bf4c1238ca0448c11575ea9228d050596d02162cd0613f8c5090cc9117` |
+| Línea base | suscripcion-planlang-a-002-200-v1.5-base | `1ab219ded7ae9d1ce14f4d7ff0e699b517926564afda1ac73c74301ea6cff5f7` |
 
 Sesiones: 10 · casos ejecutados: 200 · con error del proveedor: 0 · límites de uso alcanzados: 0.
 
@@ -196,4 +211,4 @@ Umbrales aplicados: U1 = 0,75 · U2 = 1000 · U3 = 2 · U4 = false · en el plan
 
 Revisión humana: En lotes, el revisor simulado sigue la verdad conocida del caso (DA-04); la vitrina lo divulga.
 
-Verificador 1.2.0 · planlang-informe/v1 · huella de este informe: `7503af8f6427198b3a31ee8cb97ad74f11f5ba3eef233a8e623039567b6f58c7`
+Verificador 1.2.0 · planlang-informe/v1 · huella de este informe: `6747fe37df3e72f4f4d8299e4340d848a4bfd48649497bfba326c69a861df49d`

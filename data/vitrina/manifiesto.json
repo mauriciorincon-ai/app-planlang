@@ -15,11 +15,11 @@
       "repeticiones": [],
       "linea_base": {
         "ruta": "runs/demo-a/suscripcion-planlang-a-002-200-v1.5-base",
-        "huella": "a51ee88979589768c87736e1b46aa7d3d447d3ecced2d6146d6e2d06d35c2564"
+        "huella": "1ab219ded7ae9d1ce14f4d7ff0e699b517926564afda1ac73c74301ea6cff5f7"
       },
       "informe": {
         "archivo": "data/vitrina/demo-a/suscripcion-planlang-a-002-200-v1.5/informe.json",
-        "huella": "047a10a4f36655234ae6f6564a401c10eb42415fc98dd1378e67648091cb1ff9"
+        "huella": "6747fe37df3e72f4f4d8299e4340d848a4bfd48649497bfba326c69a861df49d"
       },
       "playground": {
         "senal_propuesta": "propuesta",

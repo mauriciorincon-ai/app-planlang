@@ -8,7 +8,7 @@
 
 The plan was met with alerts. 200 synthetic cases were measured. Criteria: 9 met, 0 failed and 1 still open, out of 10. Risks that occurred: none. Human decisions were simulated.
 
-**Recommendation:** You may go on, carefully: this is already the full 200-case batch; before extending the agent, review C5, S2 and the unforeseen gaps.
+**Recommendation:** You may go on, carefully: this is already the full 200-case batch; before extending the agent, review C5, S2, S3 and the unforeseen gaps.
 
 **The three most relevant criteria**
 
@@ -24,6 +24,7 @@ The plan was met with alerts. 200 synthetic cases were measured. Criteria: 9 met
 
 - Alert: C5: measured with fewer runs than required.
 - Alert: S2: assumption refuted.
+- Alert: S3: assumption refuted.
 - Alert: 3 gap(s) the plan did not foresee.
 
 ## 2. The plan in brief
@@ -105,6 +106,7 @@ Mandatory signals: 18 of 18 present in every trace. Human pauses: 70 case(s) wit
 | Run | Variant | Visits | Mismatches | Same fingerprint as Python |
 | --- | --- | --- | --- | --- |
 | suscripcion-planlang-a-002-200-v1.5 | multi-agent | 624 | 0 | ✓ |
+| suscripcion-planlang-a-002-200-v1.5-base | single agent | 500 | 0 | ✓ |
 
 No findings.
 
@@ -159,7 +161,19 @@ Measures (n = 24): rate = 0.8333.
 
 ### S3 — The router with three specialists does no worse than a single agent at no larger budget.
 
-**◌ untested** (criticality medium). There is no single-agent baseline run to compare with.
+**✗ refuted** (criticality medium). The multi-agent run does worse than the single agent in median latency. Tolerance declared in the plan: multi-agent accuracy ≥ the baseline's and median latency ≤ 1 × the baseline's.
+
+Measures (n = 200): accuracy = 0.98 · baseline accuracy = 0.9 · median latency = 8.117 · baseline median latency = 4.964.
+
+|  | Multi-agent | Single agent (suscripcion-planlang-a-002-200-v1.5-base) |
+| --- | --- | --- |
+| Cases resolved right (decision and pause) | 98% | 90% |
+| Median latency | 8.117 s | 4.964 s |
+| Model calls (with retries) | 459 | 166 |
+| Tokens | 1326270 | 845994 |
+| Nominal cost (US$) | 4.9206 | 3.3601 |
+
+Cases where they differ: A-003, A-013, A-031, A-047, A-052, A-055, A-072, A-078, A-089, A-113, A-130, A-135, A-144, A-147, A-154, A-167, A-170, A-190. Baseline budget within the multi-agent one: yes.
 
 ## 7. Example cases
 
@@ -189,6 +203,7 @@ Measures (n = 24): rate = 0.8333.
 | Cases | planlang-a-002-200 · seed planlang-a-002 · n = 200 · generated with plan 1.5.0 | `5e76ef4cf562852c25aab2e041d55f17f809043450fe48e35c045cb419c8e62f` |
 | Run | suscripcion-planlang-a-002-200-v1.5 · 2026-10-04 · suscripcion/sonnet · multi-agent · run with plan 1.5.0 | `fdbffe765fc0e8309284bbc5c606dc67bc80b61b53cbf8a3772b3447eb8d71a0` |
 | Graph | exported graph version | `056407bf4c1238ca0448c11575ea9228d050596d02162cd0613f8c5090cc9117` |
+| Baseline | suscripcion-planlang-a-002-200-v1.5-base | `1ab219ded7ae9d1ce14f4d7ff0e699b517926564afda1ac73c74301ea6cff5f7` |
 
 Sessions: 10 · cases run: 200 · with a provider error: 0 · usage limits reached: 0.
 
@@ -196,4 +211,4 @@ Applied thresholds: U1 = 0.75 · U2 = 1000 · U3 = 2 · U4 = false · in the pla
 
 Human review: In batches, the simulated reviewer follows the case's known truth (DA-04); the showcase discloses it.
 
-Verifier 1.2.0 · planlang-informe/v1 · fingerprint of this report: `7503af8f6427198b3a31ee8cb97ad74f11f5ba3eef233a8e623039567b6f58c7`
+Verifier 1.2.0 · planlang-informe/v1 · fingerprint of this report: `6747fe37df3e72f4f4d8299e4340d848a4bfd48649497bfba326c69a861df49d`

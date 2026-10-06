@@ -106,7 +106,7 @@ Mandatory signals: 18 of 18 present in every trace. Human pauses: 70 case(s) wit
 | Run | Variant | Visits | Mismatches | Same fingerprint as Python |
 | --- | --- | --- | --- | --- |
 | suscripcion-planlang-a-002-200-v1.5 | multi-agent | 624 | 0 | ✓ |
-| suscripcion-planlang-a-002-200-v1.5-base | single agent | 202 | 0 | ✓ |
+| suscripcion-planlang-a-002-200-v1.5-base | single agent | 500 | 0 | ✓ |
 
 No findings.
 
@@ -163,19 +163,17 @@ Measures (n = 24): rate = 0.8333.
 
 **✗ refuted** (criticality medium). The multi-agent run does worse than the single agent in median latency. Tolerance declared in the plan: multi-agent accuracy ≥ the baseline's and median latency ≤ 1 × the baseline's.
 
-Measures (n = 200): accuracy = 0.98 · baseline accuracy = 0.8875 · median latency = 8.117 · baseline median latency = 5.173.
-
-> The baseline and the multi-agent run did not run the same cases: A-081, A-082, A-083, A-084, A-085, A-086, A-087, A-088, A-089, A-090, A-091, A-092, A-093, A-094, A-095, A-096, A-097, A-098, A-099, A-100, A-101, A-102, A-103, A-104, A-105, A-106, A-107, A-108, A-109, A-110, A-111, A-112, A-113, A-114, A-115, A-116, A-117, A-118, A-119, A-120, A-121, A-122, A-123, A-124, A-125, A-126, A-127, A-128, A-129, A-130, A-131, A-132, A-133, A-134, A-135, A-136, A-137, A-138, A-139, A-140, A-141, A-142, A-143, A-144, A-145, A-146, A-147, A-148, A-149, A-150, A-151, A-152, A-153, A-154, A-155, A-156, A-157, A-158, A-159, A-160, A-161, A-162, A-163, A-164, A-165, A-166, A-167, A-168, A-169, A-170, A-171, A-172, A-173, A-174, A-175, A-176, A-177, A-178, A-179, A-180, A-181, A-182, A-183, A-184, A-185, A-186, A-187, A-188, A-189, A-190, A-191, A-192, A-193, A-194, A-195, A-196, A-197, A-198, A-199, A-200.
+Measures (n = 200): accuracy = 0.98 · baseline accuracy = 0.9 · median latency = 8.117 · baseline median latency = 4.964.
 
 |  | Multi-agent | Single agent (suscripcion-planlang-a-002-200-v1.5-base) |
 | --- | --- | --- |
-| Cases resolved right (decision and pause) | 98% | 88.8% |
-| Median latency | 8.117 s | 5.173 s |
-| Model calls (with retries) | 459 | 67 |
-| Tokens | 1326270 | 341082 |
-| Nominal cost (US$) | 4.9206 | 1.3519 |
+| Cases resolved right (decision and pause) | 98% | 90% |
+| Median latency | 8.117 s | 4.964 s |
+| Model calls (with retries) | 459 | 166 |
+| Tokens | 1326270 | 845994 |
+| Nominal cost (US$) | 4.9206 | 3.3601 |
 
-Cases where they differ: A-003, A-013, A-031, A-047, A-052, A-055, A-072, A-078, A-081, A-083, A-084, A-085, A-086, A-087, A-088, A-089, A-090, A-091, A-092, A-093, A-094, A-095, A-096, A-097, A-098, A-099, A-100, A-101, A-102, A-103, A-104, A-105, A-106, A-107, A-108, A-109, A-110, A-111, A-112, A-113, A-114, A-115, A-116, A-117, A-118, A-119, A-120, A-121, A-122, A-123, A-124, A-125, A-126, A-127, A-128, A-129, A-130, A-131, A-132, A-133, A-134, A-135, A-136, A-137, A-138, A-139, A-140, A-141, A-142, A-143, A-144, A-145, A-146, A-147, A-149, A-150, A-151, A-152, A-153, A-155, A-156, A-157, A-158, A-159, A-160, A-161, A-162, A-163, A-164, A-165, A-166, A-167, A-168, A-169, A-170, A-171, A-172, A-173, A-174, A-175, A-176, A-177, A-178, A-179, A-180, A-181, A-182, A-183, A-184, A-185, A-186, A-187, A-188, A-189, A-190, A-191, A-192, A-193, A-194, A-195, A-196, A-197, A-198, A-199, A-200. Baseline budget within the multi-agent one: yes.
+Cases where they differ: A-003, A-013, A-031, A-047, A-052, A-055, A-072, A-078, A-089, A-113, A-130, A-135, A-144, A-147, A-154, A-167, A-170, A-190. Baseline budget within the multi-agent one: yes.
 
 ## 7. Example cases
 
@@ -205,7 +203,7 @@ Cases where they differ: A-003, A-013, A-031, A-047, A-052, A-055, A-072, A-078,
 | Cases | planlang-a-002-200 · seed planlang-a-002 · n = 200 · generated with plan 1.5.0 | `5e76ef4cf562852c25aab2e041d55f17f809043450fe48e35c045cb419c8e62f` |
 | Run | suscripcion-planlang-a-002-200-v1.5 · 2026-10-04 · suscripcion/sonnet · multi-agent · run with plan 1.5.0 | `fdbffe765fc0e8309284bbc5c606dc67bc80b61b53cbf8a3772b3447eb8d71a0` |
 | Graph | exported graph version | `056407bf4c1238ca0448c11575ea9228d050596d02162cd0613f8c5090cc9117` |
-| Baseline | suscripcion-planlang-a-002-200-v1.5-base | `a51ee88979589768c87736e1b46aa7d3d447d3ecced2d6146d6e2d06d35c2564` |
+| Baseline | suscripcion-planlang-a-002-200-v1.5-base | `1ab219ded7ae9d1ce14f4d7ff0e699b517926564afda1ac73c74301ea6cff5f7` |
 
 Sessions: 10 · cases run: 200 · with a provider error: 0 · usage limits reached: 0.
 
@@ -213,4 +211,4 @@ Applied thresholds: U1 = 0.75 · U2 = 1000 · U3 = 2 · U4 = false · in the pla
 
 Human review: In batches, the simulated reviewer follows the case's known truth (DA-04); the showcase discloses it.
 
-Verifier 1.2.0 · planlang-informe/v1 · fingerprint of this report: `047a10a4f36655234ae6f6564a401c10eb42415fc98dd1378e67648091cb1ff9`
+Verifier 1.2.0 · planlang-informe/v1 · fingerprint of this report: `6747fe37df3e72f4f4d8299e4340d848a4bfd48649497bfba326c69a861df49d`

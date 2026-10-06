@@ -106,7 +106,7 @@ Señales obligatorias: 18 de 18 presentes en todas las trazas. Pausas humanas: 7
 | Corrida | Variante | Visitas | Discrepancias | Misma huella que Python |
 | --- | --- | --- | --- | --- |
 | suscripcion-planlang-a-002-200-v1.5 | multiagente | 624 | 0 | ✓ |
-| suscripcion-planlang-a-002-200-v1.5-base | agente único | 202 | 0 | ✓ |
+| suscripcion-planlang-a-002-200-v1.5-base | agente único | 500 | 0 | ✓ |
 
 Sin hallazgos.
 
@@ -163,19 +163,17 @@ Medidas (n = 24): tasa = 0,8333.
 
 **✗ refutado** (criticidad media). El multiagente rinde peor que el agente único en latencia mediana. Tolerancia declarada en el plan: exactitud del multiagente ≥ la de la línea base y latencia mediana ≤ 1 × la de la línea base.
 
-Medidas (n = 200): exactitud = 0,98 · exactitud de la línea base = 0,8875 · latencia mediana = 8,117 · latencia mediana de la línea base = 5,173.
-
-> La línea base y el multiagente no corrieron los mismos casos: A-081, A-082, A-083, A-084, A-085, A-086, A-087, A-088, A-089, A-090, A-091, A-092, A-093, A-094, A-095, A-096, A-097, A-098, A-099, A-100, A-101, A-102, A-103, A-104, A-105, A-106, A-107, A-108, A-109, A-110, A-111, A-112, A-113, A-114, A-115, A-116, A-117, A-118, A-119, A-120, A-121, A-122, A-123, A-124, A-125, A-126, A-127, A-128, A-129, A-130, A-131, A-132, A-133, A-134, A-135, A-136, A-137, A-138, A-139, A-140, A-141, A-142, A-143, A-144, A-145, A-146, A-147, A-148, A-149, A-150, A-151, A-152, A-153, A-154, A-155, A-156, A-157, A-158, A-159, A-160, A-161, A-162, A-163, A-164, A-165, A-166, A-167, A-168, A-169, A-170, A-171, A-172, A-173, A-174, A-175, A-176, A-177, A-178, A-179, A-180, A-181, A-182, A-183, A-184, A-185, A-186, A-187, A-188, A-189, A-190, A-191, A-192, A-193, A-194, A-195, A-196, A-197, A-198, A-199, A-200.
+Medidas (n = 200): exactitud = 0,98 · exactitud de la línea base = 0,9 · latencia mediana = 8,117 · latencia mediana de la línea base = 4,964.
 
 |  | Multiagente | Agente único (suscripcion-planlang-a-002-200-v1.5-base) |
 | --- | --- | --- |
-| Casos resueltos bien (decisión y pausa) | 98 % | 88,8 % |
-| Latencia mediana | 8,117 s | 5,173 s |
-| Llamadas al modelo (con reintentos) | 459 | 67 |
-| Tokens | 1326270 | 341082 |
-| Costo nominal (US$) | 4,9206 | 1,3519 |
+| Casos resueltos bien (decisión y pausa) | 98 % | 90 % |
+| Latencia mediana | 8,117 s | 4,964 s |
+| Llamadas al modelo (con reintentos) | 459 | 166 |
+| Tokens | 1326270 | 845994 |
+| Costo nominal (US$) | 4,9206 | 3,3601 |
 
-Casos donde difieren: A-003, A-013, A-031, A-047, A-052, A-055, A-072, A-078, A-081, A-083, A-084, A-085, A-086, A-087, A-088, A-089, A-090, A-091, A-092, A-093, A-094, A-095, A-096, A-097, A-098, A-099, A-100, A-101, A-102, A-103, A-104, A-105, A-106, A-107, A-108, A-109, A-110, A-111, A-112, A-113, A-114, A-115, A-116, A-117, A-118, A-119, A-120, A-121, A-122, A-123, A-124, A-125, A-126, A-127, A-128, A-129, A-130, A-131, A-132, A-133, A-134, A-135, A-136, A-137, A-138, A-139, A-140, A-141, A-142, A-143, A-144, A-145, A-146, A-147, A-149, A-150, A-151, A-152, A-153, A-155, A-156, A-157, A-158, A-159, A-160, A-161, A-162, A-163, A-164, A-165, A-166, A-167, A-168, A-169, A-170, A-171, A-172, A-173, A-174, A-175, A-176, A-177, A-178, A-179, A-180, A-181, A-182, A-183, A-184, A-185, A-186, A-187, A-188, A-189, A-190, A-191, A-192, A-193, A-194, A-195, A-196, A-197, A-198, A-199, A-200. Presupuesto de la línea base dentro del multiagente: sí.
+Casos donde difieren: A-003, A-013, A-031, A-047, A-052, A-055, A-072, A-078, A-089, A-113, A-130, A-135, A-144, A-147, A-154, A-167, A-170, A-190. Presupuesto de la línea base dentro del multiagente: sí.
 
 ## 7. Casos ejemplares
 
@@ -205,7 +203,7 @@ Casos donde difieren: A-003, A-013, A-031, A-047, A-052, A-055, A-072, A-078, A-
 | Casos | planlang-a-002-200 · semilla planlang-a-002 · n = 200 · generado con el plan 1.5.0 | `5e76ef4cf562852c25aab2e041d55f17f809043450fe48e35c045cb419c8e62f` |
 | Corrida | suscripcion-planlang-a-002-200-v1.5 · 2026-10-04 · suscripcion/sonnet · multiagente · ejecutada con el plan 1.5.0 | `fdbffe765fc0e8309284bbc5c606dc67bc80b61b53cbf8a3772b3447eb8d71a0` |
 | Grafo | versión del grafo exportado | `056407bf4c1238ca0448c11575ea9228d050596d02162cd0613f8c5090cc9117` |
-| Línea base | suscripcion-planlang-a-002-200-v1.5-base | `a51ee88979589768c87736e1b46aa7d3d447d3ecced2d6146d6e2d06d35c2564` |
+| Línea base | suscripcion-planlang-a-002-200-v1.5-base | `1ab219ded7ae9d1ce14f4d7ff0e699b517926564afda1ac73c74301ea6cff5f7` |
 
 Sesiones: 10 · casos ejecutados: 200 · con error del proveedor: 0 · límites de uso alcanzados: 0.
 
@@ -213,4 +211,4 @@ Umbrales aplicados: U1 = 0,75 · U2 = 1000 · U3 = 2 · U4 = false · en el plan
 
 Revisión humana: En lotes, el revisor simulado sigue la verdad conocida del caso (DA-04); la vitrina lo divulga.
 
-Verificador 1.2.0 · planlang-informe/v1 · huella de este informe: `047a10a4f36655234ae6f6564a401c10eb42415fc98dd1378e67648091cb1ff9`
+Verificador 1.2.0 · planlang-informe/v1 · huella de este informe: `6747fe37df3e72f4f4d8299e4340d848a4bfd48649497bfba326c69a861df49d`
