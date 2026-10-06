@@ -54,7 +54,8 @@ Se usa de dos maneras:
      aprueba y sella el plan.
   3. `pnpm plan:validar --verificar plans/demo-a/v1.2.json`: comprueba que un plan aprobado no cambió.
 - **Las versiones del plan del demo A:**
-  - la **v1.5** es la que publica la vitrina desde el sprint 3. Añade la **aprobación en parte**: si el costo supera
+  - la **v1.5.2** es la que publica la vitrina desde el sprint 3: la **v1.5.1** y la v1.5.2 solo corrigen la redacción
+    de la **v1.5** (misma verdad, ADR-005). La v1.5 añade la **aprobación en parte**: si el costo supera
     el tope que el plan de beneficios cubre para ese servicio, se aprueba hasta el tope y el excedente se niega. Además,
     el caso con una instrucción escondida pasa a una persona. Con ella corrió el lote de 200 que publica la vitrina;
   - la **v1.4** añadió el respaldo «sin modelo, el caso va a una persona» (ver «Correr un lote»);
@@ -133,7 +134,7 @@ Se usa de dos maneras:
   4. Si se corta por límite de uso, vuelve a correr el mismo comando más tarde: retoma donde quedó, sin
      repetir casos.
   5. Para el lote de 200 con el plan v1.5 (con el que corrió la corrida que publica la vitrina; la vitrina la mide con
-     el v1.5.1, que solo corrige la redacción), añade `--plan plans/demo-a/v1.5.json --casos
+     el v1.5.2, que solo corrige la redacción), añade `--plan plans/demo-a/v1.5.json --casos
 data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar los 200, de 20 en 20. Deja unos
      minutos entre una sesión y la siguiente.
   6. Para ver un solo caso de punta a punta en un par de minutos, añade `--caso <id>` (por ejemplo `--caso A-016`).
@@ -157,7 +158,8 @@ data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar l
   - un puntaje de riesgo se calcula por reglas, sin leer atributos protegidos;
   - con eso propone aprobar, revisar o rechazar.
 
-  Todo rechazo y todo riesgo alto pasan por una persona (el oficial de cumplimiento, simulado en los lotes).
+  Todo rechazo y todo caso que el puntaje marca de riesgo alto pasan por una persona (el oficial de cumplimiento,
+  simulado en los lotes).
 
 - **Cómo se usa:**
   1. `pnpm lote:demo-b --corrida <nombre-nuevo> --fecha <AAAA-MM-DD>` corre los 20 casos de
@@ -170,7 +172,9 @@ data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar l
   - las listas son sintéticas;
   - el plan B no declara respaldo por proveedor: si el modelo no responde, el caso no se decide y se reintenta;
   - el plan B no declara costo humano por caso, así que su playground cuenta casos, no minutos;
-  - la vitrina del B publica su corrida de 20.
+  - la vitrina del B publica su corrida de 20;
+  - en el lote de 200 (registro, fuera de la vitrina), B-180 salió aprobado sin el oficial: el extractor leyó mal la
+    jurisdicción de los fondos y el puntaje, que no puede verlo, dio 30 en vez de 60.
 
 ### Leer un expediente · desde el sprint 3
 
@@ -183,7 +187,10 @@ data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar l
 - **Cómo se lee:** en la vitrina, entra al demo B desde su fila en la entrada y abre «Casos». Por ejemplo,
   `/es/demo-b/caso/B-010`. «Recibe» muestra los documentos tal como llegaron, con la instrucción escondida marcada
   aparte si la hay. El expediente va al final del recorrido.
-- **Limitaciones:** el texto del investigador lo escribió el modelo y se muestra en el idioma en que lo escribió.
+- **Limitaciones:**
+  - el texto del investigador lo escribió el modelo y se muestra en el idioma en que lo escribió;
+  - en la corrida de 20 que publica la vitrina, los tres rechazos (B-005, B-006 y B-014) salieron sin aviso de IA: la
+    corrida es anterior al arreglo, y la vitrina lo marca con «Sin aviso de IA».
 
 ### Leer el informe de brecha · desde el sprint 1
 
@@ -375,7 +382,8 @@ There are two ways to use it:
      approves and seals the plan.
   3. `pnpm plan:validar --verificar plans/demo-a/v1.2.json`: checks an approved plan did not change.
 - **Demo A's plan versions:**
-  - **v1.5** is the one the showcase publishes since sprint 3. It adds **partial approval**: when the cost is above
+  - **v1.5.2** is the one the showcase publishes since sprint 3: **v1.5.1** and v1.5.2 only fix **v1.5**'s wording
+    (same truth, ADR-005). v1.5 adds **partial approval**: when the cost is above
     the cap the benefits plan covers for that service, the service is approved up to the cap and the excess is
     denied. A case carrying a hidden instruction also goes to a person. The 200-case batch the showcase publishes
     ran with it;
@@ -455,7 +463,7 @@ There are two ways to use it:
   4. If it stops at a usage limit, run the same command later: it resumes where it stopped, without
      repeating cases.
   5. For the 200-case batch with plan v1.5 (the one the showcase's published run ran with; the showcase measures it
-     with v1.5.1, which only fixes the wording), add `--plan plans/demo-a/v1.5.json
+     with v1.5.2, which only fixes the wording), add `--plan plans/demo-a/v1.5.json
 --casos data/casos/demo-a/planlang-a-002-200.json` and repeat the command until all 200 are done, 20 at a time.
      Leave a few minutes between one session and the next.
   6. To watch a single case end to end in a couple of minutes, add `--caso <id>` (for example `--caso A-016`).
@@ -480,7 +488,8 @@ There are two ways to use it:
   - a risk score is computed by rules, without reading protected attributes;
   - with all that, it proposes to approve, review or reject.
 
-  Every rejection and every high risk goes to a person (the compliance officer, simulated in batches).
+  Every rejection and every case the score marks high-risk goes to a person (the compliance officer, simulated in
+  batches).
 
 - **How to use it:**
   1. `pnpm lote:demo-b --corrida <new-name> --fecha <YYYY-MM-DD>` runs the 20 cases of
@@ -493,7 +502,9 @@ There are two ways to use it:
   - the lists are synthetic;
   - plan B declares no provider fallback: if the model does not respond, the case is not decided and is retried;
   - plan B declares no human cost per case, so its playground counts cases, not minutes;
-  - demo B's showcase publishes its 20-case run.
+  - demo B's showcase publishes its 20-case run;
+  - in the 200-case batch (a record, not on the showcase), B-180 was approved without the officer: the extractor
+    misread the funds' jurisdiction and the score, which cannot see that, gave 30 instead of 60.
 
 ### Read a case file · since sprint 3
 
@@ -505,7 +516,10 @@ There are two ways to use it:
 - **How to read it:** in the showcase, go into demo B from its row on the home page and open "Cases". For example,
   `/en/demo-b/caso/B-010`. "Receives" shows the documents as they arrived, with any hidden instruction marked
   apart. The case file comes at the end of the path.
-- **Limitations:** the investigator's text was written by the model and is shown in the language it was written in.
+- **Limitations:**
+  - the investigator's text was written by the model and is shown in the language it was written in;
+  - in the 20-case run the showcase publishes, the three rejections (B-005, B-006 and B-014) went out without an AI
+    notice: the run predates the fix, and the showcase marks it "No AI notice".
 
 ### Read the gap report · since sprint 1
 

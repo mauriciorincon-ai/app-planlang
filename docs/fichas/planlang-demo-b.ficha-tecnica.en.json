@@ -12,7 +12,7 @@
     "sprints_cerrados": 3
   },
   "promesa": {
-    "tagline": "Approves the clean ones; every match, high risk or rejection goes to a person.",
+    "tagline": "Approves the clean ones; every match, high score or rejection goes to a person.",
     "intro": "The agent reads the application's three documents, checks the name against the lists, investigates the context from the start of the gray zone and scores the risk with rules that ignore the name; it approves only the clean ones, brings the rest to the officer with the evidence and leaves a file that cites the rule or match behind each conclusion.",
     "para_quien": "For a financial institution —a synthetic one— that onboards customers with due diligence: today an analyst checks every name against the control lists by hand, cannot tell which alarms were namesakes and leaves no written reason for each decision."
   },
@@ -324,9 +324,9 @@
   "procedencia_proceso": "app",
   "limites": [
     "It decides on synthetic cases: it is a demonstration, not a service.",
-    "Its compliance officer was simulated in batch, following the known truth.",
-    "It runs in batches of 20 cases, outside CI and with breaks between batches.",
-    "Its plan declares no officer minutes per case: cases are counted, not minutes."
+    "Its compliance officer was simulated following the known truth, in 20-case batches outside CI with breaks between them.",
+    "Its plan declares no officer minutes per case: cases are counted, not minutes.",
+    "In the 200-case batch (a record), B-180 was approved without the officer: the extractor misread the funds' jurisdiction and the score could not see it."
   ],
   "nunca": [
     "Rejects without a person reviewing it.",

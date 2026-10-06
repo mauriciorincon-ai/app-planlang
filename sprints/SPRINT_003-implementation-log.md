@@ -1591,7 +1591,7 @@ casilla 4 por otro auditor.
 | AU-S3-23 | desviación 29 | este |
 | AU-S3-24 | `demoDelPlan(plan_id)` y `comandoRetomar` en `core/plan/revision.ts`; `contradicciones(…, comandoRetomar?)` (sin comando: «retómala en la entrevista»); la frase de aprobación, el comando y la ruta de `v1.json` salen del demo del plan; `DEMOS_ENTREVISTABLES` con su razón en `scripts/entrevistar.ts` (lo usa `plan-aprobar.ts`), comparado con el `DEMOS` del entrevistador Python; `lotes.py --demo` con `choices=sorted(FABRICAS)`; el paquete recorre `DEMOS` para las fichas. `grep -rn -- "--demo b" core` da 0 | este |
 | AU-S3-25 | `lotes.py` sin `_grafo_y_contrato` ni `SALIDA_POR_DEFECTO` (ni los imports que solo ellos usaban); los tres alias del A, comentados, y una prueba los compara con `demos.py` | este |
-| F22 | `AVISO_IA` dice «Ninguna negación completa…» / «No full denial…» desde el plan **v1.5.1**; `AVISO_IA_HASTA_V15` conserva el texto que escribieron las corridas hasta el v1.5. Así las corridas versionadas siguen regenerándose byte a byte. El texto era exacto hasta el v1.4, sin aprobación en parte; dejó de serlo con el v1.5. **En la vitrina**, los casos de la corrida publicada del A con ese aviso (191 respuestas; los documentos de las negaciones con persona) llevan al lado la marca «Aviso inexacto»: «promete de más: con el modo Texas apagado, 9 aprobaciones en parte de esta corrida salieron sin una persona». Las 9 aprobaciones en parte traen su propio aviso, que es exacto, y no la llevan. Es una línea de texto en un artefacto de la mirada 3, con el patrón del aviso faltante del B: va «no vista» a su matriz. `grafo-codigo.json` del A se regeneró (las líneas de `nodos.py` se movieron) | este |
+| F22 | `AVISO_IA` dice «Ninguna negación completa…» / «No full denial…» desde el plan **v1.5.1**; `AVISO_IA_HASTA_V15` conserva el texto que escribieron las corridas hasta el v1.5. Así las corridas versionadas siguen regenerándose byte a byte. El texto era exacto hasta el v1.4, sin aprobación en parte; dejó de serlo con el v1.5. **En la vitrina**, las 191 respuestas con ese aviso (169 aprobaciones y 22 negaciones) y los 22 documentos de esas negaciones llevan al lado la marca «Aviso inexacto» (46 de las 48 páginas de caso): «promete de más: con el modo Texas apagado, 9 aprobaciones en parte de esta corrida salieron sin una persona». Las 9 aprobaciones en parte traen su propio aviso, que es exacto, y no la llevan. Es una línea de texto en un artefacto de la mirada 3, con el patrón del aviso faltante del B: va «no vista» a su matriz. `grafo-codigo.json` del A se regeneró (las líneas de `nodos.py` se movieron) | este |
 
 **Demos en rojo de la Fase 2** (`scripts/demo-rojo.sh`):
 
@@ -1619,8 +1619,8 @@ casilla 4 por otro auditor.
 | F2-D20 | aviso hasta el v1.5, Python ↔ TS (F22) | `AVISO_IA_HASTA_V15` de TS dice «negación completa» | «expected 0 to be greater than 0»: ningún aviso de la corrida simulada del v1.5 es el de la vitrina | sí |
 | F2-D21 | aviso por versión del plan (F22) | `AVISO_COMPLETA_DESDE = (1, 6, 0)` | `test_el_aviso_dice_negacion_completa_desde_el_plan_v1_5_1` falla | sí |
 
-**Tres rojos de e2e sin leer (`785bd0c`, `5ffb8e4`, `9f3c5ac`).** Después de cada push corrí `gh pr checks 14`, pero
-e2e seguía **pendiente** y no volví a mirarlo antes del push siguiente. Las tres corridas fallaron por lo mismo: 8 pruebas
+**Cuatro rojos de e2e sin leer (`785bd0c`, `5ffb8e4`, `9f3c5ac` y `374728d`; el cuarto lo contó el segundo auditor).** Después de cada push corrí `gh pr checks 14`, pero
+e2e seguía **pendiente** y no volví a mirarlo antes del push siguiente. Las cuatro corridas fallaron por lo mismo: 8 pruebas
 de la Brecha del A en el teléfono (380 px), en los dos idiomas, temas y perfiles, con un desborde lateral de 45 px. La
 causa fue la medida de C5 que trajo el verificador 1.3.0, «96,2 % · 1 corrida (pide 3 solo en lotes de 20)». Va en
 mono con `whitespace-nowrap` y no cabe. El arreglo: debajo de `chico` la medida va en su propia fila y parte línea; desde
@@ -1706,6 +1706,41 @@ lote `planlang-b-001-200`.
     propuesta de un riesgo nuevo para el plan B (una enmienda la decide el autor, no el constructor).
 
 **La vitrina del B** sigue sobre su corrida de 20 (decisión del usuario); este lote es registro.
+
+### Segunda pasada de la casilla 4: el otro auditor (2026-10-05)
+
+Subagente independiente, en solo lectura, sobre `origin/main...fb22a72` (el summary ya dentro) y `out/`. Hizo el barrido
+por promesa aplazada en ES y EN y cotejó cada frase de evidencia del summary con su corrida. Veredicto: «requiere
+ajustes», con **3 Altos, 3 Medios y 10 Bajos**. Revisó sin hallazgo: los conteos de la guía (59: 13 · 21 · 25; ⭐ 23 y
+⭐⭐ 4, que deja fuera 19), C5 en el verificador 1.3.0, «en construcción», los 52 hallazgos de la Fase 1, el mapa de
+pagos a commits, F2-D1…D21, las desviaciones 1–29 y las filas 1–7 y 9 de la mirada 3.
+
+**Decisión del usuario sobre A1** (AskUserQuestion, 2026-10-05, textual): «Plan v1.5.2 (Recomendado)».
+
+| Hallazgo | Pago |
+|---|---|
+| A1 · C1 del plan dice «Ninguna negación sin pausa humana» y su regla solo mide la completa | **plan v1.5.2** de solo redacción (`enmendarAV152`; firmado por el usuario el 2026-10-05): «Ninguna negación completa sin pausa humana» / «No full denial without a human pause». Misma verdad (ADR-005; `enmienda-v1-5-2.test.ts`). La vitrina mide con él: informe de la vitrina del A regenerado (solo cambian C1, la versión y la huella), manifiesto, fichas, README, manual, guía (encabezado del informe) y kit de prueba |
+| A2 · `paraQue` de `pausa_humana` | «Ninguna negación completa ni rechazo sin una persona… La negación parcial pasa por aquí solo con el modo Texas, y ese sí es un umbral del plan (U4).» y EN |
+| A3 · B-180 contradice garantías del B | las garantías hablan del **puntaje**: tagline de la ficha B, objetivo y «Nunca» del Agente B, C2 del Plan B, manual (ES/EN) y guía m11; B-180 entra como límite en la ficha B (el contrato admite 4 límites de 160 caracteres: «oficial simulado» y «lotes de 20» quedan en uno) y en el manual |
+| M1 · «y así lo dicen las corridas nuevas» (no hay corridas del v1.5.1) | «Vale para la negación completa: desde el plan v1.5.1 el agente lo escribe así, y esta corrida es del v1.5.» y EN, en la vitrina y en la fila 8 de la matriz de la mirada 3 |
+| M2 · fueron cuatro rojos de e2e, no tres | `374728d` sumado en el summary y aquí; también `814a6f4` cayó por el calendario (`source-map-js`) |
+| M3 · el aviso que falta en los rechazos del B no estaba declarado | límite nuevo en «Leer un expediente» del manual (ES/EN); el summary ya no dice que la guía y la mirada 3 lo declaran, y nombra que el chip «Sin aviso de IA» no tiene fila en ninguna matriz |
+| B1 | el manual dice qué versión publica la vitrina (v1.5.2; v1.5.1 y v1.5.2 solo corrigen redacción) |
+| B2, B3, B5, B6 | summary: 8,1 s; 624 visitas en el A y 400 en el B; adenda del ADR-010; las 191 respuestas (169 + 22) y los 22 documentos, 46 de 48 páginas |
+| B4 · evidencia sin corrida registrada | las cifras del summary citan la CI de `fb22a72` (vitest 4.094 + 5 saltadas en 134 archivos, cobertura 97,13 · 88,26 · 97,6; pytest 226 + 3, 96,61 %; Playwright 193 + 3 sin reintentos; paquete 3/3; movimiento reducido 16/16). Corridas locales registradas aquí: `pnpm test` 4.098 + 1 (antes de esta pasada) y 4.102 + 1 (después); e2e 193 + 3 sin reintentos; barrido de cero enlaces con 0 coincidencias después de cada `git add` de `374728d`, `6a8b962`, `909227d` y `fb22a72` |
+| B7 | guía m10: «sus nueve códigos» |
+| B8 | ADR-002: «solo los lotes reales, la entrevista con modelo y el humo real (`PLANLANG_HUMO_REAL=1`), siempre fuera de CI» |
+| B9 | `MOTIVO.negar` y la rama `negar` de `caso.ts` dicen «negación completa» (hoy no se pintan) |
+| B10 | `design-system.md:263` (el ejemplo del B «en construcción») se propone para el DS 1.1, que es mirada del usuario; la regla 4 del `CLAUDE.md`, a las correcciones propuestas |
+
+**Un build lento y un aviso viejo.** El primer e2e local de esta pasada se cayó porque el servidor web esperó 180 s
+al build y no llegó (`Timed out waiting 180000ms from config.webServer`); al relanzarlo, el build terminó solo. El build
+imprime «Can't resolve '../styles/tokens.css' in '<raíz del repo>'» y aun así sale con 0. El único que importa ese
+archivo es `src/app/globals.css`, las pantallas salen con sus colores (axe mide el contraste en verde) y la CI de
+`main` ya lo imprimía antes del S3 (5 veces en el log de su última corrida, igual que en `fb22a72`). Queda como ruido
+conocido, sin causa encontrada; no lo trajo este sprint.
+
+**Demo en rojo** F2-D22: el plan v1.5.2 con el enunciado viejo de C1 → `enmienda-v1-5-2.test.ts` falla dos veces («expected { id: 'plan-demo-a', …(19) } to deeply equal …» y el enunciado), y vuelve a verde al restaurar.
 
 ## Desviación del plan
 

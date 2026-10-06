@@ -14,8 +14,8 @@ export const AGENTE_B = {
     "Agent B · due-diligence onboarding",
   ),
   tagline: tb(
-    "Aprueba lo limpio; toda coincidencia, riesgo alto o rechazo va a una persona.",
-    "Approves the clean ones; every match, high risk or rejection goes to a person.",
+    "Aprueba lo limpio; toda coincidencia, puntaje alto o rechazo va a una persona.",
+    "Approves the clean ones; every match, high score or rejection goes to a person.",
   ),
   para_quien: tb(
     "Para una entidad financiera —sintética— que vincula clientes con debida diligencia: hoy un analista cruza a mano cada nombre con las listas de control y no sabe cuáles alarmas eran homónimos ni deja escrito por qué decidió.",
@@ -182,16 +182,16 @@ export const AGENTE_B = {
       "It decides on synthetic cases: it is a demonstration, not a service.",
     ),
     tb(
-      "Su oficial de cumplimiento se simuló en lote siguiendo la verdad conocida.",
-      "Its compliance officer was simulated in batch, following the known truth.",
-    ),
-    tb(
-      "Corre en lotes de 20 casos, fuera de CI y con pausas entre lotes.",
-      "It runs in batches of 20 cases, outside CI and with breaks between batches.",
+      "Su oficial de cumplimiento se simuló siguiendo la verdad conocida, en lotes de 20 casos fuera de CI y con pausas entre lotes.",
+      "Its compliance officer was simulated following the known truth, in 20-case batches outside CI with breaks between them.",
     ),
     tb(
       "Su plan no declara minutos de oficial por caso: se cuentan casos, no minutos.",
       "Its plan declares no officer minutes per case: cases are counted, not minutes.",
+    ),
+    tb(
+      "En el lote de 200 (registro), B-180 salió aprobado sin el oficial: el extractor leyó mal la jurisdicción de los fondos y el puntaje no pudo verlo.",
+      "In the 200-case batch (a record), B-180 was approved without the officer: the extractor misread the funds' jurisdiction and the score could not see it.",
     ),
   ],
   nunca: [

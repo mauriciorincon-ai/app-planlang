@@ -12,7 +12,7 @@
     "sprints_cerrados": 3
   },
   "promesa": {
-    "tagline": "Aprueba lo limpio; toda coincidencia, riesgo alto o rechazo va a una persona.",
+    "tagline": "Aprueba lo limpio; toda coincidencia, puntaje alto o rechazo va a una persona.",
     "intro": "El agente lee los tres documentos de la solicitud, cruza el nombre con las listas, investiga el contexto desde el inicio de la zona gris y puntúa el riesgo con reglas que no miran el nombre; aprueba solo lo limpio, lleva lo demás al oficial con la evidencia y deja un expediente que cita la regla o la coincidencia de cada conclusión.",
     "para_quien": "Para una entidad financiera —sintética— que vincula clientes con debida diligencia: hoy un analista cruza a mano cada nombre con las listas de control y no sabe cuáles alarmas eran homónimos ni deja escrito por qué decidió."
   },
@@ -324,9 +324,9 @@
   "procedencia_proceso": "app",
   "limites": [
     "Decide sobre casos sintéticos: es una demostración, no un servicio.",
-    "Su oficial de cumplimiento se simuló en lote siguiendo la verdad conocida.",
-    "Corre en lotes de 20 casos, fuera de CI y con pausas entre lotes.",
-    "Su plan no declara minutos de oficial por caso: se cuentan casos, no minutos."
+    "Su oficial de cumplimiento se simuló siguiendo la verdad conocida, en lotes de 20 casos fuera de CI y con pausas entre lotes.",
+    "Su plan no declara minutos de oficial por caso: se cuentan casos, no minutos.",
+    "En el lote de 200 (registro), B-180 salió aprobado sin el oficial: el extractor leyó mal la jurisdicción de los fondos y el puntaje no pudo verlo."
   ],
   "nunca": [
     "Rechaza sin que una persona lo revise.",

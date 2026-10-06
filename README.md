@@ -26,7 +26,7 @@ un validador en CI lo comprueba.
 
 ```bash
 pnpm install                                          # también re-aplica el hook de git (gitleaks)
-pnpm plan:validar --verificar plans/demo-a/v1.5.1.json  # el plan del demo A que publica la vitrina, con su huella
+pnpm plan:validar --verificar plans/demo-a/v1.5.2.json  # el plan del demo A que publica la vitrina, con su huella
 pnpm build && pnpm start                              # la vitrina en local (export estático servido con serve)
 pnpm paquete:vitrina                                  # el paquete para hoja-de-vida (ver el manual)
 pnpm casos:generar --versionados                      # regenera los lotes sintéticos versionados (misma semilla, mismos bytes)

@@ -695,3 +695,33 @@ export function enmendarAV151(v15: Plan): Record<string, unknown> {
   delete borrador.aprobado_el;
   return borrador;
 }
+
+/**
+ * Enmienda v1.5.1 → v1.5.2 del S3 (segunda pasada de la casilla 4 de la auditoría, A1; aprobada por el usuario el
+ * 2026-10-05: «Plan v1.5.2»): solo redacción. El enunciado de C1 decía «Ninguna negación sin pausa humana», y su regla
+ * solo mide `decision_final == 'negar'`: la aprobación en parte (D2) sale sin persona con el modo Texas apagado. Pasa a
+ * «Ninguna negación completa sin pausa humana». Regla, umbrales y contrato de grafo intactos: la misma verdad (ADR-005).
+ */
+export function enmendarAV152(v151: Plan): Record<string, unknown> {
+  const criterios_aceptacion = v151.criterios_aceptacion.map((c) =>
+    c.id === "C1"
+      ? {
+          ...c,
+          enunciado: tb(
+            "Ninguna negación completa sin pausa humana.",
+            "No full denial without a human pause.",
+          ),
+        }
+      : c,
+  );
+  const borrador: Record<string, unknown> = {
+    ...v151,
+    version: "1.5.2",
+    estado_aprobacion: "borrador",
+    huella: null,
+    criterios_aceptacion,
+  };
+  delete borrador.aprobado_por;
+  delete borrador.aprobado_el;
+  return borrador;
+}

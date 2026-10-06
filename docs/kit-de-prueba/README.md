@@ -10,7 +10,7 @@ Lo que necesitas para probar los sprints 1 a 3 sin preparar nada: todo vive en e
 
 | Pieza | Dónde | Para qué |
 |---|---|---|
-| Planes | `plans/demo-a/v1.5.json` · `v1.5.1.json` | La corrida de 200 que publica la vitrina corrió con la v1.5: suma la aprobación en parte (el costo sobre el tope del plan de beneficios) y manda a una persona el caso con una instrucción escondida. La v1.5.1 solo corrige la redacción de S1, S3 y el problema, tiene la misma verdad y es con la que la vitrina la mide. `v1.json` a `v1.4.json` quedan como historia |
+| Planes | `plans/demo-a/v1.5.json` · `v1.5.1.json` · `v1.5.2.json` | La corrida de 200 que publica la vitrina corrió con la v1.5: suma la aprobación en parte (el costo sobre el tope del plan de beneficios) y manda a una persona el caso con una instrucción escondida. La v1.5.1 solo corrige la redacción de S1, S3 y el problema, y la v1.5.2 la del criterio C1 («negación completa»); tienen la misma verdad y la v1.5.2 es con la que la vitrina la mide. `v1.json` a `v1.4.json` quedan como historia |
 | Lotes de casos | `data/casos/demo-a/planlang-a-002-200.json` | El de la corrida que publica la vitrina (200 casos, con nueve sobre el tope). Quedan como historia los de 20 y 200 del lote `planlang-a-001` y uno de 3 (humo) |
 | Plan de beneficios | `data/plan-beneficios/demo-a.json` | El mundo del A: 40 procedimientos, exentos, exclusiones con causal y topes de cobertura |
 | Afirmación de privacidad | `data/casos/demo-a/AFIRMACION-DE-PRIVACIDAD.md` | Por qué ningún dato puede ser de una persona real |
@@ -41,7 +41,7 @@ Lo que necesitas para probar los sprints 1 a 3 sin preparar nada: todo vive en e
 | Carnadas de identificadores | `tests/fixtures/identificadores/carnadas.json` | Una cédula real, un NIT con dígito válido y un SSN: el validador debe ponerlos en rojo |
 | La infraestructura | `docs/BLUEPRINT.html` | Qué sostiene la app, cuánto cuesta y qué ve quién sin sesión |
 
-**Reproducir el informe de la vitrina del A:** `pnpm brecha:informe --corrida runs/demo-a/suscripcion-planlang-a-002-200-v1.5 --plan plans/demo-a/v1.5.1.json --base runs/demo-a/suscripcion-planlang-a-002-200-v1.5-base --salida <carpeta>`
+**Reproducir el informe de la vitrina del A:** `pnpm brecha:informe --corrida runs/demo-a/suscripcion-planlang-a-002-200-v1.5 --plan plans/demo-a/v1.5.2.json --base runs/demo-a/suscripcion-planlang-a-002-200-v1.5-base --salida <carpeta>`
 (dos ejecuciones dan la misma huella, la que declara `data/vitrina/manifiesto.json`). **Verificar todo lo guardado:** `pnpm trazas:verificar`.
 
 ## English
@@ -52,7 +52,7 @@ What you need to test sprints 1 to 3 without preparing anything: it all lives in
 
 | Piece | Where | What for |
 |---|---|---|
-| Plans | `plans/demo-a/v1.5.json` · `v1.5.1.json` | The 200-case run the showcase publishes ran with v1.5: it adds partial approval (cost above the benefits plan's cap) and sends a case with a hidden instruction to a person. v1.5.1 only fixes the wording of S1, S3 and the problem, has the same truth and is the one the showcase measures it with. `v1.json` to `v1.4.json` stay as history |
+| Plans | `plans/demo-a/v1.5.json` · `v1.5.1.json` · `v1.5.2.json` | The 200-case run the showcase publishes ran with v1.5: it adds partial approval (cost above the benefits plan's cap) and sends a case with a hidden instruction to a person. v1.5.1 only fixes the wording of S1, S3 and the problem, and v1.5.2 that of criterion C1 ("full denial"); they have the same truth and v1.5.2 is the one the showcase measures it with. `v1.json` to `v1.4.json` stay as history |
 | Case batches | `data/casos/demo-a/planlang-a-002-200.json` | The batch of the run the showcase publishes (200 cases, nine of them above the cap). The 20 and 200-case `planlang-a-001` batches and a 3-case (smoke) one stay as history |
 | Benefits plan | `data/plan-beneficios/demo-a.json` | Demo A's world: 40 procedures, exempt services, exclusions with a ground and coverage caps |
 | Privacy statement | `data/casos/demo-a/AFIRMACION-DE-PRIVACIDAD.md` | Why no piece of data can belong to a real person |
@@ -83,5 +83,5 @@ What you need to test sprints 1 to 3 without preparing anything: it all lives in
 | Identifier baits | `tests/fixtures/identificadores/carnadas.json` | A real-format national ID, a tax ID with a valid check digit and an SSN: the validator must flag them |
 | The infrastructure | `docs/BLUEPRINT.html` | What holds the app up, what it costs and what anyone sees without a session |
 
-**Reproduce demo A's showcase report:** `pnpm brecha:informe --corrida runs/demo-a/suscripcion-planlang-a-002-200-v1.5 --plan plans/demo-a/v1.5.1.json --base runs/demo-a/suscripcion-planlang-a-002-200-v1.5-base --salida <folder>`
+**Reproduce demo A's showcase report:** `pnpm brecha:informe --corrida runs/demo-a/suscripcion-planlang-a-002-200-v1.5 --plan plans/demo-a/v1.5.2.json --base runs/demo-a/suscripcion-planlang-a-002-200-v1.5-base --salida <folder>`
 (two runs give the same fingerprint, the one `data/vitrina/manifiesto.json` declares). **Check everything stored:** `pnpm trazas:verificar`.

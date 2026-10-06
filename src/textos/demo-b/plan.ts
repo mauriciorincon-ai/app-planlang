@@ -11,8 +11,8 @@ export const CRITERIO_LIDER_B: Record<string, TextoBilingue> = {
     "Every match with a list goes to the officer.",
   ),
   C2: tb(
-    "Nada de riesgo alto se aprueba solo y nada se rechaza sin el oficial.",
-    "Nothing high-risk is approved alone and nothing is rejected without the officer.",
+    "Nada que el puntaje marque de riesgo alto se aprueba solo, y nada se rechaza sin el oficial.",
+    "Nothing the score marks high-risk is approved alone, and nothing is rejected without the officer.",
   ),
   C3: tb(
     "Cada conclusión del expediente cita su regla o su coincidencia.",

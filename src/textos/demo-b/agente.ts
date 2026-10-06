@@ -74,8 +74,8 @@ export interface CifrasDeNodoB {
 
 export const FICHA_B = {
   objetivo: tb(
-    "Resolver solicitudes de vinculación con debida diligencia: aprobar en segundos las limpias y llevar al oficial de cumplimiento toda coincidencia en listas, todo riesgo alto y todo rechazo. Nunca rechaza por su cuenta, nunca deja que un documento cambie lo que hace y cita en el expediente la regla o la coincidencia de cada conclusión.",
-    "Resolve onboarding applications with due diligence: approve the clean ones in seconds and bring every list match, every high risk and every rejection to the compliance officer. It never rejects on its own, never lets a document change what it does and cites in the file the rule or match behind each conclusion.",
+    "Resolver solicitudes de vinculación con debida diligencia: aprobar en segundos las limpias y llevar al oficial de cumplimiento toda coincidencia en listas, todo puntaje de riesgo alto y todo rechazo. Nunca rechaza por su cuenta, nunca deja que un documento cambie lo que hace y cita en el expediente la regla o la coincidencia de cada conclusión.",
+    "Resolve onboarding applications with due diligence: approve the clean ones in seconds and bring every list match, every high risk score and every rejection to the compliance officer. It never rejects on its own, never lets a document change what it does and cites in the file the rule or match behind each conclusion.",
   ),
   recibe: {
     identidad: {
@@ -202,8 +202,8 @@ export const FICHA_B = {
     },
     {
       titulo: tb(
-        "Aprobar solo un caso de riesgo alto",
-        "Approve a high-risk case on its own",
+        "Aprobar solo un caso que su puntaje marca de riesgo alto",
+        "Approve on its own a case its score marks high-risk",
       ),
       refs: tb(
         "D4 · C2 · el nombre no entra al puntaje",

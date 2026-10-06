@@ -108,7 +108,8 @@ acción.
 
 Pasa desde el S1 y nunca hubo matriz: cada lote tuvo su «sí» del usuario, pero sin esta fila. El usuario la aprobó el
 2026-10-05 («Sí, regístrala», Fase 2 de la auditoría del S3, registrado en la bitácora) y vale para los lotes que
-siguen. Ningún test ni comando por defecto la toca (regla 25): solo los lotes reales, fuera de CI.
+siguen. Ningún test ni comando por defecto la toca (regla 25): solo los lotes reales, la entrevista con modelo y el
+humo real (`PLANLANG_HUMO_REAL=1`), siempre fuera de CI.
 
 ## Registro de re-lecturas (antes de cada release — casilla de `/deploy-check`)
 

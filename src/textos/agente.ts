@@ -1654,8 +1654,8 @@ export const NODOS: Record<
       sub: tb("aquí el auditor está simulado", "here the auditor is simulated"),
     },
     paraQue: tb(
-      "Ninguna negación ni rechazo sin una persona: es ley en los dos dominios (CA SB 1120, TX SB 815, AI Act art. 14), no un umbral.",
-      "No denial or rejection without a person: it is law in both domains (CA SB 1120, TX SB 815, EU AI Act art. 14), not a threshold.",
+      "Ninguna negación completa ni rechazo sin una persona: es ley en los dos dominios (CA SB 1120, TX SB 815, AI Act art. 14), no un umbral. La negación parcial pasa por aquí solo con el modo Texas, y ese sí es un umbral del plan (U4).",
+      "No full denial or rejection without a person: it is law in both domains (CA SB 1120, TX SB 815, EU AI Act art. 14), not a threshold. A partial denial comes through here only with Texas mode on, and that one is a plan threshold (U4).",
     ),
     como: tb(
       "LangGraph detiene el grafo con interrupt y guarda su estado; la respuesta del auditor lo reanuda en el mismo punto, hacia el redactor.",

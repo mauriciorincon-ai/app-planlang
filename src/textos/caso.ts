@@ -334,8 +334,8 @@ export const CAMPO: Record<string, TextoBilingue> = {
 /** Por qué pasó a una persona, en palabras llanas (la categoría de la regla que se cumplió). */
 export const MOTIVO: Record<string, TextoBilingue> = {
   negar: tb(
-    "la propuesta del agente era negar, y ninguna negación sale sin que una persona la revise",
-    "the agent proposed to deny, and no denial goes out without a person reviewing it",
+    "la propuesta del agente era negar, y ninguna negación completa sale sin que una persona la revise",
+    "the agent proposed to deny, and no full denial goes out without a person reviewing it",
   ),
   confianza: tb(
     "la confianza de la lectura quedó bajo el umbral U1",
@@ -589,8 +589,8 @@ export const RAMA = {
       "no escalation rule holds: on to the writer alone",
     ),
     negar: tb(
-      "la propuesta es negar: ninguna negación sin una persona",
-      "the proposal is to deny: no denial without a person",
+      "la propuesta es negar: ninguna negación completa sin una persona",
+      "the proposal is to deny: no full denial without a person",
     ),
     confianza: tb(
       "la confianza está bajo U1: pasa a una persona",
@@ -776,8 +776,8 @@ export const AVISO_INEXACTO = {
   chip: tb("Aviso inexacto", "Inaccurate notice"),
   texto: (p: { n: number }) =>
     tb(
-      `El agente escribió este aviso en la corrida, que no se reescribe, y promete de más: con el modo Texas apagado, ${p.n === 1 ? "una aprobación en parte de esta corrida salió" : `${p.n} aprobaciones en parte de esta corrida salieron`} sin una persona. Vale para la negación completa, y así lo dicen las corridas nuevas.`,
-      `The agent wrote this notice into the run, which is never rewritten, and it promises too much: with Texas mode off, ${p.n === 1 ? "one partial approval in this run went" : `${p.n} partial approvals in this run went`} out without a person. It holds for a full denial, and new runs say so.`,
+      `El agente escribió este aviso en la corrida, que no se reescribe, y promete de más: con el modo Texas apagado, ${p.n === 1 ? "una aprobación en parte de esta corrida salió" : `${p.n} aprobaciones en parte de esta corrida salieron`} sin una persona. Vale para la negación completa: desde el plan v1.5.1 el agente lo escribe así, y esta corrida es del v1.5.`,
+      `The agent wrote this notice into the run, which is never rewritten, and it promises too much: with Texas mode off, ${p.n === 1 ? "one partial approval in this run went" : `${p.n} partial approvals in this run went`} out without a person. It holds for a full denial: from plan v1.5.1 on the agent writes it that way, and this run is from v1.5.`,
     ),
 };
 

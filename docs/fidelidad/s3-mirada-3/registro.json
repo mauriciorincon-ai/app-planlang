@@ -73,8 +73,8 @@
       "ancho": 380,
       "idioma": "es",
       "tema": "oscuro",
-      "alto": 22918,
-      "sha256": "13d4927c6c2a41a7a953035931566016e1f30d141d350a6148b3380f2f7d7983",
+      "alto": 22957,
+      "sha256": "a5b759a99386c4819e8003fb0308a3522f1115a17b12a5fc119a7a71deed56a0",
       "entera": "a-brecha-380-oscuro-es.png",
       "miniatura": "mini-a-brecha-380-oscuro-es.jpg"
     },
@@ -85,7 +85,7 @@
       "idioma": "es",
       "tema": "oscuro",
       "alto": 11759,
-      "sha256": "0bfdb67a758503681eb7420b74a01b12cd0f4a0d9bf467eaf63c61c435c07d51",
+      "sha256": "60f032fd4924223a26f08b0934ada2d0ba47b74d000cf593a701108cc93b0871",
       "entera": "a-brecha-1280-oscuro-es.png",
       "miniatura": "mini-a-brecha-1280-oscuro-es.jpg"
     },
@@ -95,8 +95,8 @@
       "ancho": 380,
       "idioma": "es",
       "tema": "claro",
-      "alto": 22918,
-      "sha256": "1ae2eb82b0c47337e2c27960fa22447711e5bfb4ae5cedf811c4c974289c36fa",
+      "alto": 22957,
+      "sha256": "6f0587e5f1f3fd116de15f0a9fbb0742691076960fa45947af6490c869b2eb2a",
       "entera": "a-brecha-380-claro-es.png",
       "miniatura": "mini-a-brecha-380-claro-es.jpg"
     },
@@ -107,7 +107,7 @@
       "idioma": "es",
       "tema": "claro",
       "alto": 11759,
-      "sha256": "a8ec618c1941ba78e25d580fefbc426dfd1bfffefa04f440240b733a669f6bda",
+      "sha256": "770a4dab05b3288d34ea2dc34c5d0cf25dd2f739c28a9c457ada5062afd659e1",
       "entera": "a-brecha-1280-claro-es.png",
       "miniatura": "mini-a-brecha-1280-claro-es.jpg"
     },
@@ -118,7 +118,7 @@
       "idioma": "en",
       "tema": "oscuro",
       "alto": 22688,
-      "sha256": "4cbc5ed0ee6342f4b6c2cf21b68baf48a9e0459c7e43999600fd7238dbcd7523",
+      "sha256": "62bc63dc258bee30dfdc360fcb829fc2268df9fddf37a1f9152e011de4816d91",
       "entera": "a-brecha-380-oscuro-en.png",
       "miniatura": "mini-a-brecha-380-oscuro-en.jpg"
     },
@@ -129,7 +129,7 @@
       "idioma": "en",
       "tema": "oscuro",
       "alto": 11606,
-      "sha256": "b83dc5e52562109a7a0d5ef47d23d62b60dc8ff18038edb676571fd4bc2d7d70",
+      "sha256": "f27c3cc77d783f2f0aaeee2adb98125367a66b397277b3ab9770f491092d7ab1",
       "entera": "a-brecha-1280-oscuro-en.png",
       "miniatura": "mini-a-brecha-1280-oscuro-en.jpg"
     },
@@ -337,8 +337,8 @@
       "ancho": 380,
       "idioma": "es",
       "tema": "oscuro",
-      "alto": 9699,
-      "sha256": "9fe300ed473d705140f8bcc40519447bc69382492c00345301569a8dedc74d3c",
+      "alto": 9738,
+      "sha256": "3d874440088a150ca372a37e56fba756a02e2676f15bab98a4f9aa78f9d19ba8",
       "entera": "a-caso-A-016-380-oscuro-es.png",
       "miniatura": "mini-a-caso-A-016-380-oscuro-es.jpg"
     },
@@ -349,7 +349,7 @@
       "idioma": "es",
       "tema": "oscuro",
       "alto": 4735,
-      "sha256": "d5842582697e0ccc001121e8dd4a879860e749c2afef692517e2d9934329e21f",
+      "sha256": "ef0bed512b02b869bdd88efd9d7483dc7321e029852168cee0afd75da604b5f7",
       "entera": "a-caso-A-016-1280-oscuro-es.png",
       "miniatura": "mini-a-caso-A-016-1280-oscuro-es.jpg"
     },
@@ -359,8 +359,8 @@
       "ancho": 380,
       "idioma": "es",
       "tema": "claro",
-      "alto": 9699,
-      "sha256": "d66a8d89dfadf99dc9eafd5245ef331827625df1fe09da2fa0fda7a7d8516da9",
+      "alto": 9738,
+      "sha256": "50de9f84b5b47635d1932ec4bd219d64b0369909934f2b316a2902921c02b849",
       "entera": "a-caso-A-016-380-claro-es.png",
       "miniatura": "mini-a-caso-A-016-380-claro-es.jpg"
     },
@@ -371,7 +371,7 @@
       "idioma": "es",
       "tema": "claro",
       "alto": 4735,
-      "sha256": "de555443f065a68fe7520f7ccfc6ed2db9c71cbe03de52eef9cc6ad8064a2a61",
+      "sha256": "5a20e43aa416060d10ada123555eff80dd652ad3b00171f4f69325839ff805cb",
       "entera": "a-caso-A-016-1280-claro-es.png",
       "miniatura": "mini-a-caso-A-016-1280-claro-es.jpg"
     },
@@ -381,8 +381,8 @@
       "ancho": 380,
       "idioma": "en",
       "tema": "oscuro",
-      "alto": 9439,
-      "sha256": "b033211e03c9a2138b54a439b753a6c1091c220d25639af1b2c7020c60a96425",
+      "alto": 9477,
+      "sha256": "b3feb3050868e3e16b9c81fc7d16b6e1d8bd61548ccc473a72bb5f60db145271",
       "entera": "a-caso-A-016-380-oscuro-en.png",
       "miniatura": "mini-a-caso-A-016-380-oscuro-en.jpg"
     },
@@ -392,8 +392,8 @@
       "ancho": 1280,
       "idioma": "en",
       "tema": "oscuro",
-      "alto": 4620,
-      "sha256": "36657749e6b7b407f00bd1408240bccf85557463a0a25f0cd366df8957362433",
+      "alto": 4658,
+      "sha256": "4e1e3cd68f01bff98d17bb9d2b0024aa4cef6ebf9a6fa4f47e8a3e87b6e09672",
       "entera": "a-caso-A-016-1280-oscuro-en.png",
       "miniatura": "mini-a-caso-A-016-1280-oscuro-en.jpg"
     },
@@ -620,7 +620,7 @@
       "archivo": "Caso A-017 (/es/caso/A-017), la respuesta",
       "estado": "tal como abre",
       "mirar": "La marca al lado del aviso de IA (también va en el documento).",
-      "esperada": "Bajo el aviso que escribió el agente, «Aviso inexacto» (alerta) y la frase: promete de más, porque con el modo Texas apagado 9 aprobaciones en parte de esta corrida salieron sin una persona; vale para la negación completa, y así lo dicen las corridas nuevas.",
+      "esperada": "Bajo el aviso que escribió el agente, «Aviso inexacto» (alerta) y la frase: promete de más, porque con el modo Texas apagado 9 aprobaciones en parte de esta corrida salieron sin una persona; vale para la negación completa: desde el plan v1.5.1 el agente lo escribe así, y esta corrida es del v1.5.",
       "ruta": "/es/caso/A-017",
       "ancho": 1280,
       "tema": "oscuro",

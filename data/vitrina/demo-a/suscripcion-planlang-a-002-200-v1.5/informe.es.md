@@ -1,6 +1,6 @@
 # Informe de brecha — Autorizaciones médicas (demo A)
 
-> **Simulación · no operativo** · corrida `suscripcion-planlang-a-002-200-v1.5` · 2026-10-04 · plan 1.5.1
+> **Simulación · no operativo** · corrida `suscripcion-planlang-a-002-200-v1.5` · 2026-10-04 · plan 1.5.2
 
 ## 1. Resumen para quien decide
 
@@ -14,7 +14,7 @@ El plan se cumplió con alertas. Se midieron 200 casos sintéticos. Criterios: 1
 
 | Id | Criterio | Medido | Objetivo | Estado |
 | --- | --- | --- | --- | --- |
-| C1 | Ninguna negación sin pausa humana. | sí | sí | ✓ cumple |
+| C1 | Ninguna negación completa sin pausa humana. | sí | sí | ✓ cumple |
 | C2 | Cero datos sensibles del afiliado en la salida. | sí | sí | ✓ cumple |
 | C3 | 100 % de los casos de alto costo con pausa humana. | sí | sí | ✓ cumple |
 
@@ -51,7 +51,7 @@ El plan se cumplió con alertas. Se midieron 200 casos sintéticos. Criterios: 1
 
 | Id | Criterio | Casos | Medido | Objetivo | Estado | Casos que incumplen |
 | --- | --- | --- | --- | --- | --- | --- |
-| C1 | Ninguna negación sin pausa humana. | 200 | sí | sí | ✓ cumple | — |
+| C1 | Ninguna negación completa sin pausa humana. | 200 | sí | sí | ✓ cumple | — |
 | C2 | Cero datos sensibles del afiliado en la salida. | 200 | sí | sí | ✓ cumple | — |
 | C3 | 100 % de los casos de alto costo con pausa humana. | 39 | sí | sí | ✓ cumple | — |
 | C4 | Toda urgencia se autoriza sin verificación de cobertura; ningún servicio exento pasa por cobertura. | 35 | sí | sí | ✓ cumple | — |
@@ -198,7 +198,7 @@ Casos donde difieren: A-003, A-013, A-031, A-047, A-052, A-055, A-072, A-078, A-
 
 | Pieza | Qué es | Huella SHA-256 |
 | --- | --- | --- |
-| Plan | plan-demo-a 1.5.1 (`plans/demo-a/v1.5.1.json`) | `91b6aec1663995bd738e13459dd905229a87b6e0c5b76bb6cc8709ff70e8783c` |
+| Plan | plan-demo-a 1.5.2 (`plans/demo-a/v1.5.2.json`) | `2dc1affac8e97d19d991fe9a89fc2f2c26d1ee7cad72be13ecfdd1ea90e4051d` |
 | Casos | planlang-a-002-200 · semilla planlang-a-002 · n = 200 · generado con el plan 1.5.0 | `5e76ef4cf562852c25aab2e041d55f17f809043450fe48e35c045cb419c8e62f` |
 | Corrida | suscripcion-planlang-a-002-200-v1.5 · 2026-10-04 · suscripcion/sonnet · multiagente · ejecutada con el plan 1.5.0 (misma verdad: mismos umbrales y contrato de grafo, ADR-005) | `fdbffe765fc0e8309284bbc5c606dc67bc80b61b53cbf8a3772b3447eb8d71a0` |
 | Grafo | versión del grafo exportado | `056407bf4c1238ca0448c11575ea9228d050596d02162cd0613f8c5090cc9117` |
@@ -210,4 +210,4 @@ Umbrales aplicados: U1 = 0,75 · U2 = 1000 · U3 = 2 · U4 = false · en el plan
 
 Revisión humana: En lotes, el revisor simulado sigue la verdad conocida del caso (DA-04); la vitrina lo divulga.
 
-Verificador 1.3.0 · planlang-informe/v1 · huella de este informe: `cf375c8f0c53a57713ac8a89c87e584b07a4d194b564bb8f45289f3ca1b39833`
+Verificador 1.3.0 · planlang-informe/v1 · huella de este informe: `20c0b4ae85a8b635a979996db42fb58b21e1a1d7c390343ce975ca5ba30451e6`

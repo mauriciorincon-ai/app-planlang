@@ -13,8 +13,9 @@
  * bilingüe; umbrales y contrato de grafo intactos). Con `--a 1.4`, la enmienda v1.3 → v1.4 del S2 (AU-9: arista de
  * respaldo a la pausa humana sin proveedor; cambia el contrato de grafo). Con `--a 1.5`, la enmienda v1.4 → v1.5 del
  * S3 (aprobación parcial y modo Texas, M-16, M-8, unidad de U2; cambia el contrato de grafo). Con `--a 1.5.1`, la
- * enmienda v1.5 → v1.5.1 de la auditoría del S3 (solo redacción: S1, S3 y el problema; F8).
- * Uso: `pnpm tsx scripts/enmendar-plan-demo-a.ts [--a 1.2|1.3|1.4|1.5|1.5.1] --por <nombre> --el <YYYY-MM-DD>`
+ * enmienda v1.5 → v1.5.1 de la auditoría del S3 (solo redacción: S1, S3 y el problema; F8). Con `--a 1.5.2`, la
+ * enmienda v1.5.1 → v1.5.2 de la segunda pasada de la casilla 4 (solo redacción: el enunciado de C1; A1).
+ * Uso: `pnpm tsx scripts/enmendar-plan-demo-a.ts [--a 1.2|1.3|1.4|1.5|1.5.1|1.5.2] --por <nombre> --el <YYYY-MM-DD>`
  */
 import { aprobarPlan, cargarPlan } from "../core/plan";
 import {
@@ -24,6 +25,7 @@ import {
   enmendarAV14,
   enmendarAV15,
   enmendarAV151,
+  enmendarAV152,
 } from "./enmienda-plan-demo-a";
 import { argumentos, escribirJson, leerJson } from "./_io";
 
@@ -58,6 +60,11 @@ const ENMIENDAS = {
     salida: "plans/demo-a/v1.5.1.json",
     f: enmendarAV151,
   },
+  "1.5.2": {
+    entrada: "plans/demo-a/v1.5.1.json",
+    salida: "plans/demo-a/v1.5.2.json",
+    f: enmendarAV152,
+  },
 } as const;
 
 async function main(): Promise<number> {
@@ -67,6 +74,7 @@ async function main(): Promise<number> {
     return 2;
   }
   const a =
+    args.a === "1.5.2" ||
     args.a === "1.5.1" ||
     args.a === "1.5" ||
     args.a === "1.4" ||

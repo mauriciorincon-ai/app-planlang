@@ -469,7 +469,7 @@ const DECISIONES_MIRADA_3 = [
       marco(page.locator('section[aria-labelledby="c-salida"]')),
     mirar: "La marca al lado del aviso de IA (también va en el documento).",
     esperada:
-      "Bajo el aviso que escribió el agente, «Aviso inexacto» (alerta) y la frase: promete de más, porque con el modo Texas apagado 9 aprobaciones en parte de esta corrida salieron sin una persona; vale para la negación completa, y así lo dicen las corridas nuevas.",
+      "Bajo el aviso que escribió el agente, «Aviso inexacto» (alerta) y la frase: promete de más, porque con el modo Texas apagado 9 aprobaciones en parte de esta corrida salieron sin una persona; vale para la negación completa: desde el plan v1.5.1 el agente lo escribe así, y esta corrida es del v1.5.",
   },
   {
     clave: "a-agente-decision",
