@@ -17,10 +17,23 @@ from typing import Any
 
 AVISO_IA = {
     "es": "Aviso: esta respuesta la redactó una inteligencia artificial en una simulación con datos "
+    "sintéticos. Ninguna negación completa se emite sin la revisión de una persona.",
+    "en": "Notice: this reply was drafted by an artificial intelligence in a simulation with synthetic "
+    "data. No full denial is issued without review by a person.",
+}
+
+# F22 (auditoría del S3): el aviso que dejaron escrito las corridas hasta el plan v1.5. Era exacto hasta el
+# v1.4, que no tenía aprobación en parte; con el v1.5, la parte negada sale sin una persona si el modo Texas
+# está apagado, y la frase deja de serlo. Las corridas versionadas no se reescriben y se regeneran byte a byte
+# desde este código, así que lo conservan (la vitrina lo marca inexacto donde aplica). Desde el v1.5.1, que
+# corrigió la misma frase en el problema del plan, el aviso dice «negación completa».
+AVISO_IA_HASTA_V15 = {
+    "es": "Aviso: esta respuesta la redactó una inteligencia artificial en una simulación con datos "
     "sintéticos. Ninguna negación se emite sin la revisión de una persona.",
     "en": "Notice: this reply was drafted by an artificial intelligence in a simulation with synthetic "
     "data. No denial is issued without review by a person.",
 }
+AVISO_COMPLETA_DESDE = (1, 5, 1)
 
 VIA_DE_CONTRADICCION = {
     "es": "Puede pedir que se revise esta decisión: presente una solicitud de revisión ante la entidad, con "
@@ -67,10 +80,16 @@ REQUERIDOS = (
 )
 
 
-def aviso_ia(decision: str, con_persona: bool) -> dict[str, str]:
+def _version(v: str) -> tuple[int, ...]:
+    return tuple(int(x) for x in v.split("."))
+
+
+def aviso_ia(decision: str, con_persona: bool, version_plan: str) -> dict[str, str]:
     """El aviso de IA que corresponde: una negación parcial sin persona no puede decir que una persona
-    la revisó."""
-    return AVISO_IA if con_persona or decision != "aprobar_parcial" else AVISO_IA_SIN_PERSONA
+    la revisó; y con un plan anterior al v1.5.1, el aviso que esas corridas dejaron escrito (F22)."""
+    if not con_persona and decision == "aprobar_parcial":
+        return AVISO_IA_SIN_PERSONA
+    return AVISO_IA if _version(version_plan) >= AVISO_COMPLETA_DESDE else AVISO_IA_HASTA_V15
 
 
 def _textos(v: Any) -> list[dict[str, Any]]:
@@ -122,7 +141,7 @@ def documento_adverso(
         "version": {"plan": plan, "plan_beneficios": plan_beneficios},
         "via_de_contradiccion": VIA_DE_CONTRADICCION,
         "decidido_por": DECIDIDO_POR if con_persona else DECIDIDO_POR_REGLA,
-        "aviso_ia": aviso_ia(decision, con_persona),
+        "aviso_ia": aviso_ia(decision, con_persona, plan["version"]),
     }
     requeridos = REQUERIDOS
     if decision == "aprobar_parcial":

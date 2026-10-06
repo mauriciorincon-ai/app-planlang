@@ -2253,6 +2253,12 @@ export const TRAZAS_DE_NODO: Record<
 };
 
 /** La nota bajo la tabla de trazas de cada nodo; los casos que nombra salen de la corrida. */
+/** Título de la fuente `tipo: codigo` que el lienzo del visor suma a cada nodo con código (`src/lib/vista/visor.ts`). */
+export const TITULO_CODIGO = tb(
+  "Código del nodo en el repositorio",
+  "The node's code in the repository",
+);
+
 export const NOTA_TRAZAS = {
   enrutador: tb(
     "Toca un caso para ver su texto. Las urgencias y los exentos no pasan por el extractor.",

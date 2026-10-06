@@ -654,7 +654,9 @@ class NodosDemoA:
             "salida_final": {
                 **r["salida"],
                 "aviso_ia": aviso_ia(
-                    estado.get("decision_final") or "aprobar", bool(estado.get("pausa_humana"))
+                    estado.get("decision_final") or "aprobar",
+                    bool(estado.get("pausa_humana")),
+                    self.plan.version,
                 ),
             },
             "guardia_salida": {k: v for k, v in r.items() if k != "salida"},

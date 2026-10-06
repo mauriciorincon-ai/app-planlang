@@ -67,6 +67,8 @@ export interface PerfilCaso {
   verdad: string;
   pausa: PausaLeida | null;
   documento: VistaCaso["documento"];
+  /** Si el aviso de IA de la respuesta promete más de lo que la corrida cumplió (F22); `null` si es exacto. */
+  avisoInexacto: VistaCaso["salida"]["avisoInexacto"];
   expediente: VistaCaso["expediente"];
   /** Lo que entrega, sin la traza (el esqueleto la añade al final). */
   entrega: Array<{ titulo: string; detalle?: string }>;

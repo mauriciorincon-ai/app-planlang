@@ -762,6 +762,25 @@ export const SALIDA = {
   severidad: tb("Severidad de la acción", "Action severity"),
 };
 
+/**
+ * F22 (auditoría del S3): el aviso de IA que dejaron escrito las corridas hasta el plan v1.5 (`AVISO_IA_HASTA_V15` de
+ * `agents/src/app_agents/demo_a/documento_adverso.py`; una prueba lo compara con el que la corrida simulada del v1.5
+ * trae escrito). Con el v1.5 la parte negada sale sin una persona si el modo Texas está apagado: donde la corrida
+ * tuvo aprobaciones en parte así, el aviso promete de más, y la vista lo dice al lado sin reescribir la corrida.
+ */
+export const AVISO_IA_HASTA_V15 = tb(
+  "Aviso: esta respuesta la redactó una inteligencia artificial en una simulación con datos sintéticos. Ninguna negación se emite sin la revisión de una persona.",
+  "Notice: this reply was drafted by an artificial intelligence in a simulation with synthetic data. No denial is issued without review by a person.",
+);
+export const AVISO_INEXACTO = {
+  chip: tb("Aviso inexacto", "Inaccurate notice"),
+  texto: (p: { n: number }) =>
+    tb(
+      `El agente escribió este aviso en la corrida, que no se reescribe, y promete de más: con el modo Texas apagado, ${p.n === 1 ? "una aprobación en parte de esta corrida salió" : `${p.n} aprobaciones en parte de esta corrida salieron`} sin una persona. Vale para la negación completa, y así lo dicen las corridas nuevas.`,
+      `The agent wrote this notice into the run, which is never rewritten, and it promises too much: with Texas mode off, ${p.n === 1 ? "one partial approval in this run went" : `${p.n} partial approvals in this run went`} out without a person. It holds for a full denial, and new runs say so.`,
+    ),
+};
+
 export const DOCUMENTO = {
   sinDatos: tb(
     "ninguno: el extractor no respondió y el documento queda incompleto",

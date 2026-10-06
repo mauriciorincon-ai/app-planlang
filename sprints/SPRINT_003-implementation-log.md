@@ -1583,6 +1583,14 @@ casilla 4 por otro auditor.
 | F7 | la entradilla de Criterios dice el estado del más exigente: incompleto con sus corridas, o, como ahora, «pide 3 corridas seguidas solo en los lotes de 20 casos: en este se midió en una corrida» | este |
 | F8 (decisión «Corregir los dos») | **plan v1.5.1** de solo redacción (`enmendarAV151`, aprobado por la respuesta del usuario del 2026-10-05): S1 y S3 dicen «el lote medido» y el problema «sin negar jamás del todo por su cuenta». Misma verdad que el v1.5 (ADR-005, prueba `enmienda-v1-5-1.test.ts`); la vitrina lo publica y mide con él la corrida de la v1.5, y la ficha de reproducibilidad suma la fila «Plan con que corrió: 1.5.0». La página del Plan muestra además `k_aplica_a` en la regla técnica de C5 | este |
 | Textos (lote 1) | F1 (spike: «el grafo de arriba, el de la corrida publicada, las tiene todas»), F2 (sin «16 señales»), F3 a–r («negación completa» y la aprobación en parte nombrada en Entrada, fichas, Agente, Plan, Caso y manual), F4 (la Entrega del A con cuatro respuestas y «9 sobre el tope del servicio»), F5 (la tarjeta «Mover un umbral» por demo), F6 (rótulo «de los demos» y «quien revisa —el auditor en el A, el oficial en el B—»), F9 («construcción cerrada»), F10 y AU-S3-09 (lo que cuenta el export), F11 y AU-S3-02 (bloque B de la guía sobre el informe que publica la vitrina), F12 y AU-S3-03 (bloque D: PR #14, cifras y «Ver N más»), F13 y AU-S3-22 (manual: la Entrada y lo que publica el design system), F14 (README), F15 y AU-S3-18 (BLUEPRINT), F16 (ADR-011), F17 (ADR-001), F18, F19 en la vitrina, F20 (concordancia con k = 1), F21 (la capacidad del lote completo se mide, no se estima), F23 (g2), AU-S3-04 (por qué A, B y C quedan fuera del ⭐⭐), AU-S3-05 (el conmutador «A · B» vive en las pantallas del B), AU-S3-08 (el investigador entra desde el inicio de la zona gris). La guía: 20 mejoradas, 13 nuevas, 26 heredadas (59) | este |
+| AU-S3-16 | `TITULO_CODIGO` pasa a `src/textos/agente.ts` (copia bilingüe fuera de `src/lib`) | este |
+| AU-S3-17 | el README del diagramador dice 0.5.0, gramática 1.2.0 y la ruta real de la prueba del lock; `lector.ts` dice «la vitrina, al compilar: ADR-008», no IndexedDB | este |
+| AU-S3-20 | guía h2: la señal nula cita `interprete.test.ts` y `test_reglas_arista.py` (la prueba cruzada sigue citando `rf-09-2.test.ts`) | este |
+| AU-S3-21 | guía j1, «Mejorado en S3»: borra `public/piezas/planlang/` antes de copiar, abre también la Brecha del B, y espera las fichas de los dos agentes. La guía: 21 mejoradas, 13 nuevas, 25 heredadas (59); el historial lo dice | este |
+| AU-S3-23 | desviación 29 | este |
+| AU-S3-24 | `demoDelPlan(plan_id)` y `comandoRetomar` en `core/plan/revision.ts`; `contradicciones(…, comandoRetomar?)` (sin comando: «retómala en la entrevista»); la frase de aprobación, el comando y la ruta de `v1.json` salen del demo del plan; `DEMOS_ENTREVISTABLES` con su razón en `scripts/entrevistar.ts` (lo usa `plan-aprobar.ts`), comparado con el `DEMOS` del entrevistador Python; `lotes.py --demo` con `choices=sorted(FABRICAS)`; el paquete recorre `DEMOS` para las fichas. `grep -rn -- "--demo b" core` da 0 | este |
+| AU-S3-25 | `lotes.py` sin `_grafo_y_contrato` ni `SALIDA_POR_DEFECTO` (ni los imports que solo ellos usaban); los tres alias del A, comentados, y una prueba los compara con `demos.py` | este |
+| F22 | `AVISO_IA` dice «Ninguna negación completa…» / «No full denial…» desde el plan **v1.5.1**; `AVISO_IA_HASTA_V15` conserva el texto que escribieron las corridas hasta el v1.5. Así las corridas versionadas siguen regenerándose byte a byte. El texto era exacto hasta el v1.4, sin aprobación en parte; dejó de serlo con el v1.5. **En la vitrina**, los casos de la corrida publicada del A con ese aviso (191 respuestas; los documentos de las negaciones con persona) llevan al lado la marca «Aviso inexacto»: «promete de más: con el modo Texas apagado, 9 aprobaciones en parte de esta corrida salieron sin una persona». Las 9 aprobaciones en parte traen su propio aviso, que es exacto, y no la llevan. Es una línea de texto en un artefacto de la mirada 3, con el patrón del aviso faltante del B: va «no vista» a su matriz. `grafo-codigo.json` del A se regeneró (las líneas de `nodos.py` se movieron) | este |
 
 **Demos en rojo de la Fase 2** (`scripts/demo-rojo.sh`):
 
@@ -1603,6 +1611,12 @@ casilla 4 por otro auditor.
 | F2-D13 | registro del generador (AU-S3-28) | `"unidad_de_ingreso"` → `"unidad_de_ingresos"` en la lista | «listas · unidad_de_ingresos: expected false to be true» | sí |
 | F2-D14 | listas de la corrida (AU-S3-28) | se quita `esLaListaDeLaCorrida(...)` de `cargarDemo`. **Primer intento: el control pasó**, porque la prueba solo llamaba a la función; se añadió una prueba con una copia del B cuya corrida cita la versión 9.9.9. Segundo intento | «promise resolved … instead of rejecting» | sí |
 | F2-D15 | `k_aplica_a` (verificador 1.3.0) | `const aplica = true;` | «expected … to match object { estado: 'cumple' }» en el lote de 200 | sí |
+| F2-D16 | demo del plan en la revisión (AU-S3-24) | `revision.ts`: `--demo ${d} --por` → `--demo b --por` | «expected '# Revisión del borrador — plan-demo-c…' to contain '--demo c --por'» | sí |
+| F2-D17 | demos entrevistables = los de Python (AU-S3-24) | `DEMOS_ENTREVISTABLES = ["a", "b"]` | «expected [ 'a', 'b' ] to deeply equal [ 'b' ]» | sí |
+| F2-D18 | alias del A en `lotes.py` (AU-S3-25) | `PLAN_POR_DEFECTO` → `v1.3.json` | `test_los_alias_del_a_son_los_de_su_entrada_en_demos` falla | sí |
+| F2-D19 | nota del aviso inexacto (F22) | `sinPersona > 0` → `sinPersona > 999` | «A-001 (es): expected to have a length of 1 but got +0» | sí |
+| F2-D20 | aviso hasta el v1.5, Python ↔ TS (F22) | `AVISO_IA_HASTA_V15` de TS dice «negación completa» | «expected 0 to be greater than 0»: ningún aviso de la corrida simulada del v1.5 es el de la vitrina | sí |
+| F2-D21 | aviso por versión del plan (F22) | `AVISO_COMPLETA_DESDE = (1, 6, 0)` | `test_el_aviso_dice_negacion_completa_desde_el_plan_v1_5_1` falla | sí |
 
 **Un tropiezo de la CI:** el push de `d44a2ad` salió rojo en `python`. Ruff marcó nueve líneas de más de 110 columnas
 (la verificación local había corrido con `-q` y su salida se perdió en la tubería). Además, la prueba de la consola
@@ -1632,6 +1646,9 @@ negación completa se emite…») rompe tres pruebas de pytest, porque las corri
 Dos caminos:
 - una constante nueva que solo usan las corridas nuevas, con versión del documento adverso;
 - o declararlo deuda hasta el próximo lote.
+
+*(Resuelto tras compactar: el primer camino, con la versión tomada del plan, más la marca en la vitrina. Ver la fila F22
+de la tabla de pagos. Los textos AU-S3-16 a 25 también quedaron pagados ahí.)*
 
 **Sigue, en orden:**
 1. **Textos que faltan:**
@@ -1786,6 +1803,11 @@ lote `planlang-b-001-200`.
 28. **El ⭐⭐ del cierre vive en un bloque nuevo (★) al principio de la guía.** Las cuatro paradas tienen que caminarse en
     el orden del documento; repartidas entre los bloques heredados obligaban a saltar. Los bloques A–M conservan sus
     letras y sus pruebas.
+29. **El delta «README de comandos» (kit v1.35.0, K-S5-2) no se aplicó, y no lo dije a tiempo** (AU-S3-23). El README
+    de `.claude/commands/` es un `README.md`, y el estampado excluye todo `README.md`. Así que el «no se copia» de la
+    fase 0 era cierto, pero dejaba a la app sin la tabla de comandos que el delta pedía. El kit v1.38.0 (K-S6-1) lo movió
+    a `.claude/COMANDOS.md`, fuera de `.claude/commands/`, porque ahí aparecía como `/README`. Este S3 se sincronizó con
+    el v1.37.0, así que el archivo entra en la próxima puesta al día del kit (v1.38.0 o posterior), no en este PR.
 
 ## Registro de miradas
 

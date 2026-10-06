@@ -3,7 +3,7 @@
  * huella no coincide con la declarada, si un archivo no cumple su esquema o si una traza está mal
  * formada, la corrida se RECHAZA con todos los motivos juntos — nunca se mide «lo que se pudo leer».
  *
- * Puro: recibe objetos ya parseados (los scripts leen el disco; la vitrina, IndexedDB).
+ * Puro: recibe objetos ya parseados (los scripts leen el disco; la vitrina, al compilar: ADR-008).
  */
 import type { TextoBilingue } from "../formatos/bilingue";
 import { verificarHuella } from "../formatos/huella";

@@ -34,8 +34,7 @@ from langgraph.types import Command
 from app_agents.adaptador import CLAUDE_BIN, ErrorProveedor, crear_modelo
 from app_agents.canonico import leer_verificando
 from app_agents.demo_a.estado import estado_inicial
-from app_agents.demo_a.plan_beneficios import PlanBeneficios
-from app_agents.demos import CorridaIncompatible, Demo, demo
+from app_agents.demos import FABRICAS, CorridaIncompatible, Demo, demo
 from app_agents.exportador import (
     ETIQUETA,
     FORMATO_TRAZA,
@@ -47,19 +46,17 @@ from app_agents.exportador import (
 from app_agents.logger import registrar
 from app_agents.plan import (
     RAIZ_REPO,
-    ContratoDeGrafo,
-    PlanCargado,
     cargar_plan,
     misma_verdad,
     plan_por_huella,
 )
 from app_agents.reloj import RelojFijo, RelojReal
 
-# Los del demo A, que siguen siendo los de `pnpm lote:demo` sin `--demo` (el manual los nombra).
+# Alias del demo A (su entrada en `demos.py` es la fuente): `pnpm lote:demo` sin `--demo` corre el A, el
+# manual nombra su plan y su lote, y las pruebas los leen de aquí. Una prueba los compara con `demos.py`.
 PLAN_POR_DEFECTO = "plans/demo-a/v1.2.json"
 CASOS_POR_DEFECTO = "data/casos/demo-a/planlang-a-001-20.json"
 BENEFICIOS_POR_DEFECTO = "data/plan-beneficios/demo-a.json"
-SALIDA_POR_DEFECTO = "runs/demo-a"
 VARIANTES = ("multiagente", "agente_unico")
 # El alias del modelo con la suscripción y el tamaño de sesión los declara el PLAN (`lotes.modelo_alias`,
 # `lotes.corridas_espaciadas_de`): aquí no se cablean (auditoría S1, AU-10).
@@ -87,12 +84,6 @@ def _relativa(p: Path) -> str:
         return p.resolve().relative_to(RAIZ_REPO).as_posix()
     except ValueError:
         return p.name
-
-
-def _grafo_y_contrato(
-    variante: str, plan: PlanCargado, pb: PlanBeneficios, checkpointer: Any
-) -> tuple[Any, ContratoDeGrafo]:
-    return demo("a").construir(variante, plan, pb, checkpointer)
 
 
 def _entorno(proveedor: str) -> dict[str, Any]:
@@ -417,7 +408,7 @@ def ejecutar_lote(
 
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(description="Corre un lote de un demo y exporta planlang-trace/v1")
-    p.add_argument("--demo", default="a", choices=["a", "b"])
+    p.add_argument("--demo", default="a", choices=sorted(FABRICAS))
     p.add_argument("--proveedor", default=os.environ.get("PLANLANG_PROVEEDOR", "suscripcion"))
     p.add_argument("--modelo", default=None)
     p.add_argument("--plan", default=None, help="por defecto, el del demo")

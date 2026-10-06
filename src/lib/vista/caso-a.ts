@@ -16,6 +16,8 @@ import {
 import type { DatosDemoA } from "@/lib/datos/vitrina";
 import { VALORES } from "@/textos/agente";
 import {
+  AVISO_IA_HASTA_V15,
+  AVISO_INEXACTO,
   CABECERA,
   CAMPO,
   DOCUMENTO,
@@ -55,6 +57,20 @@ export function perfilCasoA(
   const decisionTb = (x: string): TextoBilingue =>
     VALORES[x] ?? { es: x, en: x };
   const ex = extraccionA(t);
+  // F22: el aviso que las corridas hasta el plan v1.5 dejaron escrito («ninguna negación sin una persona») promete de
+  // más donde la corrida tuvo aprobaciones en parte sin persona; la vista lo dice al lado, sin reescribir la corrida.
+  const sinPersona = d.corrida.trazas.filter(
+    (x) =>
+      x.senales.decision_final === "aprobar_parcial" &&
+      x.senales.pausa_humana !== true,
+  ).length;
+  const inexacto = (a: TextoBilingue | undefined) =>
+    a?.es === AVISO_IA_HASTA_V15.es && sinPersona > 0
+      ? {
+          chip: X(AVISO_INEXACTO.chip, i),
+          texto: X(AVISO_INEXACTO.texto({ n: sinPersona }), i),
+        }
+      : null;
   const conf = ex ? decimal(ex.confianza, 2, i) : "—";
   const cob = (t.cobertura ?? {}) as Record<string, unknown>;
   const e = c.entrada;
@@ -381,6 +397,7 @@ export function perfilCasoA(
           ],
           aviso: X(doc.aviso_ia, i),
           avisoFalta: null,
+          avisoInexacto: inexacto(doc.aviso_ia),
           completo: X(
             DOCUMENTO.completo({
               completo: doc.completo,
@@ -390,6 +407,7 @@ export function perfilCasoA(
           ),
         }
       : null,
+    avisoInexacto: inexacto(t.salida_final?.aviso_ia),
     expediente: null,
     entrega: [
       { titulo: X(ENTREGA.respuesta, i) },

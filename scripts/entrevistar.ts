@@ -22,6 +22,14 @@ import {
 import { argumentos, escribirJson, escribirTexto, leerJson } from "./_io";
 
 const PYTHON = resolve("agents/.venv/bin/python");
+/**
+ * Los demos cuyo plan nace de una entrevista: los que tienen plantilla de dominio con preguntas y entrada en el
+ * entrevistador Python (`DEMOS` de `agents/src/app_agents/entrevistador/cli.py`; una prueba las compara). El plan del
+ * A se escribió a mano en el S1, antes de que existiera el entrevistador, y no se reentrevista: sus corridas fijan su
+ * verdad (ADR-005).
+ */
+export const DEMOS_ENTREVISTABLES: readonly string[] = ["b"];
+const USO_DEMO = `--demo ${DEMOS_ENTREVISTABLES.join("|")}`;
 const SALIDA_GUARDADA = 3;
 
 export async function revisarDirectorio(directorio: string): Promise<Revision> {
@@ -59,9 +67,9 @@ export async function revisarDirectorio(directorio: string): Promise<Revision> {
 async function main(): Promise<number> {
   const args = argumentos(process.argv.slice(2));
   const demo = args.demo;
-  if (demo !== "b") {
+  if (typeof demo !== "string" || !DEMOS_ENTREVISTABLES.includes(demo)) {
     console.error(
-      "uso: entrevistar --demo b [--retomar] [--nueva] [--pregunta P13] [--respuestas archivo] [--idioma es|en] [--sin-modelo] [--salida carpeta]",
+      `uso: entrevistar ${USO_DEMO} [--retomar] [--nueva] [--pregunta P13] [--respuestas archivo] [--idioma es|en] [--sin-modelo] [--salida carpeta]`,
     );
     return 2;
   }

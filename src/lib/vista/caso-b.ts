@@ -374,6 +374,7 @@ export function perfilCasoB(
                 chip: X(DOCUMENTO_B.avisoFaltaChip, i),
                 texto: X(DOCUMENTO_B.avisoFalta, i),
               },
+          avisoInexacto: null,
           completo: X(
             DOCUMENTO_B.completo({
               completo: doc.completo,
@@ -384,6 +385,7 @@ export function perfilCasoB(
           ),
         }
       : null,
+    avisoInexacto: null,
     expediente: exp
       ? {
           titulo: X(EXPEDIENTE_B.titulo, i),

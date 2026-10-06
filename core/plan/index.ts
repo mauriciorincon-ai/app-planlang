@@ -33,6 +33,8 @@ export {
   type PreguntaPendiente,
 } from "./contradicciones";
 export {
+  comandoRetomar,
+  demoDelPlan,
   revisarBorrador,
   textoDeRevision,
   impideAprobar,

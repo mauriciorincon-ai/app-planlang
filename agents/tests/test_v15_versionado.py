@@ -18,7 +18,7 @@ from langgraph.checkpoint.memory import InMemorySaver
 from v15_simulado import CORRIDA, LOTE_002, PLAN_V15, generar
 
 from app_agents.canonico import leer_verificando
-from app_agents.demo_a.documento_adverso import AVISO_IA, AVISO_IA_SIN_PERSONA, DECIDIDO_POR_REGLA
+from app_agents.demo_a.documento_adverso import AVISO_IA_HASTA_V15, AVISO_IA_SIN_PERSONA, DECIDIDO_POR_REGLA
 from app_agents.demo_a.grafo import construir_grafo
 from app_agents.demo_a.nodos import exigir_pausa_en_negacion
 from app_agents.demo_a.plan_beneficios import cargar_plan_beneficios
@@ -83,7 +83,7 @@ def test_aprobacion_parcial_con_texas_pasa_por_una_persona() -> None:
     assert final["decision_final"] == "aprobar_parcial"
     disparo = next(d for d in final["decisiones_de_arista"] if d["desde"] == "decision" and d["resultado"])
     assert disparo["funcion"] == "texas_y_no_aprobar"
-    assert final["documento_adverso"]["aviso_ia"] == AVISO_IA
+    assert final["documento_adverso"]["aviso_ia"] == AVISO_IA_HASTA_V15
 
 
 def test_carga_detectada_es_la_primera_arista_de_decision_y_llega_a_la_persona() -> None:

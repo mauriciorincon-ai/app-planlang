@@ -7,7 +7,7 @@
     "hasta": 54
   },
   "formato": "planlang-grafo-codigo/v1",
-  "huella": "bd5e9b30e4a42a1868d74485b077e5284dde97446a3e1ab5c67d4abe2b117444",
+  "huella": "b0f3274e2c136cfc8f52bb95c03b7e0ab014361c12ce65e8f3f76ddb8774aeb6",
   "nodos": {
     "aclaracion": {
       "archivo": "agents/src/app_agents/demo_a/nodos.py",
@@ -67,7 +67,7 @@
     },
     "guardia_salida": {
       "archivo": "agents/src/app_agents/demo_a/nodos.py",
-      "codigo": "def guardia_salida(self, estado: Estado, runtime: Runtime[ContextoCaso]) -> dict[str, Any]:\n    reloj = runtime.context.reloj\n    inicio = reloj.ahora_ms()\n    borrador = estado[\"borrador\"] or {\"es\": \"\", \"en\": \"\", \"acciones\": []}\n    r = revisar_salida(\n        {\"es\": borrador[\"es\"], \"en\": borrador[\"en\"]},\n        list(borrador.get(\"acciones\") or []),\n        estado[\"entrada\"],\n        estado.get(\"extraccion\"),\n    )\n    return {\n        \"salida_final\": {\n            **r[\"salida\"],\n            \"aviso_ia\": aviso_ia(\n                estado.get(\"decision_final\") or \"aprobar\", bool(estado.get(\"pausa_humana\"))\n            ),\n        },\n        \"guardia_salida\": {k: v for k, v in r.items() if k != \"salida\"},\n        \"severidad_accion\": r[\"severidad_accion\"],\n        \"pasos\": [self._paso(estado, \"guardia_salida\", inicio, reloj.ahora_ms())],\n    }",
+      "codigo": "def guardia_salida(self, estado: Estado, runtime: Runtime[ContextoCaso]) -> dict[str, Any]:\n    reloj = runtime.context.reloj\n    inicio = reloj.ahora_ms()\n    borrador = estado[\"borrador\"] or {\"es\": \"\", \"en\": \"\", \"acciones\": []}\n    r = revisar_salida(\n        {\"es\": borrador[\"es\"], \"en\": borrador[\"en\"]},\n        list(borrador.get(\"acciones\") or []),\n        estado[\"entrada\"],\n        estado.get(\"extraccion\"),\n    )\n    return {\n        \"salida_final\": {\n            **r[\"salida\"],\n            \"aviso_ia\": aviso_ia(\n                estado.get(\"decision_final\") or \"aprobar\",\n                bool(estado.get(\"pausa_humana\")),\n                self.plan.version,\n            ),\n        },\n        \"guardia_salida\": {k: v for k, v in r.items() if k != \"salida\"},\n        \"severidad_accion\": r[\"severidad_accion\"],\n        \"pasos\": [self._paso(estado, \"guardia_salida\", inicio, reloj.ahora_ms())],\n    }",
       "desde": 643,
       "escribe": [
         "guardia_salida",
@@ -75,7 +75,7 @@
         "salida_final",
         "severidad_accion"
       ],
-      "hasta": 663
+      "hasta": 665
     },
     "pausa_humana": {
       "archivo": "agents/src/app_agents/demo_a/nodos.py",

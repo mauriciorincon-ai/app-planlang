@@ -141,6 +141,20 @@ export function pendientesDe(t: Transcripcion): PreguntaPendiente[] {
     .map((p) => ({ id: p.id, seccion: p.seccion }));
 }
 
+/**
+ * El demo de un plan, derivado de su id (`plan-demo-b` → `b`): los comandos y textos de la revisión salen de aquí y
+ * no nombran un demo fijo (AU-S3-24). Un id sin esa forma detiene la revisión nombrándolo.
+ */
+export function demoDelPlan(planId: string): string {
+  const m = /^plan-demo-([a-z0-9]+)$/.exec(planId);
+  if (!m) throw new Error(`revisión: el plan_id «${planId}» no dice de qué demo es (plan-demo-<x>)`);
+  return m[1]!;
+}
+
+/** El comando que retoma la entrevista del plan: las pendientes lo citan. */
+export const comandoRetomar = (planId: string) =>
+  `pnpm entrevistar --demo ${demoDelPlan(planId)} --retomar`;
+
 export function revisarBorrador(borrador: unknown, t: Transcripcion): Revision {
   const v = validarPlan(borrador);
   const bloqueantes = v.advertencias.filter(
@@ -164,7 +178,11 @@ export function revisarBorrador(borrador: unknown, t: Transcripcion): Revision {
         (m) => m.codigo !== "SENAL_NO_DECLARADA",
       ),
     },
-    contradicciones: contradicciones(borrador, pendientes),
+    contradicciones: contradicciones(
+      borrador,
+      pendientes,
+      comandoRetomar(t.plan_id),
+    ),
     pendientes,
     redactado_por_entrevistador: redactado,
     senales_derivadas: t.senales_derivadas,
@@ -230,8 +248,8 @@ const NOMBRE_IDIOMA: Readonly<
 const T = {
   es: {
     titulo: "Revisión del borrador",
-    intro:
-      "Lo propuso el entrevistador con tus respuestas. Nada está aprobado: el plan pasa a v1 solo cuando dices «apruebo el plan B».",
+    intro: (d: string) =>
+      `Lo propuso el entrevistador con tus respuestas. Nada está aprobado: el plan pasa a v1 solo cuando dices «apruebo el plan ${d.toUpperCase()}».`,
     estado: "Estado",
     listo:
       "M1 lo acepta: se puede aprobar si estás de acuerdo con lo de abajo.",
@@ -262,8 +280,8 @@ const T = {
     costo: (n: number, c: number) =>
       `${n} llamadas al modelo · costo nominal US$ ${c.toFixed(4)} (la suscripción no cobra por llamada).`,
     aprobar: "Cómo se aprueba",
-    aprobarTexto:
-      'Si estás de acuerdo, dile al constructor «apruebo el plan B». Él corre `pnpm plan:aprobar --demo b --por "<tu nombre>" --el <fecha>`, que vuelve a validar y escribe `plans/demo-b/v1.json` con su huella.',
+    aprobarTexto: (d: string) =>
+      `Si estás de acuerdo, dile al constructor «apruebo el plan ${d.toUpperCase()}». Él corre \`pnpm plan:aprobar --demo ${d} --por "<tu nombre>" --el <fecha>\`, que vuelve a validar y escribe \`plans/demo-${d}/v1.json\` con su huella.`,
     secciones: {
       problema: "Problema",
       actores: "Actores",
@@ -297,8 +315,8 @@ const T = {
   },
   en: {
     titulo: "Draft review",
-    intro:
-      "The interviewer proposed it from your answers. Nothing is approved: the plan becomes v1 only when you say “I approve plan B”.",
+    intro: (d: string) =>
+      `The interviewer proposed it from your answers. Nothing is approved: the plan becomes v1 only when you say “I approve plan ${d.toUpperCase()}”.`,
     estado: "Status",
     listo: "M1 accepts it: it can be approved if you agree with what follows.",
     noListo: "M1 does not accept it yet: fix what follows before approving.",
@@ -329,8 +347,8 @@ const T = {
     costo: (n: number, c: number) =>
       `${n} model calls · nominal cost US$ ${c.toFixed(4)} (the subscription does not charge per call).`,
     aprobar: "How to approve",
-    aprobarTexto:
-      'If you agree, tell the builder “I approve plan B”. They run `pnpm plan:aprobar --demo b --por "<your name>" --el <date>`, which validates again and writes `plans/demo-b/v1.json` with its fingerprint.',
+    aprobarTexto: (d: string) =>
+      `If you agree, tell the builder “I approve plan ${d.toUpperCase()}”. They run \`pnpm plan:aprobar --demo ${d} --por "<your name>" --el <date>\`, which validates again and writes \`plans/demo-${d}/v1.json\` with its fingerprint.`,
     secciones: {
       problema: "Problem",
       actores: "Actors",
@@ -555,6 +573,7 @@ export function textoDeRevision(
   idioma: Idioma,
 ): string {
   const t = T[idioma];
+  const d = demoDelPlan(r.plan_id);
   const b = esObj(borrador) ? borrador : {};
   const linea = (m: {
     codigo: string;
@@ -564,7 +583,7 @@ export function textoDeRevision(
   return [
     `# ${t.titulo} — ${r.plan_id}`,
     "",
-    t.intro,
+    t.intro(d),
     "",
     `## ${t.estado}`,
     "",
@@ -638,7 +657,7 @@ export function textoDeRevision(
     ...seccionesDelPlan(b, idioma),
     `## ${t.aprobar}`,
     "",
-    t.aprobarTexto,
+    t.aprobarTexto(d),
     "",
   ].join("\n");
 }

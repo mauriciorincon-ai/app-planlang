@@ -189,3 +189,40 @@ describe("el documento de rechazo del B sin aviso de IA (regla dura 12, AU-S3-07
     expect(container.querySelector('[data-falla="aviso-ia"]')).toBeNull();
   });
 });
+
+describe("el aviso del A que promete de más (F22)", () => {
+  it("donde la corrida dice «ninguna negación sin una persona» y tuvo aprobaciones en parte sin persona, lo dice al lado, en los dos idiomas", () => {
+    for (const [idioma, chip, frase] of [
+      ["es", "Aviso inexacto", "9 aprobaciones en parte de esta corrida salieron sin una persona"],
+      ["en", "Inaccurate notice", "9 partial approvals in this run went out without a person"],
+    ] as const) {
+      // A-001 se aprueba: solo su respuesta lleva aviso. A-017 se niega con una persona: respuesta y documento.
+      for (const [id, n] of [
+        ["A-001", 1],
+        ["A-017", 2],
+      ] as const) {
+        const { container, unmount } = render(
+          <Caso v={vistaCaso(d, id, idioma)} idioma={idioma} />,
+        );
+        const notas = container.querySelectorAll(
+          '[data-falla="aviso-inexacto"]',
+        );
+        expect(notas, `${id} (${idioma})`).toHaveLength(n);
+        for (const nota of notas) {
+          expect(nota.querySelector('[data-v="alerta"]')!.textContent).toBe(
+            chip,
+          );
+          expect(nota.textContent).toContain(frase);
+        }
+        unmount();
+      }
+    }
+  });
+
+  it("la aprobación en parte sin persona trae su propio aviso, que es exacto: sin nota", () => {
+    const { container } = render(
+      <Caso v={vistaCaso(d, "A-006", "es")} idioma="es" />,
+    );
+    expect(container.querySelector('[data-falla="aviso-inexacto"]')).toBeNull();
+  });
+});

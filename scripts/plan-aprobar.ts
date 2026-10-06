@@ -8,18 +8,19 @@
  */
 import { existsSync } from "node:fs";
 import { aprobarPlan, impideAprobar } from "../core/plan";
-import { revisarDirectorio } from "./entrevistar";
+import { DEMOS_ENTREVISTABLES, revisarDirectorio } from "./entrevistar";
 import { argumentos, escribirJson, leerJson } from "./_io";
 
 async function main(): Promise<number> {
   const args = argumentos(process.argv.slice(2));
   if (
-    args.demo !== "b" ||
+    typeof args.demo !== "string" ||
+    !DEMOS_ENTREVISTABLES.includes(args.demo) ||
     typeof args.por !== "string" ||
     typeof args.el !== "string"
   ) {
     console.error(
-      'uso: plan:aprobar --demo b --por "<nombre>" --el <YYYY-MM-DD> [--con-contradicciones]',
+      `uso: plan:aprobar --demo ${DEMOS_ENTREVISTABLES.join("|")} --por "<nombre>" --el <YYYY-MM-DD> [--con-contradicciones]`,
     );
     return 2;
   }

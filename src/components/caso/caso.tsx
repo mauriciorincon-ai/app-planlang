@@ -490,6 +490,19 @@ export function Caso({ v, idioma }: { v: VistaCaso; idioma: Idioma }) {
                 {v.salida.aviso}
               </p>
             ) : null}
+            {v.salida.avisoInexacto ? (
+              <p
+                data-falla="aviso-inexacto"
+                className="mt-2.5 flex flex-wrap items-center gap-2 text-dato text-tinta-2"
+              >
+                <Veredicto clase="alerta" chico>
+                  {v.salida.avisoInexacto.chip}
+                </Veredicto>
+                <span className="min-w-0 flex-1 basis-60">
+                  {v.salida.avisoInexacto.texto}
+                </span>
+              </p>
+            ) : null}
           </div>
           <GrupoT icono={ShieldCheck} titulo={SALIDA.guardia[idioma]}>
             <Definiciones filas={v.salida.guardia} />
@@ -556,6 +569,19 @@ export function Caso({ v, idioma }: { v: VistaCaso; idioma: Idioma }) {
                 </Veredicto>
                 <span className="min-w-0 flex-1 basis-60">
                   {v.documento.avisoFalta.texto}
+                </span>
+              </footer>
+            ) : null}
+            {v.documento.avisoInexacto ? (
+              <footer
+                data-falla="aviso-inexacto"
+                className="flex flex-wrap items-center gap-2 border-t border-linea px-4.5 py-3 text-dato text-tinta-2"
+              >
+                <Veredicto clase="alerta" chico>
+                  {v.documento.avisoInexacto.chip}
+                </Veredicto>
+                <span className="min-w-0 flex-1 basis-60">
+                  {v.documento.avisoInexacto.texto}
                 </span>
               </footer>
             ) : null}

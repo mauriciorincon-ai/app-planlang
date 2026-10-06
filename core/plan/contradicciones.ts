@@ -78,9 +78,14 @@ export function rutasPendientes(valor: unknown, ruta = ""): string[] {
   return [];
 }
 
+/**
+ * `comandoRetomar` es el comando que retoma la entrevista de ESTE plan (lo arma quien sabe de qué demo es: la revisión
+ * lo deriva del `plan_id`); sin él, las pendientes dicen solo «retómala en la entrevista» (AU-S3-24).
+ */
 export function contradicciones(
   borrador: unknown,
   pendientes: readonly PreguntaPendiente[] = [],
+  comandoRetomar?: string,
 ): Contradiccion[] {
   const plan = esObjeto(borrador) ? borrador : {};
   const riesgos = lista(plan.riesgos);
@@ -278,8 +283,12 @@ export function contradicciones(
       c(
         "PENDIENTE",
         p.id,
-        `La pregunta ${p.id} (${p.seccion}) quedó pendiente: retómala con «pnpm entrevistar --demo b --retomar».`,
-        `Question ${p.id} (${p.seccion}) is pending: resume it with “pnpm entrevistar --demo b --retomar”.`,
+        comandoRetomar
+          ? `La pregunta ${p.id} (${p.seccion}) quedó pendiente: retómala con «${comandoRetomar}».`
+          : `La pregunta ${p.id} (${p.seccion}) quedó pendiente: retómala en la entrevista.`,
+        comandoRetomar
+          ? `Question ${p.id} (${p.seccion}) is pending: resume it with “${comandoRetomar}”.`
+          : `Question ${p.id} (${p.seccion}) is pending: resume it in the interview.`,
       ),
     );
   for (const u of umbrales)

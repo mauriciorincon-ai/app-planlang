@@ -13,6 +13,7 @@ from app_agents.adaptador import ErrorProveedor
 from app_agents.canonico import escribir_con_huella, leer_verificando
 from app_agents.demo_a import simulacion as simulacion_a
 from app_agents.demo_a.simulacion import RespondedorSimulado
+from app_agents.demos import demo
 from app_agents.exportador import leer_corrida, verificar_corrida
 
 LOTE20 = "data/casos/demo-a/planlang-a-001-20.json"
@@ -286,6 +287,14 @@ def test_el_limite_de_uso_no_pasa_a_una_persona(tmp_path: Path) -> None:
     r, corrida = _respaldo(tmp_path, {"A-001": ("Extraccion", "limite_de_uso")}, 2)
     assert r.detenida_por == "limite_de_uso" and r.ejecutados == []
     assert not (corrida / "trazas" / "A-001.json").exists()
+
+
+def test_los_alias_del_a_son_los_de_su_entrada_en_demos():
+    """AU-S3-25: los alias de `lotes.py` no se apartan del registro de demos, que es la fuente."""
+    a = demo("a")
+    assert (lotes.PLAN_POR_DEFECTO, lotes.CASOS_POR_DEFECTO) == (a.plan_por_defecto, a.casos_por_defecto)
+    assert lotes.BENEFICIOS_POR_DEFECTO.startswith(f"{a.directorio_mundo}/")
+    assert (lotes.RAIZ_REPO / lotes.BENEFICIOS_POR_DEFECTO).is_file()
 
 
 def test_el_manual_dice_con_que_plan_y_lote_corre_lote_demo_por_defecto():

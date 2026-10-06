@@ -65,6 +65,12 @@ export interface PasoCaso {
   reglas: FilaRegla[];
 }
 
+/** Una falla del aviso de IA dicha al lado del aviso: falta (AU-S3-07) o promete de más (F22). */
+export interface FallaDeAviso {
+  chip: string;
+  texto: string;
+}
+
 export interface VistaCaso {
   id: string;
   descriptor: string;
@@ -110,14 +116,22 @@ export interface VistaCaso {
     respuesta: string;
     nota: string;
   } | null;
-  salida: { respuesta: string; aviso: string; guardia: Fila[] };
+  salida: {
+    respuesta: string;
+    aviso: string;
+    /** Si el aviso promete más de lo que la corrida cumplió (F22), lo dicho al lado; `null` si es exacto. */
+    avisoInexacto: FallaDeAviso | null;
+    guardia: Fila[];
+  };
   documento: {
     encabezado: string;
     filas: Array<Fila & { nota?: string }>;
     /** El aviso de IA del documento; `null` si el documento no lo trae (la vista no lo inventa). */
     aviso: string | null;
     /** Si el documento no trae su aviso de IA, la falla dicha (regla dura 12, AU-S3-07); `null` si lo trae. */
-    avisoFalta: { chip: string; texto: string } | null;
+    avisoFalta: FallaDeAviso | null;
+    /** Si el aviso del documento promete más de lo que la corrida cumplió (F22); `null` si es exacto. */
+    avisoInexacto: FallaDeAviso | null;
     completo: string;
   } | null;
   senales: Fila[];
@@ -547,6 +561,7 @@ export function vistaCaso(d: DatosDemo, id: string, i: Idioma): VistaCaso {
     salida: {
       respuesta: t.salida_final ? X(t.salida_final, i) : "—",
       aviso: t.salida_final ? X(t.salida_final.aviso_ia, i) : "",
+      avisoInexacto: t.salida_final ? perfil.avisoInexacto : null,
       guardia: [
         {
           k: X(SALIDA.intentadas, i),

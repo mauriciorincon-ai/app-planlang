@@ -51,6 +51,7 @@ import {
   NODOS,
   NODOS_FUERA_DEL_CONTRATO,
   REGLA_CORTA,
+  TITULO_CODIGO,
   type TextosDeNodoVitrina,
 } from "@/textos/agente";
 import { NODOS_B, REANUDACION_B, REGLA_CORTA_B } from "@/textos/demo-b/agente";
@@ -113,11 +114,6 @@ export function erroresDeEsquema(mapa: unknown): string[] {
 export type CodigoDeNodos = Readonly<
   Record<string, { archivo: string; desde: number; hasta: number }>
 >;
-
-const TITULO_CODIGO: TextoIdioma = {
-  es: "Código del nodo en el repositorio",
-  en: "The node's code in the repository",
-};
 
 export function grafoParaMapa(g: Grafo): GrafoParaMapa {
   return {
