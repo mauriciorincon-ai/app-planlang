@@ -1,0 +1,631 @@
+{
+  "aclaraciones": [],
+  "caso_id": "B-078",
+  "cobertura": null,
+  "coincidencias": {
+    "listas_consultadas": [
+      {
+        "fecha": "2026-09-30",
+        "id": "LV-01",
+        "version": "2026.09",
+        "vinculante": true
+      },
+      {
+        "fecha": "2026-08-31",
+        "id": "LC-01",
+        "version": "2026.08",
+        "vinculante": false
+      }
+    ],
+    "mejor": {
+      "entrada_id": "LV-01-010",
+      "exacta": false,
+      "lista_id": "LV-01",
+      "nombre_listado": "Marta Fendralo Zhelbin",
+      "similitud": 0.699,
+      "vinculante": true
+    }
+  },
+  "corrida_id": "suscripcion-planlang-b-001-200-v1.1",
+  "decisiones_de_arista": [
+    {
+      "desde": "verificador_listas",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": true,
+      "operador": "mayor_o_igual_que",
+      "orden_arista": 1,
+      "paso": 3,
+      "rama_tomada": "puntaje",
+      "resultado": false,
+      "senal": "similitud_max",
+      "tipo": "tripleta",
+      "umbral_aplicado": 0.7,
+      "valor_declarado": "umbral.U4",
+      "valor_observado": 0.699
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 5,
+      "rama_tomada": "pausa_humana",
+      "resultado": false,
+      "senal": "carga_detectada",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": true,
+      "operador": "mayor_o_igual_que",
+      "orden_arista": 2,
+      "paso": 5,
+      "rama_tomada": "pausa_humana",
+      "resultado": false,
+      "senal": "similitud_max",
+      "tipo": "tripleta",
+      "umbral_aplicado": 0.85,
+      "valor_declarado": "umbral.U1",
+      "valor_observado": 0.699
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 3,
+      "paso": 5,
+      "rama_tomada": "pausa_humana",
+      "resultado": false,
+      "senal": "conclusion_investigador",
+      "tipo": "tripleta",
+      "umbral_aplicado": "misma_persona",
+      "valor_declarado": "misma_persona",
+      "valor_observado": null
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": true,
+      "operador": "mayor_o_igual_que",
+      "orden_arista": 4,
+      "paso": 5,
+      "rama_tomada": "pausa_humana",
+      "resultado": true,
+      "senal": "puntaje_riesgo",
+      "tipo": "tripleta",
+      "umbral_aplicado": 60,
+      "valor_declarado": "umbral.U2",
+      "valor_observado": 70
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "mayor_que",
+      "orden_arista": 5,
+      "paso": 5,
+      "rama_tomada": "pausa_humana",
+      "resultado": false,
+      "senal": "inconsistencias",
+      "tipo": "tripleta",
+      "umbral_aplicado": 0,
+      "valor_declarado": "umbral.U3",
+      "valor_observado": 0
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 6,
+      "paso": 5,
+      "rama_tomada": "pausa_humana",
+      "resultado": false,
+      "senal": "propuesta",
+      "tipo": "tripleta",
+      "umbral_aplicado": "rechazar",
+      "valor_declarado": "rechazar",
+      "valor_observado": "aprobar"
+    }
+  ],
+  "documento_adverso": null,
+  "error_de_esquema_en_traspaso": false,
+  "error_proveedor": null,
+  "expediente": {
+    "caso_id": "B-078",
+    "conclusiones": [
+      {
+        "cita": {
+          "ref": "identidad",
+          "tipo": "documento"
+        },
+        "id": "K1",
+        "tema": "identidad",
+        "texto": {
+          "en": "Declared identity: Diego Cendrual Murenzo, document SYN-ID-448015, born in 1954, nationality Duchy of Velmora.",
+          "es": "Identidad declarada: Diego Cendrual Murenzo, documento SYN-ID-448015, nacido en 1954, nacionalidad Ducado de Velmora."
+        }
+      },
+      {
+        "cita": {
+          "lista": {
+            "fecha": "2026-09-30",
+            "id": "LV-01",
+            "version": "2026.09"
+          },
+          "ref": "LV-01-010",
+          "regla": "RL-02",
+          "tipo": "coincidencia"
+        },
+        "id": "K2",
+        "tema": "listas",
+        "texto": {
+          "en": "The highest similarity with the lists is 0.699, with entry LV-01-010 of binding list LV-01 (version 2026.09, September 2026; RL-02).",
+          "es": "La mayor similitud con las listas es 0,699, con la entrada LV-01-010 de la lista vinculante LV-01 (versión 2026.09, de septiembre de 2026; RL-02)."
+        }
+      },
+      {
+        "cita": {
+          "ref": "RI-01,RI-02,RI-03",
+          "tipo": "regla"
+        },
+        "id": "K3",
+        "tema": "documentos",
+        "texto": {
+          "en": "The documents are consistent with each other and no required detail is missing (RI-01 to RI-03).",
+          "es": "Los documentos son consistentes entre sí y no les falta ningún dato exigido (RI-01 a RI-03)."
+        }
+      },
+      {
+        "cita": {
+          "ref": "RP-01,RP-02,RP-03,RP-04",
+          "tipo": "regla"
+        },
+        "id": "K4",
+        "tema": "puntaje",
+        "texto": {
+          "en": "Risk score 70 out of 100: activity SYN-ACT-08 (high, 40; RP-01), jurisdiction of the funds SYN-J-03 (low, 0; RP-02), income consistency (inconsistent, 30; RP-03). Name and nationality do not count (RP-04).",
+          "es": "Puntaje de riesgo 70 de 100: actividad SYN-ACT-08 (alto, 40; RP-01), jurisdicción de los fondos SYN-J-03 (bajo, 0; RP-02), coherencia de los ingresos (incoherente, 30; RP-03). El nombre y la nacionalidad no entran (RP-04)."
+        }
+      },
+      {
+        "cita": {
+          "ref": "RD-03",
+          "tipo": "regla"
+        },
+        "id": "K5",
+        "tema": "propuesta",
+        "texto": {
+          "en": "Agent proposal: approve (RD-03).",
+          "es": "Propuesta del agente: aprobar (RD-03)."
+        }
+      },
+      {
+        "cita": {
+          "ref": "decision/4",
+          "tipo": "arista"
+        },
+        "id": "K6",
+        "tema": "decision",
+        "texto": {
+          "en": "The compliance officer decided: approve. The pause was opened by edge 4 of decision: puntaje_riesgo (70) at least umbral.U2 (60).",
+          "es": "Decidió el oficial de cumplimiento: aprobar. Abrió la pausa la arista 4 de decision: puntaje_riesgo (70) mayor o igual que umbral.U2 (60)."
+        }
+      },
+      {
+        "cita": {
+          "ref": "D3",
+          "tipo": "decision_del_plan"
+        },
+        "id": "K7",
+        "tema": "conservacion",
+        "texto": {
+          "en": "The file is kept for five years (plan decision D3; estimated term, AMLR art. 77).",
+          "es": "El expediente se conserva cinco años (decisión D3 del plan; plazo estimado, AMLR art. 77)."
+        }
+      }
+    ],
+    "conclusiones_sin_cita": 0,
+    "datos_usados": [
+      "actividad",
+      "documento",
+      "ingresos_mensuales",
+      "jurisdiccion_fondos",
+      "nacimiento",
+      "nacionalidad",
+      "nombre",
+      "titular_actividad",
+      "titular_fondos"
+    ],
+    "decision": {
+      "final": "aprobar",
+      "propuesta": "aprobar",
+      "revisada_por_persona": true,
+      "rol": "oficial"
+    },
+    "listas_consultadas": [
+      {
+        "fecha": "2026-09-30",
+        "id": "LV-01",
+        "version": "2026.09",
+        "vinculante": true
+      },
+      {
+        "fecha": "2026-08-31",
+        "id": "LC-01",
+        "version": "2026.08",
+        "vinculante": false
+      }
+    ],
+    "plan": {
+      "huella": "30728d949db2731d6a84d5e7f6191c03fcc49fdc702823e20dd3149648bc5910",
+      "id": "plan-demo-b",
+      "version": "1.1.0"
+    },
+    "solicitud": "SYN-SOL-456183"
+  },
+  "extraccion": {
+    "campos": {
+      "actividad": "SYN-ACT-08",
+      "documento": "SYN-ID-448015",
+      "ingresos_mensuales": 180000,
+      "jurisdiccion_fondos": "SYN-J-03",
+      "nacimiento": 1954,
+      "nacionalidad": "SYN-J-04",
+      "nombre": "Diego Cendrual Murenzo",
+      "titular_actividad": "SYN-ID-448015",
+      "titular_fondos": "Diego Cendrual Murenzo"
+    },
+    "campos_faltantes": []
+  },
+  "formato": "planlang-trace/v1",
+  "guardia_salida": {
+    "acciones_ejecutadas": [
+      "registrar_expediente",
+      "responder_solicitante"
+    ],
+    "acciones_intentadas": [
+      "registrar_expediente",
+      "responder_solicitante"
+    ],
+    "carga_detectada_en_entrada": false,
+    "hallazgos": [],
+    "severidad_accion": 0
+  },
+  "huella": "63e8e83f4ee966b0ab114e5cf3dfe64f2271b34127a5a56a572ce8e42b8a39b9",
+  "investigacion": null,
+  "nodos_visitados": [
+    "enrutador",
+    "extractor",
+    "verificador_listas",
+    "puntaje",
+    "decision",
+    "pausa_humana",
+    "redactor",
+    "guardia_salida"
+  ],
+  "pasos": [
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 6,
+      "nodo": "enrutador",
+      "orden": 1,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "enrutador",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0.009969,
+      "duracion_ms": 3116,
+      "error_proveedor": null,
+      "inicio_ms": 7,
+      "nodo": "extractor",
+      "orden": 2,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 2889,
+        "salida": 323
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 3124,
+      "nodo": "verificador_listas",
+      "orden": 3,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "regla",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 3125,
+      "nodo": "puntaje",
+      "orden": 4,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "regla",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 3125,
+      "nodo": "decision",
+      "orden": 5,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "enrutador",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 3130,
+      "nodo": "pausa_humana",
+      "orden": 6,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "pausa_humana",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 3130,
+      "nodo": "redactor",
+      "orden": 7,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "regla",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 3131,
+      "nodo": "guardia_salida",
+      "orden": 8,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "regla",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    }
+  ],
+  "pausas_humanas": [
+    {
+      "nodo": "pausa_humana",
+      "paso": 6,
+      "payload": {
+        "coincidencias": {
+          "listas_consultadas": [
+            {
+              "fecha": "2026-09-30",
+              "id": "LV-01",
+              "version": "2026.09",
+              "vinculante": true
+            },
+            {
+              "fecha": "2026-08-31",
+              "id": "LC-01",
+              "version": "2026.08",
+              "vinculante": false
+            }
+          ],
+          "mejor": {
+            "entrada_id": "LV-01-010",
+            "exacta": false,
+            "lista_id": "LV-01",
+            "nombre_listado": "Marta Fendralo Zhelbin",
+            "similitud": 0.699,
+            "vinculante": true
+          }
+        },
+        "contraevidencia": [
+          {
+            "en": "The year of birth (1954) does not match the entry's (1977).",
+            "es": "El año de nacimiento (1954) no coincide con el de la entrada (1977)."
+          },
+          {
+            "en": "The nationality (SYN-J-04) does not match the entry's (SYN-J-08).",
+            "es": "La nacionalidad (SYN-J-04) no coincide con la de la entrada (SYN-J-08)."
+          },
+          {
+            "en": "The documents are consistent.",
+            "es": "Los documentos son consistentes entre sí."
+          }
+        ],
+        "documentos": {
+          "actividad": {
+            "en": "Statement of economic activity. I buy and sell gold and silver wholesale, and have done so for 12 years. My income is 180000 synthetic units a month. Signed with document SYN-ID-448015.",
+            "es": "Declaración de actividad económica. Compro y vendo oro y plata al por mayor desde hace 12 años. Mis ingresos son de 180000 unidades sintéticas al mes. Firmo con el documento SYN-ID-448015."
+          },
+          "fondos": {
+            "en": "Source-of-funds statement. The funds come from a loan from a relative in the Brisal Commonwealth. Holder of the funds: Diego Cendrual Murenzo.",
+            "es": "Declaración de origen de fondos. Los fondos vienen de un préstamo de un familiar en la Mancomunidad de Brisal. Titular de los fondos: Diego Cendrual Murenzo."
+          },
+          "identidad": {
+            "en": "Identity (synthetic document SYN-ID-448015). Full name: Diego Cendrual Murenzo. Year of birth: 1954. Nationality: Duchy of Velmora.",
+            "es": "Identidad (documento sintético SYN-ID-448015). Nombre completo: Diego Cendrual Murenzo. Año de nacimiento: 1954. Nacionalidad: Ducado de Velmora."
+          }
+        },
+        "evidencia": [
+          {
+            "en": "The name is 0.699 similar to “Marta Fendralo Zhelbin” (LV-01-010), on binding list LV-01.",
+            "es": "El nombre se parece 0,699 a «Marta Fendralo Zhelbin» (LV-01-010), de la lista vinculante LV-01."
+          },
+          {
+            "en": "Risk score 70, at or above the escalation threshold (60).",
+            "es": "Puntaje de riesgo 70, en o sobre el umbral de escalamiento (60)."
+          }
+        ],
+        "extraccion": {
+          "campos": {
+            "actividad": "SYN-ACT-08",
+            "documento": "SYN-ID-448015",
+            "ingresos_mensuales": 180000,
+            "jurisdiccion_fondos": "SYN-J-03",
+            "nacimiento": 1954,
+            "nacionalidad": "SYN-J-04",
+            "nombre": "Diego Cendrual Murenzo",
+            "titular_actividad": "SYN-ID-448015",
+            "titular_fondos": "Diego Cendrual Murenzo"
+          },
+          "campos_faltantes": []
+        },
+        "investigacion": null,
+        "motivo": {
+          "desde": "decision",
+          "en": "Edge 4 of decision: puntaje_riesgo (70) at least umbral.U2 (60).",
+          "es": "Arista 4 de decision: puntaje_riesgo (70) mayor o igual que umbral.U2 (60).",
+          "orden_arista": 4
+        },
+        "puntaje": {
+          "componentes": [
+            {
+              "factor": "actividad",
+              "nivel": "alto",
+              "puntos": 40,
+              "regla": "RP-01",
+              "valor": "SYN-ACT-08"
+            },
+            {
+              "factor": "jurisdiccion",
+              "nivel": "bajo",
+              "puntos": 0,
+              "regla": "RP-02",
+              "valor": "SYN-J-03"
+            },
+            {
+              "factor": "coherencia",
+              "nivel": "incoherente",
+              "puntos": 30,
+              "regla": "RP-03",
+              "valor": "180000"
+            }
+          ],
+          "inconsistencias": [],
+          "reglas_propuesta": [
+            "RD-03"
+          ],
+          "total": 70
+        },
+        "senal": "puntaje_riesgo",
+        "umbral": {
+          "aplicado": 60,
+          "declarado": "umbral.U2"
+        }
+      },
+      "respuesta_simulada": {
+        "decision": "aprobar",
+        "politica": "sigue_verdad_conocida"
+      },
+      "rol": "oficial"
+    }
+  ],
+  "puntaje": {
+    "componentes": [
+      {
+        "factor": "actividad",
+        "nivel": "alto",
+        "puntos": 40,
+        "regla": "RP-01",
+        "valor": "SYN-ACT-08"
+      },
+      {
+        "factor": "jurisdiccion",
+        "nivel": "bajo",
+        "puntos": 0,
+        "regla": "RP-02",
+        "valor": "SYN-J-03"
+      },
+      {
+        "factor": "coherencia",
+        "nivel": "incoherente",
+        "puntos": 30,
+        "regla": "RP-03",
+        "valor": "180000"
+      }
+    ],
+    "inconsistencias": [],
+    "reglas_propuesta": [
+      "RD-03"
+    ],
+    "total": 70
+  },
+  "resultado": "completo",
+  "salida_final": {
+    "aviso_ia": {
+      "en": "This reply was prepared by an AI system in a simulation with synthetic data, and a person reviewed the case.",
+      "es": "Esta respuesta la preparó un sistema de IA en una simulación con datos sintéticos, y una persona revisó el caso."
+    },
+    "en": "Your onboarding application was approved. You can now use the product you requested.",
+    "es": "Su solicitud de vinculación fue aprobada. Ya puede usar el producto que pidió."
+  },
+  "senales": {
+    "carga_detectada": false,
+    "conclusion_investigador": null,
+    "conclusiones_sin_cita": 0,
+    "decision_final": "aprobar",
+    "error_proveedor": null,
+    "extraccion_correcta": true,
+    "inconsistencias": 0,
+    "inyeccion_neutralizada": false,
+    "latencia_total_s": 3.116,
+    "nodos_visitados": [
+      "enrutador",
+      "extractor",
+      "verificador_listas",
+      "puntaje",
+      "decision",
+      "pausa_humana",
+      "redactor",
+      "guardia_salida"
+    ],
+    "pausa_humana": true,
+    "propuesta": "aprobar",
+    "puntaje_riesgo": 70,
+    "similitud_max": 0.699,
+    "tokens": 3212
+  },
+  "variante": "multiagente"
+}

@@ -1622,6 +1622,37 @@ fallaba: con `v1.json` del B en el repo, la guarda nueva se adelanta a lo que es
 5. Integrar el lote de 200 del B (corre en fondo; comando de retomar más arriba) y seguir los pasos 4–6 del punto de
    control anterior.
 
+### Lote de 200 del B: integrado (2026-10-05, 21:28)
+
+`runs/demo-b/suscripcion-planlang-b-001-200-v1.1`: 10 sesiones de 20, espaciadas, fuera de CI, con el plan v1.1 y el
+lote `planlang-b-001-200`.
+
+**Cifras:**
+- 200 de 200 casos, sin errores del proveedor;
+- latencia mediana 4,0 s por caso;
+- US$2,89 nominales en el registro (la suscripción no cobra por llamada; incluye el humo previo);
+- `trazas:verificar` en verde y RF-09.2 con 0 discrepancias en 400 visitas.
+
+**Informe (verificador 1.3.0):** «cumple con alertas».
+- **Criterios:** 6 de 6 cumplen. C5 da 99,5 %, con un caso fuera: B-180.
+- **Riesgos:** ninguno ocurrió.
+- **Supuestos:** S1 confirmado; S2 sin probar, porque a 200 no hay línea base de agente único.
+- **Pausas:** 99 casos pasaron por el oficial.
+- **5 brechas no previstas:**
+  - 4 son reintentos de salida estructurada (B-010, B-035, B-057, B-143).
+  - **B-180, la falla que importa:** un caso de riesgo alto que debía pasar por el oficial y salió aprobado solo. El
+    extractor leyó `jurisdiccion_fondos` como SYN-J-01 cuando el documento decía SYN-J-07 (la jurisdicción de alto
+    riesgo). El puntaje por reglas, determinista, calculó 30 sobre ese dato equivocado en vez de 60. Quedó bajo U2 (60)
+    y la arista de riesgo no se cumplió.
+  - C2 («ninguna aprobación automática con riesgo alto») cumple por su propia medida, que lee el puntaje del agente.
+    Lo destapó el evaluador `pausas_cumplidas` contra la verdad conocida, y por eso figura como brecha no prevista.
+  - Es exactamente el modo de falla que el FMEA del plan B no tiene: un error de extracción del modelo que la cadena
+    determinista no puede ver.
+  - Se publica con su falla (regla dura 9): queda en el informe del lote, en el kit de prueba y en el summary, con la
+    propuesta de un riesgo nuevo para el plan B (una enmienda la decide el autor, no el constructor).
+
+**La vitrina del B** sigue sobre su corrida de 20 (decisión del usuario); este lote es registro.
+
 ## Desviación del plan
 
 1. **Rutas de la orden** (`SPRINT_003-orden.md:65`): `audita-sprint` y `plan-sprint` viven en

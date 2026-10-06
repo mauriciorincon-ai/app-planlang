@@ -28,6 +28,7 @@ Lo que necesitas para probar los sprints 1 a 3 sin preparar nada: todo vive en e
 | Lotes de casos | `data/casos/demo-b/planlang-b-001-20.json` · `planlang-b-001-200.json` | El de 20 es el de la corrida que publica la vitrina; también hay uno de 4 (humo) |
 | Afirmación de privacidad | `data/casos/demo-b/AFIRMACION-DE-PRIVACIDAD.md` | Lo mismo que el A, más los nombres de las listas |
 | Informe que publica la vitrina | `data/vitrina/demo-b/suscripcion-planlang-b-001-20/informe.es.md` · `.en.md` | El de la pantalla Brecha del B, medido con la v1.1, con su línea base corregida (`…-base-v2`) |
+| El lote de 200 | `runs/demo-b/suscripcion-planlang-b-001-200-v1.1/informe.es.md` · `.en.md` | Registro: la vitrina sigue sobre la corrida de 20. Cumple con alertas: 6 de 6 criterios y ningún riesgo. Publica su falla: B-180, un caso de riesgo alto, salió aprobado solo porque el extractor leyó mal la jurisdicción de los fondos y el puntaje se calculó sobre ese dato |
 | Un caso para el ⭐⭐ | B-010 | Un homónimo en la zona gris: pasa por el investigador y termina en su expediente. `pnpm lote:demo-b --caso B-010 …` lo corre solo |
 
 ### Lo que comparten
@@ -69,6 +70,7 @@ What you need to test sprints 1 to 3 without preparing anything: it all lives in
 | Case batches | `data/casos/demo-b/planlang-b-001-20.json` · `planlang-b-001-200.json` | The 20-case one is the batch of the run the showcase publishes; there is also a 4-case (smoke) one |
 | Privacy statement | `data/casos/demo-b/AFIRMACION-DE-PRIVACIDAD.md` | The same as demo A's, plus the names on the lists |
 | Report the showcase publishes | `data/vitrina/demo-b/suscripcion-planlang-b-001-20/informe.en.md` · `.es.md` | Demo B's Gap screen, measured with v1.1, with its corrected baseline (`…-base-v2`) |
+| The 200-case batch | `runs/demo-b/suscripcion-planlang-b-001-200-v1.1/informe.en.md` · `.es.md` | A record: the showcase stays on the 20-case run. Met with alerts: 6 of 6 criteria and no risk occurred. It publishes its failure: B-180, a high-risk case, went out approved on its own because the extractor misread the funds' jurisdiction and the score was computed on that value |
 | A case for the ⭐⭐ | B-010 | A namesake in the gray zone: it goes through the investigator and ends in its case file. `pnpm lote:demo-b --caso B-010 …` runs it alone |
 
 ### Shared
