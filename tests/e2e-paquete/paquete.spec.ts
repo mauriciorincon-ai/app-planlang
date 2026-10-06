@@ -106,8 +106,9 @@ test("los controles funcionan dentro del paquete sin salir del origen", async ({
 
   const u1 = page.getByRole("slider", { name: /Confianza mínima/ });
   await u1.focus();
-  for (let k = 0; k < 3; k++) await page.keyboard.press("ArrowRight");
-  await expect(page.locator("#cambios [data-caso]")).toHaveCount(1);
+  // Corrida de 200 (S3): U1 en 0,85 manda A-089 y A-144 a una persona.
+  for (let k = 0; k < 2; k++) await page.keyboard.press("ArrowRight");
+  await expect(page.locator("#cambios [data-caso]")).toHaveCount(2);
 
   await page.getByRole("link", { name: "English" }).click();
   await expect(page).toHaveURL(new RegExp(`${BASE}/en/playground\\.html$`));
