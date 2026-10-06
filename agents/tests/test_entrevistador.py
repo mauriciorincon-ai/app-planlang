@@ -13,7 +13,15 @@ from pathlib import Path
 from typing import Any
 
 import pytest
-from entrevista_simulada import FIXTURE, RESPUESTAS, VOCABULARIO, entrevistar, generar, respondedor
+from entrevista_simulada import (
+    FIXTURE,
+    RESPUESTAS,
+    VOCABULARIO,
+    entrevistar,
+    generar,
+    generar_con_restaurados,
+    respondedor,
+)
 from langchain_core.language_models.chat_models import BaseChatModel
 
 from app_agents.adaptador import ErrorProveedor, crear_modelo
@@ -46,6 +54,17 @@ def test_la_entrevista_simulada_se_regenera_con_los_mismos_bytes(tmp_path: Path)
     for archivo in ("v0-borrador.json", "transcripcion.json"):
         assert (tmp_path / archivo).read_bytes() == (FIXTURE / archivo).read_bytes(), archivo
     leer_verificando(FIXTURE / "transcripcion.json")
+
+
+def test_la_transcripcion_con_elementos_restaurados_se_regenera_y_los_nombra(tmp_path: Path) -> None:
+    """AU-S3-01: cuando el modelo descarta elementos, el turno dice cuáles devolvió el código; TypeScript lee el
+    fixture con el esquema estricto (`tests/contrato/entrevista-borrador.test.ts`)."""
+    generar_con_restaurados(tmp_path)
+    archivo = "transcripcion-con-restaurados.json"
+    assert (tmp_path / archivo).read_bytes() == (FIXTURE / archivo).read_bytes()
+    t = leer_verificando(FIXTURE / archivo)
+    p05 = next(p for p in t["preguntas"] if p["id"] == "P05")
+    assert p05["turnos"][-1]["restaurados"] == ["D1", "D3", "D4"]
 
 
 def test_el_fixture_cubre_cada_pregunta_y_cada_seccion() -> None:
@@ -418,3 +437,41 @@ def test_el_modelo_no_descarta_elementos_de_la_propuesta() -> None:
     con_nuevo = [*solo_d4, {**prop[0], "id": "D5", "origen": "usuario"}]
     assert [m["id"] for m in marcar("decisiones", con_nuevo, prop)] == ["D1", "D2", "D3", "D4", "D5"]
     assert descartados("flujo", [], [{"es": "a", "en": "a"}]) == []
+
+
+def test_con_el_plan_aprobado_la_entrevista_no_sobrescribe_su_registro(tmp_path: Path) -> None:
+    """AU-S3-10: `plans/demo-b/` es el registro del plan B aprobado (borrador, transcripción y la revisión que el
+    usuario leyó). Con `v1.json` presente, la entrevista exige otra carpeta; con ella, escribe allí."""
+    from app_agents.adaptador import crear_modelo
+    from app_agents.entrevistador.cli import DEMOS, Lector, PlanYaAprobado, ejecutar
+
+    raiz = tmp_path / "repo"
+    (raiz / "plans" / "demo-b").mkdir(parents=True)
+    (raiz / "plans" / "demo-b" / "v1.json").write_text("{}", encoding="utf-8")
+    with pytest.raises(PlanYaAprobado):
+        ejecutar(
+            DEMOS["b"],
+            idioma="es",
+            lector=Lector(RESPUESTAS),
+            modelo=None,
+            proveedor="ninguno",
+            modelo_nombre="ninguno",
+            fecha="2026-10-05",
+            raiz=raiz,
+            salida=lambda _t: None,
+        )
+    salida = tmp_path / "otra-entrevista"
+    r = ejecutar(
+        DEMOS["b"],
+        idioma="es",
+        lector=Lector(RESPUESTAS),
+        modelo=crear_modelo("simulado", respondedor=respondedor),
+        proveedor="simulado",
+        modelo_nombre="simulado",
+        vocabulario=VOCABULARIO,
+        fecha="2026-10-05",
+        salida=lambda _t: None,
+        directorio_salida=salida,
+    )
+    assert r.terminada
+    assert sorted(p.name for p in salida.iterdir()) == ["transcripcion.json", "v0-borrador.json"]

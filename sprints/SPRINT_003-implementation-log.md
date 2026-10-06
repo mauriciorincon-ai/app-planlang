@@ -1552,6 +1552,36 @@ usuario:
 Además, la CI salió roja por el calendario sobre `525f5d1`: dos avisos altos nuevos con parche (`source-map-js`
 < 1.2.2 y `compression` < 1.8.2). Es el primer pago de la Fase 2 (regla 18: se sube la dependencia, sin excepción).
 
+### Punto de control de la Fase 2 de la auditoría (2026-10-05, a pedido del usuario: límite de contexto)
+
+**Pagado y comiteado:**
+- Dependencias: `source-map-js` y `compression`, más el override acotado (`31ee86c`).
+- **AU-S3-01:** `restaurados` declarado en `TurnoSchema`, con su lector en la revisión y su carnada (fixture
+  `transcripcion-con-restaurados.json`, escrito por Python, y pruebas pytest y vitest). Demo en rojo con
+  `demo-rojo.sh`: «Unrecognized key: restaurados» al borrarlo, verde al restaurar.
+- **AU-S3-13:** la revisión trae la entrevista pregunta por pregunta, la cabecera y las advertencias de M1.
+- **AU-S3-10 (lado Python y CLI):** `PlanYaAprobado` y `--salida`, con su prueba pytest.
+
+**Falta de AU-S3-10:**
+- `tests/unit/guardias/procedencia-plan-b.test.ts`: (a) `aprobarPlan(v0-borrador, {por: "Mauricio Rincón", el:
+  "2026-10-04"})` reproduce `plans/demo-b/v1.json`; (b) las huellas de `contradicciones.json` coinciden con las del
+  borrador y la transcripción;
+- la línea del manual (ES/EN) sobre `--salida`.
+
+**Siguiente, en orden** (todo detallado con su ajuste en `sprints/SPRINT_003-auditoria.md`):
+1. Controles: AU-S3-06, 07, 11, 12 (con su demo en rojo: añadir «demo-c» a `DEMOS`), 14, 27, 28, 19 y 15.
+2. Decisiones del usuario:
+   - C5 respeta `k_aplica_a` en el verificador (versión nueva del verificador);
+   - plan v1.5.1 de solo redacción (F8), aprobado por la respuesta del usuario;
+   - texto del verificador (AU-S3-26, F19);
+   - regenerar informes, fichas, goldens y manifiesto, y reescribir los textos que decían «C5 incompleto»;
+   - matriz del Llavero en el ADR-002 (AU-S3-29).
+3. Textos: F1–F23 y AU-S3-02 a 05, 08, 09, 16 a 18 y 20 a 25.
+4. Rebuild, capturas de la mirada 3 otra vez, controles sobre el árbol entero y segunda pasada de la casilla 4 por
+   otro auditor.
+5. Integrar el lote de 200 del B (corre en fondo; comando de retomar más arriba) y seguir los pasos 4–6 del punto de
+   control anterior.
+
 ## Desviación del plan
 
 1. **Rutas de la orden** (`SPRINT_003-orden.md:65`): `audita-sprint` y `plan-sprint` viven en

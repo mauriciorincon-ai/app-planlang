@@ -197,14 +197,27 @@ def _parche(pid: str, actual: Any) -> tuple[Any, list[dict[str, str]]]:
     raise AssertionError(f"el modelo simulado no espera la pregunta {pid}")
 
 
-def respondedor(peticion: dict[str, Any]) -> dict[str, Any]:
-    prompt = peticion["prompt"]
+def _pregunta(prompt: str) -> str:
     plantilla = cargar_plantilla("dom-financiero")
     texto_pregunta = re.search(r"^PREGUNTA: (.*)$", prompt, re.M).group(1)  # type: ignore[union-attr]
-    pid = next(q["id"] for q in plantilla["preguntas_guia"] if texto_pregunta in (q["es"], q["en"]))
+    return next(q["id"] for q in plantilla["preguntas_guia"] if texto_pregunta in (q["es"], q["en"]))
+
+
+def respondedor(peticion: dict[str, Any]) -> dict[str, Any]:
+    prompt = peticion["prompt"]
+    pid = _pregunta(prompt)
     bloque = prompt.split("PROPUESTA ACTUAL:\n", 1)[1].split("\nCONTEXTO DEL PLAN", 1)[0]
     valor, explicaciones = _parche(pid, json.loads(bloque))
     return {"valor": valor, "explicaciones": explicaciones}
+
+
+def respondedor_que_descarta(peticion: dict[str, Any]) -> dict[str, Any]:
+    """Como `respondedor`, pero al redactar P05 devuelve solo la decisión que tocó (D2), como hizo el modelo real en
+    la segunda corrida del B: el código devuelve las demás desde la propuesta y lo deja escrito en `restaurados`."""
+    r = respondedor(peticion)
+    if _pregunta(peticion["prompt"]) == "P05":
+        r["valor"] = [d for d in r["valor"] if d["id"] == "D2"]
+    return r
 
 
 def entrevistar(respuestas: dict[str, Any] | None = None, **opciones: Any) -> Resultado:
@@ -231,7 +244,17 @@ def generar(directorio: Path = FIXTURE) -> Resultado:
     return r
 
 
+def generar_con_restaurados(directorio: Path = FIXTURE) -> Resultado:
+    """La carnada de AU-S3-01: la transcripción de una entrevista en la que el modelo descartó elementos, escrita
+    con el serializador real para que TypeScript la valide (el turno lleva `restaurados`)."""
+    r = entrevistar(modelo=crear_modelo("simulado", respondedor=respondedor_que_descarta))
+    assert r.transcripcion is not None
+    escribir_con_huella(directorio / "transcripcion-con-restaurados.json", r.transcripcion)
+    return r
+
+
 if __name__ == "__main__":
+    generar_con_restaurados()
     r = generar()
     llamadas = r.transcripcion["llamadas_al_modelo"]  # type: ignore[index]
     print(f"entrevista simulada → {FIXTURE.relative_to(RAIZ_REPO)} ({llamadas} redacciones)")

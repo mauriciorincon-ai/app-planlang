@@ -42,6 +42,8 @@ export const TurnoSchema = z
           .strict(),
       )
       .optional(),
+    /** Los elementos que el modelo descartó y el código devolvió desde la propuesta (Python: `grafo.py`, AU-S3-01). */
+    restaurados: z.array(z.string().min(1)).min(1).optional(),
     redaccion: z.object({ es: QUIEN_REDACTA, en: QUIEN_REDACTA }).optional(),
     costo_nominal_usd: z.number().nonnegative().optional(),
     tokens_entrada: z.number().int().nonnegative().optional(),
@@ -107,6 +109,30 @@ export interface Revision {
   senales_derivadas: Transcripcion["senales_derivadas"];
   llamadas_al_modelo: number;
   costo_nominal_usd: number;
+  /** Elementos que el modelo omitió y el código devolvió desde la propuesta, por pregunta (AU-S3-01). */
+  restaurados_por_el_codigo: { pregunta: string; elementos: string[] }[];
+  /** De dónde salió la entrevista: plantilla, proveedor, modelo, fecha, pasadas y tokens (AU-S3-13). */
+  cabecera: {
+    plantilla: { id: string; version: string };
+    proveedor: string;
+    modelo: string;
+    fecha: string;
+    pasadas: number;
+    tokens_entrada: number;
+    tokens_salida: number;
+  };
+  /** Cada pregunta con su último turno: lo que respondió el usuario, tal cual, y lo que hizo el entrevistador. */
+  entrevista: {
+    id: string;
+    seccion: string;
+    pregunta: TextoBilingue;
+    estado: string;
+    respuesta: { texto: string; idioma: "es" | "en" } | null;
+    resultado: string | null;
+    motivo: string | null;
+    elementos: { id: string; origen: string }[];
+    explicaciones: { elemento: string; es: string; en: string }[];
+  }[];
 }
 
 export function pendientesDe(t: Transcripcion): PreguntaPendiente[] {
@@ -144,6 +170,40 @@ export function revisarBorrador(borrador: unknown, t: Transcripcion): Revision {
     senales_derivadas: t.senales_derivadas,
     llamadas_al_modelo: t.llamadas_al_modelo,
     costo_nominal_usd: t.costo_nominal_usd,
+    restaurados_por_el_codigo: t.preguntas.flatMap((p) =>
+      p.turnos
+        .filter((x) => x.restaurados)
+        .map((x) => ({ pregunta: p.id, elementos: x.restaurados! })),
+    ),
+    cabecera: {
+      plantilla: { id: t.plantilla.id, version: t.plantilla.version },
+      proveedor: t.proveedor,
+      modelo: t.modelo,
+      fecha: t.fecha,
+      pasadas: t.pasadas,
+      tokens_entrada: t.preguntas.reduce(
+        (a, p) => a + p.turnos.reduce((b, x) => b + (x.tokens_entrada ?? 0), 0),
+        0,
+      ),
+      tokens_salida: t.preguntas.reduce(
+        (a, p) => a + p.turnos.reduce((b, x) => b + (x.tokens_salida ?? 0), 0),
+        0,
+      ),
+    },
+    entrevista: t.preguntas.map((p) => {
+      const u = p.turnos.at(-1);
+      return {
+        id: p.id,
+        seccion: p.seccion,
+        pregunta: p.pregunta,
+        estado: p.estado,
+        respuesta: u ? u.respuesta : null,
+        resultado: u ? u.resultado : null,
+        motivo: u?.motivo ?? null,
+        elementos: u?.elementos ?? [],
+        explicaciones: u?.explicaciones ?? [],
+      };
+    }),
   };
 }
 
@@ -183,6 +243,19 @@ const T = {
     redactadoLinea: (p: string, i: string) =>
       `${p}: el texto en ${NOMBRE_IDIOMA.es[i] ?? i} lo redactó el entrevistador desde tu respuesta.`,
     senales: "Señales que el agente tendrá que registrar y que sumó el código",
+    restaurados: "Elementos que el modelo omitió y el código devolvió",
+    restauradoLinea: (p: string, ids: string[]) =>
+      `${p}: el modelo omitió ${ids.join(", ")}; el código los devolvió desde la propuesta.`,
+    advertencias: "Advertencias de M1 (no impiden aprobar)",
+    cabecera: (c: Revision["cabecera"]) =>
+      `Plantilla ${c.plantilla.id} ${c.plantilla.version} · ${c.proveedor} / ${c.modelo} · ${c.fecha} · ${c.pasadas} ${c.pasadas === 1 ? "pasada" : "pasadas"} · ${c.tokens_entrada} tokens de entrada y ${c.tokens_salida} de salida.`,
+    entrevista: "La entrevista, pregunta por pregunta",
+    respuesta: "Tu respuesta",
+    sinRespuesta: "sin respuesta",
+    resultado: "Resultado",
+    elementos: "Elementos",
+    explicaciones: "Lo que explicó el entrevistador",
+    motivoLiteral: "Por qué quedó literal",
     senalLinea: (s: string, q: string[]) => `\`${s}\`: la lee ${q.join(", ")}.`,
     plan: "El plan, sección por sección",
     origen: "origen",
@@ -236,6 +309,19 @@ const T = {
     redactadoLinea: (p: string, i: string) =>
       `${p}: the ${NOMBRE_IDIOMA.en[i] ?? i} text was written by the interviewer from your answer.`,
     senales: "Signals the agent will have to record, added by code",
+    restaurados: "Elements the model left out and the code put back",
+    restauradoLinea: (p: string, ids: string[]) =>
+      `${p}: the model left out ${ids.join(", ")}; the code put them back from the proposal.`,
+    advertencias: "M1 warnings (they do not block approval)",
+    cabecera: (c: Revision["cabecera"]) =>
+      `Template ${c.plantilla.id} ${c.plantilla.version} · ${c.proveedor} / ${c.modelo} · ${c.fecha} · ${c.pasadas} ${c.pasadas === 1 ? "pass" : "passes"} · ${c.tokens_entrada} input tokens and ${c.tokens_salida} output tokens.`,
+    entrevista: "The interview, question by question",
+    respuesta: "Your answer",
+    sinRespuesta: "no answer",
+    resultado: "Result",
+    elementos: "Elements",
+    explicaciones: "What the interviewer explained",
+    motivoLiteral: "Why it stayed literal",
     senalLinea: (s: string, q: string[]) =>
       `\`${s}\`: read by ${q.join(", ")}.`,
     plan: "The plan, section by section",
@@ -486,9 +572,15 @@ export function textoDeRevision(
     "",
     t.costo(r.llamadas_al_modelo, r.costo_nominal_usd),
     "",
+    t.cabecera(r.cabecera),
+    "",
     `## ${t.m1}`,
     "",
     ...(r.m1.motivos.length ? r.m1.motivos.map(linea) : [t.ninguna]),
+    "",
+    `## ${t.advertencias}`,
+    "",
+    ...(r.m1.advertencias.length ? r.m1.advertencias.map(linea) : [t.ninguna]),
     "",
     `## ${t.contr}`,
     "",
@@ -510,6 +602,37 @@ export function textoDeRevision(
         )
       : [t.ninguna]),
     "",
+    `## ${t.restaurados}`,
+    "",
+    ...(r.restaurados_por_el_codigo.length
+      ? r.restaurados_por_el_codigo.map(
+          (x) => `- ${t.restauradoLinea(x.pregunta, x.elementos)}`,
+        )
+      : [t.ninguna]),
+    "",
+    `## ${t.entrevista}`,
+    "",
+    ...r.entrevista.flatMap((p) => [
+      `### ${p.id} · ${p.seccion} · ${p.estado}`,
+      "",
+      `> ${p.pregunta[idioma]}`,
+      "",
+      `- ${t.respuesta}: ${p.respuesta ? `«${p.respuesta.texto}» (${NOMBRE_IDIOMA[idioma][p.respuesta.idioma]})` : t.sinRespuesta}`,
+      ...(p.resultado ? [`- ${t.resultado}: \`${p.resultado}\``] : []),
+      ...(p.motivo ? [`- ${t.motivoLiteral}: ${p.motivo}`] : []),
+      ...(p.elementos.length
+        ? [
+            `- ${t.elementos}: ${p.elementos.map((e) => `${e.id} (${e.origen})`).join(", ")}`,
+          ]
+        : []),
+      ...(p.explicaciones.length
+        ? [
+            `- ${t.explicaciones}:`,
+            ...p.explicaciones.map((e) => `  - ${e.elemento}: ${e[idioma]}`),
+          ]
+        : []),
+      "",
+    ]),
     `## ${t.plan}`,
     "",
     ...seccionesDelPlan(b, idioma),

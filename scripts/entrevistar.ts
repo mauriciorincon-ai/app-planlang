@@ -61,7 +61,7 @@ async function main(): Promise<number> {
   const demo = args.demo;
   if (demo !== "b") {
     console.error(
-      "uso: entrevistar --demo b [--retomar] [--nueva] [--pregunta P13] [--respuestas archivo] [--idioma es|en] [--sin-modelo]",
+      "uso: entrevistar --demo b [--retomar] [--nueva] [--pregunta P13] [--respuestas archivo] [--idioma es|en] [--sin-modelo] [--salida carpeta]",
     );
     return 2;
   }
@@ -79,7 +79,7 @@ async function main(): Promise<number> {
   ];
   for (const bandera of ["retomar", "nueva", "sin-modelo"])
     if (args[bandera] === true) pasar.push(`--${bandera}`);
-  for (const opcion of ["respuestas", "idioma", "pregunta", "fecha"])
+  for (const opcion of ["respuestas", "idioma", "pregunta", "fecha", "salida"])
     if (typeof args[opcion] === "string")
       pasar.push(`--${opcion}`, args[opcion] as string);
   const py = spawnSync(PYTHON, ["-m", "app_agents.entrevistador", ...pasar], {
@@ -91,7 +91,9 @@ async function main(): Promise<number> {
   }
   if (py.status === SALIDA_GUARDADA) return 0;
   if (py.status !== 0) return py.status ?? 1;
-  const directorio = `plans/demo-${demo}`;
+  // Con el plan ya aprobado, la entrevista nueva va a `--salida`: la de `plans/demo-<x>/` es su registro (AU-S3-10).
+  const directorio =
+    typeof args.salida === "string" ? args.salida : `plans/demo-${demo}`;
   const r = await revisarDirectorio(directorio);
   const idioma = args.idioma === "en" ? "en" : "es";
   console.log(

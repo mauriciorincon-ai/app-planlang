@@ -53,6 +53,11 @@ class SinEntrevista(RuntimeError):
     pass
 
 
+class PlanYaAprobado(RuntimeError):
+    """El plan del demo ya tiene su `v1.json`: el borrador, la transcripción y la revisión que el usuario leyó al
+    aprobarlo son su registro y no se sobrescriben (AU-S3-10). Una entrevista nueva va a otra carpeta (`salida`)."""
+
+
 @dataclass
 class Resultado:
     terminada: bool
@@ -117,7 +122,11 @@ def ejecutar(
     raiz: Path = RAIZ_REPO,
     escribir: bool = True,
     salida: Callable[[str], None] = print,
+    directorio_salida: Path | None = None,
 ) -> Resultado:
+    directorio = directorio_salida or raiz / demo.directorio
+    if escribir and directorio_salida is None and (raiz / demo.directorio / "v1.json").exists():
+        raise PlanYaAprobado(demo.id)
     plantilla = cargar_plantilla(demo.dominio, raiz)
     app = construir_entrevista(checkpointer=checkpointer or InMemorySaver())
     config: Any = {"configurable": {"thread_id": f"entrevista-{demo.demo_id}"}}
@@ -177,14 +186,11 @@ def ejecutar(
         modelo=modelo_nombre,
     )
     if escribir:
-        directorio = raiz / demo.directorio
+        directorio.mkdir(parents=True, exist_ok=True)
         escribir_bonito(directorio / ARCHIVO_BORRADOR, borrador)
         registro = escribir_con_huella(directorio / ARCHIVO_TRANSCRIPCION, registro)
-        salida(
-            t["archivos"].format(
-                b=f"{demo.directorio}/{ARCHIVO_BORRADOR}", t=f"{demo.directorio}/{ARCHIVO_TRANSCRIPCION}"
-            )
-        )
+        visible = directorio.relative_to(raiz) if directorio.is_relative_to(raiz) else directorio
+        salida(t["archivos"].format(b=f"{visible}/{ARCHIVO_BORRADOR}", t=f"{visible}/{ARCHIVO_TRANSCRIPCION}"))
     estados = list((final.get("estados") or {}).values())
     salida(
         t["fin"].format(

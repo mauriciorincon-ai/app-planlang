@@ -22,6 +22,8 @@ import {
 const DIR = "tests/contrato/entrevista-demo-b";
 const borrador = JSON.parse(readFileSync(`${DIR}/v0-borrador.json`, "utf8"));
 const crudo = JSON.parse(readFileSync(`${DIR}/transcripcion.json`, "utf8"));
+/** La respuesta de P01 tal como la escribió el usuario del fixture (`agents/tests/entrevista_simulada.py`). */
+const RESPUESTA_P01 = (crudo.preguntas[0].turnos.at(-1).respuesta.texto as string);
 
 describe("borrador del entrevistador (Python → TS)", () => {
   it("la transcripción valida contra su esquema Zod y su huella verifica", async () => {
@@ -81,5 +83,30 @@ describe("borrador del entrevistador (Python → TS)", () => {
       expect(es).toContain(`### ${s}`);
     expect(es).toContain("`extraccion_exacta`: la lee C5.");
     expect(en).toContain("P12: the English text was written by the interviewer");
+    // AU-S3-13: lo que el usuario respondió, tal cual, y lo que hizo el entrevistador, pregunta por pregunta.
+    expect(es).toContain("## La entrevista, pregunta por pregunta");
+    expect(en).toContain("## The interview, question by question");
+    expect(es).toContain(`- Tu respuesta: «${RESPUESTA_P01}» (español)`);
+    expect(en).toContain(`- Your answer: «${RESPUESTA_P01}» (Spanish)`);
+    expect(es).toMatch(/Plantilla dom-financiero \S+ · simulado \/ simulado · 2026-10-04/);
+    expect(es).toContain("## Advertencias de M1 (no impiden aprobar)");
+    expect(r.entrevista).toHaveLength(14);
+  });
+
+  it("AU-S3-01: una transcripción con elementos que el código restauró valida y la revisión los nombra", () => {
+    const conRestaurados = JSON.parse(
+      readFileSync(`${DIR}/transcripcion-con-restaurados.json`, "utf8"),
+    );
+    const t = TranscripcionSchema.parse(conRestaurados);
+    const r = revisarBorrador(borrador, t);
+    expect(r.restaurados_por_el_codigo).toEqual([
+      { pregunta: "P05", elementos: ["D1", "D3", "D4"] },
+    ]);
+    expect(textoDeRevision(borrador, r, "es")).toContain(
+      "P05: el modelo omitió D1, D3, D4; el código los devolvió desde la propuesta.",
+    );
+    expect(textoDeRevision(borrador, r, "en")).toContain(
+      "P05: the model left out D1, D3, D4; the code put them back from the proposal.",
+    );
   });
 });

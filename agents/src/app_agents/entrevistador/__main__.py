@@ -11,12 +11,14 @@ from __future__ import annotations
 import argparse
 import sys
 from datetime import date
+from pathlib import Path
 
 from app_agents.adaptador import MODELO_POR_DEFECTO, crear_modelo, proveedor_activo
 from app_agents.entrevistador.cli import (
     DEMOS,
     EntrevistaEnCurso,
     Lector,
+    PlanYaAprobado,
     SinEntrevista,
     checkpointer_sqlite,
     ejecutar,
@@ -48,6 +50,10 @@ def main(argv: list[str] | None = None) -> int:
         "--vocabulario", default="", help="claves del contexto de condiciones, separadas por comas"
     )
     p.add_argument("--fecha", default=date.today().isoformat())
+    p.add_argument(
+        "--salida",
+        help="carpeta de la entrevista (obligatoria si el plan del demo ya está aprobado: v1.json existe)",
+    )
     a = p.parse_args(argv)
     demo = DEMOS[a.demo]
     if a.sin_modelo:
@@ -71,7 +77,14 @@ def main(argv: list[str] | None = None) -> int:
             forzadas=a.pregunta,
             vocabulario=tuple(v for v in a.vocabulario.split(",") if v),
             fecha=a.fecha,
+            directorio_salida=Path(a.salida).resolve() if a.salida else None,
         )
+    except PlanYaAprobado:
+        print(
+            f"{demo.directorio}/v1.json ya está aprobado: la entrevista nueva va a la carpeta que indiques con --salida.",
+            file=sys.stderr,
+        )
+        return 2
     except EntrevistaEnCurso:
         print(
             "Ya hay una entrevista guardada: --retomar para seguirla o --nueva para empezar de cero.",
