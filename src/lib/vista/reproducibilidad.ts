@@ -5,6 +5,7 @@
  */
 import type { Idioma } from "@core/formatos/bilingue";
 import type { DatosDemo } from "@/lib/datos/vitrina";
+import { TIPO_DE_CASO } from "@/textos/agente";
 import { VARIANTE } from "@/textos/brecha";
 import { APAGADO, ENCENDIDO } from "@/textos/plan-comun";
 import { REPRODUCIBILIDAD as R } from "@/textos/reproducibilidad";
@@ -66,6 +67,23 @@ export function filasDeReproducibilidad(
     {
       k: R.casos[i],
       v: `${f.casos.id} · ${R.semilla[i]} ${f.casos.semilla} · n = ${f.casos.n_lote} · \`${f.casos.huella}\``,
+    },
+    {
+      k: R.generador[i],
+      v: R.generadorValor({
+        receta: d.lote.receta,
+        version: d.lote.version_generador,
+        composicion: Object.entries(d.lote.composicion.por_tipo).map(
+          ([tipo, n]) => ({
+            tipo: delVocabulario(
+              TIPO_DE_CASO,
+              tipo,
+              "TIPO_DE_CASO (src/textos/agente.ts)",
+            ),
+            n,
+          }),
+        ),
+      })[i],
     },
     {
       k: R.corrida[i],

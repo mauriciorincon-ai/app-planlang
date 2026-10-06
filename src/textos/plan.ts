@@ -9,6 +9,10 @@ import { CRITERIO_LIDER_B } from "./demo-b/plan";
 
 type Plantilla<P> = (p: P) => TextoBilingue;
 
+/** «Imita la forma…» dentro de un paréntesis: la primera letra en minúscula y sin el punto final. */
+const minuscula = (x: string) =>
+  (x.charAt(0).toLowerCase() + x.slice(1)).replace(/\.$/, "");
+
 export const TITULO_PAGINA = tb("El plan · planlang", "The plan · planlang");
 export const DESCRIPCION_PAGINA: Record<IdDemo, TextoBilingue> = {
   "demo-a": tb(
@@ -79,30 +83,48 @@ export const PARTE_DE = {
     procedimientos: number;
     exentos: number;
     exclusiones: number;
+    topes: number;
   }) =>
     tb(
-      `plan de beneficios sintético: ${p.procedimientos} procedimientos, ${p.exentos} exentos, ${p.exclusiones} exclusiones con causal`,
-      `synthetic benefit plan: ${p.procedimientos} procedures, ${p.exentos} exempt, ${p.exclusiones} exclusions with a ground`,
+      `plan de beneficios sintético: ${p.procedimientos} procedimientos, ${p.exentos} exentos, ${p.exclusiones} exclusiones con causal y ${p.topes} topes de cobertura`,
+      `synthetic benefit plan: ${p.procedimientos} procedures, ${p.exentos} exempt, ${p.exclusiones} exclusions with a ground and ${p.topes} coverage caps`,
     )) as Plantilla<{
     procedimientos: number;
     exentos: number;
     exclusiones: number;
+    topes: number;
   }>,
-  /** El mundo del B: las listas de control sintéticas que citan el lote y la corrida. */
+  /** El mundo del B: las listas de control sintéticas que citan el lote y la corrida, con su nombre y lo que imitan. */
   dominioDetalleB: ((p: {
-    vinculantes: number;
-    entradasV: number;
-    consulta: number;
-    entradasC: number;
+    listas: Array<{
+      id: string;
+      nombre: TextoBilingue;
+      fuente: TextoBilingue;
+      personas: number;
+      vinculante: boolean;
+    }>;
   }) =>
     tb(
-      `listas de control sintéticas, con versión y fecha: ${p.vinculantes} vinculante${p.vinculantes === 1 ? "" : "s"} (${p.entradasV} personas) y ${p.consulta} de consulta (${p.entradasC} personas)`,
-      `synthetic watch lists, with version and date: ${p.vinculantes} binding (${p.entradasV} people) and ${p.consulta} for reference (${p.entradasC} people)`,
+      `listas de control sintéticas, con versión y fecha: ${p.listas
+        .map(
+          (l) =>
+            `${l.nombre.es} (${l.id}, ${l.vinculante ? "vinculante" : "de consulta"}, ${l.personas} personas; ${minuscula(l.fuente.es)})`,
+        )
+        .join("; ")}`,
+      `synthetic watch lists, with version and date: ${p.listas
+        .map(
+          (l) =>
+            `${l.nombre.en} (${l.id}, ${l.vinculante ? "binding" : "for reference"}, ${l.personas} people; ${minuscula(l.fuente.en)})`,
+        )
+        .join("; ")}`,
     )) as Plantilla<{
-    vinculantes: number;
-    entradasV: number;
-    consulta: number;
-    entradasC: number;
+    listas: Array<{
+      id: string;
+      nombre: TextoBilingue;
+      fuente: TextoBilingue;
+      personas: number;
+      vinculante: boolean;
+    }>;
   }>,
   participan: tb("Quién participa", "Who takes part"),
 };

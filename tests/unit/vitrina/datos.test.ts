@@ -19,27 +19,31 @@ import {
   cargarDemo,
   datosDemo,
   esElPlanDeBeneficiosDeLaCorrida,
+  esLaListaDeLaCorrida,
 } from "@/lib/datos/vitrina";
 
 const copias: string[] = [];
-function copia(): string {
+function copia(demo: "demo-a" | "demo-b" = "demo-a"): string {
   const dir = mkdtempSync(join(tmpdir(), "planlang-vitrina-"));
   copias.push(dir);
   const m = JSON.parse(readFileSync("data/vitrina/manifiesto.json", "utf8"));
-  const d = m.demos["demo-a"];
+  const d = m.demos[demo];
   const c = JSON.parse(
     readFileSync(join(d.corrida.ruta, "corrida.json"), "utf8"),
   );
+  const propios =
+    demo === "demo-a"
+      ? ["data/vitrina/demo-a/spike-2026-09-26", "data/plan-beneficios"]
+      : ["data/listas"];
   for (const r of [
     "data/vitrina/manifiesto.json",
-    "data/vitrina/demo-a/grafo-codigo.json",
-    "data/vitrina/demo-a/spike-2026-09-26",
-    "data/plan-beneficios",
-    "plans/demo-a",
+    `data/vitrina/${demo}/grafo-codigo.json`,
+    ...propios,
+    `plans/${demo}`,
     d.informe.archivo,
     d.corrida.ruta,
     c.casos.archivo,
-    ...[...d.repeticiones, d.linea_base].map((x: { ruta: string }) =>
+    ...[...(d.repeticiones ?? []), d.linea_base].map((x: { ruta: string }) =>
       join(x.ruta, "corrida.json"),
     ),
   ])
@@ -78,6 +82,30 @@ describe("datos de la vitrina", () => {
     writeFileSync(ruta, JSON.stringify(m));
     await expect(cargarDemo("demo-a", dir)).rejects.toThrow(
       /declara «demo-c», que la vitrina no sabe pintar \(demo-a, demo-b\); un demo nuevo exige sus rutas/,
+    );
+  });
+
+  it("AU-S3-28 · rojo: la corrida del B cita otra versión de las listas que la publicada", async () => {
+    const dir = copia("demo-b");
+    const rutaM = join(dir, "data/vitrina/manifiesto.json");
+    const m = JSON.parse(readFileSync(rutaM, "utf8"));
+    const ruta = join(dir, m.demos["demo-b"].corrida.ruta, "corrida.json");
+    const c = JSON.parse(readFileSync(ruta, "utf8"));
+    c.listas.version = "9.9.9";
+    delete c.huella;
+    const sellada = await conHuella(c);
+    writeFileSync(ruta, JSON.stringify(sellada));
+    m.demos["demo-b"].corrida.huella = sellada.huella;
+    const rutaI = join(dir, m.demos["demo-b"].informe.archivo);
+    const inf = JSON.parse(readFileSync(rutaI, "utf8"));
+    inf.ficha_reproducibilidad.corrida.huella = sellada.huella;
+    delete inf.huella;
+    const infSellado = await conHuella(inf);
+    writeFileSync(rutaI, JSON.stringify(infSellado));
+    m.demos["demo-b"].informe.huella = infSellado.huella;
+    writeFileSync(rutaM, JSON.stringify(m));
+    await expect(cargarDemo("demo-b", dir)).rejects.toThrow(
+      "corrió con las listas version «9.9.9» y data/listas/demo-b.json trae «1.0.0»",
     );
   });
 
@@ -230,6 +258,22 @@ describe("datos de la vitrina", () => {
     );
     await expect(cargarDemo("demo-a", dir)).rejects.toThrow(
       /grafo-codigo\.json es el código del demo «demo-b», no el de «demo-a»/,
+    );
+  });
+
+  it("AU-S3-28 · rojo: las listas no son las que nombra la corrida del B", () => {
+    expect(() =>
+      esLaListaDeLaCorrida(
+        {
+          archivo: "data/listas/demo-b.json",
+          id: "listas-demo-b",
+          version: "1.0.0",
+        },
+        { id: "listas-demo-b", version: "2.0.0" },
+        "demo-b",
+      ),
+    ).toThrow(
+      "corrió con las listas version «1.0.0» y data/listas/demo-b.json trae «2.0.0»",
     );
   });
 

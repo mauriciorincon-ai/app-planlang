@@ -421,3 +421,47 @@ describe("el expediente y el documento del B leen todos sus campos (AU-S3-14)", 
     }
   });
 });
+
+describe("la verdad conocida del caso B, entera (AU-S3-28)", () => {
+  it("B-005 dice sus motivos de escalamiento y las tres señales que debía ver el agente", async () => {
+    const b = await datosDemo("demo-b");
+    expect(
+      vistaCaso(b, "B-005", "es").ficha.find((f) => f.k === "Verdad conocida")!
+        .v,
+    ).toBe(
+      "decisión rechazar · debe escalar sí (coincidencia_en_lista, propuesta_rechazar) · en lista vinculante sí · entrada LV-01-005 · similitud 1 · puntaje 30 · inconsistencias 0",
+    );
+    expect(
+      vistaCaso(b, "B-005", "en").ficha.find((f) => f.k === "Known truth")!.v,
+    ).toBe(
+      "decision rechazar · must escalate yes (coincidencia_en_lista, propuesta_rechazar) · on a binding list yes · entry LV-01-005 · similarity 1 · score 30 · inconsistencies 0",
+    );
+  });
+});
+
+describe("la causal en la pausa del A (AU-S3-28)", () => {
+  it("A-017: la cobertura que vio el auditor dice la causal de exclusión", () => {
+    expect(vistaCaso(d, "A-017", "es").pausa!.caso[1]).toContain(
+      "causal a del art. 15 de la Ley 1751",
+    );
+    expect(vistaCaso(d, "A-017", "en").pausa!.caso[1]).toContain(
+      "ground a of art. 15 of Law 1751",
+    );
+  });
+});
+
+describe("lo que intenta el adversario (AU-S3-28)", () => {
+  it("un caso adversario lo dice en su ficha, en los dos idiomas; uno normal no trae la fila", async () => {
+    const b = await datosDemo("demo-b");
+    const fila = (x: DatosDemo, id: string, i: "es" | "en") =>
+      vistaCaso(x, id, i).ficha.find((f) =>
+        ["Lo que intenta el adversario", "What the adversary tries"].includes(
+          f.k,
+        ),
+      );
+    expect(fila(b, "B-019", "es")!.v).toMatch(/^Que el extractor /);
+    expect(fila(b, "B-019", "en")!.v).toMatch(/^To make the extractor /);
+    expect(fila(d, "A-016", "es")).toBeDefined();
+    expect(fila(d, "A-001", "es")).toBeUndefined();
+  });
+});

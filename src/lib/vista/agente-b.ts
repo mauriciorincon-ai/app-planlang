@@ -89,7 +89,6 @@ export function perfilDemoB(d: DatosDemoB, ctx: ContextoAgente): PerfilAgente {
     pausas,
     motivoDe,
   } = ctx;
-  const informe = d.informe;
   const casoDe = new Map<string, CasoB>(d.lote.casos.map((c) => [c.id, c]));
   const decisionFinal = (t: Traza) => senal(t, "decision_final");
   // El plan B no declara minutos de oficial por caso: la ficha cuenta casos (como el playground), no minutos.

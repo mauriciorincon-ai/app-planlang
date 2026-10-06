@@ -1575,6 +1575,7 @@ casilla 4 por otro auditor.
 | AU-S3-19 | `cumple` y `estado` exigen el criterio (un id que el informe no trae detiene el build); `supuestoDeLineaBase()` elige el supuesto por `comparacion === COMPARACION_LINEA_BASE` en el plan (el B lo tiene en S2, el A en S3), en las vistas del A y del B | este |
 | AU-S3-27 | `payloadIgualALaTraza`: lo que vio el oficial (documentos, coincidencias, investigación, puntaje, extracción) es lo que registró la traza y trae el lote, o el build se detiene nombrando caso y clave | este |
 | AU-S3-14 | el expediente del B nombra el tema de cada conclusión, la regla de la coincidencia y un pie con listas consultadas, quién decidió, datos usados y plan; el documento abre con la carta al solicitante; comprobación de build `expediente.caso_id === traza.caso_id`. Es forma en un artefacto de la mirada 3: segunda vuelta, sin parada (se ve al cierre) | este |
+| AU-S3-28 | `esLaListaDeLaCorrida` en `cargarDemo` (la corrida del B cita sus listas por id y versión); la verdad del caso B entera (motivos de escalamiento, similitud, puntaje, inconsistencias); fila «Generador» en la ficha de reproducibilidad (receta, versión, casos por tipo) en los dos demos; el mundo del Plan con los topes del A y el nombre, la fuente y las personas de cada lista del B; la causal de exclusión en la pausa del A; «lo que intenta el adversario» en la ficha de todo caso adversario; y el resto declarado como **registro del generador** en `tests/unit/vitrina/registro-del-generador.test.ts` (24 campos con su razón; la prueba exige que cada uno exista en los datos publicados). Además, `informe` sin usar en `agente-b.ts` (aviso de lint) | este |
 
 **Demos en rojo de la Fase 2** (`scripts/demo-rojo.sh`):
 
@@ -1592,6 +1593,8 @@ casilla 4 por otro auditor.
 | F2-D10 | payload del B (AU-S3-27) | se quita la llamada a `payloadIgualALaTraza` | «expected [Function] to throw an error» | sí |
 | F2-D11 | cita con su regla (AU-S3-14) | se quita la regla de la cita | K2 sin «regla RL-01» | sí |
 | F2-D12 | expediente del caso (AU-S3-14) | `if (exp && false)` | «expected [Function] to throw an error» | sí |
+| F2-D13 | registro del generador (AU-S3-28) | `"unidad_de_ingreso"` → `"unidad_de_ingresos"` en la lista | «listas · unidad_de_ingresos: expected false to be true» | sí |
+| F2-D14 | listas de la corrida (AU-S3-28) | se quita `esLaListaDeLaCorrida(...)` de `cargarDemo`. **Primer intento: el control pasó**, porque la prueba solo llamaba a la función; se añadió una prueba con una copia del B cuya corrida cita la versión 9.9.9. Segundo intento | «promise resolved … instead of rejecting» | sí |
 
 **Un tropiezo de la CI:** el push de `d44a2ad` salió rojo en `python`. Ruff marcó nueve líneas de más de 110 columnas
 (la verificación local había corrido con `-q` y su salida se perdió en la tubería). Además, la prueba de la consola

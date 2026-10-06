@@ -275,7 +275,7 @@ describe("la mirada general", () => {
       "Demo A · plan-demo-a 1.5.0 · aprobado el 2026-10-04",
     );
     expect(es.parteDe[1]!.detalle).toBe(
-      "plan de beneficios sintético: 40 procedimientos, 5 exentos, 6 exclusiones con causal",
+      "plan de beneficios sintético: 40 procedimientos, 5 exentos, 6 exclusiones con causal y 6 topes de cobertura",
     );
     expect(es.hace.hecho).toBe(true);
     expect(es.entrega[0]!.detalle).toMatch(
@@ -401,5 +401,21 @@ describe("C-7: la vitrina dibuja una pausa humana; con más, se detiene nombrán
     const sin = { ...d, plan: structuredClone(d.plan) };
     sin.plan.contrato_de_grafo.pausas_humanas = [];
     expect(() => vistaPlan(sin, "es")).toThrow("no declara pausa humana");
+  });
+});
+
+describe("el mundo del plan lee sus fuentes (AU-S3-28)", () => {
+  it("el B nombra cada lista, si es vinculante, cuántas personas trae y qué imita; el A cuenta sus topes", async () => {
+    const b = await datosDemo("demo-b");
+    expect(JSON.stringify(vistaPlan(b, "es"))).toContain(
+      "Lista vinculante sintética de sanciones (LV-01, vinculante, 12 personas; imita la forma de una lista de sanciones del Consejo de Seguridad de la ONU)",
+    );
+    expect(JSON.stringify(vistaPlan(b, "en"))).toContain(
+      "Synthetic reference list of politically exposed persons (LC-01, for reference, 10 people; mimics the shape of a politically exposed persons list)",
+    );
+    const a = await datosDemo("demo-a");
+    expect(JSON.stringify(vistaPlan(a, "en"))).toContain(
+      "6 exclusions with a ground and 6 coverage caps",
+    );
   });
 });

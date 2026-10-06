@@ -186,10 +186,28 @@ export function esElPlanDeBeneficiosDeLaCorrida(
   pb: { id: string; version: string },
   demo: string,
 ): void {
+  esElMundoDeLaCorrida(ref, pb, demo, "el plan de beneficios");
+}
+
+/** Las listas que cita la corrida del B (`corrida.listas.{id,version}`) son las del archivo publicado (AU-S3-28). */
+export function esLaListaDeLaCorrida(
+  ref: { archivo: string; id?: string; version?: string },
+  listas: { id: string; version: string },
+  demo: string,
+): void {
+  esElMundoDeLaCorrida(ref, listas, demo, "las listas");
+}
+
+function esElMundoDeLaCorrida(
+  ref: { archivo: string; id?: string; version?: string },
+  mundo: { id: string; version: string },
+  demo: string,
+  que: string,
+): void {
   for (const k of ["id", "version"] as const)
-    if (ref[k] !== undefined && ref[k] !== pb[k])
+    if (ref[k] !== undefined && ref[k] !== mundo[k])
       throw new Error(
-        `vitrina: la corrida de «${demo}» corrió con el plan de beneficios ${k} «${ref[k]}» y ${ref.archivo} trae «${pb[k]}».`,
+        `vitrina: la corrida de «${demo}» corrió con ${que} ${k} «${ref[k]}» y ${ref.archivo} trae «${mundo[k]}».`,
       );
 }
 
@@ -344,11 +362,13 @@ export async function cargarDemo(
         );
       const listasCrudas = leer(m.listas.archivo);
       await conHuellaDeclarada(m.listas.archivo, listasCrudas, m.listas.huella);
+      const listas = ListasSchema.parse(listasCrudas);
+      esLaListaDeLaCorrida(m.listas, listas, id);
       return {
         ...comunes,
         id: "demo-b",
         lote: LoteBSchema.parse(casos),
-        listas: ListasSchema.parse(listasCrudas),
+        listas,
       };
     }
     case "demo-a": {

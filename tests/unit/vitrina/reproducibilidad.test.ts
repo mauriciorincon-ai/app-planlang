@@ -69,3 +69,22 @@ describe("ficha de reproducibilidad", () => {
     );
   });
 });
+
+describe("cómo se generó el lote (AU-S3-28)", () => {
+  it("la fila Generador dice receta, versión y casos por tipo, en los dos idiomas y los dos demos", async () => {
+    const fila = (x: DatosDemo, i: "es" | "en") =>
+      filasDeReproducibilidad(x, i, "brecha").find((f) =>
+        ["Generador", "Generator"].includes(f.k),
+      )!.v;
+    expect(fila(d, "es")).toBe(
+      "receta estandar · versión 1.1.0 · adversario 20 · borde 30 · faltante 30 · normal 120",
+    );
+    expect(fila(d, "en")).toBe(
+      "recipe estandar · version 1.1.0 · adversarial 20 · edge case 30 · missing data 30 · normal 120",
+    );
+    const b = await datosDemo("demo-b");
+    expect(fila(b, "es")).toBe(
+      "receta estandar · versión 1.0.0 · adversario 2 · borde 3 · faltante 3 · normal 12",
+    );
+  });
+});

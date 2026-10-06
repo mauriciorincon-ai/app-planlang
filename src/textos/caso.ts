@@ -395,6 +395,7 @@ export const FICHA = {
       `provider: ${p.proveedor ?? "none"} · schema on handoff: ${p.esquema ? "yes" : "no"}`,
     )) as Plantilla<{ proveedor: string | null; esquema: boolean }>,
   verdad: tb("Verdad conocida", "Known truth"),
+  intenta: tb("Lo que intenta el adversario", "What the adversary tries"),
   verdadTexto: ((p: {
     decision: string;
     escalar: boolean;
@@ -703,6 +704,12 @@ export const PAUSA = {
   orden: tb("Orden", "Order"),
   cobertura: tb("Cobertura", "Coverage"),
   altoCosto: tb("alto costo", "high cost"),
+  /** La causal de exclusión que encontró el verificador (AU-S3-28). */
+  causal: ((x: string) =>
+    tb(
+      `causal ${x} del art. 15 de la Ley 1751`,
+      `ground ${x} of art. 15 of Law 1751`,
+    )) as Plantilla<string>,
   reglas: tb("reglas", "rules"),
   sinCobertura: tb(
     "Cobertura: todavía sin verificar cuando el agente se detuvo",

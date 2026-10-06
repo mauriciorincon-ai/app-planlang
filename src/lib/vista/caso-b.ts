@@ -303,8 +303,15 @@ export function perfilCasoB(
       FICHA_CASO_B.verdadTexto({
         decision: v.decision,
         escalar: v.debe_escalar,
+        motivos: v.motivos_escalamiento,
         vinculante: v.en_lista_vinculante,
         entrada: v.entrada_lista,
+        similitud: {
+          es: valorLeido(v.similitud_max, "es"),
+          en: valorLeido(v.similitud_max, "en"),
+        },
+        puntaje: v.puntaje_riesgo,
+        inconsistencias: v.inconsistencias,
       }),
       i,
     ),

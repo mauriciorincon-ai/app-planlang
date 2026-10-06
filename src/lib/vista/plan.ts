@@ -725,28 +725,34 @@ function mundoDelPlan(d: DatosDemo): {
     case "demo-a": {
       const b = d.plan.plan_beneficios_sintetico;
       if (!b) return { texto: null, faltan: ["plan_beneficios_sintetico"] };
+      if (b.topes_de_cobertura === undefined)
+        return {
+          texto: null,
+          faltan: ["plan_beneficios_sintetico.topes_de_cobertura"],
+        };
       return {
         texto: PARTE_DE.dominioDetalle({
           procedimientos: b.procedimientos,
           exentos: b.exentos_de_autorizacion,
           exclusiones: b.exclusiones_con_causal,
+          topes: b.topes_de_cobertura,
         }),
         faltan: [],
       };
     }
-    case "demo-b": {
-      const vinculantes = d.listas.listas.filter((l) => l.vinculante);
-      const consulta = d.listas.listas.filter((l) => !l.vinculante);
+    case "demo-b":
       return {
         texto: PARTE_DE.dominioDetalleB({
-          vinculantes: vinculantes.length,
-          entradasV: vinculantes.reduce((n, l) => n + l.entradas.length, 0),
-          consulta: consulta.length,
-          entradasC: consulta.reduce((n, l) => n + l.entradas.length, 0),
+          listas: d.listas.listas.map((l) => ({
+            id: l.id,
+            nombre: l.nombre,
+            fuente: l.fuente_simulada,
+            personas: l.entradas.length,
+            vinculante: l.vinculante,
+          })),
         }),
         faltan: [],
       };
-    }
     default:
       return demoSinDespacho(d, "vistaPlan (el mundo del demo)");
   }

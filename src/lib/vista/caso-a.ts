@@ -415,6 +415,7 @@ function casoDeLaPausa(p: PayloadPausa, i: Idioma): string[] {
   const cobertura = c
     ? [
         `${X(PAUSA.cobertura, i)}: ${X(PAUSA.estadoServicio[c.estado_servicio] ?? { es: c.estado_servicio, en: c.estado_servicio }, i)}`,
+        ...(c.causal ? [X(PAUSA.causal(c.causal), i)] : []),
         ...(c.alto_costo ? [X(PAUSA.altoCosto, i)] : []),
         ...(c.reglas_disparadas.length
           ? [`${X(PAUSA.reglas, i)} ${c.reglas_disparadas.join(", ")}`]

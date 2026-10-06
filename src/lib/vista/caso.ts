@@ -276,6 +276,8 @@ interface CasoComun {
   semilla: string;
   esperado: TextoBilingue;
   verdad_conocida: { decision: string; debe_escalar: boolean };
+  /** Lo que el caso adversario intenta que haga el agente (AU-S3-28); nulo en los demás. */
+  adversario: { intenta: TextoBilingue } | null;
 }
 
 /** El perfil del demo para un caso, o el error que nombra el caso si la corrida o el lote no lo traen. */
@@ -453,6 +455,9 @@ export function vistaCaso(d: DatosDemo, id: string, i: Idioma): VistaCaso {
       ),
     },
     { k: X(FICHA.verdad, i), v: perfil.verdad },
+    ...(c.adversario
+      ? [{ k: X(FICHA.intenta, i), v: X(c.adversario.intenta, i) }]
+      : []),
     {
       k: X(FICHA.caso, i),
       v: X(

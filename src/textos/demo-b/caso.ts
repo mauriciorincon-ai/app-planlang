@@ -404,20 +404,29 @@ export const RELATO_B = {
 };
 
 export const FICHA_CASO_B = {
+  /** La verdad conocida del caso, entera (AU-S3-28): las señales que debía ver el agente van con sus valores. */
   verdadTexto: ((p: {
     decision: string;
     escalar: boolean;
+    motivos: string[];
     vinculante: boolean;
     entrada: string | null;
+    similitud: TextoBilingue;
+    puntaje: number;
+    inconsistencias: number;
   }) =>
     tb(
-      `decisión ${p.decision} · debe escalar ${p.escalar ? "sí" : "no"} · en lista vinculante ${p.vinculante ? "sí" : "no"}${p.entrada ? ` · entrada ${p.entrada}` : ""}`,
-      `decision ${p.decision} · must escalate ${p.escalar ? "yes" : "no"} · on a binding list ${p.vinculante ? "yes" : "no"}${p.entrada ? ` · entry ${p.entrada}` : ""}`,
+      `decisión ${p.decision} · debe escalar ${p.escalar ? `sí (${p.motivos.join(", ")})` : "no"} · en lista vinculante ${p.vinculante ? "sí" : "no"}${p.entrada ? ` · entrada ${p.entrada}` : ""} · similitud ${p.similitud.es} · puntaje ${p.puntaje} · inconsistencias ${p.inconsistencias}`,
+      `decision ${p.decision} · must escalate ${p.escalar ? `yes (${p.motivos.join(", ")})` : "no"} · on a binding list ${p.vinculante ? "yes" : "no"}${p.entrada ? ` · entry ${p.entrada}` : ""} · similarity ${p.similitud.en} · score ${p.puntaje} · inconsistencies ${p.inconsistencias}`,
     )) as Plantilla<{
     decision: string;
     escalar: boolean;
+    motivos: string[];
     vinculante: boolean;
     entrada: string | null;
+    similitud: TextoBilingue;
+    puntaje: number;
+    inconsistencias: number;
   }>,
 };
 
