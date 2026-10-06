@@ -347,7 +347,7 @@ function ListaCumplida({
                 {it.experto}
               </span>
             </span>
-            <span className="col-start-3 font-mono text-dato whitespace-nowrap text-tinta-2 chico:col-start-auto chico:text-right">
+            <span className="col-start-3 font-mono text-dato text-tinta-2 chico:col-start-auto chico:text-right chico:whitespace-nowrap">
               {it.valor}
             </span>
           </li>

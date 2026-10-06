@@ -1618,6 +1618,15 @@ casilla 4 por otro auditor.
 | F2-D20 | aviso hasta el v1.5, Python ↔ TS (F22) | `AVISO_IA_HASTA_V15` de TS dice «negación completa» | «expected 0 to be greater than 0»: ningún aviso de la corrida simulada del v1.5 es el de la vitrina | sí |
 | F2-D21 | aviso por versión del plan (F22) | `AVISO_COMPLETA_DESDE = (1, 6, 0)` | `test_el_aviso_dice_negacion_completa_desde_el_plan_v1_5_1` falla | sí |
 
+**Tres rojos de e2e sin leer (`785bd0c`, `5ffb8e4`, `9f3c5ac`).** Después de cada push corrí `gh pr checks 14`, pero
+e2e seguía **pendiente** y no volví a mirarlo antes del push siguiente. Las tres corridas fallaron por lo mismo: 8 pruebas
+de la Brecha del A en el teléfono (380 px), en los dos idiomas, temas y perfiles, con un desborde lateral de 45 px. La
+causa fue la medida de C5 que trajo el verificador 1.3.0, «96,2 % · 1 corrida (pide 3 solo en lotes de 20)». Va en
+mono con `whitespace-nowrap` y no cabe. El arreglo: debajo de `chico` la medida va en su propia fila y parte línea; desde
+`chico` conserva el `nowrap`. Se encontró escondiendo subárboles hasta que el ancho volvía a 380. Desde aquí, **un
+pendiente no es verde**: antes de cada push se lee la conclusión de la corrida anterior, y si la fase tocó la vitrina, el
+e2e completo corre en local antes de empujar.
+
 **Un tropiezo de la CI:** el push de `d44a2ad` salió rojo en `python`. Ruff marcó nueve líneas de más de 110 columnas
 (la verificación local había corrido con `-q` y su salida se perdió en la tubería). Además, la prueba de la consola
 fallaba: con `v1.json` del B en el repo, la guarda nueva se adelanta a lo que esa prueba medía. La prueba ahora lo dice
