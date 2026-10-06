@@ -1563,7 +1563,11 @@ casilla 4 por otro auditor.
 | CI roja por el calendario | `source-map-js` y `compression` (override acotado `compression@<1.8.2`) | `31ee86c` |
 | AU-S3-01 | `restaurados` declarado en `TurnoSchema`, la revisión lo nombra; carnada escrita por Python (`transcripcion-con-restaurados.json`) | `d44a2ad` |
 | AU-S3-13 | la revisión trae cabecera, advertencias de M1 y la entrevista pregunta por pregunta | `d44a2ad` |
-| AU-S3-10 | la consola se niega a escribir en `plans/demo-b/` con `v1.json` presente (`PlanYaAprobado`, `--salida`); guarda de procedencia del plan B; paso 5 del manual | `d44a2ad` + este |
+| AU-S3-10 | la consola se niega a escribir en `plans/demo-b/` con `v1.json` presente (`PlanYaAprobado`, `--salida`); guarda de procedencia del plan B; paso 5 del manual | `d44a2ad` + `f370a26` |
+| AU-S3-06 | `motivoTecnico(d)` en `caso-comun.ts` arma el motivo de la pausa desde la arista registrada (`MOTIVO_TECNICO` en `src/textos/caso.ts`); `reglaDeLaPausa` devuelve la decisión completa. El `_motivo` de Python del A queda como deuda para el próximo lote | este |
+| AU-S3-07 | `avisoFalta` en el documento del B: chip «Sin aviso de IA» + la frase, en B-005, B-006 y B-014 | este |
+| AU-S3-11 | `parcial` declarado en el playground del A (`manifiesto.json`). El golden de la isla no cambia: el efecto era latente, las 9 parciales ya salían solas con Texas apagado | este |
+| lint | `capturas-demo-b.mjs:354` dejaba un `page` sin usar (aviso nacido en `a1b1bbe`) | este |
 
 **Demos en rojo de la Fase 2** (`scripts/demo-rojo.sh`):
 
@@ -1571,6 +1575,9 @@ casilla 4 por otro auditor.
 |---|---|---|---|---|
 | F2-D1 | contrato de la transcripción (AU-S3-01) | se borra `restaurados` de `TurnoSchema` | «Unrecognized key: "restaurados"» sobre el fixture que escribió Python | sí |
 | F2-D2 | procedencia del plan B (AU-S3-10) | `v0-borrador.json`: «solo las exactas» → «… (entrevista nueva)» | las dos pruebas: `aprobarPlan` da `58b0eac5…` en vez de `0cd6590c…` (la huella de `v1.json`), y `contradicciones.json` apunta a `823bfba5…` cuando el borrador ya es `24ff6c14…` | sí |
+| F2-D3 | motivo técnico (AU-S3-06) | `valorDelMotivo`: `"true"` → `"True"` | «A-009 (es): expected 'Arista 4 de decision: contradiccion_o…' not to match» y A-016 distinto de lo esperado | sí |
+| F2-D4 | aviso de IA del B (AU-S3-07) | `avisoFalta: doc.aviso_ia` → `avisoFalta: true` | «B-005 (es): expected null not to be null» | sí |
+| F2-D5 | parcial del playground A (AU-S3-11) | `manifiesto.json`: `"aprobar_parcial"` → `"aprobar_en_parte"` | la prueba del compacto: `propuesta` no es la declarada | sí |
 
 **Un tropiezo de la CI:** el push de `d44a2ad` salió rojo en `python`. Ruff marcó nueve líneas de más de 110 columnas
 (la verificación local había corrido con `-q` y su salida se perdió en la tubería). Además, la prueba de la consola

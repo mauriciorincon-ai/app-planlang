@@ -29,7 +29,7 @@ import {
   RELATO,
   SALIDA,
 } from "@/textos/caso";
-import { valorLeido, type PerfilCaso } from "./caso-comun";
+import { motivoTecnico, valorLeido, type PerfilCaso } from "./caso-comun";
 import { decimal, enumerar } from "./formato";
 import {
   categoriaDeRegla,
@@ -311,7 +311,9 @@ export function perfilCasoA(
       pausa && payload
         ? {
             motivo: motivoPausa(),
-            motivoTecnico: payload.motivo,
+            motivoTecnico: motivoTecnico(
+              reglaDeLaPausa(t.caso_id, payload.motivo, t.decisiones_de_arista),
+            ),
             senal: payload.senal,
             umbral: payload.umbral,
             evidencia: payload.evidencia,
@@ -377,6 +379,7 @@ export function perfilCasoA(
             },
           ],
           aviso: X(doc.aviso_ia, i),
+          avisoFalta: null,
           completo: X(
             DOCUMENTO.completo({
               completo: doc.completo,

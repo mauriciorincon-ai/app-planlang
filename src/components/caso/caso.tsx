@@ -546,6 +546,19 @@ export function Caso({ v, idioma }: { v: VistaCaso; idioma: Idioma }) {
                 {v.documento.aviso}
               </footer>
             ) : null}
+            {v.documento.avisoFalta ? (
+              <footer
+                data-falla="aviso-ia"
+                className="flex flex-wrap items-center gap-2 border-t border-linea px-4.5 py-3 text-dato text-tinta-2"
+              >
+                <Veredicto clase="no-cumple" chico>
+                  {v.documento.avisoFalta.chip}
+                </Veredicto>
+                <span className="min-w-0 flex-1 basis-60">
+                  {v.documento.avisoFalta.texto}
+                </span>
+              </footer>
+            ) : null}
           </article>
           <BloqueExperto
             rotulo={PERFIL.experto[idioma]}

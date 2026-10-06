@@ -448,6 +448,11 @@ export const SALIDA_B = {
 
 export const DOCUMENTO_B = {
   titulo: tb("El documento de rechazo", "The rejection document"),
+  avisoFaltaChip: tb("Sin aviso de IA", "No AI notice"),
+  avisoFalta: tb(
+    "Este documento no trae su aviso de IA: la corrida es anterior al arreglo que lo añadió (bitácora del S3, D54); las corridas nuevas lo traen.",
+    "This document carries no AI notice: the run predates the fix that added it (S3 log, D54); new runs carry it.",
+  ),
   cabecera: tb("Documento de rechazo", "Rejection document"),
   lectura: tb(
     "Todo rechazo lleva este documento, en español y en inglés: lo arma el código, no el modelo. Dice por qué se rechazó, con qué norma, con qué regla, con qué datos y con qué versión del plan y de las listas, si lo revisó una persona y cómo pedir otra revisión.",

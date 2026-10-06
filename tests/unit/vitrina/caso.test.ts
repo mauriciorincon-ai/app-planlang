@@ -338,3 +338,28 @@ describe("AU-S2-21: P6 valida lo que lee de la traza", () => {
     );
   });
 });
+
+describe("el motivo técnico de la pausa (AU-S3-06)", () => {
+  it("se escribe desde la arista registrada: ningún `True`, `False` ni `None`, y en español ningún punto decimal, en los dos demos", async () => {
+    const b = await datosDemo("demo-b");
+    const python = {
+      es: /\bTrue\b|\bFalse\b|\bNone\b|\d\.\d/,
+      en: /\bTrue\b|\bFalse\b|\bNone\b/,
+    };
+    for (const demo of [d, b] as DatosDemo[])
+      for (const i of ["es", "en"] as const)
+        for (const id of idsDeCasos(demo)) {
+          const p = vistaCaso(demo, id, i).pausa;
+          if (p) expect(p.motivoTecnico, `${id} (${i})`).not.toMatch(python[i]);
+        }
+  });
+
+  it("A-016: la instrucción escondida, como la evaluó la arista", () => {
+    expect(vistaCaso(d, "A-016", "es").pausa!.motivoTecnico).toBe(
+      "Arista 1 de decision: carga_detectada (true) igual a true (true).",
+    );
+    expect(vistaCaso(d, "A-016", "en").pausa!.motivoTecnico).toBe(
+      "Edge 1 of decision: carga_detectada (true) equal to true (true).",
+    );
+  });
+});

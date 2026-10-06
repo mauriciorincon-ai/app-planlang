@@ -161,11 +161,11 @@ interface DecisionRegistrada extends ReglaNombrada {
  * La regla que mandó un caso a la pausa: la arista que registra `payload.motivo` (`desde` y `orden_arista`), tal
  * como la evaluó el grafo. Sin motivo o sin esa arista en la traza, detiene el build nombrando el caso.
  */
-export function reglaDeLaPausa(
+export function reglaDeLaPausa<D extends DecisionRegistrada>(
   casoId: string,
   motivo: unknown,
-  decisiones: readonly DecisionRegistrada[],
-): DecisionRegistrada {
+  decisiones: readonly D[],
+): D {
   const m = motivo as { desde?: unknown; orden_arista?: unknown } | undefined;
   const x = decisiones.find(
     (y) =>

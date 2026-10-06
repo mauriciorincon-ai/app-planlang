@@ -26,7 +26,11 @@
         "valor_favorable": "aprobar",
         "claves_previas": [
           "extraccion"
-        ]
+        ],
+        "parcial": {
+          "valor": "aprobar_parcial",
+          "senal_que_exige_persona": "modo_texas"
+        }
       },
       "spike": {
         "fecha": "2026-09-26",

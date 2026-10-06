@@ -144,6 +144,17 @@ describe("lo que la vista no inventa", () => {
 });
 
 describe("los datos de la isla", () => {
+  it("AU-S3-11: el compacto del A trae la aprobación parcial que el plan v1.5 deja salir sola sin modo Texas", () => {
+    expect(es.isla.compacto.propuesta).toEqual({
+      senal: "propuesta",
+      favorable: "aprobar",
+      parcial: {
+        valor: "aprobar_parcial",
+        senal_que_exige_persona: "modo_texas",
+      },
+    });
+  });
+
   it("cuatro umbrales con su rango y sus decimales; U4 es un interruptor", () => {
     expect(
       es.isla.umbrales.map((u) => [u.id, u.valorPlan, u.rango, u.decimales]),

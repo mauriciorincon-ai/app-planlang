@@ -29,7 +29,7 @@ import {
   RELATO_B,
   SALIDA_B,
 } from "@/textos/demo-b/caso";
-import { valorLeido, type PerfilCaso } from "./caso-comun";
+import { motivoTecnico, valorLeido, type PerfilCaso } from "./caso-comun";
 import { decimal, decimalesDe } from "./formato";
 import {
   categoriaDeRegla,
@@ -306,7 +306,9 @@ export function perfilCasoB(
       pausa && payload
         ? {
             motivo: motivoPausa(),
-            motivoTecnico: payload.motivo,
+            motivoTecnico: motivoTecnico(
+              reglaDeLaPausa(t.caso_id, payload.motivo, t.decisiones_de_arista),
+            ),
             senal: payload.senal,
             umbral: payload.umbral,
             evidencia: payload.evidencia,
@@ -350,8 +352,14 @@ export function perfilCasoB(
             },
           ],
           // El de la corrida de 20 no trae aviso de IA propio (el agente lo escribe desde la fase 4 del S3): la vista
-          // pinta el que venga y no inventa el que falta.
+          // pinta el que venga, no inventa el que falta y dice la falla (regla dura 12, AU-S3-07).
           aviso: doc.aviso_ia ? X(doc.aviso_ia, i) : null,
+          avisoFalta: doc.aviso_ia
+            ? null
+            : {
+                chip: X(DOCUMENTO_B.avisoFaltaChip, i),
+                texto: X(DOCUMENTO_B.avisoFalta, i),
+              },
           completo: X(
             DOCUMENTO_B.completo({
               completo: doc.completo,

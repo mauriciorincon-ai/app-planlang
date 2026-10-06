@@ -4,6 +4,7 @@
  * se ARMA aquí con plantillas desde la traza: ningún caso lleva texto escrito a mano.
  */
 import { tb, type TextoBilingue } from "@core/formatos/bilingue";
+import type { Operador } from "@core/plan/esquema";
 import type { Subtipo } from "@core/sintetico/esquema";
 import type { IdDemo } from "@/lib/demos";
 import { MIRADA_B, ORACULO_TEXTO_B } from "./demo-b/caso";
@@ -611,6 +612,47 @@ export const RAMA = {
       "the input guard flagged a hidden instruction: on to a person",
     ),
   },
+};
+
+/**
+ * El motivo técnico de una pausa (AU-S3-06): la arista que se cumplió, escrita aquí desde la traza. El texto que
+ * guardó Python en `payload.motivo` escribía `True` en las corridas anteriores al arreglo; la vitrina ya no lo copia.
+ */
+export const MOTIVO_TECNICO = {
+  operador: {
+    igual_a: tb("igual a", "equal to"),
+    distinto_de: tb("distinto de", "different from"),
+    menor_que: tb("menor que", "less than"),
+    mayor_que: tb("mayor que", "greater than"),
+    menor_o_igual_que: tb("menor o igual que", "at most"),
+    mayor_o_igual_que: tb("mayor o igual que", "at least"),
+  } satisfies Record<Operador, TextoBilingue>,
+  tripleta: ((p: {
+    orden: number;
+    desde: string;
+    senal: string;
+    observado: TextoBilingue;
+    operador: TextoBilingue;
+    declarado: TextoBilingue;
+    aplicado: TextoBilingue;
+  }) =>
+    tb(
+      `Arista ${p.orden} de ${p.desde}: ${p.senal} (${p.observado.es}) ${p.operador.es} ${p.declarado.es} (${p.aplicado.es}).`,
+      `Edge ${p.orden} of ${p.desde}: ${p.senal} (${p.observado.en}) ${p.operador.en} ${p.declarado.en} (${p.aplicado.en}).`,
+    )) as Plantilla<{
+    orden: number;
+    desde: string;
+    senal: string;
+    observado: TextoBilingue;
+    operador: TextoBilingue;
+    declarado: TextoBilingue;
+    aplicado: TextoBilingue;
+  }>,
+  funcion: ((p: { orden: number; desde: string; llamada: TextoBilingue }) =>
+    tb(
+      `Arista ${p.orden} de ${p.desde}: ${p.llamada.es}.`,
+      `Edge ${p.orden} of ${p.desde}: ${p.llamada.en}.`,
+    )) as Plantilla<{ orden: number; desde: string; llamada: TextoBilingue }>,
 };
 
 export const PAUSA = {

@@ -351,7 +351,7 @@ const DECISIONES_MIRADA_3 = [
     ruta: "/_docs/BLUEPRINT.html",
     ancho: 1280,
     tema: "oscuro",
-    recorte: async (page) => ({ x: 0, y: 0, width: 1280, height: 1100 }),
+    recorte: async () => ({ x: 0, y: 0, width: 1280, height: 1100 }),
     mirar: "El diagrama y la tabla por pieza.",
     esperada:
       "Las piezas que sostienen la app con su costo (US$0 al mes), el punto único de falla (la suscripción) y «qué ve quién sin sesión: nadie»; ninguna dirección escrita.",

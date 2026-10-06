@@ -3,8 +3,8 @@
  * esqueleto de `caso.ts` (lo que recibió, qué hizo cada nodo, el relato, la pausa, el documento y el expediente).
  */
 import type { Idioma, TextoBilingue } from "@core/formatos/bilingue";
-import type { Traza } from "@core/formatos/traza";
-import { SI_NO } from "@/textos/caso";
+import type { DecisionDeArista, Traza } from "@core/formatos/traza";
+import { MOTIVO_TECNICO, SI_NO } from "@/textos/caso";
 import { decimal, decimalesDe } from "./formato";
 import type { PasoCaso, VistaCaso } from "./caso";
 
@@ -71,4 +71,53 @@ export interface PerfilCaso {
   /** Lo que entrega, sin la traza (el esqueleto la añade al final). */
   entrega: Array<{ titulo: string; detalle?: string }>;
   textos: VistaCaso["textos"];
+}
+
+/** Un valor dentro del motivo técnico, como lo escribe el plan: `true`, `false`, `null`; decimal con coma en español. */
+function valorDelMotivo(v: unknown): TextoBilingue {
+  if (typeof v === "boolean") {
+    const x = v ? "true" : "false";
+    return { es: x, en: x };
+  }
+  if (v === null || v === undefined) return { es: "null", en: "null" };
+  if (typeof v === "number" && !Number.isInteger(v))
+    return {
+      es: decimal(v, decimalesDe(v), "es"),
+      en: decimal(v, decimalesDe(v), "en"),
+    };
+  const x = typeof v === "string" ? v : JSON.stringify(v);
+  return { es: x, en: x };
+}
+
+/**
+ * El motivo técnico de una pausa (AU-S3-06): la arista que se cumplió, escrita desde lo que registró la traza y no
+ * desde el texto que guardó Python (que en las corridas anteriores al arreglo decía `True`).
+ */
+export function motivoTecnico(d: DecisionDeArista): TextoBilingue {
+  if (d.tipo === "funcion") {
+    const ent = d.entradas ?? {};
+    const llamada = (i: Idioma) =>
+      `${d.funcion ?? "?"}(${Object.keys(ent)
+        .sort()
+        .map((k) => `${k}=${valorDelMotivo(ent[k])[i]}`)
+        .join(", ")})`;
+    return MOTIVO_TECNICO.funcion({
+      orden: d.orden_arista,
+      desde: d.desde,
+      llamada: { es: llamada("es"), en: llamada("en") },
+    });
+  }
+  if (d.operador === null || d.senal === null)
+    throw new Error(
+      `vitrina: la arista ${d.orden_arista} de ${d.desde} es una tripleta sin señal u operador en la traza`,
+    );
+  return MOTIVO_TECNICO.tripleta({
+    orden: d.orden_arista,
+    desde: d.desde,
+    senal: d.senal,
+    observado: valorDelMotivo(d.valor_observado),
+    operador: MOTIVO_TECNICO.operador[d.operador],
+    declarado: valorDelMotivo(d.valor_declarado),
+    aplicado: valorDelMotivo(d.umbral_aplicado),
+  });
 }

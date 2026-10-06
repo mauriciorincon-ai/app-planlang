@@ -163,3 +163,29 @@ describe("regla 5-a: la forma no depende del perfil", () => {
     expect(forma(container)).toBe(antes);
   });
 });
+
+describe("el documento de rechazo del B sin aviso de IA (regla dura 12, AU-S3-07)", () => {
+  it("B-005, B-006 y B-014 dicen la falla con su marca, en los dos idiomas; un documento del A con aviso no la dice", async () => {
+    const b = await datosDemo("demo-b");
+    for (const id of ["B-005", "B-006", "B-014"])
+      for (const [idioma, chip, frase] of [
+        ["es", "Sin aviso de IA", "Este documento no trae su aviso de IA"],
+        ["en", "No AI notice", "This document carries no AI notice"],
+      ] as const) {
+        const { container, unmount } = render(
+          <Caso v={vistaCaso(b, id, idioma)} idioma={idioma} />,
+        );
+        const falla = container.querySelector('[data-falla="aviso-ia"]');
+        expect(falla, `${id} (${idioma})`).not.toBeNull();
+        expect(falla!.querySelector('[data-v="no-cumple"]')!.textContent).toBe(
+          chip,
+        );
+        expect(falla!.textContent).toContain(frase);
+        unmount();
+      }
+    const { container } = render(
+      <Caso v={vistaCaso(d, "A-017", "es")} idioma="es" />,
+    );
+    expect(container.querySelector('[data-falla="aviso-ia"]')).toBeNull();
+  });
+});

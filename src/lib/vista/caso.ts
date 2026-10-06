@@ -116,6 +116,8 @@ export interface VistaCaso {
     filas: Array<Fila & { nota?: string }>;
     /** El aviso de IA del documento; `null` si el documento no lo trae (la vista no lo inventa). */
     aviso: string | null;
+    /** Si el documento no trae su aviso de IA, la falla dicha (regla dura 12, AU-S3-07); `null` si lo trae. */
+    avisoFalta: { chip: string; texto: string } | null;
     completo: string;
   } | null;
   senales: Fila[];
