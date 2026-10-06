@@ -81,6 +81,7 @@ export function perfilDemoB(d: DatosDemoB, ctx: ContextoAgente): PerfilAgente {
     modelo,
     marca,
     cumple,
+    estado,
     con,
     pasosDe,
     senal,
@@ -121,7 +122,7 @@ export function perfilDemoB(d: DatosDemoB, ctx: ContextoAgente): PerfilAgente {
     total: n,
     casos: con(nodo).length,
     visitas: pasosDe(nodo).length,
-    criterios: frasesDeCriterios(crit, cumple),
+    criterios: frasesDeCriterios(crit, estado),
     cargas,
     reintentos: pasosDe(nodo).reduce((a, p) => a + p.reintentos_esquema, 0),
     faltantes: trazas

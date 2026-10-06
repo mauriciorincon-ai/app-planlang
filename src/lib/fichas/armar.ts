@@ -101,10 +101,20 @@ function cifrasAgenteA(d: DatosDemo, i: Idioma): CifraFicha[] {
       clave: "exactitud_extraccion",
       valor: red(c5.valor_medido * 100, 1),
       unidad: "%",
-      etiqueta: X(C.exactitud.etiqueta, i),
+      etiqueta: X(
+        C.exactitud.etiqueta({
+          k: c5.k?.observado ?? 1,
+          requerido: c5.k?.requerido ?? null,
+        }),
+        i,
+      ),
       fuente: "medido",
       detalle: X(
-        C.exactitud.detalle({ n: c5.n_poblacion, k: c5.k?.observado ?? 1 }),
+        C.exactitud.detalle({
+          n: c5.n_poblacion,
+          k: c5.k?.observado ?? 1,
+          requerido: c5.k?.requerido ?? null,
+        }),
         i,
       ),
     },

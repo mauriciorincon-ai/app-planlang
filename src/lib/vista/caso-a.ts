@@ -164,18 +164,12 @@ export function perfilCasoA(
 
   // ── el relato ────────────────────────────────────────────────────────────────────────────────────
   const pausa = pausaUnica(t.pausas_humanas, `el caso ${t.caso_id}`);
-  const motivoPausa = (): TextoBilingue =>
-    textoDeCategoria(
-      MOTIVO,
-      categoriaDeRegla(
-        reglaDeLaPausa(
-          t.caso_id,
-          pausa?.payload.motivo,
-          t.decisiones_de_arista,
-        ),
-      ),
-      "MOTIVO (src/textos/caso.ts)",
+  const categoriaPausa = (): string =>
+    categoriaDeRegla(
+      reglaDeLaPausa(t.caso_id, pausa?.payload.motivo, t.decisiones_de_arista),
     );
+  const motivoPausa = (): TextoBilingue =>
+    textoDeCategoria(MOTIVO, categoriaPausa(), "MOTIVO (src/textos/caso.ts)");
   const visito = (n: string) => t.nodos_visitados.includes(n);
   const relato: string[] = [
     X(RELATO.pidio({ servicio, mujer, edad: e.afiliado.edad }), i),
@@ -227,6 +221,7 @@ export function perfilCasoA(
             excluido: cob.estado_servicio === "excluido",
             causal: (cob.causal as string | null) ?? null,
             propuesta: decisionTb(String(cob.propuesta)),
+            conTope: cob.propuesta === "aprobar_parcial",
           }),
           i,
         ),
@@ -243,8 +238,16 @@ export function perfilCasoA(
       ),
     );
   }
+  // Si la pausa fue por la carga, su frase ya contó que la guardia la marcó: aquí solo va lo que pasó después.
   if (t.guardia_salida?.carga_detectada_en_entrada)
-    relato.push(X(RELATO.inyeccion(t.guardia_salida.severidad_accion), i));
+    relato.push(
+      X(
+        (persona && categoriaPausa() === "carga"
+          ? RELATO.inyeccionYaContada
+          : RELATO.inyeccion)(t.guardia_salida.severidad_accion),
+        i,
+      ),
+    );
   relato.push(
     X(
       RELATO.cierre({

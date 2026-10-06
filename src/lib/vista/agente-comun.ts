@@ -78,6 +78,8 @@ export interface ContextoAgente {
     id: string,
   ) => DatosDemo["informe"]["criterios"][number] | undefined;
   cumple: (id: string) => boolean;
+  /** El estado del criterio en el informe (cumple · incumple · incompleto). */
+  estado: (id: string) => string | undefined;
   con: (nodo: string) => Traza[];
   pasosDe: (nodo: string) => Traza["pasos"];
   senal: (t: Traza, k: string) => unknown;
@@ -103,6 +105,7 @@ export function contextoAgente(d: DatosDemo, i: Idioma): ContextoAgente {
     marca: MARCA_CORRIO(corrida)[i],
     criterio,
     cumple: (id) => criterio(id)?.estado === "cumple",
+    estado: (id) => criterio(id)?.estado,
     con: (nodo) => trazas.filter((t) => t.nodos_visitados.includes(nodo)),
     pasosDe: (nodo) =>
       trazas.flatMap((t) => t.pasos.filter((p) => p.nodo === nodo)),

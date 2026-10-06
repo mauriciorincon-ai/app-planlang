@@ -211,8 +211,12 @@ describe("pestañas de un panel", () => {
     render(<Pagina idioma="es" />);
     const panel = within(detalle("enrutador"));
     await act(async () =>
-      fireEvent.click(panel.getByRole("button", { name: /^Trazas · 20$/ })),
+      fireEvent.click(panel.getByRole("button", { name: /^Trazas · 200$/ })),
     );
+    // La corrida tiene 200 casos; la pestaña cuenta los 200 y lista el primer bloque de 20, y lo dice.
+    expect(
+      panel.getByText("Pasaron 200 casos; se listan los 20 primeros del lote."),
+    ).toBeTruthy();
     const mas = panel.getByRole("button", {
       name: "Ver 15 más: A-006 … A-020",
     });

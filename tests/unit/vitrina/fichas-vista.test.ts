@@ -59,17 +59,21 @@ describe("la ficha de reproducibilidad", () => {
 
   it("los pasos para repetirla, con los archivos de su manifiesto, en los dos idiomas", () => {
     expect(es.repro.pasos.map((p) => p.comando)).toEqual([
-      "pnpm plan:validar --verificar plans/demo-a/v1.3.json",
+      "pnpm plan:validar --verificar plans/demo-a/v1.5.json",
       "pnpm casos:generar --versionados",
-      "pnpm lote:demo",
+      // El plan y los casos con que corrió la corrida publicada (no los de omisión del comando).
+      "pnpm lote:demo --plan plans/demo-a/v1.5.json --casos data/casos/demo-a/planlang-a-002-200.json",
       "pnpm trazas:verificar",
-      "pnpm brecha:informe --corrida runs/demo-a/suscripcion-planlang-a-001-20-v1.2 --plan plans/demo-a/v1.3.json --salida data/vitrina/demo-a/suscripcion-planlang-a-001-20-v1.2 --verificar",
+      "pnpm brecha:informe --corrida runs/demo-a/suscripcion-planlang-a-002-200-v1.5 --plan plans/demo-a/v1.5.json --salida data/vitrina/demo-a/suscripcion-planlang-a-002-200-v1.5 --verificar",
     ]);
+    expect(es.repro.pasos[2]!.texto).toContain(
+      "el mismo comando 10 veces, de a 20 y espaciadas, hasta completar los 200 casos",
+    );
     // La línea base del B no sigue la convención (`-base` es la primera, descartada): se nombra.
     expect(esB.repro.pasos.map((p) => p.comando)).toEqual([
       "pnpm plan:validar --verificar plans/demo-b/v1.1.json",
       "pnpm casos:generar --versionados --demo b",
-      "pnpm lote:demo-b",
+      "pnpm lote:demo-b --plan plans/demo-b/v1.json --casos data/casos/demo-b/planlang-b-001-20.json",
       "pnpm trazas:verificar",
       "pnpm brecha:informe --corrida runs/demo-b/suscripcion-planlang-b-001-20 --plan plans/demo-b/v1.1.json --base runs/demo-b/suscripcion-planlang-b-001-20-base-v2 --salida data/vitrina/demo-b/suscripcion-planlang-b-001-20 --verificar",
     ]);
@@ -164,7 +168,7 @@ describe("cada ficha, como la pinta hoja-de-vida", () => {
       limites: "03",
       donde: "04",
     });
-    expect(es.app.tieneSub).toBe("6 grupos · 16 funcionalidades.");
+    expect(es.app.tieneSub).toBe("6 grupos · 19 funcionalidades.");
     expect(es.app.hitos.map((h) => h.etiqueta)).toEqual([
       "ciclo",
       "sprints cerrados",
@@ -179,23 +183,23 @@ describe("cada ficha, como la pinta hoja-de-vida", () => {
     const cifra = (v: VistaFichas, f: "app" | "agente", k: string) =>
       v[f].cifras.find((c) => c.clave === k)!;
     expect(cifra(es, "app", "costo_de_una_corrida")).toMatchObject({
-      valor: "0,963",
+      valor: "5,214",
       unidad: "US$",
       fuenteTexto: "calculada",
     });
-    expect(cifra(en, "app", "costo_de_una_corrida").valor).toBe("0.963");
+    expect(cifra(en, "app", "costo_de_una_corrida").valor).toBe("5.214");
     expect(cifra(en, "app", "costo_de_una_corrida").fuenteTexto).toBe(
       "computed",
     );
     // «criterios» ya está en la etiqueta: no se repite.
     expect(cifra(es, "app", "criterios_cumplidos").unidad).toBeNull();
-    expect(cifra(es, "agente", "costo_por_caso").valor).toBe("0,034");
+    expect(cifra(es, "agente", "costo_por_caso").valor).toBe("0,025");
     expect(cifra(es, "agente", "latencia_mediana")).toMatchObject({
-      valor: "11,8",
+      valor: "8,1",
       unidad: "segundos",
     });
     expect(cifra(en, "agente", "latencia_mediana")).toMatchObject({
-      valor: "11.8",
+      valor: "8.1",
       unidad: "seconds",
     });
   });

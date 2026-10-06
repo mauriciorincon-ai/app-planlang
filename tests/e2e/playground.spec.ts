@@ -4,9 +4,10 @@ import { consolaLimpia, desbordeLateral, sinViolacionesAxe } from "./_comun";
 /**
  * P5 Playground en el export servido (S2 fase 3): se llega por su pestaña y se lee en los dos idiomas, temas y
  * perfiles sin desplazar la página de lado, sin violaciones de axe (críticas, serias ni moderadas) y sin errores de hidratación; los
- * deslizadores se mueven con el teclado y recalculan en el navegador (U1 a 0,90 manda A-008 a una persona; U2 a 1600
- * introduce el error de A-010, cuyo enlace abre la traza en el paso donde el camino se separa); el modo Texas es un interruptor que no cambia ningún caso y lo dice; «Volver al plan»
- * deshace; y con movimiento reducido lo del experto aparece visible.
+ * deslizadores se mueven con el teclado y recalculan en el navegador sobre la corrida de 200 del plan v1.5 (U1 a 0,85
+ * manda A-089 y A-144 a una persona; U2 a 1600 introduce doce errores, el primero A-007, cuyo enlace abre la traza en el
+ * paso donde el camino se separa); el modo Texas es un interruptor que manda a una persona las nueve aprobaciones en parte
+ * y dice que es la revisión que exige; «Volver al plan» deshace; y con movimiento reducido lo del experto aparece visible.
  */
 
 const T = {
@@ -22,8 +23,8 @@ const T = {
     u2: /Alto costo/,
     texas: /Modo Texas/,
     enPlan: "En los valores del plan",
-    movidoU1: "Movido: U1 0,90.",
-    texasNada: "Encender el modo Texas no cambia ningún caso",
+    movidoU1: "Movido: U1 0,85.",
+    texasExige: "la exige el modo Texas",
     error: "error: debía ir a una persona",
     volver: "Volver al plan",
   },
@@ -39,8 +40,8 @@ const T = {
     u2: /High cost/,
     texas: /Texas mode/,
     enPlan: "At the plan values",
-    movidoU1: "Moved: U1 0.90.",
-    texasNada: "Turning Texas mode on changes no case",
+    movidoU1: "Moved: U1 0.85.",
+    texasExige: "required by Texas mode",
     error: "error: it had to go to a person",
     volver: "Back to the plan",
   },
@@ -87,7 +88,7 @@ for (const idioma of ["es", "en"] as const) {
           expect(errores).toEqual([]);
         });
 
-    test("con el teclado: U1 a 0,90 manda A-008 a una persona y «Volver al plan» lo deshace", async ({
+    test("con el teclado: U1 a 0,85 manda A-089 y A-144 a una persona y «Volver al plan» lo deshace", async ({
       page,
     }) => {
       await page.goto(`/${idioma}/playground`);
@@ -99,12 +100,12 @@ for (const idioma of ["es", "en"] as const) {
       await expect(volver).toBeDisabled();
       expect(await borde()).toBe("dashed");
       await u1.focus();
-      for (let k = 0; k < 3; k++) await page.keyboard.press("ArrowRight");
+      for (let k = 0; k < 2; k++) await page.keyboard.press("ArrowRight");
       await expect(volver).toBeEnabled();
       expect(await borde()).toBe("solid");
-      await expect(u1).toHaveValue("0.9");
-      await expect(cambios(page)).toHaveCount(1);
-      await expect(cambios(page).first()).toHaveAttribute("data-caso", "A-008");
+      await expect(u1).toHaveValue("0.85");
+      await expect(cambios(page)).toHaveCount(2);
+      await expect(cambios(page).first()).toHaveAttribute("data-caso", "A-089");
       await expect(estado(page)).toContainText(t.movidoU1);
       expect(await desbordeLateral(page)).toBeLessThanOrEqual(0);
       await sinViolacionesAxe(page);
@@ -114,7 +115,7 @@ for (const idioma of ["es", "en"] as const) {
       await expect(estado(page)).toContainText(t.enPlan);
     });
 
-    test("U2 a 1600 introduce el error de A-010, que enlaza a su traza", async ({
+    test("U2 a 1600 introduce doce errores; el de A-007 enlaza a su traza", async ({
       page,
     }) => {
       await page.goto(`/${idioma}/playground?tema=claro`);
@@ -122,20 +123,21 @@ for (const idioma of ["es", "en"] as const) {
       await u2.focus();
       for (let k = 0; k < 6; k++) await page.keyboard.press("ArrowRight");
       await expect(u2).toHaveValue("1600");
-      const fila = page.locator('#cambios [data-caso="A-010"]');
+      await expect(cambios(page)).toHaveCount(12);
+      const fila = page.locator('#cambios [data-caso="A-007"]');
       await expect(fila).toContainText(t.error);
       expect(await desbordeLateral(page)).toBeLessThanOrEqual(0);
       await sinViolacionesAxe(page);
       await fila.getByRole("link").click();
       // Abre el caso en el paso donde el camino se separa (AU-S2-P-5), y ese paso queda a la vista.
       await expect(page).toHaveURL(
-        new RegExp(`/${idioma}/caso/A-010#paso-\\d+$`),
+        new RegExp(`/${idioma}/caso/A-007#paso-\\d+$`),
       );
       const paso = new URL(page.url()).hash;
       await expect(page.locator(`li${paso}`)).toBeInViewport();
     });
 
-    test("el modo Texas es un interruptor: con la barra espaciadora se enciende y no cambia ningún caso", async ({
+    test("el modo Texas es un interruptor: con la barra espaciadora se enciende y manda a una persona las nueve aprobaciones en parte", async ({
       page,
     }) => {
       await page.goto(`/${idioma}/playground`);
@@ -144,8 +146,9 @@ for (const idioma of ["es", "en"] as const) {
       await texas.focus();
       await page.keyboard.press("Space");
       await expect(texas).toHaveAttribute("aria-checked", "true");
-      await expect(cambios(page)).toHaveCount(0);
-      await expect(page.locator("#cambios")).toContainText(t.texasNada);
+      await expect(cambios(page)).toHaveCount(9);
+      await expect(cambios(page).first()).toHaveAttribute("data-caso", "A-006");
+      await expect(cambios(page).first()).toContainText(t.texasExige);
       await page.keyboard.press("Enter");
       await expect(texas).toHaveAttribute("aria-checked", "false");
     });

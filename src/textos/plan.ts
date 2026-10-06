@@ -192,17 +192,27 @@ export const CIFRAS = {
     sin_probar: number;
   }>,
   criterios: tb("criterios", "criteria"),
-  cumplieron: ((p: { si: number; no: number }) =>
-    p.no
-      ? tb(
-          `${p.si} cumplieron y ${p.no} no en la corrida`,
-          `${p.si} met and ${p.no} did not in the run`,
-        )
-      : tb(
-          `${p.si} cumplieron en la corrida`,
-          `${p.si} met in the run`,
-        )) as Plantilla<{
+  cumplieron: ((p: { si: number; no: number; incompletos: number }) => {
+    const es = [
+      `${p.si} cumplieron`,
+      p.no ? `${p.no} no` : "",
+      p.incompletos
+        ? `${p.incompletos} ${p.incompletos === 1 ? "quedó incompleto" : "quedaron incompletos"}`
+        : "",
+    ].filter(Boolean);
+    const en = [
+      `${p.si} met`,
+      p.no ? `${p.no} did not` : "",
+      p.incompletos ? `${p.incompletos} left incomplete` : "",
+    ].filter(Boolean);
+    const y = (l: string[], c: string) =>
+      l.length <= 1
+        ? l.join("")
+        : `${l.slice(0, -1).join(", ")} ${c} ${l.at(-1)}`;
+    return tb(`${y(es, "y")} en la corrida`, `${y(en, "and")} in the run`);
+  }) as Plantilla<{
     si: number;
+    incompletos: number;
     no: number;
   }>,
   umbrales: tb("umbrales", "thresholds"),
@@ -422,12 +432,16 @@ export const CRITERIO = {
         "A typical case is resolved in {plan:C7.objetivo} seconds or less.",
       ),
       C8: tb(
-        "Toda negación lleva su documento completo, en español y en inglés.",
-        "Every denial carries its complete document, in Spanish and English.",
+        "Toda negación, también la parcial, lleva su documento completo, en español y en inglés.",
+        "Every denial, partial ones included, carries its complete document, in Spanish and English.",
       ),
       C9: tb(
         "Quien revisa ve el caso completo, con evidencia y contraevidencia.",
         "Whoever reviews sees the full case, with evidence and counter-evidence.",
+      ),
+      C10: tb(
+        "Con el modo Texas encendido, ninguna negación, ni siquiera en parte, sale sin una persona.",
+        "With Texas mode on, no denial, not even a partial one, goes out without a person.",
       ),
     },
     "demo-b": CRITERIO_LIDER_B,
@@ -472,19 +486,30 @@ export const CONTRATO = {
     reglas: number;
     decisiones: string;
     diferencias: number;
-  }) =>
-    p.diferencias === 0
+    /** Las corridas que midió el informe (la publicada, sus repeticiones y su línea base). */
+    corridas: number;
+  }) => {
+    const quien =
+      p.corridas === 1
+        ? tb("la corrida rehízo sus", "the run redid its")
+        : tb(
+            `las ${p.corridas} corridas medidas rehicieron sus`,
+            `the ${p.corridas} measured runs redid their`,
+          );
+    return p.diferencias === 0
       ? tb(
-          `Las ${p.reglas} reglas del plan deciden por dónde sigue un caso; la corrida rehízo sus ${p.decisiones} decisiones con estas mismas reglas en otro lenguaje y no hubo una sola diferencia.`,
-          `The plan’s ${p.reglas} rules decide where a case goes next; the run redid its ${p.decisiones} decisions with these same rules in another language and there was not a single difference.`,
+          `Las ${p.reglas} reglas del plan deciden por dónde sigue un caso; ${quien.es} ${p.decisiones} decisiones con estas mismas reglas en otro lenguaje y no hubo una sola diferencia.`,
+          `The plan’s ${p.reglas} rules decide where a case goes next; ${quien.en} ${p.decisiones} decisions with these same rules in another language and there was not a single difference.`,
         )
       : tb(
-          `Las ${p.reglas} reglas del plan deciden por dónde sigue un caso; la corrida rehízo sus ${p.decisiones} decisiones con estas mismas reglas en otro lenguaje y hubo ${p.diferencias} diferencias.`,
-          `The plan’s ${p.reglas} rules decide where a case goes next; the run redid its ${p.decisiones} decisions with these same rules in another language and there were ${p.diferencias} differences.`,
-        )) as Plantilla<{
+          `Las ${p.reglas} reglas del plan deciden por dónde sigue un caso; ${quien.es} ${p.decisiones} decisiones con estas mismas reglas en otro lenguaje y hubo ${p.diferencias} diferencias.`,
+          `The plan’s ${p.reglas} rules decide where a case goes next; ${quien.en} ${p.decisiones} decisions with these same rules in another language and there were ${p.diferencias} differences.`,
+        );
+  }) as Plantilla<{
     reglas: number;
     decisiones: string;
     diferencias: number;
+    corridas: number;
   }>,
   conExperto: tb(
     "Con «Experto», las ves una por una.",

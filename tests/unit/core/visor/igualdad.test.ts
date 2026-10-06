@@ -64,9 +64,9 @@ describe("diagrama = grafo", () => {
 
   it("rojo si una regla cambia de umbral, se pierde, o aparece una que el plan no tiene", () => {
     const m = copia();
-    const r1 = m.flujos.find((f) => f.id === "decision-a-pausa-humana-r1")!;
-    r1.condicion = { senal: "senal-confianza", operador: "<", valor: "U2" };
-    m.flujos = m.flujos.filter((f) => f.id !== "extractor-a-aclaracion-r1");
+    const r2 = m.flujos.find((f) => f.id === "decision-a-pausa-humana-r2")!;
+    r2.condicion = { senal: "senal-confianza", operador: "<", valor: "U2" };
+    m.flujos = m.flujos.filter((f) => f.id !== "extractor-a-aclaracion-r2");
     m.flujos.push({
       ...m.flujos[0]!,
       id: "inventada",
@@ -75,10 +75,10 @@ describe("diagrama = grafo", () => {
     const c = diagramaIgualGrafo(m, GRAFO, CONTRATO);
     expect(c.fallas).toEqual(
       expect.arrayContaining([
-        "regla del plan sin su flujo en el dibujo: decision#1",
-        "regla del plan sin su flujo en el dibujo: extractor#1",
+        "regla del plan sin su flujo en el dibujo: decision#2",
+        "regla del plan sin su flujo en el dibujo: extractor#2",
         "flujo con una regla que el plan no declara: inventada",
-        "flujo con una regla que el plan no declara: decision-a-pausa-humana-r1",
+        "flujo con una regla que el plan no declara: decision-a-pausa-humana-r2",
       ]),
     );
   });
@@ -99,7 +99,11 @@ describe("diagrama = grafo", () => {
     expect(c.fallas).toContain(
       "nodo exigido y ausente del grafo sin la marca «exigido»: aclaracion",
     );
-    expect(c.reglas.exigidasAusentes).toEqual(["aclaracion#1", "extractor#1"]);
+    expect(c.reglas.exigidasAusentes).toEqual([
+      "aclaracion#1",
+      "aclaracion#2",
+      "extractor#2",
+    ]);
 
     const conExtra = {
       ...GRAFO,

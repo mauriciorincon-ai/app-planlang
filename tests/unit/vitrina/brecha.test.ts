@@ -1,8 +1,8 @@
 /**
  * P4 Brecha: la vista se arma desde el informe que declara el manifiesto y lo publica con sus fallas (regla dura 9):
- * el veredicto con alertas, S3 refutado y S1 sin probar al frente, las brechas no previstas como falla, lo cumplido
- * con nota y su porqué medido en el playground. Una lectura editorial que falte no se suple con un genérico: el build
- * se detiene nombrándola.
+ * sobre la corrida de 200 del plan v1.5, el veredicto con alertas, S2 y S3 refutados al frente, C5 incompleto (pass^k
+ * con una corrida de tres), las brechas no previstas como falla, lo cumplido con nota y su porqué medido en el
+ * playground. Una lectura editorial que falte no se suple con un genérico: el build se detiene nombrándola.
  */
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -10,6 +10,7 @@ import { beforeAll, describe, expect, it } from "vitest";
 import { compactar } from "@core/playground/compactar";
 import { consecuencias, umbralesDelPlan } from "@core/playground/consecuencias";
 import { datosDemo, type DatosDemo } from "@/lib/datos/vitrina";
+import { idsDeCasos } from "@/lib/vista/caso";
 import { VEREDICTOS } from "@/textos/comun";
 import { noCumple } from "./_brecha-no-cumple";
 import {
@@ -33,10 +34,21 @@ describe("el veredicto y el balance", () => {
     expect(es.veredicto.clase).toBe("alerta");
     expect(es.veredicto.texto).toBe("Cumple con alertas");
     expect(en.veredicto.texto).toBe("Meets with warnings");
+    expect(es.veredicto.lider).toContain("(S2)");
     expect(es.veredicto.lider).toContain("(S3)");
-    expect(es.veredicto.lider).toContain("(S1)");
+    // C5 no se calla: incompleto no es cumplido ni incumplido.
+    expect(es.veredicto.lider).toMatch(
+      /Y C5 quedó incompleto: se midió con menos corridas de las que pide su regla\.$/,
+    );
+    expect(en.veredicto.lider).toMatch(
+      /And C5 was left incomplete: measured with fewer runs than its rule asks for\.$/,
+    );
+    const total = d.informe.contrato_de_grafo.rf_09_2.reduce(
+      (a, r) => a + r.visitas,
+      0,
+    );
     expect(es.veredicto.experto).toContain(
-      "RF-09.2: 0 diferencias en 233 decisiones",
+      `RF-09.2: 0 diferencias en ${total} decisiones`,
     );
   });
 
@@ -55,7 +67,7 @@ describe("el veredicto y el balance", () => {
     }
   });
 
-  it("seis renglones; en supuestos, S2 cumplió, S3 falló y S1 quedó sin probar", () => {
+  it("seis renglones; en supuestos, S1 cumplió y S2 y S3 fallaron; en criterios, C5 quedó sin decidir", () => {
     expect(es.balance.map((b) => b.clave)).toEqual([
       "criterios",
       "riesgos",
@@ -65,30 +77,67 @@ describe("el veredicto y el balance", () => {
       "cruzada",
     ]);
     const s = es.balance.find((b) => b.clave === "supuestos")!;
-    expect(s.cumplio?.ids).toBe("S2");
-    expect(s.fallo).toMatchObject({ ids: "S3", href: "#f-S3" });
-    expect(s.sinProbar).toMatchObject({ ids: "S1", href: "#f-S1" });
+    expect(s.cumplio?.ids).toBe("S1");
+    expect(s.fallo).toMatchObject({ ids: "S2, S3", href: "#f-S2" });
+    expect(s.sinProbar).toBeNull();
+    const c = es.balance.find((b) => b.clave === "criterios")!;
+    expect(c.sinProbar).toMatchObject({ ids: "C5", href: "#f-C5" });
   });
 });
 
 describe("las fallas a la vista (regla dura 9)", () => {
-  it("lo que falló: S3 y las respuestas fuera de formato; lo sin probar: S1", () => {
-    expect(es.fallos.map((f) => f.codigo)).toEqual(["S3", "no previsto"]);
+  it("lo que falló: S2, S3 y lo que vio un evaluador; lo sin decidir: C5", () => {
+    expect(es.fallos.map((f) => f.codigo)).toEqual(["S2", "S3", "no previsto"]);
     expect(es.fallos.every((f) => f.clase === "no-cumple")).toBe(true);
     expect(es.sinProbar.map((f) => [f.codigo, f.clase])).toEqual([
-      ["S1", "beta"],
+      ["C5", "beta"],
     ]);
-    // Los casos en que difieren multiagente y línea base enlazan a su traza.
-    expect(es.fallos[0]!.casos.map((c) => c.href)).toEqual([
-      "/es/caso/A-008",
-      "/es/caso/A-012",
-      "/es/caso/A-020",
-    ]);
+    // Los casos en que difieren multiagente y línea base enlazan a su traza si tienen página; los demás, sin enlace.
+    const s3 = es.fallos.find((f) => f.codigo === "S3")!;
+    const distintos = d.informe.supuestos.find((x) => x.id === "S3")!
+      .comparacion!.casos_distintos;
+    expect(s3.casos.map((c) => c.id)).toEqual(distintos);
+    const conPagina = new Set(idsDeCasos(d));
+    for (const c of s3.casos)
+      expect(c.href, c.id).toBe(
+        conPagina.has(c.id) ? `/es/caso/${c.id}` : null,
+      );
   });
 
-  it("C3 se cumple con nota, y el umbral que lo rompe lo mide el playground (U2 en 1500 → A-010)", () => {
+  it("S2 dice lo que midió frente a lo que pide el plan, no el motivo crudo del verificador", () => {
+    const s2 = es.fallos.find((f) => f.codigo === "S2")!;
+    const m = d.informe.supuestos.find((x) => x.id === "S2")!;
+    expect(s2.lider[1]).toMatch(
+      /^Midió tasa \d+(,\d)?\u00a0% \(el plan pide ≥ 95\u00a0%\), sobre \d+ casos\.$/,
+    );
+    expect(s2.lider[1]).toContain(`sobre ${m.n} casos`);
+    expect(s2.lider.join(" ")).not.toContain("tasa_min");
+  });
+
+  it("lo no previsto dice cada detalle una vez, con sus casos", () => {
+    const np = es.fallos.find((f) => f.codigo === "no previsto")!;
+    const ids = d.informe.brechas_no_previstas.brechas.map((b) => b.caso_id!);
+    expect(np.lider[1]).toBe(
+      `La extracción no coincide con la verdad conocida (${ids.slice(0, -1).join(", ")} y ${ids.at(-1)}).`,
+    );
+  });
+
+  it("la lectura editorial de S3 refutado («la exactitud extra se paga en tiempo») solo vale si las cifras la sostienen", () => {
+    const s3 = d.informe.supuestos.find((x) => x.id === "S3")!;
+    if (s3.estado !== "refutado") return;
+    const c = s3.comparacion!;
+    // Si una corrida nueva da otro sentido, esta prueba obliga a reescribir LECTURA_SUPUESTO_A["S3:refutado"].
+    expect(c.exactitud.multiagente).toBeGreaterThan(c.exactitud.agente_unico);
+    expect(c.latencia_mediana_s.multiagente!).toBeGreaterThan(
+      c.latencia_mediana_s.agente_unico!,
+    );
+  });
+
+  it("C3 se cumple con nota, y el umbral que lo rompe lo mide el playground (U2 en 1200 → cuatro casos)", () => {
     const c3 = es.conNota.find((f) => f.codigo === "C3")!;
-    expect(c3.lider.join(" ")).toContain("con U2 en 1500");
+    expect(c3.lider.join(" ")).toContain(
+      "con U2 en 1200, deja de cumplirse (A-007, A-083, A-142 y A-191 saldrían sin persona)",
+    );
     expect(c3.enlaces.map((e) => e.href)).toContain("/es/playground");
     const c = compactar(
       d.plan,
@@ -99,11 +148,11 @@ describe("las fallas a la vista (regla dura 9)", () => {
     );
     expect(umbralQueLoRompe(c, "C3")).toEqual({
       umbral: "U2",
-      valor: 1500,
-      casos: ["A-010"],
+      valor: 1200,
+      casos: ["A-007", "A-083", "A-142", "A-191"],
     });
-    // Un paso antes (1400) todavía se cumple: 1500 es el más cercano al plan.
-    const r = consecuencias(c, { ...umbralesDelPlan(c), U2: 1400 });
+    // Un paso antes (1100) todavía se cumple: 1200 es el más cercano al plan.
+    const r = consecuencias(c, { ...umbralesDelPlan(c), U2: 1100 });
     expect(r.criterios.find((x) => x.id === "C3")!.estado).toBe("cumple");
   });
 
@@ -120,10 +169,11 @@ describe("las fallas a la vista (regla dura 9)", () => {
 
   it("R8 se cuenta en sesiones, no en casos", () => {
     const r8 = es.cumplido.riesgos.items.find((x) => x.codigo === "R8")!;
-    expect(r8.valor).toBe("0 de 1 sesión");
+    // La corrida de 200 corrió en 10 sesiones de 20.
+    expect(r8.valor).toBe("0 de 10 sesiones");
     expect(
       en.cumplido.riesgos.items.find((x) => x.codigo === "R8")!.valor,
-    ).toBe("0 of 1 session");
+    ).toBe("0 of 10 sessions");
   });
 });
 
@@ -149,8 +199,19 @@ describe("las nueve secciones del informe", () => {
       "U3",
       "U4",
     ]);
+    // Los nueve casos con costo exactamente 1000: el borde de U2 (no inclusivo) que el lote siembra.
     const u2 = es.playground.filas.find((f) => f.id === "U2")!;
-    expect(u2.justo.map((x) => x.id)).toEqual(["A-003"]);
+    expect(u2.justo.map((x) => x.id)).toEqual([
+      "A-010",
+      "A-040",
+      "A-067",
+      "A-110",
+      "A-118",
+      "A-127",
+      "A-153",
+      "A-161",
+      "A-173",
+    ]);
   });
 });
 
@@ -179,7 +240,7 @@ describe("un informe que no cumple se publica con sus fallas al frente", () => {
       v.fallos.find((f) => f.codigo === "R2")!.casos.map((c) => c.id),
     ).toEqual(["A-015"]);
     expect(v.sinProbar.map((f) => f.codigo)).toEqual(
-      expect.arrayContaining(["S1", "C6"]),
+      expect.arrayContaining(["C5", "C6"]),
     );
     expect(v.cumplido.criterios.items.map((c) => c.codigo)).not.toContain("C7");
     expect(v.cumplido.riesgos.items.map((c) => c.codigo)).not.toContain("R2");
@@ -194,9 +255,9 @@ describe("una lectura editorial que falta detiene el build", () => {
   it("un supuesto en un estado sin lectura se nombra", () => {
     const otro = structuredClone(d);
     const s2 = otro.informe.supuestos.find((s) => s.id === "S2")!;
-    (s2 as { estado: string }).estado = "refutado";
+    (s2 as { estado: string }).estado = "sin_probar";
     expect(() => vistaBrecha(otro, "es")).toThrow(
-      /S2 «refutado» y Brecha no tiene su lectura/,
+      /S2 «sin_probar» y Brecha no tiene su lectura/,
     );
   });
 

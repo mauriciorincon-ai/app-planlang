@@ -87,6 +87,9 @@ export function filaDeDemo(datos: DatosDemo, idioma: Idioma): FilaDemo {
   const sinProbar = informe.supuestos.filter(
     (s) => s.estado === "sin_probar",
   ).length;
+  const incompletosN = informe.criterios.filter(
+    (c) => c.estado === "incompleto",
+  ).length;
   // Las mismas fallas que nombra «Medí la brecha»: criterios incumplidos, riesgos ocurridos, supuestos refutados y,
   // si las hay, las brechas no previstas como una sola.
   const nFallas =
@@ -101,6 +104,9 @@ export function filaDeDemo(datos: DatosDemo, idioma: Idioma): FilaDemo {
   ];
   const cola = [
     ...(nFallas > 0 ? [conteo(nFallas, FORMAS.falla, idioma)] : []),
+    ...(incompletosN > 0
+      ? [conteo(incompletosN, FORMAS.criterioIncompleto, idioma)]
+      : []),
     ...(sinProbar > 0
       ? [conteo(sinProbar, FORMAS.supuestoSinProbar, idioma)]
       : []),
@@ -201,6 +207,10 @@ export function vistaEntrada(datos: DatosDemo, idioma: Idioma): VistaEntrada {
   const nCrit = cuadros.length;
   const cumplen = cuadros.filter((c) => c.estado === "cumple").length;
   const incumplidos = informe.criterios.filter((c) => c.estado === "incumple");
+  // Incompleto: el informe no pudo decidirlo (pass^k con menos corridas de las exigidas); se nombra, no se calla.
+  const incompletos = informe.criterios.filter(
+    (c) => c.estado === "incompleto",
+  );
   const nRiesgos = informe.riesgos.length;
   const ocurridos = informe.riesgos.filter((r) => r.estado === "ocurrio");
   const refutados = informe.supuestos.filter((s) => s.estado === "refutado");
@@ -236,6 +246,12 @@ export function vistaEntrada(datos: DatosDemo, idioma: Idioma): VistaEntrada {
           },
         ]
       : []),
+    ...incompletos.map((c) => ({
+      tipo: "sin-probar" as const,
+      texto: ARMADO.incompleto({ id: c.id, texto: c.enunciado[idioma] })[
+        idioma
+      ],
+    })),
     ...sinProbar.map((s) => ({
       tipo: "sin-probar" as const,
       texto: ARMADO.sinProbar({
@@ -278,16 +294,21 @@ export function vistaEntrada(datos: DatosDemo, idioma: Idioma): VistaEntrada {
     `Claude Code ${version(entorno.claude_cli)}`,
   ].join(" · ");
 
+  // Los lotes de la regla 6 son las sesiones (20 casos espaciados), no el archivo de casos: la corrida de 200 corrió
+  // en 10 sesiones de 20 («en lotes de 200» decía lo contrario de lo que pasó).
+  const casosPorSesion = Math.ceil(
+    ficha.corrida.casos_ejecutados / Math.max(1, ficha.corrida.sesiones),
+  );
   const modelo = (
     ficha.corrida.proveedor === "suscripcion"
       ? ARMADO.modeloSuscripcion({
           modelo: ficha.corrida.modelo,
-          lote: ficha.casos.n_lote,
+          lote: casosPorSesion,
         })
       : ARMADO.modeloProveedor({
           modelo: ficha.corrida.modelo,
           proveedor: ficha.corrida.proveedor,
-          lote: ficha.casos.n_lote,
+          lote: casosPorSesion,
         })
   )[idioma];
 
@@ -300,6 +321,7 @@ export function vistaEntrada(datos: DatosDemo, idioma: Idioma): VistaEntrada {
         n: nCrit,
         cumplen,
         incumplidos: incumplidos.map((c) => c.id),
+        incompletos: incompletos.map((c) => c.id),
       })[idioma],
       leyenda: {
         criteriosCumplen: leyendaCrit,

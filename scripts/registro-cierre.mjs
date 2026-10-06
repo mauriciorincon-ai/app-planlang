@@ -245,12 +245,13 @@ const CAMBIOS = [
     tema: "oscuro",
     accion: async (page) => {
       await page.getByRole("slider", { name: /Alto costo/ }).fill("1600");
-      await page.locator('#cambios [data-caso="A-010"] a').click();
-      await page.waitForURL(/caso\/A-010#paso-\d+$/);
+      // Corrida de 200 (S3): A-007 es el primero de los doce que U2 en 1600 deja salir sin persona.
+      await page.locator('#cambios [data-caso="A-007"] a').click();
+      await page.waitForURL(/caso\/A-007#paso-\d+$/);
     },
     recorte: async () => ({ x: 0, y: 0, width: 1280, height: 900 }),
-    donde: "U2 en 1600, «ver su traza» de A-010",
-    ver: "El caso A-010 abierto con su paso de decisión arriba de la ventana (no al principio de la página).",
+    donde: "U2 en 1600, «ver su traza» de A-007",
+    ver: "El caso A-007 abierto con su paso de decisión arriba de la ventana (no al principio de la página).",
   },
 ];
 

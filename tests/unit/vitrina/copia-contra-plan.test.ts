@@ -19,6 +19,9 @@ import { beforeAll, describe, expect, it } from "vitest";
 import { datosDemo, type DatosDemo } from "@/lib/datos/vitrina";
 import type { IdDemo } from "@/lib/demos";
 import { vistaAgente } from "@/lib/vista/agente";
+import { vistaBrecha } from "@/lib/vista/brecha";
+import { vistaEntrada } from "@/lib/vista/entrada";
+import { vistaPlayground } from "@/lib/vista/playground";
 import { idsDeCasos, vistaCaso } from "@/lib/vista/caso";
 import { conPlan, REFERENCIA_PLAN } from "@/lib/vista/plan-en-texto";
 import { vistaPlan } from "@/lib/vista/plan";
@@ -218,7 +221,7 @@ describe("2 · las plantillas {plan:…} se resuelven contra el plan", () => {
     );
     expect(
       conPlan("{plan:reglas.decision|Palabra} reglas", d.plan, "es", "demo-a"),
-    ).toBe("Cinco reglas");
+    ).toBe("Seis reglas");
   });
 
   it("las reglas del B se nombran con su vocabulario, no con el del A", () => {
@@ -226,9 +229,10 @@ describe("2 · las plantillas {plan:…} se resuelven contra el plan", () => {
     expect(conPlan("{plan:lista.decision}", b, "es", "demo-b")).toBe(
       "instrucción escondida, similitud desde U1, el investigador concluye «misma persona», riesgo desde U2, inconsistencias sobre U3 y propuesta de rechazar",
     );
-    // Leído con el vocabulario del A, el plan B detiene el build nombrando la regla que no conoce.
+    // Leído con el vocabulario del A, el plan B detiene el build nombrando la regla que no conoce (la carga ya la
+    // conoce: el plan v1.5 del A también la tiene).
     expect(() => conPlan("{plan:lista.decision}", b, "es", "demo-a")).toThrow(
-      /carga_detectada/,
+      /similitud_max/,
     );
   });
 
@@ -239,6 +243,10 @@ describe("2 · las plantillas {plan:…} se resuelven contra el plan", () => {
       for (const i of ["es", "en"] as const) {
         expect(JSON.stringify(vistaAgente(x, i))).not.toContain("{plan:");
         expect(JSON.stringify(vistaPlan(x, i))).not.toContain("{plan:");
+        // S3: la Brecha pintaba «{plan:C5.objetivo|%}» y «{plan:C7.objetivo}» sin resolver; esta prueba no la miraba.
+        expect(JSON.stringify(vistaBrecha(x, i))).not.toContain("{plan:");
+        expect(JSON.stringify(vistaPlayground(x, i))).not.toContain("{plan:");
+        expect(JSON.stringify(vistaEntrada(x, i))).not.toContain("{plan:");
         for (const id of idsDeCasos(x))
           expect(JSON.stringify(vistaCaso(x, id, i)), id).not.toContain(
             "{plan:",
@@ -347,31 +355,26 @@ describe("3 · los mapas editoriales citan criterios que existen y miden lo que 
   });
 });
 
-describe("4 · lo que la copia dice de la corrida de 200 es cierto (AU-S2-5)", () => {
-  const RUTA = "runs/demo-a/suscripcion-planlang-a-001-200-v1.4";
+describe("4 · la vitrina publica la corrida de 200 y ningún texto la anuncia en futuro (AU-S2-5, S3)", () => {
+  // En el S2 la copia citaba la corrida de 200 de la v1.4 como lo que «entra a la vitrina en el sprint 3». Desde el S3
+  // la vitrina publica la de 200 del plan v1.5: esas frases se quitaron y ninguna puede volver.
+  const RUTA = "runs/demo-a/suscripcion-planlang-a-002-200-v1.5";
 
-  it("los textos que la citan dicen lo que la corrida y el manifiesto sostienen", () => {
-    const citan = ls.filter((l) => /corrida de 200|200-case run/.test(l.texto));
-    expect(citan.length).toBeGreaterThanOrEqual(6);
-    for (const l of citan) {
-      // Ninguna la anuncia en futuro: la corrida existe.
-      expect(l.texto, `${l.archivo}:${l.linea}`).not.toMatch(
-        /tomará forma|will take shape|antes del lote|before the 200/,
-      );
-      expect(l.texto, `${l.archivo}:${l.linea}`).toMatch(/v1\.4/);
-    }
+  it("la corrida publicada es la de 200 del plan v1.5, y ningún texto la anuncia", () => {
+    expect(d.manifiesto.corrida.ruta).toBe(RUTA);
     const corrida = JSON.parse(
       readFileSync(join(RUTA, "corrida.json"), "utf8"),
     ) as { plan: { archivo: string }; trazas: unknown[] };
     expect(corrida.trazas).toHaveLength(200);
-    expect(corrida.plan.archivo).toBe("plans/demo-a/v1.4.json");
-    // «confirmó S1»
-    const inf = JSON.parse(
-      readFileSync(join(RUTA, "informe.json"), "utf8"),
-    ) as { supuestos: Array<{ id: string; estado: string }> };
-    expect(inf.supuestos.find((s) => s.id === "S1")?.estado).toBe("confirmado");
-    // «entra a la vitrina en el sprint 3»: la vitrina publica otra corrida.
-    expect(d.manifiesto.corrida.ruta).not.toBe(RUTA);
+    expect(corrida.plan.archivo).toBe("plans/demo-a/v1.5.json");
+    for (const l of ls)
+      expect(l.texto, `${l.archivo}:${l.linea}`).not.toMatch(
+        /tomará forma|will take shape|antes del lote de 200|before the 200|entra a la vitrina en el sprint 3|enters the showcase in sprint 3|en el sprint 3 entra|corrida de 200 de la v1\.4/i,
+      );
+    // «S1 confirmado» (la lectura de la Brecha) es lo que dice el informe publicado.
+    expect(d.informe.supuestos.find((x) => x.id === "S1")?.estado).toBe(
+      "confirmado",
+    );
   });
 });
 

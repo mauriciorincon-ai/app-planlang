@@ -124,7 +124,7 @@ describe("las reglas que el esquema no puede decir (el Zod de hoja-de-vida)", ()
   it("el export: el total cuadra con los grupos y producción va en null", () => {
     const exp = structuredClone(brochureExport(ds, repo, "es"));
     exp.funcionalidades.total += 1;
-    expect(problemasDeExport(exp).join(" ")).toMatch(/total declarado 17 ≠ 16/);
+    expect(problemasDeExport(exp).join(" ")).toMatch(/total declarado 20 ≠ 19/);
     const conEnlace = structuredClone(
       brochureExport(ds, repo, "es"),
     ) as unknown as {
@@ -165,11 +165,33 @@ describe("lo que dicen las fichas sale de los datos", () => {
     expect(valor("casos_con_persona")).toBe(
       d.informe.contrato_de_grafo.pausas.casos_con_pausa,
     );
-    expect(valor("exactitud_extraccion")).toBe(100);
-    expect(valor("latencia_mediana")).toBe(11.8);
+    // La corrida de 200 del plan v1.5: C5 medido con 1 de las 3 corridas que pide pass^3, y la etiqueta lo dice.
+    expect(valor("exactitud_extraccion")).toBe(96.2);
+    expect(
+      f.cifras.find((c) => c.clave === "exactitud_extraccion")!.etiqueta,
+    ).toBe("exactitud de extracción, 1 de 3 corridas (incompleto)");
+    expect(valor("latencia_mediana")).toBe(8.1);
     expect(valor("negaciones_sin_persona")).toBe(0);
-    expect(valor("costo_por_caso")).toBe(0.034);
+    expect(valor("costo_por_caso")).toBe(0.025);
     expect(f.cifras.every((c) => c.fuente)).toBe(true);
+  });
+
+  it("la exactitud dice cuántas corridas pide pass^k y cuántas se midieron; sin pass^k, no inventa «1 de 1»", () => {
+    const etiqueta = (x: typeof d) =>
+      fichaAgente(x, repo, "en").cifras.find(
+        (c) => c.clave === "exactitud_extraccion",
+      )!.etiqueta;
+    expect(etiqueta(d)).toBe("extraction accuracy, 1 of 3 runs (incomplete)");
+    const completo = structuredClone(d);
+    completo.informe.criterios.find((c) => c.id === "C5")!.k = {
+      requerido: 3,
+      observado: 3,
+      aplica_a: null,
+    };
+    expect(etiqueta(completo)).toBe("extraction accuracy, 3 of 3 runs");
+    const sinK = structuredClone(d);
+    sinK.informe.criterios.find((c) => c.id === "C5")!.k = null;
+    expect(etiqueta(sinK)).toBe("extraction accuracy");
   });
 
   it("un bloque por nodo del contrato, en su orden, sin cuenta de funcionalidades, y cada nodo hace un paso del proceso", () => {
@@ -221,7 +243,7 @@ describe("lo que dicen las fichas sale de los datos", () => {
       a.ficha_reproducibilidad.corrida.casos_ejecutados +
         b.ficha_reproducibilidad.corrida.casos_ejecutados,
     );
-    expect(m("costo_de_una_corrida").valor).toBe(0.9634);
+    expect(m("costo_de_una_corrida").valor).toBe(5.2136);
     for (const k of [
       "criterios_cumplidos",
       "casos_sinteticos",
@@ -229,16 +251,17 @@ describe("lo que dicen las fichas sale de los datos", () => {
     ])
       expect(m(k).detalle, k).toMatch(/Demo A: .+ Demo B: /);
     expect(m("costo_de_una_corrida").detalle).toContain(
-      "Demo A: US$ 0,6704 por 20 casos. Demo B: US$ 0,293 por 20 casos.",
+      "Demo A: US$ 4,9206 por 200 casos. Demo B: US$ 0,293 por 20 casos.",
     );
   });
 
-  it("el export cuenta lo construido: 16 funcionalidades en 6 grupos, una cifra por ADR", () => {
+  it("el export cuenta lo construido: 19 funcionalidades en 6 grupos, una cifra por ADR", () => {
     const exp = brochureExport(ds, repo, "es");
+    // S3: el entrevistador (Planear), el demo B y el expediente (Correr).
     expect(exp.funcionalidades.grupos.map((g) => g.features.length)).toEqual([
-      3, 4, 4, 1, 1, 3,
+      4, 6, 4, 1, 1, 3,
     ]);
-    expect(exp.funcionalidades.total).toBe(16);
+    expect(exp.funcionalidades.total).toBe(19);
     expect(
       exp.metricas.find((m) => m.clave === "decisiones_registradas")!.valor,
     ).toBe(repo.adrs);

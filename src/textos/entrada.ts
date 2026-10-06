@@ -285,10 +285,7 @@ export const CATEGORIA_DE_BRECHA: Record<
   },
   // Una falla que nombra un evaluador del dominio (M-20) y que ningún riesgo del plan cubría.
   evaluador: {
-    uno: tb(
-      "falla que solo vio un evaluador",
-      "failure only an evaluator saw",
-    ),
+    uno: tb("falla que solo vio un evaluador", "failure only an evaluator saw"),
     varios: tb(
       "fallas que solo vio un evaluador",
       "failures only an evaluator saw",
@@ -344,6 +341,10 @@ export const FORMAS = {
     uno: tb("supuesto sin probar", "assumption untested"),
     varios: tb("supuestos sin probar", "assumptions untested"),
   },
+  criterioIncompleto: {
+    uno: tb("criterio incompleto", "criterion incomplete"),
+    varios: tb("criterios incompletos", "criteria incomplete"),
+  },
   corrida: { uno: tb("corrida", "run"), varios: tb("corridas", "runs") },
   decision: {
     uno: tb("decisión", "decision"),
@@ -394,6 +395,15 @@ export const ARMADO = {
     id: string;
     texto: string;
   }>,
+  /** Un criterio que el informe no pudo decidir (pass^k con menos corridas de las exigidas): ni cumple ni falla. */
+  incompleto: ((p: { id: string; texto: string }) =>
+    tb(
+      `Incompleto ${p.id}: ${p.texto}`,
+      `${p.id} incomplete: ${p.texto}`,
+    )) as Plantilla<{
+    id: string;
+    texto: string;
+  }>,
   corridaCorta: ((v: string) =>
     tb(`corrida ${v}`, `run ${v}`)) as Plantilla<string>,
   criteriosCumplen: ((c: string) =>
@@ -430,11 +440,17 @@ export const ARMADO = {
     n: number;
     cumplen: number;
     incumplidos: string[];
+    incompletos: string[];
   }) =>
     tb(
-      `${p.n} criterios: ${p.cumplen} cumplen${p.incumplidos.length ? `, ${p.incumplidos.length} no cumplen (${p.incumplidos.join(", ")})` : ""}`,
-      `${p.n} criteria: ${p.cumplen} met${p.incumplidos.length ? `, ${p.incumplidos.length} not met (${p.incumplidos.join(", ")})` : ""}`,
-    )) as Plantilla<{ n: number; cumplen: number; incumplidos: string[] }>,
+      `${p.n} criterios: ${p.cumplen} cumplen${p.incumplidos.length ? `, ${p.incumplidos.length} no cumplen (${p.incumplidos.join(", ")})` : ""}${p.incompletos.length ? `, ${p.incompletos.length} ${p.incompletos.length === 1 ? "incompleto" : "incompletos"} (${p.incompletos.join(", ")})` : ""}`,
+      `${p.n} criteria: ${p.cumplen} met${p.incumplidos.length ? `, ${p.incumplidos.length} not met (${p.incumplidos.join(", ")})` : ""}${p.incompletos.length ? `, ${p.incompletos.length} incomplete (${p.incompletos.join(", ")})` : ""}`,
+    )) as Plantilla<{
+    n: number;
+    cumplen: number;
+    incumplidos: string[];
+    incompletos: string[];
+  }>,
   piePrueba: ((p: { corrida: string; casos: number; por: string }) =>
     tb(
       `${p.corrida} · ${p.casos} casos${p.por}`,

@@ -31,58 +31,106 @@ const campo = (v: VistaAgente, id: string, rotulo: RegExp) =>
 describe("P3 Agente: las cifras salen de las trazas", () => {
   it("las 7 actividades con su cifra real", () => {
     expect(es.ficha.hace.items.map((x) => x.detalle)).toEqual([
-      "20 de 20 casos",
-      "2 urgencias y 2 exentos",
-      "16 casos",
-      "3 casos, 5 preguntas",
-      "15 casos, sin modelo",
-      "8 de 20 a una persona",
-      "5 documentos en ES y EN",
+      "200 de 200 casos",
+      "23 urgencias y 12 exentos",
+      "165 casos",
+      "30 casos, 47 preguntas",
+      "155 casos, sin modelo",
+      "70 de 200 a una persona",
+      "31 documentos en ES y EN",
     ]);
     expect(es.ficha.hace.items.every((x) => x.corrio)).toBe(true);
   });
 
-  it("lo que corrió frente a su plan: 8 de 8, 9 de 9 y la prueba cruzada sin diferencias", () => {
+  it("lo que corrió frente a su plan: 8 de 8, 12 de 12 y la prueba cruzada sin diferencias", () => {
     expect(es.lienzo.comparacion.ok).toBe(true);
     expect(es.contrato.cifras[0]!.cifra).toBe("8 de 8");
-    expect(en.contrato.cifras[1]!.cifra).toBe("9 of 9");
+    expect(en.contrato.cifras[1]!.cifra).toBe("12 of 12");
     expect(es.contrato.cifras[2]!.cifra).toMatch(/^\d+ · 0$/);
   });
 
-  it("«En los 20 casos» de cada nodo", () => {
-    expect(campo(es, "enrutador", /En los 20/)).toMatch(
-      /^16 siguieron al extractor\. 2 urgencias y 2 servicios exentos/,
+  it("«En los 200 casos» de cada nodo", () => {
+    expect(campo(es, "enrutador", /En los 200/)).toMatch(
+      /^165 siguieron al extractor\. 23 urgencias y 12 servicios exentos/,
     );
-    expect(campo(es, "extractor", /En los 20/)).toMatch(
-      /^Leyó 16 casos, 21 veces: 5 relecturas/,
+    expect(campo(es, "extractor", /En los 200/)).toMatch(
+      /^Leyó 165 casos, 212 veces: 47 relecturas/,
     );
-    expect(campo(es, "aclaracion", /En los 20/)).toMatch(
-      /^3 casos incompletos, 5 preguntas\./,
+    expect(campo(es, "aclaracion", /En los 200/)).toMatch(
+      /^30 casos incompletos, 47 preguntas\./,
     );
-    expect(campo(es, "verificador_cobertura", /En los 20/)).toMatch(
-      /^Revisó 15 casos: 5 excluidos con causal, 3 de alto costo y 1 contradicción/,
+    expect(campo(es, "verificador_cobertura", /En los 200/)).toMatch(
+      /^Revisó 155 casos: 21 excluidos con causal, 39 de alto costo y 8 contradicciones/,
     );
-    expect(campo(es, "decision", /En los 20/)).toMatch(
-      /^Decidió 15 casos: 8 siguieron solos al redactor y 7 pasaron a una persona/,
+    // El desglose, en el orden de las reglas del plan, suma los 60 que pasaron a una persona (9 + 4 + 34 + 7 + 6).
+    expect(campo(es, "decision", /En los 200/)).toMatch(
+      /^Decidió 155 casos: 95 siguieron solos al redactor y 60 pasaron a una persona \(9 instrucciones escondidas, 4 de baja confianza, 34 de alto costo, 7 contradicciones, 6 propuestas de negar\)\./,
     );
-    expect(campo(es, "pausa_humana", /En los 20/)).toMatch(
-      /^8 pausas: 7 desde decision y 1 por el tope.*negó 5 y aprobó 3\. Unos 96 minutos/,
+    expect(campo(es, "pausa_humana", /En los 200/)).toMatch(
+      /^70 pausas: 60 desde decision y 10 por el tope.*negó 22 y aprobó 48\. Unos 840 minutos/,
     );
-    expect(campo(es, "redactor", /En los 20/)).toMatch(
-      /^Escribió 20 respuestas; 5 negaciones/,
+    // 31 documentos: 22 negaciones y 9 aprobaciones en parte (no «31 negaciones»).
+    expect(campo(es, "redactor", /En los 200/)).toMatch(
+      /^Escribió 200 respuestas; 22 negaciones y 9 aprobaciones en parte, cada una con su documento/,
     );
-    expect(campo(en, "guardia_salida", /In the 20/)).toMatch(
-      /^It checked all 20 answers: 0 findings/,
+    expect(campo(en, "redactor", /In the 200/)).toMatch(
+      /^It wrote 200 answers; 22 denials and 9 partial approvals, each with its document/,
+    );
+    expect(campo(en, "guardia_salida", /In the 200/)).toMatch(
+      /^It checked all 200 answers: 0 findings/,
     );
   });
 
-  it("la arista U1: 15 casos llegaron a decision y la regla manda a una persona a los que están bajo 0,75", () => {
-    expect(es.arista.puntos).toHaveLength(15);
+  it("si una categoría que manda casos a una persona no tiene su frase, el desglose detiene el build", async () => {
+    const { NODOS: N } = await import("@/textos/agente");
+    const cifras = {
+      casos: 3,
+      solos: 0,
+      aPersona: 3,
+      porRegla: { carga: 1, negar: 1, tope: 1 },
+      criterios: { es: "", en: "" },
+    } as unknown as Parameters<(typeof N)["decision"]["enLaCorrida"]>[0];
+    expect(() => N.decision!.enLaCorrida(cifras)).toThrow(
+      /el desglose de decision suma 2 y 3 casos pasaron a una persona/,
+    );
+  });
+
+  it("cada estado de un criterio tiene su frase; incompleto y sin población no se leen como incumplidos", async () => {
+    const { frasesDeCriterios } = await import("@/textos/agente");
+    const estados: Record<string, string> = {
+      C1: "cumple",
+      C3: "sin_poblacion",
+      C5: "incompleto",
+      C6: "cumple",
+      C7: "incumple",
+    };
+    const f = frasesDeCriterios(
+      ["C1", "C3", "C5", "C6", "C7"],
+      (x) => estados[x],
+    );
+    expect(f.es).toBe(
+      "C1 y C6 se cumplieron; C7 no se cumplió; C5 quedó incompleto; C3 no tuvo casos que lo prueben.",
+    );
+    expect(f.en).toBe(
+      "C1 and C6 were met; C7 was not met; C5 was left incomplete; C3 had no case to test it.",
+    );
+    // Un estado que la frase no sabe decir detiene el build en lugar de leerse «no se cumplió».
+    expect(() => frasesDeCriterios(["C1"], () => "raro")).toThrow(
+      /el criterio C1 llega en estado «raro»/,
+    );
+  });
+
+  it("la arista U1: 155 casos llegaron a decision y la regla manda a una persona a los que están bajo 0,75", () => {
+    expect(es.arista.puntos).toHaveLength(155);
     expect(
       es.arista.puntos.filter((p) => p.aPersona).every((p) => p.valor < 0.75),
     ).toBe(true);
-    expect(es.arista.filas.at(-1)!.v).toMatch(
-      /^1 de 15 bajo U1: A-012, con 0,70$/,
+    // Cada caso con su valor entre paréntesis: con comas decimales, «A-139, con 0,20, A-082…» se leía mal.
+    expect(es.arista.filas.at(-1)!.v).toBe(
+      "4 de 155 bajo U1: A-139 (0,20), A-082 (0,60), A-068 (0,70) y A-148 (0,72)",
+    );
+    expect(en.arista.filas.at(-1)!.v).toBe(
+      "4 of 155 below U1: A-139 (0.20), A-082 (0.60), A-068 (0.70) and A-148 (0.72)",
     );
   });
 
@@ -101,11 +149,11 @@ describe("P3 Agente: las cifras salen de las trazas", () => {
 });
 
 describe("el spike, frente al mismo contrato", () => {
-  it("3 de 8 nodos, 1 de 9 reglas (la de U1, en otro nodo) y aprobar fuera del contrato", async () => {
+  it("3 de 8 nodos, 1 de 12 reglas (la de U1, en otro nodo) y aprobar fuera del contrato", async () => {
     const v = vistaAgente(await datosDemo(), "es");
     expect(v.spike).not.toBeNull();
     const s = v.spike!;
-    expect(s.cifras.map((c) => c.cifra)).toEqual(["3 de 8", "1 de 9", "1"]);
+    expect(s.cifras.map((c) => c.cifra)).toEqual(["3 de 8", "1 de 12", "1"]);
     expect(s.cifras[0]!.detalle).toBe(
       "faltaban aclaracion, verificador_cobertura, decision, redactor y guardia_salida",
     );
@@ -292,7 +340,8 @@ describe("P-11: el lienzo del agente exige «diagrama = grafo» en el build", ()
       orden: 9,
     });
     expect(() => vistaAgente(otro, "es")).toThrow(
-      /el lienzo «agente» no es el grafo:[\s\S]*enrutador#9/,
+      // La primera regla del plan v1.5 vive en decision (la carga): su copia con orden 9 no tiene flujo.
+      /el lienzo «agente» no es el grafo:[\s\S]*decision#9/,
     );
   });
 });

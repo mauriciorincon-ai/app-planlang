@@ -90,7 +90,7 @@ describe("AU-S2-23: en los dos sentidos y con la condición", () => {
     );
     expect(cambiada).not.toBe(svg);
     expect(compararPagina(cambiada, GRAFO, CONTRATO)).toEqual([
-      "condición distinta en extractor-a-aclaracion-r1: el dibujo dice «campos-faltantes-count > 1» y el plan «campos-faltantes-count > 0»",
+      "condición distinta en extractor-a-aclaracion-r2: el dibujo dice «campos-faltantes-count > 1» y el plan «campos-faltantes-count > 0»",
     ]);
   });
 

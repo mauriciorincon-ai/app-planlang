@@ -200,7 +200,7 @@ describe("P1 Entrada renderizada", () => {
     ])
       expect(screen.getAllByText(t).length).toBeGreaterThan(0);
     expect(
-      screen.getByRole("list", { name: /el agente del sprint 1/ }),
+      screen.getByRole("list", { name: /el agente del sprint 3/ }),
     ).toBeInTheDocument();
     expect(
       screen
@@ -208,7 +208,9 @@ describe("P1 Entrada renderizada", () => {
         .some((li) => li.textContent === "guardia_salida"),
     ).toBe(true);
     expect(
-      screen.getByRole("img", { name: "9 criterios: 9 cumplen" }),
+      screen.getByRole("img", {
+        name: "10 criterios: 9 cumplen, 1 incompleto (C5)",
+      }),
     ).toBeInTheDocument();
     expect(
       screen

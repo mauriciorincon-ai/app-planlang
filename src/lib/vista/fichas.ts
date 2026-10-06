@@ -170,13 +170,23 @@ export function pasosDeRepro(
     ? ""
     : ` --repeticiones ${reps.join(",")}`;
   const P = REPRO.pasos;
+  // El lote con el plan y los casos con que corrió ESTA corrida (S3: «pnpm lote:demo» a secas corría el plan v1.2
+  // sobre el lote de 20, no la corrida de 200 que publica la vitrina), y en cuántas sesiones.
+  const c = d.corrida.manifiesto;
+  const sesiones = c.sesiones.length;
   return [
     {
       comando: `pnpm plan:validar --verificar ${m.plan.archivo}`,
       texto: P.plan[i],
     },
     { comando: COMANDOS[d.id].casos, texto: P.casos[i] },
-    { comando: COMANDOS[d.id].lote, texto: P.lote[i] },
+    {
+      comando: `${COMANDOS[d.id].lote} --plan ${c.plan.archivo} --casos ${c.casos.archivo}`,
+      texto:
+        sesiones > 1
+          ? P.loteEnSesiones({ sesiones, n: c.casos_ejecutados.length })[i]
+          : P.lote[i],
+    },
     { comando: "pnpm trazas:verificar", texto: P.trazas[i] },
     {
       comando: `pnpm brecha:informe --corrida ${corrida} --plan ${m.plan.archivo}${baseArg}${repsArg} --salida ${carpeta(m.informe.archivo)} --verificar`,

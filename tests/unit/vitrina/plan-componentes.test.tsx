@@ -59,7 +59,9 @@ describe("navegar el plan", () => {
 
   it("«Ver N más» abre el resto y lo vuelve a cerrar", async () => {
     render(<Pagina idioma="es" />);
-    const boton = screen.getByRole("button", { name: "Ver 3 más: R7, R4, R8" });
+    const boton = screen.getByRole("button", {
+      name: "Ver 5 más: R5, R7, R9, R4, R8",
+    });
     const resto = document.getElementById(
       boton.getAttribute("aria-controls")!,
     )!;
@@ -118,7 +120,7 @@ describe("regla 5-a: la forma no depende del perfil ni del cliente", () => {
     const b = renderToStaticMarkup(<Pagina idioma="es" />);
     expect(a).toBe(b);
     expect(a).toContain("Ficha técnica del plan");
-    expect(a).toContain("Las 9 aristas condicionales, en orden");
+    expect(a).toContain("Las 12 aristas condicionales, en orden");
     // Lo que va tras «Ver N más» también está en el HTML del servidor.
     expect(a).toContain("Cuota de la suscripción agotada a mitad de lote");
   });

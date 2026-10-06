@@ -155,9 +155,18 @@ const SUBTIPOS: Readonly<Record<IdDemo, Record<string, TextoBilingue>>> = {
   "demo-b": SUBTIPO_B,
 };
 
-/** El nombre de un subtipo en su demo (el Caso y el Playground lo dicen igual); sin nombre, el id tal cual. */
+/**
+ * El nombre de un subtipo en su demo (el Caso, la Brecha y el Playground lo dicen igual). Un subtipo sin nombre
+ * detiene el build nombrándolo: antes salía el id tal cual y cuatro subtipos del lote de 200 lo hicieron sin que nadie
+ * lo viera (S3).
+ */
 export function nombreDeSubtipo(demo: IdDemo, subtipo: string): TextoBilingue {
-  return SUBTIPOS[demo][subtipo] ?? { es: subtipo, en: subtipo };
+  const t = (SUBTIPOS[demo] as Record<string, TextoBilingue>)[subtipo];
+  if (!t)
+    throw new Error(
+      `vitrina: el subtipo «${subtipo}» del ${demo} no tiene nombre (src/textos/${demo === "demo-a" ? "caso.ts" : "demo-b/caso.ts"}).`,
+    );
+  return t;
 }
 
 /** El documento de decisión adversa como lo escribe el grafo (`planlang-documento-adverso/v1`). */
@@ -191,14 +200,19 @@ export function chipsDeCasos(d: DatosDemo, i: Idioma): ChipCaso[] {
     d.lote.casos.map((c) => [c.id, c.subtipo] as [string, string]),
   );
   const conPagina = casosConPagina(d);
-  return d.corrida.trazas.filter((t) => conPagina.has(t.caso_id)).map((t) => {
-    const subtipo = subtipos.get(t.caso_id)!;
-    return {
-      id: t.caso_id,
-      descriptor: X(SUBTIPOS[d.id][subtipo] ?? { es: subtipo, en: subtipo }, i),
-      enlace: ruta(i, "caso", t.caso_id, d.id),
-    };
-  });
+  return d.corrida.trazas
+    .filter((t) => conPagina.has(t.caso_id))
+    .map((t) => {
+      const subtipo = subtipos.get(t.caso_id)!;
+      return {
+        id: t.caso_id,
+        descriptor: X(
+          SUBTIPOS[d.id][subtipo] ?? { es: subtipo, en: subtipo },
+          i,
+        ),
+        enlace: ruta(i, "caso", t.caso_id, d.id),
+      };
+    });
 }
 
 /** Los casos que tienen página (`casosConPagina`): uno por traza en una corrida de 20, una selección en la de 200. */
@@ -289,7 +303,8 @@ export function vistaCaso(d: DatosDemo, id: string, i: Idioma): VistaCaso {
   const s = t.senales;
   const final = String(s.decision_final);
   const aprobado = final === "aprobar";
-  const parcial = perfil.parcial !== undefined && final === perfil.parcial.valor;
+  const parcial =
+    perfil.parcial !== undefined && final === perfil.parcial.valor;
   const persona = s.pausa_humana === true;
   const v = c.verdad_conocida;
   const coincide = final === v.decision && persona === v.debe_escalar;

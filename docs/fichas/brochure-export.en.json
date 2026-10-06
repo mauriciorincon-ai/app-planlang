@@ -29,7 +29,7 @@
     "diferencial": "Observing traces and evaluating answers is done by many tools. What nobody does is demand the plan first and measure against it afterwards: the plan → result gap report, with the prior risk analysis, and the plan's thresholds playable over the real traces."
   },
   "funcionalidades": {
-    "total": 16,
+    "total": 19,
     "fuente_del_conteo": "docs/MANUAL-DE-USO.md",
     "descartadas": [],
     "grupos": [
@@ -37,7 +37,7 @@
         "orden": 1,
         "estrella": false,
         "nombre": "Plan",
-        "linea": "The plan as a contract: templates, validator and the builder's contract.",
+        "linea": "The plan as a contract: the interview, the templates, the validator and the builder's contract.",
         "features": [
           {
             "id": "plantillas",
@@ -52,6 +52,12 @@
             "seccion_manual": "Validate a plan"
           },
           {
+            "id": "entrevistador",
+            "nombre": "Plan interviewer",
+            "que_hace": "Asks in order what the domain template requires, drafts the plan in Spanish and English, flags its contradictions and never approves it: the author does.",
+            "seccion_manual": "Interview a plan"
+          },
+          {
             "id": "contrato",
             "nombre": "The builder's contract",
             "que_hace": "The plan hands over the nodes, the edges as signal · operator · value, the human pauses and the signals the trace must record; what the agent decides is literally what the plan says.",
@@ -63,7 +69,7 @@
         "orden": 2,
         "estrella": false,
         "nombre": "Run",
-        "linea": "Cases with a known truth, demo A and batch runs.",
+        "linea": "Cases with a known truth, both demos and batch runs.",
         "features": [
           {
             "id": "casos",
@@ -78,9 +84,21 @@
             "seccion_manual": "Run a batch"
           },
           {
+            "id": "demo-b",
+            "nombre": "Demo B: onboarding with due diligence",
+            "que_hace": "An extractor, a list checker, an investigator that acts only in the gray zone and a rule-based risk score approve, review or reject; no rejection goes out without the compliance officer.",
+            "seccion_manual": "Run demo B"
+          },
+          {
+            "id": "expediente",
+            "nombre": "Case file by code",
+            "que_hace": "Every demo B case ends in a case file in Spanish and English written by code: each conclusion cites the plan rule or the list match, with its version.",
+            "seccion_manual": "Read a case file"
+          },
+          {
             "id": "documento-adverso",
             "nombre": "Adverse-decision document",
-            "que_hace": "Every denial produces, by code, a document in Spanish and English with the cause, the rule, the data used and the way to contest it.",
+            "que_hace": "Every denial, partial ones included, produces by code a document in Spanish and English with the cause, the rule, the data used and the way to contest it.",
             "seccion_manual": "Run a batch"
           },
           {
@@ -132,7 +150,7 @@
           {
             "id": "playground",
             "nombre": "Move the plan's thresholds",
-            "que_hace": "You slide the minimum confidence, the high cost, the clarification maximum or Texas mode and see which cases change path, which errors appear, how much human work it costs and the risk-coverage curve.",
+            "que_hace": "You slide each demo's thresholds (in A, the minimum confidence, the high cost, the clarification maximum or Texas mode; in B, the similarity, the gray zone, the risk and the inconsistencies) and see which cases change path, which errors appear, how much human work it costs and the risk-coverage curve.",
             "seccion_manual": "Move thresholds in the playground"
           }
         ]
@@ -166,7 +184,7 @@
           {
             "id": "pestanas",
             "nombre": "Plan, Agent, Gap and Cases",
-            "que_hace": "In plain language with detail for experts, in Spanish and English, on a 380 px phone, with the “Simulation · not operational” label and the simulated-reviewer disclosure.",
+            "que_hace": "For each demo, in plain language with detail for experts, in Spanish and English, on a 380 px phone, with the “Simulation · not operational” label and the simulated-reviewer disclosure.",
             "seccion_manual": "Open the showcase"
           },
           {
@@ -182,27 +200,27 @@
   "metricas": [
     {
       "clave": "criterios_cumplidos",
-      "etiqueta": "criteria met across the plans of 2 demos, of 15",
+      "etiqueta": "criteria met across the plans of 2 demos, of 16",
       "valor": 15,
       "unidad": "criteria",
       "fuente": "medido",
-      "detalle": "Demo A: 9 of 9, in verifier 1.2.0's report on run suscripcion-planlang-a-001-20-v1.2. Demo B: 6 of 6, in verifier 1.2.0's report on run suscripcion-planlang-b-001-20."
+      "detalle": "Demo A: 9 of 10, in verifier 1.2.0's report on run suscripcion-planlang-a-002-200-v1.5. Demo B: 6 of 6, in verifier 1.2.0's report on run suscripcion-planlang-b-001-20."
     },
     {
       "clave": "decisiones_cruzadas",
       "etiqueta": "decisions redone in another language, with 0 differences",
-      "valor": 313,
+      "valor": 1204,
       "unidad": "decisions",
       "fuente": "medido",
-      "detalle": "RF-09.2 cross-check over 6 runs of 2 demos: the TypeScript edge interpreter redoes every decision Python recorded."
+      "detalle": "RF-09.2 cross-check over 4 runs of 2 demos: the TypeScript edge interpreter redoes every decision Python recorded."
     },
     {
       "clave": "casos_sinteticos",
       "etiqueta": "synthetic cases with a known answer, across 2 demos",
-      "valor": 40,
+      "valor": 220,
       "unidad": "cases",
       "fuente": "medido",
-      "detalle": "Demo A: 20 cases in run suscripcion-planlang-a-001-20-v1.2, 2 repetitions (pass^k) and the single-agent baseline. Demo B: 20 cases in run suscripcion-planlang-b-001-20 and the single-agent baseline."
+      "detalle": "Demo A: 200 cases in run suscripcion-planlang-a-002-200-v1.5 and the single-agent baseline. Demo B: 20 cases in run suscripcion-planlang-b-001-20 and the single-agent baseline."
     },
     {
       "clave": "llamadas_a_modelos_en_la_vitrina",
@@ -214,16 +232,16 @@
     },
     {
       "clave": "costo_de_una_corrida",
-      "etiqueta": "nominal cost of running each demo once (40 cases)",
-      "valor": 0.9634,
+      "etiqueta": "nominal cost of running each demo once (220 cases)",
+      "valor": 5.2136,
       "unidad": "US$",
       "fuente": "calculada",
-      "detalle": "Demo A: US$ 0.6704 for 20 cases. Demo B: US$ 0.293 for 20 cases. Sum of the nominal cost the CLI declares per call, over each run's traces; through the subscription it was not paid separately."
+      "detalle": "Demo A: US$ 4.9206 for 200 cases. Demo B: US$ 0.293 for 20 cases. Sum of the nominal cost the CLI declares per call, over each run's traces; through the subscription it was not paid separately."
     },
     {
       "clave": "funcionalidades",
       "etiqueta": "built features",
-      "valor": 16,
+      "valor": 19,
       "unidad": "features",
       "fuente": "medido",
       "detalle": "Those of the product vision marked for the two-week cut, counted against docs/MANUAL-DE-USO.md; roadmap ones do not count."

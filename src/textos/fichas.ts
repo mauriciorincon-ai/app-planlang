@@ -168,6 +168,11 @@ export const REPRO = {
       "corre el lote en la máquina del autor, fuera de CI, con su suscripción",
       "runs the batch on the author's machine, outside CI, with their subscription",
     ),
+    loteEnSesiones: ((p: { sesiones: number; n: number }) =>
+      tb(
+        `corre el lote en la máquina del autor, fuera de CI, con su suscripción: el mismo comando ${p.sesiones} veces, de a 20 y espaciadas, hasta completar los ${p.n} casos (retoma donde quedó)`,
+        `runs the batch on the author's machine, outside CI, with their subscription: the same command ${p.sesiones} times, 20 at a time and spaced out, until all ${p.n} cases are done (it resumes where it stopped)`,
+      )) as Plantilla<{ sesiones: number; n: number }>,
     trazas: tb(
       "comprueba huellas, umbrales aplicados y RF-09.2",
       "checks fingerprints, applied thresholds and RF-09.2",
@@ -416,15 +421,41 @@ export const AGENTE = {
   },
   cifras: {
     exactitud: {
-      etiqueta: tb(
-        "exactitud de extracción, 3 de 3 corridas",
-        "extraction accuracy, 3 of 3 runs",
-      ),
-      detalle: ((p: { n: number; k: number }) =>
-        tb(
-          `Criterio C5 del plan, medido por el verificador como pass^${p.k}: los campos extraídos son los de la verdad conocida en los ${p.n} casos que la tienen, en las ${p.k} corridas seguidas.`,
-          `The plan's criterion C5, measured by the verifier as pass^${p.k}: the extracted fields are the known truth's in the ${p.n} cases that have one, in ${p.k} runs in a row.`,
-        )) as Plantilla<{ n: number; k: number }>,
+      /**
+       * Las corridas que pide pass^k y las que se midieron, del informe: con la corrida de 200 (una de tres), «3 de 3
+       * corridas» habría prometido lo que no se midió (S3).
+       */
+      etiqueta: ((p: { k: number; requerido: number | null }) =>
+        p.requerido === null
+          ? tb("exactitud de extracción", "extraction accuracy")
+          : p.k >= p.requerido
+            ? tb(
+                `exactitud de extracción, ${p.k} de ${p.requerido} corridas`,
+                `extraction accuracy, ${p.k} of ${p.requerido} runs`,
+              )
+            : tb(
+                `exactitud de extracción, ${p.k} de ${p.requerido} corridas (incompleto)`,
+                `extraction accuracy, ${p.k} of ${p.requerido} runs (incomplete)`,
+              )) as Plantilla<{ k: number; requerido: number | null }>,
+      detalle: ((p: { n: number; k: number; requerido: number | null }) =>
+        p.requerido === null
+          ? tb(
+              `Criterio C5 del plan: los campos extraídos son los de la verdad conocida en esta proporción de los ${p.n} casos que la tienen.`,
+              `The plan's criterion C5: the extracted fields are the known truth's in this share of the ${p.n} cases that have one.`,
+            )
+          : p.k >= p.requerido
+            ? tb(
+                `Criterio C5 del plan, medido por el verificador como pass^${p.k}: los campos extraídos son los de la verdad conocida en los ${p.n} casos que la tienen, en las ${p.k} corridas seguidas.`,
+                `The plan's criterion C5, measured by the verifier as pass^${p.k}: the extracted fields are the known truth's in the ${p.n} cases that have one, in ${p.k} runs in a row.`,
+              )
+            : tb(
+                `Criterio C5 del plan (pass^${p.requerido}): los campos extraídos son los de la verdad conocida en esta proporción de los ${p.n} casos que la tienen. Se midió con ${p.k} de las ${p.requerido} corridas seguidas que pide, así que todavía no puede declararse cumplido.`,
+                `The plan's criterion C5 (pass^${p.requerido}): the extracted fields are the known truth's in this share of the ${p.n} cases that have one. It was measured with ${p.k} of the ${p.requerido} runs in a row it asks for, so it cannot be declared met yet.`,
+              )) as Plantilla<{
+        n: number;
+        k: number;
+        requerido: number | null;
+      }>,
     },
     latencia: {
       etiqueta: tb(
@@ -560,7 +591,8 @@ export const AGENTE = {
   ],
   hitos: {
     plan: tb("versión del plan", "plan version"),
-    corrida: tb("primera corrida real", "first real run"),
+    // La fecha es la de la corrida que publica la vitrina (en el A, la de 200 del S3; la primera real fue la del S1).
+    corrida: tb("corrida publicada", "published run"),
     piezas: tb("piezas del contrato", "contract pieces"),
     piezasValor: ((p: { a: number; b: number }) =>
       tb(`${p.a} de ${p.b}`, `${p.a} of ${p.b}`)) as Plantilla<{
@@ -957,8 +989,8 @@ export const APP = {
       id: "planear",
       nombre: tb("Planear", "Plan"),
       linea: tb(
-        "El plan como contrato: plantillas, validador y contrato para el constructor.",
-        "The plan as a contract: templates, validator and the builder's contract.",
+        "El plan como contrato: la entrevista, las plantillas, el validador y el contrato para el constructor.",
+        "The plan as a contract: the interview, the templates, the validator and the builder's contract.",
       ),
       estrella: false,
       features: [
@@ -984,6 +1016,15 @@ export const APP = {
           seccion_manual: tb("Validar un plan", "Validate a plan"),
         },
         {
+          id: "entrevistador",
+          nombre: tb("Entrevistador del plan", "Plan interviewer"),
+          que_hace: tb(
+            "Pregunta en orden lo que la plantilla del dominio exige, redacta el borrador en español e inglés, señala sus contradicciones y nunca lo aprueba: eso lo hace el autor.",
+            "Asks in order what the domain template requires, drafts the plan in Spanish and English, flags its contradictions and never approves it: the author does.",
+          ),
+          seccion_manual: tb("Entrevistar un plan", "Interview a plan"),
+        },
+        {
           id: "contrato",
           nombre: tb("Contrato para el constructor", "The builder's contract"),
           que_hace: tb(
@@ -998,8 +1039,8 @@ export const APP = {
       id: "correr",
       nombre: tb("Correr", "Run"),
       linea: tb(
-        "Casos con verdad conocida, el demo A y las corridas por lotes.",
-        "Cases with a known truth, demo A and batch runs.",
+        "Casos con verdad conocida, los dos demos y las corridas por lotes.",
+        "Cases with a known truth, both demos and batch runs.",
       ),
       estrella: false,
       features: [
@@ -1031,14 +1072,35 @@ export const APP = {
           seccion_manual: tb("Correr un lote", "Run a batch"),
         },
         {
+          id: "demo-b",
+          nombre: tb(
+            "Demo B: vinculación con debida diligencia",
+            "Demo B: onboarding with due diligence",
+          ),
+          que_hace: tb(
+            "Un extractor, un verificador de listas, un investigador que solo actúa en la zona gris y un puntaje de riesgo por reglas aprueban, revisan o rechazan; ningún rechazo sale sin el oficial de cumplimiento.",
+            "An extractor, a list checker, an investigator that acts only in the gray zone and a rule-based risk score approve, review or reject; no rejection goes out without the compliance officer.",
+          ),
+          seccion_manual: tb("Correr el demo B", "Run demo B"),
+        },
+        {
+          id: "expediente",
+          nombre: tb("Expediente por código", "Case file by code"),
+          que_hace: tb(
+            "Cada caso del demo B termina en un expediente en español e inglés que escribe el código: cada conclusión cita la regla del plan o la coincidencia en una lista, con su versión.",
+            "Every demo B case ends in a case file in Spanish and English written by code: each conclusion cites the plan rule or the list match, with its version.",
+          ),
+          seccion_manual: tb("Leer un expediente", "Read a case file"),
+        },
+        {
           id: "documento-adverso",
           nombre: tb(
             "Documento de decisión adversa",
             "Adverse-decision document",
           ),
           que_hace: tb(
-            "Toda negación produce, por código, un documento en español e inglés con la causal, la regla, los datos usados y la vía de contradicción.",
-            "Every denial produces, by code, a document in Spanish and English with the cause, the rule, the data used and the way to contest it.",
+            "Toda negación, también la parcial, produce por código un documento en español e inglés con la causal, la regla, los datos usados y la vía de contradicción.",
+            "Every denial, partial ones included, produces by code a document in Spanish and English with the cause, the rule, the data used and the way to contest it.",
           ),
           seccion_manual: tb("Correr un lote", "Run a batch"),
         },
@@ -1134,8 +1196,8 @@ export const APP = {
             "Move the plan's thresholds",
           ),
           que_hace: tb(
-            "Deslizas la confianza mínima, el alto costo, el máximo de aclaraciones o el modo Texas y ves qué casos cambian de camino, qué errores aparecen, cuánto trabajo humano cuesta y la curva riesgo-cobertura.",
-            "You slide the minimum confidence, the high cost, the clarification maximum or Texas mode and see which cases change path, which errors appear, how much human work it costs and the risk-coverage curve.",
+            "Deslizas los umbrales de cada demo (en el A, la confianza mínima, el alto costo, el máximo de aclaraciones o el modo Texas; en el B, la similitud, la zona gris, el riesgo y las inconsistencias) y ves qué casos cambian de camino, qué errores aparecen, cuánto trabajo humano cuesta y la curva riesgo-cobertura.",
+            "You slide each demo's thresholds (in A, the minimum confidence, the high cost, the clarification maximum or Texas mode; in B, the similarity, the gray zone, the risk and the inconsistencies) and see which cases change path, which errors appear, how much human work it costs and the risk-coverage curve.",
           ),
           seccion_manual: tb(
             "Mover umbrales en el playground",
@@ -1192,8 +1254,8 @@ export const APP = {
             "Plan, Agent, Gap and Cases",
           ),
           que_hace: tb(
-            "En lenguaje llano con detalle para expertos, en español e inglés, en un teléfono de 380 px, con el rótulo «Simulación · no operativo» y la divulgación del revisor simulado.",
-            "In plain language with detail for experts, in Spanish and English, on a 380 px phone, with the “Simulation · not operational” label and the simulated-reviewer disclosure.",
+            "Por cada demo, en lenguaje llano con detalle para expertos, en español e inglés, en un teléfono de 380 px, con el rótulo «Simulación · no operativo» y la divulgación del revisor simulado.",
+            "For each demo, in plain language with detail for experts, in Spanish and English, on a 380 px phone, with the “Simulation · not operational” label and the simulated-reviewer disclosure.",
           ),
           seccion_manual: tb("Abrir la vitrina", "Open the showcase"),
         },

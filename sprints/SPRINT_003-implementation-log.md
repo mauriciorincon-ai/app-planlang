@@ -1408,6 +1408,76 @@ igual que se lanzó, y salta los casos ya exportados:
      cambios de forma del A).
 8. `/audita-sprint` (con segundo auditor), luego la parada del usuario, luego `/deploy-check --python` y el summary.
 
+### Retomado el 2026-10-05: la vitrina del A sobre la corrida de 200 (pasos 1–4 del punto de control)
+
+**La línea base.** La sesión de anoche cerró con la base en 100 trazas (el proceso murió con la sesión). Se retomó con el
+mismo comando y la misma decisión del usuario («Sí, correr la base»): sesiones de 20, 10 minutos entre ellas, fuera de
+CI; salta los casos ya exportados. Mientras crecía, las pruebas que verifican el manifiesto fallaban por la huella de
+una base en movimiento; para trabajar sin esperar, el informe provisional se apuntó a una **instantánea** de la base
+(`runs/demo-a/zz-instantanea-base`, sin versionar, nunca comiteada), que el paso 1 reemplaza por la base completa.
+
+**Lo que destapó reanclar las pruebas a la corrida de 200** (cada uno con su prueba; ninguno lo veía la de 20):
+
+| # | Pantalla | Defecto | Arreglo |
+|---|---|---|---|
+| D57 | Brecha | C5 y C7 se pintaban con `{plan:C5.objetivo\|%}` y `{plan:C7.objetivo}` sin resolver; la prueba «ninguna vista con plantilla sin resolver» no miraba la Brecha | `liderDeCriterio` con `conPlan`; la prueba suma Brecha, Playground y Entrada (demo en rojo abajo) |
+| D58 | Caso, Playground, Brecha | cuatro subtipos del lote de 200 (`normal_sobre_tope`, `borde_texto_ambiguo`, `faltante_tres_ciclos`, `adversario_homonimo`, más `borde_empate_umbrales`) sin nombre: salía el código crudo | `SUBTIPO: Record<Subtipo, …>` (el compilador exige los 18) y `nombreDeSubtipo` detiene el build nombrando el que falte |
+| D59 | Agente · decision | el desglose de los 60 que pasaron a una persona sumaba 51: faltaba la carga (M-16) | la frase de la carga, en el orden de las reglas del plan, y un candado: si el desglose no suma, el build se detiene |
+| D60 | Agente, Plan, Entrada, Brecha | C5 incompleto (pass^k medido con 1 de 3 corridas) se leía «no se cumplió» / «1 no» / se callaba | `frasesDeCriterios` con una frase por estado (cumple, incumple, incompleto, sin población, indeterminado, mal formado) y rojo si falta; «9 cumplieron y 1 quedó incompleto»; la Entrada lo nombra («Incompleto C5») y la Brecha lo rotula «Incompleto», no «Sin probar», y lo dice en el veredicto |
+| D61 | Agente · redactor | «31 negaciones con su documento» | 22 negaciones y 9 aprobaciones en parte |
+| D62 | Agente · arista U1 | «A-139, con 0,20, A-082, con 0,60…» (comas decimales y de lista mezcladas) | «A-139 (0,20), A-082 (0,60)…» |
+| D63 | Agente · ficha | R9, R10 y C10 no tocaban ningún nodo en «Qué del plan toca a cada nodo» | asignados a extractor, aclaracion, decision y pausa_humana |
+| D64 | Plan | C10 sin frase llana; C8 decía «toda negación» y el plan v1.5 cubre también la parcial | frase de C10; C8 «también la parcial» (Plan y Agente) |
+| D65 | Plan | «la corrida rehízo sus 971 decisiones» sumando dos corridas | «las 2 corridas medidas rehicieron sus …» |
+| D66 | Agente · experto, Entrada · experto | «200 casos × 1 repeticiones»; «en lotes de 200 fuera de CI» | «200 casos, sin repetir»; «en lotes de 20» (las sesiones de la regla 6, no el archivo de casos) |
+| D67 | Playground · ejemplo del líder | desaparecía: el primer valor de U1 que mueve algo (0,85) mueve dos casos y la vista solo sabía contar uno | el ejemplo admite hasta tres casos, todos de «solo» a «persona»; «con confianza 0,80 cada uno» cuando valen lo mismo |
+| D68 | Playground · modo Texas | con el interruptor encendido, la fila decía «modo_texas false» y «revisión de más» | la señal ligada a un umbral se dice con el valor movido (como la evalúa el núcleo); la consecuencia es «la exige el modo Texas · +12 min» |
+| D69 | Brecha | «A-007, A-083, A-142 y A-191 saldría»; «A-048, A-055… pasó el objetivo» | concordancia por número |
+| D70 | Brecha · no previsto | «La extracción no coincide con la verdad conocida.» tres veces, unidas con comas | una vez por detalle, con sus casos |
+| D71 | Brecha y Plan · S2 | «No cumple el umbral de confirmación: tasa_min.» | «Midió tasa 83,3 % (el plan pide ≥ 95 %), sobre 24 casos.» (`medidaContraElPlan`, compartida) |
+| D72 | Brecha · S3 | la lectura «acertó más pero tardó más» estaba escrita fija | el sentido sale de las cifras; lectura de «S3:confirmado» preparada; una prueba exige que la lectura editorial de S3 refutado («la exactitud extra se paga en tiempo») tenga cifras que la sostengan |
+| D73 | Caso · relato | A-016 contaba dos veces la instrucción escondida; «encontró el servicio cubierto y propuso aprobar en parte»; «decidió aprobar en parte solo» | la segunda frase solo dice que no tuvo efecto; «cubierto hasta un tope que el costo supera»; «decidió por su cuenta» |
+| D74 | Agente · trazas | «se listan los 20 de los 20 primeros» | «se listan los 20 primeros del lote» |
+
+**Demos en rojo (regla 15) de los candados nuevos:**
+
+| Gate | Mutación | Resultado |
+|---|---|---|
+| D57 · plantillas sin resolver en Brecha/Playground/Entrada | `scripts/demo-rojo.sh` sobre `src/lib/vista/brecha.ts`: `liderDeCriterio` devuelve el texto sin `conPlan` | rojo: «ninguna vista del demo-a sale con una plantilla sin resolver» (`expected '{"portada"…' not to contain '{plan:'`); verde al restaurar (grep + cmp) |
+| D58 · subtipo sin nombre | la prueba pide `nombreDeSubtipo("demo-a", "inventado")`; quitar una entrada de `SUBTIPO` rompe `tsc` | rojo nombrado: «el subtipo «inventado» del demo-a no tiene nombre» |
+| D59 · desglose que no suma | la prueba arma cifras con `tope: 1`, que el desglose de decision no nombra | rojo: «el desglose de decision suma 2 y 3 casos pasaron a una persona» |
+| D60 · estado de criterio sin frase | la prueba pide la frase de un estado «raro» | rojo: «el criterio C1 llega en estado «raro»…»; y el respaldo AU-9 (C3 sin población) lo destapó antes de la prueba |
+
+**Pruebas reancladas** a la corrida de 200 (casos de referencia con página): A-017 negado con persona y documento,
+A-002 el ejemplar «escalado como debía» (tope de aclaraciones), A-013 dos aclaraciones sin persona, A-006 aprobado en
+parte, A-016 la instrucción escondida (pausa por la carga), A-004 urgencia; Playground: U1 0,85 → A-089 y A-144, U2
+1600 → doce errores (A-007 el primero), Texas → las nueve en parte; Brecha: C3 se rompe con U2 en 1200 (A-007, A-083,
+A-142, A-191). Visor: la numeración de reglas del plan v1.5 (la carga es la regla 1 de decision). e2e (`caso`,
+`playground`, `e2e-paquete` con la cuenta de páginas del A leída del export) y arneses (`capturar-vitrina.mjs`,
+`registro-cierre.mjs`) con los mismos casos y la matriz al día.
+
+### Paso 7 adelantado: manual, kit de prueba, fichas y guía acumulativa (2026-10-05)
+
+- **Manual ES/EN** (`docs/MANUAL-DE-USO.md`): secciones nuevas «Entrevistar un plan», «Correr el demo B», «Leer un
+  expediente» y «Publicar el design system»; «Validar un plan», «Generar casos», «Correr un lote», «Abrir la vitrina»,
+  «Mover umbrales» y «Las fichas» al día con la v1.5, la corrida de 200 y los dos demos; preguntas frecuentes nuevas
+  (por qué hay casos sin página); historial con la fila del S3. Se barrió por promesa aplazada: ninguna frase dice ya
+  que el entrevistador, el demo B o la corrida de 200 «llegan en un sprint posterior».
+- **Kit de prueba** (`docs/kit-de-prueba/README.md`): por demo, con la entrevista, los planes, las listas, los lotes,
+  los informes que publica la vitrina y B-010 para el ⭐⭐; cada ruta comprobada.
+- **Fichas** (`src/textos/fichas.ts`): tres funcionalidades nuevas (entrevistador, demo B, expediente) con su sección
+  del manual; el playground y las pantallas dicen los dos demos; el documento adverso, también la negación parcial.
+- **Guía** (`docs/GUIA-DE-PRUEBA.html`, prefijo `guia-planlang:s3:`): 59 pruebas (13 nuevas, 16 mejoradas, ninguna
+  eliminada), ⭐ 23 (~1 h 30 min), ⭐⭐ 4 paradas (~20 min) en el bloque ★, en orden: B-010 con la suscripción →
+  los dos demos en el teléfono → el modo Texas y un umbral del B → el expediente de B-010. Reemplazan a las del S2,
+  que siguen en el ⭐; el encabezado declara las 19 ⭐ que deja fuera y por qué. Comprobada en Chromium a 380 px:
+  conteos 59 · 29 · 23 · 4, las paradas 1–4 en el orden del documento, sin desborde, el idioma conmuta y la casilla
+  se guarda bajo `s3`.
+- **Lo que la guía declara de B-010:** la corrida de 20 que publica la vitrina del B se corrió antes del arreglo D51
+  (`valor_en_texto`): su conclusión K2 escribe «0.814» con punto en español. La corrida es append-only y la vitrina
+  del B se queda en la de 20 (decisión del usuario), así que la página lo muestra así; un caso corrido hoy (la parada
+  1) ya escribe «0,814». Queda como deuda visible hasta que la vitrina del B publique una corrida posterior.
+
 ## Desviación del plan
 
 1. **Rutas de la orden** (`SPRINT_003-orden.md:65`): `audita-sprint` y `plan-sprint` viven en
@@ -1505,6 +1575,15 @@ igual que se lanzó, y salta los casos ya exportados:
     Umbrales del Plan cuentan casos y no inventan minutos (`minutos_por_persona: null`, textos `sinCosto` y
     `lecturaSinCosto`). Si el usuario quiere el costo humano en el B, es una enmienda del plan B, no un número del
     builder.
+
+27. **`design-sync/` sin «las vistas del B».** El plan pedía el bundle «con las vistas del B, sin publicar». El bundle se
+    genera desde `design-system.md` (1.0.0, sin cambios en el S3) y publica fundamentos y componentes canon, no
+    pantallas; el B reutilizó los componentes canon. Queda al día (su prueba lo regenera byte a byte) y las tres piezas
+    que el S3 sumó a la vitrina (el conmutador de demo, el caso sin página con borde punteado y el expediente) se
+    proponen para un `design-system.md` 1.1, que es una mirada de FORMA del usuario, no una decisión del builder.
+28. **El ⭐⭐ del cierre vive en un bloque nuevo (★) al principio de la guía.** Las cuatro paradas tienen que caminarse en
+    el orden del documento; repartidas entre los bloques heredados obligaban a saltar. Los bloques A–M conservan sus
+    letras y sus pruebas.
 
 ## Registro de miradas
 

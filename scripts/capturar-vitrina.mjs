@@ -142,16 +142,16 @@ async function interaccionMirada2({ page, probar }) {
         .click(),
     () => page.locator("#detalle-decision figure").first().isVisible(),
   );
-  await page.goto(`${V}/es/caso/A-006?tema=oscuro&perfil=lider`);
+  await page.goto(`${V}/es/caso/A-016?tema=oscuro&perfil=lider`);
   await asentar(page);
   await probar(
-    "Caso: selector → A-008",
+    "Caso: selector → A-013",
     () =>
       page
         .getByRole("navigation", { name: "Casos", exact: true })
-        .getByRole("link", { name: /^A-008/ })
+        .getByRole("link", { name: /^A-013/ })
         .click(),
-    () => page.evaluate(() => location.pathname === "/es/caso/A-008"),
+    () => page.evaluate(() => location.pathname === "/es/caso/A-013"),
   );
 }
 
@@ -159,7 +159,8 @@ async function interaccionMirada2({ page, probar }) {
 async function u2a1600(page) {
   await page.locator("#w-U2 input[type=range]").focus();
   for (let k = 0; k < 6; k++) await page.keyboard.press("ArrowRight");
-  await page.locator('#cambios [data-caso="A-010"]').waitFor();
+  // Corrida de 200 (S3): doce casos de alto costo salen sin persona; A-007 es el primero.
+  await page.locator('#cambios [data-caso="A-007"]').waitFor();
   // Sin el anillo de foco del teclado en la captura: se compara la pantalla, no el foco.
   await page.evaluate(() => document.activeElement?.blur());
 }
@@ -178,9 +179,9 @@ async function interaccionMirada3({ page, probar }) {
       ),
   );
   await probar(
-    "Brecha: balance «1 · S3» → lo que falló",
-    () => page.locator('a[href="#f-S3"]').first().click(),
-    () => page.evaluate(() => location.hash === "#f-S3"),
+    "Brecha: balance «2 · S2, S3» → lo que falló",
+    () => page.locator('a[href="#f-S2"]').first().click(),
+    () => page.evaluate(() => location.hash === "#f-S2"),
   );
   await probar(
     "Brecha: «Abrir el playground»",
@@ -191,7 +192,7 @@ async function interaccionMirada3({ page, probar }) {
   await probar(
     "Playground: U2 → 1600 con el teclado",
     () => u2a1600(page),
-    () => page.locator('#cambios [data-caso="A-010"]').isVisible(),
+    () => page.locator('#cambios [data-caso="A-007"]').isVisible(),
   );
   await probar(
     "Playground: «Volver al plan»",
@@ -281,17 +282,17 @@ const MIRADAS = {
       [
         "«Cómo funciona»",
         "Lee el objetivo y los tres pasos.",
-        "El objetivo en una frase; «Construí» con las 8 piezas del agente real; «Medí la brecha» con 9 de 9 criterios y lo que falló, nombrado.",
+        "El objetivo en una frase; «Construí» con las 8 piezas del agente real; «Medí la brecha» con 9 de 10 criterios, lo que falló nombrado y C5 «Incompleto», no callado.",
       ],
       [
         "«Capacidad medida», bajo los tres pasos",
         "Mira las cuatro cifras.",
-        "20 × 3 casos, 233 decisiones con 0 diferencias, 9 de 9 · 0 de 8 y 0 llamadas a modelos, cada una con su procedencia.",
+        "200 × 1 casos más la línea base, las decisiones de las dos corridas con 0 diferencias, 9 de 10 · 0 de 10 y 0 llamadas a modelos, cada una con su procedencia.",
       ],
       [
         "«Los demos», fila A",
         "Compara la columna «Corrida» con la maqueta.",
-        "Demo A «Cumple con alertas». La corrida dice «plan v1.3 · corrida con v1.2»: el informe es el del plan v1.3 sobre el lote que corrió con la v1.2 (la maqueta decía «plan v1.2»).",
+        "Demo A «Cumple con alertas». La corrida dice «plan v1.5 · 200 casos × 1 + línea base» (la maqueta decía «plan v1.2»: desde el S3 la vitrina publica la corrida de 200).",
       ],
       [
         "Botón «Ver como experto»",
@@ -342,8 +343,9 @@ const MIRADAS = {
       },
       {
         clave: "p6",
-        nombre: "P6 Caso (A-006)",
-        ruta: (idioma) => `/${idioma}/caso/A-006`,
+        // El estado «a006» de la maqueta es el caso con la instrucción escondida; en la corrida de 200, A-016.
+        nombre: "P6 Caso (A-016)",
+        ruta: (idioma) => `/${idioma}/caso/A-016`,
         maqueta: "diseno/06-caso.html",
         estadoMaqueta: "a006",
         extra: EXPERTO,
@@ -355,19 +357,19 @@ const MIRADAS = {
         "P2 Plan",
         "Arriba, «El plan en una mirada»",
         "Lee «Para qué» y las tres cajas.",
-        "El problema, el dominio (40 procedimientos, 5 exentos, 6 exclusiones) y quién participa; seis pasos con ✓; tres entregas, la primera con la huella del plan v1.3.",
+        "El problema, el dominio (40 procedimientos, 5 exentos, 6 exclusiones) y quién participa; seis pasos con ✓; tres entregas, la primera con la huella del plan v1.5.",
       ],
       [
         "P2 Plan",
         "Las cinco cifras",
         "Mira «riesgos».",
-        "«5 con prioridad alta, 2 por control legal». La maqueta decía 3: el plan v1.3 declara el control legal de R1 y R6, que sube su prioridad.",
+        "«6 con prioridad alta, 3 por control legal». La maqueta decía 3: el plan v1.5 declara el control legal de R1, R6 y R10, que sube su prioridad.",
       ],
       [
         "P2 Plan",
         "«Riesgos»",
         "Mira el orden y la columna de la derecha de R1 y R6.",
-        "R2, R3, R1, R6 y R5 a la vista; R1 y R6 con «AP alta» y la línea «control legal (tabla: baja)»; abajo, «Ver 3 más: R7, R4, R8».",
+        "R2, R3, R1, R10 y R6 a la vista; R1, R10 y R6 con «AP alta» y la línea «control legal (tabla: baja)»; abajo, «Ver 5 más: R5, R7, R9, R4, R8».",
       ],
       [
         "P2 Plan",
@@ -379,13 +381,13 @@ const MIRADAS = {
         "P2 Plan",
         "Pares «experto»",
         "Mira bajo las cifras y al final de la página.",
-        "«Ficha técnica del plan» y «Las 9 aristas condicionales, en orden»; en el teléfono, una tarjeta por regla, sin cortar palabras.",
+        "«Ficha técnica del plan» y «Las 12 aristas condicionales, en orden»; en el teléfono, una tarjeta por regla, sin cortar palabras.",
       ],
       [
         "P2 Plan",
         "«Umbrales»",
         "Pulsa «Moverlo».",
-        "Lleva a Playground, que sigue «en construcción» hasta la fase 3.",
+        "Lleva al Playground, con ese umbral a la vista.",
       ],
       [
         "P3 Agente",
@@ -403,13 +405,13 @@ const MIRADAS = {
         "P3 Agente",
         "El panel del nodo",
         "Abre la página, toca «decision» y luego la pestaña «Trazas».",
-        "El panel cambia al nodo; «Trazas · 15» muestra 5 casos reales y «Ver 10 más»; cada fila se abre y enlaza a su caso.",
+        "El panel cambia al nodo; «Trazas · 155» dice que pasaron 155 casos y lista los 16 de los 20 primeros del lote; cada fila se abre y enlaza a su caso.",
       ],
       [
         "P3 Agente",
         "«Antes: el spike», al final",
         "Lee las tres cifras.",
-        "«3 de 8» nodos, «1 de 9» reglas (la de U1, pero en enrutador y no en decision) y «1 nodo fuera del contrato» (aprobar), con el lienzo del spike dibujado contra el mismo contrato y lo que faltaba en discontinuo.",
+        "«3 de 8» nodos, «1 de 12» reglas (la de U1, pero en enrutador y no en decision) y «1 nodo fuera del contrato» (aprobar), con el lienzo del spike dibujado contra el mismo contrato y lo que faltaba en discontinuo.",
       ],
       [
         "P3 Agente",
@@ -438,8 +440,8 @@ const MIRADAS = {
       [
         "P6 Caso",
         "El selector de casos",
-        "En la página, pulsa A-008.",
-        "Cambia de caso y lo marca; A-008 muestra el diálogo con el médico y no trae pausa ni documento.",
+        "En la página, pulsa A-013.",
+        "Cambia de caso y lo marca; A-013 muestra el diálogo con el médico (dos preguntas) y no trae pausa ni documento.",
       ],
       [
         "Las tres",
@@ -495,31 +497,31 @@ const MIRADAS = {
         "P4 Brecha",
         "«El informe en una mirada»",
         "Lee el sello y la frase debajo.",
-        "«Cumple con alertas»: se cumplieron los 9 criterios y no ocurrió ninguno de los 8 riesgos; fallaron S3 (varios agentes, más lentos que uno) y 5 respuestas fuera de formato; S1 quedó sin probar.",
+        "«Cumple con alertas»: se cumplieron 9 de los 10 criterios y no ocurrió ninguno de los 10 riesgos; fallaron S2 (dos aclaraciones no bastaron), S3 (varios agentes, más lentos que uno) y lo que vio un evaluador; C5 quedó incompleto (una corrida de las tres que pide).",
       ],
       [
         "P4 Brecha",
         "El balance",
-        "Pulsa «1 · S3» en la fila de supuestos.",
-        "Baja a «Lo que falló», al renglón de S3, con sus casos A-008, A-012 y A-020 enlazados.",
+        "Pulsa «2 · S2, S3» en la fila de supuestos.",
+        "Baja a «Lo que falló», al renglón de S2 («Midió tasa … el plan pide ≥ 95 %»); S3 sigue, con sus casos distintos: los que tienen página, enlazados; los demás, con borde punteado.",
       ],
       [
         "P4 Brecha",
         "«Lo que quedó sin probar»",
-        "Mira el renglón de S1.",
-        "Borde discontinuo y «Sin probar»: el modelo acertó los 15 casos medidos y sin un error no hay con qué medir su confianza.",
+        "Mira el renglón de C5.",
+        "Borde discontinuo e «Incompleto»: 96,2 % medido con una de las tres corridas que pide pass^k (no es «sin probar»).",
       ],
       [
         "P4 Brecha",
         "«Se cumplió, con una nota»",
         "Lee el renglón de C3.",
-        "Cumple sobre solo 3 casos; con U2 en 1500 deja de cumplirse (A-010 saldría sin persona). Ese 1500 lo calcula el playground, no está escrito a mano.",
+        "Cumple sobre solo 39 casos; con U2 en 1200 deja de cumplirse (A-007, A-083, A-142 y A-191 saldrían sin persona). Ese 1200 lo calcula el playground, no está escrito a mano.",
       ],
       [
         "P4 Brecha",
         "Lo cumplido, renglón R8",
         "Mira la columna de la derecha.",
-        "«0 de 1 sesión»: R8 se cuenta por sesión, no por caso (la maqueta decía «casos»).",
+        "«0 de 10 sesiones»: R8 se cuenta por sesión, no por caso (la corrida de 200 corrió en 10 sesiones de 20).",
       ],
       [
         "P4 Brecha",
@@ -531,37 +533,37 @@ const MIRADAS = {
         "P4 Brecha",
         "§ 6 Supuestos, S1",
         "Mira la curva en miniatura.",
-        "La curva plana en 0 % con las etiquetas de U1 sin encimarse y el punto del plan en 0,75.",
+        "La curva con las etiquetas de U1 sin encimarse y el punto del plan en 0,75; S1 confirmado sobre 159 casos.",
       ],
       [
         "P5 Playground",
         "«El playground en una mirada», como líder",
         "Lee «Un ejemplo».",
-        "Subir U1 de 0,75 a 0,90 manda A-008 (confianza 0,88) a una persona: 12 minutos más, ningún error nuevo. Es una medida, no un texto fijo.",
+        "Subir U1 de 0,75 a 0,85 manda A-089 y A-144 (confianza 0,80 cada uno) a una persona: 24 minutos más, ningún error nuevo. Es una medida, no un texto fijo.",
       ],
       [
         "P5 Playground",
         "Pares «experto»",
         "Mira la ficha técnica y la regla de decisión.",
-        "El orden de evaluación sigue el grafo (enrutador, extractor, aclaracion, decision) y no el alfabeto; la regla muestra los valores que muevas, subrayados.",
+        "El orden de evaluación sigue el grafo (enrutador, extractor, aclaracion, decision) y no el alfabeto; la regla muestra los valores que muevas, subrayados; con el modo Texas encendido, la línea dice «modo_texas true».",
       ],
       [
         "P5 Playground",
         "Par «U2 en 1600»",
         "Compáralo con la maqueta en el mismo estado.",
-        "A-010 pasa a «solo» y es un error; C3 deja de cumplirse. La maqueta decía «8 de 9»; aquí dice «6 de 9» porque C2 y C7 no se pueden medir en A-010: leen lo que pasa después del cambio, que la traza no registró.",
+        "Doce casos de alto costo pasan a «solo» y son errores; C3 deja de cumplirse. Los criterios que leen lo que pasa después del cambio no se pueden medir en esos casos: la traza no lo registró.",
       ],
       [
         "P5 Playground",
         "Modo Texas (U4)",
         "En la página, enciéndelo.",
-        "Ningún caso cambia, y la lista lo dice: toda propuesta adversa ya pasaba por una persona; abajo, «conmutarlo cambia 0 de las 62 decisiones».",
+        "Las nueve aprobaciones en parte pasan a una persona, cada una «la exige el modo Texas · +12 min» (no «revisión de más»); abajo, «conmutarlo cambia 9 de las 624 decisiones».",
       ],
       [
         "P5 Playground",
         "La curva riesgo-cobertura",
         "En la página, mueve U1.",
-        "El cuadro ■ sigue a U1 en la curva y en la tabla; el círculo es el plan. La lectura dice que el riesgo quedó en 0 % porque no hubo errores.",
+        "El cuadro ■ sigue a U1 en la curva y en la tabla; el círculo es el plan. La lectura dice que subir U1 baja la cobertura y, si la confianza está calibrada, también el riesgo.",
       ],
       [
         "Las dos",

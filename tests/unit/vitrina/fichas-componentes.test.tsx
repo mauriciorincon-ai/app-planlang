@@ -130,7 +130,7 @@ describe("inglés", () => {
     for (const x of copia.querySelectorAll("code")) x.remove();
     const texto = copia.textContent ?? "";
     expect(texto).toContain("The records at a glance");
-    expect(texto).toContain("100% extraction accuracy");
+    expect(texto).toContain("96.2% extraction accuracy");
     expect(texto).toContain("Unsealed");
     expect(texto).toContain("Who it's for, and what it solves");
     for (const residuo of [

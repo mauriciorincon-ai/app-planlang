@@ -74,6 +74,7 @@ export function perfilDemoA(d: DatosDemoA, ctx: ContextoAgente): PerfilAgente {
     marca,
     criterio,
     cumple,
+    estado,
     con,
     pasosDe,
     senal,
@@ -114,6 +115,12 @@ export function perfilDemoA(d: DatosDemoA, ctx: ContextoAgente): PerfilAgente {
         ),
       )
       .map((t) => t.caso_id);
+  const documentados = trazas.filter(
+    (t) =>
+      t.documento_adverso &&
+      t.documento_adverso.completo &&
+      t.documento_adverso.idiomas.join() === "es,en",
+  );
   const cargas = trazas
     .filter((t) => t.guardia_salida?.carga_detectada_en_entrada)
     .map((t) => t.caso_id);
@@ -126,7 +133,7 @@ export function perfilDemoA(d: DatosDemoA, ctx: ContextoAgente): PerfilAgente {
     total: n,
     casos: con(nodo).length,
     visitas: pasosDe(nodo).length,
-    criterios: frasesDeCriterios(crit, cumple),
+    criterios: frasesDeCriterios(crit, estado),
     aExtractor: enr.filter((v) => v.rama === "extractor").length,
     urgencias: enr.filter((v) => v.regla?.senal === "tipo_atencion").length,
     exentos: enr.filter((v) => v.regla?.senal === "servicio_exento").length,
@@ -167,11 +174,9 @@ export function perfilDemoA(d: DatosDemoA, ctx: ContextoAgente): PerfilAgente {
     ).length,
     minutos: pausas.length * costoHumano,
     minutosPorCaso: costoHumano,
-    negaciones: trazas.filter(
-      (t) =>
-        t.documento_adverso &&
-        t.documento_adverso.completo &&
-        t.documento_adverso.idiomas.join() === "es,en",
+    negaciones: documentados.length,
+    parciales: documentados.filter(
+      (t) => t.senales.decision_final === "aprobar_parcial",
     ).length,
     hallazgos: trazas.reduce(
       (a, t) => a + (t.guardia_salida?.hallazgos.length ?? 0),

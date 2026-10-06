@@ -55,7 +55,6 @@ import {
   VARIANTE,
 } from "@/textos/brecha";
 import { CRITERIO } from "@/textos/plan";
-import { SUBTIPO } from "@/textos/caso";
 import { VEREDICTOS } from "@/textos/comun";
 import { APAGADO, ENCENDIDO } from "@/textos/plan-comun";
 import {
@@ -63,7 +62,7 @@ import {
   type ClaseDeVeredicto,
 } from "@/components/veredicto";
 import type { Fila } from "./agente";
-import { pieDeCorrida } from "./caso";
+import { nombreDeSubtipo, pieDeCorrida } from "./caso";
 import { enlaceACaso } from "./paginas-caso";
 import { filasDeReproducibilidad } from "./reproducibilidad";
 import {
@@ -626,6 +625,10 @@ export function vistaBrecha(d: DatosDemo, i: Idioma): VistaBrecha {
       ),
     );
   }
+  const incompletos = inf.criterios
+    .filter((c) => c.estado === "incompleto")
+    .map((c) => c.id);
+  if (incompletos.length > 0) frases.push(X(FRASE.incompletos(incompletos), i));
   const totalReintentos = brechas.reduce((n, b) => n + (b.reintentos ?? 0), 0);
   const experto = [
     X(EXPERTO.veredicto(textoDeVeredicto(inf.veredicto.valor, i)), i),
@@ -1346,7 +1349,7 @@ export function vistaBrecha(d: DatosDemo, i: Idioma): VistaBrecha {
         rol: X(EJEMPLARES.rol[rol]!, i),
         caso: {
           id: e.caso_id,
-          tipo: X(SUBTIPO[e.subtipo] ?? { es: e.subtipo, en: e.subtipo }, i),
+          tipo: X(nombreDeSubtipo(d.id, e.subtipo), i),
         },
         texto: X(e.por_que, i),
         cadena: cadena.map((n) => ({
@@ -1494,6 +1497,49 @@ function nombreMetrica(k: string, i: Idioma): string {
 /** Valor de una métrica con hasta 4 decimales, sin ceros sobrantes (0,0807 · 1). */
 function valorMetrica(v: number, i: Idioma): string {
   return numCorto(v, i, 4);
+}
+
+/**
+ * Lo que midió un supuesto no confirmado frente a lo que pide el plan: «Midió tasa 83 % (el plan pide ≥ 95 %), sobre 24
+ * casos.» Nulo si está confirmado, si el plan no declara su umbral o si falta alguna medida: entonces queda el motivo
+ * del verificador. Lo usan la Brecha y el Plan (S3: los dos decían «No cumple el umbral de confirmación: tasa_min.»).
+ */
+export function medidaContraElPlan(
+  s: {
+    estado: string;
+    metricas: Readonly<Record<string, number | null>>;
+    n: number;
+  },
+  umbral: Readonly<Record<string, unknown>>,
+  i: Idioma,
+): string | null {
+  if (s.estado === "confirmado") return null;
+  const ambos = (f: (j: Idioma) => string): TextoBilingue => ({
+    es: f("es"),
+    en: f("en"),
+  });
+  const partes = Object.entries(umbral).flatMap(([k, v]) => {
+    const m = k.replace(/_(min|max)$/, "");
+    const valor = s.metricas[m];
+    if (typeof valor !== "number") return [];
+    // Una tasa o una exactitud se lee en porcentaje; ECE y AUROC, como el número que son.
+    const proporcion = m === "tasa" || m === "exactitud";
+    return [
+      PASO.medidaContra({
+        nombre: ambos((j) => nombreMetrica(m, j)),
+        valor: ambos((j) =>
+          proporcion ? porcentaje(valor, j) : valorMetrica(valor, j),
+        ),
+        op: k.endsWith("_max") ? "≤" : "≥",
+        umbral: ambos((j) =>
+          proporcion ? porcentaje(Number(v), j) : decimal(Number(v), 2, j),
+        ),
+      }),
+    ];
+  });
+  if (partes.length === 0 || partes.length !== Object.keys(umbral).length)
+    return null;
+  return X(PASO.contraUmbral({ partes, n: s.n }), i);
 }
 
 /** Una cifra que el informe debe traer para pintar esa parte: si falta, la vista lo dice en vez de pintar «NaN». */
@@ -1682,7 +1728,16 @@ function filaSupuesto(
     const n = s.n;
     const exactitud =
       typeof s.metricas.exactitud === "number" ? s.metricas.exactitud : null;
-    paso = exactitud === 1 ? X(PASO.sinErrores(n), i) : X(s.motivo, i);
+    // Lo que midió frente a lo que pide el plan; el motivo crudo del verificador («No cumple el umbral de
+    // confirmación: tasa_min.») solo queda si el plan no declara el umbral o falta la medida (S3).
+    paso =
+      exactitud === 1
+        ? X(PASO.sinErrores(n), i)
+        : (medidaContraElPlan(
+            s,
+            p?.medible_en_trazas?.umbral_confirmacion ?? {},
+            i,
+          ) ?? X(s.motivo, i));
     medido = `${Object.entries(s.metricas)
       .map(([k, v]) =>
         X(
@@ -1746,22 +1801,68 @@ function filaSupuesto(
   };
 }
 
+/**
+ * El criterio en palabras llanas, con sus valores leídos del plan (`{plan:C5.objetivo}`): la Brecha lo pintaba sin
+ * resolver en C5 y C7 (S3), y la prueba de plantillas sin resolver no miraba esta vista.
+ */
+function liderDeCriterio(
+  c: ResultadoCriterio,
+  d: DatosDemo,
+  i: Idioma,
+): string {
+  return conPlan(
+    X(CRITERIO.lider[d.id][c.id] ?? c.enunciado, i),
+    d.plan,
+    i,
+    d.id,
+  );
+}
+
+/**
+ * Lo que vio cada brecha, una vez por detalle y con sus casos: «La extracción no coincide con la verdad conocida
+ * (A-022, A-126 y A-139).» Antes se enumeraba el detalle de cada brecha y tres iguales se leían como una frase
+ * repetida tres veces (S3).
+ */
+function detallesAgrupados(
+  bs: ReadonlyArray<{ detalle: TextoBilingue; caso_id: string | null }>,
+  i: Idioma,
+): string {
+  const porDetalle = new Map<string, string[]>();
+  for (const b of bs) {
+    const t = X(b.detalle, i).replace(/\.\s*$/, "");
+    const l = porDetalle.get(t) ?? [];
+    if (b.caso_id && !l.includes(b.caso_id)) l.push(b.caso_id);
+    porDetalle.set(t, l);
+  }
+  return [...porDetalle]
+    .map(([t, casos]) =>
+      casos.length ? `${t} (${enumerar(casos, i)}).` : `${t}.`,
+    )
+    .join(" ");
+}
+
 function filaCriterioFallido(
   c: ResultadoCriterio,
   d: DatosDemo,
   i: Idioma,
   sinProbar = false,
 ): FilaFallo {
-  const demo = d.id;
   const estado = estadoDeCriterio(c.estado, i, "informe");
   return {
     ancla: `f-${c.id}`,
     clase: sinProbar ? "beta" : estado.clase,
-    etiqueta: X(sinProbar ? ETIQUETA_FILA.sinProbar : ETIQUETA_FILA.fallo, i),
+    etiqueta: X(
+      !sinProbar
+        ? ETIQUETA_FILA.fallo
+        : c.estado === "incompleto"
+          ? ETIQUETA_FILA.incompleto
+          : ETIQUETA_FILA.sinProbar,
+      i,
+    ),
     codigo: c.id,
     titulo: X(c.enunciado, i),
     lider: [
-      X(CRITERIO.lider[demo][c.id] ?? c.enunciado, i),
+      liderDeCriterio(c, d, i),
       `${valorDe(c, i)} · ${estado.texto}`,
       c.nota ? X(c.nota, i) : estado.texto,
     ],
@@ -1864,10 +1965,7 @@ function filaBrecha(
             }),
             i,
           )
-        : enumerar(
-            bs.map((b) => X(b.detalle, i)),
-            i,
-          ),
+        : detallesAgrupados(bs, i),
       X(l.significa, i),
     ],
     experto: [
@@ -1917,6 +2015,7 @@ function filaConNota(
           umbral: rompe.umbral,
           valor: numeroDato(rompe.valor, i),
           caso: enumerar(rompe.casos, i),
+          n: rompe.casos.length,
         }),
         i,
       )
@@ -1936,6 +2035,7 @@ function filaConNota(
         mediana: segundos(c.valor_medido, i),
         casos: enumerar(c.casos_que_incumplen, i),
         valores: unoAUno.map((x) => x.split(": ")[1]).join(", "),
+        n: c.casos_que_incumplen.length,
       }),
       i,
     );
@@ -1974,7 +2074,7 @@ function filaConNota(
     etiqueta: X(ETIQUETA_FILA.conNota, i),
     codigo: c.id,
     titulo: X(c.enunciado, i),
-    lider: [X(CRITERIO.lider[demo][c.id] ?? c.enunciado, i), paso, significa],
+    lider: [liderDeCriterio(c, d, i), paso, significa],
     experto: [
       c.metrica
         ? `${c.agregacion}(${c.metrica}) ${MENOR_ES_MEJOR.has(c.tipo) ? "≤" : "≥"} ${numeroDato(Number(c.objetivo), i)} · n = ${c.n_poblacion}`
@@ -2092,6 +2192,7 @@ function filaCriterio(
           valores: c.casos_que_incumplen
             .map((id) => segundos(latenciaDe.get(id) ?? Number.NaN, i))
             .join(", "),
+          n: c.casos_que_incumplen.length,
         }),
         i,
       ),
@@ -2182,7 +2283,24 @@ function vistaSupuesto(
   let grafico: SupuestoVista["grafico"] = null;
   if (s.comparacion) {
     const c = s.comparacion;
+    const latM = cifra(
+      c.latencia_mediana_s.multiagente,
+      "la latencia mediana del multiagente",
+    );
+    const latB = cifra(
+      c.latencia_mediana_s.agente_unico,
+      "la latencia mediana de la línea base",
+    );
+    const sentido = (a: number, b: number) =>
+      a > b
+        ? ("mas" as const)
+        : a < b
+          ? ("menos" as const)
+          : ("igual" as const);
     texto = dio({
+      // El sentido sale de las cifras, no de la copia (S3: la frase decía «acertó más pero tardó más» fija).
+      acerto: sentido(c.exactitud.multiagente, c.exactitud.agente_unico),
+      tardo: sentido(latM, latB),
       exactitud: porcentaje(c.exactitud.multiagente, i),
       exactitudBase: porcentaje(c.exactitud.agente_unico, i),
       latencia: segundos(

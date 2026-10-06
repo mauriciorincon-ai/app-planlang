@@ -36,6 +36,7 @@ import type { Fila } from "./agente";
 import { pieDeCorrida } from "./caso";
 import { entero, enumerar, porcentaje, versionCorta } from "./formato";
 import { compararCadenas } from "@core/playground/aristas";
+import { medidaContraElPlan } from "./brecha";
 import { conPlan } from "./plan-en-texto";
 import {
   VISIBLES,
@@ -306,7 +307,13 @@ export function vistaPlan(d: DatosDemo, i: Idioma): VistaPlan {
   // ── supuestos ──────────────────────────────────────────────────────────────────────────────────
   const supuestos: FilaPlan[] = p.supuestos.map((s) => {
     const si = informe.supuestos.find((x) => x.id === s.id) as
-      { estado: string; motivo?: TextoBilingue | null } | undefined;
+      | {
+          estado: string;
+          motivo?: TextoBilingue | null;
+          metricas: Record<string, number | null>;
+          n: number;
+        }
+      | undefined;
     const m = s.medible_en_trazas as Record<string, unknown> & {
       metricas: string[];
       poblacion: string;
@@ -331,7 +338,14 @@ export function vistaPlan(d: DatosDemo, i: Idioma): VistaPlan {
         filas: [
           { k: X(SUPUESTO.prueba, i), v: X(s.prueba_barata, i) },
           ...(si?.motivo
-            ? [{ k: X(SUPUESTO.dio, i), v: X(si.motivo, i) }]
+            ? [
+                {
+                  k: X(SUPUESTO.dio, i),
+                  v:
+                    medidaContraElPlan(si, m.umbral_confirmacion ?? {}, i) ??
+                    X(si.motivo, i),
+                },
+              ]
             : []),
         ],
       },
@@ -499,7 +513,10 @@ export function vistaPlan(d: DatosDemo, i: Idioma): VistaPlan {
       detalle: X(
         CIFRAS.cumplieron({
           si: cumplen,
-          no: p.criterios_aceptacion.length - cumplen,
+          no: informe.criterios.filter((c) => c.estado === "incumple").length,
+          incompletos: informe.criterios.filter(
+            (c) => c.estado === "incompleto",
+          ).length,
         }),
         i,
       ),
@@ -704,6 +721,7 @@ export function vistaPlan(d: DatosDemo, i: Idioma): VistaPlan {
             i,
           ),
           diferencias: rf.reduce((s, c) => s + c.discrepancias, 0),
+          corridas: rf.length,
         }),
         i,
       ),

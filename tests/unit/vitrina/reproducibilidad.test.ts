@@ -41,8 +41,22 @@ describe("ficha de reproducibilidad", () => {
     const texto = filas.map((f) => `${f.k}: ${f.v}`).join("\n");
     expect(texto).toContain("single agent");
     expect(texto).toContain("groq");
+    // La publicada (S3) ya corrió con el plan que la mide: solo se va la fila de la línea base.
     expect(filas.length).toBe(
-      filasDeReproducibilidad(d, "en", "brecha").length - 2,
+      filasDeReproducibilidad(d, "en", "brecha").length - 1,
+    );
+  });
+
+  it("una corrida hecha con otro plan que el que la mide suma la fila del plan con que corrió", () => {
+    const x = otra((f) => {
+      f.corrida.plan_de_ejecucion = {
+        ...f.corrida.plan_de_ejecucion,
+        huella: "0".repeat(64),
+        version: "1.4.0",
+      };
+    });
+    expect(filasDeReproducibilidad(x, "es", "brecha").length).toBe(
+      filasDeReproducibilidad(d, "es", "brecha").length + 1,
     );
   });
 

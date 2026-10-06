@@ -87,21 +87,26 @@ describe("mapa del demo A", () => {
       mapa.flujos.map((f) => [f.id, f.condicion]),
     );
     expect(porId["decision-a-pausa-humana-r1"]).toEqual({
+      senal: "carga-detectada",
+      operador: "=",
+      valor: true,
+    });
+    expect(porId["decision-a-pausa-humana-r2"]).toEqual({
       senal: "senal-confianza",
       operador: "<",
       valor: "U1",
     });
-    expect(porId["aclaracion-a-pausa-humana-r1"]).toEqual({
+    expect(porId["aclaracion-a-pausa-humana-r2"]).toEqual({
       senal: "ciclos-aclaracion",
       operador: ">=",
       valor: "U3",
     });
-    expect(porId["extractor-a-aclaracion-r1"]).toEqual({
+    expect(porId["extractor-a-aclaracion-r2"]).toEqual({
       senal: "campos-faltantes-count",
       operador: ">",
       valor: 0,
     });
-    expect(porId["decision-a-pausa-humana-r5"]).toEqual({
+    expect(porId["decision-a-pausa-humana-r6"]).toEqual({
       funcion: "texas_y_no_aprobar",
       entradas: ["modo-texas", "propuesta"],
     });

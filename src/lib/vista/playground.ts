@@ -111,8 +111,12 @@ export function valorUmbral(v: number, decimales: number, i: Idioma): string {
 
 /**
  * El ejemplo llano del líder, medido: el primer valor por encima del plan, en el primer umbral numérico, que cambia
- * algún caso de camino. Si ninguno lo hace, no hay ejemplo (no se inventa uno).
+ * algún caso de camino (uno o varios, hasta MAX_CASOS_EJEMPLO, todos de «solo» a «persona»). Si ninguno lo hace, no
+ * hay ejemplo (no se inventa uno).
  */
+/** Más casos que estos en el primer paso no caben en una frase: el ejemplo se calla y la isla los muestra. */
+const MAX_CASOS_EJEMPLO = 3;
+
 function ejemplo(c: Compacto, d: DatosDemo, i: Idioma): string | null {
   const plan = umbralesDelPlan(c);
   for (const u of c.umbrales) {
@@ -126,20 +130,20 @@ function ejemplo(c: Compacto, d: DatosDemo, i: Idioma): string | null {
         (x) => x.antes === "solo" && x.ahora === "persona",
       );
       if (r.cambios.length === 0) continue;
-      if (r.cambios.length !== 1 || solos.length !== 1) return null;
-      const caso = solos[0]!;
-      const valor = caso.senales[u.senal];
+      if (solos.length !== r.cambios.length || solos.length > MAX_CASOS_EJEMPLO)
+        return null;
+      const valores = solos.map((x) => x.senales[u.senal]);
       const delPlan = d.plan.umbrales.find((x) => x.id === u.id);
-      if (!delPlan || typeof valor !== "number") return null;
+      if (!delPlan || valores.some((x) => typeof x !== "number")) return null;
       return X(
         EJEMPLO.texto({
           umbral: u.id,
           nombre: delPlan.nombre,
           desde: valorUmbral(u.valor_en_plan, dec, i),
           hasta: valorUmbral(v, dec, i),
-          caso: caso.id,
+          casos: solos.map((x) => x.id),
           senal: nombreLlano(u.senal),
-          valor: valorUmbral(valor, dec, i),
+          valores: valores.map((x) => valorUmbral(x as number, dec, i)),
           minutos:
             r.minutos === null || r.minutos_plan === null
               ? null

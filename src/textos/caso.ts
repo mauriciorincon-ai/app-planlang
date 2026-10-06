@@ -4,6 +4,7 @@
  * se ARMA aquí con plantillas desde la traza: ningún caso lleva texto escrito a mano.
  */
 import { tb, type TextoBilingue } from "@core/formatos/bilingue";
+import type { Subtipo } from "@core/sintetico/esquema";
 import type { IdDemo } from "@/lib/demos";
 import { MIRADA_B, ORACULO_TEXTO_B } from "./demo-b/caso";
 
@@ -73,12 +74,13 @@ export const MIRADA = {
     "demo-b": MIRADA_B.avisoExperto,
   } as Record<IdDemo, TextoBilingue>,
   selector: tb("Casos", "Cases"),
-  casosDeLaCorrida: ((p: { conPagina: number; total: number; primeros: number }) =>
+  casosDeLaCorrida: ((p: {
+    conPagina: number;
+    total: number;
+    primeros: number;
+  }) =>
     p.conPagina === p.total
-      ? tb(
-          `Los ${p.total} casos de la corrida:`,
-          `The run’s ${p.total} cases:`,
-        )
+      ? tb(`Los ${p.total} casos de la corrida:`, `The run’s ${p.total} cases:`)
       : tb(
           `${p.conPagina} de los ${p.total} casos de la corrida tienen su página: los ${p.primeros} primeros del lote y los que nombra el informe. La Brecha y el Playground miden sobre los ${p.total}.`,
           `${p.conPagina} of the run’s ${p.total} cases have their own page: the first ${p.primeros} in the batch and those the report names. The Gap and the Playground measure all ${p.total}.`,
@@ -90,7 +92,7 @@ export const MIRADA = {
 };
 
 /** Cómo se nombra cada subtipo de caso sintético en el selector (`core/sintetico`). */
-export const SUBTIPO: Record<string, TextoBilingue> = {
+export const SUBTIPO: Record<Subtipo, TextoBilingue> = {
   normal_aprobable: tb("normal, aprobable", "normal, approvable"),
   normal_excluido: tb("normal, excluido", "normal, excluded"),
   normal_urgencia: tb("normal, urgencia", "normal, emergency"),
@@ -105,10 +107,19 @@ export const SUBTIPO: Record<string, TextoBilingue> = {
     "borde: urgencia con cobertura dudosa",
     "edge: emergency with doubtful coverage",
   ),
+  borde_texto_ambiguo: tb("borde: texto ambiguo", "edge: ambiguous text"),
+  borde_empate_umbrales: tb(
+    "borde: empate en los umbrales",
+    "edge: tie at the thresholds",
+  ),
   faltante_un_ciclo: tb("faltante: 1 aclaración", "missing: 1 clarification"),
   faltante_dos_ciclos: tb(
     "faltante: 2 aclaraciones",
     "missing: 2 clarifications",
+  ),
+  faltante_tres_ciclos: tb(
+    "faltante: 3 aclaraciones",
+    "missing: 3 clarifications",
   ),
   faltante_sin_respuesta: tb("faltante: sin respuesta", "missing: no answer"),
   adversario_inyeccion_texto_libre: tb(
@@ -123,6 +134,11 @@ export const SUBTIPO: Record<string, TextoBilingue> = {
     "adversario: dato sensible",
     "adversarial: sensitive data",
   ),
+  adversario_homonimo: tb(
+    "adversario: nombre casi idéntico",
+    "adversarial: near-identical name",
+  ),
+  normal_sobre_tope: tb("normal, sobre el tope", "normal, above the cap"),
 };
 
 /** El caso ejemplar del informe que es este (`casos_ejemplares`). */
@@ -243,19 +259,27 @@ export const RELATO = {
     excluido: boolean;
     causal: string | null;
     propuesta: TextoBilingue;
+    /** El costo supera el tope del plan de beneficios para el servicio (la propuesta es aprobar en parte). */
+    conTope: boolean;
   }) =>
     p.excluido
       ? tb(
           `El verificador de cobertura encontró que el servicio está excluido por ley${p.causal ? ` (causal ${p.causal} del art. 15 de la Ley 1751)` : ""} y propuso ${p.propuesta.es}.`,
           `The coverage checker found the service excluded by law${p.causal ? ` (ground ${p.causal} of art. 15 of Law 1751)` : ""} and proposed to ${p.propuesta.en}.`,
         )
-      : tb(
-          `El verificador de cobertura encontró el servicio cubierto y propuso ${p.propuesta.es}.`,
-          `The coverage checker found the service covered and proposed to ${p.propuesta.en}.`,
-        )) as Plantilla<{
+      : p.conTope
+        ? tb(
+            `El verificador de cobertura encontró el servicio cubierto hasta un tope que el costo supera, y propuso ${p.propuesta.es}.`,
+            `The coverage checker found the service covered up to a cap that the cost exceeds, and proposed to ${p.propuesta.en}.`,
+          )
+        : tb(
+            `El verificador de cobertura encontró el servicio cubierto y propuso ${p.propuesta.es}.`,
+            `The coverage checker found the service covered and proposed to ${p.propuesta.en}.`,
+          )) as Plantilla<{
     excluido: boolean;
     causal: string | null;
     propuesta: TextoBilingue;
+    conTope: boolean;
   }>,
   aPersona: ((p: { motivo: TextoBilingue; decision: TextoBilingue }) =>
     tb(
@@ -264,7 +288,7 @@ export const RELATO = {
     )) as Plantilla<{ motivo: TextoBilingue; decision: TextoBilingue }>,
   solo: ((decision: TextoBilingue) =>
     tb(
-      `Ninguna regla de escalamiento se cumplió y el agente decidió ${decision.es} solo.`,
+      `Ninguna regla de escalamiento se cumplió y el agente decidió por su cuenta ${decision.es}.`,
       `No escalation rule held and the agent decided to ${decision.en} on its own.`,
     )) as Plantilla<TextoBilingue>,
   /** La guardia detectó una instrucción escondida en la entrada (`guardia_salida.carga_detectada_en_entrada`). */
@@ -277,6 +301,17 @@ export const RELATO = {
       : tb(
           `El texto del médico escondía una instrucción para la IA: la guardia la detectó en la entrada, pero la acción quedó con severidad ${severidad}.`,
           `The doctor’s text hid an instruction for the AI: the guard detected it in the input, but the action was left with severity ${severidad}.`,
+        )) as Plantilla<number>,
+  /** Lo mismo, cuando la frase de la pausa ya contó que la guardia la marcó (la pausa fue por la carga). */
+  inyeccionYaContada: ((severidad: number) =>
+    severidad === 0
+      ? tb(
+          "La instrucción no tuvo efecto, porque el texto de un caso nunca decide qué acción se ejecuta.",
+          "The instruction had no effect, because a case’s text never decides which action runs.",
+        )
+      : tb(
+          `La acción quedó con severidad ${severidad}.`,
+          `The action was left with severity ${severidad}.`,
         )) as Plantilla<number>,
   cierre: ((p: { documento: boolean; hallazgos: number }) =>
     tb(
@@ -619,7 +654,10 @@ export const PAUSA = {
   ),
   respondio: tb("Lo que respondió el auditor", "What the auditor answered"),
   // M-8 (plan v1.5): lo que el auditor recibe además del texto y la extracción.
-  casoCompleto: tb("El resto del caso que recibió", "The rest of the case it received"),
+  casoCompleto: tb(
+    "El resto del caso que recibió",
+    "The rest of the case it received",
+  ),
   orden: tb("Orden", "Order"),
   cobertura: tb("Cobertura", "Coverage"),
   altoCosto: tb("alto costo", "high cost"),
@@ -629,7 +667,10 @@ export const PAUSA = {
     "Coverage: not yet checked when the agent stopped",
   ),
   estadoServicio: {
-    requiere_autorizacion: tb("requiere autorización", "requires authorization"),
+    requiere_autorizacion: tb(
+      "requiere autorización",
+      "requires authorization",
+    ),
     excluido: tb("excluido", "excluded"),
     exento: tb("no requiere autorización", "needs no authorization"),
   } as Record<string, TextoBilingue>,

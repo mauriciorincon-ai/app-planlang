@@ -5,6 +5,7 @@
  * «copia contra plan» la lea contra el plan B.
  */
 import { tb, type TextoBilingue } from "@core/formatos/bilingue";
+import type { SubtipoB } from "@core/sintetico/demo-b/esquema";
 
 type Plantilla<P> = (p: P) => TextoBilingue;
 
@@ -25,7 +26,7 @@ export const MIRADA_B = {
 };
 
 /** Cómo se nombra cada subtipo de caso sintético del B en el selector (`core/sintetico/demo-b`). */
-export const SUBTIPO_B: Record<string, TextoBilingue> = {
+export const SUBTIPO_B: Record<SubtipoB, TextoBilingue> = {
   normal_limpio: tb("normal, limpio", "normal, clean"),
   normal_riesgo_alto: tb("normal, riesgo alto", "normal, high risk"),
   normal_lista_vinculante: tb(

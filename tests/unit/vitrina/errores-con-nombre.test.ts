@@ -38,10 +38,11 @@ describe("P4 Brecha", () => {
   });
 
   it("una curva de supuesto sin umbral de confianza en el plan", () => {
+    // El umbral sigue (las aristas del plan v1.5 lo citan y el playground de la Brecha lo recalcula), pero ya no lee la
+    // señal de confianza: la curva no sabe dónde marcar el punto del plan y lo dice.
     const otro = conPlan();
-    otro.plan.umbrales = otro.plan.umbrales.filter(
-      (u) => u.senal !== SENAL_DE_CONFIANZA,
-    );
+    otro.plan.umbrales.find((u) => u.senal === SENAL_DE_CONFIANZA)!.senal =
+      "otra_senal";
     expect(() => vistaBrecha(otro, "en")).toThrow(
       `no tiene un umbral sobre «${SENAL_DE_CONFIANZA}»`,
     );

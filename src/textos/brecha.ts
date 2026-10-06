@@ -134,6 +134,18 @@ export const FRASE = {
       `Y quedó sin probar ${unir(p.es, "ni")}.`,
       `And it was left untested ${unir(p.en, "or")}.`,
     )) as Plantilla<{ es: string[]; en: string[] }>,
+  /** Un criterio medido que no pudo decidirse (pass^k con menos corridas de las exigidas): se dice, no se calla. */
+  incompletos: ((ids: string[]) => {
+    // Ids, sin la coma de la maqueta antes de la conjunción: «C5 y C7», «C5, C6 y C7».
+    const y = (c: string) =>
+      ids.length <= 1
+        ? ids.join("")
+        : `${ids.slice(0, -1).join(", ")} ${c} ${ids[ids.length - 1]}`;
+    return tb(
+      `Y ${y("y")} ${ids.length === 1 ? "quedó incompleto: se midió" : "quedaron incompletos: se midieron"} con menos corridas de las que pide su regla.`,
+      `And ${y("and")} ${ids.length === 1 ? "was" : "were"} left incomplete: measured with fewer runs than ${ids.length === 1 ? "its rule asks" : "their rules ask"} for.`,
+    );
+  }) as Plantilla<string[]>,
 };
 
 function mayuscula(s: string): string {
@@ -155,6 +167,37 @@ export interface LecturaDeFalla {
   titulo: TextoBilingue;
   planeo: TextoBilingue;
   significa: TextoBilingue;
+}
+
+/** Lo que comparó S3 (multiagente frente a la línea base), con el sentido de cada diferencia sacado de las cifras. */
+interface ComparacionS3 {
+  acerto: "mas" | "menos" | "igual";
+  tardo: "mas" | "menos" | "igual";
+  exactitud: string;
+  exactitudBase: string;
+  latencia: string;
+  latenciaBase: string;
+}
+
+/** «Acertó más (98 % frente a 90 %) pero tardó más (8,1 s frente a 5,1 s)»: el conector dice si las dos van juntas. */
+function comparacionS3(p: ComparacionS3): TextoBilingue {
+  const bienA = p.acerto !== "menos";
+  const bienT = p.tardo !== "mas";
+  const pero = bienA !== bienT;
+  const a = {
+    mas: tb("Acertó más", "It got more right"),
+    menos: tb("Acertó menos", "It got fewer right"),
+    igual: tb("Acertó lo mismo", "It got the same right"),
+  }[p.acerto];
+  const t = {
+    mas: tb("tardó más", "took longer"),
+    menos: tb("tardó menos", "took less time"),
+    igual: tb("tardó lo mismo", "took the same time"),
+  }[p.tardo];
+  return tb(
+    `${a.es} (${p.exactitud} frente a ${p.exactitudBase}) ${pero ? "pero" : "y"} ${t.es} (${p.latencia} frente a ${p.latenciaBase})`,
+    `${a.en} (${p.exactitud} against ${p.exactitudBase}) ${pero ? "but" : "and"} ${t.en} (${p.latencia} against ${p.latenciaBase})`,
+  );
 }
 
 const LECTURA_SUPUESTO_A: Record<string, LecturaDeFalla> = {
@@ -334,6 +377,27 @@ export const PASO = {
     llamadas: number;
     llamadasBase: number;
   }>,
+  /** Lo que midió un supuesto frente a lo que pide el plan (en lugar del motivo crudo del verificador). */
+  contraUmbral: ((p: { partes: TextoBilingue[]; n: number }) =>
+    tb(
+      `Midió ${p.partes.map((x) => x.es).join(" y ")}, sobre ${p.n} casos.`,
+      `It measured ${p.partes.map((x) => x.en).join(" and ")}, on ${p.n} cases.`,
+    )) as Plantilla<{ partes: TextoBilingue[]; n: number }>,
+  medidaContra: ((p: {
+    nombre: TextoBilingue;
+    valor: TextoBilingue;
+    op: string;
+    umbral: TextoBilingue;
+  }) =>
+    tb(
+      `${p.nombre.es} ${p.valor.es} (el plan pide ${p.op} ${p.umbral.es})`,
+      `${p.nombre.en} ${p.valor.en} (the plan asks ${p.op} ${p.umbral.en})`,
+    )) as Plantilla<{
+    nombre: TextoBilingue;
+    valor: TextoBilingue;
+    op: string;
+    umbral: TextoBilingue;
+  }>,
   sinErrores: ((n: number) =>
     tb(
       `No se pudo comprobar: el modelo acertó los ${n} casos medidos y, sin un solo error, no hay con qué comparar su confianza.`,
@@ -356,21 +420,36 @@ export const PASO = {
     reintentos: number;
     corridas: number;
   }>,
-  mediana: ((p: { mediana: string; casos: string; valores: string }) =>
+  mediana: ((p: {
+    mediana: string;
+    casos: string;
+    valores: string;
+    n: number;
+  }) =>
     tb(
-      `La mediana fue ${p.mediana}. Pero ${p.casos} pasó el objetivo uno a uno: ${p.valores}.`,
+      `La mediana fue ${p.mediana}. Pero ${p.casos} ${p.n === 1 ? "pasó" : "pasaron"} el objetivo uno a uno: ${p.valores}.`,
       `The median was ${p.mediana}. But ${p.casos} went past the target one by one: ${p.valores}.`,
-    )) as Plantilla<{ mediana: string; casos: string; valores: string }>,
+    )) as Plantilla<{
+    mediana: string;
+    casos: string;
+    valores: string;
+    n: number;
+  }>,
   fuera: ((p: { dentro: number; fuera: number }) =>
     tb(
       `Los ${p.dentro} casos de la población cumplieron. Otros ${p.fuera} no tienen la señal que la define —el paso que la escribe no corrió en ellos— y quedan fuera de la cuenta.`,
       `The ${p.dentro} cases in the population met it. Another ${p.fuera} lack the signal that defines it —the step that writes it did not run for them— and are left out of the count.`,
     )) as Plantilla<{ dentro: number; fuera: number }>,
-  playground: ((p: { umbral: string; valor: string; caso: string }) =>
+  playground: ((p: {
+    umbral: string;
+    valor: string;
+    caso: string;
+    n: number;
+  }) =>
     tb(
-      `En el playground, con ${p.umbral} en ${p.valor}, deja de cumplirse (${p.caso} saldría sin persona).`,
+      `En el playground, con ${p.umbral} en ${p.valor}, deja de cumplirse (${p.caso} ${p.n === 1 ? "saldría" : "saldrían"} sin persona).`,
       `In the playground, with ${p.umbral} at ${p.valor}, it stops being met (${p.caso} would go out without a person).`,
-    )) as Plantilla<{ umbral: string; valor: string; caso: string }>,
+    )) as Plantilla<{ umbral: string; valor: string; caso: string; n: number }>,
 };
 
 /** Nombre llano de cada nodo dentro de una frase («el extractor no entregó…»). */
@@ -540,6 +619,8 @@ export const COLUMNAS = {
 export const ETIQUETA_FILA = {
   fallo: tb("Falló", "Failed"),
   sinProbar: tb("Sin probar", "Untested"),
+  /** Medido, pero sin poder decidirse (pass^k con menos corridas de las exigidas): no es «sin probar». */
+  incompleto: tb("Incompleto", "Incomplete"),
   conNota: tb("Cumple, con nota", "Met, with a note"),
   noPrevisto: tb("no previsto", "unforeseen"),
 };
@@ -823,11 +904,11 @@ export const CRITERIOS = {
       `${n} ${n === 1 ? "caso queda" : "casos quedan"} fuera: en ${n === 1 ? "él" : "ellos"} la señal que define la población no existe, porque el paso que la escribe no corrió.`,
       `${n} ${n === 1 ? "case is" : "cases are"} left out: the signal that defines the population does not exist for ${n === 1 ? "it" : "them"}, because the step that writes it did not run.`,
     )) as Plantilla<number>,
-  unoAUno: ((p: { casos: string; valores: string }) =>
+  unoAUno: ((p: { casos: string; valores: string; n: number }) =>
     tb(
-      `Se mide sobre el agregado. Uno a uno, ${p.casos} pasó el objetivo: ${p.valores}.`,
+      `Se mide sobre el agregado. Uno a uno, ${p.casos} ${p.n === 1 ? "pasó" : "pasaron"} el objetivo: ${p.valores}.`,
       `It is measured on the aggregate. One by one, ${p.casos} went past the target: ${p.valores}.`,
-    )) as Plantilla<{ casos: string; valores: string }>,
+    )) as Plantilla<{ casos: string; valores: string; n: number }>,
   noEvaluables: ((p: { n: number; casos: string }) =>
     tb(
       `${p.n} ${p.n === 1 ? "caso no se pudo" : "casos no se pudieron"} evaluar: ${p.casos}.`,
@@ -1020,21 +1101,16 @@ export const SUPUESTOS = {
           `La prueba pedía medir si la confianza del modelo separa aciertos de errores. El modelo acertó los ${n} casos: sin errores, esa medida no existe y el supuesto queda abierto.`,
           `The test asked whether the model’s confidence separates hits from errors. The model got all ${n} cases right: with no errors, that measure does not exist and the assumption stays open.`,
         )) as Plantilla<number>,
-      "S3:refutado": ((p: {
-        exactitud: string;
-        exactitudBase: string;
-        latencia: string;
-        latenciaBase: string;
-      }) =>
+      "S3:refutado": ((p: ComparacionS3) =>
         tb(
-          `El plan suponía que repartir el trabajo entre varios agentes no rendiría peor que uno solo. Acertó más (${p.exactitud} frente a ${p.exactitudBase}) pero tardó más (${p.latencia} frente a ${p.latenciaBase}), y el plan solo tolera la misma demora: refutado.`,
-          `The plan assumed that splitting the work among several agents would do no worse than one. It got more right (${p.exactitud} against ${p.exactitudBase}) but took longer (${p.latencia} against ${p.latenciaBase}), and the plan only tolerates the same delay: refuted.`,
-        )) as Plantilla<{
-        exactitud: string;
-        exactitudBase: string;
-        latencia: string;
-        latenciaBase: string;
-      }>,
+          `El plan suponía que repartir el trabajo entre varios agentes no rendiría peor que uno solo. ${comparacionS3(p).es}, y el plan no tolera rendir peor en ninguna de las dos: refutado.`,
+          `The plan assumed that splitting the work among several agents would do no worse than one. ${comparacionS3(p).en}, and the plan tolerates doing worse on neither: refuted.`,
+        )) as Plantilla<ComparacionS3>,
+      "S3:confirmado": ((p: ComparacionS3) =>
+        tb(
+          `El plan suponía que repartir el trabajo entre varios agentes no rendiría peor que uno solo. ${comparacionS3(p).es}: confirmado.`,
+          `The plan assumed that splitting the work among several agents would do no worse than one. ${comparacionS3(p).en}: confirmed.`,
+        )) as Plantilla<ComparacionS3>,
       "S2:confirmado": ((p: { n: number; u: number }) =>
         tb(
           `Los ${p.n} casos con datos faltantes que recibieron respuesta se cerraron en ${p.u} aclaraciones o menos.`,

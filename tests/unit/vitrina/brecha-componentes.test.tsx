@@ -55,12 +55,14 @@ function Pagina({ idioma, datos }: { idioma: Idioma; datos?: DatosDemo }) {
 describe("el informe en una mirada", () => {
   it("lo que falló y lo sin probar van al frente, con su ancla", () => {
     const { container } = render(<Pagina idioma="es" />);
+    expect(container.querySelector("#f-S2")).not.toBeNull();
     expect(container.querySelector("#f-S3")).not.toBeNull();
     expect(container.querySelector("#f-np")).not.toBeNull();
-    const s1 = container.querySelector("#f-S1")!;
-    expect(s1).not.toBeNull();
-    // Lo que no se midió se dibuja discontinuo, con su palabra (el color nunca va solo).
-    const chip = within(s1 as HTMLElement).getAllByText("Sin probar")[0]!;
+    const c5 = container.querySelector("#f-C5")!;
+    expect(c5).not.toBeNull();
+    // Lo que no se pudo decidir se dibuja discontinuo, con su palabra (el color nunca va solo): C5 se midió con una
+    // corrida de las tres que pide pass^k, así que es «Incompleto», no «Sin probar».
+    const chip = within(c5 as HTMLElement).getAllByText("Incompleto")[0]!;
     expect(chip.closest("span")!.className).toContain("border-dashed");
   });
 

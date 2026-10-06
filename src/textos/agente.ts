@@ -704,8 +704,8 @@ export const EXPERTO = {
     lotes: tb("Lotes", "Batches"),
     lotesTexto: ((p: { casos: number; repeticiones: number; base: boolean }) =>
       tb(
-        `${p.casos} casos × ${p.repeticiones} repeticiones${p.base ? " + línea base de agente único" : ""}`,
-        `${p.casos} cases × ${p.repeticiones} repetitions${p.base ? " + single-agent baseline" : ""}`,
+        `${p.casos} casos${p.repeticiones === 1 ? ", sin repetir" : ` × ${p.repeticiones} repeticiones`}${p.base ? " + línea base de agente único" : ""}`,
+        `${p.casos} cases${p.repeticiones === 1 ? ", not repeated" : ` × ${p.repeticiones} repetitions`}${p.base ? " + single-agent baseline" : ""}`,
       )) as Plantilla<{ casos: number; repeticiones: number; base: boolean }>,
     plan: tb("Plan", "Plan"),
     planTexto: ((p: {
@@ -997,10 +997,15 @@ export const PANEL = {
     verMenos: tb("Ver menos", "See less"),
     // Corrida de 200: solo los casos con página se listan (decisión del usuario, S3; `paginas-caso.ts`).
     soloElBloque: ((p: { n: number; total: number; bloque: number }) =>
-      tb(
-        `Pasaron ${p.total} casos; se listan los ${p.n} de los ${p.bloque} primeros del lote.`,
-        `${p.total} cases went through; the ${p.n} among the first ${p.bloque} in the batch are listed.`,
-      )) as Plantilla<{ n: number; total: number; bloque: number }>,
+      p.n === p.bloque
+        ? tb(
+            `Pasaron ${p.total} casos; se listan los ${p.bloque} primeros del lote.`,
+            `${p.total} cases went through; the first ${p.bloque} in the batch are listed.`,
+          )
+        : tb(
+            `Pasaron ${p.total} casos; se listan los ${p.n} de los ${p.bloque} primeros del lote.`,
+            `${p.total} cases went through; the ${p.n} among the first ${p.bloque} in the batch are listed.`,
+          )) as Plantilla<{ n: number; total: number; bloque: number }>,
     reglaQueDecidio: tb("Regla que decidió", "Rule that decided"),
     porDefecto: tb("ninguna: rama por defecto", "none: default branch"),
     ninguna: tb("ninguna", "none"),
@@ -1087,30 +1092,59 @@ export const F_SALIDA: Fuente = {
   tipo: "oficial",
 };
 
-/** «C1 y C3 se cumplieron.» · «C4 se cumplió.» · «C1 se cumplió; C3, no.» */
+/** Cómo se dice, en «En los N casos», cada estado de un criterio: [uno, varios] en cada idioma. */
+const FRASE_DE_ESTADO: Record<
+  string,
+  { es: [string, string]; en: [string, string] }
+> = {
+  cumple: { es: ["se cumplió", "se cumplieron"], en: ["was met", "were met"] },
+  incumple: {
+    es: ["no se cumplió", "no se cumplieron"],
+    en: ["was not met", "were not met"],
+  },
+  incompleto: {
+    es: ["quedó incompleto", "quedaron incompletos"],
+    en: ["was left incomplete", "were left incomplete"],
+  },
+  sin_poblacion: {
+    es: ["no tuvo casos que lo prueben", "no tuvieron casos que los prueben"],
+    en: ["had no case to test it", "had no case to test them"],
+  },
+  indeterminado: {
+    es: ["quedó indeterminado", "quedaron indeterminados"],
+    en: ["was left undetermined", "were left undetermined"],
+  },
+  mal_formado: {
+    es: ["tiene una regla mal formada", "tienen una regla mal formada"],
+    en: ["has a malformed rule", "have a malformed rule"],
+  },
+};
+
+/**
+ * «C1 y C3 se cumplieron.» · «C6 se cumplió; C5 quedó incompleto.» · «C1 se cumplió; C3 no se cumplió.» Cada estado
+ * del informe con su frase: antes todo lo que no era «cumple» se leía «no se cumplió», y un C5 incompleto (pass^k con
+ * una corrida de tres) o un C3 sin población salían como incumplidos (S3). Un estado sin frase detiene el build.
+ */
 export function frasesDeCriterios(
   ids: readonly string[],
-  cumple: (id: string) => boolean,
+  estado: (id: string) => string | undefined,
 ): TextoBilingue {
-  const si = ids.filter(cumple);
-  const no = ids.filter((x) => !cumple(x));
+  for (const x of ids)
+    if (!FRASE_DE_ESTADO[estado(x) ?? ""])
+      throw new Error(
+        `vitrina: el criterio ${x} llega en estado «${estado(x)}», que «En los N casos» no sabe decir (frasesDeCriterios, src/textos/agente.ts).`,
+      );
   const lista = (l: string[], y: string) =>
     l.length <= 1
       ? l.join("")
       : `${l.slice(0, -1).join(", ")} ${y} ${l[l.length - 1]}`;
   const es: string[] = [];
   const en: string[] = [];
-  if (si.length) {
-    es.push(
-      `${lista(si, "y")} se ${si.length === 1 ? "cumplió" : "cumplieron"}`,
-    );
-    en.push(`${lista(si, "and")} ${si.length === 1 ? "was" : "were"} met`);
-  }
-  if (no.length) {
-    es.push(
-      `${lista(no, "y")} no se ${no.length === 1 ? "cumplió" : "cumplieron"}`,
-    );
-    en.push(`${lista(no, "and")} ${no.length === 1 ? "was" : "were"} not met`);
+  for (const [k, f] of Object.entries(FRASE_DE_ESTADO)) {
+    const l = ids.filter((x) => estado(x) === k);
+    if (!l.length) continue;
+    es.push(`${lista(l, "y")} ${f.es[l.length === 1 ? 0 : 1]}`);
+    en.push(`${lista(l, "and")} ${f.en[l.length === 1 ? 0 : 1]}`);
   }
   return tb(`${es.join("; ")}.`, `${en.join("; ")}.`);
 }
@@ -1147,7 +1181,10 @@ export interface CifrasDeNodo {
   aprobo: number;
   minutos: number;
   minutosPorCaso: number;
+  /** Documentos de decisión adversa completos en los dos idiomas: las negaciones y las aprobaciones en parte. */
   negaciones: number;
+  /** De ellos, los de una aprobación en parte (el excedente sobre el tope se niega). */
+  parciales: number;
   hallazgos: number;
   severidadMax: number;
   cargas: string[];
@@ -1498,21 +1535,15 @@ export const NODOS: Record<
     ),
     enLaCorrida: (c) => {
       const r = c.porRegla;
+      // En el orden de las reglas del plan v1.5 (carga, U1, U2, contradicción, negar, Texas).
       const partes = (
         [
           [
-            r.negar,
-            "propuestas de negar",
-            "proposals to deny",
-            "propuesta de negar",
-            "proposal to deny",
-          ],
-          [
-            r.altoCosto,
-            "de alto costo",
-            "high-cost",
-            "de alto costo",
-            "high-cost",
+            r.carga,
+            "instrucciones escondidas",
+            "hidden instructions",
+            "instrucción escondida",
+            "hidden instruction",
           ],
           [
             r.confianza,
@@ -1522,11 +1553,25 @@ export const NODOS: Record<
             "low-confidence",
           ],
           [
+            r.altoCosto,
+            "de alto costo",
+            "high-cost",
+            "de alto costo",
+            "high-cost",
+          ],
+          [
             r.contradiccion,
             "contradicciones",
             "contradictions",
             "contradicción",
             "contradiction",
+          ],
+          [
+            r.negar,
+            "propuestas de negar",
+            "proposals to deny",
+            "propuesta de negar",
+            "proposal to deny",
           ],
           [
             r.texas,
@@ -1537,6 +1582,20 @@ export const NODOS: Record<
           ],
         ] as const
       ).filter(([n]) => n > 0);
+      // El desglose suma los casos que pasaron a una persona: una categoría sin su frase aquí detiene el build, en
+      // lugar de faltar en silencio (S3: la carga del plan v1.5 faltaba y el desglose sumaba 51 de 60).
+      const suma = partes.reduce((a, [n]) => a + n, 0);
+      if (suma !== c.aPersona)
+        throw new Error(
+          `vitrina: el desglose de decision suma ${suma} y ${c.aPersona} casos pasaron a una persona; falta la frase de alguna categoría (${Object.entries(
+            r,
+          )
+            .filter(([, n]) => n > 0)
+            .map(([k]) => k)
+            .join(
+              ", ",
+            )}) en NODOS.decision.enLaCorrida (src/textos/agente.ts).`,
+        );
       const es = partes
         .map(([n, v, , u]) => `${n} ${n === 1 ? u : v}`)
         .join(", ");
@@ -1671,14 +1730,32 @@ export const NODOS: Record<
       "It could copy a member's data into the answer (risk R2).",
     ),
     seMide: tb(
-      "Toda negación lleva su documento completo, en español y en inglés (C8).",
-      "Every denial carries its complete document, in Spanish and English (C8).",
+      "Toda negación, también la parcial, lleva su documento completo, en español y en inglés (C8).",
+      "Every denial, partial ones included, carries its complete document, in Spanish and English (C8).",
     ),
-    enLaCorrida: (c) =>
-      tb(
-        `Escribió ${c.casos} respuestas; ${c.negaciones} ${c.negaciones === 1 ? "negación" : "negaciones"} con su documento en los dos idiomas. ${c.criterios.es}`,
-        `It wrote ${c.casos} answers; ${c.negaciones} ${c.negaciones === 1 ? "denial" : "denials"} with their document in both languages. ${c.criterios.en}`,
-      ),
+    enLaCorrida: (c) => {
+      const negadas = c.negaciones - c.parciales;
+      const es = [
+        negadas > 0 || c.parciales === 0
+          ? `${negadas} ${negadas === 1 ? "negación" : "negaciones"}`
+          : "",
+        c.parciales > 0
+          ? `${c.parciales} ${c.parciales === 1 ? "aprobación en parte" : "aprobaciones en parte"}`
+          : "",
+      ].filter(Boolean);
+      const en = [
+        negadas > 0 || c.parciales === 0
+          ? `${negadas} ${negadas === 1 ? "denial" : "denials"}`
+          : "",
+        c.parciales > 0
+          ? `${c.parciales} ${c.parciales === 1 ? "partial approval" : "partial approvals"}`
+          : "",
+      ].filter(Boolean);
+      return tb(
+        `Escribió ${c.casos} respuestas; ${es.join(" y ")}, cada una con su documento en los dos idiomas. ${c.criterios.es}`,
+        `It wrote ${c.casos} answers; ${en.join(" and ")}, each with its document in both languages. ${c.criterios.en}`,
+      );
+    },
     lee: tb(
       "la decisión, la causal y la extracción, sin el texto libre",
       "the decision, the cause and the extraction, without the free text",
@@ -1838,7 +1915,8 @@ export const PLAN_POR_NODO: Record<
   },
   extractor: {
     decisiones: ["D1", "D6"],
-    riesgos: ["R3", "R5", "R8"],
+    // R9 (plan v1.4+): sin proveedor al extraer, la arista de respaldo lleva el caso a una persona.
+    riesgos: ["R3", "R5", "R8", "R9"],
     supuestos: ["S1"],
     criterios: ["C5", "C6"],
     umbrales: [],
@@ -1846,7 +1924,7 @@ export const PLAN_POR_NODO: Record<
   },
   aclaracion: {
     decisiones: ["D5", "D6"],
-    riesgos: ["R4"],
+    riesgos: ["R4", "R9"],
     supuestos: ["S2"],
     criterios: [],
     umbrales: ["U3"],
@@ -1860,16 +1938,17 @@ export const PLAN_POR_NODO: Record<
   },
   decision: {
     decisiones: ["D2", "D3"],
-    riesgos: ["R1", "R5"],
+    // Plan v1.5: la primera regla es la carga que marcó la guardia de entrada (R3) y la última, el modo Texas (R10).
+    riesgos: ["R1", "R3", "R5", "R10"],
     supuestos: [],
-    criterios: ["C1", "C3"],
+    criterios: ["C1", "C3", "C10"],
     umbrales: ["U1", "U2", "U4"],
   },
   pausa_humana: {
     decisiones: ["D2", "D3"],
-    riesgos: ["R1"],
+    riesgos: ["R1", "R9", "R10"],
     supuestos: [],
-    criterios: ["C1", "C3", "C9"],
+    criterios: ["C1", "C3", "C9", "C10"],
     umbrales: ["U1", "U2", "U3", "U4"],
   },
   redactor: {
@@ -1941,7 +2020,6 @@ export const ARISTA_U1 = {
       `${p.bajo} de ${p.de} bajo U1${p.casos ? `: ${p.casos}` : ""}`,
       `${p.bajo} of ${p.de} below U1${p.casos ? `: ${p.casos}` : ""}`,
     )) as Plantilla<{ bajo: number; de: number; casos: string }>,
-  con: tb("con", "at"),
   mover: tb("Moverla en el Playground", "Move it in the Playground"),
   aPersona: tb("a una persona", "to a person"),
   sigueSolo: tb("sigue solo", "goes on alone"),

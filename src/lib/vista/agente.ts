@@ -1008,7 +1008,7 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
           de: puntos.length,
           casos: enumerar(
             bajo.map(
-              (p) => `${p.id}, ${X(ARISTA_U1.con)} ${decimal(p.valor, 2, i)}`,
+              (p) => `${p.id} (${decimal(p.valor, 2, i)})`,
             ),
             i,
           ),

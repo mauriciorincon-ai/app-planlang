@@ -743,28 +743,37 @@ export const LIMITES = {
 
 export const EJEMPLO = {
   titulo: tb("Un ejemplo.", "An example."),
+  /** Uno o varios casos: con la corrida de 200, el primer valor que mueve algo puede mover más de uno (S3). */
   texto: ((p: {
     umbral: string;
     nombre: TextoBilingue;
     desde: string;
     hasta: string;
-    caso: string;
+    casos: string[];
     senal: TextoBilingue;
-    valor: string;
+    valores: string[];
     minutos: number | null;
     errores: number;
-  }) =>
-    tb(
-      `Si subes el umbral de ${p.nombre.es.toLowerCase()} (${p.umbral}) de ${p.desde} a ${p.hasta}, el caso ${p.caso} —que el agente resolvió solo, con ${p.senal.es} ${p.valor}— pasaría a una persona: ${p.minutos === null ? "" : `${p.minutos} minutos más de auditor y `}${p.errores === 0 ? "ningún error nuevo" : `${p.errores} errores nuevos`}. Pruébalo abajo.`,
-      `If you raise the ${p.nombre.en.toLowerCase()} (${p.umbral}) from ${p.desde} to ${p.hasta}, case ${p.caso} —which the agent resolved alone, with ${p.senal.en} ${p.valor}— would go to a person: ${p.minutos === null ? "" : `${p.minutos} more auditor minutes and `}${p.errores === 0 ? "no new error" : `${p.errores} new errors`}. Try it below.`,
-    )) as Plantilla<{
+  }) => {
+    const uno = p.casos.length === 1;
+    // «con confianza 0,80 y 0,80» se lee como un error: si valen lo mismo, se dice una vez.
+    const iguales = !uno && p.valores.every((v) => v === p.valores[0]);
+    const y = (l: string[], c: string) =>
+      l.length <= 1
+        ? l.join("")
+        : `${l.slice(0, -1).join(", ")} ${c} ${l.at(-1)}`;
+    return tb(
+      `Si subes el umbral de ${p.nombre.es.toLowerCase()} (${p.umbral}) de ${p.desde} a ${p.hasta}, ${uno ? "el caso" : "los casos"} ${y(p.casos, "y")} —que el agente resolvió solo, con ${p.senal.es} ${iguales ? `${p.valores[0]} cada uno` : y(p.valores, "y")}— ${uno ? "pasaría" : "pasarían"} a una persona: ${p.minutos === null ? "" : `${p.minutos} minutos más de auditor y `}${p.errores === 0 ? "ningún error nuevo" : `${p.errores} errores nuevos`}. Pruébalo abajo.`,
+      `If you raise the ${p.nombre.en.toLowerCase()} (${p.umbral}) from ${p.desde} to ${p.hasta}, ${uno ? "case" : "cases"} ${y(p.casos, "and")} —which the agent resolved alone, ${iguales ? `each with ${p.senal.en} ${p.valores[0]}` : `with ${p.senal.en} ${y(p.valores, "and")}`}— would go to a person: ${p.minutos === null ? "" : `${p.minutos} more auditor minutes and `}${p.errores === 0 ? "no new error" : `${p.errores} new errors`}. Try it below.`,
+    );
+  }) as Plantilla<{
     umbral: string;
     nombre: TextoBilingue;
     desde: string;
     hasta: string;
-    caso: string;
+    casos: string[];
     senal: TextoBilingue;
-    valor: string;
+    valores: string[];
     minutos: number | null;
     errores: number;
   }>,
@@ -826,7 +835,27 @@ export const FICHA_TECNICA = {
  */
 export const INTERRUPTOR: Record<
   string,
-  { on: TextoBilingue; off: TextoBilingue; sinCambio: TextoBilingue }
+  {
+    on: TextoBilingue;
+    off: TextoBilingue;
+    sinCambio: TextoBilingue;
+    /**
+     * La consecuencia de un caso que el interruptor manda a una persona: no es una «revisión de más», es la que el
+     * interruptor exige (S3: con el modo Texas, las 9 aprobaciones en parte las decide una persona).
+     */
+    exige: Plantilla<number | null>;
+  }
 > = {
-  U4: { on: ESTADO.texasOn, off: ESTADO.texasOff, sinCambio: CAMBIOS.texas },
+  U4: {
+    on: ESTADO.texasOn,
+    off: ESTADO.texasOff,
+    sinCambio: CAMBIOS.texas,
+    exige: ((m: number | null) =>
+      m === null
+        ? tb("la exige el modo Texas", "required by Texas mode")
+        : tb(
+            `la exige el modo Texas · +${m} min`,
+            `required by Texas mode · +${m} min`,
+          )) as Plantilla<number | null>,
+  },
 };

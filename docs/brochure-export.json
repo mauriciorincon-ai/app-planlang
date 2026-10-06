@@ -29,7 +29,7 @@
     "diferencial": "Observar trazas y evaluar respuestas ya lo hacen muchas herramientas. Lo que no hace nadie es exigir el plan antes y medir contra él después: el informe de brecha plan → resultado, con el análisis de riesgos previo, y los umbrales del plan jugables sobre las trazas reales."
   },
   "funcionalidades": {
-    "total": 16,
+    "total": 19,
     "fuente_del_conteo": "docs/MANUAL-DE-USO.md",
     "descartadas": [],
     "grupos": [
@@ -37,7 +37,7 @@
         "orden": 1,
         "estrella": false,
         "nombre": "Planear",
-        "linea": "El plan como contrato: plantillas, validador y contrato para el constructor.",
+        "linea": "El plan como contrato: la entrevista, las plantillas, el validador y el contrato para el constructor.",
         "features": [
           {
             "id": "plantillas",
@@ -52,6 +52,12 @@
             "seccion_manual": "Validar un plan"
           },
           {
+            "id": "entrevistador",
+            "nombre": "Entrevistador del plan",
+            "que_hace": "Pregunta en orden lo que la plantilla del dominio exige, redacta el borrador en español e inglés, señala sus contradicciones y nunca lo aprueba: eso lo hace el autor.",
+            "seccion_manual": "Entrevistar un plan"
+          },
+          {
             "id": "contrato",
             "nombre": "Contrato para el constructor",
             "que_hace": "El plan entrega los nodos, las aristas con señal · operador · valor, las pausas humanas y las señales que la traza debe registrar; lo que decide el agente es literalmente lo que dice el plan.",
@@ -63,7 +69,7 @@
         "orden": 2,
         "estrella": false,
         "nombre": "Correr",
-        "linea": "Casos con verdad conocida, el demo A y las corridas por lotes.",
+        "linea": "Casos con verdad conocida, los dos demos y las corridas por lotes.",
         "features": [
           {
             "id": "casos",
@@ -78,9 +84,21 @@
             "seccion_manual": "Correr un lote"
           },
           {
+            "id": "demo-b",
+            "nombre": "Demo B: vinculación con debida diligencia",
+            "que_hace": "Un extractor, un verificador de listas, un investigador que solo actúa en la zona gris y un puntaje de riesgo por reglas aprueban, revisan o rechazan; ningún rechazo sale sin el oficial de cumplimiento.",
+            "seccion_manual": "Correr el demo B"
+          },
+          {
+            "id": "expediente",
+            "nombre": "Expediente por código",
+            "que_hace": "Cada caso del demo B termina en un expediente en español e inglés que escribe el código: cada conclusión cita la regla del plan o la coincidencia en una lista, con su versión.",
+            "seccion_manual": "Leer un expediente"
+          },
+          {
             "id": "documento-adverso",
             "nombre": "Documento de decisión adversa",
-            "que_hace": "Toda negación produce, por código, un documento en español e inglés con la causal, la regla, los datos usados y la vía de contradicción.",
+            "que_hace": "Toda negación, también la parcial, produce por código un documento en español e inglés con la causal, la regla, los datos usados y la vía de contradicción.",
             "seccion_manual": "Correr un lote"
           },
           {
@@ -132,7 +150,7 @@
           {
             "id": "playground",
             "nombre": "Mover los umbrales del plan",
-            "que_hace": "Deslizas la confianza mínima, el alto costo, el máximo de aclaraciones o el modo Texas y ves qué casos cambian de camino, qué errores aparecen, cuánto trabajo humano cuesta y la curva riesgo-cobertura.",
+            "que_hace": "Deslizas los umbrales de cada demo (en el A, la confianza mínima, el alto costo, el máximo de aclaraciones o el modo Texas; en el B, la similitud, la zona gris, el riesgo y las inconsistencias) y ves qué casos cambian de camino, qué errores aparecen, cuánto trabajo humano cuesta y la curva riesgo-cobertura.",
             "seccion_manual": "Mover umbrales en el playground"
           }
         ]
@@ -166,7 +184,7 @@
           {
             "id": "pestanas",
             "nombre": "Plan, Agente, Brecha y Casos",
-            "que_hace": "En lenguaje llano con detalle para expertos, en español e inglés, en un teléfono de 380 px, con el rótulo «Simulación · no operativo» y la divulgación del revisor simulado.",
+            "que_hace": "Por cada demo, en lenguaje llano con detalle para expertos, en español e inglés, en un teléfono de 380 px, con el rótulo «Simulación · no operativo» y la divulgación del revisor simulado.",
             "seccion_manual": "Abrir la vitrina"
           },
           {
@@ -182,27 +200,27 @@
   "metricas": [
     {
       "clave": "criterios_cumplidos",
-      "etiqueta": "criterios cumplidos en los planes de 2 demos, de 15",
+      "etiqueta": "criterios cumplidos en los planes de 2 demos, de 16",
       "valor": 15,
       "unidad": "criterios",
       "fuente": "medido",
-      "detalle": "Demo A: 9 de 9, en el informe del verificador 1.2.0 sobre la corrida suscripcion-planlang-a-001-20-v1.2. Demo B: 6 de 6, en el informe del verificador 1.2.0 sobre la corrida suscripcion-planlang-b-001-20."
+      "detalle": "Demo A: 9 de 10, en el informe del verificador 1.2.0 sobre la corrida suscripcion-planlang-a-002-200-v1.5. Demo B: 6 de 6, en el informe del verificador 1.2.0 sobre la corrida suscripcion-planlang-b-001-20."
     },
     {
       "clave": "decisiones_cruzadas",
       "etiqueta": "decisiones rehechas en otro lenguaje, con 0 diferencias",
-      "valor": 313,
+      "valor": 1204,
       "unidad": "decisiones",
       "fuente": "medido",
-      "detalle": "Prueba cruzada RF-09.2 sobre 6 corridas de 2 demos: el intérprete de aristas de TypeScript rehace cada decisión que registró Python."
+      "detalle": "Prueba cruzada RF-09.2 sobre 4 corridas de 2 demos: el intérprete de aristas de TypeScript rehace cada decisión que registró Python."
     },
     {
       "clave": "casos_sinteticos",
       "etiqueta": "casos sintéticos con respuesta conocida, en 2 demos",
-      "valor": 40,
+      "valor": 220,
       "unidad": "casos",
       "fuente": "medido",
-      "detalle": "Demo A: 20 casos en la corrida suscripcion-planlang-a-001-20-v1.2, 2 repeticiones (pass^k) y la línea base de agente único. Demo B: 20 casos en la corrida suscripcion-planlang-b-001-20 y la línea base de agente único."
+      "detalle": "Demo A: 200 casos en la corrida suscripcion-planlang-a-002-200-v1.5 y la línea base de agente único. Demo B: 20 casos en la corrida suscripcion-planlang-b-001-20 y la línea base de agente único."
     },
     {
       "clave": "llamadas_a_modelos_en_la_vitrina",
@@ -214,16 +232,16 @@
     },
     {
       "clave": "costo_de_una_corrida",
-      "etiqueta": "costo nominal de correr una vez cada demo (40 casos)",
-      "valor": 0.9634,
+      "etiqueta": "costo nominal de correr una vez cada demo (220 casos)",
+      "valor": 5.2136,
       "unidad": "US$",
       "fuente": "calculada",
-      "detalle": "Demo A: US$ 0,6704 por 20 casos. Demo B: US$ 0,293 por 20 casos. Suma del costo nominal que el CLI declara por llamada, en las trazas de cada corrida; por la suscripción no se pagó aparte."
+      "detalle": "Demo A: US$ 4,9206 por 200 casos. Demo B: US$ 0,293 por 20 casos. Suma del costo nominal que el CLI declara por llamada, en las trazas de cada corrida; por la suscripción no se pagó aparte."
     },
     {
       "clave": "funcionalidades",
       "etiqueta": "funcionalidades construidas",
-      "valor": 16,
+      "valor": 19,
       "unidad": "funcionalidades",
       "fuente": "medido",
       "detalle": "Las de la visión del producto marcadas para el corte de dos semanas, contadas contra docs/MANUAL-DE-USO.md; las del roadmap no cuentan."

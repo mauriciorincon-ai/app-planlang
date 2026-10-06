@@ -6,6 +6,7 @@
 import { beforeAll, describe, expect, it } from "vitest";
 import { consecuencias, umbralesDelPlan } from "@core/playground/consecuencias";
 import { datosDemo, type DatosDemo } from "@/lib/datos/vitrina";
+import { idsDeCasos } from "@/lib/vista/caso";
 import { vistaPlayground, type VistaPlayground } from "@/lib/vista/playground";
 import { INTERRUPTOR, PORQUE_FUNCION } from "@/textos/playground";
 
@@ -24,49 +25,56 @@ const ficha = (v: VistaPlayground, k: string) =>
 describe("el playground en una mirada", () => {
   it("la portada y lo que recibe se cuentan en la corrida", () => {
     expect(es.portada.antetitulo).toBe(
-      "Demo A · corrida suscripcion-planlang-a-001-20-v1.2 · 20 casos · 62 decisiones registradas",
+      "Demo A · corrida suscripcion-planlang-a-002-200-v1.5 · 200 casos · 624 decisiones registradas",
     );
-    expect(es.recibeSub).toBe("20 casos · 62 decisiones");
+    expect(es.recibeSub).toBe("200 casos · 624 decisiones");
     expect(es.recibe[0]!.detalle).toBe(
-      "confianza, costo, contradicción, propuesta y aclaraciones de los 20 casos",
+      "instrucción escondida, confianza, costo, contradicción, propuesta, sin respuesta del modelo y aclaraciones de los 200 casos",
     );
     expect(en.recibe[0]!.detalle).toBe(
-      "confidence, cost, contradiction, proposal and clarifications of the 20 cases",
+      "hidden instruction, confidence, cost, contradiction, proposal, no model response and clarifications of the 200 cases",
     );
     expect(es.hace[3]).toContain("12 por caso");
   });
 
-  it("el ejemplo del líder es una medida: U1 a 0,90 manda A-008 a una persona, +12 min, ningún error", () => {
+  it("el ejemplo del líder es una medida: U1 a 0,85 manda A-089 y A-144 a una persona, +24 min, ningún error", () => {
+    // Con la corrida de 200, el primer valor que mueve algo mueve dos casos, los dos con confianza 0,80.
     expect(es.ejemplo).toBe(
-      "Si subes el umbral de confianza mínima de extracción (U1) de 0,75 a 0,90, el caso A-008 —que el agente resolvió solo, con confianza 0,88— pasaría a una persona: 12 minutos más de auditor y ningún error nuevo. Pruébalo abajo.",
+      "Si subes el umbral de confianza mínima de extracción (U1) de 0,75 a 0,85, los casos A-089 y A-144 —que el agente resolvió solo, con confianza 0,80 cada uno— pasarían a una persona: 24 minutos más de auditor y ningún error nuevo. Pruébalo abajo.",
     );
-    expect(en.ejemplo).toContain("from 0.75 to 0.90, case A-008");
+    expect(en.ejemplo).toContain(
+      "from 0.75 to 0.85, cases A-089 and A-144 —which the agent resolved alone, each with confidence 0.80—",
+    );
     // La misma cuenta, hecha a mano con el núcleo.
     const c = es.isla.compacto;
-    const r = consecuencias(c, { ...umbralesDelPlan(c), U1: 0.9 });
+    const r = consecuencias(c, { ...umbralesDelPlan(c), U1: 0.85 });
     expect(r.cambios.map((x) => [x.id, x.antes, x.ahora])).toEqual([
-      ["A-008", "solo", "persona"],
+      ["A-089", "solo", "persona"],
+      ["A-144", "solo", "persona"],
     ]);
-    expect(r.minutos! - r.minutos_plan!).toBe(12);
+    expect(r.minutos! - r.minutos_plan!).toBe(24);
     expect(r.introducidos).toEqual([]);
-    // Y 0,80 y 0,85 no cambian nada: el ejemplo es el primer valor que mueve un caso.
-    for (const v of [0.8, 0.85])
+    // Y 0,80 no cambia nada: el ejemplo es el primer valor que mueve un caso.
+    for (const v of [0.8])
       expect(
         consecuencias(c, { ...umbralesDelPlan(c), U1: v }).cambios,
       ).toEqual([]);
   });
 
   it("la ficha técnica sale de la corrida y del informe", () => {
+    // La corrida de 200 y su línea base: las decisiones de las dos, como las cuenta el informe.
+    const rf = d.informe.contrato_de_grafo.rf_09_2;
+    const total = rf.reduce((a, r) => a + r.visitas, 0);
     expect(ficha(es, "Prueba cruzada")).toBe(
-      "RF-09.2: 0 diferencias en 233 decisiones de 4 corridas, Python frente a TypeScript",
+      `RF-09.2: 0 diferencias en ${total} decisiones de 2 corridas, Python frente a TypeScript`,
     );
     expect(ficha(es, "Regla de cada umbral")).toContain(
       "U4 es la función nombrada texas_y_no_aprobar(modo_texas, propuesta)",
     );
     expect(ficha(es, "Carga humana")).toContain(
-      "costo_humano_por_caso_min = 12 en los 4 umbrales del plan v1.3",
+      "costo_humano_por_caso_min = 12 en los 4 umbrales del plan v1.5",
     );
-    expect(ficha(en, "Cross-check")).toContain("0 differences in 233");
+    expect(ficha(en, "Cross-check")).toContain(`0 differences in ${total}`);
   });
 
   it("el orden de evaluación sigue el grafo del plan, no el orden alfabético", () => {
@@ -77,12 +85,15 @@ describe("el playground en una mirada", () => {
     expect(es.isla.nodosEnOrden).toEqual(orden);
   });
 
-  it("los límites vienen del informe, con U4 inerte y dicho", () => {
+  it("los límites vienen del informe: U4 ya no es inerte (mueve las 9 aprobaciones en parte) y lo dice", () => {
     expect(es.limites).toHaveLength(3);
     expect(es.limites[1]).toBe(
-      "U4 (Modo Texas): conmutarlo cambia 0 de las 62 decisiones registradas en esta corrida.",
+      "U4 (Modo Texas): conmutarlo cambia 9 de las 624 decisiones registradas en esta corrida.",
     );
-    expect(es.nucleoDetalle).toContain("233 decisiones");
+    const rf = d.informe.contrato_de_grafo.rf_09_2;
+    expect(es.nucleoDetalle).toContain(
+      `${rf.reduce((a, r) => a + r.visitas, 0)} decisiones`,
+    );
   });
 });
 
@@ -90,7 +101,16 @@ describe("lo que la vista no inventa", () => {
   it("si ningún valor de U1 en su rango cambia un caso, no hay ejemplo (no se escribe uno fijo)", () => {
     const otro = structuredClone(d);
     const u1 = otro.plan.umbrales.find((u) => u.id === "U1")!;
-    if ("min" in u1.rango_jugable) u1.rango_jugable.max = 0.85;
+    // 0,80 no mueve ningún caso; 0,85 sí (A-089 y A-144).
+    if ("min" in u1.rango_jugable) u1.rango_jugable.max = 0.8;
+    expect(vistaPlayground(otro, "es").ejemplo).toBeNull();
+  });
+
+  it("si el primer valor que mueve algo mueve más casos de los que caben en una frase, no hay ejemplo", () => {
+    const otro = structuredClone(d);
+    const u1 = otro.plan.umbrales.find((u) => u.id === "U1")!;
+    // Con pasos de 0,20, el primer valor por encima del plan es 0,95: mueve once casos.
+    if ("min" in u1.rango_jugable) u1.rango_jugable.paso = 0.2;
     expect(vistaPlayground(otro, "es").ejemplo).toBeNull();
   });
 
@@ -137,30 +157,40 @@ describe("los datos de la isla", () => {
 
   it("las columnas son las señales que leen las aristas; las ligadas a un umbral no se repiten", () => {
     expect(es.isla.columnas.map((c) => c.senal)).toEqual([
+      "carga_detectada",
       "senal_confianza",
       "costo_estimado",
       "contradiccion_orden_texto",
       "propuesta",
+      "proveedor_no_disponible",
       "ciclos_aclaracion",
     ]);
   });
 
-  it("los 20 casos enlazan a su página en el idioma de la vista", () => {
-    expect(es.isla.casos).toHaveLength(20);
+  it("los 200 casos van en la isla; solo los que tienen página enlazan a ella, en el idioma de la vista", () => {
+    expect(es.isla.casos).toHaveLength(200);
     expect(es.isla.casos[0]).toMatchObject({
       id: "A-001",
       href: "/es/caso/A-001",
     });
     expect(en.isla.casos[0]!.href).toBe("/en/caso/A-001");
+    const conPagina = new Set(idsDeCasos(d));
+    for (const x of es.isla.casos)
+      expect(x.href, x.id).toBe(
+        conPagina.has(x.id) ? `/es/caso/${x.id}` : null,
+      );
+    // A-021 no está entre los 20 primeros ni lo nombra el informe: va sin enlace.
+    expect(es.isla.casos.find((x) => x.id === "A-021")!.href).toBeNull();
   });
 
-  it("la curva lleva el punto del plan y dice que el riesgo quedó en 0 % porque no hubo errores", () => {
-    expect(es.isla.curva).toMatchObject({ plan: 0.75, n: 15, umbral: "U1" });
-    expect(es.isla.curva!.lectura).toContain(
-      "los 15 casos medidos fueron aciertos",
+  it("la curva lleva el punto del plan; con errores medidos, la lectura no dice «0 % en todo el rango»", () => {
+    // S1 se midió sobre los 159 casos con verdad conocida, y no todos fueron aciertos.
+    expect(es.isla.curva).toMatchObject({ plan: 0.75, n: 159, umbral: "U1" });
+    expect(es.isla.curva!.lectura).toBe(
+      "Subir la confianza mínima (U1) manda más casos a una persona: baja la cobertura y, si la confianza está calibrada, también el riesgo.",
     );
     expect(en.isla.curva!.lectura).toContain(
-      "all 15 measured cases were correct",
+      "Raising the minimum confidence (U1) sends more cases to a person",
     );
   });
 
