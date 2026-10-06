@@ -74,7 +74,7 @@ describe("P1 Entrada con la corrida real (plan v1.5, corrida de 200)", () => {
     );
   });
 
-  it("Medí la brecha: 9 de 10 criterios, lo que falló nombrado y C5 incompleto, no callado", () => {
+  it("Medí la brecha: 10 de 10 criterios (C5 medido en una corrida, verificador 1.3.0) y lo que falló, nombrado", () => {
     const v = vistaEntrada(datos, "es");
     expect(v.brecha.cuadros).toHaveLength(10);
     expect(v.brecha.cuadros.map((c) => c.estado)).toEqual([
@@ -82,7 +82,7 @@ describe("P1 Entrada con la corrida real (plan v1.5, corrida de 200)", () => {
       "cumple",
       "cumple",
       "cumple",
-      "sin-probar",
+      "cumple",
       "cumple",
       "cumple",
       "cumple",
@@ -90,11 +90,9 @@ describe("P1 Entrada con la corrida real (plan v1.5, corrida de 200)", () => {
       "cumple",
     ]);
     expect(v.brecha.leyenda.criteriosCumplen).toBe(
-      `9${D}de${D}10 criterios cumplen`,
+      `10${D}de${D}10 criterios cumplen`,
     );
-    expect(v.brecha.etiquetaCuadros).toBe(
-      "10 criterios: 9 cumplen, 1 incompleto (C5)",
-    );
+    expect(v.brecha.etiquetaCuadros).toBe("10 criterios: 10 cumplen");
     expect(v.brecha.fallas).toEqual([
       { tipo: "fallo", texto: "Falló S2: dos aclaraciones bastan" },
       {
@@ -105,11 +103,6 @@ describe("P1 Entrada con la corrida real (plan v1.5, corrida de 200)", () => {
         tipo: "fallo",
         texto: `Falló lo no previsto: 3${D}fallas que solo vio un evaluador`,
       },
-      {
-        tipo: "sin-probar",
-        texto:
-          "Incompleto C5: Exactitud de extracción ≥ 90 % sobre casos con verdad conocida.",
-      },
     ]);
     expect(v.brecha.pie).toBe(`corrida v1.5 · 200 casos${D}×${D}1`);
     expect(v.fallasALaVista).toEqual({ n: 3, texto: `3${D}fallas a la vista` });
@@ -118,11 +111,8 @@ describe("P1 Entrada con la corrida real (plan v1.5, corrida de 200)", () => {
       "S2 failed: two clarifications are enough",
       "S3 failed: several agents, slower than one",
       `The unforeseen failed: 3${D}failures only an evaluator saw`,
-      "C5 incomplete: Extraction accuracy ≥ 90% on ground-truth cases.",
     ]);
-    expect(en.brecha.etiquetaCuadros).toBe(
-      "10 criteria: 9 met, 1 incomplete (C5)",
-    );
+    expect(en.brecha.etiquetaCuadros).toBe("10 criteria: 10 met");
   });
 
   it("capacidad, veredicto, corrida y el bloque del experto", () => {
@@ -134,10 +124,10 @@ describe("P1 Entrada con la corrida real (plan v1.5, corrida de 200)", () => {
     const rf = datos.informe.contrato_de_grafo.rf_09_2;
     const total = rf.reduce((a, r) => a + r.visitas, 0);
     expect(v.capacidad.cruzada.cifra).toBe(`${total} · 0`);
-    expect(v.capacidad.balance.cifra).toBe(`9${D}de${D}10 · 0${D}de${D}10`);
+    expect(v.capacidad.balance.cifra).toBe(`10${D}de${D}10 · 0${D}de${D}10`);
     expect(v.veredicto).toEqual({
       valor: "cumple_con_alertas",
-      detalle: `9${D}de${D}10 criterios · 0${D}de${D}10 riesgos · 3${D}fallas y 1${D}criterio incompleto`,
+      detalle: `10${D}de${D}10 criterios · 0${D}de${D}10 riesgos · 3${D}fallas`,
     });
     expect(v.corrida).toEqual({
       texto: `plan v1.5 · 200 casos${D}×${D}1 + línea base · 2026-10-04`,
@@ -200,6 +190,8 @@ describe("P1 Entrada con otra suerte (variantes)", () => {
     const d = variante((x) => {
       for (const s of x.informe.supuestos) s.estado = "confirmado";
       x.informe.brechas_no_previstas.brechas = [];
+      // La corrida publicada ya no tiene incompletos (verificador 1.3.0): se siembra uno.
+      x.informe.criterios.find((c) => c.id === "C5")!.estado = "incompleto";
     });
     const v = vistaEntrada(d, "es");
     expect(v.fallasALaVista).toEqual({ n: 0, texto: "Ninguna falla" });

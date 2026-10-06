@@ -209,7 +209,7 @@ describe("P1 Entrada renderizada", () => {
     ).toBe(true);
     expect(
       screen.getByRole("img", {
-        name: "10 criterios: 9 cumplen, 1 incompleto (C5)",
+        name: "10 criterios: 10 cumplen",
       }),
     ).toBeInTheDocument();
     expect(

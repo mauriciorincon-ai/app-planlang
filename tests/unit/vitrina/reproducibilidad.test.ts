@@ -41,23 +41,29 @@ describe("ficha de reproducibilidad", () => {
     const texto = filas.map((f) => `${f.k}: ${f.v}`).join("\n");
     expect(texto).toContain("single agent");
     expect(texto).toContain("groq");
-    // La publicada (S3) ya corrió con el plan que la mide: solo se va la fila de la línea base.
+    // La publicada corrió con la v1.5 y la mide la v1.5.1 (auditoría, F8): con el mismo plan se van la fila del plan con
+    // que corrió y la de la línea base.
     expect(filas.length).toBe(
-      filasDeReproducibilidad(d, "en", "brecha").length - 1,
+      filasDeReproducibilidad(d, "en", "brecha").length - 2,
     );
   });
 
   it("una corrida hecha con otro plan que el que la mide suma la fila del plan con que corrió", () => {
-    const x = otra((f) => {
+    const mismo = otra((f) => {
       f.corrida.plan_de_ejecucion = {
         ...f.corrida.plan_de_ejecucion,
-        huella: "0".repeat(64),
-        version: "1.4.0",
+        huella: f.plan.huella,
       };
     });
-    expect(filasDeReproducibilidad(x, "es", "brecha").length).toBe(
-      filasDeReproducibilidad(d, "es", "brecha").length + 1,
+    // La publicada es de este tipo: corrió con la v1.5 y la mide la v1.5.1.
+    expect(filasDeReproducibilidad(d, "es", "brecha").length).toBe(
+      filasDeReproducibilidad(mismo, "es", "brecha").length + 1,
     );
+    expect(
+      filasDeReproducibilidad(d, "es", "brecha").find(
+        (f) => f.k === "Plan con que corrió",
+      )!.v,
+    ).toMatch(/^plan-demo-a 1\.5\.0 · /);
   });
 
   it("una variante sin nombre detiene el build", () => {

@@ -369,7 +369,7 @@ export function vistaPlan(d: DatosDemo, i: Idioma): VistaPlan {
         d.id,
       ),
       resumen: `${X(CRITERIO.objetivo, i)}: ${objetivo} · ${X(CRITERIO.origen[c.origen] ?? { es: c.origen, en: c.origen }, i)}`,
-      tecnica: `${X(c.enunciado, i)} — ${r.poblacion} → ${lee} · ${r.agregacion}${typeof r.k === "number" ? ` · k = ${r.k}` : ""}`,
+      tecnica: `${X(c.enunciado, i)} — ${r.poblacion} → ${lee} · ${r.agregacion}${typeof r.k === "number" ? ` · k = ${r.k}` : ""}${r.k_aplica_a ? ` · k_aplica_a = ${r.k_aplica_a}` : ""}`,
       lado: { tipo: "criterio", estado: estadoDeCriterio(ci?.estado, i) },
     };
   });

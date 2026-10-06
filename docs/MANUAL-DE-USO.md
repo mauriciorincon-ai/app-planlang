@@ -132,7 +132,8 @@ Se usa de dos maneras:
      agente, para comparar.
   4. Si se corta por límite de uso, vuelve a correr el mismo comando más tarde: retoma donde quedó, sin
      repetir casos.
-  5. Para el lote de 200 con el plan v1.5 (el que publica la vitrina), añade `--plan plans/demo-a/v1.5.json --casos
+  5. Para el lote de 200 con el plan v1.5 (con el que corrió la corrida que publica la vitrina; la vitrina la mide con
+     el v1.5.1, que solo corrige la redacción), añade `--plan plans/demo-a/v1.5.json --casos
 data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar los 200, de 20 en 20. Deja unos
      minutos entre una sesión y la siguiente.
   6. Para ver un solo caso de punta a punta en un par de minutos, añade `--caso <id>` (por ejemplo `--caso A-016`).
@@ -193,8 +194,10 @@ data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar l
      `informe.en.md` dentro de la corrida. Si existen `<nombre>-base` o `<nombre>-r2`, `-r3`, las usa
      como línea base y como repeticiones.
   2. Abre `informe.es.md` (en VS Code: `Cmd+Shift+V` para verlo formateado).
-- **Cómo leer los estados:** ✓ cumple · ✗ incumple · ◐ incompleto (faltan corridas: la corrida de 200 del A no se
-  repite, así que C5, que pide tres corridas seguidas, queda incompleto y se dice) · ? indeterminado
+- **Cómo leer los estados:** ✓ cumple · ✗ incumple · ◐ incompleto (faltan corridas: un criterio que pide varias
+  corridas seguidas y se midió con menos queda incompleto, y se dice. Si el plan limita esas corridas a un tamaño de
+  lote, rigen solo ahí: la C5 del A pide tres solo en los lotes de 20, así que en el de 200 se mide en una corrida y la
+  nota del informe lo explica) · ? indeterminado
   (hubo casos que no se pudieron evaluar) · — sin casos que lo prueben · ⚠ regla mal formada (el
   problema está en el plan, no en el agente).
 - **Las decisiones que no se pueden deshacer** dicen en el informe qué se eligió, si el plan escribió la opción en
@@ -315,7 +318,6 @@ data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar l
 - **¿Por qué el informe dice «cumple con alertas»?** Porque el veredicto no mira solo los criterios: también los
   supuestos, los riesgos y las fallas que el plan no previó. En el informe que publica la vitrina del A:
   - los supuestos S2 y S3 quedaron refutados;
-  - C5 quedó incompleto;
   - aparecieron fallas que vio un evaluador y ningún riesgo del plan cubría.
 
   Lo que no se pudo medir también es una alerta, nunca un silencio.
@@ -447,7 +449,8 @@ There are two ways to use it:
      to compare.
   4. If it stops at a usage limit, run the same command later: it resumes where it stopped, without
      repeating cases.
-  5. For the 200-case batch with plan v1.5 (the one the showcase publishes), add `--plan plans/demo-a/v1.5.json
+  5. For the 200-case batch with plan v1.5 (the one the showcase's published run ran with; the showcase measures it
+     with v1.5.1, which only fixes the wording), add `--plan plans/demo-a/v1.5.json
 --casos data/casos/demo-a/planlang-a-002-200.json` and repeat the command until all 200 are done, 20 at a time.
      Leave a few minutes between one session and the next.
   6. To watch a single case end to end in a couple of minutes, add `--caso <id>` (for example `--caso A-016`).
@@ -508,8 +511,10 @@ There are two ways to use it:
      `informe.en.md` inside the run. If `<name>-base` or `<name>-r2`, `-r3` exist, it uses them as the
      baseline and as repetitions.
   2. Open `informe.en.md` (in VS Code: `Cmd+Shift+V` to see it formatted).
-- **How to read the statuses:** ✓ met · ✗ not met · ◐ incomplete (runs missing: demo A's 200-case run is not
-  repeated, so C5, which asks for three runs in a row, is left incomplete and says so) · ? undetermined (some
+- **How to read the statuses:** ✓ met · ✗ not met · ◐ incomplete (runs missing: a criterion that asks for several
+  runs in a row and was measured with fewer is left incomplete, and says so. If the plan limits those runs to one batch
+  size, they only apply there: demo A's C5 asks for three only in 20-case batches, so the 200-case batch measures it in
+  one run and the report's note explains why) · ? undetermined (some
   cases could not be evaluated) · — no case tests it · ⚠ malformed rule (the problem is in the plan,
   not in the agent).
 - **One-way decisions** state in the report what was chosen, if the plan wrote the option in both languages
@@ -632,7 +637,6 @@ There are two ways to use it:
 - **Why does the report say “met with alerts”?** Because the verdict looks beyond the criteria: at the assumptions,
   the risks and the failures the plan did not foresee. In demo A's published report:
   - assumptions S2 and S3 were refuted;
-  - C5 was left incomplete;
   - an evaluator saw failures that no risk in the plan covered.
 
   Whatever could not be measured is an alert too, never a silence.

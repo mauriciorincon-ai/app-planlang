@@ -59,12 +59,12 @@ describe("la ficha de reproducibilidad", () => {
 
   it("los pasos para repetirla, con los archivos de su manifiesto, en los dos idiomas", () => {
     expect(es.repro.pasos.map((p) => p.comando)).toEqual([
-      "pnpm plan:validar --verificar plans/demo-a/v1.5.json",
+      "pnpm plan:validar --verificar plans/demo-a/v1.5.1.json",
       "pnpm casos:generar --versionados",
       // El plan y los casos con que corrió la corrida publicada (no los de omisión del comando).
       "pnpm lote:demo --plan plans/demo-a/v1.5.json --casos data/casos/demo-a/planlang-a-002-200.json",
       "pnpm trazas:verificar",
-      "pnpm brecha:informe --corrida runs/demo-a/suscripcion-planlang-a-002-200-v1.5 --plan plans/demo-a/v1.5.json --salida data/vitrina/demo-a/suscripcion-planlang-a-002-200-v1.5 --verificar",
+      "pnpm brecha:informe --corrida runs/demo-a/suscripcion-planlang-a-002-200-v1.5 --plan plans/demo-a/v1.5.1.json --salida data/vitrina/demo-a/suscripcion-planlang-a-002-200-v1.5 --verificar",
     ]);
     expect(es.repro.pasos[2]!.texto).toContain(
       "el mismo comando 10 veces, de a 20 y espaciadas, hasta completar los 200 casos",
@@ -158,7 +158,7 @@ describe("cada ficha, como la pinta hoja-de-vida", () => {
       "H1",
       `${repo.sprintsCerrados} sprint${repo.sprintsCerrados === 1 ? "" : "s"}`,
       `v${repo.version}`,
-      "Datos del 2026-10-04",
+      "Datos del 2026-10-05",
     ]);
     expect(es.app.proceso).toBeNull();
     expect(es.app.num).toEqual({

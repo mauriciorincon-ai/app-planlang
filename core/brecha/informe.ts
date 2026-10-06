@@ -47,8 +47,12 @@ export const FORMATO_INFORME = "planlang-informe/v1";
  * idioma va `null`, no copiada al otro como si fuera suya (regla 20; AU-S2-P-6).
  * 1.2.0 (S2, fase 3): cada brecha no prevista trae `reintentos` (M-24); un criterio con métrica cuya población no
  * tiene un solo valor medido queda `indeterminado`, no `sin_poblacion`, y su nota dice el sentido del objetivo (M-26).
+ * 1.3.0 (S3, auditoría): `pass^k` respeta `k_aplica_a` (`lote_demo_<n>`): en un lote de otro tamaño, k no rige y el
+ * criterio se mide en las corridas que hubo, con una nota que lo dice (decisión del usuario sobre la C5 del plan v1.5);
+ * `k` gana `aplica`. Un supuesto refutado dice cada medida frente a su umbral, no el nombre de la clave (AU-S3-26); un
+ * evaluador opcional que no corrió dice «el plan no lo exige» (F19).
  */
-export const VERSION_VERIFICADOR = "1.2.0";
+export const VERSION_VERIFICADOR = "1.3.0";
 
 export interface CasoEjemplar {
   caso_id: string;
@@ -606,6 +610,7 @@ export async function generarInforme(
     plan,
     vistas,
     e.repeticiones.map(vistasDe),
+    m.casos.n_lote,
   );
   const riesgos = evaluarRiesgos(plan, vistas, vistasDeSesiones(m.sesiones));
   const supuestos = evaluarSupuestos(

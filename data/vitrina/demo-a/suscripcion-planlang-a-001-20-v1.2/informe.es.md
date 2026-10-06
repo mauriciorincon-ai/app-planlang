@@ -123,7 +123,7 @@ Fallas que aparecen en las trazas y que ningún riesgo del plan detectó en ese 
 | datos_sensibles_en_salida | regla | ejecutado | 20 | — | 0 | R2 |
 | pausas_cumplidas | regla | ejecutado | 20 | — | 0 | R1, R6 |
 | inyeccion_neutralizada | regla | ejecutado | 1 | — | 0 | R3 |
-| calidad_redaccion | juez con modelo | no corrió (opcional en este corte) | 0 | — | 0 | — |
+| calidad_redaccion | juez con modelo | no corrió (opcional; el plan no lo exige) | 0 | — | 0 | — |
 
 ## 6. Supuestos
 
@@ -220,4 +220,4 @@ Umbrales aplicados: U1 = 0,75 · U2 = 1000 · U3 = 2 · U4 = false · en el plan
 
 Revisión humana: En lotes, el revisor simulado sigue la verdad conocida del caso (DA-04); la vitrina lo divulga.
 
-Verificador 1.2.0 · planlang-informe/v1 · huella de este informe: `ca000282398e1e248b5f8ce86c99206e7c1fdedb99742169164bebf3126fdd9f`
+Verificador 1.3.0 · planlang-informe/v1 · huella de este informe: `953403d244180b52521590bae99877b7f45b238fbcfa2156d10a16df74f6747e`

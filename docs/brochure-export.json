@@ -12,7 +12,7 @@
     "enlaces.produccion": "null cuando la app no tiene URL pública. `razon` explica por qué, y es lo que la vitrina muestra en lugar del enlace. Nunca se rellena con un enlace de repositorio ni con una promesa."
   },
   "schema_version": "1.0.0",
-  "actualizado": "2026-10-04",
+  "actualizado": "2026-10-05",
   "app": {
     "slug": "planlang",
     "nombre": "planlang",
@@ -201,10 +201,10 @@
     {
       "clave": "criterios_cumplidos",
       "etiqueta": "criterios cumplidos en los planes de 2 demos, de 16",
-      "valor": 15,
+      "valor": 16,
       "unidad": "criterios",
       "fuente": "medido",
-      "detalle": "Demo A: 9 de 10, en el informe del verificador 1.2.0 sobre la corrida suscripcion-planlang-a-002-200-v1.5. Demo B: 6 de 6, en el informe del verificador 1.2.0 sobre la corrida suscripcion-planlang-b-001-20."
+      "detalle": "Demo A: 10 de 10, en el informe del verificador 1.3.0 sobre la corrida suscripcion-planlang-a-002-200-v1.5. Demo B: 6 de 6, en el informe del verificador 1.3.0 sobre la corrida suscripcion-planlang-b-001-20."
     },
     {
       "clave": "decisiones_cruzadas",

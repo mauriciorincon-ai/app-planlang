@@ -57,9 +57,12 @@ afterAll(() => {
 describe("datos de la vitrina", () => {
   it("carga el demo A con plan, informe y entorno verificados, y lo memoriza", async () => {
     const d = await datosDemo();
-    // Desde el S3, la corrida de 200 del plan v1.5 (fase 4).
-    expect(d.plan.version).toBe("1.5.0");
-    expect(d.informe.ficha_reproducibilidad.plan.version).toBe("1.5.0");
+    // Desde el S3, la corrida de 200 del plan v1.5 (fase 4), medida con el v1.5.1 de solo redacción (auditoría, F8).
+    expect(d.plan.version).toBe("1.5.1");
+    expect(d.informe.ficha_reproducibilidad.plan.version).toBe("1.5.1");
+    expect(
+      d.informe.ficha_reproducibilidad.corrida.plan_de_ejecucion.version,
+    ).toBe("1.5.0");
     expect(d.manifiesto.corrida.sprint).toBe(3);
     expect(d.entorno.paquetes.langgraph).toMatch(/^1\.2\./);
     expect(d.corrida.trazas).toHaveLength(200);
@@ -139,12 +142,12 @@ describe("datos de la vitrina", () => {
 
   it("rojo: el plan alterado no coincide con su huella", async () => {
     const dir = copia();
-    const ruta = join(dir, "plans/demo-a/v1.5.json");
+    const ruta = join(dir, "plans/demo-a/v1.5.1.json");
     const plan = JSON.parse(readFileSync(ruta, "utf8"));
     plan.nombre = { es: "otro", en: "other" };
     writeFileSync(ruta, JSON.stringify(plan));
     await expect(cargarDemo("demo-a", dir)).rejects.toThrow(
-      /plans\/demo-a\/v1\.5\.json no trae una huella válida \(no_coincide\)/,
+      /plans\/demo-a\/v1\.5\.1\.json no trae una huella válida \(no_coincide\)/,
     );
   });
 

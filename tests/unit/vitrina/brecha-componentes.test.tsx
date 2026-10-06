@@ -58,10 +58,18 @@ describe("el informe en una mirada", () => {
     expect(container.querySelector("#f-S2")).not.toBeNull();
     expect(container.querySelector("#f-S3")).not.toBeNull();
     expect(container.querySelector("#f-np")).not.toBeNull();
+    // La corrida publicada no deja nada sin decidir (verificador 1.3.0: C5 se mide en una corrida en el lote de 200).
+    expect(within(container).queryAllByText("Incompleto")).toHaveLength(0);
+  });
+
+  it("lo que no se pudo decidir se dibuja discontinuo, con su palabra (el color nunca va solo)", () => {
+    const incompleto = { ...d, informe: structuredClone(d.informe) };
+    incompleto.informe.criterios.find((c) => c.id === "C5")!.estado =
+      "incompleto";
+    const { container } = render(<Pagina idioma="es" datos={incompleto} />);
     const c5 = container.querySelector("#f-C5")!;
     expect(c5).not.toBeNull();
-    // Lo que no se pudo decidir se dibuja discontinuo, con su palabra (el color nunca va solo): C5 se midió con una
-    // corrida de las tres que pide pass^k, así que es «Incompleto», no «Sin probar».
+    // «Incompleto», no «Sin probar»: se midió, con menos corridas de las que pide pass^k.
     const chip = within(c5 as HTMLElement).getAllByText("Incompleto")[0]!;
     expect(chip.closest("span")!.className).toContain("border-dashed");
   });

@@ -6,7 +6,7 @@ import { consolaLimpia, desbordeLateral, sinViolacionesAxe } from "./_comun";
  * sin desplazar la página de lado y sin violaciones de axe (críticas, serias ni moderadas); lo que falló y lo sin probar están al frente y el
  * balance lleva a cada uno; las nueve secciones del informe tienen su ancla; el informe abre el playground; y con
  * movimiento reducido lo del experto aparece visible. Desde el S3, sobre la corrida de 200 del plan v1.5: fallaron S2 y
- * S3 y lo que vio un evaluador; C5 quedó incompleto.
+ * S3 y lo que vio un evaluador; C5 cumple medido en una corrida, y su nota lo explica (verificador 1.3.0).
  */
 
 const T = {
@@ -58,7 +58,7 @@ for (const idioma of ["es", "en"] as const) {
           expect(errores).toEqual([]);
         });
 
-    test("el balance lleva a lo que falló (S2) y a lo incompleto (C5); el informe abre el playground", async ({
+    test("el balance lleva a lo que falló (S2) y a la nota de C5 (medido en una corrida); el informe abre el playground", async ({
       page,
     }) => {
       await page.goto(`/${idioma}/brecha`);

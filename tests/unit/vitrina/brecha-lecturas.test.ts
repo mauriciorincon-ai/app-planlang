@@ -101,6 +101,8 @@ describe("la Brecha con otra suerte", () => {
         casos_que_incumplen: [],
       },
     );
+    // La corrida publicada ya no trae incompletos (verificador 1.3.0): se siembra uno.
+    otro.informe.criterios.find((c) => c.id === "C5")!.estado = "incompleto";
     const v = vistaBrecha(otro, "es");
     const rotulo = (id: string) =>
       v.sinProbar.find((f) => f.codigo === id)!.etiqueta;
@@ -110,7 +112,8 @@ describe("la Brecha con otra suerte", () => {
 
   it("dos criterios incompletos se dicen en plural en el veredicto", () => {
     const otro = structuredClone(d);
-    otro.informe.criterios.find((c) => c.id === "C7")!.estado = "incompleto";
+    for (const id of ["C5", "C7"])
+      otro.informe.criterios.find((c) => c.id === id)!.estado = "incompleto";
     expect(vistaBrecha(otro, "es").veredicto.lider).toContain(
       "Y C5 y C7 quedaron incompletos: se midieron con menos corridas de las que pide su regla.",
     );

@@ -425,36 +425,60 @@ export const AGENTE = {
        * Las corridas que pide pass^k y las que se midieron, del informe: con la corrida de 200 (una de tres), «3 de 3
        * corridas» habría prometido lo que no se midió (S3).
        */
-      etiqueta: ((p: { k: number; requerido: number | null }) =>
-        p.requerido === null
-          ? tb("exactitud de extracción", "extraction accuracy")
-          : p.k >= p.requerido
-            ? tb(
-                `exactitud de extracción, ${p.k} de ${p.requerido} corridas`,
-                `extraction accuracy, ${p.k} of ${p.requerido} runs`,
-              )
-            : tb(
-                `exactitud de extracción, ${p.k} de ${p.requerido} corridas (incompleto)`,
-                `extraction accuracy, ${p.k} of ${p.requerido} runs (incomplete)`,
-              )) as Plantilla<{ k: number; requerido: number | null }>,
-      detalle: ((p: { n: number; k: number; requerido: number | null }) =>
-        p.requerido === null
+      etiqueta: ((p: {
+        k: number;
+        requerido: number | null;
+        soloEnLotesDe?: number | null;
+      }) =>
+        p.soloEnLotesDe
           ? tb(
-              `Criterio C5 del plan: los campos extraídos son los de la verdad conocida en esta proporción de los ${p.n} casos que la tienen.`,
-              `The plan's criterion C5: the extracted fields are the known truth's in this share of the ${p.n} cases that have one.`,
+              `exactitud de extracción, en ${p.k === 1 ? "una corrida" : `${p.k} corridas`}`,
+              `extraction accuracy, in ${p.k === 1 ? "one run" : `${p.k} runs`}`,
             )
-          : p.k >= p.requerido
-            ? tb(
-                `Criterio C5 del plan, medido por el verificador como pass^${p.k}: los campos extraídos son los de la verdad conocida en los ${p.n} casos que la tienen, en las ${p.k} corridas seguidas.`,
-                `The plan's criterion C5, measured by the verifier as pass^${p.k}: the extracted fields are the known truth's in the ${p.n} cases that have one, in ${p.k} runs in a row.`,
-              )
-            : tb(
-                `Criterio C5 del plan (pass^${p.requerido}): los campos extraídos son los de la verdad conocida en esta proporción de los ${p.n} casos que la tienen. Se midió con ${p.k} de las ${p.requerido} corridas seguidas que pide, así que todavía no puede declararse cumplido.`,
-                `The plan's criterion C5 (pass^${p.requerido}): the extracted fields are the known truth's in this share of the ${p.n} cases that have one. It was measured with ${p.k} of the ${p.requerido} runs in a row it asks for, so it cannot be declared met yet.`,
-              )) as Plantilla<{
+          : p.requerido === null
+            ? tb("exactitud de extracción", "extraction accuracy")
+            : p.k >= p.requerido
+              ? tb(
+                  `exactitud de extracción, ${p.k} de ${p.requerido} corridas`,
+                  `extraction accuracy, ${p.k} of ${p.requerido} runs`,
+                )
+              : tb(
+                  `exactitud de extracción, ${p.k} de ${p.requerido} corridas (incompleto)`,
+                  `extraction accuracy, ${p.k} of ${p.requerido} runs (incomplete)`,
+                )) as Plantilla<{
+        k: number;
+        requerido: number | null;
+        soloEnLotesDe?: number | null;
+      }>,
+      detalle: ((p: {
         n: number;
         k: number;
         requerido: number | null;
+        soloEnLotesDe?: number | null;
+      }) =>
+        p.soloEnLotesDe
+          ? tb(
+              `Criterio C5 del plan: los campos extraídos son los de la verdad conocida en esta proporción de los ${p.n} casos que la tienen, en ${p.k === 1 ? "una corrida" : `${p.k} corridas`}. El plan pide ${p.requerido} corridas seguidas solo en los lotes de ${p.soloEnLotesDe} casos; este es más grande.`,
+              `The plan's criterion C5: the extracted fields are the known truth's in this share of the ${p.n} cases that have one, in ${p.k === 1 ? "one run" : `${p.k} runs`}. The plan asks for ${p.requerido} runs in a row only in batches of ${p.soloEnLotesDe} cases; this one is larger.`,
+            )
+          : p.requerido === null
+            ? tb(
+                `Criterio C5 del plan: los campos extraídos son los de la verdad conocida en esta proporción de los ${p.n} casos que la tienen.`,
+                `The plan's criterion C5: the extracted fields are the known truth's in this share of the ${p.n} cases that have one.`,
+              )
+            : p.k >= p.requerido
+              ? tb(
+                  `Criterio C5 del plan, medido por el verificador como pass^${p.k}: los campos extraídos son los de la verdad conocida en los ${p.n} casos que la tienen, en las ${p.k} corridas seguidas.`,
+                  `The plan's criterion C5, measured by the verifier as pass^${p.k}: the extracted fields are the known truth's in the ${p.n} cases that have one, in ${p.k} runs in a row.`,
+                )
+              : tb(
+                  `Criterio C5 del plan (pass^${p.requerido}): los campos extraídos son los de la verdad conocida en esta proporción de los ${p.n} casos que la tienen. Se midió con ${p.k} de las ${p.requerido} corridas seguidas que pide, así que todavía no puede declararse cumplido.`,
+                  `The plan's criterion C5 (pass^${p.requerido}): the extracted fields are the known truth's in this share of the ${p.n} cases that have one. It was measured with ${p.k} of the ${p.requerido} runs in a row it asks for, so it cannot be declared met yet.`,
+                )) as Plantilla<{
+        n: number;
+        k: number;
+        requerido: number | null;
+        soloEnLotesDe?: number | null;
       }>,
     },
     latencia: {

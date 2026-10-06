@@ -9,6 +9,7 @@
  *   (export + complemento; huella de ese código en `docs/contratos/hoja-de-vida/CONTRATO.lock`).
  * Un idioma por ficha, como pide el contrato; se entrega el español y el inglés queda para la vitrina.
  */
+import { loteDeK } from "@core/brecha/criterios";
 import type { Idioma, TextoBilingue } from "@core/formatos/bilingue";
 import { DEMOS, type IdDemo } from "@/lib/demos";
 import type { DatosDeLosDemos, DatosDemo } from "@/lib/datos/vitrina";
@@ -105,6 +106,7 @@ function cifrasAgenteA(d: DatosDemo, i: Idioma): CifraFicha[] {
         C.exactitud.etiqueta({
           k: c5.k?.observado ?? 1,
           requerido: c5.k?.requerido ?? null,
+          soloEnLotesDe: soloEnLotesDe(c5),
         }),
         i,
       ),
@@ -114,6 +116,7 @@ function cifrasAgenteA(d: DatosDemo, i: Idioma): CifraFicha[] {
           n: c5.n_poblacion,
           k: c5.k?.observado ?? 1,
           requerido: c5.k?.requerido ?? null,
+          soloEnLotesDe: soloEnLotesDe(c5),
         }),
         i,
       ),
@@ -669,4 +672,12 @@ export function armarFichaApp(
       ...(dec ? [{ valor: String(dec.valor), etiqueta: "decisiones" }] : []),
     ],
   };
+}
+
+/** El tamaño de lote al que el plan limita la k de un criterio, si ESTE lote no lo tiene (verificador 1.3.0). */
+function soloEnLotesDe(c: {
+  k: { aplica: boolean; aplica_a: string | null } | null;
+}): number | null {
+  if (!c.k || c.k.aplica) return null;
+  return loteDeK(c.k.aplica_a ?? undefined) ?? null;
 }

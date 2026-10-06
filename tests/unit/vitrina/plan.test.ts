@@ -42,20 +42,13 @@ describe("las cifras se cuentan en el plan y el informe", () => {
           "1 confirmado · 2 refutados · 0 sin probar",
           "#p-sup",
         ],
-        // C5 (pass^k, k = 3) se midió con una corrida de las tres: incompleto, no incumplido.
-        [
-          "10",
-          "criterios",
-          "9 cumplieron y 1 quedó incompleto en la corrida",
-          "#p-crit",
-        ],
+        // Verificador 1.3.0: C5 pide k = 3 solo en lotes de 20; en el de 200 se mide en una corrida y cumple.
+        ["10", "criterios", "10 cumplieron en la corrida", "#p-crit"],
         ["4", "umbrales", "jugables en el playground", "#p-umb"],
       ],
     );
     expect(en.cifras[1]!.detalle).toBe("6 high priority, 3 by legal control");
-    expect(en.cifras[3]!.detalle).toBe(
-      "9 met and 1 left incomplete in the run",
-    );
+    expect(en.cifras[3]!.detalle).toBe("10 met in the run");
   });
 
   it("cada cifra lleva a una sección que existe", () => {
@@ -168,7 +161,7 @@ describe("las secciones", () => {
     expect(c[4]!.resumen).toBe("Objetivo: ≥ 90\u00a0% · lo pidió el autor");
     expect(c[6]!.resumen).toBe("Objetivo: ≤ 30 s · lo pidió el autor");
     expect(c[4]!.tecnica).toBe(
-      "Exactitud de extracción ≥ 90 % sobre casos con verdad conocida. — verdad_conocida.presente → extraccion.campos == verdad_conocida.campos · pass^k · k = 3",
+      "Exactitud de extracción ≥ 90 % sobre casos con verdad conocida. — verdad_conocida.presente → extraccion.campos == verdad_conocida.campos · pass^k · k = 3 · k_aplica_a = lote_demo_20",
     );
     expect(
       c.map((f) => (f.lado.tipo === "criterio" ? f.lado.estado.texto : "")),
@@ -177,7 +170,7 @@ describe("las secciones", () => {
       "Cumplió",
       "Cumplió",
       "Cumplió",
-      "Incompleto",
+      "Cumplió",
       "Cumplió",
       "Cumplió",
       "Cumplió",
@@ -272,14 +265,14 @@ describe("el contrato del grafo", () => {
 describe("la mirada general", () => {
   it("parte de, hace y entrega, desde el plan", () => {
     expect(es.portada.antetitulo).toBe(
-      "Demo A · plan-demo-a 1.5.0 · aprobado el 2026-10-04",
+      "Demo A · plan-demo-a 1.5.1 · aprobado el 2026-10-05",
     );
     expect(es.parteDe[1]!.detalle).toBe(
       "plan de beneficios sintético: 40 procedimientos, 5 exentos, 6 exclusiones con causal y 6 topes de cobertura",
     );
     expect(es.hace.hecho).toBe(true);
     expect(es.entrega[0]!.detalle).toMatch(
-      /^plan-demo-a 1\.5\.0 · [0-9a-f]{12}…$/,
+      /^plan-demo-a 1\.5\.1 · [0-9a-f]{12}…$/,
     );
     expect(es.entrega[1]!.detalle).toBe(
       "8 nodos, 12 aristas con su regla y 18 señales que toda traza debe dejar",

@@ -90,7 +90,7 @@ function decidirConUmbral(
 ): { estado: EstadoSupuesto; motivo: TextoBilingue } {
   if (!umbral || Object.keys(umbral).length === 0)
     return { estado: "sin_probar", motivo: SIN_UMBRAL };
-  const fallidas: string[] = [];
+  const fallidas: TextoBilingue[] = [];
   const sinValor: string[] = [];
   for (const clave of Object.keys(umbral).sort()) {
     const lim = umbral[clave] as number;
@@ -101,8 +101,14 @@ function decidirConUmbral(
       sinValor.push(metrica);
       continue;
     }
-    const ok = m?.[2] === "max" ? valor <= lim : valor >= lim;
-    if (!ok) fallidas.push(clave);
+    const esMax = m?.[2] === "max";
+    const ok = esMax ? valor <= lim : valor >= lim;
+    // La medida frente al umbral, no el nombre de la clave (AU-S3-26: «… umbral de confirmación: tasa_min.»).
+    if (!ok)
+      fallidas.push({
+        es: `${metrica} ${numCorto(valor, "es", 4)} frente a un ${esMax ? "máximo" : "mínimo"} de ${numCorto(lim, "es", 4)}`,
+        en: `${metrica} ${numCorto(valor, "en", 4)} against a ${esMax ? "maximum" : "minimum"} of ${numCorto(lim, "en", 4)}`,
+      });
   }
   if (fallidas.length > 0) {
     const extra: TextoBilingue =
@@ -115,8 +121,8 @@ function decidirConUmbral(
     return {
       estado: "refutado",
       motivo: {
-        es: `No cumple el umbral de confirmación: ${fallidas.join(", ")}.${extra.es}`,
-        en: `It misses the confirmation threshold: ${fallidas.join(", ")}.${extra.en}`,
+        es: `No cumple el umbral de confirmación: ${fallidas.map((f) => f.es).join("; ")}.${extra.es}`,
+        en: `It misses the confirmation threshold: ${fallidas.map((f) => f.en).join("; ")}.${extra.en}`,
       },
     };
   }

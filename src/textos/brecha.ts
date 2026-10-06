@@ -656,11 +656,26 @@ export const CUMPLIDO = {
       `${p.a} de ${p.b} ${p.b === 1 ? "sesión" : "sesiones"}`,
       `${p.a} of ${p.b} ${p.b === 1 ? "session" : "sessions"}`,
     )) as Plantilla<{ a: number; b: number }>,
-  corridas: ((p: { valor: string; k: number; de: number }) =>
-    tb(
-      `${p.valor} · ${p.k} de ${p.de} corridas`,
-      `${p.valor} · ${p.k} of ${p.de} runs`,
-    )) as Plantilla<{ valor: string; k: number; de: number }>,
+  corridas: ((p: {
+    valor: string;
+    k: number;
+    de: number;
+    lote?: number | null;
+  }) =>
+    p.lote
+      ? tb(
+          `${p.valor} · ${p.k === 1 ? "1 corrida" : `${p.k} corridas`} (pide ${p.de} solo en lotes de ${p.lote})`,
+          `${p.valor} · ${p.k === 1 ? "1 run" : `${p.k} runs`} (asks for ${p.de} only in batches of ${p.lote})`,
+        )
+      : tb(
+          `${p.valor} · ${p.k} de ${p.de} corridas`,
+          `${p.valor} · ${p.k} of ${p.de} runs`,
+        )) as Plantilla<{
+    valor: string;
+    k: number;
+    de: number;
+    lote?: number | null;
+  }>,
 };
 
 export const IPO = {
@@ -868,15 +883,40 @@ export const CRITERIOS = {
     cumplen: number;
     exigente: string | null;
     k: number;
-  }) =>
-    tb(
-      `Cada criterio es una promesa del plan con su regla de medición. ${p.cumplen === p.n ? `Los ${p.n} se cumplieron` : `Se cumplieron ${p.cumplen} de ${p.n}`}${p.exigente ? `; el más exigente, ${p.exigente}, tenía que cumplirse en las ${p.k} corridas seguidas` : ""}.`,
-      `Each criterion is a promise of the plan with its measurement rule. ${p.cumplen === p.n ? `All ${p.n} were met` : `${p.cumplen} of ${p.n} were met`}${p.exigente ? `; the most demanding, ${p.exigente}, had to be met in the ${p.k} runs in a row` : ""}.`,
-    )) as Plantilla<{
+    /** Las corridas que hubo y si el criterio quedó incompleto por faltar (F7). */
+    corridas: number;
+    incompleto: boolean;
+    /** Si el plan limita su k a lotes de otro tamaño (verificador 1.3.0): ese tamaño; si no, `null`. */
+    soloEnLotesDe: number | null;
+  }) => {
+    const exigente: TextoBilingue = !p.exigente
+      ? { es: "", en: "" }
+      : p.soloEnLotesDe
+        ? {
+            es: `; el más exigente, ${p.exigente}, pide ${p.k} corridas seguidas solo en los lotes de ${p.soloEnLotesDe} casos: en este se midió en ${p.corridas === 1 ? "una corrida" : `${p.corridas} corridas`}`,
+            en: `; the most demanding, ${p.exigente}, asks for ${p.k} runs in a row only in batches of ${p.soloEnLotesDe} cases: this one was measured in ${p.corridas === 1 ? "one run" : `${p.corridas} runs`}`,
+          }
+        : p.incompleto
+          ? {
+              es: `; el más exigente, ${p.exigente}, pide ${p.k} corridas seguidas y aquí hubo ${p.corridas}: quedó incompleto`,
+              en: `; the most demanding, ${p.exigente}, asks for ${p.k} runs in a row and there ${p.corridas === 1 ? "was" : "were"} ${p.corridas} here: it was left incomplete`,
+            }
+          : {
+              es: `; el más exigente, ${p.exigente}, tenía que cumplirse en las ${p.k} corridas seguidas`,
+              en: `; the most demanding, ${p.exigente}, had to be met in the ${p.k} runs in a row`,
+            };
+    return tb(
+      `Cada criterio es una promesa del plan con su regla de medición. ${p.cumplen === p.n ? `Los ${p.n} se cumplieron` : `Se cumplieron ${p.cumplen} de ${p.n}`}${exigente.es}.`,
+      `Each criterion is a promise of the plan with its measurement rule. ${p.cumplen === p.n ? `All ${p.n} were met` : `${p.cumplen} of ${p.n} were met`}${exigente.en}.`,
+    );
+  }) as Plantilla<{
     n: number;
     cumplen: number;
     exigente: string | null;
     k: number;
+    corridas: number;
+    incompleto: boolean;
+    soloEnLotesDe: number | null;
   }>,
   columnas: {
     criterio: tb("Criterio", "Criterion"),
@@ -894,11 +934,21 @@ export const CRITERIOS = {
   maximo: tb("máximo", "maximum"),
   objetivo: tb("objetivo", "target"),
   todos: tb("todos", "all"),
-  corridas: ((p: { k: number; de: number; n: number }) =>
-    tb(
-      `${p.k} de ${p.de} corridas · ${p.n} casos`,
-      `${p.k} of ${p.de} runs · ${p.n} cases`,
-    )) as Plantilla<{ k: number; de: number; n: number }>,
+  corridas: ((p: { k: number; de: number; n: number; lote?: number | null }) =>
+    p.lote
+      ? tb(
+          `${p.k === 1 ? "1 corrida" : `${p.k} corridas`} · ${p.n} casos (pide ${p.de} solo en lotes de ${p.lote})`,
+          `${p.k === 1 ? "1 run" : `${p.k} runs`} · ${p.n} cases (asks for ${p.de} only in batches of ${p.lote})`,
+        )
+      : tb(
+          `${p.k} de ${p.de} corridas · ${p.n} casos`,
+          `${p.k} of ${p.de} runs · ${p.n} cases`,
+        )) as Plantilla<{
+    k: number;
+    de: number;
+    n: number;
+    lote?: number | null;
+  }>,
   fuera: ((n: number) =>
     tb(
       `${n} ${n === 1 ? "caso queda" : "casos quedan"} fuera: en ${n === 1 ? "él" : "ellos"} la señal que define la población no existe, porque el paso que la escribe no corrió.`,

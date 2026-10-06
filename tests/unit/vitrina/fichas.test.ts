@@ -165,28 +165,42 @@ describe("lo que dicen las fichas sale de los datos", () => {
     expect(valor("casos_con_persona")).toBe(
       d.informe.contrato_de_grafo.pausas.casos_con_pausa,
     );
-    // La corrida de 200 del plan v1.5: C5 medido con 1 de las 3 corridas que pide pass^3, y la etiqueta lo dice.
+    // La corrida de 200 del plan v1.5: C5 pide pass^3 solo en lotes de 20 (verificador 1.3.0) y aquí se midió en una
+    // corrida; la etiqueta lo dice y el detalle nombra el límite.
     expect(valor("exactitud_extraccion")).toBe(96.2);
-    expect(
-      f.cifras.find((c) => c.clave === "exactitud_extraccion")!.etiqueta,
-    ).toBe("exactitud de extracción, 1 de 3 corridas (incompleto)");
+    const c5 = f.cifras.find((c) => c.clave === "exactitud_extraccion")!;
+    expect(c5.etiqueta).toBe("exactitud de extracción, en una corrida");
+    expect(c5.detalle).toContain(
+      "El plan pide 3 corridas seguidas solo en los lotes de 20 casos; este es más grande.",
+    );
     expect(valor("latencia_mediana")).toBe(8.1);
     expect(valor("negaciones_sin_persona")).toBe(0);
     expect(valor("costo_por_caso")).toBe(0.025);
     expect(f.cifras.every((c) => c.fuente)).toBe(true);
   });
 
-  it("la exactitud dice cuántas corridas pide pass^k y cuántas se midieron; sin pass^k, no inventa «1 de 1»", () => {
+  it("la exactitud dice cuántas corridas pide pass^k y cuántas se midieron, y si k no rige en este lote; sin pass^k, no inventa «1 de 1»", () => {
     const etiqueta = (x: typeof d) =>
       fichaAgente(x, repo, "en").cifras.find(
         (c) => c.clave === "exactitud_extraccion",
       )!.etiqueta;
-    expect(etiqueta(d)).toBe("extraction accuracy, 1 of 3 runs (incomplete)");
+    expect(etiqueta(d)).toBe("extraction accuracy, in one run");
+    const incompleto = structuredClone(d);
+    incompleto.informe.criterios.find((c) => c.id === "C5")!.k = {
+      requerido: 3,
+      observado: 1,
+      aplica_a: null,
+      aplica: true,
+    };
+    expect(etiqueta(incompleto)).toBe(
+      "extraction accuracy, 1 of 3 runs (incomplete)",
+    );
     const completo = structuredClone(d);
     completo.informe.criterios.find((c) => c.id === "C5")!.k = {
       requerido: 3,
       observado: 3,
       aplica_a: null,
+      aplica: true,
     };
     expect(etiqueta(completo)).toBe("extraction accuracy, 3 of 3 runs");
     const sinK = structuredClone(d);

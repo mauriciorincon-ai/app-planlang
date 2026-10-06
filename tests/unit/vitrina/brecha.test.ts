@@ -1,7 +1,7 @@
 /**
  * P4 Brecha: la vista se arma desde el informe que declara el manifiesto y lo publica con sus fallas (regla dura 9):
- * sobre la corrida de 200 del plan v1.5, el veredicto con alertas, S2 y S3 refutados al frente, C5 incompleto (pass^k
- * con una corrida de tres), las brechas no previstas como falla, lo cumplido con nota y su porqué medido en el
+ * sobre la corrida de 200 del plan v1.5, el veredicto con alertas, S2 y S3 refutados al frente, C5 cumplido en una
+ * corrida (el plan pide k = 3 solo en lotes de 20: verificador 1.3.0), las brechas no previstas como falla, lo cumplido con nota y su porqué medido en el
  * playground. Una lectura editorial que falte no se suple con un genérico: el build se detiene nombrándola.
  */
 import { readFileSync } from "node:fs";
@@ -36,13 +36,10 @@ describe("el veredicto y el balance", () => {
     expect(en.veredicto.texto).toBe("Meets with warnings");
     expect(es.veredicto.lider).toContain("(S2)");
     expect(es.veredicto.lider).toContain("(S3)");
-    // C5 no se calla: incompleto no es cumplido ni incumplido.
-    expect(es.veredicto.lider).toMatch(
-      /Y C5 quedó incompleto: se midió con menos corridas de las que pide su regla\.$/,
-    );
-    expect(en.veredicto.lider).toMatch(
-      /And C5 was left incomplete: measured with fewer runs than its rule asks for\.$/,
-    );
+    // Verificador 1.3.0: C5 se mide en una corrida en el lote de 200 (k_aplica_a: lote_demo_20) y cumple.
+    expect(es.veredicto.lider).toMatch(/^Se cumplieron los 10 criterios/);
+    expect(es.veredicto.lider).not.toMatch(/incomplet/);
+    expect(en.veredicto.lider).not.toMatch(/incomplete/);
     const total = d.informe.contrato_de_grafo.rf_09_2.reduce(
       (a, r) => a + r.visitas,
       0,
@@ -67,7 +64,7 @@ describe("el veredicto y el balance", () => {
     }
   });
 
-  it("seis renglones; en supuestos, S1 cumplió y S2 y S3 fallaron; en criterios, C5 quedó sin decidir", () => {
+  it("seis renglones; en supuestos, S1 cumplió y S2 y S3 fallaron; en criterios, nada quedó sin decidir", () => {
     expect(es.balance.map((b) => b.clave)).toEqual([
       "criterios",
       "riesgos",
@@ -81,17 +78,15 @@ describe("el veredicto y el balance", () => {
     expect(s.fallo).toMatchObject({ ids: "S2, S3", href: "#f-S2" });
     expect(s.sinProbar).toBeNull();
     const c = es.balance.find((b) => b.clave === "criterios")!;
-    expect(c.sinProbar).toMatchObject({ ids: "C5", href: "#f-C5" });
+    expect(c.sinProbar).toBeNull();
   });
 });
 
 describe("las fallas a la vista (regla dura 9)", () => {
-  it("lo que falló: S2, S3 y lo que vio un evaluador; lo sin decidir: C5", () => {
+  it("lo que falló: S2, S3 y lo que vio un evaluador; nada sin decidir", () => {
     expect(es.fallos.map((f) => f.codigo)).toEqual(["S2", "S3", "no previsto"]);
     expect(es.fallos.every((f) => f.clase === "no-cumple")).toBe(true);
-    expect(es.sinProbar.map((f) => [f.codigo, f.clase])).toEqual([
-      ["C5", "beta"],
-    ]);
+    expect(es.sinProbar).toEqual([]);
     // Los casos en que difieren multiagente y línea base enlazan a su traza si tienen página; los demás, sin enlace.
     const s3 = es.fallos.find((f) => f.codigo === "S3")!;
     const distintos = d.informe.supuestos.find((x) => x.id === "S3")!
@@ -240,7 +235,7 @@ describe("un informe que no cumple se publica con sus fallas al frente", () => {
       v.fallos.find((f) => f.codigo === "R2")!.casos.map((c) => c.id),
     ).toEqual(["A-015"]);
     expect(v.sinProbar.map((f) => f.codigo)).toEqual(
-      expect.arrayContaining(["C5", "C6"]),
+      expect.arrayContaining(["C6"]),
     );
     expect(v.cumplido.criterios.items.map((c) => c.codigo)).not.toContain("C7");
     expect(v.cumplido.riesgos.items.map((c) => c.codigo)).not.toContain("R2");

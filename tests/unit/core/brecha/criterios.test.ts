@@ -135,9 +135,41 @@ describe("tasa y pass^k", () => {
     expect(r).toMatchObject({
       estado: "incompleto",
       valor_medido: 1,
-      k: { requerido: 3, observado: 1, aplica_a: "lote_demo_20" },
+      // Sin el tamaño del lote, k rige: no se declara cumplido sin la prueba.
+      k: { requerido: 3, observado: 1, aplica_a: "lote_demo_20", aplica: true },
     });
     expect(r?.nota?.en).toMatch(/1 of the 3 required runs/);
+  });
+  it("k_aplica_a (verificador 1.3.0): en un lote de 20, k rige; en uno de 200, se mide en una corrida y lo dice", () => {
+    const [en20] = evaluarCriterios(conCriterios(pk), buenos, [], 20);
+    expect(en20).toMatchObject({
+      estado: "incompleto",
+      k: { requerido: 3, observado: 1, aplica: true },
+    });
+    const [en200] = evaluarCriterios(conCriterios(pk), buenos, [], 200);
+    expect(en200).toMatchObject({
+      estado: "cumple",
+      k: { requerido: 3, observado: 1, aplica: false },
+    });
+    expect(en200?.nota?.es).toBe(
+      "El plan exige 3 corridas solo en lotes de 20 casos (k_aplica_a: lote_demo_20); este lote tiene 200 casos y se mide en una corrida.",
+    );
+    // Bajo el objetivo, incumple igual: que k no rija no regala nada.
+    const [malo] = evaluarCriterios(
+      conCriterios(pk),
+      [vista("1", { ok: true }), vista("2", { ok: false })],
+      [],
+      200,
+    );
+    expect(malo?.estado).toBe("incumple");
+  });
+  it("k_aplica_a con un valor que el verificador no sabe leer → mal formado, con su nombre", () => {
+    const raro = structuredClone(pk);
+    (raro.regla_de_medicion as { k_aplica_a?: string }).k_aplica_a =
+      "todos_los_lunes";
+    const [r] = evaluarCriterios(conCriterios(raro), buenos, [], 200);
+    expect(r?.estado).toBe("mal_formado");
+    expect(r?.nota?.es).toMatch(/k_aplica_a «todos_los_lunes»/);
   });
   it("si la tasa observada ya está bajo el objetivo → incumple aunque falten corridas", () => {
     const [r] = evaluarCriterios(conCriterios(pk), [

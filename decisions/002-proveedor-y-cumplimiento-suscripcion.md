@@ -97,6 +97,19 @@ interruptor a API entra por configuración (techo declarado) y este ADR se marca
 funcionalidad del producto depende de que la suscripción siga sirviendo: el núcleo y la vitrina
 corren sin modelo.
 
+## Protecciones del sistema (regla 24 del kit; auditoría del S3, AU-S3-29)
+
+Lo que el binario oficial toca del sistema del usuario al correr un lote. Se enseña antes de tocarlo, con un «sí» por
+acción.
+
+| Qué | Para qué | Qué aviso se ve | Cómo se deshace |
+| --- | --- | --- | --- |
+| `claude -p` lee su credencial del Llavero de macOS (el ítem «Claude Code-credentials», que el propio Claude Code creó al iniciar sesión) | autenticar la suscripción del usuario en cada llamada del lote | ninguno: el ítem es del propio binario y macOS no pide permiso | `claude logout`, o borrar el ítem «Claude Code-credentials» en Acceso a Llaveros |
+
+Pasa desde el S1 y nunca hubo matriz: cada lote tuvo su «sí» del usuario, pero sin esta fila. El usuario la aprobó el
+2026-10-05 («Sí, regístrala», Fase 2 de la auditoría del S3, registrado en la bitácora) y vale para los lotes que
+siguen. Ningún test ni comando por defecto la toca (regla 25): solo los lotes reales, fuera de CI.
+
 ## Registro de re-lecturas (antes de cada release — casilla de `/deploy-check`)
 
 | Fecha      | Quién                        | Fuentes                                                            | Cambio detectado | Acción                                              |

@@ -20,6 +20,7 @@ import type { DatosDemo } from "@/lib/datos/vitrina";
 import type { IdDemo } from "@/lib/demos";
 import { DEMO_TEXTO } from "@/textos/demo";
 import { ruta } from "@/lib/ruta";
+import { loteDeK } from "@core/brecha/criterios";
 import { umbralDeCategoria, type CategoriaRegla } from "./motivo-pausa";
 import { delVocabulario } from "./vocabulario";
 import { conPlan } from "./plan-en-texto";
@@ -431,13 +432,24 @@ function valorDe(c: ResultadoCriterio, i: Idioma): string {
   return porcentaje(c.valor_medido, i);
 }
 
+/** La k con que se mide el criterio: la del plan si rige en este lote; si el plan la limita a otro tamaño, la medida. */
+const kMedida = (k: {
+  requerido: number;
+  observado: number;
+  aplica: boolean;
+}) => (k.aplica ? k.requerido : k.observado);
+
+/** El tamaño de lote al que el plan limita la k, si ESTE lote no lo tiene (verificador 1.3.0); si k rige, `null`. */
+const loteDeLaK = (k: { aplica: boolean; aplica_a: string | null }) =>
+  k.aplica ? null : (loteDeK(k.aplica_a ?? undefined) ?? null);
+
 function reglaDe(c: ResultadoCriterio): string {
   const partes = [c.poblacion];
   if (c.condicion) partes.push(c.condicion);
   const base = c.metrica ? `${c.agregacion}(${c.metrica})` : partes.join(" → ");
   return c.metrica
     ? base
-    : `${base} · ${c.agregacion === "pass^k" && c.k ? `pass^${c.k.requerido}` : c.agregacion}`;
+    : `${base} · ${c.agregacion === "pass^k" && c.k ? `pass^${kMedida(c.k)}` : c.agregacion}`;
 }
 
 function lecturaSupuesto(demo: IdDemo, s: ResultadoSupuesto) {
@@ -700,7 +712,7 @@ export function vistaBrecha(d: DatosDemo, i: Idioma): VistaBrecha {
       .map((c) => {
         const ag =
           c.agregacion === "pass^k" && c.k
-            ? `pass^${c.k.requerido}`
+            ? `pass^${kMedida(c.k)}`
             : c.agregacion;
         const op = MENOR_ES_MEJOR.has(c.tipo) ? "≤" : "≥";
         const v =
@@ -950,6 +962,7 @@ export function vistaBrecha(d: DatosDemo, i: Idioma): VistaBrecha {
               valor: porcentaje(c.valor_medido, i),
               k: c.k.observado,
               de: c.k.requerido,
+              lote: loteDeLaK(c.k),
             }),
             i,
           )
@@ -1042,7 +1055,11 @@ export function vistaBrecha(d: DatosDemo, i: Idioma): VistaBrecha {
   const composicion = { normal: 0, borde: 0, faltante: 0, adversario: 0 };
   for (const c of d.lote.casos)
     composicion[c.tipo as keyof typeof composicion]++;
-  const kMax = Math.max(1, ...inf.criterios.map((c) => c.k?.requerido ?? 1));
+  // Solo las k que rigen en este lote (verificador 1.3.0): una que el plan limita a otro tamaño no se exigió aquí.
+  const kMax = Math.max(
+    1,
+    ...inf.criterios.map((c) => (c.k?.aplica ? c.k.requerido : 1)),
+  );
   const ipo = {
     recibe: [
       {
@@ -1176,6 +1193,9 @@ export function vistaBrecha(d: DatosDemo, i: Idioma): VistaBrecha {
         cumplen: criteriosCumplen.length,
         exigente: exigente ? X(criterioExigente(d.id, exigente.id), i) : null,
         k: exigente?.k?.requerido ?? 1,
+        corridas: exigente?.k?.observado ?? 1,
+        incompleto: exigente?.estado === "incompleto",
+        soloEnLotesDe: exigente?.k ? loteDeLaK(exigente.k) : null,
       }),
       i,
     ),
@@ -2183,6 +2203,7 @@ function filaCriterio(
               k: c.k.observado,
               de: c.k.requerido,
               n: c.n_poblacion,
+              lote: loteDeLaK(c.k),
             }),
             i,
           )

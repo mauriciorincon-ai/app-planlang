@@ -5,7 +5,7 @@
  * El estado nunca va solo en color: símbolo + texto (regla dura 13).
  */
 import type { Idioma, TextoBilingue } from "../formatos/bilingue";
-import type { ResultadoCriterio } from "./criterios";
+import { loteDeK, type ResultadoCriterio } from "./criterios";
 import type { ResultadoRiesgo } from "./detectores";
 import { partirDisparador } from "./detectores";
 import type { CasoEjemplar, Informe, UmbralJugable } from "./informe";
@@ -159,8 +159,17 @@ function objetivoCriterio(c: ResultadoCriterio, i: Idioma): string {
   if (typeof o === "boolean") return siNo(o, i);
   if (c.tipo === "latencia") return `≤ ${numCorto(o, i)} s`;
   if (c.tipo === "costo") return `≤ ${numCorto(o, i)}`;
-  if (c.agregacion === "pass^k" && c.k)
-    return `≥ ${pct(o, i)} (k = ${c.k.requerido})`;
+  if (c.agregacion === "pass^k" && c.k) {
+    // Verificador 1.3.0: si el plan limita k a otro tamaño de lote, se dice (`k_aplica_a`).
+    const lote = c.k.aplica ? null : loteDeK(c.k.aplica_a ?? undefined);
+    if (lote === null || lote === undefined)
+      return `≥ ${pct(o, i)} (k = ${c.k.requerido})`;
+    const soloEnLotes: Tb = {
+      es: `solo en lotes de ${lote}`,
+      en: `only in batches of ${lote}`,
+    };
+    return `≥ ${pct(o, i)} (k = ${c.k.requerido} ${soloEnLotes[i]})`;
+  }
   return `≥ ${pct(o, i)}`;
 }
 
@@ -358,8 +367,8 @@ function seccionBrechas(inf: Informe, i: Idioma): string {
   const ESTADO_EVAL: Record<string, Tb> = {
     ejecutado: tb("ejecutado", "run"),
     no_ejecutado_opcional: tb(
-      "no corrió (opcional en este corte)",
-      "did not run (optional in this cut)",
+      "no corrió (opcional; el plan no lo exige)",
+      "did not run (optional; the plan does not require it)",
     ),
     no_ejecutado: tb("✗ no corrió", "✗ did not run"),
     sin_implementacion: tb("✗ sin implementación", "✗ not implemented"),

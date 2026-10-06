@@ -423,11 +423,11 @@
     },
     "verificador": {
       "formato": "planlang-informe/v1",
-      "version": "1.2.0"
+      "version": "1.3.0"
     }
   },
   "formato": "planlang-informe/v1",
-  "huella": "2fb21628c6914a5c726f3484e5d1252a6b26bb6b2fb9e76bf66d2c09fa15dafa",
+  "huella": "4705b3f3d49c8c4c53590a6845620ad25c76bcff26a595125bc1050c2fee1411",
   "plan_en_breve": {
     "decisiones_una_via": [
       {
@@ -842,5 +842,5 @@
     "bloqueantes": [],
     "valor": "cumple_con_alertas"
   },
-  "version_verificador": "1.2.0"
+  "version_verificador": "1.3.0"
 }
