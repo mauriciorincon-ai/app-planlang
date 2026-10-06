@@ -1473,10 +1473,11 @@ A-142, A-191). Visor: la numeración de reglas del plan v1.5 (la carga es la reg
   que siguen en el ⭐; el encabezado declara las 19 ⭐ que deja fuera y por qué. Comprobada en Chromium a 380 px:
   conteos 59 · 29 · 23 · 4, las paradas 1–4 en el orden del documento, sin desborde, el idioma conmuta y la casilla
   se guarda bajo `s3`.
-- **Lo que la guía declara de B-010:** la corrida de 20 que publica la vitrina del B se corrió antes del arreglo D51
-  (`valor_en_texto`): su conclusión K2 escribe «0.814» con punto en español. La corrida es append-only y la vitrina
-  del B se queda en la de 20 (decisión del usuario), así que la página lo muestra así; un caso corrido hoy (la parada
-  1) ya escribe «0,814». Queda como deuda visible hasta que la vitrina del B publique una corrida posterior.
+- **Lo que la guía declara de B-010:** la corrida de 20 que publica la vitrina del B se corrió antes de los arreglos
+  D51 (`valor_en_texto`) y D55 (ids sin huecos): su conclusión K2 escribe «0.814» con punto en español y la numeración
+  salta de K5 a K7. La corrida es append-only y la vitrina del B se queda en la de 20 (decisión del usuario), así que
+  la página lo muestra así; un caso corrido hoy (la parada 1) ya escribe «0,814» y numera sin saltos. Queda como deuda
+  visible hasta que la vitrina del B publique una corrida posterior (la de 200, en curso, ya trae los dos arreglos).
 
 ## Desviación del plan
 
@@ -1591,6 +1592,7 @@ A-142, A-191). Visor: la numeración de reglas del plan v1.5 (la carga es la reg
 |---|---|---|---|---|---|
 | 2026-10-04 | 1 · plan del demo B | DECISIÓN | `plans/demo-b/revision.es.md` (borrador de la entrevista corrida por delegación: «corre la entrevista con tus respuestas») | «apruebo el plan B» | `plans/demo-b/v1.json` (huella `0cd6590c…`); la fase 2 arranca sobre él |
 | 2026-10-04 | 2 · vistas del demo B | FORMA «no vista» | `docs/fidelidad/s3-demo-b/index.html` (matriz de 9 filas: entrada con dos filas, barra del B, trazas del verificador de listas, «Recibe» y expediente de B-019, Playground, Umbrales del Plan, ficha del agente B, pie) | sin respuesta: viaja al ⭐⭐ (parada 2) | la fase 3 sigue; las vistas se construyeron antes de esta mirada, como prevé el plan de miradas |
+| 2026-10-05 | 3 · cierre del ciclo | FORMA y TEXTO «no vista» | `docs/fidelidad/s3-mirada-3/index.html` (matriz de 9 filas: BLUEPRINT, expediente de B-010, informe del B, «Medí la brecha» con C5 incompleto, el modo Texas del A, «Lo que falló» del A con casos sin página, el documento de A-006 aprobado en parte, el nodo decision en los 200 casos, y los textos del entrevistador en `plans/demo-b/revision.es.md`); 48 capturas enteras leídas por su huella (fuera del repo), 9 recortes leídos como imagen, 2.042 KB (techo 2 MB) | sin respuesta: viaja al ⭐ del ciclo; las paradas 2 a 4 del ⭐⭐ la recorren en parte | la pasada destapó y se arregló antes de registrar: el BLUEPRINT decía «Cerrado (Acto 1)» y «parada 1 del ⭐⭐» para LangSmith; la lectura del documento adverso decía «causal de ley» en una aprobación en parte |
 
 ## Bugs y fricciones
 
