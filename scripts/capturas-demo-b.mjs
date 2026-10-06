@@ -368,7 +368,7 @@ const DECISIONES_MIRADA_3 = [
     mirar:
       "Las conclusiones numeradas, la del investigador y la cita bajo cada una.",
     esperada:
-      "Cada conclusión con su tema: K1 la identidad declarada, K2 la mayor similitud con su entrada de lista (versión, fecha y la regla RL-02), K3 el investigador («homónimo») y la decisión; cada una con su cita en mono, y al pie las listas consultadas, quién decidió, los datos usados y el plan. K2 escribe «0.814» con punto y la numeración salta de K5 a K7: esta corrida es anterior a los arreglos D51 y D55 (deuda declarada).",
+      "Cada conclusión con su tema: K1 la identidad declarada, K2 la mayor similitud con su entrada de lista (versión, fecha y la regla RL-02), K3 el investigador («homónimo») y la decisión; cada una con su cita en mono, y al pie las listas consultadas, quién decidió, los datos usados y el plan. K2 escribe «0.814» con punto y la numeración salta de K5 a K7: esta corrida es anterior a los arreglos D51 (ids sin huecos) y D52b (coma decimal) (deuda declarada).",
   },
   {
     clave: "b-informe",

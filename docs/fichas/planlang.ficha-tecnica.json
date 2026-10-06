@@ -9,7 +9,7 @@
     "ciclo": "H1",
     "version": "0.1.0",
     "sellado_en": null,
-    "sprints_cerrados": 2
+    "sprints_cerrados": 3
   },
   "promesa": {
     "tagline": "Planeé, construí y medí la brecha.",
@@ -140,7 +140,7 @@
       "etiqueta": "ciclo"
     },
     {
-      "valor": "2",
+      "valor": "3",
       "etiqueta": "sprints"
     },
     {

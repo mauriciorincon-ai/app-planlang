@@ -1474,7 +1474,8 @@ A-142, A-191). Visor: la numeración de reglas del plan v1.5 (la carga es la reg
   conteos 59 · 29 · 23 · 4, las paradas 1–4 en el orden del documento, sin desborde, el idioma conmuta y la casilla
   se guarda bajo `s3`.
 - **Lo que la guía declara de B-010:** la corrida de 20 que publica la vitrina del B se corrió antes de los arreglos
-  D51 (`valor_en_texto`) y D55 (ids sin huecos): su conclusión K2 escribe «0.814» con punto en español y la numeración
+  D52b (`valor_en_texto`, la coma decimal) y D51 (ids sin huecos): su conclusión K2 escribe «0.814» con punto en
+  español y la numeración
   salta de K5 a K7. La corrida es append-only y la vitrina del B se queda en la de 20 (decisión del usuario), así que
   la página lo muestra así; un caso corrido hoy (la parada 1) ya escribe «0,814» y numera sin saltos. Queda como deuda
   visible hasta que la vitrina del B publique una corrida posterior (la de 200, en curso, ya trae los dos arreglos).
@@ -1533,7 +1534,7 @@ check, regla 15).
    LCP (ADR-011), el ⭐⭐ pendiente del Acto 2, la parada de DECISIÓN con su frase, las tres miradas «no vistas» con
    su matriz, los contrapesos (pasada de capturas: 9 recortes leídos como imagen y 48 capturas por huella en la mirada
    3; e2e de movimiento reducido), las desviaciones 1–28, las deudas declaradas (la corrida de 20 del B anterior a D51
-   y D55; `design-sync/` sin las piezas nuevas, propuestas para un DS 1.1) y la auditoría con sus pagos.
+   y D52b; *corregido el 2026-10-05: decía «D55», que es la vista que pinta el aviso*; `design-sync/` sin las piezas nuevas, propuestas para un DS 1.1) y la auditoría con sus pagos.
 6. Push, `gh pr checks 14` después de cada push, barrido de cero enlaces después del último `git add`.
 
 ### `/audita-sprint`: Fase 1 aprobada y decisiones del usuario (2026-10-05, AskUserQuestion)
