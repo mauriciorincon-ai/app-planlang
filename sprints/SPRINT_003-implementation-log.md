@@ -1536,6 +1536,22 @@ check, regla 15).
    y D55; `design-sync/` sin las piezas nuevas, propuestas para un DS 1.1) y la auditoría con sus pagos.
 6. Push, `gh pr checks 14` después de cada push, barrido de cero enlaces después del último `git add`.
 
+### `/audita-sprint`: Fase 1 aprobada y decisiones del usuario (2026-10-05, AskUserQuestion)
+
+Informe en `sprints/SPRINT_003-auditoria.md`: dos auditores independientes, 52 hallazgos. Respuestas textuales del
+usuario:
+- «¿Apruebas la Fase 1 y el plan de pagar todos los hallazgos en la Fase 2?» → **«Sí, paga todo (Recomendado)»**.
+- C5 y su `k_aplica_a` («lote_demo_20»): **«Respetar el plan (Recomendado)»**. El verificador lee ese campo; en la corrida
+  de 200, C5 se mide en una corrida.
+- Textos en archivos con huella (el plan v1.5 y el verificador): **«Corregir los dos (Recomendado)»**. Plan v1.5.1 de
+  solo redacción, aprobado por esta respuesta, y el texto del verificador; se regeneran informes, fichas y goldens.
+- Matriz del Llavero (regla 24): **«Sí, regístrala»**. Qué: el binario oficial `claude` lee su credencial del Llavero
+  de macOS. Para qué: autenticar la suscripción. Aviso: ninguno. Cómo se deshace: `claude logout` o borrar el ítem
+  «Claude Code-credentials». Queda en el ADR-002.
+
+Además, la CI salió roja por el calendario sobre `525f5d1`: dos avisos altos nuevos con parche (`source-map-js`
+< 1.2.2 y `compression` < 1.8.2). Es el primer pago de la Fase 2 (regla 18: se sube la dependencia, sin excepción).
+
 ## Desviación del plan
 
 1. **Rutas de la orden** (`SPRINT_003-orden.md:65`): `audita-sprint` y `plan-sprint` viven en

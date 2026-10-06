@@ -18,3 +18,8 @@ ignoredBuiltDependencies:
 auditConfig:
   ignoreGhsas:
     - GHSA-vfj7-8cjw-p6xm
+# Overrides acotados al rango vulnerable y sin cruzar de mayor (regla 18; /deploy-check § 5): solo lo que un
+# paquete clava por debajo del parche.
+overrides:
+  # serve 14.2.6 (la última) fija compression 1.8.1; GHSA-vc2v-76pw-4v95 se parchea en 1.8.2 (S3, 2026-10-05).
+  "compression@<1.8.2": "^1.8.2"
