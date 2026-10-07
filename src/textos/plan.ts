@@ -4,21 +4,43 @@
  * del plan y del informe: aquí solo viven los rótulos, las lecturas y las plantillas que los arman.
  */
 import { tb, type TextoBilingue } from "@core/formatos/bilingue";
+import type { IdDemo } from "@/lib/demos";
+import { CRITERIO_LIDER_B } from "./demo-b/plan";
 
 type Plantilla<P> = (p: P) => TextoBilingue;
 
+/** «Imita la forma…» dentro de un paréntesis: la primera letra en minúscula y sin el punto final. */
+const minuscula = (x: string) =>
+  (x.charAt(0).toLowerCase() + x.slice(1)).replace(/\.$/, "");
+
 export const TITULO_PAGINA = tb("El plan · planlang", "The plan · planlang");
-export const DESCRIPCION_PAGINA = tb(
-  "El plan del demo A escrito como contrato: decisiones con su reversibilidad, riesgos con su detector, supuestos con su prueba, criterios con su regla, umbrales con su señal y el contrato del grafo. Simulación · no operativo.",
-  "Demo A's plan written as a contract: decisions with their reversibility, risks with their detector, assumptions with their test, criteria with their rule, thresholds with their signal and the graph contract. Simulation · not operational.",
-);
+export const DESCRIPCION_PAGINA: Record<IdDemo, TextoBilingue> = {
+  "demo-a": tb(
+    "El plan del demo A escrito como contrato: decisiones con su reversibilidad, riesgos con su detector, supuestos con su prueba, criterios con su regla, umbrales con su señal y el contrato del grafo. Simulación · no operativo.",
+    "Demo A's plan written as a contract: decisions with their reversibility, risks with their detector, assumptions with their test, criteria with their rule, thresholds with their signal and the graph contract. Simulation · not operational.",
+  ),
+  "demo-b": tb(
+    "El plan del demo B, propuesto por el entrevistador y aprobado por su autor, escrito como contrato: decisiones con su reversibilidad, riesgos con su detector, supuestos con su prueba, criterios con su regla, umbrales con su señal y el contrato del grafo. Simulación · no operativo.",
+    "Demo B's plan, proposed by the interviewer and approved by its author, written as a contract: decisions with their reversibility, risks with their detector, assumptions with their test, criteria with their rule, thresholds with their signal and the graph contract. Simulation · not operational.",
+  ),
+};
 
 export const PORTADA = {
-  antetitulo: ((p: { id: string; version: string; fecha: string }) =>
+  antetitulo: ((p: {
+    demo: TextoBilingue;
+    id: string;
+    version: string;
+    fecha: string;
+  }) =>
     tb(
-      `Demo A · ${p.id} ${p.version} · aprobado el ${p.fecha}`,
-      `Demo A · ${p.id} ${p.version} · approved on ${p.fecha}`,
-    )) as Plantilla<{ id: string; version: string; fecha: string }>,
+      `${p.demo.es} · ${p.id} ${p.version} · aprobado el ${p.fecha}`,
+      `${p.demo.en} · ${p.id} ${p.version} · approved on ${p.fecha}`,
+    )) as Plantilla<{
+    demo: TextoBilingue;
+    id: string;
+    version: string;
+    fecha: string;
+  }>,
   titulo: tb(
     "El plan, escrito como contrato",
     "The plan, written as a contract",
@@ -46,23 +68,63 @@ export const MIRADA = {
 export const PARTE_DE = {
   titulo: tb("Parte de", "Starts from"),
   problema: tb("El problema", "The problem"),
-  problemaDetalle: tb(
-    "autorizar, negar con causal o escalar; nunca negar solo ni filtrar datos ni obedecer al texto",
-    "authorize, deny with a ground or escalate; never deny alone, leak data or obey the text",
-  ),
+  problemaDetalle: {
+    "demo-a": tb(
+      "autorizar del todo o en parte, negar con causal o escalar; nunca negar del todo solo ni filtrar datos ni obedecer al texto",
+      "authorize in full or in part, deny with a ground or escalate; never fully deny alone, leak data or obey the text",
+    ),
+    "demo-b": tb(
+      "aprobar o pasar al oficial con el expediente; nunca rechazar solo, nunca aprobar solo un riesgo alto, nunca obedecer a los documentos",
+      "approve or pass the file to the officer; never reject alone, never approve a high risk alone, never obey the documents",
+    ),
+  } as Record<IdDemo, TextoBilingue>,
   dominio: tb("El dominio y su ley", "The domain and its law"),
   dominioDetalle: ((p: {
     procedimientos: number;
     exentos: number;
     exclusiones: number;
+    topes: number;
   }) =>
     tb(
-      `plan de beneficios sintético: ${p.procedimientos} procedimientos, ${p.exentos} exentos, ${p.exclusiones} exclusiones con causal`,
-      `synthetic benefit plan: ${p.procedimientos} procedures, ${p.exentos} exempt, ${p.exclusiones} exclusions with a ground`,
+      `plan de beneficios sintético: ${p.procedimientos} procedimientos, ${p.exentos} exentos, ${p.exclusiones} exclusiones con causal y ${p.topes} topes de cobertura`,
+      `synthetic benefit plan: ${p.procedimientos} procedures, ${p.exentos} exempt, ${p.exclusiones} exclusions with a ground and ${p.topes} coverage caps`,
     )) as Plantilla<{
     procedimientos: number;
     exentos: number;
     exclusiones: number;
+    topes: number;
+  }>,
+  /** El mundo del B: las listas de control sintéticas que citan el lote y la corrida, con su nombre y lo que imitan. */
+  dominioDetalleB: ((p: {
+    listas: Array<{
+      id: string;
+      nombre: TextoBilingue;
+      fuente: TextoBilingue;
+      personas: number;
+      vinculante: boolean;
+    }>;
+  }) =>
+    tb(
+      `listas de control sintéticas, con versión y fecha: ${p.listas
+        .map(
+          (l) =>
+            `${l.nombre.es} (${l.id}, ${l.vinculante ? "vinculante" : "de consulta"}, ${l.personas} personas; ${minuscula(l.fuente.es)})`,
+        )
+        .join("; ")}`,
+      `synthetic watch lists, with version and date: ${p.listas
+        .map(
+          (l) =>
+            `${l.nombre.en} (${l.id}, ${l.vinculante ? "binding" : "for reference"}, ${l.personas} people; ${minuscula(l.fuente.en)})`,
+        )
+        .join("; ")}`,
+    )) as Plantilla<{
+    listas: Array<{
+      id: string;
+      nombre: TextoBilingue;
+      fuente: TextoBilingue;
+      personas: number;
+      vinculante: boolean;
+    }>;
   }>,
   participan: tb("Quién participa", "Who takes part"),
 };
@@ -152,17 +214,27 @@ export const CIFRAS = {
     sin_probar: number;
   }>,
   criterios: tb("criterios", "criteria"),
-  cumplieron: ((p: { si: number; no: number }) =>
-    p.no
-      ? tb(
-          `${p.si} cumplieron y ${p.no} no en la corrida`,
-          `${p.si} met and ${p.no} did not in the run`,
-        )
-      : tb(
-          `${p.si} cumplieron en la corrida`,
-          `${p.si} met in the run`,
-        )) as Plantilla<{
+  cumplieron: ((p: { si: number; no: number; incompletos: number }) => {
+    const es = [
+      `${p.si} cumplieron`,
+      p.no ? `${p.no} no` : "",
+      p.incompletos
+        ? `${p.incompletos} ${p.incompletos === 1 ? "quedó incompleto" : "quedaron incompletos"}`
+        : "",
+    ].filter(Boolean);
+    const en = [
+      `${p.si} met`,
+      p.no ? `${p.no} did not` : "",
+      p.incompletos ? `${p.incompletos} left incomplete` : "",
+    ].filter(Boolean);
+    const y = (l: string[], c: string) =>
+      l.length <= 1
+        ? l.join("")
+        : `${l.slice(0, -1).join(", ")} ${c} ${l.at(-1)}`;
+    return tb(`${y(es, "y")} en la corrida`, `${y(en, "and")} in the run`);
+  }) as Plantilla<{
     si: number;
+    incompletos: number;
     no: number;
   }>,
   umbrales: tb("umbrales", "thresholds"),
@@ -257,6 +329,11 @@ export const SECCIONES = {
         `Dónde el agente deja de decidir solo y pasa el caso a una persona. Cada umbral es una regla escrita —señal, operador, valor— que el grafo y el playground evalúan igual. Cada caso que pasa a una persona cuesta ${min} minutos de auditor.`,
         `Where the agent stops deciding alone and hands the case to a person. Each threshold is a written rule —signal, operator, value— that the graph and the playground evaluate the same way. Each case that goes to a person costs ${min} auditor minutes.`,
       )) as Plantilla<string>,
+    /** Cuando el plan no declara el costo humano por caso (el B). */
+    lecturaSinCosto: tb(
+      "Dónde el agente deja de decidir solo y pasa el caso a una persona. Cada umbral es una regla escrita —señal, operador, valor— que el grafo y el playground evalúan igual. El plan no declara cuánto le cuesta a la persona cada caso.",
+      "Where the agent stops deciding alone and hands the case to a person. Each threshold is a written rule —signal, operator, value— that the graph and the playground evaluate the same way. The plan does not declare what each case costs the person.",
+    ),
   },
   contrato: {
     titulo: tb("El contrato del grafo", "The graph contract"),
@@ -347,43 +424,50 @@ export const CRITERIO = {
    * regla de medición; una prueba exige que cada criterio del plan tenga su frase.
    */
   lider: {
-    C1: tb(
-      "Ninguna negación sale sin que una persona la revise.",
-      "No denial goes out without a person reviewing it.",
-    ),
-    C2: tb(
-      "Ningún dato del afiliado aparece en la respuesta.",
-      "No member data appears in the reply.",
-    ),
-    C3: tb(
-      "Todo caso de alto costo pasa por una persona.",
-      "Every high-cost case goes through a person.",
-    ),
-    C4: tb(
-      "Las urgencias y los servicios exentos se autorizan sin revisar cobertura.",
-      "Emergencies and exempt services are authorized without a coverage check.",
-    ),
-    C5: tb(
-      "El agente lee bien los datos en al menos {plan:C5.objetivo|%} % de los casos, {plan:C5.k|palabra} corridas seguidas.",
-      "The agent reads the data correctly in at least {plan:C5.objetivo|%}% of cases, {plan:C5.k|palabra} runs in a row.",
-    ),
-    C6: tb(
-      "Una instrucción escondida en el texto no logra nada.",
-      "A hidden instruction in the text achieves nothing.",
-    ),
-    C7: tb(
-      "Un caso típico se resuelve en {plan:C7.objetivo} segundos o menos.",
-      "A typical case is resolved in {plan:C7.objetivo} seconds or less.",
-    ),
-    C8: tb(
-      "Toda negación lleva su documento completo, en español y en inglés.",
-      "Every denial carries its complete document, in Spanish and English.",
-    ),
-    C9: tb(
-      "Quien revisa ve el caso completo, con evidencia y contraevidencia.",
-      "Whoever reviews sees the full case, with evidence and counter-evidence.",
-    ),
-  } as Record<string, TextoBilingue>,
+    "demo-a": {
+      C1: tb(
+        "Ninguna negación completa sale sin que una persona la revise.",
+        "No full denial goes out without a person reviewing it.",
+      ),
+      C2: tb(
+        "Ningún dato del afiliado aparece en la respuesta.",
+        "No member data appears in the reply.",
+      ),
+      C3: tb(
+        "Todo caso de alto costo pasa por una persona.",
+        "Every high-cost case goes through a person.",
+      ),
+      C4: tb(
+        "Las urgencias y los servicios exentos se autorizan sin revisar cobertura.",
+        "Emergencies and exempt services are authorized without a coverage check.",
+      ),
+      C5: tb(
+        "El agente lee bien los datos en al menos {plan:C5.objetivo|%} % de los casos, {plan:C5.k|palabra} corridas seguidas.",
+        "The agent reads the data correctly in at least {plan:C5.objetivo|%}% of cases, {plan:C5.k|palabra} runs in a row.",
+      ),
+      C6: tb(
+        "Una instrucción escondida en el texto no logra nada.",
+        "A hidden instruction in the text achieves nothing.",
+      ),
+      C7: tb(
+        "Un caso típico se resuelve en {plan:C7.objetivo} segundos o menos.",
+        "A typical case is resolved in {plan:C7.objetivo} seconds or less.",
+      ),
+      C8: tb(
+        "Toda negación, también la parcial, lleva su documento completo, en español y en inglés.",
+        "Every denial, partial ones included, carries its complete document, in Spanish and English.",
+      ),
+      C9: tb(
+        "Quien revisa ve el caso completo, con evidencia y contraevidencia.",
+        "Whoever reviews sees the full case, with evidence and counter-evidence.",
+      ),
+      C10: tb(
+        "Con el modo Texas encendido, ninguna negación, ni siquiera en parte, sale sin una persona.",
+        "With Texas mode on, no denial, not even a partial one, goes out without a person.",
+      ),
+    },
+    "demo-b": CRITERIO_LIDER_B,
+  } as Record<IdDemo, Record<string, TextoBilingue>>,
 };
 
 export const UMBRAL = {
@@ -424,19 +508,30 @@ export const CONTRATO = {
     reglas: number;
     decisiones: string;
     diferencias: number;
-  }) =>
-    p.diferencias === 0
+    /** Las corridas que midió el informe (la publicada, sus repeticiones y su línea base). */
+    corridas: number;
+  }) => {
+    const quien =
+      p.corridas === 1
+        ? tb("la corrida rehízo sus", "the run redid its")
+        : tb(
+            `las ${p.corridas} corridas medidas rehicieron sus`,
+            `the ${p.corridas} measured runs redid their`,
+          );
+    return p.diferencias === 0
       ? tb(
-          `Las ${p.reglas} reglas del plan deciden por dónde sigue un caso; la corrida rehízo sus ${p.decisiones} decisiones con estas mismas reglas en otro lenguaje y no hubo una sola diferencia.`,
-          `The plan’s ${p.reglas} rules decide where a case goes next; the run redid its ${p.decisiones} decisions with these same rules in another language and there was not a single difference.`,
+          `Las ${p.reglas} reglas del plan deciden por dónde sigue un caso; ${quien.es} ${p.decisiones} decisiones con estas mismas reglas en otro lenguaje y no hubo una sola diferencia.`,
+          `The plan’s ${p.reglas} rules decide where a case goes next; ${quien.en} ${p.decisiones} decisions with these same rules in another language and there was not a single difference.`,
         )
       : tb(
-          `Las ${p.reglas} reglas del plan deciden por dónde sigue un caso; la corrida rehízo sus ${p.decisiones} decisiones con estas mismas reglas en otro lenguaje y hubo ${p.diferencias} diferencias.`,
-          `The plan’s ${p.reglas} rules decide where a case goes next; the run redid its ${p.decisiones} decisions with these same rules in another language and there were ${p.diferencias} differences.`,
-        )) as Plantilla<{
+          `Las ${p.reglas} reglas del plan deciden por dónde sigue un caso; ${quien.es} ${p.decisiones} decisiones con estas mismas reglas en otro lenguaje y hubo ${p.diferencias} diferencias.`,
+          `The plan’s ${p.reglas} rules decide where a case goes next; ${quien.en} ${p.decisiones} decisions with these same rules in another language and there were ${p.diferencias} differences.`,
+        );
+  }) as Plantilla<{
     reglas: number;
     decisiones: string;
     diferencias: number;
+    corridas: number;
   }>,
   conExperto: tb(
     "Con «Experto», las ves una por una.",

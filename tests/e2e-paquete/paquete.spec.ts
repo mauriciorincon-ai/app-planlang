@@ -1,3 +1,4 @@
+import { readdirSync } from "node:fs";
 import { expect, test, type Page } from "@playwright/test";
 
 /**
@@ -7,6 +8,11 @@ import { expect, test, type Page } from "@playwright/test";
  */
 
 const BASE = "/piezas/planlang";
+
+/** Las páginas de caso del A que lleva el paquete (S3: los 20 primeros de la corrida de 200 y los que nombra el informe). */
+const PAGINAS_A = readdirSync(
+  "dist/paquete-hoja-de-vida/public/piezas/planlang/es/caso",
+).filter((f) => /^A-\d+\.html$/.test(f)).length;
 
 function vigilar(page: Page) {
   const fallas: string[] = [];
@@ -51,9 +57,20 @@ test("desde la raíz, todos los enlaces de la vitrina cargan dentro del paquete 
         pendientes.push(h.split("#")[0]!);
     }
   }
-  // Por idioma: la Entrada, las 6 pestañas (el índice de casos incluido) y los 20 casos. La raíz entra con ?elegir.
+  // Por idioma: la Entrada y, por demo, sus 6 pestañas (el índice de casos incluido) y sus casos con página (ADR-014):
+  // en el A, los de la corrida de 200 que llevan página (los enlaza el selector, todos alcanzables); en el B, sus 20.
+  // La raíz entra con ?elegir.
   const paginas = [...vistas].filter((v) => !v.includes("?"));
-  expect(paginas.length).toBeGreaterThanOrEqual(2 * (1 + 6 + 20));
+  expect(PAGINAS_A).toBeGreaterThan(20);
+  expect(paginas.length).toBeGreaterThanOrEqual(
+    2 * (1 + (6 + PAGINAS_A) + (6 + 20)),
+  );
+  expect(paginas.filter((v) => /\/caso\/A-\d+\.html$/.test(v)).length).toBe(
+    2 * PAGINAS_A,
+  );
+  expect(paginas.filter((v) => v.includes("/demo-b/")).length).toBe(
+    2 * (6 + 20),
+  );
   expect(fallas).toEqual([]);
 });
 
@@ -89,8 +106,9 @@ test("los controles funcionan dentro del paquete sin salir del origen", async ({
 
   const u1 = page.getByRole("slider", { name: /Confianza mínima/ });
   await u1.focus();
-  for (let k = 0; k < 3; k++) await page.keyboard.press("ArrowRight");
-  await expect(page.locator("#cambios [data-caso]")).toHaveCount(1);
+  // Corrida de 200 (S3): U1 en 0,85 manda A-089 y A-144 a una persona.
+  for (let k = 0; k < 2; k++) await page.keyboard.press("ArrowRight");
+  await expect(page.locator("#cambios [data-caso]")).toHaveCount(2);
 
   await page.getByRole("link", { name: "English" }).click();
   await expect(page).toHaveURL(new RegExp(`${BASE}/en/playground\\.html$`));

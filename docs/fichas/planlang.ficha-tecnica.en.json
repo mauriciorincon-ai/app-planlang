@@ -1,6 +1,6 @@
 {
   "schema_version": "1.3.1",
-  "actualizado": "2026-10-04",
+  "actualizado": "2026-10-05",
   "pieza": {
     "slug": "planlang",
     "nombre": "planlang",
@@ -9,7 +9,7 @@
     "ciclo": "H1",
     "version": "0.1.0",
     "sellado_en": null,
-    "sprints_cerrados": 2
+    "sprints_cerrados": 3
   },
   "promesa": {
     "tagline": "I planned, built and measured the gap.",
@@ -28,7 +28,7 @@
     },
     {
       "nombre": "Python 3.12 · LangGraph 1.2",
-      "papel": "demo A's agent, with the human pause as an interrupt"
+      "papel": "both demos' agents, with the human pause as an interrupt"
     },
     {
       "nombre": "Claude Code by subscription",
@@ -46,27 +46,27 @@
   "cifras": [
     {
       "clave": "criterios_cumplidos",
-      "valor": 9,
+      "valor": 16,
       "unidad": "criteria",
-      "etiqueta": "plan criteria met, of 9",
+      "etiqueta": "criteria met across the plans of 2 demos, of 16",
       "fuente": "medido",
-      "detalle": "From verifier 1.2.0's report on run suscripcion-planlang-a-001-20-v1.2: 9 of 9 criteria met."
+      "detalle": "Demo A: 10 of 10, in verifier 1.3.0's report on run suscripcion-planlang-a-002-200-v1.5. Demo B: 6 of 6, in verifier 1.3.0's report on run suscripcion-planlang-b-001-20."
     },
     {
       "clave": "decisiones_cruzadas",
-      "valor": 233,
+      "valor": 1204,
       "unidad": "decisions",
       "etiqueta": "decisions redone in another language, with 0 differences",
       "fuente": "medido",
-      "detalle": "RF-09.2 cross-check over 4 runs: the TypeScript edge interpreter redoes every decision Python recorded."
+      "detalle": "RF-09.2 cross-check over 4 runs of 2 demos: the TypeScript edge interpreter redoes every decision Python recorded."
     },
     {
-      "clave": "casos_por_corrida",
-      "valor": 20,
+      "clave": "casos_sinteticos",
+      "valor": 220,
       "unidad": "cases",
-      "etiqueta": "cases per run, over 3 runs and a baseline",
+      "etiqueta": "synthetic cases with a known answer, across 2 demos",
       "fuente": "medido",
-      "detalle": "Run suscripcion-planlang-a-001-20-v1.2 with its 2 repetitions (pass^k) and the single-agent baseline at equal budget."
+      "detalle": "Demo A: 200 cases in run suscripcion-planlang-a-002-200-v1.5 and the single-agent baseline. Demo B: 20 cases in run suscripcion-planlang-b-001-20 and the single-agent baseline."
     },
     {
       "clave": "llamadas_a_modelos_en_la_vitrina",
@@ -78,25 +78,25 @@
     },
     {
       "clave": "costo_de_una_corrida",
-      "valor": 0.6704,
+      "valor": 5.2136,
       "unidad": "US$",
-      "etiqueta": "nominal cost of a 20-case run",
+      "etiqueta": "nominal cost of running each demo once (220 cases)",
       "fuente": "calculada",
-      "detalle": "Sum of the nominal cost the CLI declares per call, over the run's traces; through the subscription it was not paid separately."
+      "detalle": "Demo A: US$ 4.9206 for 200 cases. Demo B: US$ 0.293 for 20 cases. Sum of the nominal cost the CLI declares per call, over each run's traces; through the subscription it was not paid separately."
     }
   ],
   "bloques": [
     {
       "orden": 1,
       "nombre": "Plan",
-      "linea": "The plan as a contract: templates, validator and the builder's contract.",
-      "cuenta": 3
+      "linea": "The plan as a contract: the interview, the templates, the validator and the builder's contract.",
+      "cuenta": 4
     },
     {
       "orden": 2,
       "nombre": "Run",
-      "linea": "Cases with a known truth, demo A and batch runs.",
-      "cuenta": 4
+      "linea": "Cases with a known truth, both demos and batch runs.",
+      "cuenta": 6
     },
     {
       "orden": 3,
@@ -125,13 +125,13 @@
   ],
   "limites": [
     "It is a simulation: it handles no real cases and decides on no one.",
-    "Demo B and the interviewer come later; until then they say “under construction”.",
+    "The interviewer runs in the console, not in the showcase: here you see the plan it drafted for demo B, reviewed and approved by a person.",
     "It measures what the plan declared; what it did not foresee shows up as a gap, not as a verdict."
   ],
   "nunca": [
-    "Uses real data: every case, member and physician is synthetic.",
+    "Uses real data: every case, member, physician, applicant and watchlist is synthetic.",
     "Lets a model decide whether the agent got it right.",
-    "Denies a case without a person reviewing it.",
+    "Denies or rejects a case without a person reviewing it.",
     "Hides an unfavorable result."
   ],
   "hitos": [
@@ -140,7 +140,7 @@
       "etiqueta": "ciclo"
     },
     {
-      "valor": "2",
+      "valor": "3",
       "etiqueta": "sprints"
     },
     {
@@ -152,7 +152,7 @@
       "etiqueta": "version"
     },
     {
-      "valor": "11",
+      "valor": "16",
       "etiqueta": "decisiones"
     }
   ]

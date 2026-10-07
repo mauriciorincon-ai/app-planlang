@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mirada 3 · cierre (S3)</title>
+<style>
+:root{--fondo:#0f1115;--sup:#171a21;--t1:#eceef2;--t2:#a9afbb;--linea:#2a2f3a}
+@media (prefers-color-scheme: light){:root{--fondo:#f7f7f5;--sup:#fff;--t1:#16181d;--t2:#4a505c;--linea:#d9dbe0}}
+body{margin:0;background:var(--fondo);color:var(--t1);font:15px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1200px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:24px;margin:0 0 8px}h2{font-size:19px;margin:40px 0 8px}h3{font-size:16px;margin:0}
+p{color:var(--t2);max-width:80ch;margin:4px 0}code{font:12px ui-monospace,monospace}
+.pregunta{color:var(--t1);font-size:17px;font-weight:600}
+table{border-collapse:collapse;width:100%;font-size:13px;margin-top:8px}th,td{border-top:1px solid var(--linea);padding:8px;text-align:left;vertical-align:top}th{color:var(--t2);font-weight:500}
+.forma{margin-top:28px}.forma img{max-width:100%;height:auto;border:1px solid var(--linea);border-radius:6px;display:block;margin-top:8px}
+.minis{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:12px}
+.minis figure{margin:0}.minis img{width:100%;height:auto;border:1px solid var(--linea);border-radius:4px;display:block}.minis figcaption{font-size:11px;color:var(--t2);margin-top:4px;line-height:1.4}
+</style>
+</head>
+<body><main>
+<p class="pregunta">¿El BLUEPRINT, el expediente y el informe del B, y los cambios del A sobre la corrida de 200, se leen como esperas? Mira cada fila de la tabla con su recorte.</p>
+<h1>Mirada 3 · cierre del ciclo, «no vista» (S3, fase 4)</h1>
+<p>Vitrina construida con el commit en curso, servida desde <code>out/</code>; el BLUEPRINT, desde <code>docs/</code>. Clase de mirada: FORMA y TEXTO, registrada «no vista»; su veredicto viaja al gate ⭐ del ciclo (las paradas 2 a 4 del ⭐⭐ la recorren en parte). Las capturas enteras no se versionan: cada una se identifica por su huella SHA-256.</p>
+<h2>La matriz</h2>
+<table><thead><tr><th>#</th><th>Archivo / pantalla</th><th>Botón o estado</th><th>Qué mirar</th><th>Respuesta esperada</th><th>Tu respuesta</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>docs/BLUEPRINT.html (doble clic)</td><td>tal como abre</td><td>El diagrama y la tabla por pieza.</td><td>Las piezas que sostienen la app con su costo (US$0 al mes), el punto único de falla (la suscripción) y «qué ve quién sin sesión: nadie»; ninguna dirección escrita.</td><td>sin respuesta</td></tr>
+<tr><td>2</td><td>Caso B-010 del B (/es/demo-b/caso/B-010), sección «Expediente»</td><td>tal como abre</td><td>Las conclusiones numeradas, la del investigador y la cita bajo cada una.</td><td>Cada conclusión con su tema: K1 la identidad declarada, K2 la mayor similitud con su entrada de lista (versión, fecha y la regla RL-02), K3 el investigador («homónimo») y la decisión; cada una con su cita en mono, y al pie las listas consultadas, quién decidió, los datos usados y el plan. K2 escribe «0.814» con punto y la numeración salta de K5 a K7: esta corrida es anterior a los arreglos D51 (ids sin huecos) y D52b (coma decimal) (deuda declarada).</td><td>sin respuesta</td></tr>
+<tr><td>3</td><td>Brecha del B (/es/demo-b/brecha), «El informe en una mirada»</td><td>tal como abre</td><td>El sello, la frase de líder y el balance del informe del B.</td><td>El veredicto del B con sus dos lecturas y el balance de criterios, riesgos y supuestos, con lo que falló al frente.</td><td>sin respuesta</td></tr>
+<tr><td>4</td><td>Entrada (/es), «Medí la brecha» del demo A</td><td>tal como abre</td><td>Los cuadros de los criterios y la lista de lo que falló.</td><td>Diez cuadros llenos y «10 de 10 criterios cumplen · 0 de 10 riesgos ocurrieron» (C5 se mide en una corrida: el plan pide tres solo en lotes de 20); fallaron S2, S3 y lo no previsto, sin callarlo.</td><td>sin respuesta</td></tr>
+<tr><td>5</td><td>Playground del A (/es/playground), el modo Texas</td><td>encender «Modo Texas»</td><td>Las nueve filas que cambian y su consecuencia.</td><td>Las nueve aprobaciones en parte pasan a una persona, cada una «la exige el modo Texas · +12 min» (no «revisión de más»); las que no tienen página propia lo dicen.</td><td>sin respuesta</td></tr>
+<tr><td>6</td><td>Brecha del A (/es/brecha), «Lo que falló»</td><td>tal como abre</td><td>Los renglones de S2 y S3 y los casos de S3.</td><td>S2 dice lo que midió («Midió tasa 83,3 % … el plan pide ≥ 95 %»); S3 acierta más pero tarda más; sus casos con página enlazan y los demás van con borde punteado, sin enlace.</td><td>sin respuesta</td></tr>
+<tr><td>7</td><td>Caso A-006 (/es/caso/A-006), el documento</td><td>tal como abre</td><td>El documento de una aprobación en parte.</td><td>«Aprobada en parte: se niega lo que supera el tope», el monto solicitado, aprobado y negado, la regla RB-08 y la vía para contradecirla.</td><td>sin respuesta</td></tr>
+<tr><td>8</td><td>Caso A-017 (/es/caso/A-017), la respuesta</td><td>tal como abre</td><td>La marca al lado del aviso de IA (también va en el documento).</td><td>Bajo el aviso que escribió el agente, «Aviso inexacto» (alerta) y la frase: promete de más, porque con el modo Texas apagado 9 aprobaciones en parte de esta corrida salieron sin una persona; vale para la negación completa: desde el plan v1.5.1 el agente lo escribe así, y esta corrida es del v1.5.</td><td>sin respuesta</td></tr>
+<tr><td>9</td><td>Agente del A (/es/agente), el nodo «decision»</td><td>tocar «decision» en el lienzo</td><td>«En los 200 casos» del nodo decision.</td><td>Decidió 155 casos: 95 solos y 60 a una persona, desglosados en el orden de las reglas del plan (9 instrucciones escondidas, 4 de baja confianza, 34 de alto costo, 7 contradicciones, 6 propuestas de negar), que suman 60.</td><td>sin respuesta</td></tr>
+<tr><td>10</td><td>plans/demo-b/revision.es.md y transcripcion.json (textos del entrevistador)</td><td>abrir el archivo (no hay captura)</td><td>Las preguntas, las respuestas y la revisión del borrador.</td><td>Cada pregunta con su ejemplo, la respuesta tal cual y, en la revisión, las contradicciones y los pendientes; el inglés que redactó el modelo marcado como suyo.</td><td>sin respuesta</td></tr>
+</tbody></table>
+<h2>Los recortes</h2>
+<section class="forma" id="blueprint"><h3>1. docs/BLUEPRINT.html (doble clic)</h3><p>tal como abre · 1280 px · oscuro</p><img loading="lazy" src="forma-blueprint.jpg" alt="El diagrama y la tabla por pieza."></section>
+<section class="forma" id="b-expediente"><h3>2. Caso B-010 del B (/es/demo-b/caso/B-010), sección «Expediente»</h3><p>tal como abre · 1280 px · oscuro</p><img loading="lazy" src="forma-b-expediente.jpg" alt="Las conclusiones numeradas, la del investigador y la cita bajo cada una."></section>
+<section class="forma" id="b-informe"><h3>3. Brecha del B (/es/demo-b/brecha), «El informe en una mirada»</h3><p>tal como abre · 1280 px · oscuro</p><img loading="lazy" src="forma-b-informe.jpg" alt="El sello, la frase de líder y el balance del informe del B."></section>
+<section class="forma" id="a-entrada-balance"><h3>4. Entrada (/es), «Medí la brecha» del demo A</h3><p>tal como abre · 1280 px · oscuro</p><img loading="lazy" src="forma-a-entrada-balance.jpg" alt="Los cuadros de los criterios y la lista de lo que falló."></section>
+<section class="forma" id="a-texas"><h3>5. Playground del A (/es/playground), el modo Texas</h3><p>encender «Modo Texas» · 1280 px · oscuro · la interacción cambió la página</p><img loading="lazy" src="forma-a-texas.jpg" alt="Las nueve filas que cambian y su consecuencia."></section>
+<section class="forma" id="a-brecha-fallos"><h3>6. Brecha del A (/es/brecha), «Lo que falló»</h3><p>tal como abre · 1280 px · oscuro</p><img loading="lazy" src="forma-a-brecha-fallos.jpg" alt="Los renglones de S2 y S3 y los casos de S3."></section>
+<section class="forma" id="a-caso-parcial"><h3>7. Caso A-006 (/es/caso/A-006), el documento</h3><p>tal como abre · 1280 px · oscuro</p><img loading="lazy" src="forma-a-caso-parcial.jpg" alt="El documento de una aprobación en parte."></section>
+<section class="forma" id="a-aviso-inexacto"><h3>8. Caso A-017 (/es/caso/A-017), la respuesta</h3><p>tal como abre · 1280 px · oscuro</p><img loading="lazy" src="forma-a-aviso-inexacto.jpg" alt="La marca al lado del aviso de IA (también va en el documento)."></section>
+<section class="forma" id="a-agente-decision"><h3>9. Agente del A (/es/agente), el nodo «decision»</h3><p>tocar «decision» en el lienzo · 1280 px · oscuro · la interacción cambió la página</p><img loading="lazy" src="forma-a-agente-decision.jpg" alt="«En los 200 casos» del nodo decision."></section>
+<section class="forma" id="entrevistador"><h3>10. plans/demo-b/revision.es.md y transcripcion.json (textos del entrevistador)</h3><p>abrir el archivo (no hay captura)</p></section>
+<h2>La pasada completa (48 capturas)</h2>
+<p>Las pantallas que cambió el cierre, a 380 y 1280 px: en español en los dos temas, en inglés en oscuro. La miniatura es la parte de arriba; la huella identifica la captura entera que se leyó.</p>
+<div class="minis">
+<figure><img loading="lazy" src="mini-entrada-380-oscuro-es.jpg" alt="entrada 380 px oscuro es"><figcaption>entrada · 380 · oscuro · es<br><code title="SHA-256 de la captura entera">a2c9b64fb95d…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-entrada-1280-oscuro-es.jpg" alt="entrada 1280 px oscuro es"><figcaption>entrada · 1280 · oscuro · es<br><code title="SHA-256 de la captura entera">8f22e70d2db9…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-entrada-380-claro-es.jpg" alt="entrada 380 px claro es"><figcaption>entrada · 380 · claro · es<br><code title="SHA-256 de la captura entera">0d277f59a962…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-entrada-1280-claro-es.jpg" alt="entrada 1280 px claro es"><figcaption>entrada · 1280 · claro · es<br><code title="SHA-256 de la captura entera">7377cfacc2c4…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-entrada-380-oscuro-en.jpg" alt="entrada 380 px oscuro en"><figcaption>entrada · 380 · oscuro · en<br><code title="SHA-256 de la captura entera">0750d4dbe2e1…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-entrada-1280-oscuro-en.jpg" alt="entrada 1280 px oscuro en"><figcaption>entrada · 1280 · oscuro · en<br><code title="SHA-256 de la captura entera">be729b29288c…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-a-brecha-380-oscuro-es.jpg" alt="a-brecha 380 px oscuro es"><figcaption>a-brecha · 380 · oscuro · es<br><code title="SHA-256 de la captura entera">a5b759a99386…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-a-brecha-1280-oscuro-es.jpg" alt="a-brecha 1280 px oscuro es"><figcaption>a-brecha · 1280 · oscuro · es<br><code title="SHA-256 de la captura entera">60f032fd4924…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-a-brecha-380-claro-es.jpg" alt="a-brecha 380 px claro es"><figcaption>a-brecha · 380 · claro · es<br><code title="SHA-256 de la captura entera">6f0587e5f1f3…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-a-brecha-1280-claro-es.jpg" alt="a-brecha 1280 px claro es"><figcaption>a-brecha · 1280 · claro · es<br><code title="SHA-256 de la captura entera">770a4dab05b3…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-a-brecha-380-oscuro-en.jpg" alt="a-brecha 380 px oscuro en"><figcaption>a-brecha · 380 · oscuro · en<br><code title="SHA-256 de la captura entera">62bc63dc258b…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-a-brecha-1280-oscuro-en.jpg" alt="a-brecha 1280 px oscuro en"><figcaption>a-brecha · 1280 · oscuro · en<br><code title="SHA-256 de la captura entera">f27c3cc77d78…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-a-playground-380-oscuro-es.jpg" alt="a-playground 380 px oscuro es"><figcaption>a-playground · 380 · oscuro · es<br><code title="SHA-256 de la captura entera">1b6317d85af2…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-a-playground-1280-oscuro-es.jpg" alt="a-playground 1280 px oscuro es"><figcaption>a-playground · 1280 · oscuro · es<br><code title="SHA-256 de la captura entera">63284d90ce09…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-a-playground-380-claro-es.jpg" alt="a-playground 380 px claro es"><figcaption>a-playground · 380 · claro · es<br><code title="SHA-256 de la captura entera">9982b1dfb08d…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-a-playground-1280-claro-es.jpg" alt="a-playground 1280 px claro es"><figcaption>a-playground · 1280 · claro · es<br><code title="SHA-256 de la captura entera">7011c212000d…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-a-playground-380-oscuro-en.jpg" alt="a-playground 380 px oscuro en"><figcaption>a-playground · 380 · oscuro · en<br><code title="SHA-256 de la captura entera">3f194410b172…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-a-playground-1280-oscuro-en.jpg" alt="a-playground 1280 px oscuro en"><figcaption>a-playground · 1280 · oscuro · en<br><code title="SHA-256 de la captura entera">6f9e8bc2c896…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-a-agente-380-oscuro-es.jpg" alt="a-agente 380 px oscuro es"><figcaption>a-agente · 380 · oscuro · es<br><code title="SHA-256 de la captura entera">ca0983b9b01e…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-a-agente-1280-oscuro-es.jpg" alt="a-agente 1280 px oscuro es"><figcaption>a-agente · 1280 · oscuro · es<br><code title="SHA-256 de la captura entera">8f1447f2bce9…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-a-agente-380-claro-es.jpg" alt="a-agente 380 px claro es"><figcaption>a-agente · 380 · claro · es<br><code title="SHA-256 de la captura entera">7e6ee69309af…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-a-agente-1280-claro-es.jpg" alt="a-agente 1280 px claro es"><figcaption>a-agente · 1280 · claro · es<br><code title="SHA-256 de la captura entera">d891c5c40ff6…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-a-agente-380-oscuro-en.jpg" alt="a-agente 380 px oscuro en"><figcaption>a-agente · 380 · oscuro · en<br><code title="SHA-256 de la captura entera">e3aadfea76c7…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-a-agente-1280-oscuro-en.jpg" alt="a-agente 1280 px oscuro en"><figcaption>a-agente · 1280 · oscuro · en<br><code title="SHA-256 de la captura entera">a91304340e7d…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-a-caso-A-006-380-oscuro-es.jpg" alt="a-caso-A-006 380 px oscuro es"><figcaption>a-caso-A-006 · 380 · oscuro · es<br><code title="SHA-256 de la captura entera">e383cdd910e9…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-a-caso-A-006-1280-oscuro-es.jpg" alt="a-caso-A-006 1280 px oscuro es"><figcaption>a-caso-A-006 · 1280 · oscuro · es<br><code title="SHA-256 de la captura entera">225f978789ab…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-a-caso-A-006-380-claro-es.jpg" alt="a-caso-A-006 380 px claro es"><figcaption>a-caso-A-006 · 380 · claro · es<br><code title="SHA-256 de la captura entera">ebaf20db139c…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-a-caso-A-006-1280-claro-es.jpg" alt="a-caso-A-006 1280 px claro es"><figcaption>a-caso-A-006 · 1280 · claro · es<br><code title="SHA-256 de la captura entera">30d82275aee5…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-a-caso-A-006-380-oscuro-en.jpg" alt="a-caso-A-006 380 px oscuro en"><figcaption>a-caso-A-006 · 380 · oscuro · en<br><code title="SHA-256 de la captura entera">3933a9129536…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-a-caso-A-006-1280-oscuro-en.jpg" alt="a-caso-A-006 1280 px oscuro en"><figcaption>a-caso-A-006 · 1280 · oscuro · en<br><code title="SHA-256 de la captura entera">b5079e05884f…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-a-caso-A-016-380-oscuro-es.jpg" alt="a-caso-A-016 380 px oscuro es"><figcaption>a-caso-A-016 · 380 · oscuro · es<br><code title="SHA-256 de la captura entera">3d874440088a…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-a-caso-A-016-1280-oscuro-es.jpg" alt="a-caso-A-016 1280 px oscuro es"><figcaption>a-caso-A-016 · 1280 · oscuro · es<br><code title="SHA-256 de la captura entera">ef0bed512b02…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-a-caso-A-016-380-claro-es.jpg" alt="a-caso-A-016 380 px claro es"><figcaption>a-caso-A-016 · 380 · claro · es<br><code title="SHA-256 de la captura entera">50de9f84b5b4…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-a-caso-A-016-1280-claro-es.jpg" alt="a-caso-A-016 1280 px claro es"><figcaption>a-caso-A-016 · 1280 · claro · es<br><code title="SHA-256 de la captura entera">5a20e43aa416…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-a-caso-A-016-380-oscuro-en.jpg" alt="a-caso-A-016 380 px oscuro en"><figcaption>a-caso-A-016 · 380 · oscuro · en<br><code title="SHA-256 de la captura entera">b3feb3050868…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-a-caso-A-016-1280-oscuro-en.jpg" alt="a-caso-A-016 1280 px oscuro en"><figcaption>a-caso-A-016 · 1280 · oscuro · en<br><code title="SHA-256 de la captura entera">4e1e3cd68f01…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-b-brecha-380-oscuro-es.jpg" alt="b-brecha 380 px oscuro es"><figcaption>b-brecha · 380 · oscuro · es<br><code title="SHA-256 de la captura entera">87dd0518a83a…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-b-brecha-1280-oscuro-es.jpg" alt="b-brecha 1280 px oscuro es"><figcaption>b-brecha · 1280 · oscuro · es<br><code title="SHA-256 de la captura entera">01d9feb9ad0a…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-b-brecha-380-claro-es.jpg" alt="b-brecha 380 px claro es"><figcaption>b-brecha · 380 · claro · es<br><code title="SHA-256 de la captura entera">39493af95500…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-b-brecha-1280-claro-es.jpg" alt="b-brecha 1280 px claro es"><figcaption>b-brecha · 1280 · claro · es<br><code title="SHA-256 de la captura entera">59fcc2ce0841…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-b-brecha-380-oscuro-en.jpg" alt="b-brecha 380 px oscuro en"><figcaption>b-brecha · 380 · oscuro · en<br><code title="SHA-256 de la captura entera">786d45378c55…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-b-brecha-1280-oscuro-en.jpg" alt="b-brecha 1280 px oscuro en"><figcaption>b-brecha · 1280 · oscuro · en<br><code title="SHA-256 de la captura entera">77a28f6ca98f…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-b-caso-B-010-380-oscuro-es.jpg" alt="b-caso-B-010 380 px oscuro es"><figcaption>b-caso-B-010 · 380 · oscuro · es<br><code title="SHA-256 de la captura entera">9b58a5d5e882…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-b-caso-B-010-1280-oscuro-es.jpg" alt="b-caso-B-010 1280 px oscuro es"><figcaption>b-caso-B-010 · 1280 · oscuro · es<br><code title="SHA-256 de la captura entera">772722491d65…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-b-caso-B-010-380-claro-es.jpg" alt="b-caso-B-010 380 px claro es"><figcaption>b-caso-B-010 · 380 · claro · es<br><code title="SHA-256 de la captura entera">41eee29a6498…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-b-caso-B-010-1280-claro-es.jpg" alt="b-caso-B-010 1280 px claro es"><figcaption>b-caso-B-010 · 1280 · claro · es<br><code title="SHA-256 de la captura entera">91b2c81480fe…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-b-caso-B-010-380-oscuro-en.jpg" alt="b-caso-B-010 380 px oscuro en"><figcaption>b-caso-B-010 · 380 · oscuro · en<br><code title="SHA-256 de la captura entera">cdb248cf2408…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-b-caso-B-010-1280-oscuro-en.jpg" alt="b-caso-B-010 1280 px oscuro en"><figcaption>b-caso-B-010 · 1280 · oscuro · en<br><code title="SHA-256 de la captura entera">ddf96af89154…</code></figcaption></figure>
+</div>
+</main></body>
+</html>

@@ -12,14 +12,14 @@
     "enlaces.produccion": "null cuando la app no tiene URL pública. `razon` explica por qué, y es lo que la vitrina muestra en lugar del enlace. Nunca se rellena con un enlace de repositorio ni con una promesa."
   },
   "schema_version": "1.0.0",
-  "actualizado": "2026-10-04",
+  "actualizado": "2026-10-05",
   "app": {
     "slug": "planlang",
     "nombre": "planlang",
     "ciclo": "H1",
     "estado": "inicial",
     "sellado_en": null,
-    "sprints_cerrados": 2,
+    "sprints_cerrados": 3,
     "version_repo": "0.1.0"
   },
   "promesa": {
@@ -29,7 +29,7 @@
     "diferencial": "Observing traces and evaluating answers is done by many tools. What nobody does is demand the plan first and measure against it afterwards: the plan → result gap report, with the prior risk analysis, and the plan's thresholds playable over the real traces."
   },
   "funcionalidades": {
-    "total": 16,
+    "total": 19,
     "fuente_del_conteo": "docs/MANUAL-DE-USO.md",
     "descartadas": [],
     "grupos": [
@@ -37,7 +37,7 @@
         "orden": 1,
         "estrella": false,
         "nombre": "Plan",
-        "linea": "The plan as a contract: templates, validator and the builder's contract.",
+        "linea": "The plan as a contract: the interview, the templates, the validator and the builder's contract.",
         "features": [
           {
             "id": "plantillas",
@@ -52,6 +52,12 @@
             "seccion_manual": "Validate a plan"
           },
           {
+            "id": "entrevistador",
+            "nombre": "Plan interviewer",
+            "que_hace": "Asks in order what the domain template requires, drafts the plan in Spanish and English, flags its contradictions and never approves it: the author does.",
+            "seccion_manual": "Interview a plan"
+          },
+          {
             "id": "contrato",
             "nombre": "The builder's contract",
             "que_hace": "The plan hands over the nodes, the edges as signal · operator · value, the human pauses and the signals the trace must record; what the agent decides is literally what the plan says.",
@@ -63,7 +69,7 @@
         "orden": 2,
         "estrella": false,
         "nombre": "Run",
-        "linea": "Cases with a known truth, demo A and batch runs.",
+        "linea": "Cases with a known truth, both demos and batch runs.",
         "features": [
           {
             "id": "casos",
@@ -74,13 +80,25 @@
           {
             "id": "demo-a",
             "nombre": "Demo A: medical prior authorizations",
-            "que_hace": "A router, an extractor, a rule-based coverage checker and a drafter approve, deny with a stated cause or escalate to an auditor; no denial goes out without a person.",
+            "que_hace": "A router, an extractor, a rule-based coverage checker and a drafter approve, approve in part, deny with a stated cause or escalate to an auditor; no full denial goes out without a person.",
             "seccion_manual": "Run a batch"
+          },
+          {
+            "id": "demo-b",
+            "nombre": "Demo B: onboarding with due diligence",
+            "que_hace": "An extractor, a list checker, an investigator that acts from the start of the gray zone and a rule-based risk score approve, review or reject; no rejection goes out without the compliance officer.",
+            "seccion_manual": "Run demo B"
+          },
+          {
+            "id": "expediente",
+            "nombre": "Case file by code",
+            "que_hace": "Every demo B case ends in a case file in Spanish and English written by code: each conclusion cites the plan rule or the list match, with its version.",
+            "seccion_manual": "Read a case file"
           },
           {
             "id": "documento-adverso",
             "nombre": "Adverse-decision document",
-            "que_hace": "Every denial produces, by code, a document in Spanish and English with the cause, the rule, the data used and the way to contest it.",
+            "que_hace": "Every denial, partial ones included, produces by code a document in Spanish and English with the cause, the rule, the data used and the way to contest it.",
             "seccion_manual": "Run a batch"
           },
           {
@@ -132,7 +150,7 @@
           {
             "id": "playground",
             "nombre": "Move the plan's thresholds",
-            "que_hace": "You slide the minimum confidence, the high cost, the clarification maximum or Texas mode and see which cases change path, which errors appear, how much human work it costs and the risk-coverage curve.",
+            "que_hace": "You slide each demo's thresholds (in A, the minimum confidence, the high cost, the clarification maximum or Texas mode; in B, the similarity, the gray zone, the risk and the inconsistencies) and see which cases change path, which errors appear, how much human work it costs and the risk-coverage curve.",
             "seccion_manual": "Move thresholds in the playground"
           }
         ]
@@ -166,13 +184,13 @@
           {
             "id": "pestanas",
             "nombre": "Plan, Agent, Gap and Cases",
-            "que_hace": "In plain language with detail for experts, in Spanish and English, on a 380 px phone, with the “Simulation · not operational” label and the simulated-reviewer disclosure.",
+            "que_hace": "For each demo, in plain language with detail for experts, in Spanish and English, on a 380 px phone, with the “Simulation · not operational” label and the simulated-reviewer disclosure.",
             "seccion_manual": "Open the showcase"
           },
           {
             "id": "fichas",
             "nombre": "Records and package for the personal showcase",
-            "que_hace": "The reproducibility record, agent A's record and these app facts, with the static package hoja-de-vida publishes without a single link.",
+            "que_hace": "Each demo's reproducibility record, each agent's record and these app facts, with the static package hoja-de-vida publishes without a single link.",
             "seccion_manual": "Hand the package to hoja-de-vida"
           }
         ]
@@ -182,27 +200,27 @@
   "metricas": [
     {
       "clave": "criterios_cumplidos",
-      "etiqueta": "plan criteria met, of 9",
-      "valor": 9,
+      "etiqueta": "criteria met across the plans of 2 demos, of 16",
+      "valor": 16,
       "unidad": "criteria",
       "fuente": "medido",
-      "detalle": "From verifier 1.2.0's report on run suscripcion-planlang-a-001-20-v1.2: 9 of 9 criteria met."
+      "detalle": "Demo A: 10 of 10, in verifier 1.3.0's report on run suscripcion-planlang-a-002-200-v1.5. Demo B: 6 of 6, in verifier 1.3.0's report on run suscripcion-planlang-b-001-20."
     },
     {
       "clave": "decisiones_cruzadas",
       "etiqueta": "decisions redone in another language, with 0 differences",
-      "valor": 233,
+      "valor": 1204,
       "unidad": "decisions",
       "fuente": "medido",
-      "detalle": "RF-09.2 cross-check over 4 runs: the TypeScript edge interpreter redoes every decision Python recorded."
+      "detalle": "RF-09.2 cross-check over 4 runs of 2 demos: the TypeScript edge interpreter redoes every decision Python recorded."
     },
     {
-      "clave": "casos_por_corrida",
-      "etiqueta": "cases per run, over 3 runs and a baseline",
-      "valor": 20,
+      "clave": "casos_sinteticos",
+      "etiqueta": "synthetic cases with a known answer, across 2 demos",
+      "valor": 220,
       "unidad": "cases",
       "fuente": "medido",
-      "detalle": "Run suscripcion-planlang-a-001-20-v1.2 with its 2 repetitions (pass^k) and the single-agent baseline at equal budget."
+      "detalle": "Demo A: 200 cases in run suscripcion-planlang-a-002-200-v1.5 and the single-agent baseline. Demo B: 20 cases in run suscripcion-planlang-b-001-20 and the single-agent baseline."
     },
     {
       "clave": "llamadas_a_modelos_en_la_vitrina",
@@ -214,24 +232,24 @@
     },
     {
       "clave": "costo_de_una_corrida",
-      "etiqueta": "nominal cost of a 20-case run",
-      "valor": 0.6704,
+      "etiqueta": "nominal cost of running each demo once (220 cases)",
+      "valor": 5.2136,
       "unidad": "US$",
       "fuente": "calculada",
-      "detalle": "Sum of the nominal cost the CLI declares per call, over the run's traces; through the subscription it was not paid separately."
+      "detalle": "Demo A: US$ 4.9206 for 200 cases. Demo B: US$ 0.293 for 20 cases. Sum of the nominal cost the CLI declares per call, over each run's traces; through the subscription it was not paid separately."
     },
     {
       "clave": "funcionalidades",
       "etiqueta": "built features",
-      "valor": 16,
+      "valor": 19,
       "unidad": "features",
       "fuente": "medido",
-      "detalle": "Those of the product vision marked for the two-week cut, counted against docs/MANUAL-DE-USO.md; roadmap ones do not count."
+      "detalle": "The product vision's features that work today: the two-week cut's and the roadmap ones built in S3 (the interviewer, demo B and its case file), counted against docs/MANUAL-DE-USO.md; what remains on the roadmap does not count."
     },
     {
       "clave": "decisiones_registradas",
       "etiqueta": "recorded architecture decisions",
-      "valor": 11,
+      "valor": 16,
       "unidad": "ADR",
       "fuente": "medido",
       "detalle": "Files in decisions/."
@@ -248,7 +266,7 @@
     },
     {
       "nombre": "Python 3.12 · LangGraph 1.2",
-      "papel": "demo A's agent, with the human pause as an interrupt"
+      "papel": "both demos' agents, with the human pause as an interrupt"
     },
     {
       "nombre": "Claude Code by subscription",
@@ -264,7 +282,7 @@
     }
   ],
   "privacidad": {
-    "detalle": "Every case, member, physician and benefit plan is synthetic, from a seed, and an identifier validator in CI rejects any with a real-looking form. The showcase is static: no visitor triggers calls to models or services.",
+    "detalle": "Every case, member, physician, benefit plan, applicant and watchlist is synthetic, from a seed, and an identifier validator in CI rejects any with a real-looking form. The showcase is static: no visitor triggers calls to models or services.",
     "datos_sinteticos": true,
     "llamadas_a_modelos_en_la_vitrina": false,
     "red_saliente_en_la_vitrina": false
@@ -274,7 +292,7 @@
     "razon": "The private app is not published. The showcase travels to hoja-de-vida as a static package, labeled “Simulation · not operational”, and is shown there.",
     "repositorio": null,
     "razon_repositorio": "The repository is not linked from the showcase (the portfolio's zero-links rule).",
-    "brochure_archivo": "pending: docs/BROCHURE.html is born at the H1 cycle close (sprint 3)",
-    "brochure_ruta_local": "pending: the /conoce route is born with the brochure (sprint 3)"
+    "brochure_archivo": "no file of its own: the showcase and its records serve as the brochure (sprint 3 decision)",
+    "brochure_ruta_local": "no /conoce route: the showcase is the app's presentation (sprint 3 decision)"
   }
 }

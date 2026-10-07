@@ -1,7 +1,7 @@
 {
-  "contrato_version": "0.3.0",
+  "contrato_version": "0.5.0",
   "id": "agentes-ia",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "nombre": {
     "es": "Agentes y flujos de IA",
     "en": "AI agents and flows"
@@ -152,7 +152,7 @@
         "en": "Deterministic rule"
       },
       "token_color": "tipo-3",
-      "glifo": "escudo",
+      "glifo": "hexagono",
       "etiqueta_corta": {
         "es": "REG",
         "en": "RULE"

@@ -41,9 +41,29 @@ describe("ficha de reproducibilidad", () => {
     const texto = filas.map((f) => `${f.k}: ${f.v}`).join("\n");
     expect(texto).toContain("single agent");
     expect(texto).toContain("groq");
+    // La publicada corrió con la v1.5 y la mide la v1.5.1 (auditoría, F8): con el mismo plan se van la fila del plan con
+    // que corrió y la de la línea base.
     expect(filas.length).toBe(
       filasDeReproducibilidad(d, "en", "brecha").length - 2,
     );
+  });
+
+  it("una corrida hecha con otro plan que el que la mide suma la fila del plan con que corrió", () => {
+    const mismo = otra((f) => {
+      f.corrida.plan_de_ejecucion = {
+        ...f.corrida.plan_de_ejecucion,
+        huella: f.plan.huella,
+      };
+    });
+    // La publicada es de este tipo: corrió con la v1.5 y la mide la v1.5.1.
+    expect(filasDeReproducibilidad(d, "es", "brecha").length).toBe(
+      filasDeReproducibilidad(mismo, "es", "brecha").length + 1,
+    );
+    expect(
+      filasDeReproducibilidad(d, "es", "brecha").find(
+        (f) => f.k === "Plan con que corrió",
+      )!.v,
+    ).toMatch(/^plan-demo-a 1\.5\.0 · /);
   });
 
   it("una variante sin nombre detiene el build", () => {
@@ -52,6 +72,25 @@ describe("ficha de reproducibilidad", () => {
     });
     expect(() => filasDeReproducibilidad(x, "es", "brecha")).toThrow(
       "«enjambre» no tiene su entrada en VARIANTE",
+    );
+  });
+});
+
+describe("cómo se generó el lote (AU-S3-28)", () => {
+  it("la fila Generador dice receta, versión y casos por tipo, en los dos idiomas y los dos demos", async () => {
+    const fila = (x: DatosDemo, i: "es" | "en") =>
+      filasDeReproducibilidad(x, i, "brecha").find((f) =>
+        ["Generador", "Generator"].includes(f.k),
+      )!.v;
+    expect(fila(d, "es")).toBe(
+      "receta estandar · versión 1.1.0 · adversario 20 · borde 30 · faltante 30 · normal 120",
+    );
+    expect(fila(d, "en")).toBe(
+      "recipe estandar · version 1.1.0 · adversarial 20 · edge case 30 · missing data 30 · normal 120",
+    );
+    const b = await datosDemo("demo-b");
+    expect(fila(b, "es")).toBe(
+      "receta estandar · versión 1.0.0 · adversario 2 · borde 3 · faltante 3 · normal 12",
     );
   });
 });

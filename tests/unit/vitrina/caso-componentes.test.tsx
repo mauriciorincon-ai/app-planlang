@@ -1,7 +1,8 @@
 /**
- * P6 Caso renderizado (Testing Library): la página de un caso con pausa y documento (A-004) y la de uno sin ellos
- * (A-001); la marca de la instrucción escondida (A-006) y el diálogo de aclaración (A-008); el selector marca solo el
- * caso actual; el inglés sin español residual; y la regla 5-a: la FORMA del árbol no depende del perfil.
+ * P6 Caso renderizado (Testing Library), sobre la corrida de 200 del plan v1.5: la página de un caso con pausa y
+ * documento (A-017) y la de uno sin ellos (A-001); la marca de la instrucción escondida (A-016) y el diálogo de
+ * aclaración (A-013); el selector enlaza solo los casos con página y marca el actual; el inglés sin español residual;
+ * y la regla 5-a: la FORMA del árbol no depende del perfil.
  */
 import "../../setup.core-jsdom";
 import { act, fireEvent, render, screen, within } from "@testing-library/react";
@@ -26,7 +27,13 @@ afterEach(() => {
 function Pagina({ id, idioma }: { id: string; idioma: Idioma }) {
   return (
     <>
-      <MiradaCaso chips={chipsDeCasos(d, idioma)} actual={id} idioma={idioma} />
+      <MiradaCaso
+        chips={chipsDeCasos(d, idioma)}
+        total={d.corrida.trazas.length}
+        actual={id}
+        idioma={idioma}
+        demo="demo-a"
+      />
       <Caso v={vistaCaso(d, id, idioma)} idioma={idioma} />
     </>
   );
@@ -36,11 +43,11 @@ const titulo = (name: string | RegExp) =>
   screen.queryByRole("heading", { name, hidden: true });
 
 describe("un caso con pausa y documento, uno sin ellos", () => {
-  it("A-004 trae la pausa, el documento, sus 7 pasos y las 16 señales", () => {
-    const { container } = render(<Pagina id="A-004" idioma="es" />);
+  it("A-017 trae la pausa, el documento, sus 7 pasos y las 18 señales", () => {
+    const { container } = render(<Pagina id="A-017" idioma="es" />);
     expect(titulo("La pausa humana: lo que vio el auditor")).not.toBeNull();
     expect(titulo("El documento de decisión adversa")).not.toBeNull();
-    expect(titulo(/^Las 16 señales que deja la traza$/)).not.toBeNull();
+    expect(titulo(/^Las 18 señales que deja la traza$/)).not.toBeNull();
     const pasos = container.querySelectorAll(
       "section[aria-labelledby=c-rec] ol > li",
     );
@@ -66,14 +73,14 @@ describe("un caso con pausa y documento, uno sin ellos", () => {
     expect(container.querySelector("#c-pausa, #c-doc")).toBeNull();
   });
 
-  it("A-006 marca la instrucción escondida; A-008 muestra el diálogo y ninguna marca", () => {
-    const a = render(<Pagina id="A-006" idioma="es" />);
+  it("A-016 marca la instrucción escondida; A-013 muestra el diálogo y ninguna marca", () => {
+    const a = render(<Pagina id="A-016" idioma="es" />);
     const marcas = a.container.querySelectorAll("mark");
     expect(marcas).toHaveLength(1);
     expect(marcas[0]!.textContent).toContain("instrucción escondida");
     a.unmount();
 
-    const b = render(<Pagina id="A-008" idioma="es" />);
+    const b = render(<Pagina id="A-013" idioma="es" />);
     expect(b.container.querySelectorAll("mark")).toHaveLength(0);
     const preguntas = screen.getAllByText("Pregunta");
     expect(preguntas.length).toBeGreaterThanOrEqual(1);
@@ -84,21 +91,22 @@ describe("un caso con pausa y documento, uno sin ellos", () => {
 });
 
 describe("el selector", () => {
-  it("enlaza a los 20 casos y marca solo el actual", () => {
-    render(<Pagina id="A-008" idioma="en" />);
+  it("enlaza a los casos con página (no a los 200) y marca solo el actual", () => {
+    render(<Pagina id="A-013" idioma="en" />);
     const nav = screen.getByRole("navigation", { name: "Cases" });
     const enlaces = within(nav).getAllByRole("link");
-    expect(enlaces).toHaveLength(20);
+    expect(enlaces).toHaveLength(chipsDeCasos(d, "en").length);
+    expect(enlaces.length).toBeLessThan(d.corrida.trazas.length);
     const actuales = enlaces.filter((a) => a.getAttribute("aria-current"));
     expect(actuales.map((a) => a.getAttribute("href"))).toEqual([
-      "/en/caso/A-008",
+      "/en/caso/A-013",
     ]);
   });
 });
 
 describe("inglés", () => {
   it("sin español residual en lo que se lee (salvo las citas del modelo y los nombres del código)", () => {
-    const { container } = render(<Pagina id="A-004" idioma="en" />);
+    const { container } = render(<Pagina id="A-017" idioma="en" />);
     const copia = container.cloneNode(true) as HTMLElement;
     for (const x of copia.querySelectorAll('[lang="es"]')) x.remove();
     const texto = copia.textContent ?? "";
@@ -132,16 +140,16 @@ function forma(el: Element): string {
 describe("regla 5-a: la forma no depende del perfil", () => {
   it("el servidor pinta lo mismo sea cual sea el perfil y trae los dos", () => {
     html.setAttribute("data-perfil", "lider");
-    const a = renderToStaticMarkup(<Pagina id="A-004" idioma="es" />);
+    const a = renderToStaticMarkup(<Pagina id="A-017" idioma="es" />);
     html.setAttribute("data-perfil", "experto");
-    const b = renderToStaticMarkup(<Pagina id="A-004" idioma="es" />);
+    const b = renderToStaticMarkup(<Pagina id="A-017" idioma="es" />);
     expect(a).toBe(b);
     expect(a).toContain("solo-experto");
-    expect(a).toContain("Las 16 señales que deja la traza");
+    expect(a).toContain("Las 18 señales que deja la traza");
   });
 
   it("cambiar a experto y volver no cambia la forma", async () => {
-    const { container } = render(<Pagina id="A-004" idioma="es" />);
+    const { container } = render(<Pagina id="A-017" idioma="es" />);
     const antes = forma(container);
     const grupo = screen.getByRole("group", { name: "Leer como" });
     await act(async () =>
@@ -153,5 +161,68 @@ describe("regla 5-a: la forma no depende del perfil", () => {
       fireEvent.click(within(grupo).getByRole("button", { name: "Líder" })),
     );
     expect(forma(container)).toBe(antes);
+  });
+});
+
+describe("el documento de rechazo del B sin aviso de IA (regla dura 12, AU-S3-07)", () => {
+  it("B-005, B-006 y B-014 dicen la falla con su marca, en los dos idiomas; un documento del A con aviso no la dice", async () => {
+    const b = await datosDemo("demo-b");
+    for (const id of ["B-005", "B-006", "B-014"])
+      for (const [idioma, chip, frase] of [
+        ["es", "Sin aviso de IA", "Este documento no trae su aviso de IA"],
+        ["en", "No AI notice", "This document carries no AI notice"],
+      ] as const) {
+        const { container, unmount } = render(
+          <Caso v={vistaCaso(b, id, idioma)} idioma={idioma} />,
+        );
+        const falla = container.querySelector('[data-falla="aviso-ia"]');
+        expect(falla, `${id} (${idioma})`).not.toBeNull();
+        expect(falla!.querySelector('[data-v="no-cumple"]')!.textContent).toBe(
+          chip,
+        );
+        expect(falla!.textContent).toContain(frase);
+        unmount();
+      }
+    const { container } = render(
+      <Caso v={vistaCaso(d, "A-017", "es")} idioma="es" />,
+    );
+    expect(container.querySelector('[data-falla="aviso-ia"]')).toBeNull();
+  });
+});
+
+describe("el aviso del A que promete de más (F22)", () => {
+  it("donde la corrida dice «ninguna negación sin una persona» y tuvo aprobaciones en parte sin persona, lo dice al lado, en los dos idiomas", () => {
+    for (const [idioma, chip, frase] of [
+      ["es", "Aviso inexacto", "9 aprobaciones en parte de esta corrida salieron sin una persona"],
+      ["en", "Inaccurate notice", "9 partial approvals in this run went out without a person"],
+    ] as const) {
+      // A-001 se aprueba: solo su respuesta lleva aviso. A-017 se niega con una persona: respuesta y documento.
+      for (const [id, n] of [
+        ["A-001", 1],
+        ["A-017", 2],
+      ] as const) {
+        const { container, unmount } = render(
+          <Caso v={vistaCaso(d, id, idioma)} idioma={idioma} />,
+        );
+        const notas = container.querySelectorAll(
+          '[data-falla="aviso-inexacto"]',
+        );
+        expect(notas, `${id} (${idioma})`).toHaveLength(n);
+        for (const nota of notas) {
+          expect(nota.querySelector('[data-v="alerta"]')!.textContent).toBe(
+            chip,
+          );
+          expect(nota.textContent).toContain(frase);
+        }
+        unmount();
+      }
+    }
+  });
+
+  it("la aprobación en parte sin persona trae su propio aviso, que es exacto: sin nota", () => {
+    const { container } = render(
+      <Caso v={vistaCaso(d, "A-006", "es")} idioma="es" />,
+    );
+    expect(container.querySelector('[data-falla="aviso-inexacto"]')).toBeNull();
   });
 });

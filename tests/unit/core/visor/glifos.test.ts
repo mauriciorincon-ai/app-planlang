@@ -1,28 +1,40 @@
-/** Las rutas de los glifos (datos, sin trigonometría en el núcleo) son los polígonos que se calculan con seno y coseno. */
+/**
+ * Las rutas de los glifos son las de la tabla del contrato del diagramador 0.5.0 § 5.4 (copia fijada), y la forma de
+ * cada tipo es la que declara la gramática `agentes-ia` (el hexágono para `regla` desde la 1.2.0).
+ */
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { RUTA_GLIFO } from "@core/visor/glifos";
+import { formaDeGlifo, RUTA_GLIFO } from "@core/visor/glifos";
+import type { Gramatica } from "@core/visor/tipos";
+import gramaticaJson from "../../../../packages/diagramador/contrato/gramaticas/agentes-ia.json";
 
-const r2 = (x: number) => Math.round(x * 100) / 100;
-function poligono(radios: number[], giro = -90): string {
-  const n = radios.length;
-  return (
-    radios
-      .map((r, i) => {
-        const a = ((giro + (360 / n) * i) * Math.PI) / 180;
-        return `${i === 0 ? "M" : "L"}${r2(r * Math.cos(a))},${r2(r * Math.sin(a))}`;
-      })
-      .join(" ") + " Z"
-  )
-    .replaceAll("-0,", "0,")
-    .replaceAll(",-0 ", ",0 ");
-}
+const CONTRATO = readFileSync(
+  "packages/diagramador/contrato/CONTRATO.md",
+  "utf8",
+);
+const G = gramaticaJson as unknown as Gramatica;
 
 describe("glifos", () => {
-  it("estrella, hexágono y rombo son los polígonos regulares", () => {
-    expect(RUTA_GLIFO.estrella).toBe(
-      poligono(Array.from({ length: 10 }, (_, i) => (i % 2 ? 3.5 : 8.2))),
+  it.each(Object.entries(RUTA_GLIFO))(
+    "%s es la ruta de la tabla del § 5.4 del contrato",
+    (forma, ruta) => {
+      expect(CONTRATO).toContain(`| \`${forma}\` | lleno | \`${ruta}\` |`);
+    },
+  );
+
+  it("cada tipo de la gramática tiene su glifo, y regla es el hexágono", () => {
+    for (const t of G.tipos_de_nodo)
+      expect(RUTA_GLIFO[formaDeGlifo(G, t.id)], t.id).toBeTruthy();
+    expect(formaDeGlifo(G, "regla")).toBe("hexagono");
+  });
+
+  it("un glifo sin ruta detiene el dibujo", () => {
+    const g = {
+      ...G,
+      tipos_de_nodo: [{ ...G.tipos_de_nodo[0]!, glifo: "pentagono" }],
+    } as Gramatica;
+    expect(() => formaDeGlifo(g, G.tipos_de_nodo[0]!.id)).toThrow(
+      /no tiene ruta/,
     );
-    expect(RUTA_GLIFO.hexagono).toBe(poligono([8, 8, 8, 8, 8, 8]));
-    expect(RUTA_GLIFO.rombo).toBe(poligono([8, 8, 8, 8]));
   });
 });

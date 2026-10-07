@@ -3,9 +3,10 @@
  * enlaces `<a>` absolutos desde la raíz. En el build normal las URL van limpias (`/es/plan`); en el
  * paquete para hoja-de-vida (ADR-009, `PLANLANG_PAQUETE=1`) llevan su base y `.html`
  * (`/piezas/planlang/es/plan.html`): el proxy de idioma de hoja-de-vida intercepta toda ruta sin punto.
- * El modo lo fija `next.config.ts` al compilar.
+ * El modo lo fija `next.config.ts` al compilar. El demo B cuelga de su segmento (`/es/demo-b/plan`, ADR-014).
  */
 import type { Idioma } from "@core/formatos/bilingue";
+import { SEGMENTO_DEMO, type IdDemo } from "./demos";
 
 export const PANTALLAS = [
   "entrada",
@@ -24,14 +25,30 @@ const PAQUETE = process.env.PLANLANG_PAQUETE === "1";
 export const BASE_RUTA = PAQUETE ? "/piezas/planlang" : "";
 export const SUFIJO_RUTA = PAQUETE ? ".html" : "";
 
-export function ruta(idioma: Idioma, pantalla: Pantalla, id?: string): string {
+/**
+ * El camino de una pantalla. La Entrada es una sola para los dos demos (`/es`); las demás llevan el segmento del demo
+ * (ninguno para el A, ADR-014).
+ */
+export function ruta(
+  idioma: Idioma,
+  pantalla: Pantalla,
+  id: string | undefined,
+  demo: IdDemo,
+): string {
+  const segmento = SEGMENTO_DEMO[demo];
+  const base = segmento ? `/${idioma}/${segmento}` : `/${idioma}`;
   const camino =
     pantalla === "entrada"
       ? `/${idioma}`
       : id === undefined
-        ? `/${idioma}/${pantalla}`
-        : `/${idioma}/${pantalla}/${id}`;
+        ? `${base}/${pantalla}`
+        : `${base}/${pantalla}/${id}`;
   return `${BASE_RUTA}${camino}${SUFIJO_RUTA}`;
+}
+
+/** La Entrada: una sola para los dos demos (`/es`). */
+export function rutaEntrada(idioma: Idioma): string {
+  return ruta(idioma, "entrada", undefined, "demo-a");
 }
 
 export function otroIdioma(idioma: Idioma): Idioma {

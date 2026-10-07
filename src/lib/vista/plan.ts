@@ -12,6 +12,8 @@ import {
 } from "@core/formatos/bilingue";
 import { esAristaTripleta } from "@core/plan/esquema";
 import type { DatosDemo } from "@/lib/datos/vitrina";
+import { demoSinDespacho } from "@/lib/demos";
+import { DEMO_TEXTO } from "@/textos/demo";
 import { ruta } from "@/lib/ruta";
 import {
   CHIP,
@@ -35,6 +37,7 @@ import type { Fila } from "./agente";
 import { pieDeCorrida } from "./caso";
 import { entero, enumerar, porcentaje, versionCorta } from "./formato";
 import { compararCadenas } from "@core/playground/aristas";
+import { medidaContraElPlan } from "./brecha";
 import { conPlan } from "./plan-en-texto";
 import {
   VISIBLES,
@@ -165,22 +168,25 @@ export function vistaPlan(d: DatosDemo, i: Idioma): VistaPlan {
   // Lo que un plan aprobado trae siempre: sin ello la página no se arma (el build falla nombrando el campo).
   const aprobadoEl = p.aprobado_el;
   const huella = p.huella;
-  const beneficios = p.plan_beneficios_sintetico;
   const etiquetaRiesgo = p.etiqueta_riesgo;
   const lineaBase = cg.linea_base;
-  const faltan = Object.entries({
-    aprobado_el: aprobadoEl,
-    huella,
-    plan_beneficios_sintetico: beneficios,
-    etiqueta_riesgo: etiquetaRiesgo,
-    "contrato_de_grafo.linea_base": lineaBase,
-  })
-    .filter(([, v]) => v === undefined || v === null)
-    .map(([k]) => k);
-  if (!aprobadoEl || !huella || !beneficios || !etiquetaRiesgo || !lineaBase)
+  const m = mundoDelPlan(d);
+  const faltan = [
+    ...Object.entries({
+      aprobado_el: aprobadoEl,
+      huella,
+      etiqueta_riesgo: etiquetaRiesgo,
+      "contrato_de_grafo.linea_base": lineaBase,
+    })
+      .filter(([, v]) => v === undefined || v === null)
+      .map(([k]) => k),
+    ...m.faltan,
+  ];
+  if (!aprobadoEl || !huella || !m.texto || !etiquetaRiesgo || !lineaBase)
     throw new Error(
       `vitrina: el plan ${p.id} ${p.version} no trae lo que trae un plan aprobado: ${faltan.join(", ")}`,
     );
+  const mundo = m.texto;
   const vPlan = versionCorta(p.version);
   const vCorrida = versionCorta(
     informe.ficha_reproducibilidad.corrida.plan_de_ejecucion.version,
@@ -281,7 +287,13 @@ export function vistaPlan(d: DatosDemo, i: Idioma): VistaPlan {
   // ── supuestos ──────────────────────────────────────────────────────────────────────────────────
   const supuestos: FilaPlan[] = p.supuestos.map((s) => {
     const si = informe.supuestos.find((x) => x.id === s.id) as
-      { estado: string; motivo?: TextoBilingue | null } | undefined;
+      | {
+          estado: string;
+          motivo?: TextoBilingue | null;
+          metricas: Record<string, number | null>;
+          n: number;
+        }
+      | undefined;
     const m = s.medible_en_trazas as Record<string, unknown> & {
       metricas: string[];
       poblacion: string;
@@ -306,7 +318,14 @@ export function vistaPlan(d: DatosDemo, i: Idioma): VistaPlan {
         filas: [
           { k: X(SUPUESTO.prueba, i), v: X(s.prueba_barata, i) },
           ...(si?.motivo
-            ? [{ k: X(SUPUESTO.dio, i), v: X(si.motivo, i) }]
+            ? [
+                {
+                  k: X(SUPUESTO.dio, i),
+                  v:
+                    medidaContraElPlan(si, m.umbral_confirmacion ?? {}, i) ??
+                    X(si.motivo, i),
+                },
+              ]
             : []),
         ],
       },
@@ -343,15 +362,20 @@ export function vistaPlan(d: DatosDemo, i: Idioma): VistaPlan {
       typeof r.condicion === "string" ? r.condicion : String(r.metrica ?? "");
     return {
       id: c.id,
-      titulo: conPlan(X(CRITERIO.lider[c.id] ?? c.enunciado, i), p, i),
+      titulo: conPlan(
+        X(CRITERIO.lider[d.id][c.id] ?? c.enunciado, i),
+        p,
+        i,
+        d.id,
+      ),
       resumen: `${X(CRITERIO.objetivo, i)}: ${objetivo} · ${X(CRITERIO.origen[c.origen] ?? { es: c.origen, en: c.origen }, i)}`,
-      tecnica: `${X(c.enunciado, i)} — ${r.poblacion} → ${lee} · ${r.agregacion}${typeof r.k === "number" ? ` · k = ${r.k}` : ""}`,
+      tecnica: `${X(c.enunciado, i)} — ${r.poblacion} → ${lee} · ${r.agregacion}${typeof r.k === "number" ? ` · k = ${r.k}` : ""}${r.k_aplica_a ? ` · k_aplica_a = ${r.k_aplica_a}` : ""}`,
       lado: { tipo: "criterio", estado: estadoDeCriterio(ci?.estado, i) },
     };
   });
 
   // ── umbrales ───────────────────────────────────────────────────────────────────────────────────
-  const playground = ruta(i, "playground");
+  const playground = ruta(i, "playground", undefined, d.id);
   const umbrales: FilaPlan[] = p.umbrales.map((u) => {
     const rango =
       "tipo" in u.rango_jugable
@@ -469,7 +493,10 @@ export function vistaPlan(d: DatosDemo, i: Idioma): VistaPlan {
       detalle: X(
         CIFRAS.cumplieron({
           si: cumplen,
-          no: p.criterios_aceptacion.length - cumplen,
+          no: informe.criterios.filter((c) => c.estado === "incumple").length,
+          incompletos: informe.criterios.filter(
+            (c) => c.estado === "incompleto",
+          ).length,
         }),
         i,
       ),
@@ -524,6 +551,7 @@ export function vistaPlan(d: DatosDemo, i: Idioma): VistaPlan {
     portada: {
       antetitulo: X(
         PORTADA.antetitulo({
+          demo: DEMO_TEXTO[d.id].corto,
           id: p.id,
           version: p.version,
           fecha: aprobadoEl,
@@ -536,19 +564,12 @@ export function vistaPlan(d: DatosDemo, i: Idioma): VistaPlan {
       {
         clave: "problema",
         titulo: X(PARTE_DE.problema, i),
-        detalle: X(PARTE_DE.problemaDetalle, i),
+        detalle: X(PARTE_DE.problemaDetalle[d.id], i),
       },
       {
         clave: "dominio",
         titulo: X(PARTE_DE.dominio, i),
-        detalle: X(
-          PARTE_DE.dominioDetalle({
-            procedimientos: beneficios.procedimientos,
-            exentos: beneficios.exentos_de_autorizacion,
-            exclusiones: beneficios.exclusiones_con_causal,
-          }),
-          i,
-        ),
+        detalle: X(mundo, i),
       },
       {
         clave: "participan",
@@ -660,7 +681,9 @@ export function vistaPlan(d: DatosDemo, i: Idioma): VistaPlan {
         "p-umb",
         5,
         SECCIONES.umbrales,
-        SECCIONES.umbrales.lectura(minutos.join("–")),
+        minutos.length
+          ? SECCIONES.umbrales.lectura(minutos.join("–"))
+          : SECCIONES.umbrales.lecturaSinCosto,
         chipPlan,
         umbrales,
       ),
@@ -678,6 +701,7 @@ export function vistaPlan(d: DatosDemo, i: Idioma): VistaPlan {
             i,
           ),
           diferencias: rf.reduce((s, c) => s + c.discrepancias, 0),
+          corridas: rf.length,
         }),
         i,
       ),
@@ -687,4 +711,49 @@ export function vistaPlan(d: DatosDemo, i: Idioma): VistaPlan {
     },
     pie: pieDeCorrida(d, i),
   };
+}
+
+/**
+ * El mundo de cada demo como lo dice P3 (exhaustivo por demo, ADR-014): el plan de beneficios del A viaja en su plan;
+ * el B cita sus listas desde el lote y la corrida (desviación 17). Sin su mundo, `texto` es `null` y `faltan` lo nombra.
+ */
+function mundoDelPlan(d: DatosDemo): {
+  texto: TextoBilingue | null;
+  faltan: string[];
+} {
+  switch (d.id) {
+    case "demo-a": {
+      const b = d.plan.plan_beneficios_sintetico;
+      if (!b) return { texto: null, faltan: ["plan_beneficios_sintetico"] };
+      if (b.topes_de_cobertura === undefined)
+        return {
+          texto: null,
+          faltan: ["plan_beneficios_sintetico.topes_de_cobertura"],
+        };
+      return {
+        texto: PARTE_DE.dominioDetalle({
+          procedimientos: b.procedimientos,
+          exentos: b.exentos_de_autorizacion,
+          exclusiones: b.exclusiones_con_causal,
+          topes: b.topes_de_cobertura,
+        }),
+        faltan: [],
+      };
+    }
+    case "demo-b":
+      return {
+        texto: PARTE_DE.dominioDetalleB({
+          listas: d.listas.listas.map((l) => ({
+            id: l.id,
+            nombre: l.nombre,
+            fuente: l.fuente_simulada,
+            personas: l.entradas.length,
+            vinculante: l.vinculante,
+          })),
+        }),
+        faltan: [],
+      };
+    default:
+      return demoSinDespacho(d, "vistaPlan (el mundo del demo)");
+  }
 }

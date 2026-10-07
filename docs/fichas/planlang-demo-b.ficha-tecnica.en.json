@@ -1,0 +1,356 @@
+{
+  "schema_version": "1.3.1",
+  "actualizado": "2026-10-04",
+  "pieza": {
+    "slug": "planlang-demo-b",
+    "nombre": "Agent B · due-diligence onboarding",
+    "frente": "agentes",
+    "estado": "inicial",
+    "ciclo": "H1",
+    "version": "1.1.0",
+    "sellado_en": null,
+    "sprints_cerrados": 3
+  },
+  "promesa": {
+    "tagline": "Approves the clean ones; every match, high score or rejection goes to a person.",
+    "intro": "The agent reads the application's three documents, checks the name against the lists, investigates the context from the start of the gray zone and scores the risk with rules that ignore the name; it approves only the clean ones, brings the rest to the officer with the evidence and leaves a file that cites the rule or match behind each conclusion.",
+    "para_quien": "For a financial institution —a synthetic one— that onboards customers with due diligence: today an analyst checks every name against the control lists by hand, cannot tell which alarms were namesakes and leaves no written reason for each decision."
+  },
+  "titular": "An onboarding agent whose plan came out of an interview and is verified case by case: no list match and no rejection goes out without a person, and every conclusion in the file cites its rule.",
+  "stack": [
+    {
+      "nombre": "LangGraph 1.2",
+      "papel": "the agent's graph: typed state, conditional edges and the officer's pause with interrupt"
+    },
+    {
+      "nombre": "LangChain 1.4",
+      "papel": "the model adapter and schema-bound structured output"
+    },
+    {
+      "nombre": "Python 3.12",
+      "papel": "the nodes, the guards, the name similarity and the trace exporter"
+    },
+    {
+      "nombre": "Claude Code · sonnet",
+      "papel": "extracts the documents and investigates the gray zone; the official binary, through the author's subscription"
+    },
+    {
+      "nombre": "Deterministic rules",
+      "papel": "lists, score, file and guards, no model"
+    },
+    {
+      "nombre": "planlang-trace/v1",
+      "papel": "the traces' own format, with a fingerprint; the only thing the verifier reads"
+    }
+  ],
+  "cifras": [
+    {
+      "clave": "exactitud_extraccion",
+      "valor": 100,
+      "unidad": "%",
+      "etiqueta": "extraction accuracy, one run",
+      "fuente": "medido",
+      "detalle": "Plan B's criterion C5, measured by the verifier: the fields extracted from the three documents are the known truth's in all 20 cases, in a single run."
+    },
+    {
+      "clave": "casos_con_persona",
+      "valor": 11,
+      "etiqueta": "of 20 cases went through the officer",
+      "fuente": "medido",
+      "detalle": "Human pauses recorded in the traces: the officer saw the documents, the matches, the investigation and the score before deciding."
+    },
+    {
+      "clave": "coincidencias_sin_persona",
+      "valor": 0,
+      "etiqueta": "list matches without a person",
+      "fuente": "medido",
+      "detalle": "Plan B's criterion C1 over the 5 cases that are on a list: every one went through the officer."
+    },
+    {
+      "clave": "rechazos_sin_persona",
+      "valor": 0,
+      "etiqueta": "rejections without a person",
+      "fuente": "medido",
+      "detalle": "Plan B's criterion C2 over 20 cases: every rejection, and every approval at high risk, went through the officer."
+    },
+    {
+      "clave": "costo_por_caso",
+      "valor": 0.015,
+      "unidad": "US$",
+      "etiqueta": "nominal cost per case",
+      "fuente": "calculada",
+      "detalle": "US$ 0.293 for the run over 20 cases: the nominal cost the CLI declares per call, summed over the traces. Through the subscription it was not paid separately."
+    }
+  ],
+  "bloques": [
+    {
+      "orden": 1,
+      "nombre": "Input guard",
+      "linea": "Flags instructions hidden in the documents before any model reads them.",
+      "cuenta": 0
+    },
+    {
+      "orden": 2,
+      "nombre": "Extractor",
+      "linea": "Turns the three documents into fields, with the catalog codes.",
+      "cuenta": 0
+    },
+    {
+      "orden": 3,
+      "nombre": "List checker",
+      "linea": "Checks the name against the lists, exactly and approximately, no model.",
+      "cuenta": 0
+    },
+    {
+      "orden": 4,
+      "nombre": "Context investigator",
+      "linea": "From the start of the gray zone: a namesake or the same person? It concludes, it does not decide.",
+      "cuenta": 0
+    },
+    {
+      "orden": 5,
+      "nombre": "Risk score",
+      "linea": "Declared rules on activity, funds and income; the name does not count.",
+      "cuenta": 0
+    },
+    {
+      "orden": 6,
+      "nombre": "Decision",
+      "linea": "The rules written in the plan decide whether the case goes to the officer.",
+      "cuenta": 0
+    },
+    {
+      "orden": 7,
+      "nombre": "Human pause",
+      "linea": "The compliance officer sees the full case before deciding.",
+      "cuenta": 0
+    },
+    {
+      "orden": 8,
+      "nombre": "File",
+      "linea": "Every conclusion with its citation, the reply and, on a rejection, its document.",
+      "cuenta": 0
+    },
+    {
+      "orden": 9,
+      "nombre": "Output guard",
+      "linea": "Fixed rules: no applicant data, no action off the list.",
+      "cuenta": 0
+    }
+  ],
+  "proceso": {
+    "titulo": "One onboarding application",
+    "carriles": [
+      {
+        "id": "solicitante",
+        "nombre": "Applicant"
+      },
+      {
+        "id": "agente",
+        "nombre": "The agent"
+      },
+      {
+        "id": "oficial",
+        "nombre": "Compliance officer"
+      }
+    ],
+    "pasos": [
+      {
+        "id": "inicio",
+        "tipo": "inicio",
+        "carril": "solicitante",
+        "texto": "An application"
+      },
+      {
+        "id": "entrega",
+        "tipo": "tarea",
+        "carril": "solicitante",
+        "texto": "Hands in three documents"
+      },
+      {
+        "id": "marca",
+        "tipo": "tarea",
+        "carril": "agente",
+        "texto": "Looks for hidden instructions"
+      },
+      {
+        "id": "extrae",
+        "tipo": "tarea",
+        "carril": "agente",
+        "texto": "Extracts the fields"
+      },
+      {
+        "id": "cruza",
+        "tipo": "tarea",
+        "carril": "agente",
+        "texto": "Checks the name against the lists"
+      },
+      {
+        "id": "gris",
+        "tipo": "decision",
+        "carril": "agente",
+        "texto": "Similarity from the gray zone up?"
+      },
+      {
+        "id": "investiga",
+        "tipo": "tarea",
+        "carril": "agente",
+        "texto": "Compares the context"
+      },
+      {
+        "id": "puntua",
+        "tipo": "tarea",
+        "carril": "agente",
+        "texto": "Scores the risk without the name"
+      },
+      {
+        "id": "escala",
+        "tipo": "decision",
+        "carril": "agente",
+        "texto": "To the officer?"
+      },
+      {
+        "id": "revisa",
+        "tipo": "tarea",
+        "carril": "oficial",
+        "texto": "Reviews the full case and decides"
+      },
+      {
+        "id": "expediente",
+        "tipo": "tarea",
+        "carril": "agente",
+        "texto": "Builds the file with its citations"
+      },
+      {
+        "id": "filtra",
+        "tipo": "tarea",
+        "carril": "agente",
+        "texto": "The guard filters the output"
+      },
+      {
+        "id": "recibe",
+        "tipo": "tarea",
+        "carril": "solicitante",
+        "texto": "Receives the reply"
+      },
+      {
+        "id": "fin",
+        "tipo": "fin",
+        "carril": "solicitante",
+        "texto": ""
+      }
+    ],
+    "flujos": [
+      {
+        "de": "inicio",
+        "a": "entrega"
+      },
+      {
+        "de": "entrega",
+        "a": "marca"
+      },
+      {
+        "de": "marca",
+        "a": "extrae"
+      },
+      {
+        "de": "extrae",
+        "a": "cruza"
+      },
+      {
+        "de": "cruza",
+        "a": "gris"
+      },
+      {
+        "de": "gris",
+        "a": "investiga",
+        "etiqueta": "yes"
+      },
+      {
+        "de": "gris",
+        "a": "puntua",
+        "etiqueta": "no"
+      },
+      {
+        "de": "investiga",
+        "a": "puntua"
+      },
+      {
+        "de": "puntua",
+        "a": "escala"
+      },
+      {
+        "de": "escala",
+        "a": "revisa",
+        "etiqueta": "yes"
+      },
+      {
+        "de": "escala",
+        "a": "expediente",
+        "etiqueta": "no"
+      },
+      {
+        "de": "revisa",
+        "a": "expediente"
+      },
+      {
+        "de": "expediente",
+        "a": "filtra"
+      },
+      {
+        "de": "filtra",
+        "a": "recibe"
+      },
+      {
+        "de": "recibe",
+        "a": "fin"
+      }
+    ],
+    "anotaciones": [
+      {
+        "paso": "revisa",
+        "texto": "No rejection and no list match goes out without the officer; in this demo, the officer was simulated in batch."
+      },
+      {
+        "paso": "investiga",
+        "texto": "The investigator concludes, it does not decide: if it says “same person”, the case goes to the officer."
+      },
+      {
+        "paso": "filtra",
+        "texto": "A document never decides which action runs."
+      }
+    ]
+  },
+  "procedencia_proceso": "app",
+  "limites": [
+    "It decides on synthetic cases: it is a demonstration, not a service.",
+    "Its compliance officer was simulated following the known truth, in 20-case batches outside CI with breaks between them.",
+    "Its plan declares no officer minutes per case: cases are counted, not minutes.",
+    "In the 200-case batch (a record), B-180 was approved without the officer: the extractor misread the funds' jurisdiction and the score could not see it."
+  ],
+  "nunca": [
+    "Rejects without a person reviewing it.",
+    "Approves on its own someone who matches a list.",
+    "Uses the name or nationality to score the risk.",
+    "Lets a document change what it does.",
+    "Writes a conclusion without citing its rule or match."
+  ],
+  "hitos": [
+    {
+      "valor": "v1.1",
+      "etiqueta": "plan version"
+    },
+    {
+      "valor": "2026-10-04",
+      "etiqueta": "published run"
+    },
+    {
+      "valor": "9 of 9",
+      "etiqueta": "contract pieces"
+    },
+    {
+      "valor": "80",
+      "etiqueta": "verified decisions"
+    }
+  ]
+}

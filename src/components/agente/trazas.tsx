@@ -1,6 +1,7 @@
 import { ArrowRight } from "lucide-react";
 import type { CSSProperties, ReactNode } from "react";
 import type { Idioma } from "@core/formatos/bilingue";
+import type { IdDemo } from "@/lib/demos";
 import type { FilaTraza, PanelNodo } from "@/lib/vista/agente";
 import { decimal } from "@/lib/vista/formato";
 import { PANEL } from "@/textos/agente";
@@ -16,38 +17,84 @@ import { delVocabulario } from "@/lib/vista/vocabulario";
  * Cómo se reparte el ancho entre las tres columnas de cada nodo y cuáles van en la mono (tiempos, costos,
  * reglas, acciones): la presentación que aprobó la maqueta. Caso y tipo van siempre a 60 y 110 px.
  */
-const PRESENTACION: Record<string, { cols: string; mono: number[] }> = {
-  enrutador: {
-    cols: "minmax(0,1fr) minmax(0,0.6fr) minmax(0,1.2fr)",
-    mono: [],
+type Presentacion = { cols: string; mono: number[] };
+
+/** Por demo: un mismo nombre de nodo (`enrutador`, `decision`) lleva otras columnas en cada uno. */
+const PRESENTACION: Readonly<
+  Record<IdDemo, Readonly<Record<string, Presentacion>>>
+> = {
+  "demo-a": {
+    enrutador: {
+      cols: "minmax(0,1fr) minmax(0,0.6fr) minmax(0,1.2fr)",
+      mono: [],
+    },
+    extractor: {
+      cols: "minmax(0,1.3fr) minmax(0,0.5fr) minmax(0,1.4fr)",
+      mono: [1, 2],
+    },
+    aclaracion: {
+      cols: "minmax(0,0.5fr) minmax(0,1fr) minmax(0,1.4fr)",
+      mono: [0, 2],
+    },
+    verificador_cobertura: {
+      cols: "minmax(0,1.4fr) minmax(0,0.7fr) minmax(0,0.9fr)",
+      mono: [2],
+    },
+    decision: {
+      cols: "minmax(0,1.3fr) minmax(0,0.6fr) minmax(0,1fr)",
+      mono: [0],
+    },
+    pausa_humana: {
+      cols: "minmax(0,1.4fr) minmax(0,0.7fr) minmax(0,0.8fr)",
+      mono: [],
+    },
+    redactor: {
+      cols: "minmax(0,0.6fr) minmax(0,0.5fr) minmax(0,1.4fr)",
+      mono: [2],
+    },
+    guardia_salida: {
+      cols: "minmax(0,1.2fr) minmax(0,0.6fr) minmax(0,0.7fr)",
+      mono: [0, 2],
+    },
   },
-  extractor: {
-    cols: "minmax(0,1.3fr) minmax(0,0.5fr) minmax(0,1.4fr)",
-    mono: [1, 2],
-  },
-  aclaracion: {
-    cols: "minmax(0,0.5fr) minmax(0,1fr) minmax(0,1.4fr)",
-    mono: [0, 2],
-  },
-  verificador_cobertura: {
-    cols: "minmax(0,1.4fr) minmax(0,0.7fr) minmax(0,0.9fr)",
-    mono: [2],
-  },
-  decision: {
-    cols: "minmax(0,1.3fr) minmax(0,0.6fr) minmax(0,1fr)",
-    mono: [0],
-  },
-  pausa_humana: {
-    cols: "minmax(0,1.4fr) minmax(0,0.7fr) minmax(0,0.8fr)",
-    mono: [],
-  },
-  redactor: {
-    cols: "minmax(0,0.6fr) minmax(0,0.5fr) minmax(0,1.4fr)",
-    mono: [2],
-  },
-  guardia_salida: {
-    cols: "minmax(0,1.2fr) minmax(0,0.6fr) minmax(0,0.7fr)",
-    mono: [0, 2],
+  // El B, mirada de FORMA «no vista» (S3): la cifra con barra y los textos más largos se llevan el ancho.
+  "demo-b": {
+    enrutador: {
+      cols: "minmax(0,0.8fr) minmax(0,0.6fr) minmax(0,1.2fr)",
+      mono: [1],
+    },
+    extractor: {
+      cols: "minmax(0,0.8fr) minmax(0,0.5fr) minmax(0,1.4fr)",
+      mono: [1, 2],
+    },
+    verificador_listas: {
+      cols: "minmax(0,1.3fr) minmax(0,0.6fr) minmax(0,0.9fr)",
+      mono: [1],
+    },
+    investigador: {
+      cols: "minmax(0,0.9fr) minmax(0,0.6fr) minmax(0,1.4fr)",
+      mono: [1, 2],
+    },
+    puntaje: {
+      cols: "minmax(0,0.6fr) minmax(0,0.7fr) minmax(0,1fr)",
+      mono: [0, 1],
+    },
+    decision: {
+      cols: "minmax(0,1.3fr) minmax(0,0.6fr) minmax(0,1fr)",
+      mono: [0],
+    },
+    pausa_humana: {
+      cols: "minmax(0,1.4fr) minmax(0,0.7fr) minmax(0,0.8fr)",
+      mono: [],
+    },
+    redactor: {
+      cols: "minmax(0,0.7fr) minmax(0,0.6fr) minmax(0,1.2fr)",
+      mono: [2],
+    },
+    guardia_salida: {
+      cols: "minmax(0,1.2fr) minmax(0,0.6fr) minmax(0,0.7fr)",
+      mono: [0, 2],
+    },
   },
 };
 
@@ -114,19 +161,18 @@ function Senal({
 
 function Fila({
   f,
-  nodo,
+  p,
   tipoDe,
   idioma,
   columnas,
 }: {
   f: FilaTraza;
-  nodo: string;
+  p: Presentacion;
   tipoDe: Readonly<Record<string, string>>;
   idioma: Idioma;
   /** Los nombres de las columnas (caso, tipo y las del nodo): el lector los oye en cada celda (AU-S2-15). */
   columnas: readonly string[];
 }) {
-  const p = delVocabulario(PRESENTACION, nodo, PRESENTACION_DONDE);
   // La fila es un `<summary>` desplegable: no admite roles de tabla, así que cada celda dice su columna al lector.
   const col = (k: number) => <span className="sr-only">{columnas[k]}: </span>;
   return (
@@ -191,24 +237,30 @@ function Fila({
 /** Las trazas reales de un nodo: 5 a la vista, el resto tras «Ver N más», y la nota de la corrida. */
 export function TablaTrazas({
   panel,
+  demo,
   tipoDe,
   idioma,
   chip,
 }: {
   panel: PanelNodo;
+  demo: IdDemo;
   tipoDe: Readonly<Record<string, string>>;
   idioma: Idioma;
   chip: ReactNode;
 }) {
   const t = panel.trazas;
-  const p = delVocabulario(PRESENTACION, panel.nombre, PRESENTACION_DONDE);
+  const p = delVocabulario(
+    PRESENTACION[demo],
+    panel.nombre,
+    PRESENTACION_DONDE,
+  );
   const vistas = t.filas.slice(0, t.visibles);
   const resto = t.filas.slice(t.visibles);
   const fila = (f: FilaTraza) => (
     <Fila
       key={f.id}
       f={f}
-      nodo={panel.nombre}
+      p={p}
       tipoDe={tipoDe}
       idioma={idioma}
       columnas={[
@@ -252,6 +304,17 @@ export function TablaTrazas({
           </VerMas>
         ) : null}
       </div>
+      {t.total > t.filas.length ? (
+        <p className="mt-2.5 text-dato text-tinta-2">
+          {
+            PANEL.trazas_.soloElBloque({
+              n: t.filas.length,
+              total: t.total,
+              bloque: t.bloque,
+            })[idioma]
+          }
+        </p>
+      ) : null}
       <p className="mt-2.5 flex flex-wrap items-center gap-1.5 text-dato text-tinta-2">
         {t.nota} {chip}
       </p>

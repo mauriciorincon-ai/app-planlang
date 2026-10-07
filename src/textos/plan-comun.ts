@@ -83,6 +83,7 @@ export const NOMBRE_DE_REGLA: Record<string, TextoBilingue> = {
   contradiccion: tb("contradicción", "contradiction"),
   negar: tb("propuesta de negar", "a proposal to deny"),
   texas: tb("modo Texas", "Texas mode"),
+  carga: tb("instrucción escondida", "hidden instruction"),
 };
 
 /** Los números pequeños en palabras, para las plantillas `{plan:…|palabra}` (más allá de diez, en cifras). */

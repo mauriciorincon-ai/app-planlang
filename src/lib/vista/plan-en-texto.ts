@@ -11,13 +11,15 @@
  * `|palabra` y `|Palabra` escriben un número pequeño en palabras; `|minuscula` baja la inicial de un enunciado. Una referencia que el plan no tiene detiene el
  * build nombrándola; `tests/unit/vitrina/copia-contra-plan.test.ts` las resuelve todas contra el plan publicado.
  */
-import type { Idioma } from "@core/formatos/bilingue";
+import type { Idioma, TextoBilingue } from "@core/formatos/bilingue";
 import { esAristaTripleta, type Plan } from "@core/plan/esquema";
 import {
   NODO_EN_FRASE,
   NOMBRE_DE_REGLA,
   NUMERO_EN_PALABRAS,
 } from "@/textos/plan-comun";
+import type { IdDemo } from "@/lib/demos";
+import { NODO_DESTINO_B, NOMBRE_DE_REGLA_B } from "@/textos/demo-b/plan";
 import { decimal, entero, enumerar } from "./formato";
 import {
   categoriaDeRegla,
@@ -28,6 +30,29 @@ import {
 /** Lo que una plantilla puede leer del plan: el contrato de grafo siempre; umbrales y criterios si los hay. */
 export type FuentePlan = Pick<Plan, "contrato_de_grafo"> &
   Partial<Pick<Plan, "umbrales" | "criterios_aceptacion" | "supuestos">>;
+
+/** Cómo nombra cada demo sus reglas y los nodos a los que mandan, y dónde vive ese vocabulario. */
+const VOCABULARIO_DE_REGLAS: Readonly<
+  Record<
+    IdDemo,
+    {
+      reglas: Readonly<Record<string, TextoBilingue>>;
+      destinos: Readonly<Record<string, TextoBilingue>>;
+      donde: string;
+    }
+  >
+> = {
+  "demo-a": {
+    reglas: NOMBRE_DE_REGLA,
+    destinos: NODO_EN_FRASE,
+    donde: "src/textos/plan-comun.ts",
+  },
+  "demo-b": {
+    reglas: NOMBRE_DE_REGLA_B,
+    destinos: NODO_DESTINO_B,
+    donde: "src/textos/demo-b/plan.ts",
+  },
+};
 
 export const REFERENCIA_PLAN =
   /\{plan:([^}|]+)(?:\|(palabra|Palabra|%|minuscula))?\}/g;
@@ -51,11 +76,13 @@ function numero(v: number, mod: string | undefined, i: Idioma): string {
 function nombreDeRegla(
   a: Plan["contrato_de_grafo"]["aristas_condicionales"][number],
   i: Idioma,
+  demo: IdDemo,
 ): string {
+  const v = VOCABULARIO_DE_REGLAS[demo];
   const t = textoDeCategoria(
-    NOMBRE_DE_REGLA,
-    categoriaDeRegla(reglaDelPlan(a)),
-    "NOMBRE_DE_REGLA (src/textos/plan-comun.ts)",
+    v.reglas,
+    categoriaDeRegla(reglaDelPlan(a), demo),
+    `los nombres de regla (${v.donde})`,
   )[i];
   const u =
     esAristaTripleta(a) &&
@@ -71,6 +98,7 @@ function resolver(
   mod: string | undefined,
   plan: FuentePlan,
   i: Idioma,
+  demo: IdDemo,
 ): string {
   const aristas = plan.contrato_de_grafo.aristas_condicionales;
   const [cabeza, cola] = ref.split(".", 2) as [string, string | undefined];
@@ -82,13 +110,13 @@ function resolver(
     if (cabeza === "reglas") return numero(delNodo.length, mod, i);
     if (cabeza === "lista")
       return enumerar(
-        delNodo.map((a) => nombreDeRegla(a, i)),
+        delNodo.map((a) => nombreDeRegla(a, i, demo)),
         i,
       );
     return delNodo
       .map(
         (a) =>
-          `${nombreDeRegla(a, i)} → ${textoDeCategoria(NODO_EN_FRASE, a.si_verdadero, "NODO_EN_FRASE (src/textos/plan-comun.ts)")[i]}`,
+          `${nombreDeRegla(a, i, demo)} → ${textoDeCategoria(VOCABULARIO_DE_REGLAS[demo].destinos, a.si_verdadero, `los destinos de regla (${VOCABULARIO_DE_REGLAS[demo].donde})`)[i]}`,
       )
       .join("; ");
   }
@@ -119,9 +147,14 @@ function resolver(
   return falta(ref);
 }
 
-/** El texto con sus referencias al plan resueltas en el idioma pedido. */
-export function conPlan(texto: string, plan: FuentePlan, i: Idioma): string {
+/** El texto con sus referencias al plan del demo resueltas en el idioma pedido. */
+export function conPlan(
+  texto: string,
+  plan: FuentePlan,
+  i: Idioma,
+  demo: IdDemo,
+): string {
   return texto.replace(REFERENCIA_PLAN, (_m, ref: string, mod?: string) =>
-    resolver(ref, mod, plan, i),
+    resolver(ref, mod, plan, i, demo),
   );
 }

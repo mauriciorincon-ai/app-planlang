@@ -24,26 +24,32 @@ const PLANES = ["v1.2", "v1.3", "v1.4"].map((v) =>
 describe("la categoría de cada regla", () => {
   it("la señal del respaldo es «proveedor»", () => {
     expect(
-      categoriaDeRegla({ senal: "proveedor_no_disponible", funcion: null }),
+      categoriaDeRegla(
+        { senal: "proveedor_no_disponible", funcion: null },
+        "demo-a",
+      ),
     ).toBe("proveedor");
     expect(
-      categoriaDeRegla({ senal: null, funcion: "texas_y_no_aprobar" }),
+      categoriaDeRegla(
+        { senal: null, funcion: "texas_y_no_aprobar" },
+        "demo-a",
+      ),
     ).toBe("texas");
   });
 
   it("una regla desconocida detiene el build nombrándola (antes caía en «texas»)", () => {
-    expect(() => categoriaDeRegla({ senal: "x", funcion: null })).toThrow(
-      /«x»/,
-    );
     expect(() =>
-      categoriaDeRegla({ senal: null, funcion: "otra_funcion" }),
+      categoriaDeRegla({ senal: "x", funcion: null }, "demo-a"),
+    ).toThrow(/«x»/);
+    expect(() =>
+      categoriaDeRegla({ senal: null, funcion: "otra_funcion" }, "demo-a"),
     ).toThrow(/«otra_funcion»/);
   });
 
   it("toda arista condicional de los planes v1.2, v1.3 y v1.4 tiene categoría y texto de rama", () => {
     for (const p of PLANES)
       for (const a of p.contrato_de_grafo.aristas_condicionales) {
-        const c = categoriaDeRegla(reglaDelPlan(a));
+        const c = categoriaDeRegla(reglaDelPlan(a), "demo-a");
         const textos = RAMA[a.desde as keyof typeof RAMA] as
           Record<string, unknown> | undefined;
         expect(
@@ -57,13 +63,15 @@ describe("la categoría de cada regla", () => {
 
   it("el tope de aclaraciones se lee del umbral del plan", () => {
     for (const p of PLANES)
-      expect(umbralDeCategoria(p, "tope").valor_en_plan).toBe(2);
+      expect(umbralDeCategoria(p, "tope", "demo-a").valor_en_plan).toBe(2);
     const sinTope = structuredClone(PLANES[2]!);
     sinTope.contrato_de_grafo.aristas_condicionales =
       sinTope.contrato_de_grafo.aristas_condicionales.filter(
         (a) => !("senal" in a) || a.senal !== "ciclos_aclaracion",
       );
-    expect(() => umbralDeCategoria(sinTope, "tope")).toThrow(/«tope»/);
+    expect(() => umbralDeCategoria(sinTope, "tope", "demo-a")).toThrow(
+      /«tope»/,
+    );
   });
 });
 

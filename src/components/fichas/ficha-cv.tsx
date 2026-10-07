@@ -527,14 +527,17 @@ function Comprobacion({ f, idioma }: { f: FichaCv; idioma: Idioma }) {
   );
 }
 
+/** `titulo`: el de la sección; el del agente nombra al agente del demo de la página. */
 export function SeccionFicha({
   n,
   f,
+  titulo,
   idioma,
   className,
 }: {
   n: number;
   f: FichaCv;
+  titulo: string;
   idioma: Idioma;
   className?: string;
 }) {
@@ -542,14 +545,10 @@ export function SeccionFicha({
   return (
     <Seccion
       id={`f-${f.clave}`}
-      titulo={
-        <TituloNumerado
-          n={n}
-          titulo={(app ? SECCION.app : SECCION.agente)[idioma]}
-        />
-      }
+      titulo={<TituloNumerado n={n} titulo={titulo} />}
       nota={(app ? SECCION.appNota : SECCION.agenteNota)[idioma]}
       className={className}
+      ambosDemos={app}
     >
       <div className="overflow-hidden rounded-control border border-tinta-3">
         <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1.5 border-b border-tinta-3 bg-sup-1 px-4 py-2.5 text-chico text-tinta-2">

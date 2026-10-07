@@ -73,7 +73,11 @@ for (const idioma of ["es", "en"] as const) {
       await expect(page).toHaveURL(new RegExp(`/${idioma}$`));
       await expect(page.getByRole("heading", { level: 1 })).toHaveText(T.h1);
       await expect(page.getByText(T.rotulo).first()).toBeVisible();
-      await expect(page.getByText(T.veredicto)).toBeVisible();
+      // Una fila real por demo (S3): cada una con el veredicto de su informe.
+      for (const demo of ["demo-a", "demo-b"])
+        await expect(
+          page.locator(`[data-demo="${demo}"]`).getByText(T.veredicto),
+        ).toBeVisible();
       for (const tema of ["oscuro", "claro"])
         for (const perfil of ["lider", "experto"]) {
           await page.goto(`/${idioma}?tema=${tema}&perfil=${perfil}`);

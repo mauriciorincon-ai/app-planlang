@@ -47,8 +47,12 @@ export const FORMATO_INFORME = "planlang-informe/v1";
  * idioma va `null`, no copiada al otro como si fuera suya (regla 20; AU-S2-P-6).
  * 1.2.0 (S2, fase 3): cada brecha no prevista trae `reintentos` (M-24); un criterio con métrica cuya población no
  * tiene un solo valor medido queda `indeterminado`, no `sin_poblacion`, y su nota dice el sentido del objetivo (M-26).
+ * 1.3.0 (S3, auditoría): `pass^k` respeta `k_aplica_a` (`lote_demo_<n>`): en un lote de otro tamaño, k no rige y el
+ * criterio se mide en las corridas que hubo, con una nota que lo dice (decisión del usuario sobre la C5 del plan v1.5);
+ * `k` gana `aplica`. Un supuesto refutado dice cada medida frente a su umbral, no el nombre de la clave (AU-S3-26); un
+ * evaluador opcional que no corrió dice «el plan no lo exige» (F19).
  */
-export const VERSION_VERIFICADOR = "1.2.0";
+export const VERSION_VERIFICADOR = "1.3.0";
 
 export interface CasoEjemplar {
   caso_id: string;
@@ -299,6 +303,7 @@ export function resumenDelInforme(
 /** Los valores de dominio que el informe nombra, redactados en cada idioma (regla 20: nada crudo en el EN). */
 const DECISION: Readonly<Record<string, TextoBilingue>> = {
   aprobar: { es: "aprobar", en: "approve" },
+  aprobar_parcial: { es: "aprobar en parte", en: "approve in part" },
   negar: { es: "negar", en: "deny" },
   rechazar: { es: "rechazar", en: "reject" },
   escalar: { es: "escalar", en: "escalate" },
@@ -307,11 +312,17 @@ const ATAQUE: Readonly<Record<string, TextoBilingue>> = {
   inyeccion: { es: "inyección", en: "injection" },
   dato_sensible: { es: "dato sensible", en: "sensitive data" },
   homonimo: { es: "homónimo", en: "look-alike name" },
+  transliteracion: { es: "transliteración", en: "transliteration" },
+  documentos_contradictorios: {
+    es: "documentos contradictorios",
+    en: "contradictory documents",
+  },
 };
 
+const SIN_DECISION: TextoBilingue = { es: "sin decisión", en: "no decision" };
+
 function nombreDecision(d: unknown, i: "es" | "en"): string {
-  if (d === null || d === undefined)
-    return i === "es" ? "sin decisión" : "no decision";
+  if (d === null || d === undefined) return SIN_DECISION[i];
   return DECISION[String(d)]?.[i] ?? String(d);
 }
 
@@ -341,6 +352,10 @@ function ejemplares(
   const correcto = (v: VistaDeCaso) =>
     v.traza.senales["decision_final"] === v.caso.verdad_conocida.decision;
   const pausa = (v: VistaDeCaso) => v.traza.senales["pausa_humana"] === true;
+  // La severidad de acción es señal obligatoria en el A; el B la deja en el registro de la guardia de salida.
+  const severidad = (v: VistaDeCaso) =>
+    v.traza.senales["severidad_accion"] ??
+    v.traza.guardia_salida?.severidad_accion;
   const ficha = (
     v: VistaDeCaso | undefined,
     por_que: (v: VistaDeCaso) => TextoBilingue,
@@ -404,7 +419,7 @@ function ejemplares(
         (v) =>
           v.caso.tipo === "adversario" &&
           correcto(v) &&
-          v.traza.senales["severidad_accion"] === 0 &&
+          severidad(v) === 0 &&
           !fallos.has(v.caso_id),
       ),
       (v) => ({
@@ -595,6 +610,7 @@ export async function generarInforme(
     plan,
     vistas,
     e.repeticiones.map(vistasDe),
+    m.casos.n_lote,
   );
   const riesgos = evaluarRiesgos(plan, vistas, vistasDeSesiones(m.sesiones));
   const supuestos = evaluarSupuestos(

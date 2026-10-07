@@ -95,6 +95,26 @@ class PlanCargado:
     def senales_obligatorias(self) -> list[str]:
         return list(self.contrato["senales_obligatorias_en_traza"])
 
+    def umbral_de_senal(self, senal: str) -> dict[str, Any]:
+        """M-18: el umbral se busca por la señal que compara, no por su id (renumerar U1…Un no rompe nada)."""
+        hallados = [u for u in self.datos["umbrales"] if u["senal"] == senal]
+        if len(hallados) != 1:
+            raise PlanInvalido(
+                f"el plan declara {len(hallados)} umbrales sobre la señal {senal}; se espera uno"
+            )
+        return dict(hallados[0])
+
+    def umbral_de_referencia(self, referencia: str, senal: str) -> dict[str, Any]:
+        """Un umbral citado como `umbral.Ux` (p. ej. el tope de alto costo del plan de beneficios),
+        exigiendo que sea el de `senal`: una referencia que apunte a otro umbral es un error del plan, no
+        un número que se usa igual."""
+        if not referencia.startswith("umbral."):
+            raise PlanInvalido(f"«{referencia}» no es una referencia a un umbral")
+        u = self.umbral_de_senal(senal)
+        if u["id"] != referencia.removeprefix("umbral."):
+            raise PlanInvalido(f"«{referencia}» no es el umbral de la señal {senal} ({u['id']})")
+        return u
+
     def referencia(self) -> dict[str, str]:
         return {"archivo": self.archivo, "huella": self.huella, "id": self.id, "version": self.version}
 

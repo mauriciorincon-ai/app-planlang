@@ -44,7 +44,7 @@ describe.each(["es", "en"] as const)("SVG del demo A (%s)", (idioma) => {
     expect(svg).toContain(
       `lang="${idioma}" role="graphics-document document" aria-labelledby="visor-a-t visor-a-d"`,
     );
-    expect(svg).not.toMatch(/\r|20\d\d-\d\d-\d\d|0\.3\.0/);
+    expect(svg).not.toMatch(/\r|20\d\d-\d\d-\d\d|0\.[35]\.0/);
     expect(svg.endsWith("</svg>\n")).toBe(true);
   });
 
@@ -57,12 +57,13 @@ describe.each(["es", "en"] as const)("SVG del demo A (%s)", (idioma) => {
     expect(ids.some((id) => ids2.includes(id))).toBe(false);
   });
 
-  it("los 8 nodos y las 4 líneas con reglas son botones con nombre; lo demás, aria-hidden (D9)", () => {
+  it("los 8 nodos y las 5 líneas con reglas son botones con nombre; lo demás, aria-hidden (D9)", () => {
     const botones = [
       ...svg.matchAll(/<g [^>]*role="button"[^>]*aria-label="([^"]+)"/g),
     ].map((m) => m[1]!);
-    expect(botones).toHaveLength(12);
-    expect(svg.match(/data-sel-id="/g)).toHaveLength(12);
+    // Plan v1.5 (S3): el respaldo sin modelo suma la línea extractor → pausa_humana con su regla.
+    expect(botones).toHaveLength(13);
+    expect(svg.match(/data-sel-id="/g)).toHaveLength(13);
     expect(svg.match(/class="d-flujo"[^>]*aria-hidden="true"/g)).toHaveLength(
       9,
     );

@@ -17,6 +17,14 @@ export const ID = z
   .string()
   .regex(/^[A-Za-z][A-Za-z0-9_-]*$/, "id estable: letras, dígitos, _ y -");
 
+/**
+ * Quién propuso cada elemento (RF-02.4): la plantilla del dominio, el entrevistador o el usuario. Los criterios lo
+ * llevan desde el S1; los demás elementos lo ganan en el S3 (opcional: los planes del A no lo traen y conservan su
+ * huella).
+ */
+export const ORIGEN = ["plantilla", "entrevistador", "usuario"] as const;
+export const OrigenSchema = z.enum(ORIGEN);
+
 // --------------------------------------------------------------------------- decisiones (§ 6.3)
 
 export const REVERSIBILIDAD = ["una_via", "costosa", "dos_vias"] as const;
@@ -44,6 +52,7 @@ export const DecisionSchema = z
     depende_de: z.array(ID).default([]),
     umbrales_asociados: z.array(ID).default([]),
     riesgos_asociados: z.array(ID).default([]),
+    origen: OrigenSchema.optional(),
   })
   .strict()
   .refine(
@@ -104,6 +113,7 @@ export const ModoDeFallaSchema = z
     no_detectable_en_trazas: TextoLibreSchema.optional(),
     /** Instrumentos-de-plan v0.2.0 (G8): protege una obligación legal ⇒ prioridad efectiva alta. */
     control_legal: z.boolean().optional(),
+    origen: OrigenSchema.optional(),
   })
   .strict();
 
@@ -134,6 +144,7 @@ export const SupuestoSchema = z
     prueba_barata: TextoBilingueSchema,
     medible_en_trazas: MedibleSchema.optional(),
     estado: z.enum(ESTADO_SUPUESTO),
+    origen: OrigenSchema.optional(),
   })
   .strict();
 
@@ -148,8 +159,6 @@ export const AGREGACION = [
   "promedio",
   "maximo",
 ] as const;
-export const ORIGEN = ["plantilla", "entrevistador", "usuario"] as const;
-
 export const ReglaDeMedicionSchema = z
   .object({
     poblacion: z.string().min(1),
@@ -168,7 +177,9 @@ export const CriterioSchema = z
     tipo: z.enum(TIPO_CRITERIO),
     regla_de_medicion: ReglaDeMedicionSchema,
     valor_objetivo: z.union([z.number(), z.boolean()]),
-    origen: z.enum(ORIGEN),
+    origen: OrigenSchema,
+    /** Los riesgos que este criterio controla (RF-02.5: un riesgo de severidad ≥ 9 sin criterio es contradicción). */
+    riesgos_controlados: z.array(ID).optional(),
   })
   .strict();
 
@@ -205,6 +216,7 @@ export const UmbralSchema = z
     rango_jugable: RangoJugableSchema,
     consecuencia_si_verdadero: z.string().min(1),
     costo_humano_por_caso_min: z.number().nonnegative().optional(),
+    origen: OrigenSchema.optional(),
   })
   .strict();
 
@@ -295,6 +307,7 @@ export const ContratoDeGrafoSchema = z
     senales_obligatorias_en_traza: z.array(z.string().min(1)).min(1),
     evaluadores_requeridos: z.array(EvaluadorSchema),
     linea_base: LineaBaseSchema.optional(),
+    origen: OrigenSchema.optional(),
   })
   .strict();
 
@@ -310,6 +323,7 @@ export const ActorSchema = z
     en: z.string().min(1),
     tipo: z.enum(TIPO_ACTOR),
     rol_en_pausa: z.boolean().optional(),
+    origen: OrigenSchema.optional(),
   })
   .strict();
 
@@ -321,6 +335,7 @@ export const LotesSchema = z
     fuera_de_ci: z.literal(true),
     proveedor: z.string().min(1),
     modelo_alias: z.string().min(1),
+    origen: OrigenSchema.optional(),
   })
   .strict();
 
@@ -330,6 +345,8 @@ export const PlanBeneficiosSinteticoSchema = z
     exentos_de_autorizacion: z.number().int().nonnegative(),
     exclusiones_con_causal: z.number().int().nonnegative(),
     tope_alto_costo: z.string().min(1),
+    /** Servicios con tope de cobertura (plan de beneficios v2, aprobación parcial RB-08; plan v1.5 del A). */
+    topes_de_cobertura: z.number().int().nonnegative().optional(),
   })
   .strict();
 
@@ -407,6 +424,44 @@ export const RestriccionRegulatoriaSchema = z
   })
   .strict();
 
+/**
+ * Las secciones del plan que conduce la entrevista (M2, S3), en el orden en que se preguntan. Cada pregunta guía
+ * apunta a una; una sección puede recibir varias preguntas.
+ */
+export const SECCIONES_DE_ENTREVISTA = [
+  "problema",
+  "actores",
+  "flujo",
+  "decisiones",
+  "riesgos",
+  "supuestos",
+  "criterios",
+  "umbrales",
+  "contrato",
+  "lotes",
+] as const;
+export type SeccionDeEntrevista = (typeof SECCIONES_DE_ENTREVISTA)[number];
+
+/** Una pregunta guía con su ejemplo de respuesta (RF-02.2) y la sección del plan que alimenta. */
+export const PreguntaGuiaSchema = z
+  .object({
+    id: ID,
+    seccion: z.enum(SECCIONES_DE_ENTREVISTA),
+    es: z.string().min(1),
+    en: z.string().min(1),
+    ejemplo: TextoBilingueSchema,
+    obligatoria: z.boolean(),
+  })
+  .strict();
+
+/**
+ * Un umbral que la plantilla propone sin valor: la señal, el operador y el rango salen del dominio; el valor lo fija
+ * el usuario en la entrevista (`null` hasta entonces).
+ */
+export const UmbralSugeridoSchema = UmbralSchema.extend({
+  valor_en_plan: z.union([z.number(), z.boolean()]).nullable(),
+}).strict();
+
 export const PlantillaDominioSchema = z
   .object({
     id: ID,
@@ -418,7 +473,14 @@ export const PlantillaDominioSchema = z
     riesgos_tipicos: z.array(ModoDeFallaSchema).min(1),
     criterios_sugeridos: z.array(CriterioSchema).min(1),
     restricciones_regulatorias: z.array(RestriccionRegulatoriaSchema).min(1),
-    preguntas_guia: z.array(TextoBilingueSchema).min(1),
+    preguntas_guia: z.array(PreguntaGuiaSchema).min(1),
+    /**
+     * Propuestas para la entrevista (S3): umbrales sin valor, los supuestos que el dominio exige medir (la línea base de
+     * agente único, regla dura 10) y el contrato de grafo típico del dominio.
+     */
+    umbrales_sugeridos: z.array(UmbralSugeridoSchema).optional(),
+    supuestos_sugeridos: z.array(SupuestoSchema).optional(),
+    contrato_sugerido: ContratoDeGrafoSchema.optional(),
     huella: z
       .string()
       .regex(/^[0-9a-f]{64}$/)
@@ -427,3 +489,4 @@ export const PlantillaDominioSchema = z
   .strict();
 
 export type PlantillaDominio = z.infer<typeof PlantillaDominioSchema>;
+export type PreguntaGuia = z.infer<typeof PreguntaGuiaSchema>;

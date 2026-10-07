@@ -8,6 +8,7 @@ export function Seccion({
   nota,
   cabecera,
   className,
+  ambosDemos,
   children,
 }: {
   id: string;
@@ -16,11 +17,17 @@ export function Seccion({
   /** Controles de la cabecera (p. ej. «Leer como»), a la derecha del título. */
   cabecera?: ReactNode;
   className?: string;
+  /**
+   * La sección habla de los dos demos a propósito (la ficha de la app): la guardia de vocabulario por demo del
+   * export (`scripts/verificar-export.mjs`, regla 7) la salta.
+   */
+  ambosDemos?: boolean;
   children: ReactNode;
 }) {
   return (
     <section
       aria-labelledby={id}
+      data-vocabulario={ambosDemos ? "ambos-demos" : undefined}
       className={cx("border-t border-linea py-10", className)}
     >
       <div

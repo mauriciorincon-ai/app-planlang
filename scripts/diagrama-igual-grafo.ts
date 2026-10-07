@@ -1,6 +1,7 @@
 /**
- * Gate «diagrama = grafo» sobre lo PUBLICADO: el SVG que lleva `out/<idioma>/agente.html` dibuja exactamente el
- * grafo compilado de la corrida que declara el manifiesto frente al contrato del plan. `core/visor/igualdad.ts`
+ * Gate «diagrama = grafo» sobre lo PUBLICADO: el SVG que lleva la pantalla Agente de cada demo
+ * (`out/<idioma>/agente.html` el A, `out/<idioma>/demo-b/agente.html` el B: ADR-014) dibuja exactamente el grafo
+ * compilado de la corrida que declara el manifiesto frente al contrato de su plan. `core/visor/igualdad.ts`
  * prueba el mapa; esto prueba que la página construida lleva ese dibujo y no otro (un build viejo, un filtro en la
  * vista, un SVG cambiado a mano). En los dos sentidos (AU-S2-23):
  *  - nodos: biyección (los del contrato ausentes del grafo, con la marca «exigido»);
@@ -17,9 +18,10 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { IDIOMAS } from "../core/formatos/bilingue";
 import type { AristaCondicional } from "../core/plan/esquema";
-import { condicionEnTexto } from "../core/visor/geometria";
+import { condicionEnTexto } from "../core/visor/condicion";
 import { idDeMapa } from "../core/visor/ids";
-import { condicionDeRegla, SENAL_POR_DEFECTO } from "../core/visor/mapa";
+import { condicionDeRegla } from "../core/visor/mapa";
+import { esIdDemo, SEGMENTO_DEMO } from "../src/lib/demos";
 
 export interface GrafoPublicable {
   nodos: ReadonlyArray<{ id: string }>;
@@ -114,15 +116,9 @@ export function flujosEsperados(
     const porDefecto =
       grafo.ramas_por_defecto[a.source] ??
       reglasDe(a.source).find((r) => r.si_falso !== undefined)?.si_falso;
+    // La rama «si no» es su propia forma desde el 0.5.0 (§ 3.4), no una tripleta disfrazada.
     if (porDefecto === a.target)
-      out.set(
-        `${par}-defecto`,
-        condicionEnTexto({
-          senal: SENAL_POR_DEFECTO,
-          operador: "=",
-          valor: true,
-        }),
-      );
+      out.set(`${par}-defecto`, condicionEnTexto({ por_defecto: true }));
   }
   return out;
 }
@@ -222,8 +218,22 @@ export function principal(carpeta = "out"): number {
     const contrato = (
       leer(m.plan.archivo) as { contrato_de_grafo: ContratoPublicable }
     ).contrato_de_grafo;
+    if (!esIdDemo(demo)) {
+      console.error(
+        `✗ ${demo}: el manifiesto declara un demo que la vitrina no conoce`,
+      );
+      fallas++;
+      continue;
+    }
     for (const idioma of IDIOMAS) {
-      const pagina = join(raiz, carpeta, idioma, "agente.html");
+      // Cada demo en su página (ADR-014): leer la del A para el B compararía el grafo del B con el dibujo del A.
+      const pagina = join(
+        raiz,
+        carpeta,
+        idioma,
+        SEGMENTO_DEMO[demo],
+        "agente.html",
+      );
       if (!existsSync(pagina)) {
         console.error(
           `✗ ${demo}/${idioma}: falta ${pagina} (¿corrió pnpm build?)`,

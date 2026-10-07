@@ -1,10 +1,13 @@
-"""Ejecución por lotes del demo A (RF-04.9, RF-05.5) y exportación `planlang-trace/v1`.
+"""Ejecución por lotes de los demos (RF-04.9, RF-05.5) y exportación `planlang-trace/v1`.
 
-`pnpm lote:demo` ≡ `python -m app_agents.lotes --demo a --n 20`. Fuera de CI con la suscripción (regla 6):
-lotes pequeños, espaciados (`--pausa-s`) y ACUMULABLES: la corrida es el directorio; una sesión nueva
-salta los casos ya exportados, añade su sesión al manifiesto y reescribe ramas y manifiesto. Si el
-proveedor llega al límite de uso, la sesión se detiene, el caso no se exporta (se reintenta después) y
-el límite queda registrado. Otro error del proveedor exporta una traza parcial con el nodo que falló.
+`pnpm lote:demo` ≡ `python -m app_agents.lotes --demo a --n 20`; `--demo b` corre el demo B con su plan,
+su lote y sus listas por defecto (S3). Lo que cambia entre demos vive en `app_agents.demos`.
+
+Fuera de CI con la suscripción (regla 6): lotes pequeños, espaciados (`--pausa-s`) y ACUMULABLES: la
+corrida es el directorio; una sesión nueva salta los casos ya exportados, añade su sesión al manifiesto y
+reescribe ramas y manifiesto. Si el proveedor llega al límite de uso, la sesión se detiene, el caso no se
+exporta (se reintenta después) y el límite queda registrado. Otro error del proveedor exporta una traza
+parcial con el nodo que falló.
 
 LangSmith es ESPEJO: si `LANGSMITH_TRACING=true` y hay clave en el entorno del builder, LangChain
 traza solo; la clave jamás se lee aquí ni viaja al subproceso de `claude` (adaptador).
@@ -29,12 +32,9 @@ from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.types import Command
 
 from app_agents.adaptador import CLAUDE_BIN, ErrorProveedor, crear_modelo
-from app_agents.agente_unico import construir_grafo_linea_base, contrato_linea_base
 from app_agents.canonico import leer_verificando
-from app_agents.demo_a.estado import ContextoCaso, estado_inicial
-from app_agents.demo_a.grafo import construir_grafo
-from app_agents.demo_a.plan_beneficios import PlanBeneficios, cargar_plan_beneficios
-from app_agents.demo_a.simulacion import EntornoSimulado, RespondedorSimulado
+from app_agents.demo_a.estado import estado_inicial
+from app_agents.demos import FABRICAS, CorridaIncompatible, Demo, demo
 from app_agents.exportador import (
     ETIQUETA,
     FORMATO_TRAZA,
@@ -46,26 +46,21 @@ from app_agents.exportador import (
 from app_agents.logger import registrar
 from app_agents.plan import (
     RAIZ_REPO,
-    ContratoDeGrafo,
-    PlanCargado,
     cargar_plan,
     misma_verdad,
     plan_por_huella,
 )
 from app_agents.reloj import RelojFijo, RelojReal
 
+# Alias del demo A (su entrada en `demos.py` es la fuente): `pnpm lote:demo` sin `--demo` corre el A, el
+# manual nombra su plan y su lote, y las pruebas los leen de aquí. Una prueba los compara con `demos.py`.
 PLAN_POR_DEFECTO = "plans/demo-a/v1.2.json"
 CASOS_POR_DEFECTO = "data/casos/demo-a/planlang-a-001-20.json"
 BENEFICIOS_POR_DEFECTO = "data/plan-beneficios/demo-a.json"
-SALIDA_POR_DEFECTO = "runs/demo-a"
 VARIANTES = ("multiagente", "agente_unico")
 # El alias del modelo con la suscripción y el tamaño de sesión los declara el PLAN (`lotes.modelo_alias`,
 # `lotes.corridas_espaciadas_de`): aquí no se cablean (auditoría S1, AU-10).
 MODELO_POR_PROVEEDOR = {"simulado": "simulado"}
-
-
-class CorridaIncompatible(ValueError):
-    pass
 
 
 @dataclass
@@ -89,14 +84,6 @@ def _relativa(p: Path) -> str:
         return p.resolve().relative_to(RAIZ_REPO).as_posix()
     except ValueError:
         return p.name
-
-
-def _grafo_y_contrato(
-    variante: str, plan: PlanCargado, pb: PlanBeneficios, checkpointer: Any
-) -> tuple[Any, ContratoDeGrafo]:
-    if variante == "agente_unico":
-        return construir_grafo_linea_base(plan, pb, checkpointer=checkpointer), contrato_linea_base(plan)
-    return construir_grafo(plan, pb, checkpointer=checkpointer), plan.contrato_de_grafo()
 
 
 def _entorno(proveedor: str) -> dict[str, Any]:
@@ -123,34 +110,43 @@ def _espejo_langsmith() -> bool:
     )
 
 
-def _ficha(variante: str, proveedor: str, modelo: str, lote: dict[str, Any]) -> dict[str, Any]:
-    nombre_es = "Demo A · autorizaciones médicas" + (
-        " · línea base de agente único" if variante == "agente_unico" else ""
-    )
-    nombre_en = "Demo A · medical prior authorisation" + (
-        " · single-agent baseline" if variante == "agente_unico" else ""
-    )
+def _ficha(
+    variante: str, proveedor: str, modelo: str, lote: dict[str, Any], d: Demo | None = None
+) -> dict[str, Any]:
+    d = d or demo("a")
+    base = " · línea base de agente único" if variante == "agente_unico" else ""
+    base_en = " · single-agent baseline" if variante == "agente_unico" else ""
     return {
-        "nombre": {"es": nombre_es, "en": nombre_en},
+        "nombre": {"es": d.nombre["es"] + base, "en": d.nombre["en"] + base_en},
         "descripcion": {
             "es": f"Corrida sobre el lote sintético {lote['id']} con el proveedor {proveedor} "
-            f"(modelo {modelo}). "
-            "Las decisiones humanas se simularon en lote: el auditor sigue la verdad conocida del caso.",
+            f"(modelo {modelo}). {d.revisor['es']}",
             "en": f"Run over the synthetic batch {lote['id']} with provider {proveedor} (model {modelo}). "
-            "Human decisions were simulated in batch: the auditor follows the case's known truth.",
+            f"{d.revisor['en']}",
         },
         "etiqueta": ETIQUETA,
     }
 
 
 def ejecutar_caso(
-    app: Any, caso: dict[str, Any], ctx: ContextoCaso, config: dict[str, Any], umbrales: dict[str, Any]
+    app: Any,
+    caso: dict[str, Any],
+    ctx: Any,
+    config: dict[str, Any],
+    umbrales: dict[str, Any],
+    inicial: Any = estado_inicial,
 ):
-    salida = app.invoke(estado_inicial(caso, umbrales), config, context=ctx)
+    salida = app.invoke(inicial(caso, umbrales), config, context=ctx)
     while "__interrupt__" in salida:
         respuesta = ctx.entorno.revisar(salida["__interrupt__"][0].value)
         salida = app.invoke(Command(resume=respuesta), config, context=ctx)
     return app.get_state(config).values
+
+
+def beneficios_del_lote(lote: dict[str, Any]) -> Path:
+    """El plan de beneficios con que se generó el lote del A, buscado por su huella en `data/plan-beneficios/`
+    (S3: el lote de la v1.5 usa el v2). Sin uno que coincida, el lote no corre."""
+    return demo("a").mundo_del_lote(lote)
 
 
 def ejecutar_lote(
@@ -158,18 +154,26 @@ def ejecutar_lote(
     corrida_id: str,
     fecha: str,
     proveedor: str,
-    plan_ruta: str | Path = PLAN_POR_DEFECTO,
-    casos_ruta: str | Path = CASOS_POR_DEFECTO,
-    beneficios_ruta: str | Path = BENEFICIOS_POR_DEFECTO,
-    salida: str | Path = SALIDA_POR_DEFECTO,
+    plan_ruta: str | Path | None = None,
+    casos_ruta: str | Path | None = None,
+    beneficios_ruta: str | Path | None = None,
+    salida: str | Path | None = None,
     n: int | None = None,
     variante: str = "multiagente",
     modelo: str | None = None,
     pausa_s: float = 0.0,
     reloj: str = "real",
+    demo_clave: str = "a",
+    caso: str | None = None,
 ) -> ResumenSesion:
+    """`beneficios_ruta` es el mundo del demo (el plan de beneficios del A, las listas del B); por defecto, el
+    del lote por su huella. `caso` corre solo ese caso del lote (la parada 1 del ⭐⭐: un homónimo)."""
     if variante not in VARIANTES:
         raise ValueError(f"variante desconocida: {variante}")
+    d = demo(demo_clave)
+    plan_ruta = plan_ruta or d.plan_por_defecto
+    casos_ruta = casos_ruta or d.casos_por_defecto
+    salida = salida or d.salida_por_defecto
     plan = cargar_plan(_ruta(plan_ruta))
     lotes_plan = plan.datos["lotes"]
     tope = int(lotes_plan["corridas_espaciadas_de"])
@@ -181,12 +185,18 @@ def ejecutar_lote(
             raise ValueError(f"regla 6: con la suscripción, a lo sumo {tope} casos por sesión")
         if pausa_s <= 0:
             raise ValueError("regla 6: con la suscripción los casos van espaciados (pausa_s > 0)")
-    pb = cargar_plan_beneficios(_ruta(beneficios_ruta))
     lote_ruta = _ruta(casos_ruta)
     lote = leer_verificando(lote_ruta)
-    if lote["plan_beneficios"]["huella"] != pb.huella:
-        # La verdad conocida del lote se derivó con SU plan de beneficios (auditoría S1, M-2).
-        raise CorridaIncompatible("el lote de casos se generó con otro plan de beneficios")
+    if beneficios_ruta is None:
+        beneficios_ruta = d.mundo_del_lote(lote)
+    pb = d.cargar_mundo(_ruta(beneficios_ruta))
+    if lote[d.clave_mundo]["huella"] != pb.huella:
+        # La verdad conocida del lote se derivó con SU mundo (auditoría S1, M-2).
+        raise CorridaIncompatible(
+            "el lote de casos se generó con otro plan de beneficios"
+            if d.clave_mundo == "plan_beneficios"
+            else f"el lote de casos se generó con otro archivo de {d.clave_mundo}"
+        )
     if lote["plan"]["huella"] != plan.huella:
         # Un lote generado con otro plan vale solo si ese plan da la misma verdad (enmienda de medición).
         generador = plan_por_huella(_ruta(plan_ruta).parent, lote["plan"]["huella"])
@@ -218,10 +228,12 @@ def ejecutar_lote(
         if (
             previo["plan"]["huella"] != plan.huella
             or previo["casos"]["huella"] != lote["huella"]
-            or previo["plan_beneficios"]["huella"] != pb.huella
+            or previo[d.clave_mundo]["huella"] != pb.huella
         ):
             raise CorridaIncompatible(
                 f"{corrida_id}: otro plan, otro lote de casos u otro plan de beneficios"
+                if d.clave_mundo == "plan_beneficios"
+                else f"{corrida_id}: otro plan, otro lote de casos u otro archivo de {d.clave_mundo}"
             )
 
     simulado = proveedor == "simulado"
@@ -235,11 +247,14 @@ def ejecutar_lote(
         from langgraph.checkpoint.sqlite import SqliteSaver
 
         checkpointer = SqliteSaver(conexion)
-    app, contrato = _grafo_y_contrato(variante, plan, pb, checkpointer)
+    app, contrato = d.construir(variante, plan, pb, checkpointer)
     sesion_n = len(previo["sesiones"]) + 1 if previo else 1
     orden_lote = [c["id"] for c in lote["casos"]]
+    if caso is not None and caso not in orden_lote:
+        raise ValueError(f"el caso {caso} no está en el lote {lote_ruta.name}")
     pendientes = [c for c in lote["casos"] if c["id"] not in trazas]
-    a_correr = pendientes if n is None else pendientes[:n]
+    elegibles = [c for c in pendientes if caso is None or c["id"] == caso]
+    a_correr = elegibles if n is None else elegibles[:n]
     resumen = ResumenSesion(corrida_id=corrida_id, directorio=directorio)
     modelo_real = (
         None
@@ -272,7 +287,7 @@ def ejecutar_lote(
             return
         grafo = grafo_json(
             app,
-            demo_id="demo-a",
+            demo_id=d.demo_id,
             variante=variante,
             contrato=plan.contrato,
             aristas=contrato.aristas,
@@ -284,11 +299,11 @@ def ejecutar_lote(
             "formato": FORMATO_TRAZA,
             "tipo": "corrida",
             "corrida_id": corrida_id,
-            "demo_id": "demo-a",
+            "demo_id": d.demo_id,
             "variante": variante,
             "fecha": previo["fecha"] if previo else fecha,
             "plan": plan.referencia(),
-            "plan_beneficios": {**pb.referencia(), "archivo": _relativa(_ruta(beneficios_ruta))},
+            d.clave_mundo: {**pb.referencia(), "archivo": _relativa(_ruta(beneficios_ruta))},
             "casos": {
                 "archivo": _relativa(lote_ruta),
                 "huella": lote["huella"],
@@ -303,7 +318,7 @@ def ejecutar_lote(
             "sesiones": sesiones,
             "casos_ejecutados": ejecutados,
             "casos_con_error": [c for c in ejecutados if trazas[c]["resultado"] == "error"],
-            "ficha": _ficha(variante, proveedor, modelo_nombre, lote),
+            "ficha": _ficha(variante, proveedor, modelo_nombre, lote, d),
         }
         escribir_corrida(
             directorio,
@@ -315,22 +330,18 @@ def ejecutar_lote(
 
     try:
         for i, caso in enumerate(a_correr):
-            entorno = EntornoSimulado(caso)
-            llm = (
-                crear_modelo("simulado", respondedor=RespondedorSimulado(entorno))
-                if simulado
-                else modelo_real
-            )
-            ctx = ContextoCaso(caso["id"], llm, entorno, RelojFijo() if reloj == "fijo" else RelojReal())
+            entorno = d.entorno(caso)
+            llm = crear_modelo("simulado", respondedor=d.respondedor(entorno)) if simulado else modelo_real
+            ctx = d.contexto(caso["id"], llm, entorno, RelojFijo() if reloj == "fijo" else RelojReal())
             config = {
                 "configurable": {"thread_id": f"{corrida_id}:{caso['id']}:s{sesion_n}"},
-                "run_name": f"demo-a:{caso['id']}",
+                "run_name": f"{d.demo_id}:{caso['id']}",
                 "tags": [corrida_id, variante],
                 "metadata": {"caso_id": caso["id"], "corrida_id": corrida_id, "plan_version": plan.version},
             }
             error = None
             try:
-                final = ejecutar_caso(app, caso, ctx, config, umbrales)
+                final = ejecutar_caso(app, caso, ctx, config, umbrales, d.estado_inicial)
             except ErrorProveedor as e:
                 if e.tipo == "limite_de_uso":
                     resumen.limites_alcanzados += 1
@@ -353,7 +364,9 @@ def ejecutar_lote(
                     error_proveedor=e.tipo,
                     detalle=str(e.detalle)[:200],
                 )
-                final = dict(app.get_state(config).values) or estado_inicial(caso, umbrales)
+                final = dict(app.get_state(config).values) or d.estado_inicial(caso, umbrales)
+            # Señales de MEDICIÓN del demo (con la verdad conocida, fuera del grafo); el A no tiene ninguna.
+            final = {**final, **d.medir(caso, dict(final))}
             traza = traza_de_estado(
                 final,
                 corrida_id=corrida_id,
@@ -361,6 +374,7 @@ def ejecutar_lote(
                 senales_obligatorias=plan.senales_obligatorias(),
                 error=error,
                 tipo_de_nodo=contrato.tipo_de_nodo,
+                extras=d.extras_traza,
             )
             trazas[caso["id"]] = traza
             resumen.ejecutados.append(caso["id"])
@@ -393,24 +407,32 @@ def ejecutar_lote(
 
 
 def main(argv: list[str] | None = None) -> int:
-    p = argparse.ArgumentParser(description="Corre un lote del demo A y exporta planlang-trace/v1")
-    p.add_argument("--demo", default="a", choices=["a"])
+    p = argparse.ArgumentParser(description="Corre un lote de un demo y exporta planlang-trace/v1")
+    p.add_argument("--demo", default="a", choices=sorted(FABRICAS))
     p.add_argument("--proveedor", default=os.environ.get("PLANLANG_PROVEEDOR", "suscripcion"))
     p.add_argument("--modelo", default=None)
-    p.add_argument("--plan", default=PLAN_POR_DEFECTO)
-    p.add_argument("--casos", default=CASOS_POR_DEFECTO)
-    p.add_argument("--beneficios", default=BENEFICIOS_POR_DEFECTO)
-    p.add_argument("--salida", default=SALIDA_POR_DEFECTO)
+    p.add_argument("--plan", default=None, help="por defecto, el del demo")
+    p.add_argument("--casos", default=None, help="por defecto, el lote de 20 del demo")
+    p.add_argument(
+        "--mundo",
+        "--beneficios",
+        dest="mundo",
+        default=None,
+        help="plan de beneficios (A) o listas (B); por defecto, el del lote (por su huella)",
+    )
+    p.add_argument("--salida", default=None, help="por defecto, runs/<demo>")
     p.add_argument("--corrida", default=None)
     p.add_argument("--variante", default="multiagente", choices=VARIANTES)
     p.add_argument("--n", type=int, default=None)
+    p.add_argument("--caso", default=None, help="corre solo ese caso del lote (p. ej. B-010)")
     p.add_argument("--fecha", default=None, help="fecha declarada de la sesión (YYYY-MM-DD)")
     p.add_argument("--pausa-s", type=float, default=0.0)
     p.add_argument("--reloj", default=None, choices=["real", "fijo"])
     a = p.parse_args(argv)
     if a.proveedor == "suscripcion" and a.pausa_s <= 0:
         p.error("con la suscripción los casos van espaciados: --pausa-s > 0 (regla 6)")
-    lote_id = Path(a.casos).stem
+    d = demo(a.demo)
+    lote_id = Path(a.casos or d.casos_por_defecto).stem
     corrida = a.corrida or f"{a.proveedor}-{lote_id}" + ("-base" if a.variante == "agente_unico" else "")
     fecha = a.fecha or dt.date.today().isoformat()
     reloj = a.reloj or ("fijo" if a.proveedor == "simulado" else "real")
@@ -420,13 +442,15 @@ def main(argv: list[str] | None = None) -> int:
         proveedor=a.proveedor,
         plan_ruta=a.plan,
         casos_ruta=a.casos,
-        beneficios_ruta=a.beneficios,
+        beneficios_ruta=a.mundo,
         salida=a.salida,
         n=a.n,
         variante=a.variante,
         modelo=a.modelo,
         pausa_s=a.pausa_s,
         reloj=reloj,
+        demo_clave=a.demo,
+        caso=a.caso,
     )
     print(
         f"corrida {r.corrida_id}: {len(r.ejecutados)} casos en esta sesión"

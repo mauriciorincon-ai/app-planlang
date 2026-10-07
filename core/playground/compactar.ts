@@ -26,7 +26,11 @@ import {
   ligadurasDeUmbrales,
   umbralesAplicados,
 } from "../plan/contrato-constructor";
-import type { Caso, Lote } from "../sintetico/esquema";
+import {
+  casosPorId,
+  type CasoDeDemo as Caso,
+  type LoteDeDemo as Lote,
+} from "../sintetico/de-demo";
 import { agruparVisitas, senalesDeVisita } from "./interprete";
 import {
   type CasoCompacto,
@@ -180,28 +184,34 @@ export function objetoEnOtroCamino(
 function clasificarClaves(
   objeto: Record<string, JsonValor>,
   previas: ReadonlySet<string>,
+  desenlaceDelDemo: readonly string[],
   casoId: string,
 ): void {
   const conocidas = new Set<string>([
     ...CLAVES_DEL_CASO,
     ...CLAVES_DEL_DESENLACE,
+    ...desenlaceDelDemo,
     ...previas,
   ]);
   const sueltas = Object.keys(objeto).filter((k) => !conocidas.has(k));
   if (sueltas.length > 0)
     throw new Error(
-      `playground: ${casoId} trae ${sueltas.join(", ")}, que el playground no sabe si se conoce antes de decidir o es parte del desenlace; clasifícala en core/playground/compactar.ts.`,
+      `playground: ${casoId} trae ${sueltas.join(", ")}, que el playground no sabe si se conoce antes de decidir o es parte del desenlace; clasifícala en el manifiesto del demo (claves_previas o claves_del_desenlace).`,
     );
 }
 
-/** El costo humano por caso que el plan declara en sus umbrales; si declara varios, el playground no sabe a cuál atribuir. */
-export function minutosPorPersona(plan: Plan): number {
+/**
+ * El costo humano por caso que el plan declara en sus umbrales: `null` si no declara ninguno (el playground no lo
+ * inventa); si declara varios distintos, el playground no sabe a cuál atribuir y lo dice.
+ */
+export function minutosPorPersona(plan: Plan): number | null {
   const costos = [
     ...new Set(plan.umbrales.map((u) => u.costo_humano_por_caso_min)),
   ].filter((c): c is number => typeof c === "number");
-  if (costos.length !== 1)
+  if (costos.length === 0) return null;
+  if (costos.length > 1)
     throw new Error(
-      `playground: el plan declara ${costos.length === 0 ? "ningún" : "varios"} costo humano por caso en sus umbrales (${costos.join(", ")}); el playground suma uno solo.`,
+      `playground: el plan declara varios costos humanos por caso en sus umbrales (${costos.join(", ")}); el playground suma uno solo.`,
     );
   return costos[0] as number;
 }
@@ -243,7 +253,7 @@ export function compactar(
       desenlace_de_rama[d] = desenlaceDeNodo(d, edges, pausas, escritores);
   }
 
-  const casosDelLote = new Map(lote.casos.map((c) => [c.id, c]));
+  const casosDelLote = casosPorId(lote);
   const casos: CasoCompacto[] = corrida.trazas.map((traza) => {
     const caso = casosDelLote.get(traza.caso_id);
     if (!caso)
@@ -257,7 +267,12 @@ export function compactar(
       rama: (registros[0] as { rama_tomada: string }).rama_tomada,
     }));
     const objeto = objetoDeCaso(caso, traza, umbralesPlan);
-    clasificarClaves(objeto, previas, caso.id);
+    clasificarClaves(
+      objeto,
+      previas,
+      demo.claves_del_desenlace ?? [],
+      caso.id,
+    );
     const caminos: Record<string, Evaluacion[]> = {};
     visitas.forEach((v, i) => {
       if (!jugables.includes(v.desde)) return;
@@ -339,7 +354,12 @@ export function compactar(
     nodos_jugables: jugables,
     desenlace_de_rama,
     minutos_por_persona: minutosPorPersona(plan),
-    propuesta: { senal: demo.senal_propuesta, favorable: demo.valor_favorable },
+    propuesta: {
+      senal: demo.senal_propuesta,
+      favorable: demo.valor_favorable,
+      // Solo si el demo la declara: sin ella, el compacto conserva sus bytes.
+      ...(demo.parcial ? { parcial: { ...demo.parcial } } : {}),
+    },
     casos,
     criterios,
   };

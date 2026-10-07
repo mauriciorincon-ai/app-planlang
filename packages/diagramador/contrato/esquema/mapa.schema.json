@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "diagramador/mapa.schema.json",
-  "title": "Mapa del diagramador (contrato 0.3.0)",
+  "title": "Mapa del diagramador (contrato 0.4.0)",
   "description": "Contenido de un sujeto bajo una gramática. Todo texto que se dibuja o se lee es un MAPA DE IDIOMA {es, en, …} con los idiomas que declara la gramática (V14). El esquema valida forma; las referencias contra la gramática y dentro del mapa (bandas, tipos, modos, madurez, flujos, condiciones, recorridos, bloques, densidad, ids únicos, idiomas, cobertura de la fuente) se validan en código: ver CONTRATO § 6.",
   "type": "object",
   "additionalProperties": false,
@@ -20,137 +20,459 @@
     "recorridos"
   ],
   "properties": {
-    "contrato_version": { "$ref": "#/$defs/semver" },
-    "gramatica_id": { "$ref": "#/$defs/id" },
-    "gramatica_version": { "$ref": "#/$defs/semver" },
-    "sujeto_id": { "$ref": "#/$defs/id" },
-    "sujeto_nombre": { "$ref": "#/$defs/texto_idioma" },
-    "version": { "$ref": "#/$defs/semver" },
-    "fecha_actualizacion": { "$ref": "#/$defs/fecha" },
-    "estado": { "enum": ["propuesta", "aprobada", "rechazada"] },
-    "bloques": { "type": "array", "items": { "$ref": "#/$defs/bloque" } },
-    "nodos": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/nodo" } },
-    "flujos": { "type": "array", "items": { "$ref": "#/$defs/flujo" } },
-    "recorridos": { "type": "array", "items": { "$ref": "#/$defs/recorrido" } },
+    "contrato_version": {
+      "$ref": "#/$defs/semver"
+    },
+    "gramatica_id": {
+      "$ref": "#/$defs/id"
+    },
+    "gramatica_version": {
+      "$ref": "#/$defs/semver"
+    },
+    "sujeto_id": {
+      "$ref": "#/$defs/id"
+    },
+    "sujeto_nombre": {
+      "$ref": "#/$defs/texto_idioma"
+    },
+    "version": {
+      "$ref": "#/$defs/semver"
+    },
+    "fecha_actualizacion": {
+      "$ref": "#/$defs/fecha"
+    },
+    "estado": {
+      "enum": [
+        "propuesta",
+        "aprobada",
+        "rechazada"
+      ]
+    },
+    "bloques": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/bloque"
+      }
+    },
+    "nodos": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/nodo"
+      }
+    },
+    "flujos": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/flujo"
+      }
+    },
+    "recorridos": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/recorrido"
+      }
+    },
     "glosario": {
       "$ref": "#/$defs/diccionario_idioma",
       "description": "Por idioma, términos explicados para TODO el mapa (nodos, bloques, flujos y pasos). Un nodo puede además explicar los suyos en `terminos`. El renderizador muestra la explicación donde el término aparece (F-001)."
     },
-    "refs_externas": { "$ref": "#/$defs/refs" }
+    "refs_externas": {
+      "$ref": "#/$defs/refs"
+    }
   },
   "$defs": {
-    "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
-    "semver": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
-    "fecha": { "type": "string", "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$" },
-    "idioma": { "type": "string", "pattern": "^[a-z]{2}$" },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+    },
+    "semver": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "fecha": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$"
+    },
+    "idioma": {
+      "type": "string",
+      "pattern": "^[a-z]{2}$"
+    },
     "texto_idioma": {
       "type": "object",
       "description": "Mapa de idioma: una cadena no vacía por idioma. Que estén TODOS los idiomas de la gramática lo verifica V14",
       "minProperties": 1,
-      "propertyNames": { "$ref": "#/$defs/idioma" },
-      "additionalProperties": { "type": "string", "minLength": 1 }
+      "propertyNames": {
+        "$ref": "#/$defs/idioma"
+      },
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      }
     },
     "diccionario_idioma": {
       "type": "object",
       "description": "Por idioma, un diccionario término → explicación",
-      "propertyNames": { "$ref": "#/$defs/idioma" },
+      "propertyNames": {
+        "$ref": "#/$defs/idioma"
+      },
       "additionalProperties": {
         "type": "object",
-        "additionalProperties": { "type": "string", "minLength": 1 }
+        "additionalProperties": {
+          "type": "string",
+          "minLength": 1
+        }
       }
     },
-    "refs": { "type": "array", "items": { "type": "string", "minLength": 1 }, "description": "Opacas para el motor" },
+    "refs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "Opacas para el motor"
+    },
     "fuente": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["url", "titulo", "fecha", "tipo"],
-      "properties": {
-        "url": { "type": "string", "pattern": "^https://" },
-        "titulo": { "$ref": "#/$defs/texto_idioma" },
-        "fecha": { "$ref": "#/$defs/fecha" },
-        "tipo": { "enum": ["oficial", "tercero"] }
-      }
+      "description": "Evidencia de un nodo. `oficial`/`tercero` llevan `url` https; `codigo` (0.5.0, planlang) cita `ruta` y `lineas` del repositorio sin URL",
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "url",
+            "titulo",
+            "fecha",
+            "tipo"
+          ],
+          "properties": {
+            "url": {
+              "type": "string",
+              "pattern": "^https://"
+            },
+            "titulo": {
+              "$ref": "#/$defs/texto_idioma"
+            },
+            "fecha": {
+              "$ref": "#/$defs/fecha"
+            },
+            "tipo": {
+              "enum": [
+                "oficial",
+                "tercero"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "ruta",
+            "titulo",
+            "fecha",
+            "tipo"
+          ],
+          "properties": {
+            "ruta": {
+              "type": "string",
+              "pattern": "^[^:\\s/][^\\s]*$",
+              "description": "Ruta relativa dentro del repositorio del consumidor (sin esquema ni barra inicial)"
+            },
+            "lineas": {
+              "type": "string",
+              "pattern": "^[0-9]+(-[0-9]+)?$"
+            },
+            "titulo": {
+              "$ref": "#/$defs/texto_idioma"
+            },
+            "fecha": {
+              "$ref": "#/$defs/fecha"
+            },
+            "tipo": {
+              "const": "codigo"
+            }
+          }
+        }
+      ]
     },
     "bloque": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "nombre", "banda_id", "lider"],
+      "required": [
+        "id",
+        "nombre",
+        "banda_id",
+        "lider"
+      ],
       "properties": {
-        "id": { "$ref": "#/$defs/id" },
-        "nombre": { "$ref": "#/$defs/texto_idioma" },
-        "banda_id": { "$ref": "#/$defs/id", "description": "Banda donde se ancla el bloque en la visión general" },
-        "lider": { "$ref": "#/$defs/texto_idioma" }
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "nombre": {
+          "$ref": "#/$defs/texto_idioma"
+        },
+        "banda_id": {
+          "$ref": "#/$defs/id",
+          "description": "Banda donde se ancla el bloque en la visión general"
+        },
+        "lider": {
+          "$ref": "#/$defs/texto_idioma"
+        }
       }
     },
     "nodo": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "banda_id", "tipo_id", "nombre", "lider", "experto", "por_que_importa", "madurez", "fuentes", "fecha_verificacion"],
+      "required": [
+        "id",
+        "banda_id",
+        "tipo_id",
+        "nombre",
+        "lider",
+        "experto",
+        "por_que_importa",
+        "madurez",
+        "fuentes",
+        "fecha_verificacion"
+      ],
       "properties": {
-        "id": { "$ref": "#/$defs/id" },
-        "banda_id": { "$ref": "#/$defs/id" },
-        "tipo_id": { "$ref": "#/$defs/id" },
-        "bloque_id": { "$ref": "#/$defs/id", "description": "Opcional: un nodo sin bloque no aparece en la visión general; su banda muestra cuántos nodos tiene" },
-        "nombre": { "$ref": "#/$defs/texto_idioma" },
-        "nombres_anteriores": { "type": "array", "items": { "$ref": "#/$defs/texto_idioma" } },
-        "orden": { "type": "integer", "minimum": 1, "description": "Posición dentro de la banda (capa) o sobre el eje del flujo (carril y transversal); si falta, se ordena por id" },
-        "lider": { "$ref": "#/$defs/texto_idioma" },
-        "experto": { "$ref": "#/$defs/texto_idioma" },
-        "por_que_importa": { "$ref": "#/$defs/texto_idioma" },
-        "terminos": { "$ref": "#/$defs/diccionario_idioma" },
-        "madurez": { "$ref": "#/$defs/id" },
-        "fuentes": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/fuente" } },
-        "fecha_verificacion": { "$ref": "#/$defs/fecha" },
-        "refs_externas": { "$ref": "#/$defs/refs" }
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "banda_id": {
+          "$ref": "#/$defs/id"
+        },
+        "tipo_id": {
+          "$ref": "#/$defs/id"
+        },
+        "bloque_id": {
+          "$ref": "#/$defs/id",
+          "description": "Opcional: un nodo sin bloque no aparece en la visión general; su banda muestra cuántos nodos tiene"
+        },
+        "nombre": {
+          "$ref": "#/$defs/texto_idioma"
+        },
+        "nombres_anteriores": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/texto_idioma"
+          }
+        },
+        "orden": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Posición dentro de la banda (capa) o sobre el eje del flujo (carril y transversal); si falta, se ordena por id"
+        },
+        "lider": {
+          "$ref": "#/$defs/texto_idioma"
+        },
+        "experto": {
+          "$ref": "#/$defs/texto_idioma"
+        },
+        "por_que_importa": {
+          "$ref": "#/$defs/texto_idioma"
+        },
+        "terminos": {
+          "$ref": "#/$defs/diccionario_idioma"
+        },
+        "madurez": {
+          "$ref": "#/$defs/id"
+        },
+        "fuentes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/fuente"
+          }
+        },
+        "fecha_verificacion": {
+          "$ref": "#/$defs/fecha"
+        },
+        "refs_externas": {
+          "$ref": "#/$defs/refs"
+        },
+        "papel": {
+          "enum": [
+            "inicio",
+            "fin"
+          ],
+          "description": "0.5.0 (planlang ADR-010): nodo terminal de un grafo; el motor dibuja el marcador de entrada o salida junto a la tarjeta"
+        }
       }
     },
     "condicion": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["senal", "operador", "valor"],
-      "description": "Condición de un flujo condicional (0.3.0, pedido de planlang): la señal registrada, el operador y el valor del plan. Obligatoria si el modo declara `exige_condicion` (V13)",
-      "properties": {
-        "senal": { "$ref": "#/$defs/id" },
-        "operador": { "enum": ["<", "<=", "=", "!=", ">=", ">"] },
-        "valor": { "anyOf": [{ "type": "number" }, { "type": "string", "minLength": 1 }, { "type": "boolean" }] }
-      }
+      "description": "Condición de un flujo condicional (0.3.0, pedido de planlang; 0.5.0 tres formas): la tripleta señal·operador·valor del plan, una función nombrada con sus entradas, o la rama por defecto. Obligatoria si el modo declara `exige_condicion` (V13); a lo sumo una `por_defecto` por origen (V17)",
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "senal",
+            "operador",
+            "valor"
+          ],
+          "properties": {
+            "senal": {
+              "$ref": "#/$defs/id"
+            },
+            "operador": {
+              "enum": [
+                "<",
+                "<=",
+                "=",
+                "!=",
+                ">=",
+                ">"
+              ]
+            },
+            "valor": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "funcion",
+            "entradas"
+          ],
+          "properties": {
+            "funcion": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_]*$",
+              "description": "Nombre de la función del plan tal como existe en el código (snake_case), no un id del mapa"
+            },
+            "entradas": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/id"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "por_defecto"
+          ],
+          "properties": {
+            "por_defecto": {
+              "const": true
+            }
+          }
+        }
+      ]
     },
     "flujo": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "origen", "destino", "modo_id", "que_viaja", "lider"],
+      "required": [
+        "id",
+        "origen",
+        "destino",
+        "modo_id",
+        "que_viaja",
+        "lider"
+      ],
       "properties": {
-        "id": { "$ref": "#/$defs/id" },
-        "origen": { "$ref": "#/$defs/id" },
-        "destino": { "$ref": "#/$defs/id" },
-        "modo_id": { "$ref": "#/$defs/id" },
-        "que_viaja": { "$ref": "#/$defs/texto_idioma" },
-        "lider": { "$ref": "#/$defs/texto_idioma" },
-        "condicion": { "$ref": "#/$defs/condicion" }
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "origen": {
+          "$ref": "#/$defs/id"
+        },
+        "destino": {
+          "$ref": "#/$defs/id"
+        },
+        "modo_id": {
+          "$ref": "#/$defs/id"
+        },
+        "que_viaja": {
+          "$ref": "#/$defs/texto_idioma"
+        },
+        "lider": {
+          "$ref": "#/$defs/texto_idioma"
+        },
+        "condicion": {
+          "$ref": "#/$defs/condicion"
+        }
       }
     },
     "paso": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "nodo_id", "que_pasa", "lider", "experto"],
+      "required": [
+        "id",
+        "nodo_id",
+        "que_pasa",
+        "lider",
+        "experto"
+      ],
       "properties": {
-        "id": { "$ref": "#/$defs/id" },
-        "nodo_id": { "$ref": "#/$defs/id" },
-        "sigue_de": { "$ref": "#/$defs/id", "description": "Paso anterior; si falta, es el paso previo de la lista. Dos pasos con el mismo sigue_de forman una rama" },
-        "bifurca": { "enum": ["paralela", "alternativa"], "description": "Obligatorio si de este paso salen dos o más pasos: paralela = el recorrido sigue por TODAS las ramas (tablero Y agente); alternativa = por UNA (V12)" },
-        "que_pasa": { "$ref": "#/$defs/texto_idioma" },
-        "lider": { "$ref": "#/$defs/texto_idioma" },
-        "experto": { "$ref": "#/$defs/texto_idioma" }
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "nodo_id": {
+          "$ref": "#/$defs/id"
+        },
+        "sigue_de": {
+          "$ref": "#/$defs/id",
+          "description": "Paso anterior; si falta, es el paso previo de la lista. Dos pasos con el mismo sigue_de forman una rama"
+        },
+        "bifurca": {
+          "enum": [
+            "paralela",
+            "alternativa"
+          ],
+          "description": "Obligatorio si de este paso salen dos o más pasos: paralela = el recorrido sigue por TODAS las ramas (tablero Y agente); alternativa = por UNA (V12)"
+        },
+        "que_pasa": {
+          "$ref": "#/$defs/texto_idioma"
+        },
+        "lider": {
+          "$ref": "#/$defs/texto_idioma"
+        },
+        "experto": {
+          "$ref": "#/$defs/texto_idioma"
+        }
       }
     },
     "recorrido": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "titulo", "pasos"],
+      "required": [
+        "id",
+        "titulo",
+        "pasos"
+      ],
       "properties": {
-        "id": { "$ref": "#/$defs/id" },
-        "titulo": { "$ref": "#/$defs/texto_idioma" },
-        "pasos": { "type": "array", "minItems": 2, "items": { "$ref": "#/$defs/paso" } }
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "titulo": {
+          "$ref": "#/$defs/texto_idioma"
+        },
+        "pasos": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "$ref": "#/$defs/paso"
+          }
+        }
       }
     }
   }

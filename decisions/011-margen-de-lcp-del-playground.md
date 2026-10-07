@@ -1,11 +1,11 @@
-# ADR-011 — Margen de LCP para el playground: 2,8 s por ruta, con pago en el S3
+# ADR-011 — Margen de LCP para el playground: 2,8 s por ruta; el pago no se alcanzó en el S3 (adenda)
 
 **Summary (EN):** Lighthouse's simulated LCP for the playground (`/*/playground`) is bimodal on the CI's localhost
 server: about 1.96 s when React boots after the first paint and about 2.65 s when it boots before it, with the same
 bytes. The rest of the code cannot decide that race, and the cuts within reach save at most ~0.13 s. The playground
 alone gets a 2.8 s LCP budget; every other route keeps 2.5 s, and every other metric keeps its budget on every
 route. A test checks that each measured URL falls under exactly one LCP budget and that no route exceeds 2.5 s
-without being listed here. Paid back in S3.
+without being listed here. Not paid back in S3: the user kept the margin and left it as declared debt (S3 addendum).
 
 **Estado:** aceptado · **Fecha:** 2026-10-04 · **Sprint:** S2 «La vitrina» (cierre)
 **Cítese por tema:** «ADR del margen de LCP del playground».
@@ -62,8 +62,30 @@ que ya había aceptado para este borde.
 
 - El playground puede publicarse con un LCP simulado de hasta 2,8 s en localhost. El LCP real no cambia: la
   entradilla se pinta cuando llegan el HTML y el CSS, y los scripts son `async`.
-- Es deuda declarada (`sprints/SPRINT_002-summary.md`), con pago en el S3: que el modo alto del playground baje
+- Es deuda declarada (`sprints/SPRINT_002-summary.md`), con pago previsto para el S3, que no se alcanzó (ver la adenda): que el modo alto del playground baje
   de 2,5 s, partiendo los textos de la isla por idioma, aligerando su DOM o difiriendo su chunk hasta después de la
   primera pintura, y volver la entrada a 2.500. Si el S3 mide el playground con el demo B, la entrada se revisa con
   él.
 - Una ruta nueva en `lighthouse-urls.json` exige su entrada de LCP en el mismo PR (la prueba lo pide).
+
+## Adenda del S3 (2026-10-04): el pago no se alcanzó y el margen sigue, por decisión del usuario
+
+**Summary (EN):** S3 measured the planned cuts and none brings the playground's high mode under 2.5 s. Moving the
+island's chunk out of the first load took its 18.8 KB (gzip) off the initial scripts and the LCP did not move; demo B's
+playground, with lighter HTML than the gap page, sits at the same 2.61 s. The user kept the 2.8 s budget for
+`/*/playground` and moved the debt to the next cycle.
+
+- **Mediciones** (Lighthouse local con el procedimiento de la CI, 3 corridas por URL, A en la corrida de 200 de la
+  v1.5): `/es/playground` 1.956 · 2.611 · 2.619 ms; `/en/playground` 1.958 · 2.617 · 2.619; `/es/demo-b/playground`
+  2.609 · 2.610 · 2.649; `/es/brecha` 1.954 · 2.462 · 2.468 (en otra tanda, 2.461 · 2.470 · 2.536).
+- **Recorte medido:** la isla con `next/dynamic` y `ssr: true` saca sus 18,8 KB comprimidos de los scripts iniciales y
+  deja el LCP igual (1.960 · 2.610 · 2.621 en `/es/playground`). Se revirtió. Partir los textos de la isla por idioma
+  recorta dentro de ese mismo chunk y no se intentó aparte.
+- **Lo que decide el modo alto** no es el peso de la página: el Playground del B pesa 24 KB comprimidos de HTML (la
+  Brecha, 70 KB) y da lo mismo. Es la carrera de React en localhost descrita arriba.
+- **Decisión del usuario (2026-10-04, AskUserQuestion): «Mantener 2,8 s y deuda (Recomendado)».** La entrada de
+  `/*/playground` queda en 2.800 ms; las demás rutas siguen en 2.500. La deuda pasa al próximo ciclo como frente de
+  performance (menos JavaScript compartido o hidratación parcial). El criterio de la orden del S3 «LCP ≤ 2,5 s en
+  todas las URL medidas» queda sin cumplir por esta decisión, con su medición.
+- **Riesgo declarado:** `/*/brecha` también es bimodal y en el modo alto queda a menos del 2 % de su presupuesto
+  (`lighthouse-margen` lo avisa). Un rojo de la CI en esa ruta sería la misma carrera, no una regresión del código.

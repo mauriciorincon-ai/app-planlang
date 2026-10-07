@@ -146,28 +146,49 @@ describe("contratos fijados de hoja-de-vida", () => {
 });
 
 /**
- * Las enmiendas que el S2 propone al contrato del diagramador (ADR-010 § 2, desviación 4, nota G15) viven en el lock,
- * no solo en el ADR: la planeadora las lee de ahí al subir la versión (AU-S2-B13).
+ * Las enmiendas que el S2 propuso al contrato del diagramador (ADR-010 § 2, desviación 4 del S2, nota G15) vivían en el
+ * lock (AU-S2-B13). La casa las aceptó en el 0.5.0: ya no se proponen, y el contrato fijado trae cada una. Las que el
+ * S3 proponga van al lock con su fuente.
  */
-describe("enmiendas propuestas al diagramador", () => {
-  it("el lock lista las del ADR-010 y la desviación 4", () => {
-    const lock = JSON.parse(
-      readFileSync("packages/diagramador/CONTRATO.lock", "utf8"),
-    ) as {
-      enmiendas_propuestas: { id: string; que: string; fuente: string }[];
+describe("enmiendas al diagramador", () => {
+  const lock = JSON.parse(
+    readFileSync("packages/diagramador/CONTRATO.lock", "utf8"),
+  ) as {
+    version: string;
+    fuente_metricas?: string;
+    enmiendas_propuestas: { id: string; que: string; fuente: string }[];
+  };
+  const contrato = readFileSync(
+    "packages/diagramador/contrato/CONTRATO.md",
+    "utf8",
+  );
+
+  it("las del S2 entraron al 0.5.0: el contrato las trae y el lock ya no las propone", () => {
+    const aceptadas: Record<string, RegExp> = {
+      terminal: /\*\*`papel`\*\*.*`inicio` · `fin`/,
+      "condicion.funcion": /\{ funcion, entradas: \[señal…\] \}/,
+      "condicion.por_defecto": /\{ por_defecto: true \}/,
+      "fuente.tipo-codigo":
+        /\*\*`ruta` \+ `lineas` del repositorio si el tipo es `codigo`\*\*/,
+      "glifo-regla-hexagono": /hex[aá]gono/i,
+      "G15-inter": /options\.fuente_metricas/,
     };
     const ids = lock.enmiendas_propuestas.map((e) => e.id);
-    for (const id of [
-      "terminal",
-      "condicion.funcion",
-      "condicion.por_defecto",
-      "fuente.tipo-codigo",
-      "glifo-regla-hexagono",
-    ])
-      expect(ids, id).toContain(id);
+    for (const [id, enContrato] of Object.entries(aceptadas)) {
+      expect(contrato, id).toMatch(enContrato);
+      expect(ids, id).not.toContain(id);
+    }
+  });
+
+  it("cada enmienda que el lock propone dice qué y de dónde sale", () => {
     for (const e of lock.enmiendas_propuestas) {
       expect(e.que.length, e.id).toBeGreaterThan(10);
       expect(e.fuente.length, e.id).toBeGreaterThan(3);
     }
+  });
+
+  it("el lock declara la fuente de las métricas (G15, 0.5.0)", () => {
+    expect(lock.version).toBe("0.5.0");
+    expect(lock.fuente_metricas).toBe("Inter");
   });
 });

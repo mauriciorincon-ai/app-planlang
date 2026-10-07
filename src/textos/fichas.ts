@@ -1,10 +1,11 @@
 /**
  * Textos de P7 Fichas (maqueta `docs/diseno/07-fichas.html`, aprobada en la mirada 4 de la Etapa de Diseño) y el
- * contenido de lo que viaja a hoja-de-vida: la ficha del agente A (contrato ficha técnica v1.3.1, frente Agentes), el
- * `brochure-export.json` (contrato 1.0.0) y el complemento que planlang propone para la ficha de la app (la arma
- * hoja-de-vida). Las cifras no viven aquí: las ponen `src/lib/fichas/` desde el informe, la corrida y el repositorio.
+ * contenido de lo que viaja a hoja-de-vida: la ficha del agente A (contrato ficha técnica v1.3.1, frente Agentes; la
+ * del B vive en `src/textos/demo-b/fichas.ts`), el `brochure-export.json` (contrato 1.0.0) y el complemento que planlang
+ * propone para la ficha de la app (la arma hoja-de-vida). Las cifras no viven aquí: las ponen `src/lib/fichas/` desde el informe, la corrida y el repositorio.
  */
 import { tb, type TextoBilingue } from "@core/formatos/bilingue";
+import type { IdDemo } from "@/lib/demos";
 
 type Plantilla<P> = (p: P) => TextoBilingue;
 
@@ -12,16 +13,28 @@ export const TITULO_PAGINA = tb(
   "Las fichas · planlang",
   "The records · planlang",
 );
-export const DESCRIPCION_PAGINA = tb(
-  "La ficha de reproducibilidad del demo A y las dos fichas que viajan a la vitrina personal: la de la app y la del agente A, comprobadas contra su contrato. Simulación · no operativo.",
-  "Demo A's reproducibility record and the two records that travel to the personal showcase: the app's and agent A's, checked against their contract. Simulation · not operational.",
-);
+export const DESCRIPCION_PAGINA: Record<IdDemo, TextoBilingue> = {
+  "demo-a": tb(
+    "La ficha de reproducibilidad del demo A y las dos fichas que viajan a la vitrina personal: la de la app y la del agente A, comprobadas contra su contrato. Simulación · no operativo.",
+    "Demo A's reproducibility record and the two records that travel to the personal showcase: the app's and agent A's, checked against their contract. Simulation · not operational.",
+  ),
+  "demo-b": tb(
+    "La ficha de reproducibilidad del demo B y las dos fichas que viajan a la vitrina personal: la de la app y la del agente B, comprobadas contra su contrato. Simulación · no operativo.",
+    "Demo B's reproducibility record and the two records that travel to the personal showcase: the app's and agent B's, checked against their contract. Simulation · not operational.",
+  ),
+};
 
 export const PORTADA = {
-  antetitulo: tb(
-    "Demo A · lo que viaja a la vitrina personal",
-    "Demo A · what travels to the personal showcase",
-  ),
+  antetitulo: {
+    "demo-a": tb(
+      "Demo A · lo que viaja a la vitrina personal",
+      "Demo A · what travels to the personal showcase",
+    ),
+    "demo-b": tb(
+      "Demo B · lo que viaja a la vitrina personal",
+      "Demo B · what travels to the personal showcase",
+    ),
+  } as Record<IdDemo, TextoBilingue>,
   titulo: tb(
     "Las fichas: repetirla, y contarla en dos minutos",
     "The records: repeat it, and tell it in two minutes",
@@ -102,10 +115,16 @@ export const MIRADA = {
       "los hechos de la app, de los que hoja-de-vida arma su ficha",
       "the app's facts, from which hoja-de-vida builds its record",
     ),
-    agente: tb(
-      "la ficha del agente A, para el frente Agentes",
-      "agent A's record, for the Agents front",
-    ),
+    agente: {
+      "demo-a": tb(
+        "la ficha del agente A, para el frente Agentes",
+        "agent A's record, for the Agents front",
+      ),
+      "demo-b": tb(
+        "la ficha del agente B, para el frente Agentes",
+        "agent B's record, for the Agents front",
+      ),
+    } as Record<IdDemo, TextoBilingue>,
     nunca: {
       titulo: tb("Ningún enlace", "No link"),
       detalle: tb(
@@ -122,50 +141,47 @@ export const REPRO = {
     "Todo lo que hace falta para obtener otra vez este mismo informe, byte a byte: versiones, huellas, semilla, modelo y fecha. Sin enlaces: las huellas bastan para comprobar que un archivo es el que dice ser.",
     "Everything it takes to get this same report again, byte for byte: versions, fingerprints, seed, model and date. No links: the fingerprints are enough to check that a file is what it claims to be.",
   ),
-  cuadro: tb(
-    "Ficha de reproducibilidad · demo A",
-    "Reproducibility record · demo A",
-  ),
+  cuadro: {
+    "demo-a": tb(
+      "Ficha de reproducibilidad · demo A",
+      "Reproducibility record · demo A",
+    ),
+    "demo-b": tb(
+      "Ficha de reproducibilidad · demo B",
+      "Reproducibility record · demo B",
+    ),
+  } as Record<IdDemo, TextoBilingue>,
   chip: ((v: string) =>
     tb(`real · corrida ${v}`, `real · run ${v}`)) as Plantilla<string>,
   repetir: tb("Cómo repetirla, en orden", "How to repeat it, in order"),
-  pasos: [
-    {
-      comando: "pnpm plan:validar",
-      texto: tb(
-        "valida el plan y comprueba su huella",
-        "validates the plan and checks its fingerprint",
-      ),
-    },
-    {
-      comando: "pnpm casos:generar",
-      texto: tb(
-        "regenera los casos desde la semilla; la huella debe coincidir",
-        "regenerates the cases from the seed; the fingerprint must match",
-      ),
-    },
-    {
-      comando: "pnpm lote:demo",
-      texto: tb(
-        "corre el lote en la máquina del autor, fuera de CI, con su suscripción",
-        "runs the batch on the author's machine, outside CI, with their subscription",
-      ),
-    },
-    {
-      comando: "pnpm trazas:verificar",
-      texto: tb(
-        "comprueba huellas, umbrales aplicados y RF-09.2",
-        "checks fingerprints, applied thresholds and RF-09.2",
-      ),
-    },
-    {
-      comando: "pnpm brecha:informe",
-      texto: tb(
-        "emite el informe: sale idéntico byte a byte",
-        "emits the report: it comes out identical byte for byte",
-      ),
-    },
-  ],
+  /** Qué hace cada paso; el comando lo arma la vista con los archivos que declara el manifiesto del demo. */
+  pasos: {
+    plan: tb(
+      "valida el plan y comprueba su huella",
+      "validates the plan and checks its fingerprint",
+    ),
+    casos: tb(
+      "regenera los casos desde la semilla; la huella debe coincidir",
+      "regenerates the cases from the seed; the fingerprint must match",
+    ),
+    lote: tb(
+      "corre el lote en la máquina del autor, fuera de CI, con su suscripción",
+      "runs the batch on the author's machine, outside CI, with their subscription",
+    ),
+    loteEnSesiones: ((p: { sesiones: number; n: number }) =>
+      tb(
+        `corre el lote en la máquina del autor, fuera de CI, con su suscripción: el mismo comando ${p.sesiones} veces, de a 20 y espaciadas, hasta completar los ${p.n} casos (retoma donde quedó)`,
+        `runs the batch on the author's machine, outside CI, with their subscription: the same command ${p.sesiones} times, 20 at a time and spaced out, until all ${p.n} cases are done (it resumes where it stopped)`,
+      )) as Plantilla<{ sesiones: number; n: number }>,
+    trazas: tb(
+      "comprueba huellas, umbrales aplicados y RF-09.2",
+      "checks fingerprints, applied thresholds and RF-09.2",
+    ),
+    informe: tb(
+      "rehace el informe y lo compara con el publicado: sale idéntico byte a byte",
+      "redoes the report and compares it with the published one: it comes out identical byte for byte",
+    ),
+  },
   pie: tb(
     "Scripts del repositorio. Solo el lote necesita el modelo; todo lo demás es determinista y corre igual en cualquier máquina.",
     "Repository scripts. Only the batch needs the model; everything else is deterministic and runs the same on any machine.",
@@ -178,7 +194,10 @@ export const SECCION = {
     "para el frente Apps de la vitrina",
     "for the showcase's Apps front",
   ),
-  agente: tb("La ficha del agente A", "Agent A's record"),
+  agente: {
+    "demo-a": tb("La ficha del agente A", "Agent A's record"),
+    "demo-b": tb("La ficha del agente B", "Agent B's record"),
+  } as Record<IdDemo, TextoBilingue>,
   agenteNota: tb(
     "para el frente Agentes de la vitrina",
     "for the showcase's Agents front",
@@ -307,7 +326,7 @@ export const CV = {
     ciclo: tb("ciclo", "cycle"),
     sprints: tb("sprints cerrados", "closed sprints"),
     sellada: tb("sellada (gate de pruebas)", "sealed (testing gate)"),
-    construccion: tb("en construcción", "in construction"),
+    construccion: tb("construcción cerrada", "build closed"),
     version: tb("versión del repo", "repo version"),
     decisiones: tb("decisiones registradas", "recorded decisions"),
   } as Record<string, TextoBilingue>,
@@ -355,20 +374,20 @@ export const AGENTE = {
     "Agent A · medical prior authorizations",
   ),
   tagline: tb(
-    "Aprueba, niega con causal o escala; nunca niega sin una persona.",
-    "Approves, denies with a stated cause or escalates; never denies alone.",
+    "Aprueba del todo o en parte, niega o escala; nunca niega del todo solo.",
+    "Approves in full or in part, denies or escalates; never fully denies alone.",
   ),
   para_quien: tb(
     "Para una aseguradora —sintética— que recibe solicitudes de autorización con el texto libre del médico y hoy las revisa a mano, una por una, sin saber cuáles podían decidirse solas y cuáles necesitaban a un auditor.",
     "For an insurer —a synthetic one— that receives prior-authorization requests with the physician's free text and today reviews them by hand, one by one, without knowing which could be decided alone and which needed an auditor.",
   ),
   intro: tb(
-    "El agente lee la solicitud, pide lo que falta, aplica las reglas del plan de beneficios y aprueba solo lo que el plan permite; lo demás lo pasa a un auditor con la evidencia y la contraevidencia, y responde al afiliado con un aviso de IA.",
-    "The agent reads the request, asks for what is missing, applies the benefit plan's rules and approves only what the plan allows; the rest goes to an auditor with the evidence and the counter-evidence, and it answers the member with an AI notice.",
+    "El agente lee la solicitud, pide lo que falta, aplica las reglas del plan de beneficios y aprueba lo que el plan permite, hasta el tope de cada servicio; toda negación completa y todo caso dudoso los pasa a un auditor con la evidencia y la contraevidencia, y responde al afiliado con un aviso de IA.",
+    "The agent reads the request, asks for what is missing, applies the benefit plan's rules and approves what the plan allows, up to each service's cap; every full denial and every doubtful case goes to an auditor with the evidence and the counter-evidence, and it answers the member with an AI notice.",
   ),
   titular: tb(
-    "Un agente de autorizaciones médicas construido según un plan verificable: cada camino que toma está escrito en el plan, y una persona revisa toda negación con el caso completo delante.",
-    "A medical prior-authorization agent built to a verifiable plan: every path it takes is written in the plan, and a person reviews every denial with the full case in front of them.",
+    "Un agente de autorizaciones médicas construido según un plan verificable: cada camino que toma está escrito en el plan, y una persona revisa toda negación completa con el caso completo delante.",
+    "A medical prior-authorization agent built to a verifiable plan: every path it takes is written in the plan, and a person reviews every full denial with the full case in front of them.",
   ),
   stack: {
     langgraph: tb(
@@ -402,15 +421,65 @@ export const AGENTE = {
   },
   cifras: {
     exactitud: {
-      etiqueta: tb(
-        "exactitud de extracción, 3 de 3 corridas",
-        "extraction accuracy, 3 of 3 runs",
-      ),
-      detalle: ((p: { n: number; k: number }) =>
-        tb(
-          `Criterio C5 del plan, medido por el verificador como pass^${p.k}: los campos extraídos son los de la verdad conocida en los ${p.n} casos que la tienen, en las ${p.k} corridas seguidas.`,
-          `The plan's criterion C5, measured by the verifier as pass^${p.k}: the extracted fields are the known truth's in the ${p.n} cases that have one, in ${p.k} runs in a row.`,
-        )) as Plantilla<{ n: number; k: number }>,
+      /**
+       * Las corridas que pide pass^k y las que se midieron, del informe: con la corrida de 200 (una de tres), «3 de 3
+       * corridas» habría prometido lo que no se midió (S3).
+       */
+      etiqueta: ((p: {
+        k: number;
+        requerido: number | null;
+        soloEnLotesDe?: number | null;
+      }) =>
+        p.soloEnLotesDe
+          ? tb(
+              `exactitud de extracción, en ${p.k === 1 ? "una corrida" : `${p.k} corridas`}`,
+              `extraction accuracy, in ${p.k === 1 ? "one run" : `${p.k} runs`}`,
+            )
+          : p.requerido === null
+            ? tb("exactitud de extracción", "extraction accuracy")
+            : p.k >= p.requerido
+              ? tb(
+                  `exactitud de extracción, ${p.k} de ${p.requerido} corridas`,
+                  `extraction accuracy, ${p.k} of ${p.requerido} runs`,
+                )
+              : tb(
+                  `exactitud de extracción, ${p.k} de ${p.requerido} corridas (incompleto)`,
+                  `extraction accuracy, ${p.k} of ${p.requerido} runs (incomplete)`,
+                )) as Plantilla<{
+        k: number;
+        requerido: number | null;
+        soloEnLotesDe?: number | null;
+      }>,
+      detalle: ((p: {
+        n: number;
+        k: number;
+        requerido: number | null;
+        soloEnLotesDe?: number | null;
+      }) =>
+        p.soloEnLotesDe
+          ? tb(
+              `Criterio C5 del plan: los campos extraídos son los de la verdad conocida en esta proporción de los ${p.n} casos que la tienen, en ${p.k === 1 ? "una corrida" : `${p.k} corridas`}. El plan pide ${p.requerido} corridas seguidas solo en los lotes de ${p.soloEnLotesDe} casos; este es más grande.`,
+              `The plan's criterion C5: the extracted fields are the known truth's in this share of the ${p.n} cases that have one, in ${p.k === 1 ? "one run" : `${p.k} runs`}. The plan asks for ${p.requerido} runs in a row only in batches of ${p.soloEnLotesDe} cases; this one is larger.`,
+            )
+          : p.requerido === null
+            ? tb(
+                `Criterio C5 del plan: los campos extraídos son los de la verdad conocida en esta proporción de los ${p.n} casos que la tienen.`,
+                `The plan's criterion C5: the extracted fields are the known truth's in this share of the ${p.n} cases that have one.`,
+              )
+            : p.k >= p.requerido
+              ? tb(
+                  `Criterio C5 del plan, medido por el verificador como pass^${p.k}: los campos extraídos son los de la verdad conocida en los ${p.n} casos que la tienen, en las ${p.k} corridas seguidas.`,
+                  `The plan's criterion C5, measured by the verifier as pass^${p.k}: the extracted fields are the known truth's in the ${p.n} cases that have one, in ${p.k} runs in a row.`,
+                )
+              : tb(
+                  `Criterio C5 del plan (pass^${p.requerido}): los campos extraídos son los de la verdad conocida en esta proporción de los ${p.n} casos que la tienen. Se midió con ${p.k} de las ${p.requerido} corridas seguidas que pide, así que todavía no puede declararse cumplido.`,
+                  `The plan's criterion C5 (pass^${p.requerido}): the extracted fields are the known truth's in this share of the ${p.n} cases that have one. It was measured with ${p.k} of the ${p.requerido} runs in a row it asks for, so it cannot be declared met yet.`,
+                )) as Plantilla<{
+        n: number;
+        k: number;
+        requerido: number | null;
+        soloEnLotesDe?: number | null;
+      }>,
     },
     latencia: {
       etiqueta: tb(
@@ -437,11 +506,14 @@ export const AGENTE = {
       ),
     },
     sinPersona: {
-      etiqueta: tb("negaciones sin una persona", "denials without a person"),
+      etiqueta: tb(
+        "negaciones completas sin una persona",
+        "full denials without a person",
+      ),
       detalle: ((n: number) =>
         tb(
-          `Criterio C1 del plan sobre ${n} casos: toda negación pasó por la pausa humana.`,
-          `The plan's criterion C1 over ${n} cases: every denial went through the human pause.`,
+          `Criterio C1 del plan sobre ${n} casos: toda negación completa pasó por la pausa humana.`,
+          `The plan's criterion C1 over ${n} cases: every full denial went through the human pause.`,
         )) as Plantilla<number>,
     },
     costo: {
@@ -493,8 +565,8 @@ export const AGENTE = {
     pausa_humana: {
       nombre: tb("Pausa humana", "Human pause"),
       linea: tb(
-        "Un auditor ve el caso completo antes de negar.",
-        "An auditor sees the full case before denying.",
+        "Un auditor ve el caso completo antes de negarlo del todo.",
+        "An auditor sees the full case before denying it outright.",
       ),
     },
     redactor: {
@@ -528,8 +600,8 @@ export const AGENTE = {
   ],
   nunca: [
     tb(
-      "Niega sin que una persona lo revise.",
-      "Denies without a person reviewing it.",
+      "Niega del todo sin que una persona lo revise.",
+      "Fully denies without a person reviewing it.",
     ),
     tb(
       "Obedece instrucciones escondidas en el texto de un caso.",
@@ -546,7 +618,8 @@ export const AGENTE = {
   ],
   hitos: {
     plan: tb("versión del plan", "plan version"),
-    corrida: tb("primera corrida real", "first real run"),
+    // La fecha es la de la corrida que publica la vitrina (en el A, la de 200 del S3; la primera real fue la del S1).
+    corrida: tb("corrida publicada", "published run"),
     piezas: tb("piezas del contrato", "contract pieces"),
     piezasValor: ((p: { a: number; b: number }) =>
       tb(`${p.a} de ${p.b}`, `${p.a} of ${p.b}`)) as Plantilla<{
@@ -714,8 +787,8 @@ export const AGENTE = {
       {
         paso: "revisa",
         texto: tb(
-          "Ninguna negación sale sin el auditor; en esta demo, el auditor se simuló en lote.",
-          "No denial goes out without the auditor; in this demo, the auditor was simulated in batch.",
+          "Ninguna negación completa sale sin el auditor; en esta demo, el auditor se simuló en lote.",
+          "No full denial goes out without the auditor; in this demo, the auditor was simulated in batch.",
         ),
       },
       {
@@ -745,22 +818,25 @@ export const AGENTE = {
  */
 export const METRICAS_APP = {
   criteriosCumplidos: {
-    etiqueta: ((n: number) =>
+    etiqueta: ((p: { n: number; demos: number }) =>
       tb(
-        `criterios del plan cumplidos, de ${n}`,
-        `plan criteria met, of ${n}`,
-      )) as Plantilla<number>,
+        `criterios cumplidos en los planes de ${p.demos} demos, de ${p.n}`,
+        `criteria met across the plans of ${p.demos} demos, of ${p.n}`,
+      )) as Plantilla<{ n: number; demos: number }>,
     unidad: tb("criterios", "criteria"),
-    detalle: ((p: {
+    /** Una frase por demo: el detalle las pone una tras otra (`src/lib/fichas/armar.ts`). */
+    deUnDemo: ((p: {
+      demo: string;
       verificador: string;
       corrida: string;
       cumplen: number;
       n: number;
     }) =>
       tb(
-        `Del informe del verificador ${p.verificador} sobre la corrida ${p.corrida}: ${p.cumplen} de ${p.n} criterios cumplidos.`,
-        `From verifier ${p.verificador}'s report on run ${p.corrida}: ${p.cumplen} of ${p.n} criteria met.`,
+        `${p.demo}: ${p.cumplen} de ${p.n}, en el informe del verificador ${p.verificador} sobre la corrida ${p.corrida}.`,
+        `${p.demo}: ${p.cumplen} of ${p.n}, in verifier ${p.verificador}'s report on run ${p.corrida}.`,
       )) as Plantilla<{
+      demo: string;
       verificador: string;
       corrida: string;
       cumplen: number;
@@ -774,24 +850,40 @@ export const METRICAS_APP = {
         `decisions redone in another language, with ${diferencias} differences`,
       )) as Plantilla<number>,
     unidad: tb("decisiones", "decisions"),
-    detalle: ((corridas: number) =>
+    detalle: ((p: { corridas: number; demos: number }) =>
       tb(
-        `Prueba cruzada RF-09.2 sobre ${corridas} corridas: el intérprete de aristas de TypeScript rehace cada decisión que registró Python.`,
-        `RF-09.2 cross-check over ${corridas} runs: the TypeScript edge interpreter redoes every decision Python recorded.`,
-      )) as Plantilla<number>,
+        `Prueba cruzada RF-09.2 sobre ${p.corridas} corridas de ${p.demos} demos: el intérprete de aristas de TypeScript rehace cada decisión que registró Python.`,
+        `RF-09.2 cross-check over ${p.corridas} runs of ${p.demos} demos: the TypeScript edge interpreter redoes every decision Python recorded.`,
+      )) as Plantilla<{ corridas: number; demos: number }>,
   },
-  casosPorCorrida: {
-    etiqueta: ((corridas: number) =>
+  casosSinteticos: {
+    etiqueta: ((demos: number) =>
       tb(
-        `casos por corrida, en ${corridas} corridas y una línea base`,
-        `cases per run, over ${corridas} runs and a baseline`,
+        `casos sintéticos con respuesta conocida, en ${demos} demos`,
+        `synthetic cases with a known answer, across ${demos} demos`,
       )) as Plantilla<number>,
     unidad: tb("casos", "cases"),
-    detalle: ((p: { corrida: string; repeticiones: number }) =>
+    /**
+     * Una frase por demo: su corrida, sus repeticiones (pass^k) si las hay y su línea base si la hay. El detalle las
+     * pone una tras otra.
+     */
+    deUnDemo: ((p: {
+      demo: string;
+      n: number;
+      corrida: string;
+      repeticiones: number;
+      base: boolean;
+    }) =>
       tb(
-        `Corrida ${p.corrida} con sus ${p.repeticiones} repeticiones (pass^k) y la línea base de agente único a igual presupuesto.`,
-        `Run ${p.corrida} with its ${p.repeticiones} repetitions (pass^k) and the single-agent baseline at equal budget.`,
-      )) as Plantilla<{ corrida: string; repeticiones: number }>,
+        `${p.demo}: ${p.n} casos en la corrida ${p.corrida}${p.repeticiones ? `, ${p.repeticiones === 1 ? "1 repetición" : `${p.repeticiones} repeticiones`} (pass^k)` : ""}${p.base ? " y la línea base de agente único" : ""}.`,
+        `${p.demo}: ${p.n} cases in run ${p.corrida}${p.repeticiones ? `, ${p.repeticiones === 1 ? "1 repetition" : `${p.repeticiones} repetitions`} (pass^k)` : ""}${p.base ? " and the single-agent baseline" : ""}.`,
+      )) as Plantilla<{
+      demo: string;
+      n: number;
+      corrida: string;
+      repeticiones: number;
+      base: boolean;
+    }>,
   },
   llamadasEnLaVitrina: {
     etiqueta: tb(
@@ -807,20 +899,26 @@ export const METRICAS_APP = {
   costoDeUnaCorrida: {
     etiqueta: ((n: number) =>
       tb(
-        `costo nominal de una corrida de ${n} casos`,
-        `nominal cost of a ${n}-case run`,
+        `costo nominal de correr una vez cada demo (${n} casos)`,
+        `nominal cost of running each demo once (${n} cases)`,
       )) as Plantilla<number>,
+    deUnDemo: ((p: { demo: string; costo: string; n: number }) =>
+      tb(
+        `${p.demo}: US$ ${p.costo} por ${p.n} casos.`,
+        `${p.demo}: US$ ${p.costo} for ${p.n} cases.`,
+      )) as Plantilla<{ demo: string; costo: string; n: number }>,
+    /** Va después de la frase de cada demo. */
     detalle: tb(
-      "Suma del costo nominal que el CLI declara por llamada, en las trazas de la corrida; por la suscripción no se pagó aparte.",
-      "Sum of the nominal cost the CLI declares per call, over the run's traces; through the subscription it was not paid separately.",
+      "Suma del costo nominal que el CLI declara por llamada, en las trazas de cada corrida; por la suscripción no se pagó aparte.",
+      "Sum of the nominal cost the CLI declares per call, over each run's traces; through the subscription it was not paid separately.",
     ),
   },
   funcionalidades: {
     etiqueta: tb("funcionalidades construidas", "built features"),
     unidad: tb("funcionalidades", "features"),
     detalle: tb(
-      "Las de la visión del producto marcadas para el corte de dos semanas, contadas contra docs/MANUAL-DE-USO.md; las del roadmap no cuentan.",
-      "Those of the product vision marked for the two-week cut, counted against docs/MANUAL-DE-USO.md; roadmap ones do not count.",
+      "Las de la visión del producto que ya funcionan: las del corte de dos semanas y las del roadmap que se construyeron en el S3 (el entrevistador, el demo B y su expediente), contadas contra docs/MANUAL-DE-USO.md; lo que sigue en el roadmap no cuenta.",
+      "The product vision's features that work today: the two-week cut's and the roadmap ones built in S3 (the interviewer, demo B and its case file), counted against docs/MANUAL-DE-USO.md; what remains on the roadmap does not count.",
     ),
   },
   decisionesRegistradas: {
@@ -862,8 +960,8 @@ export const APP = {
       "It is a simulation: it handles no real cases and decides on no one.",
     ),
     tb(
-      "El demo B y el entrevistador llegan después; hasta entonces dicen «en construcción».",
-      "Demo B and the interviewer come later; until then they say “under construction”.",
+      "El entrevistador corre en la consola, no en la vitrina: aquí se ve el plan que propuso para el demo B, revisado y aprobado por una persona.",
+      "The interviewer runs in the console, not in the showcase: here you see the plan it drafted for demo B, reviewed and approved by a person.",
     ),
     tb(
       "Mide lo que el plan declaró; lo que no previó aparece como brecha, no como veredicto.",
@@ -872,16 +970,16 @@ export const APP = {
   ],
   nunca: [
     tb(
-      "Usa datos reales: todo caso, afiliado y médico es sintético.",
-      "Uses real data: every case, member and physician is synthetic.",
+      "Usa datos reales: todo caso, afiliado, médico, solicitante y lista de control es sintético.",
+      "Uses real data: every case, member, physician, applicant and watchlist is synthetic.",
     ),
     tb(
       "Deja que un modelo decida si el agente acertó.",
       "Lets a model decide whether the agent got it right.",
     ),
     tb(
-      "Niega un caso sin que lo revise una persona.",
-      "Denies a case without a person reviewing it.",
+      "Niega o rechaza un caso sin que lo revise una persona.",
+      "Denies or rejects a case without a person reviewing it.",
     ),
     tb("Esconde un resultado desfavorable.", "Hides an unfavorable result."),
   ],
@@ -895,31 +993,31 @@ export const APP = {
       "The repository is not linked from the showcase (the portfolio's zero-links rule).",
     ),
     brochure_archivo: tb(
-      "pendiente: docs/BROCHURE.html nace al cierre del ciclo H1 (sprint 3)",
-      "pending: docs/BROCHURE.html is born at the H1 cycle close (sprint 3)",
+      "sin archivo propio: la vitrina y sus fichas hacen de brochure (decisión del sprint 3)",
+      "no file of its own: the showcase and its records serve as the brochure (sprint 3 decision)",
     ),
     brochure_ruta_local: tb(
-      "pendiente: la ruta /conoce nace con el brochure (sprint 3)",
-      "pending: the /conoce route is born with the brochure (sprint 3)",
+      "sin ruta /conoce: la vitrina es la presentación de la app (decisión del sprint 3)",
+      "no /conoce route: the showcase is the app's presentation (sprint 3 decision)",
     ),
   },
   privacidad: {
     detalle: tb(
-      "Todo caso, afiliado, médico y plan de beneficios es sintético, con semilla, y un validador de identificadores en CI rechaza cualquiera con forma real. La vitrina es estática: ningún visitante lanza llamadas a modelos ni a servicios.",
-      "Every case, member, physician and benefit plan is synthetic, from a seed, and an identifier validator in CI rejects any with a real-looking form. The showcase is static: no visitor triggers calls to models or services.",
+      "Todo caso, afiliado, médico, plan de beneficios, solicitante y lista de control es sintético, con semilla, y un validador de identificadores en CI rechaza cualquiera con forma real. La vitrina es estática: ningún visitante lanza llamadas a modelos ni a servicios.",
+      "Every case, member, physician, benefit plan, applicant and watchlist is synthetic, from a seed, and an identifier validator in CI rejects any with a real-looking form. The showcase is static: no visitor triggers calls to models or services.",
     ),
     datos_sinteticos: true,
     llamadas_a_modelos_en_la_vitrina: false,
     red_saliente_en_la_vitrina: false,
   },
-  /** Los seis grupos de la visión del producto con lo construido de cada uno (lo del roadmap no cuenta). */
+  /** Los seis grupos de la visión del producto con lo construido de cada uno (lo que sigue en el roadmap no cuenta). */
   grupos: [
     {
       id: "planear",
       nombre: tb("Planear", "Plan"),
       linea: tb(
-        "El plan como contrato: plantillas, validador y contrato para el constructor.",
-        "The plan as a contract: templates, validator and the builder's contract.",
+        "El plan como contrato: la entrevista, las plantillas, el validador y el contrato para el constructor.",
+        "The plan as a contract: the interview, the templates, the validator and the builder's contract.",
       ),
       estrella: false,
       features: [
@@ -945,6 +1043,15 @@ export const APP = {
           seccion_manual: tb("Validar un plan", "Validate a plan"),
         },
         {
+          id: "entrevistador",
+          nombre: tb("Entrevistador del plan", "Plan interviewer"),
+          que_hace: tb(
+            "Pregunta en orden lo que la plantilla del dominio exige, redacta el borrador en español e inglés, señala sus contradicciones y nunca lo aprueba: eso lo hace el autor.",
+            "Asks in order what the domain template requires, drafts the plan in Spanish and English, flags its contradictions and never approves it: the author does.",
+          ),
+          seccion_manual: tb("Entrevistar un plan", "Interview a plan"),
+        },
+        {
           id: "contrato",
           nombre: tb("Contrato para el constructor", "The builder's contract"),
           que_hace: tb(
@@ -959,8 +1066,8 @@ export const APP = {
       id: "correr",
       nombre: tb("Correr", "Run"),
       linea: tb(
-        "Casos con verdad conocida, el demo A y las corridas por lotes.",
-        "Cases with a known truth, demo A and batch runs.",
+        "Casos con verdad conocida, los dos demos y las corridas por lotes.",
+        "Cases with a known truth, both demos and batch runs.",
       ),
       estrella: false,
       features: [
@@ -986,10 +1093,31 @@ export const APP = {
             "Demo A: medical prior authorizations",
           ),
           que_hace: tb(
-            "Un enrutador, un extractor, un verificador de cobertura por reglas y un redactor aprueban, niegan con causal o escalan a un auditor; ninguna negación sale sin una persona.",
-            "A router, an extractor, a rule-based coverage checker and a drafter approve, deny with a stated cause or escalate to an auditor; no denial goes out without a person.",
+            "Un enrutador, un extractor, un verificador de cobertura por reglas y un redactor aprueban, aprueban en parte, niegan con causal o escalan a un auditor; ninguna negación completa sale sin una persona.",
+            "A router, an extractor, a rule-based coverage checker and a drafter approve, approve in part, deny with a stated cause or escalate to an auditor; no full denial goes out without a person.",
           ),
           seccion_manual: tb("Correr un lote", "Run a batch"),
+        },
+        {
+          id: "demo-b",
+          nombre: tb(
+            "Demo B: vinculación con debida diligencia",
+            "Demo B: onboarding with due diligence",
+          ),
+          que_hace: tb(
+            "Un extractor, un verificador de listas, un investigador que actúa desde el inicio de la zona gris y un puntaje de riesgo por reglas aprueban, revisan o rechazan; ningún rechazo sale sin el oficial de cumplimiento.",
+            "An extractor, a list checker, an investigator that acts from the start of the gray zone and a rule-based risk score approve, review or reject; no rejection goes out without the compliance officer.",
+          ),
+          seccion_manual: tb("Correr el demo B", "Run demo B"),
+        },
+        {
+          id: "expediente",
+          nombre: tb("Expediente por código", "Case file by code"),
+          que_hace: tb(
+            "Cada caso del demo B termina en un expediente en español e inglés que escribe el código: cada conclusión cita la regla del plan o la coincidencia en una lista, con su versión.",
+            "Every demo B case ends in a case file in Spanish and English written by code: each conclusion cites the plan rule or the list match, with its version.",
+          ),
+          seccion_manual: tb("Leer un expediente", "Read a case file"),
         },
         {
           id: "documento-adverso",
@@ -998,8 +1126,8 @@ export const APP = {
             "Adverse-decision document",
           ),
           que_hace: tb(
-            "Toda negación produce, por código, un documento en español e inglés con la causal, la regla, los datos usados y la vía de contradicción.",
-            "Every denial produces, by code, a document in Spanish and English with the cause, the rule, the data used and the way to contest it.",
+            "Toda negación, también la parcial, produce por código un documento en español e inglés con la causal, la regla, los datos usados y la vía de contradicción.",
+            "Every denial, partial ones included, produces by code a document in Spanish and English with the cause, the rule, the data used and the way to contest it.",
           ),
           seccion_manual: tb("Correr un lote", "Run a batch"),
         },
@@ -1095,8 +1223,8 @@ export const APP = {
             "Move the plan's thresholds",
           ),
           que_hace: tb(
-            "Deslizas la confianza mínima, el alto costo, el máximo de aclaraciones o el modo Texas y ves qué casos cambian de camino, qué errores aparecen, cuánto trabajo humano cuesta y la curva riesgo-cobertura.",
-            "You slide the minimum confidence, the high cost, the clarification maximum or Texas mode and see which cases change path, which errors appear, how much human work it costs and the risk-coverage curve.",
+            "Deslizas los umbrales de cada demo (en el A, la confianza mínima, el alto costo, el máximo de aclaraciones o el modo Texas; en el B, la similitud, la zona gris, el riesgo y las inconsistencias) y ves qué casos cambian de camino, qué errores aparecen, cuánto trabajo humano cuesta y la curva riesgo-cobertura.",
+            "You slide each demo's thresholds (in A, the minimum confidence, the high cost, the clarification maximum or Texas mode; in B, the similarity, the gray zone, the risk and the inconsistencies) and see which cases change path, which errors appear, how much human work it costs and the risk-coverage curve.",
           ),
           seccion_manual: tb(
             "Mover umbrales en el playground",
@@ -1153,8 +1281,8 @@ export const APP = {
             "Plan, Agent, Gap and Cases",
           ),
           que_hace: tb(
-            "En lenguaje llano con detalle para expertos, en español e inglés, en un teléfono de 380 px, con el rótulo «Simulación · no operativo» y la divulgación del revisor simulado.",
-            "In plain language with detail for experts, in Spanish and English, on a 380 px phone, with the “Simulation · not operational” label and the simulated-reviewer disclosure.",
+            "Por cada demo, en lenguaje llano con detalle para expertos, en español e inglés, en un teléfono de 380 px, con el rótulo «Simulación · no operativo» y la divulgación del revisor simulado.",
+            "For each demo, in plain language with detail for experts, in Spanish and English, on a 380 px phone, with the “Simulation · not operational” label and the simulated-reviewer disclosure.",
           ),
           seccion_manual: tb("Abrir la vitrina", "Open the showcase"),
         },
@@ -1165,8 +1293,8 @@ export const APP = {
             "Records and package for the personal showcase",
           ),
           que_hace: tb(
-            "La ficha de reproducibilidad, la del agente A y estos hechos de la app, con el paquete estático que hoja-de-vida publica sin un solo enlace.",
-            "The reproducibility record, agent A's record and these app facts, with the static package hoja-de-vida publishes without a single link.",
+            "La ficha de reproducibilidad de cada demo, la de cada agente y estos hechos de la app, con el paquete estático que hoja-de-vida publica sin un solo enlace.",
+            "Each demo's reproducibility record, each agent's record and these app facts, with the static package hoja-de-vida publishes without a single link.",
           ),
           seccion_manual: tb(
             "Entregar el paquete a hoja-de-vida",
@@ -1194,8 +1322,8 @@ export const APP = {
     {
       nombre: tb("Python 3.12 · LangGraph 1.2", "Python 3.12 · LangGraph 1.2"),
       papel: tb(
-        "el agente del demo A, con la pausa humana como interrupt",
-        "demo A's agent, with the human pause as an interrupt",
+        "los agentes de los dos demos, con la pausa humana como interrupt",
+        "both demos' agents, with the human pause as an interrupt",
       ),
     },
     {

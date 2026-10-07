@@ -5,13 +5,16 @@
  */
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { esIdioma, idiomaDeRuta } from "@/lib/idioma";
-import { otroIdioma, PANTALLAS, ruta } from "@/lib/ruta";
+import { otroIdioma, PANTALLAS, ruta, rutaEntrada } from "@/lib/ruta";
 
 describe("rutas de la vitrina", () => {
   it("la Entrada es la raíz del idioma; las demás cuelgan de ella", () => {
-    expect(ruta("es", "entrada")).toBe("/es");
+    expect(rutaEntrada("es")).toBe("/es");
+    expect(ruta("es", "entrada", undefined, "demo-b")).toBe("/es");
     expect(
-      PANTALLAS.filter((p) => p !== "entrada").map((p) => ruta("en", p)),
+      PANTALLAS.filter((p) => p !== "entrada").map((p) =>
+        ruta("en", p, undefined, "demo-a"),
+      ),
     ).toEqual([
       "/en/plan",
       "/en/agente",
@@ -20,7 +23,12 @@ describe("rutas de la vitrina", () => {
       "/en/caso",
       "/en/fichas",
     ]);
-    expect(ruta("es", "caso", "A-001")).toBe("/es/caso/A-001");
+    expect(ruta("es", "caso", "A-001", "demo-a")).toBe("/es/caso/A-001");
+    // El B cuelga de su prefijo (ADR-014); el demo es obligatorio: olvidarlo enlazaba al A sin romperse.
+    expect(ruta("es", "caso", "B-001", "demo-b")).toBe("/es/demo-b/caso/B-001");
+    expect(ruta("en", "playground", undefined, "demo-b")).toBe(
+      "/en/demo-b/playground",
+    );
     expect(otroIdioma("es")).toBe("en");
     expect(otroIdioma("en")).toBe("es");
   });
@@ -47,10 +55,15 @@ describe("rutas del paquete para hoja-de-vida (PLANLANG_PAQUETE=1)", () => {
     vi.stubEnv("PLANLANG_PAQUETE", "1");
     vi.resetModules();
     const r = await import("@/lib/ruta");
-    expect(r.ruta("es", "entrada")).toBe("/piezas/planlang/es.html");
-    expect(r.ruta("en", "fichas")).toBe("/piezas/planlang/en/fichas.html");
-    expect(r.ruta("es", "caso", "A-001")).toBe(
+    expect(r.rutaEntrada("es")).toBe("/piezas/planlang/es.html");
+    expect(r.ruta("en", "fichas", undefined, "demo-a")).toBe(
+      "/piezas/planlang/en/fichas.html",
+    );
+    expect(r.ruta("es", "caso", "A-001", "demo-a")).toBe(
       "/piezas/planlang/es/caso/A-001.html",
+    );
+    expect(r.ruta("es", "caso", "B-001", "demo-b")).toBe(
+      "/piezas/planlang/es/demo-b/caso/B-001.html",
     );
     expect(r.RUTA_ELEGIR).toBe("/piezas/planlang/index.html?elegir");
     const { CUERPO_SCRIPT_IDIOMA } =
@@ -67,7 +80,7 @@ describe("rutas del paquete para hoja-de-vida (PLANLANG_PAQUETE=1)", () => {
   it("sin la variable, las URL siguen limpias", async () => {
     vi.resetModules();
     const r = await import("@/lib/ruta");
-    expect(r.ruta("es", "plan")).toBe("/es/plan");
+    expect(r.ruta("es", "plan", undefined, "demo-a")).toBe("/es/plan");
     expect(r.BASE_RUTA + r.SUFIJO_RUTA).toBe("");
   });
 });

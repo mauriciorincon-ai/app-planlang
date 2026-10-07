@@ -14,8 +14,8 @@ import type { Compacto } from "@core/playground/compacto";
 import { consecuencias, umbralesDelPlan } from "@core/playground/consecuencias";
 import { esAristaTripleta } from "@core/plan/esquema";
 import type { DatosDemo } from "@/lib/datos/vitrina";
-import { ruta } from "@/lib/ruta";
-import { SUBTIPO } from "@/textos/caso";
+import { DEMO_TEXTO } from "@/textos/demo";
+
 import {
   CURVA,
   EJEMPLO,
@@ -31,8 +31,9 @@ import {
 } from "@/textos/playground";
 import type { Fila } from "./agente";
 import type { PuntoCurva } from "./brecha";
-import { pieDeCorrida } from "./caso";
+import { nombreDeSubtipo, pieDeCorrida } from "./caso";
 import { decimal, enumerar, versionCorta } from "./formato";
+import { enlaceACaso } from "./paginas-caso";
 
 const X = (t: TextoBilingue, i: Idioma) => t[i];
 
@@ -54,7 +55,8 @@ export interface DatosIsla {
   compacto: Compacto;
   umbrales: UmbralIsla[];
   criterios: { id: string; regla: string }[];
-  casos: { id: string; tipo: string; href: string }[];
+  /** `href` nulo: el caso no tiene página (corrida de 200; `paginas-caso.ts`). */
+  casos: { id: string; tipo: string; href: string | null }[];
   /** Columnas de la tabla de las decisiones: las señales que leen las aristas de los nodos jugables. */
   columnas: { senal: string; nodo: string; titulo: string }[];
   /** Los nodos que deciden, en el orden del grafo del plan (el compacto los guarda en orden canónico). */
@@ -109,8 +111,12 @@ export function valorUmbral(v: number, decimales: number, i: Idioma): string {
 
 /**
  * El ejemplo llano del líder, medido: el primer valor por encima del plan, en el primer umbral numérico, que cambia
- * algún caso de camino. Si ninguno lo hace, no hay ejemplo (no se inventa uno).
+ * algún caso de camino (uno o varios, hasta MAX_CASOS_EJEMPLO, todos de «solo» a «persona»). Si ninguno lo hace, no
+ * hay ejemplo (no se inventa uno).
  */
+/** Más casos que estos en el primer paso no caben en una frase: el ejemplo se calla y la isla los muestra. */
+const MAX_CASOS_EJEMPLO = 3;
+
 function ejemplo(c: Compacto, d: DatosDemo, i: Idioma): string | null {
   const plan = umbralesDelPlan(c);
   for (const u of c.umbrales) {
@@ -124,21 +130,24 @@ function ejemplo(c: Compacto, d: DatosDemo, i: Idioma): string | null {
         (x) => x.antes === "solo" && x.ahora === "persona",
       );
       if (r.cambios.length === 0) continue;
-      if (r.cambios.length !== 1 || solos.length !== 1) return null;
-      const caso = solos[0]!;
-      const valor = caso.senales[u.senal];
+      if (solos.length !== r.cambios.length || solos.length > MAX_CASOS_EJEMPLO)
+        return null;
+      const valores = solos.map((x) => x.senales[u.senal]);
       const delPlan = d.plan.umbrales.find((x) => x.id === u.id);
-      if (!delPlan || typeof valor !== "number") return null;
+      if (!delPlan || valores.some((x) => typeof x !== "number")) return null;
       return X(
         EJEMPLO.texto({
           umbral: u.id,
           nombre: delPlan.nombre,
           desde: valorUmbral(u.valor_en_plan, dec, i),
           hasta: valorUmbral(v, dec, i),
-          caso: caso.id,
+          casos: solos.map((x) => x.id),
           senal: nombreLlano(u.senal),
-          valor: valorUmbral(valor, dec, i),
-          minutos: r.minutos - r.minutos_plan,
+          valores: valores.map((x) => valorUmbral(x as number, dec, i)),
+          minutos:
+            r.minutos === null || r.minutos_plan === null
+              ? null
+              : r.minutos - r.minutos_plan,
           errores: r.introducidos.length,
         }),
         i,
@@ -257,6 +266,7 @@ export function vistaPlayground(d: DatosDemo, i: Idioma): VistaPlayground {
     portada: {
       antetitulo: X(
         PORTADA.antetitulo({
+          demo: DEMO_TEXTO[d.id].corto,
           corrida: inf.corrida_id,
           casos: c.casos.length,
           decisiones,
@@ -272,7 +282,7 @@ export function vistaPlayground(d: DatosDemo, i: Idioma): VistaPlayground {
     }).map((x) => ({ titulo: X(x.titulo, i), detalle: X(x.detalle, i) })),
     hace: IPO.haceItems(minutos).map((t) => X(t, i)),
     entrega: IPO.entregaItems.map((x) => ({
-      titulo: X(x.titulo, i),
+      titulo: X(minutos === null && x.sinCosto ? x.sinCosto : x.titulo, i),
       detalle: X(x.detalle, i),
     })),
     ejemplo: ejemplo(c, d, i),
@@ -355,8 +365,8 @@ export function vistaPlayground(d: DatosDemo, i: Idioma): VistaPlayground {
       }),
       casos: c.casos.map((k) => ({
         id: k.id,
-        tipo: X(SUBTIPO[k.subtipo] ?? { es: k.subtipo, en: k.subtipo }, i),
-        href: ruta(i, "caso", k.id),
+        tipo: X(nombreDeSubtipo(d.id, k.subtipo), i),
+        href: enlaceACaso(d, k.id, i),
       })),
       columnas,
       nodosEnOrden: orden,

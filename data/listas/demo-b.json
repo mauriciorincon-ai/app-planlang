@@ -1,0 +1,668 @@
+{
+  "actividades": [
+    {
+      "codigo": "SYN-ACT-01",
+      "ingreso_tipico": {
+        "max": 6000,
+        "min": 1500
+      },
+      "nombre": {
+        "en": "Retail food trade",
+        "es": "Comercio minorista de alimentos"
+      },
+      "riesgo": "bajo"
+    },
+    {
+      "codigo": "SYN-ACT-02",
+      "ingreso_tipico": {
+        "max": 12000,
+        "min": 3000
+      },
+      "nombre": {
+        "en": "Professional consulting",
+        "es": "Consultoría profesional"
+      },
+      "riesgo": "bajo"
+    },
+    {
+      "codigo": "SYN-ACT-03",
+      "ingreso_tipico": {
+        "max": 4000,
+        "min": 800
+      },
+      "nombre": {
+        "en": "Family farming",
+        "es": "Agricultura familiar"
+      },
+      "riesgo": "bajo"
+    },
+    {
+      "codigo": "SYN-ACT-04",
+      "ingreso_tipico": {
+        "max": 15000,
+        "min": 4000
+      },
+      "nombre": {
+        "en": "Freight transport",
+        "es": "Transporte de carga"
+      },
+      "riesgo": "medio"
+    },
+    {
+      "codigo": "SYN-ACT-05",
+      "ingreso_tipico": {
+        "max": 20000,
+        "min": 5000
+      },
+      "nombre": {
+        "en": "Used-car dealing",
+        "es": "Compraventa de vehículos usados"
+      },
+      "riesgo": "medio"
+    },
+    {
+      "codigo": "SYN-ACT-06",
+      "ingreso_tipico": {
+        "max": 25000,
+        "min": 6000
+      },
+      "nombre": {
+        "en": "Electronics import",
+        "es": "Importación de electrónicos"
+      },
+      "riesgo": "medio"
+    },
+    {
+      "codigo": "SYN-ACT-07",
+      "ingreso_tipico": {
+        "max": 40000,
+        "min": 8000
+      },
+      "nombre": {
+        "en": "Currency exchange office",
+        "es": "Casa de cambio de divisas"
+      },
+      "riesgo": "alto"
+    },
+    {
+      "codigo": "SYN-ACT-08",
+      "ingreso_tipico": {
+        "max": 60000,
+        "min": 10000
+      },
+      "nombre": {
+        "en": "Precious-metals trading",
+        "es": "Comercio de metales preciosos"
+      },
+      "riesgo": "alto"
+    },
+    {
+      "codigo": "SYN-ACT-09",
+      "ingreso_tipico": {
+        "max": 80000,
+        "min": 12000
+      },
+      "nombre": {
+        "en": "Real-estate development",
+        "es": "Desarrollo inmobiliario"
+      },
+      "riesgo": "alto"
+    },
+    {
+      "codigo": "SYN-ACT-10",
+      "ingreso_tipico": {
+        "max": 50000,
+        "min": 9000
+      },
+      "nombre": {
+        "en": "Gaming halls",
+        "es": "Salas de juego"
+      },
+      "riesgo": "alto"
+    }
+  ],
+  "anio_de_referencia": 2026,
+  "aviso": {
+    "en": "Simulation: no person on these lists exists. The lists and their rules mimic the shape of real ones, not their content.",
+    "es": "Simulación: ninguna persona de estas listas existe. Las listas y sus reglas imitan la forma de las reales, no su contenido."
+  },
+  "demo_id": "demo-b",
+  "dominio_id": "dom-financiero",
+  "formato": "planlang-listas/v1",
+  "huella": "08445155c778d3b098b60e94a54618958e9f453725d76a6a9955e71393766753",
+  "id": "listas-demo-b",
+  "jurisdicciones": [
+    {
+      "codigo": "SYN-J-01",
+      "nombre": {
+        "en": "State of Corvena",
+        "es": "Estado de Corvena"
+      },
+      "riesgo": "bajo"
+    },
+    {
+      "codigo": "SYN-J-02",
+      "nombre": {
+        "en": "Republic of Saldria",
+        "es": "República de Saldria"
+      },
+      "riesgo": "bajo"
+    },
+    {
+      "codigo": "SYN-J-03",
+      "nombre": {
+        "en": "Brisal Commonwealth",
+        "es": "Mancomunidad de Brisal"
+      },
+      "riesgo": "bajo"
+    },
+    {
+      "codigo": "SYN-J-04",
+      "nombre": {
+        "en": "Duchy of Velmora",
+        "es": "Ducado de Velmora"
+      },
+      "riesgo": "medio"
+    },
+    {
+      "codigo": "SYN-J-05",
+      "nombre": {
+        "en": "Tarnis Confederation",
+        "es": "Confederación de Tarnis"
+      },
+      "riesgo": "medio"
+    },
+    {
+      "codigo": "SYN-J-06",
+      "nombre": {
+        "en": "Morvane Islands",
+        "es": "Islas Morvane"
+      },
+      "riesgo": "alto"
+    },
+    {
+      "codigo": "SYN-J-07",
+      "nombre": {
+        "en": "Principality of Ostrel",
+        "es": "Principado de Ostrel"
+      },
+      "riesgo": "alto"
+    },
+    {
+      "codigo": "SYN-J-08",
+      "nombre": {
+        "en": "Kesvar Territory",
+        "es": "Territorio de Kesvar"
+      },
+      "riesgo": "alto"
+    }
+  ],
+  "listas": [
+    {
+      "entradas": [
+        {
+          "alias": [],
+          "id": "LV-01-001",
+          "motivo": {
+            "en": "Synthetic sanction for financing simulated unlawful activities.",
+            "es": "Sanción sintética por financiar actividades ilícitas simuladas."
+          },
+          "nacimiento": 1974,
+          "nacionalidad": "SYN-J-07",
+          "nombre": "Yusuf Nazrovi Sarkento"
+        },
+        {
+          "alias": [],
+          "id": "LV-01-002",
+          "motivo": {
+            "en": "Synthetic sanction for financing simulated unlawful activities.",
+            "es": "Sanción sintética por financiar actividades ilícitas simuladas."
+          },
+          "nacimiento": 1982,
+          "nacionalidad": "SYN-J-01",
+          "nombre": "Mikhail Vosgrane Imrahel"
+        },
+        {
+          "alias": [],
+          "id": "LV-01-003",
+          "motivo": {
+            "en": "Synthetic sanction for financing simulated unlawful activities.",
+            "es": "Sanción sintética por financiar actividades ilícitas simuladas."
+          },
+          "nacimiento": 1983,
+          "nacionalidad": "SYN-J-08",
+          "nombre": "Aleksandr Kelmiro Draguelo"
+        },
+        {
+          "alias": [
+            "Dmitri Fendralo"
+          ],
+          "id": "LV-01-004",
+          "motivo": {
+            "en": "Synthetic sanction for financing simulated unlawful activities.",
+            "es": "Sanción sintética por financiar actividades ilícitas simuladas."
+          },
+          "nacimiento": 1973,
+          "nacionalidad": "SYN-J-08",
+          "nombre": "Dmitri Fendralo Halvessen"
+        },
+        {
+          "alias": [],
+          "id": "LV-01-005",
+          "motivo": {
+            "en": "Synthetic sanction for financing simulated unlawful activities.",
+            "es": "Sanción sintética por financiar actividades ilícitas simuladas."
+          },
+          "nacimiento": 1983,
+          "nacionalidad": "SYN-J-08",
+          "nombre": "Sergei Karvane Sarkento"
+        },
+        {
+          "alias": [],
+          "id": "LV-01-006",
+          "motivo": {
+            "en": "Synthetic sanction for financing simulated unlawful activities.",
+            "es": "Sanción sintética por financiar actividades ilícitas simuladas."
+          },
+          "nacimiento": 1966,
+          "nacionalidad": "SYN-J-03",
+          "nombre": "Khalid Quertal Fendralo"
+        },
+        {
+          "alias": [],
+          "id": "LV-01-007",
+          "motivo": {
+            "en": "Synthetic sanction for financing simulated unlawful activities.",
+            "es": "Sanción sintética por financiar actividades ilícitas simuladas."
+          },
+          "nacimiento": 1950,
+          "nacionalidad": "SYN-J-05",
+          "nombre": "Nikolai Quertal Tazurek"
+        },
+        {
+          "alias": [
+            "Yevgeni Vosgrane"
+          ],
+          "id": "LV-01-008",
+          "motivo": {
+            "en": "Synthetic sanction for financing simulated unlawful activities.",
+            "es": "Sanción sintética por financiar actividades ilícitas simuladas."
+          },
+          "nacimiento": 1952,
+          "nacionalidad": "SYN-J-03",
+          "nombre": "Yevgeni Vosgrane Karvane"
+        },
+        {
+          "alias": [],
+          "id": "LV-01-009",
+          "motivo": {
+            "en": "Synthetic sanction for financing simulated unlawful activities.",
+            "es": "Sanción sintética por financiar actividades ilícitas simuladas."
+          },
+          "nacimiento": 1962,
+          "nacionalidad": "SYN-J-05",
+          "nombre": "Ana Ostavane Karvane"
+        },
+        {
+          "alias": [],
+          "id": "LV-01-010",
+          "motivo": {
+            "en": "Synthetic sanction for financing simulated unlawful activities.",
+            "es": "Sanción sintética por financiar actividades ilícitas simuladas."
+          },
+          "nacimiento": 1977,
+          "nacionalidad": "SYN-J-08",
+          "nombre": "Marta Fendralo Zhelbin"
+        },
+        {
+          "alias": [
+            "Pablo Vosgrane"
+          ],
+          "id": "LV-01-011",
+          "motivo": {
+            "en": "Synthetic sanction for financing simulated unlawful activities.",
+            "es": "Sanción sintética por financiar actividades ilícitas simuladas."
+          },
+          "nacimiento": 1959,
+          "nacionalidad": "SYN-J-06",
+          "nombre": "Pablo Vosgrane Imrahel"
+        },
+        {
+          "alias": [],
+          "id": "LV-01-012",
+          "motivo": {
+            "en": "Synthetic sanction for financing simulated unlawful activities.",
+            "es": "Sanción sintética por financiar actividades ilícitas simuladas."
+          },
+          "nacimiento": 1991,
+          "nacionalidad": "SYN-J-01",
+          "nombre": "Teresa Imrahel Torvask"
+        }
+      ],
+      "fecha": "2026-09-30",
+      "fuente_simulada": {
+        "en": "Mimics the shape of a UN Security Council sanctions list.",
+        "es": "Imita la forma de una lista de sanciones del Consejo de Seguridad de la ONU."
+      },
+      "id": "LV-01",
+      "nombre": {
+        "en": "Synthetic binding sanctions list",
+        "es": "Lista vinculante sintética de sanciones"
+      },
+      "version": "2026.09",
+      "vinculante": true
+    },
+    {
+      "entradas": [
+        {
+          "alias": [],
+          "id": "LC-01-001",
+          "motivo": {
+            "en": "Politically exposed person: simulated public office.",
+            "es": "Persona expuesta políticamente: cargo público simulado."
+          },
+          "nacimiento": 1979,
+          "nacionalidad": "SYN-J-01",
+          "nombre": "Rafael Sarkento Imrahel"
+        },
+        {
+          "alias": [],
+          "id": "LC-01-002",
+          "motivo": {
+            "en": "Politically exposed person: simulated public office.",
+            "es": "Persona expuesta políticamente: cargo público simulado."
+          },
+          "nacimiento": 1956,
+          "nacionalidad": "SYN-J-06",
+          "nombre": "Inés Tazurek Halvessen"
+        },
+        {
+          "alias": [],
+          "id": "LC-01-003",
+          "motivo": {
+            "en": "Politically exposed person: simulated public office.",
+            "es": "Persona expuesta políticamente: cargo público simulado."
+          },
+          "nacimiento": 1957,
+          "nacionalidad": "SYN-J-08",
+          "nombre": "Óscar Nazrovi Torvask"
+        },
+        {
+          "alias": [],
+          "id": "LC-01-004",
+          "motivo": {
+            "en": "Politically exposed person: simulated public office.",
+            "es": "Persona expuesta políticamente: cargo público simulado."
+          },
+          "nacimiento": 1952,
+          "nacionalidad": "SYN-J-01",
+          "nombre": "Sofía Fendralo Delmor"
+        },
+        {
+          "alias": [],
+          "id": "LC-01-005",
+          "motivo": {
+            "en": "Politically exposed person: simulated public office.",
+            "es": "Persona expuesta políticamente: cargo público simulado."
+          },
+          "nacimiento": 1970,
+          "nacionalidad": "SYN-J-08",
+          "nombre": "Ramiro Quertal Kelmiro"
+        },
+        {
+          "alias": [
+            "Beatriz Sarkento"
+          ],
+          "id": "LC-01-006",
+          "motivo": {
+            "en": "Politically exposed person: simulated public office.",
+            "es": "Persona expuesta políticamente: cargo público simulado."
+          },
+          "nacimiento": 1992,
+          "nacionalidad": "SYN-J-02",
+          "nombre": "Beatriz Sarkento Delmor"
+        },
+        {
+          "alias": [
+            "Ana Nazrovi"
+          ],
+          "id": "LC-01-007",
+          "motivo": {
+            "en": "Politically exposed person: simulated public office.",
+            "es": "Persona expuesta políticamente: cargo público simulado."
+          },
+          "nacimiento": 1962,
+          "nacionalidad": "SYN-J-07",
+          "nombre": "Ana Nazrovi Fendralo"
+        },
+        {
+          "alias": [],
+          "id": "LC-01-008",
+          "motivo": {
+            "en": "Politically exposed person: simulated public office.",
+            "es": "Persona expuesta políticamente: cargo público simulado."
+          },
+          "nacimiento": 1970,
+          "nacionalidad": "SYN-J-06",
+          "nombre": "Marta Ostavane Kelmiro"
+        },
+        {
+          "alias": [
+            "Pablo Delmor"
+          ],
+          "id": "LC-01-009",
+          "motivo": {
+            "en": "Politically exposed person: simulated public office.",
+            "es": "Persona expuesta políticamente: cargo público simulado."
+          },
+          "nacimiento": 1960,
+          "nacionalidad": "SYN-J-06",
+          "nombre": "Pablo Delmor Ostavane"
+        },
+        {
+          "alias": [],
+          "id": "LC-01-010",
+          "motivo": {
+            "en": "Politically exposed person: simulated public office.",
+            "es": "Persona expuesta políticamente: cargo público simulado."
+          },
+          "nacimiento": 1986,
+          "nacionalidad": "SYN-J-08",
+          "nombre": "Teresa Quertal Vosgrane"
+        }
+      ],
+      "fecha": "2026-08-31",
+      "fuente_simulada": {
+        "en": "Mimics the shape of a politically exposed persons list.",
+        "es": "Imita la forma de una lista de personas expuestas políticamente."
+      },
+      "id": "LC-01",
+      "nombre": {
+        "en": "Synthetic reference list of politically exposed persons",
+        "es": "Lista de consulta sintética de personas expuestas políticamente"
+      },
+      "version": "2026.08",
+      "vinculante": false
+    }
+  ],
+  "nombre": {
+    "en": "Synthetic control lists for demo B",
+    "es": "Listas de control sintéticas del demo B"
+  },
+  "puntaje": {
+    "actividad": {
+      "alto": 40,
+      "bajo": 0,
+      "medio": 20,
+      "sin_dato": 40
+    },
+    "coherencia": {
+      "coherente": 0,
+      "incoherente": 30,
+      "sin_dato": 30
+    },
+    "jurisdiccion": {
+      "alto": 30,
+      "bajo": 0,
+      "medio": 15,
+      "sin_dato": 30
+    }
+  },
+  "reglas_coincidencia": [
+    {
+      "id": "RL-01",
+      "texto": {
+        "en": "Exact match: the applicant's name, normalised (lower case, no accents, words in alphabetical order), equals the name or an alias of an entry.",
+        "es": "Coincidencia exacta: el nombre del solicitante, normalizado (minúsculas, sin tildes, palabras en orden alfabético), es igual al nombre o a un alias de una entrada."
+      }
+    },
+    {
+      "id": "RL-02",
+      "texto": {
+        "en": "Approximate match: Jaro-Winkler similarity between the normalised names; the highest across all entries and their aliases counts.",
+        "es": "Coincidencia aproximada: similitud de Jaro-Winkler entre los nombres normalizados; cuenta la mayor entre todas las entradas y sus alias."
+      }
+    },
+    {
+      "id": "RL-03",
+      "texto": {
+        "en": "A match on a binding list requires blocking and escalation (Colombian Law 1121 of 2006, art. 20; AMLR art. 76(5)).",
+        "es": "Una coincidencia en una lista vinculante obliga a bloquear y escalar (Ley 1121 de 2006, art. 20; AMLR art. 76(5))."
+      }
+    },
+    {
+      "id": "RL-04",
+      "texto": {
+        "en": "A match on a reference list calls for enhanced due diligence by a person, not a rejection.",
+        "es": "Una coincidencia en una lista de consulta exige debida diligencia reforzada por una persona, no un rechazo."
+      }
+    }
+  ],
+  "reglas_guardia": [
+    {
+      "id": "RG-01",
+      "texto": {
+        "en": "Input guard: if a document carries instructions aimed at the system, the case goes to the officer and that text changes no rule.",
+        "es": "Guardia de entrada: si un documento trae instrucciones dirigidas al sistema, el caso va al oficial y ese texto no cambia ninguna regla."
+      }
+    },
+    {
+      "id": "RG-02",
+      "texto": {
+        "en": "Output guard: the reply to the applicant carries no document numbers, phones or emails; the file only carries the applicant's document and the list identifiers.",
+        "es": "Guardia de salida: la respuesta al solicitante no lleva documentos, teléfonos ni correos; el expediente solo lleva el documento del solicitante y los identificadores de las listas."
+      }
+    },
+    {
+      "id": "RG-03",
+      "texto": {
+        "en": "Only allow-listed actions run: record the file and reply to the applicant.",
+        "es": "Solo se ejecutan las acciones de la lista blanca: registrar el expediente y responder al solicitante."
+      }
+    }
+  ],
+  "reglas_inconsistencia": [
+    {
+      "id": "RI-01",
+      "texto": {
+        "en": "A required detail is missing (name, document, year of birth, nationality, activity, income or jurisdiction of the funds): one inconsistency per detail.",
+        "es": "Falta un dato exigido (nombre, documento, año de nacimiento, nacionalidad, actividad, ingresos o jurisdicción de los fondos): cuenta una inconsistencia por dato."
+      }
+    },
+    {
+      "id": "RI-02",
+      "texto": {
+        "en": "The activity statement cites a different document from the identity document.",
+        "es": "La declaración de actividad cita un documento distinto del documento de identidad."
+      }
+    },
+    {
+      "id": "RI-03",
+      "texto": {
+        "en": "The source-of-funds statement cites a different holder from the identity's (normalised names).",
+        "es": "La declaración de origen de fondos cita a un titular distinto del de la identidad (nombres normalizados)."
+      }
+    }
+  ],
+  "reglas_propuesta": [
+    {
+      "id": "RD-01",
+      "texto": {
+        "en": "Propose rejection if the investigator concludes the applicant is the person on a binding-list entry.",
+        "es": "Proponer rechazar si el investigador concluye que el solicitante es la persona de una entrada de una lista vinculante."
+      }
+    },
+    {
+      "id": "RD-02",
+      "texto": {
+        "en": "Propose rejection if the identity cannot be verified (RI-02 or RI-03).",
+        "es": "Proponer rechazar si la identidad no se puede verificar (RI-02 o RI-03)."
+      }
+    },
+    {
+      "id": "RD-03",
+      "texto": {
+        "en": "Otherwise, propose approval. Every proposed rejection goes to the compliance officer.",
+        "es": "En otro caso, proponer aprobar. Toda propuesta de rechazo pasa por el oficial de cumplimiento."
+      }
+    }
+  ],
+  "reglas_puntaje": [
+    {
+      "id": "RP-01",
+      "texto": {
+        "en": "Economic activity: low risk 0, medium 20 (estimate) and high 40 points; no data, 40.",
+        "es": "Actividad económica: riesgo bajo 0, medio 20 (estimado) y alto 40 puntos; sin dato, 40."
+      }
+    },
+    {
+      "id": "RP-02",
+      "texto": {
+        "en": "Jurisdiction of the funds: low risk 0, medium 15 (estimate) and high 30 points; no data, 30.",
+        "es": "Jurisdicción de los fondos: riesgo bajo 0, medio 15 (estimado) y alto 30 puntos; sin dato, 30."
+      }
+    },
+    {
+      "id": "RP-03",
+      "texto": {
+        "en": "Consistency: income within the activity's typical range, 0 points; outside it, 30; no data, 30.",
+        "es": "Coherencia: ingresos dentro del rango típico de la actividad, 0 puntos; fuera, 30; sin dato, 30."
+      }
+    },
+    {
+      "id": "RP-04",
+      "texto": {
+        "en": "The name, nationality, year of birth and any detail that identifies the person do not enter the score.",
+        "es": "El nombre, la nacionalidad, el año de nacimiento y cualquier dato que identifique a la persona no entran al puntaje."
+      }
+    }
+  ],
+  "reglas_verdad": [
+    {
+      "id": "RV-01",
+      "texto": {
+        "en": "Known truth of the set: if the person is on a binding list, the correct decision is to reject.",
+        "es": "Verdad conocida del conjunto: si la persona está en una lista vinculante, la decisión correcta es rechazar."
+      }
+    },
+    {
+      "id": "RV-02",
+      "texto": {
+        "en": "Known truth of the set: if the identity cannot be verified, the correct decision is to reject.",
+        "es": "Verdad conocida del conjunto: si la identidad no se puede verificar, la decisión correcta es rechazar."
+      }
+    },
+    {
+      "id": "RV-03",
+      "texto": {
+        "en": "Known truth of the set: otherwise, the correct decision is to approve (with the officer when the plan requires it).",
+        "es": "Verdad conocida del conjunto: en otro caso, la decisión correcta es aprobar (con el oficial cuando el plan lo exige)."
+      }
+    }
+  ],
+  "unidad_de_ingreso": {
+    "en": "synthetic units a month",
+    "es": "unidades sintéticas al mes"
+  },
+  "version": "1.0.0"
+}

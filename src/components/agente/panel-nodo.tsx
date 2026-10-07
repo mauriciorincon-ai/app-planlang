@@ -19,6 +19,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import type { Idioma } from "@core/formatos/bilingue";
+import type { IdDemo } from "@/lib/demos";
 import type {
   ClaveCampo,
   PanelNodo as Panel,
@@ -213,10 +214,12 @@ function Experto({ p, idioma }: { p: Panel; idioma: Idioma }) {
 /** El detalle de un nodo: quién es, y lo que pide cada perfil (líder, experto), su código y sus trazas. */
 export function PanelNodo({
   p,
+  demo,
   tipoDe,
   idioma,
 }: {
   p: Panel;
+  demo: IdDemo;
   tipoDe: Readonly<Record<string, string>>;
   idioma: Idioma;
 }) {
@@ -240,7 +243,7 @@ export function PanelNodo({
           lider={PANEL.lider[idioma]}
           experto={PANEL.experto[idioma]}
           codigo={PANEL.codigo[idioma]}
-          trazas={`${PANEL.trazas[idioma]} · ${p.trazas.filas.length}`}
+          trazas={`${PANEL.trazas[idioma]} · ${p.trazas.total}`}
         />
         <PanelVista id="perfil" className="mt-1 min-w-0">
           <div className="solo-lider cambia-perfil">
@@ -263,7 +266,13 @@ export function PanelNodo({
           </p>
         </PanelVista>
         <PanelVista id="trazas" className="mt-1 min-w-0">
-          <TablaTrazas panel={p} tipoDe={tipoDe} idioma={idioma} chip={chip} />
+          <TablaTrazas
+            panel={p}
+            demo={demo}
+            tipoDe={tipoDe}
+            idioma={idioma}
+            chip={chip}
+          />
         </PanelVista>
       </div>
     </Vistas>

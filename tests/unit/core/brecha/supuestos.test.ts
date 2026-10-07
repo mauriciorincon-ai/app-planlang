@@ -72,7 +72,9 @@ describe("calibración (S1)", () => {
       null,
     );
     expect(r).toMatchObject({ estado: "refutado" });
-    expect(r?.motivo.es).toMatch(/ece_max/);
+    expect(r?.motivo.es).toBe(
+      "No cumple el umbral de confirmación: ece 0,2375 frente a un máximo de 0,01.",
+    );
     const todos = [extraido(0.9, true, "1"), extraido(0.8, true, "2")];
     const [r2] = evaluarSupuestos(
       conSupuestos(s1({ auroc_min: 0.75 })),
@@ -93,10 +95,10 @@ describe("calibración (S1)", () => {
     expect(r?.metricas.auroc).toBeNull();
     expect(r?.estado).toBe("refutado");
     expect(r?.motivo.es).toBe(
-      "No cumple el umbral de confirmación: ece_max. Sin valor medido: auroc.",
+      "No cumple el umbral de confirmación: ece 0,45 frente a un máximo de 0,1. Sin valor medido: auroc.",
     );
     expect(r?.motivo.en).toBe(
-      "It misses the confirmation threshold: ece_max. No measured value: auroc.",
+      "It misses the confirmation threshold: ece 0.45 against a maximum of 0.1. No measured value: auroc.",
     );
   });
   it("si su regla no puede medir, el supuesto lo dice y no culpa a la falta de valor (AU-7)", () => {

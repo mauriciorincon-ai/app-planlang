@@ -19,27 +19,31 @@ import {
   cargarDemo,
   datosDemo,
   esElPlanDeBeneficiosDeLaCorrida,
+  esLaListaDeLaCorrida,
 } from "@/lib/datos/vitrina";
 
 const copias: string[] = [];
-function copia(): string {
+function copia(demo: "demo-a" | "demo-b" = "demo-a"): string {
   const dir = mkdtempSync(join(tmpdir(), "planlang-vitrina-"));
   copias.push(dir);
   const m = JSON.parse(readFileSync("data/vitrina/manifiesto.json", "utf8"));
-  const d = m.demos["demo-a"];
+  const d = m.demos[demo];
   const c = JSON.parse(
     readFileSync(join(d.corrida.ruta, "corrida.json"), "utf8"),
   );
+  const propios =
+    demo === "demo-a"
+      ? ["data/vitrina/demo-a/spike-2026-09-26", "data/plan-beneficios"]
+      : ["data/listas"];
   for (const r of [
     "data/vitrina/manifiesto.json",
-    "data/vitrina/demo-a/grafo-codigo.json",
-    "data/vitrina/demo-a/spike-2026-09-26",
-    "data/plan-beneficios",
-    "plans/demo-a",
+    `data/vitrina/${demo}/grafo-codigo.json`,
+    ...propios,
+    `plans/${demo}`,
     d.informe.archivo,
     d.corrida.ruta,
     c.casos.archivo,
-    ...[...d.repeticiones, d.linea_base].map((x: { ruta: string }) =>
+    ...[...(d.repeticiones ?? []), d.linea_base].map((x: { ruta: string }) =>
       join(x.ruta, "corrida.json"),
     ),
   ])
@@ -53,13 +57,18 @@ afterAll(() => {
 describe("datos de la vitrina", () => {
   it("carga el demo A con plan, informe y entorno verificados, y lo memoriza", async () => {
     const d = await datosDemo();
-    expect(d.plan.version).toBe("1.3.0");
-    expect(d.informe.ficha_reproducibilidad.plan.version).toBe("1.3.0");
-    expect(d.manifiesto.corrida.sprint).toBe(1);
+    // Desde el S3, la corrida de 200 del plan v1.5 (fase 4), medida con el v1.5.2 de solo redacción (auditoría: F8 y la
+    // segunda pasada de la casilla 4, A1).
+    expect(d.plan.version).toBe("1.5.2");
+    expect(d.informe.ficha_reproducibilidad.plan.version).toBe("1.5.2");
+    expect(
+      d.informe.ficha_reproducibilidad.corrida.plan_de_ejecucion.version,
+    ).toBe("1.5.0");
+    expect(d.manifiesto.corrida.sprint).toBe(3);
     expect(d.entorno.paquetes.langgraph).toMatch(/^1\.2\./);
-    expect(d.corrida.trazas).toHaveLength(20);
+    expect(d.corrida.trazas).toHaveLength(200);
     expect(d.corrida.grafo.huella).toBe(d.corrida.manifiesto.version_grafo);
-    expect(d.lote.casos).toHaveLength(20);
+    expect(d.lote.casos).toHaveLength(200);
     expect(Object.keys(d.codigo.nodos)).toHaveLength(8);
     expect(d.planBeneficios.procedimientos).toHaveLength(40);
     expect(await datosDemo()).toBe(d);
@@ -69,18 +78,42 @@ describe("datos de la vitrina", () => {
     await expect(cargarDemo("demo-z")).rejects.toThrow(/no declara «demo-z»/);
   });
 
-  it("AU-S2-19 · rojo: un segundo demo en el manifiesto se detiene con su nombre (las páginas no tienen [demo])", async () => {
+  it("AU-S2-19 · rojo: un demo del manifiesto que la vitrina no sabe pintar se detiene con su nombre (ADR-014)", async () => {
     const dir = copia();
     const ruta = join(dir, "data/vitrina/manifiesto.json");
     const m = JSON.parse(readFileSync(ruta, "utf8"));
-    m.demos["demo-b"] = m.demos["demo-a"];
+    m.demos["demo-c"] = m.demos["demo-a"];
     writeFileSync(ruta, JSON.stringify(m));
     await expect(cargarDemo("demo-a", dir)).rejects.toThrow(
-      /declara «demo-b», pero la vitrina solo pinta «demo-a»; un demo nuevo exige rutas por demo/,
+      /declara «demo-c», que la vitrina no sabe pintar \(demo-a, demo-b\); un demo nuevo exige sus rutas/,
     );
   });
 
-  it("AU-S2-19 · rojo: una corrida sin plan de beneficios se nombra (antes, un TypeError sin nombre)", async () => {
+  it("AU-S3-28 · rojo: la corrida del B cita otra versión de las listas que la publicada", async () => {
+    const dir = copia("demo-b");
+    const rutaM = join(dir, "data/vitrina/manifiesto.json");
+    const m = JSON.parse(readFileSync(rutaM, "utf8"));
+    const ruta = join(dir, m.demos["demo-b"].corrida.ruta, "corrida.json");
+    const c = JSON.parse(readFileSync(ruta, "utf8"));
+    c.listas.version = "9.9.9";
+    delete c.huella;
+    const sellada = await conHuella(c);
+    writeFileSync(ruta, JSON.stringify(sellada));
+    m.demos["demo-b"].corrida.huella = sellada.huella;
+    const rutaI = join(dir, m.demos["demo-b"].informe.archivo);
+    const inf = JSON.parse(readFileSync(rutaI, "utf8"));
+    inf.ficha_reproducibilidad.corrida.huella = sellada.huella;
+    delete inf.huella;
+    const infSellado = await conHuella(inf);
+    writeFileSync(rutaI, JSON.stringify(infSellado));
+    m.demos["demo-b"].informe.huella = infSellado.huella;
+    writeFileSync(rutaM, JSON.stringify(m));
+    await expect(cargarDemo("demo-b", dir)).rejects.toThrow(
+      "corrió con las listas version «9.9.9» y data/listas/demo-b.json trae «1.0.0»",
+    );
+  });
+
+  it("AU-S2-19 · rojo: una corrida sin su mundo (el plan de beneficios del A) se nombra (antes, un TypeError sin nombre)", async () => {
     const dir = copia();
     const rutaM = join(dir, "data/vitrina/manifiesto.json");
     const m = JSON.parse(readFileSync(rutaM, "utf8"));
@@ -101,19 +134,21 @@ describe("datos de la vitrina", () => {
     writeFileSync(rutaI, JSON.stringify(infSellado));
     m.demos["demo-a"].informe.huella = infSellado.huella;
     writeFileSync(rutaM, JSON.stringify(m));
+    // Desde el S3 la corrida cita un solo mundo (plan de beneficios o listas): el lector la rechaza por esquema y lo
+    // dice con su nombre, antes de que la vitrina la pinte.
     await expect(cargarDemo("demo-a", dir)).rejects.toThrow(
-      /no declara su plan de beneficios/,
+      /ESQUEMA .*la corrida cita un solo mundo: plan de beneficios \(A\) o listas \(B\)/,
     );
   });
 
   it("rojo: el plan alterado no coincide con su huella", async () => {
     const dir = copia();
-    const ruta = join(dir, "plans/demo-a/v1.3.json");
+    const ruta = join(dir, "plans/demo-a/v1.5.2.json");
     const plan = JSON.parse(readFileSync(ruta, "utf8"));
     plan.nombre = { es: "otro", en: "other" };
     writeFileSync(ruta, JSON.stringify(plan));
     await expect(cargarDemo("demo-a", dir)).rejects.toThrow(
-      /plans\/demo-a\/v1\.3\.json no trae una huella válida \(no_coincide\)/,
+      /plans\/demo-a\/v1\.5\.2\.json no trae una huella válida \(no_coincide\)/,
     );
   });
 
@@ -121,10 +156,13 @@ describe("datos de la vitrina", () => {
     const dir = copia();
     const ruta = join(dir, "data/vitrina/manifiesto.json");
     const m = JSON.parse(readFileSync(ruta, "utf8"));
+    const real = String(m.demos["demo-a"].informe.huella).slice(0, 8);
     m.demos["demo-a"].informe.huella = "0".repeat(64);
     writeFileSync(ruta, JSON.stringify(m));
     await expect(cargarDemo("demo-a", dir)).rejects.toThrow(
-      /informe\.json tiene la huella ca000282…, el manifiesto declara 00000000…/,
+      new RegExp(
+        `informe\\.json tiene la huella ${real}…, el manifiesto declara 00000000…`,
+      ),
     );
   });
 
@@ -133,11 +171,13 @@ describe("datos de la vitrina", () => {
     const m = JSON.parse(
       readFileSync(join(dir, "data/vitrina/manifiesto.json"), "utf8"),
     );
-    const ruta = join(dir, m.demos["demo-a"].corrida.ruta, "trazas/A-004.json");
+    // A-017: negado tras una persona; la traza alterada dice «aprobar».
+    const ruta = join(dir, m.demos["demo-a"].corrida.ruta, "trazas/A-017.json");
     const t = JSON.parse(readFileSync(ruta, "utf8"));
+    expect(t.senales.decision_final).toBe("negar");
     t.senales.decision_final = "aprobar";
     writeFileSync(ruta, JSON.stringify(t));
-    await expect(cargarDemo("demo-a", dir)).rejects.toThrow(/A-004/);
+    await expect(cargarDemo("demo-a", dir)).rejects.toThrow(/A-017/);
   });
 
   it("rojo: el código por nodo sin su huella", async () => {
@@ -151,23 +191,24 @@ describe("datos de la vitrina", () => {
     );
   });
 
-  it("AU-S2-P-7 · rojo: una repetición regenerada no coincide con la huella del manifiesto", async () => {
+  // La corrida de 200 del S3 no se repite (pass^k sale de sus casos): las pruebas de AU-S2-P-7 recorren la misma
+  // verificación con la línea base, que pasa por el mismo lazo que las repeticiones.
+  it("AU-S2-P-7 · rojo: una corrida de comparación regenerada no coincide con la huella del manifiesto", async () => {
     const dir = copia();
     const m = JSON.parse(
       readFileSync(join(dir, "data/vitrina/manifiesto.json"), "utf8"),
     );
-    const r2 = join(
-      dir,
-      m.demos["demo-a"].repeticiones[0].ruta,
-      "corrida.json",
-    );
-    const cj = JSON.parse(readFileSync(r2, "utf8"));
+    const base = m.demos["demo-a"].linea_base;
+    const rb = join(dir, base.ruta, "corrida.json");
+    const cj = JSON.parse(readFileSync(rb, "utf8"));
     writeFileSync(
-      r2,
+      rb,
       JSON.stringify(await conHuella({ ...cj, fecha: "2026-09-30" })),
     );
     await expect(cargarDemo("demo-a", dir)).rejects.toThrow(
-      /v1\.2-r2\/corrida\.json tiene la huella [0-9a-f]{8}…, el manifiesto declara 0f5257d5…/,
+      new RegExp(
+        `-base\\/corrida\\.json tiene la huella [0-9a-f]{8}…, el manifiesto declara ${String(base.huella).slice(0, 8)}…`,
+      ),
     );
   });
 
@@ -175,19 +216,24 @@ describe("datos de la vitrina", () => {
     const dir = copia();
     const ruta = join(dir, "data/vitrina/manifiesto.json");
     const m = JSON.parse(readFileSync(ruta, "utf8"));
-    // Otra corrida con su huella válida (la r2 como si fuera la base): el informe midió otra.
-    m.demos["demo-a"].linea_base = m.demos["demo-a"].repeticiones[0];
+    // Otra corrida con su huella válida (la principal como si fuera la base): el informe midió otra.
+    m.demos["demo-a"].linea_base = {
+      ruta: m.demos["demo-a"].corrida.ruta,
+      huella: m.demos["demo-a"].corrida.huella,
+    };
     writeFileSync(ruta, JSON.stringify(m));
     await expect(cargarDemo("demo-a", dir)).rejects.toThrow(
       /la línea base que declara el manifiesto de «demo-a» no es la que midió su informe/,
     );
   });
 
-  it("AU-S2-P-7 · rojo: una repetición de menos en el manifiesto", async () => {
+  it("AU-S2-P-7 · rojo: una repetición en el manifiesto que el informe no midió", async () => {
     const dir = copia();
     const ruta = join(dir, "data/vitrina/manifiesto.json");
     const m = JSON.parse(readFileSync(ruta, "utf8"));
-    m.demos["demo-a"].repeticiones.pop();
+    // Una corrida con huella válida declarada como repetición: el informe no la midió.
+    expect(m.demos["demo-a"].repeticiones).toEqual([]);
+    m.demos["demo-a"].repeticiones.push(m.demos["demo-a"].linea_base);
     writeFileSync(ruta, JSON.stringify(m));
     await expect(cargarDemo("demo-a", dir)).rejects.toThrow(
       /las repeticiones que declara el manifiesto de «demo-a» no son las que midió su informe/,
@@ -216,6 +262,22 @@ describe("datos de la vitrina", () => {
     );
     await expect(cargarDemo("demo-a", dir)).rejects.toThrow(
       /grafo-codigo\.json es el código del demo «demo-b», no el de «demo-a»/,
+    );
+  });
+
+  it("AU-S3-28 · rojo: las listas no son las que nombra la corrida del B", () => {
+    expect(() =>
+      esLaListaDeLaCorrida(
+        {
+          archivo: "data/listas/demo-b.json",
+          id: "listas-demo-b",
+          version: "1.0.0",
+        },
+        { id: "listas-demo-b", version: "2.0.0" },
+        "demo-b",
+      ),
+    ).toThrow(
+      "corrió con las listas version «1.0.0» y data/listas/demo-b.json trae «2.0.0»",
     );
   });
 

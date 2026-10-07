@@ -43,14 +43,14 @@ describe("formato de la vitrina", () => {
   });
 });
 
-describe("P1 Entrada con la corrida real (plan v1.3 sobre el lote de la v1.2)", () => {
+describe("P1 Entrada con la corrida real (plan v1.5, corrida de 200)", () => {
   it("Planeé: las cinco partes del plan con su cuenta", () => {
     const v = vistaEntrada(datos, "es");
     expect(v.plan.partes.map((p) => [p.codigo, p.n])).toEqual([
       ["D", 6],
-      ["R", 8],
+      ["R", 10],
       ["S", 3],
-      ["C", 9],
+      ["C", 10],
       ["U", 4],
     ]);
     expect(v.plan.partes.find((p) => p.codigo === "C")?.fraccion).toBe(1);
@@ -68,61 +68,77 @@ describe("P1 Entrada con la corrida real (plan v1.3 sobre el lote de la v1.2)", 
       "redactor:modelo",
       "guardia_salida:regla",
     ]);
-    expect(v.agente.pie).toBe(`el agente del sprint 1 · 8${D}de${D}8 piezas`);
+    expect(v.agente.pie).toBe(`el agente del sprint 3 · 8${D}de${D}8 piezas`);
     expect(vistaEntrada(datos, "en").agente.pie).toBe(
-      `the sprint 1 agent · 8${D}of${D}8 pieces`,
+      `the sprint 3 agent · 8${D}of${D}8 pieces`,
     );
   });
 
-  it("Medí la brecha: 9 de 9 criterios, lo que falló nombrado y lo que no se probó", () => {
+  it("Medí la brecha: 10 de 10 criterios (C5 medido en una corrida, verificador 1.3.0) y lo que falló, nombrado", () => {
     const v = vistaEntrada(datos, "es");
-    expect(v.brecha.cuadros.every((c) => c.estado === "cumple")).toBe(true);
-    expect(v.brecha.cuadros).toHaveLength(9);
+    expect(v.brecha.cuadros).toHaveLength(10);
+    expect(v.brecha.cuadros.map((c) => c.estado)).toEqual([
+      "cumple",
+      "cumple",
+      "cumple",
+      "cumple",
+      "cumple",
+      "cumple",
+      "cumple",
+      "cumple",
+      "cumple",
+      "cumple",
+    ]);
     expect(v.brecha.leyenda.criteriosCumplen).toBe(
-      `9${D}de${D}9 criterios cumplen`,
+      `10${D}de${D}10 criterios cumplen`,
     );
+    expect(v.brecha.etiquetaCuadros).toBe("10 criterios: 10 cumplen");
     expect(v.brecha.fallas).toEqual([
+      { tipo: "fallo", texto: "Falló S2: dos aclaraciones bastan" },
       {
         tipo: "fallo",
         texto: "Falló S3: varios agentes, más lentos que uno solo",
       },
       {
         tipo: "fallo",
-        texto: `Falló lo no previsto: 5${D}respuestas fuera de formato`,
+        texto: `Falló lo no previsto: 3${D}fallas que solo vio un evaluador`,
       },
-      { tipo: "sin-probar", texto: "Sin probar S1: la confianza del modelo" },
     ]);
-    expect(v.brecha.pie).toBe(`corrida v1.2 · 20 casos${D}×${D}3`);
-    expect(v.fallasALaVista).toEqual({ n: 2, texto: `2${D}fallas a la vista` });
+    expect(v.brecha.pie).toBe(`corrida v1.5 · 200 casos${D}×${D}1`);
+    expect(v.fallasALaVista).toEqual({ n: 3, texto: `3${D}fallas a la vista` });
     const en = vistaEntrada(datos, "en");
     expect(en.brecha.fallas.map((f) => f.texto)).toEqual([
+      "S2 failed: two clarifications are enough",
       "S3 failed: several agents, slower than one",
-      `The unforeseen failed: 5${D}off-format answers`,
-      "S1 untested: the model’s confidence",
+      `The unforeseen failed: 3${D}failures only an evaluator saw`,
     ]);
+    expect(en.brecha.etiquetaCuadros).toBe("10 criteria: 10 met");
   });
 
   it("capacidad, veredicto, corrida y el bloque del experto", () => {
     const v = vistaEntrada(datos, "es");
-    expect(v.capacidad.casos.cifra).toBe(`20${D}×${D}3`);
+    expect(v.capacidad.casos.cifra).toBe(`200${D}×${D}1`);
     expect(v.capacidad.casos.texto).toBe(
       "casos por corrida, más una línea base de agente único",
     );
-    expect(v.capacidad.cruzada.cifra).toBe("233 · 0");
-    expect(v.capacidad.balance.cifra).toBe(`9${D}de${D}9 · 0${D}de${D}8`);
+    const rf = datos.informe.contrato_de_grafo.rf_09_2;
+    const total = rf.reduce((a, r) => a + r.visitas, 0);
+    expect(v.capacidad.cruzada.cifra).toBe(`${total} · 0`);
+    expect(v.capacidad.balance.cifra).toBe(`10${D}de${D}10 · 0${D}de${D}10`);
     expect(v.veredicto).toEqual({
       valor: "cumple_con_alertas",
-      detalle: `9${D}de${D}9 criterios · 0${D}de${D}8 riesgos · 2${D}fallas y 1${D}supuesto sin probar`,
+      detalle: `10${D}de${D}10 criterios · 0${D}de${D}10 riesgos · 3${D}fallas`,
     });
     expect(v.corrida).toEqual({
-      texto: `plan v1.3 · corrida con v1.2 · 20 casos${D}×${D}3 + línea base · 2026-09-27`,
-      chip: "real · sprint 1",
+      texto: `plan v1.5 · 200 casos${D}×${D}1 + línea base · 2026-10-04`,
+      chip: "real · sprint 3",
     });
     expect(v.experto.cruzada).toContain(
-      `0${D}diferencias en 233${D}decisiones de 4${D}corridas`,
+      `0${D}diferencias en ${total}${D}decisiones de 2${D}corridas`,
     );
+    // Los lotes de la regla 6 son las sesiones de 20, no el archivo de 200 casos.
     expect(v.experto.modelo).toMatch(
-      /^sonnet por la suscripción de Claude Code del autor, en lotes de 20/,
+      /^sonnet por la suscripción de Claude Code del autor, en lotes de 20 fuera de CI/,
     );
     expect(v.experto.pila).toBe(
       "LangGraph 1.2.12 · LangChain 1.4.2 · Python 3.12 · Claude Code 2.1.282",
@@ -142,43 +158,67 @@ describe("P1 Entrada con otra suerte (variantes)", () => {
     expect(v.brecha.cuadros[5].estado).toBe("sin-probar");
     expect(v.brecha.fallas[0].texto).toMatch(/^Falló C5: /);
     expect(v.brecha.fallas[1].texto).toMatch(/^Ocurrió R1: /);
-    expect(v.fallasALaVista.n).toBe(4);
+    // C5, R1, S2, S3 y lo no previsto.
+    expect(v.fallasALaVista.n).toBe(5);
     expect(v.brecha.etiquetaCuadros).toBe(
-      "9 criterios: 7 cumplen, 1 no cumplen (C5)",
+      "10 criterios: 8 cumplen, 1 no cumplen (C5)",
     );
     const en = vistaEntrada(d, "en");
     expect(en.brecha.fallas[0].texto).toMatch(/^C5 failed: /);
     expect(en.brecha.fallas[1].texto).toMatch(/^R1 occurred: /);
-    expect(en.brecha.etiquetaCuadros).toBe("9 criteria: 7 met, 1 not met (C5)");
+    expect(en.brecha.etiquetaCuadros).toBe(
+      "10 criteria: 8 met, 1 not met (C5)",
+    );
   });
 
-  it("sin fallas ni supuestos sin probar el detalle se acorta y la cifra lo dice", () => {
+  it("sin fallas ni pendientes el detalle se acorta y la cifra lo dice", () => {
     const d = variante((x) => {
       for (const s of x.informe.supuestos) s.estado = "confirmado";
+      for (const c of x.informe.criterios) c.estado = "cumple";
       x.informe.brechas_no_previstas.brechas = [];
     });
     const v = vistaEntrada(d, "es");
     expect(v.fallasALaVista).toEqual({ n: 0, texto: "Ninguna falla" });
     expect(vistaEntrada(d, "en").fallasALaVista.texto).toBe("No failures");
     expect(v.veredicto.detalle).toBe(
-      `9${D}de${D}9 criterios · 0${D}de${D}8 riesgos`,
+      `10${D}de${D}10 criterios · 0${D}de${D}10 riesgos`,
     );
     expect(v.brecha.fallas).toEqual([]);
+  });
+
+  it("un criterio incompleto sin otras fallas no es una falla, pero se dice", () => {
+    const d = variante((x) => {
+      for (const s of x.informe.supuestos) s.estado = "confirmado";
+      x.informe.brechas_no_previstas.brechas = [];
+      // La corrida publicada ya no tiene incompletos (verificador 1.3.0): se siembra uno.
+      x.informe.criterios.find((c) => c.id === "C5")!.estado = "incompleto";
+    });
+    const v = vistaEntrada(d, "es");
+    expect(v.fallasALaVista).toEqual({ n: 0, texto: "Ninguna falla" });
+    expect(v.veredicto.detalle).toBe(
+      `9${D}de${D}10 criterios · 0${D}de${D}10 riesgos · 1${D}criterio incompleto`,
+    );
+    expect(v.brecha.fallas.map((f) => f.tipo)).toEqual(["sin-probar"]);
   });
 
   it("sin línea base ni repeticiones, con el mismo plan que corrió y otro proveedor", () => {
     const d = variante((x) => {
       x.informe.ficha_reproducibilidad.linea_base = null;
       x.informe.ficha_reproducibilidad.repeticiones = [];
+      // El mismo plan que corrió: la versión del plan y la de ejecución coinciden.
       x.informe.ficha_reproducibilidad.plan.version = "1.2.0";
+      x.informe.ficha_reproducibilidad.corrida.plan_de_ejecucion.version =
+        "1.2.0";
       x.informe.ficha_reproducibilidad.corrida.proveedor = "anthropic";
     });
     const v = vistaEntrada(d, "en");
     expect(v.capacidad.casos).toMatchObject({
-      cifra: `20${D}×${D}1`,
+      cifra: `200${D}×${D}1`,
       texto: "cases per run",
     });
-    expect(v.corrida.texto).toBe(`plan v1.2 · 20 cases${D}×${D}1 · 2026-09-27`);
+    expect(v.corrida.texto).toBe(
+      `plan v1.2 · 200 cases${D}×${D}1 · 2026-10-04`,
+    );
     expect(v.experto.modelo).toBe(
       "sonnet through anthropic, in batches of 20 outside CI",
     );
@@ -191,11 +231,15 @@ describe("P1 Entrada con otra suerte (variantes)", () => {
     const una = variante((x) => {
       x.informe.brechas_no_previstas.brechas.splice(1);
     });
-    expect(vistaEntrada(una, "es").brecha.fallas[1].texto).toBe(
-      `Falló lo no previsto: 1${D}respuesta fuera de formato`,
+    const noPrevisto = (i: "es" | "en") =>
+      vistaEntrada(una, i).brecha.fallas.find((f) =>
+        /no previsto|unforeseen/.test(f.texto),
+      )!.texto;
+    expect(noPrevisto("es")).toBe(
+      `Falló lo no previsto: 1${D}falla que solo vio un evaluador`,
     );
-    expect(vistaEntrada(una, "en").brecha.fallas[1].texto).toBe(
-      `The unforeseen failed: 1${D}off-format answer`,
+    expect(noPrevisto("en")).toBe(
+      `The unforeseen failed: 1${D}failure only an evaluator saw`,
     );
   });
 

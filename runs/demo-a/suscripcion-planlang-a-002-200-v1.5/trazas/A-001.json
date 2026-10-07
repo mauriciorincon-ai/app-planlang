@@ -1,0 +1,141 @@
+{
+  "aclaraciones": [],
+  "caso_id": "A-001",
+  "cobertura": null,
+  "corrida_id": "suscripcion-planlang-a-002-200-v1.5",
+  "decisiones_de_arista": [
+    {
+      "desde": "enrutador",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 1,
+      "rama_tomada": "redactor",
+      "resultado": false,
+      "senal": "tipo_atencion",
+      "tipo": "tripleta",
+      "umbral_aplicado": "urgencia",
+      "valor_declarado": "urgencia",
+      "valor_observado": "ambulatoria"
+    },
+    {
+      "desde": "enrutador",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 2,
+      "paso": 1,
+      "rama_tomada": "redactor",
+      "resultado": true,
+      "senal": "servicio_exento",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": true
+    }
+  ],
+  "documento_adverso": null,
+  "error_de_esquema_en_traspaso": false,
+  "error_proveedor": null,
+  "extraccion": null,
+  "formato": "planlang-trace/v1",
+  "guardia_salida": {
+    "acciones_ejecutadas": [
+      "responder_afiliado"
+    ],
+    "acciones_intentadas": [
+      "responder_afiliado"
+    ],
+    "carga_detectada_en_entrada": false,
+    "hallazgos": [],
+    "severidad_accion": 0
+  },
+  "huella": "f2d0f033a49cd9053ccc8ba5ebb816a87610817d573cbae6218afb7fada44e1e",
+  "nodos_visitados": [
+    "enrutador",
+    "redactor",
+    "guardia_salida"
+  ],
+  "pasos": [
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 4,
+      "nodo": "enrutador",
+      "orden": 1,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "enrutador",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0.010218,
+      "duracion_ms": 4625,
+      "error_proveedor": null,
+      "inicio_ms": 4,
+      "nodo": "redactor",
+      "orden": 2,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 1346,
+        "salida": 377
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 1,
+      "error_proveedor": null,
+      "inicio_ms": 4632,
+      "nodo": "guardia_salida",
+      "orden": 3,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "regla",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    }
+  ],
+  "pausas_humanas": [],
+  "resultado": "completo",
+  "salida_final": {
+    "aviso_ia": {
+      "en": "Notice: this reply was drafted by an artificial intelligence in a simulation with synthetic data. No denial is issued without review by a person.",
+      "es": "Aviso: esta respuesta la redactó una inteligencia artificial en una simulación con datos sintéticos. Ninguna negación se emite sin la revisión de una persona."
+    },
+    "en": "Your request for a blood pressure control appointment for hypertension has been approved. You can schedule the appointment with your health care provider. This is a simulator using synthetic data.",
+    "es": "Su solicitud para la consulta de control de hipertensión arterial fue aprobada. Puede agendar la consulta con su proveedor de salud. Este es un simulador con datos sintéticos."
+  },
+  "senales": {
+    "campos_faltantes_count": null,
+    "carga_detectada": false,
+    "ciclos_aclaracion": 0,
+    "contradiccion_orden_texto": null,
+    "costo_estimado": null,
+    "decision_final": "aprobar",
+    "error_proveedor": null,
+    "latencia_total_s": 4.626,
+    "modo_texas": false,
+    "nodos_visitados": [
+      "enrutador",
+      "redactor",
+      "guardia_salida"
+    ],
+    "pausa_humana": false,
+    "propuesta": null,
+    "proveedor_no_disponible": false,
+    "senal_confianza": null,
+    "servicio_exento": true,
+    "severidad_accion": 0,
+    "tipo_atencion": "ambulatoria",
+    "tokens": 1723
+  },
+  "variante": "multiagente"
+}

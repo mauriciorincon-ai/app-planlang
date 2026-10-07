@@ -1,0 +1,474 @@
+{
+  "corrida_id": "suscripcion-planlang-b-001-20-base",
+  "formato": "planlang-ramas/v1",
+  "fuente": "python · app_agents.reglas_arista",
+  "huella": "391961a24983c4c738dee20aeb0d035a8ff8c060a0ab47349f300baad3e8b21e",
+  "umbrales_aplicados": {
+    "U1": 0.85,
+    "U2": 60,
+    "U3": 0,
+    "U4": 0.7
+  },
+  "visitas": [
+    {
+      "caso_id": "B-001",
+      "desde": "verificador_listas",
+      "paso": 3,
+      "rama_tomada": "puntaje",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "B-001",
+      "desde": "decision",
+      "paso": 5,
+      "rama_tomada": "pausa_humana",
+      "resultados": [
+        false,
+        false,
+        false,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "caso_id": "B-002",
+      "desde": "verificador_listas",
+      "paso": 3,
+      "rama_tomada": "puntaje",
+      "resultados": [
+        true
+      ]
+    },
+    {
+      "caso_id": "B-002",
+      "desde": "decision",
+      "paso": 5,
+      "rama_tomada": "pausa_humana",
+      "resultados": [
+        false,
+        true,
+        true,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "B-003",
+      "desde": "verificador_listas",
+      "paso": 3,
+      "rama_tomada": "puntaje",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "B-003",
+      "desde": "decision",
+      "paso": 5,
+      "rama_tomada": "redactor",
+      "resultados": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "B-004",
+      "desde": "verificador_listas",
+      "paso": 3,
+      "rama_tomada": "puntaje",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "B-004",
+      "desde": "decision",
+      "paso": 5,
+      "rama_tomada": "redactor",
+      "resultados": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "B-005",
+      "desde": "verificador_listas",
+      "paso": 3,
+      "rama_tomada": "puntaje",
+      "resultados": [
+        true
+      ]
+    },
+    {
+      "caso_id": "B-005",
+      "desde": "decision",
+      "paso": 5,
+      "rama_tomada": "pausa_humana",
+      "resultados": [
+        false,
+        true,
+        true,
+        false,
+        false,
+        true
+      ]
+    },
+    {
+      "caso_id": "B-006",
+      "desde": "verificador_listas",
+      "paso": 3,
+      "rama_tomada": "puntaje",
+      "resultados": [
+        true
+      ]
+    },
+    {
+      "caso_id": "B-006",
+      "desde": "decision",
+      "paso": 5,
+      "rama_tomada": "pausa_humana",
+      "resultados": [
+        false,
+        true,
+        true,
+        false,
+        false,
+        true
+      ]
+    },
+    {
+      "caso_id": "B-007",
+      "desde": "verificador_listas",
+      "paso": 3,
+      "rama_tomada": "puntaje",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "B-007",
+      "desde": "decision",
+      "paso": 5,
+      "rama_tomada": "redactor",
+      "resultados": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "B-008",
+      "desde": "verificador_listas",
+      "paso": 3,
+      "rama_tomada": "puntaje",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "B-008",
+      "desde": "decision",
+      "paso": 5,
+      "rama_tomada": "pausa_humana",
+      "resultados": [
+        false,
+        false,
+        false,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "caso_id": "B-009",
+      "desde": "verificador_listas",
+      "paso": 3,
+      "rama_tomada": "puntaje",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "B-009",
+      "desde": "decision",
+      "paso": 5,
+      "rama_tomada": "pausa_humana",
+      "resultados": [
+        false,
+        false,
+        false,
+        false,
+        true,
+        true
+      ]
+    },
+    {
+      "caso_id": "B-010",
+      "desde": "verificador_listas",
+      "paso": 3,
+      "rama_tomada": "puntaje",
+      "resultados": [
+        true
+      ]
+    },
+    {
+      "caso_id": "B-010",
+      "desde": "decision",
+      "paso": 5,
+      "rama_tomada": "redactor",
+      "resultados": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "B-011",
+      "desde": "verificador_listas",
+      "paso": 3,
+      "rama_tomada": "puntaje",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "B-011",
+      "desde": "decision",
+      "paso": 5,
+      "rama_tomada": "redactor",
+      "resultados": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "B-012",
+      "desde": "verificador_listas",
+      "paso": 3,
+      "rama_tomada": "puntaje",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "B-012",
+      "desde": "decision",
+      "paso": 5,
+      "rama_tomada": "redactor",
+      "resultados": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "B-013",
+      "desde": "verificador_listas",
+      "paso": 3,
+      "rama_tomada": "puntaje",
+      "resultados": [
+        true
+      ]
+    },
+    {
+      "caso_id": "B-013",
+      "desde": "decision",
+      "paso": 5,
+      "rama_tomada": "pausa_humana",
+      "resultados": [
+        false,
+        true,
+        true,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "B-014",
+      "desde": "verificador_listas",
+      "paso": 3,
+      "rama_tomada": "puntaje",
+      "resultados": [
+        true
+      ]
+    },
+    {
+      "caso_id": "B-014",
+      "desde": "decision",
+      "paso": 5,
+      "rama_tomada": "pausa_humana",
+      "resultados": [
+        false,
+        true,
+        true,
+        false,
+        false,
+        true
+      ]
+    },
+    {
+      "caso_id": "B-015",
+      "desde": "verificador_listas",
+      "paso": 3,
+      "rama_tomada": "puntaje",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "B-015",
+      "desde": "decision",
+      "paso": 5,
+      "rama_tomada": "pausa_humana",
+      "resultados": [
+        false,
+        false,
+        false,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "caso_id": "B-016",
+      "desde": "verificador_listas",
+      "paso": 3,
+      "rama_tomada": "puntaje",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "B-016",
+      "desde": "decision",
+      "paso": 5,
+      "rama_tomada": "pausa_humana",
+      "resultados": [
+        false,
+        false,
+        false,
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "B-017",
+      "desde": "verificador_listas",
+      "paso": 3,
+      "rama_tomada": "puntaje",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "B-017",
+      "desde": "decision",
+      "paso": 5,
+      "rama_tomada": "redactor",
+      "resultados": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "B-018",
+      "desde": "verificador_listas",
+      "paso": 3,
+      "rama_tomada": "puntaje",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "B-018",
+      "desde": "decision",
+      "paso": 5,
+      "rama_tomada": "pausa_humana",
+      "resultados": [
+        false,
+        false,
+        false,
+        false,
+        true,
+        false
+      ]
+    },
+    {
+      "caso_id": "B-019",
+      "desde": "verificador_listas",
+      "paso": 3,
+      "rama_tomada": "puntaje",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "B-019",
+      "desde": "decision",
+      "paso": 5,
+      "rama_tomada": "pausa_humana",
+      "resultados": [
+        true,
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "B-020",
+      "desde": "verificador_listas",
+      "paso": 3,
+      "rama_tomada": "puntaje",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "B-020",
+      "desde": "decision",
+      "paso": 5,
+      "rama_tomada": "pausa_humana",
+      "resultados": [
+        false,
+        false,
+        false,
+        false,
+        true,
+        true
+      ]
+    }
+  ]
+}

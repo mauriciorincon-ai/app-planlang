@@ -1,0 +1,421 @@
+{
+  "aclaraciones": [],
+  "caso_id": "A-006",
+  "cobertura": {
+    "alto_costo": false,
+    "causal": null,
+    "codigo_extraido": "SYN-P-017",
+    "codigo_orden": "SYN-P-017",
+    "contradiccion": false,
+    "estado_servicio": "requiere_autorizacion",
+    "propuesta": "aprobar_parcial",
+    "reglas_disparadas": [
+      "RB-08"
+    ],
+    "tope_cobertura": 240
+  },
+  "corrida_id": "suscripcion-planlang-a-002-200-v1.5-base",
+  "decisiones_de_arista": [
+    {
+      "desde": "enrutador",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 1,
+      "rama_tomada": "agente_unico",
+      "resultado": false,
+      "senal": "tipo_atencion",
+      "tipo": "tripleta",
+      "umbral_aplicado": "urgencia",
+      "valor_declarado": "urgencia",
+      "valor_observado": "ambulatoria"
+    },
+    {
+      "desde": "enrutador",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 2,
+      "paso": 1,
+      "rama_tomada": "agente_unico",
+      "resultado": false,
+      "senal": "servicio_exento",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    },
+    {
+      "desde": "agente_unico",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 2,
+      "rama_tomada": "verificador_cobertura",
+      "resultado": false,
+      "senal": "proveedor_no_disponible",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    },
+    {
+      "desde": "agente_unico",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "mayor_que",
+      "orden_arista": 2,
+      "paso": 2,
+      "rama_tomada": "verificador_cobertura",
+      "resultado": false,
+      "senal": "campos_faltantes_count",
+      "tipo": "tripleta",
+      "umbral_aplicado": 0,
+      "valor_declarado": 0,
+      "valor_observado": 0
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 4,
+      "rama_tomada": "cierre",
+      "resultado": false,
+      "senal": "carga_detectada",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "menor_que",
+      "orden_arista": 2,
+      "paso": 4,
+      "rama_tomada": "cierre",
+      "resultado": false,
+      "senal": "senal_confianza",
+      "tipo": "tripleta",
+      "umbral_aplicado": 0.75,
+      "valor_declarado": "umbral.U1",
+      "valor_observado": 0.95
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "mayor_que",
+      "orden_arista": 3,
+      "paso": 4,
+      "rama_tomada": "cierre",
+      "resultado": false,
+      "senal": "costo_estimado",
+      "tipo": "tripleta",
+      "umbral_aplicado": 1000,
+      "valor_declarado": "umbral.U2",
+      "valor_observado": 350
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 4,
+      "paso": 4,
+      "rama_tomada": "cierre",
+      "resultado": false,
+      "senal": "contradiccion_orden_texto",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 5,
+      "paso": 4,
+      "rama_tomada": "cierre",
+      "resultado": false,
+      "senal": "propuesta",
+      "tipo": "tripleta",
+      "umbral_aplicado": "negar",
+      "valor_declarado": "negar",
+      "valor_observado": "aprobar_parcial"
+    },
+    {
+      "desde": "decision",
+      "entradas": {
+        "modo_texas": false,
+        "propuesta": "aprobar_parcial"
+      },
+      "funcion": "texas_y_no_aprobar",
+      "inclusivo": null,
+      "operador": null,
+      "orden_arista": 6,
+      "paso": 4,
+      "rama_tomada": "cierre",
+      "resultado": false,
+      "senal": null,
+      "tipo": "funcion",
+      "umbral_aplicado": null,
+      "valor_declarado": null,
+      "valor_observado": null
+    }
+  ],
+  "documento_adverso": {
+    "aviso_ia": {
+      "en": "Notice: this reply was drafted by an artificial intelligence in a simulation with synthetic data. The part not covered was decided by a plan rule, without review by a person, because Texas mode is off; you can ask for a person to review it.",
+      "es": "Aviso: esta respuesta la redactó una inteligencia artificial en una simulación con datos sintéticos. La parte no cubierta la decidió una regla del plan, sin revisión de una persona, porque el modo Texas está apagado; puede pedir que una persona la revise."
+    },
+    "caso_id": "A-006",
+    "causal": {
+      "id": "tope_cobertura",
+      "norma": "Plan de beneficios sintético, RB-08",
+      "resumen": {
+        "en": "The plan covers this service up to 240 synthetic units; it does not cover the excess.",
+        "es": "El plan cubre este servicio hasta 240 unidades sintéticas; el excedente no lo cubre."
+      }
+    },
+    "completo": true,
+    "datos_usados": [
+      {
+        "campo": "procedimiento",
+        "valor": "SYN-P-017"
+      },
+      {
+        "campo": "diagnostico",
+        "valor": "SYN-D-04"
+      },
+      {
+        "campo": "costo_estimado",
+        "valor": 350
+      }
+    ],
+    "decidido_por": {
+      "en": "A benefit-plan rule (RB-08), without review by a person: Texas mode is off. You can ask for a person to review it.",
+      "es": "Una regla del plan de beneficios (RB-08), sin revisión de una persona: el modo Texas está apagado. Puede pedir que una persona la revise."
+    },
+    "decision": "aprobar_parcial",
+    "formato": "planlang-documento-adverso/v1",
+    "idiomas": [
+      "es",
+      "en"
+    ],
+    "monto": {
+      "aprobado": 240,
+      "negado": 110,
+      "solicitado": 350,
+      "unidad": {
+        "en": "synthetic units",
+        "es": "unidades sintéticas"
+      }
+    },
+    "regla_disparada": {
+      "id": "RB-08",
+      "texto": {
+        "en": "Coverage cap: if the estimated cost exceeds what the plan covers for that service, it is approved up to the cap and the excess is denied. It is a partial denial: with Texas mode on, a person decides it.",
+        "es": "Tope de cobertura: si el costo estimado supera lo que el plan cubre para ese servicio, se aprueba hasta el tope y el excedente se niega. Es una negación parcial: con el modo Texas encendido, la decide una persona."
+      }
+    },
+    "servicio": {
+      "codigo": "SYN-P-017",
+      "nombre": {
+        "en": "Physical therapy (10 sessions)",
+        "es": "Terapia física (10 sesiones)"
+      }
+    },
+    "version": {
+      "plan": {
+        "huella": "e1dc89c72a37bf780bd3ddd5225dff84284da6bedabe6aae9f8b3bc670c57ee1",
+        "id": "plan-demo-a",
+        "version": "1.5.0"
+      },
+      "plan_beneficios": {
+        "huella": "aea5fe3ad425157460439e908f7eaa39d314816262d9ed70e7addc9dcdf9c338",
+        "id": "pb-demo-a",
+        "version": "2.0.0"
+      }
+    },
+    "via_de_contradiccion": {
+      "en": "You can ask for this decision to be reviewed: file a review request with the insurer, with this document, within the legal deadlines; you can also go to Colombia's National Health Superintendency. This simulation has no real procedure.",
+      "es": "Puede pedir que se revise esta decisión: presente una solicitud de revisión ante la entidad, con este documento, dentro de los plazos de ley; también puede acudir a la Superintendencia Nacional de Salud. En esta simulación no hay un trámite real."
+    }
+  },
+  "error_de_esquema_en_traspaso": false,
+  "error_proveedor": null,
+  "extraccion": {
+    "campos": {
+      "costo_estimado": 350,
+      "diagnostico": "SYN-D-04",
+      "procedimiento": "SYN-P-017",
+      "urgencia": false
+    },
+    "campos_faltantes": [],
+    "confianza": 0.95,
+    "costo_estimado": 350,
+    "urgencia": false
+  },
+  "formato": "planlang-trace/v1",
+  "guardia_salida": {
+    "acciones_ejecutadas": [
+      "responder_afiliado"
+    ],
+    "acciones_intentadas": [
+      "responder_afiliado"
+    ],
+    "carga_detectada_en_entrada": false,
+    "hallazgos": [],
+    "severidad_accion": 0
+  },
+  "huella": "f8532fc3f6acad3071375174d26178458653eb4dce71790ffee6732ea5e00abc",
+  "nodos_visitados": [
+    "enrutador",
+    "agente_unico",
+    "verificador_cobertura",
+    "decision",
+    "cierre",
+    "guardia_salida"
+  ],
+  "pasos": [
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 0,
+      "nodo": "enrutador",
+      "orden": 1,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "enrutador",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0.021298,
+      "duracion_ms": 5289,
+      "error_proveedor": null,
+      "inicio_ms": 1,
+      "nodo": "agente_unico",
+      "orden": 2,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 4382,
+        "salida": 831
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 5291,
+      "nodo": "verificador_cobertura",
+      "orden": 3,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "regla",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 5292,
+      "nodo": "decision",
+      "orden": 4,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "enrutador",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 5292,
+      "nodo": "cierre",
+      "orden": 5,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "regla",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 1,
+      "error_proveedor": null,
+      "inicio_ms": 5292,
+      "nodo": "guardia_salida",
+      "orden": 6,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "regla",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    }
+  ],
+  "pausas_humanas": [],
+  "resultado": "completo",
+  "salida_final": {
+    "aviso_ia": {
+      "en": "Notice: this reply was drafted by an artificial intelligence in a simulation with synthetic data. The part not covered was decided by a plan rule, without review by a person, because Texas mode is off; you can ask for a person to review it.",
+      "es": "Aviso: esta respuesta la redactó una inteligencia artificial en una simulación con datos sintéticos. La parte no cubierta la decidió una regla del plan, sin revisión de una persona, porque el modo Texas está apagado; puede pedir que una persona la revise."
+    },
+    "en": "Dear member: we reviewed the request for physical therapy (10 sessions) indicated by your physician for the diagnosis of lumbar disc herniation. This procedure is covered by your benefit plan, with a coverage limit of 240 synthetic units. The estimated cost of the order is 350 synthetic units, so we approve coverage up to the 240-unit limit. The remaining 110 synthetic units are not covered by the plan and will be the member's responsibility. If you have questions, you may contact your health service provider. Sincerely, Authorizations Department.",
+    "es": "Estimado afiliado: revisamos la solicitud de terapia física (10 sesiones) indicada por su médico para el diagnóstico de hernia discal lumbar. El procedimiento está cubierto por su plan de beneficios, con un tope de cobertura de 240 unidades sintéticas. El costo estimado de la orden es de 350 unidades sintéticas, por lo que aprobamos la cobertura hasta el tope de 240 unidades. La diferencia de 110 unidades sintéticas no está cubierta por el plan y corresponderá al afiliado. Si tiene preguntas, puede comunicarse con su proveedor de servicios de salud. Atentamente, Departamento de Autorizaciones."
+  },
+  "senales": {
+    "campos_faltantes_count": 0,
+    "carga_detectada": false,
+    "ciclos_aclaracion": 0,
+    "contradiccion_orden_texto": false,
+    "costo_estimado": 350,
+    "decision_final": "aprobar_parcial",
+    "error_proveedor": null,
+    "latencia_total_s": 5.29,
+    "modo_texas": false,
+    "nodos_visitados": [
+      "enrutador",
+      "agente_unico",
+      "verificador_cobertura",
+      "decision",
+      "cierre",
+      "guardia_salida"
+    ],
+    "pausa_humana": false,
+    "propuesta": "aprobar_parcial",
+    "proveedor_no_disponible": false,
+    "senal_confianza": 0.95,
+    "servicio_exento": false,
+    "severidad_accion": 0,
+    "tipo_atencion": "ambulatoria",
+    "tokens": 5213
+  },
+  "variante": "agente_unico"
+}

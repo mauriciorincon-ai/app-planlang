@@ -1,13 +1,20 @@
+import { readdirSync } from "node:fs";
 import { expect, test } from "@playwright/test";
 import { consolaLimpia, desbordeLateral, sinViolacionesAxe } from "./_comun";
 
 /**
- * P6 Casos en el export servido (S2 fase 2): el índice y la página de cada caso se leen en los dos idiomas, temas y
- * perfiles sin desplazar la página de lado y sin violaciones de axe (críticas, serias ni moderadas); el selector lleva a cada caso y marca el
- * actual; un caso con pausa humana y documento adverso (A-004) los muestra y uno que no los tuvo (A-001) no los
- * inventa; el cambio de idioma conserva el caso; la marca de inyección (A-006) y el diálogo de aclaración (A-008) se
+ * P6 Casos en el export servido (S2 fase 2; corrida de 200 del plan v1.5 desde el S3): el índice y la página de cada
+ * caso se leen en los dos idiomas, temas y perfiles sin desplazar la página de lado y sin violaciones de axe (críticas,
+ * serias ni moderadas); el selector lleva a los casos con página (los 20 primeros y los que nombra el informe) y marca
+ * el actual; un caso con pausa humana y documento adverso (A-017) los muestra y uno que no los tuvo (A-001) no los
+ * inventa; el cambio de idioma conserva el caso; la marca de inyección (A-016) y el diálogo de aclaración (A-013) se
  * ven; y con movimiento reducido lo del experto aparece visible.
  */
+
+/** Las páginas de caso del A que salieron en el export (las que el selector debe enlazar, ni una más). */
+const PAGINAS_A = readdirSync("out/es/caso").filter((f) =>
+  /^A-\d+\.html$/.test(f),
+).length;
 
 const T = {
   es: {
@@ -42,7 +49,7 @@ for (const idioma of ["es", "en"] as const) {
   const t = T[idioma];
 
   test.describe(`P6 Casos (${idioma})`, () => {
-    test("del índice a un caso: el selector lleva a los 20, marca el actual y conserva el caso al cambiar de idioma", async ({
+    test("del índice a un caso: el selector lleva a los casos con página, marca el actual y conserva el caso al cambiar de idioma", async ({
       page,
     }) => {
       const errores = consolaLimpia(page);
@@ -58,32 +65,34 @@ for (const idioma of ["es", "en"] as const) {
         name: t.selector,
         exact: true,
       });
-      await expect(selector.getByRole("link")).toHaveCount(20);
+      expect(PAGINAS_A).toBeGreaterThan(20);
+      expect(PAGINAS_A).toBeLessThan(200);
+      await expect(selector.getByRole("link")).toHaveCount(PAGINAS_A);
       await expect(selector.locator("[aria-current]")).toHaveCount(0);
       expect(await desbordeLateral(page)).toBeLessThanOrEqual(0);
       await sinViolacionesAxe(page);
 
-      await selector.getByRole("link", { name: /^A-004/ }).click();
-      await expect(page).toHaveURL(new RegExp(`/${idioma}/caso/A-004$`));
+      await selector.getByRole("link", { name: /^A-017/ }).click();
+      await expect(page).toHaveURL(new RegExp(`/${idioma}/caso/A-017$`));
       await expect(
-        selector.getByRole("link", { name: /^A-004/ }),
+        selector.getByRole("link", { name: /^A-017/ }),
       ).toHaveAttribute("aria-current", "page");
       await expect(selector.locator("[aria-current]")).toHaveCount(1);
 
       const otro = idioma === "es" ? "en" : "es";
       await page.locator(`header a[hreflang="${otro}"]`).click();
-      await expect(page).toHaveURL(new RegExp(`/${otro}/caso/A-004$`));
+      await expect(page).toHaveURL(new RegExp(`/${otro}/caso/A-017$`));
       expect(errores).toEqual([]);
     });
 
-    test("A-004 se lee completo en los dos temas y perfiles: pausa, documento y, para el experto, las señales", async ({
+    test("A-017 se lee completo en los dos temas y perfiles: pausa, documento y, para el experto, las señales", async ({
       page,
     }) => {
       const errores = consolaLimpia(page);
       for (const tema of ["oscuro", "claro"])
         for (const perfil of ["lider", "experto"]) {
           await page.goto(
-            `/${idioma}/caso/A-004?tema=${tema}&perfil=${perfil}`,
+            `/${idioma}/caso/A-017?tema=${tema}&perfil=${perfil}`,
           );
           for (const h of [
             t.mirada,
@@ -121,17 +130,17 @@ for (const idioma of ["es", "en"] as const) {
       await sinViolacionesAxe(page);
     });
 
-    test("A-006 marca la instrucción escondida y A-008 muestra el diálogo de aclaración", async ({
+    test("A-016 marca la instrucción escondida y A-013 muestra el diálogo de aclaración", async ({
       page,
     }) => {
-      await page.goto(`/${idioma}/caso/A-006`);
+      await page.goto(`/${idioma}/caso/A-016`);
       const marca = page.locator("mark");
       await expect(marca).toHaveCount(1);
       await expect(marca).toBeVisible();
       await expect(marca).toContainText(t.inyeccion);
       expect(await desbordeLateral(page)).toBeLessThanOrEqual(0);
 
-      await page.goto(`/${idioma}/caso/A-008`);
+      await page.goto(`/${idioma}/caso/A-013`);
       await expect(page.locator("mark")).toHaveCount(0);
       const preguntas = page.getByText(t.pregunta, { exact: true });
       expect(await preguntas.count()).toBeGreaterThanOrEqual(1);
@@ -146,7 +155,7 @@ test.describe("movimiento reducido", () => {
   test("en un caso, lo del experto aparece visible, sin animación, y axe sigue limpio", async ({
     page,
   }) => {
-    await page.goto("/es/caso/A-004?perfil=lider");
+    await page.goto("/es/caso/A-017?perfil=lider");
     await page
       .getByRole("group", { name: "Leer como" })
       .getByRole("button", { name: "Experto" })

@@ -1,6 +1,6 @@
 /**
- * Conversor grafo compilado + contrato de grafo del plan → mapa del contrato del diagramador 0.3.0 (gramática
- * `agentes-ia` 1.1.0). Reglas (ADR-010):
+ * Conversor grafo compilado + contrato de grafo del plan → mapa del contrato del diagramador 0.5.0 (gramática
+ * `agentes-ia` 1.2.0). Reglas (ADR-010 y su adenda del S3):
  *
  * - Nodo del plan presente en el grafo → madurez `implementado`; del plan y ausente → `exigido-por-el-plan`
  *   (el dibujo lo marca «exigido»); del grafo y fuera del plan → `implementado` con la referencia opaca
@@ -8,10 +8,12 @@
  * - Banda por tipo: enrutador → orquestación · modelo y herramienta → agentes · regla → reglas · pausa humana →
  *   pausa humana. Las franjas transversales no reciben nodos del grafo.
  * - Un flujo por REGLA del plan (una arista de LangGraph puede llevar varias: enrutador → redactor lleva dos),
- *   uno por rama por defecto (`condicion` `rama-por-defecto = true`, el «si no»), uno por arista incondicional
- *   (`secuencia`, o `reanudacion` si sale de una pausa humana). Una regla que es función nombrada lleva la
- *   condición `<funcion> = true` (convención propuesta como enmienda `condicion.funcion`).
- * - `__start__` y `__end__` no son nodos del mapa (no hay tipo terminal en 0.3.0): los dibuja el visor.
+ *   uno por rama por defecto (`condicion` `{ por_defecto: true }`, el «si no»), uno por arista incondicional
+ *   (`secuencia`, o `reanudacion` si sale de una pausa humana). Una regla que es función nombrada lleva
+ *   `{ funcion, entradas }` con las señales que lee (§ 3.4).
+ * - `__start__` y `__end__` no son nodos del mapa: el nodo que sigue a `__start__` lleva `papel: "inicio"` y el
+ *   que llega a `__end__`, `papel: "fin"` (§ 3.3); el visor dibuja el marcador junto a su tarjeta.
+ * - Los `recorridos` (§ 3.5) llegan armados desde las trazas (`recorridos.ts`).
  */
 import type {
   AristaCondicional,
@@ -19,7 +21,8 @@ import type {
   PausaHumana,
 } from "../plan/esquema";
 import { esAristaTripleta } from "../plan/esquema";
-import { idDeMapa } from "./ids";
+import { esFuncion, esPorDefecto } from "./condicion";
+import { idDeCodigo, idDeMapa } from "./ids";
 import type {
   Condicion,
   FlujoMapa,
@@ -28,13 +31,14 @@ import type {
   Mapa,
   NodoMapa,
   Operador,
+  Recorrido,
   TextoIdioma,
 } from "./tipos";
 
 export const INICIO = "__start__";
 export const FIN = "__end__";
 export const FUERA_DEL_CONTRATO = "planlang:fuera-del-contrato";
-export const SENAL_POR_DEFECTO = "rama-por-defecto";
+export const CONTRATO_VERSION = "0.5.0";
 
 export interface GrafoParaMapa {
   nodos: ReadonlyArray<{ id: string; tipo: string }>;
@@ -66,6 +70,21 @@ export interface EntradaMapa {
   version: string;
   /** Fecha de la corrida (entrada: el núcleo no lee el reloj). */
   fecha: string;
+  /** Los caminos de las trazas como recorridos del contrato (`recorridosDeTrazas`); vacío si no hay trazas. */
+  recorridos?: Recorrido[];
+}
+
+/**
+ * La versión del mapa como semver (el contrato la exige): la del plan va en dos partes (`1.4` → `1.4.0`).
+ * Lo que no es una versión numérica se rechaza en vez de inventarle una.
+ */
+export function versionDeMapa(v: string): string {
+  if (/^[0-9]+\.[0-9]+\.[0-9]+$/.test(v)) return v;
+  if (/^[0-9]+\.[0-9]+$/.test(v)) return `${v}.0`;
+  if (/^[0-9]+$/.test(v)) return `${v}.0.0`;
+  throw new Error(
+    `visor: «${v}» no es una versión numérica para el mapa (semver)`,
+  );
 }
 
 export const BANDA_DE_TIPO: Readonly<Record<string, string>> = {
@@ -118,7 +137,10 @@ export function condicionDeRegla(a: AristaCondicional): Condicion {
       valor: valorDeCondicion(a.valor),
     };
   }
-  return { senal: idDeMapa(a.funcion.nombre), operador: "=", valor: true };
+  return {
+    funcion: a.funcion.nombre,
+    entradas: a.funcion.entradas.map(idDeMapa),
+  };
 }
 
 const QUE_VIAJA: TextoIdioma = {
@@ -127,7 +149,10 @@ const QUE_VIAJA: TextoIdioma = {
 };
 
 function textoCondicion(c: Condicion): string {
-  return `${c.senal.replaceAll("-", "_")} ${c.operador} ${String(c.valor)}`;
+  if (esFuncion(c))
+    return `${c.funcion}(${c.entradas.map(idDeCodigo).join(", ")})`;
+  if (esPorDefecto(c)) return "";
+  return `${idDeCodigo(c.senal)} ${c.operador} ${String(c.valor)}`;
 }
 
 function liderDeFlujo(
@@ -146,7 +171,7 @@ function liderDeFlujo(
       es: `Después de ${origen}, sigue ${destino}.`,
       en: `After ${origen}, ${destino} runs.`,
     };
-  if (c && c.senal === SENAL_POR_DEFECTO)
+  if (esPorDefecto(c))
     return {
       es: `Si ninguna regla de ${origen} se cumple, el caso sigue a ${destino}.`,
       en: `If none of ${origen}'s rules holds, the case moves on to ${destino}.`,
@@ -254,24 +279,48 @@ export function construirMapa(e: EntradaMapa): Mapa {
         a.source,
         a.target,
         "condicional",
-        { senal: SENAL_POR_DEFECTO, operador: "=", valor: true },
+        { por_defecto: true },
         "-defecto",
       );
   }
 
+  // Terminales (§ 3.3): el papel va en el dato; un nodo no puede ser inicio y fin a la vez.
+  const t = terminales(e.grafo);
+  for (const n of nodos) {
+    const inicio = t.inicio.includes(n.id);
+    const fin = t.fin.includes(n.id);
+    if (inicio && fin)
+      throw new Error(
+        `visor: «${n.id}» es a la vez el inicio y el fin del grafo`,
+      );
+    if (inicio) n.papel = "inicio";
+    if (fin) n.papel = "fin";
+  }
+
   return {
-    contrato_version: "0.3.0",
+    contrato_version: CONTRATO_VERSION,
     gramatica_id: e.gramatica.id,
     gramatica_version: e.gramatica.version,
     sujeto_id: e.sujeto_id,
     sujeto_nombre: e.sujeto_nombre,
-    version: e.version,
+    version: versionDeMapa(e.version),
     fecha_actualizacion: e.fecha,
     estado: "aprobada",
     bloques: [],
     nodos,
     flujos,
-    recorridos: [],
+    recorridos: e.recorridos ?? [],
+  };
+}
+
+/** Los terminales del dibujo, leídos del DATO del mapa (`papel`), en el orden de los nodos. */
+export function terminalesDelMapa(mapa: Mapa): {
+  inicio: string[];
+  fin: string[];
+} {
+  return {
+    inicio: mapa.nodos.filter((n) => n.papel === "inicio").map((n) => n.id),
+    fin: mapa.nodos.filter((n) => n.papel === "fin").map((n) => n.id),
   };
 }
 

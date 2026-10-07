@@ -17,8 +17,21 @@ import {
 import { sha256Hex, verificarHuella } from "@core/formatos/huella";
 import type { JsonValor } from "@core/formatos/jcs";
 import { PlanSchema, type Plan } from "@core/plan/esquema";
+import {
+  ListasSchema,
+  LoteBSchema,
+  type ListasB as Listas,
+  type LoteB,
+} from "@core/sintetico/demo-b/esquema";
 import { LoteSchema, type Lote } from "@core/sintetico/esquema";
 import type { GrafoParaMapa } from "@core/visor/mapa";
+import {
+  DEMO_PUBLICADO,
+  DEMOS,
+  demoSinDespacho,
+  esIdDemo,
+  type IdDemo,
+} from "@/lib/demos";
 import type { z } from "zod";
 import {
   EntornoCorridaSchema,
@@ -35,23 +48,44 @@ import {
   type PlanBeneficiosMinimo,
 } from "./esquemas";
 
-export interface DatosDemo {
-  id: string;
+/**
+ * Los demos que la vitrina sabe pintar: cada uno tiene sus rutas (`ruta()`, ADR-014) y sus textos de dominio. Un demo
+ * del manifiesto que no esté aquí detiene el build con su nombre (AU-S2-19).
+ */
+export const DEMOS_DE_LA_VITRINA = DEMOS;
+export type { IdDemo };
+
+interface DatosComunes {
   manifiesto: DemoDelManifiesto;
   plan: Plan;
   informe: Informe;
   entorno: EntornoCorrida;
   /** La corrida que declara el manifiesto, verificada entera (grafo, ramas y trazas con sus huellas). */
   corrida: CorridaLeida;
-  /** El lote sintético de la corrida: los casos con su verdad conocida. */
-  lote: Lote;
   /** Código por nodo del grafo (pestaña «Código» de P3). */
   codigo: GrafoCodigo;
-  /** El plan de beneficios sintético con que corrió (la huella es la que declara la corrida). */
-  planBeneficios: PlanBeneficiosMinimo;
   /** El spike de la F1, si el manifiesto lo declara: su grafo con la lectura del autor. */
   spike: SpikeLeido | null;
 }
+
+/** El demo A: autorización previa; su mundo es el plan de beneficios sintético. */
+export interface DatosDemoA extends DatosComunes {
+  id: "demo-a";
+  /** El lote sintético de la corrida: los casos con su verdad conocida. */
+  lote: Lote;
+  /** El plan de beneficios sintético con que corrió (la huella es la que declara la corrida). */
+  planBeneficios: PlanBeneficiosMinimo;
+}
+
+/** El demo B: vinculación con debida diligencia; su mundo son las listas de control sintéticas. */
+export interface DatosDemoB extends DatosComunes {
+  id: "demo-b";
+  lote: LoteB;
+  /** Las listas de control con que corrió (la huella es la que declara la corrida). */
+  listas: Listas;
+}
+
+export type DatosDemo = DatosDemoA | DatosDemoB;
 
 export interface SpikeLeido {
   fecha: string;
@@ -152,10 +186,28 @@ export function esElPlanDeBeneficiosDeLaCorrida(
   pb: { id: string; version: string },
   demo: string,
 ): void {
+  esElMundoDeLaCorrida(ref, pb, demo, "el plan de beneficios");
+}
+
+/** Las listas que cita la corrida del B (`corrida.listas.{id,version}`) son las del archivo publicado (AU-S3-28). */
+export function esLaListaDeLaCorrida(
+  ref: { archivo: string; id?: string; version?: string },
+  listas: { id: string; version: string },
+  demo: string,
+): void {
+  esElMundoDeLaCorrida(ref, listas, demo, "las listas");
+}
+
+function esElMundoDeLaCorrida(
+  ref: { archivo: string; id?: string; version?: string },
+  mundo: { id: string; version: string },
+  demo: string,
+  que: string,
+): void {
   for (const k of ["id", "version"] as const)
-    if (ref[k] !== undefined && ref[k] !== pb[k])
+    if (ref[k] !== undefined && ref[k] !== mundo[k])
       throw new Error(
-        `vitrina: la corrida de «${demo}» corrió con el plan de beneficios ${k} «${ref[k]}» y ${ref.archivo} trae «${pb[k]}».`,
+        `vitrina: la corrida de «${demo}» corrió con ${que} ${k} «${ref[k]}» y ${ref.archivo} trae «${mundo[k]}».`,
       );
 }
 
@@ -168,17 +220,18 @@ export async function cargarDemo(
   const manifiesto = ManifiestoVitrinaSchema.parse(
     leer("data/vitrina/manifiesto.json"),
   );
-  // Las páginas no llevan segmento `[demo]`: todas pintan el demo A. Un segundo demo en el manifiesto se detiene
-  // aquí con su nombre, en lugar de no aparecer o de caer más adelante con un error sin nombre (AU-S2-19).
-  const otros = Object.keys(manifiesto.demos).filter(
-    (x) => x !== DEMO_PUBLICADO,
+  // Un demo del manifiesto sin rutas ni textos en la vitrina se detiene aquí con su nombre, en lugar de no aparecer o
+  // de caer más adelante con un error sin nombre (AU-S2-19).
+  const desconocidos = Object.keys(manifiesto.demos).filter(
+    (x) => !(DEMOS_DE_LA_VITRINA as readonly string[]).includes(x),
   );
-  if (otros.length)
+  if (desconocidos.length)
     throw new Error(
-      `vitrina: el manifiesto declara ${otros.map((x) => `«${x}»`).join(", ")}, pero la vitrina solo pinta «${DEMO_PUBLICADO}»; un demo nuevo exige rutas por demo (segmento [demo]) antes de entrar al manifiesto.`,
+      `vitrina: el manifiesto declara ${desconocidos.map((x) => `«${x}»`).join(", ")}, que la vitrina no sabe pintar (${DEMOS_DE_LA_VITRINA.join(", ")}); un demo nuevo exige sus rutas (ADR-014) y sus textos de dominio antes de entrar al manifiesto.`,
     );
   const demo = manifiesto.demos[id];
-  if (!demo) throw new Error(`vitrina: el manifiesto no declara «${id}».`);
+  if (!demo || !esIdDemo(id))
+    throw new Error(`vitrina: el manifiesto no declara «${id}».`);
 
   const planCrudo = leer(demo.plan.archivo);
   await conHuellaDeclarada(demo.plan.archivo, planCrudo, demo.plan.huella);
@@ -238,12 +291,8 @@ export async function cargarDemo(
       id?: string;
       version?: string;
     };
+    listas?: { archivo: string; huella: string };
   };
-  if (!m.plan_beneficios)
-    throw new Error(
-      `vitrina: la corrida de «${id}» (${demo.corrida.ruta}) no declara su plan de beneficios; la vitrina lo necesita para P3 y P6.`,
-    );
-  const planBeneficiosRef = m.plan_beneficios;
   const planCorrida = leer(m.plan.archivo);
   const casos = leer(m.casos.archivo);
   const corrida = await leerCorridaVerificada(
@@ -252,8 +301,6 @@ export async function cargarDemo(
     casos,
     planDelLote(raiz, m.plan.archivo, planCorrida, casos),
   );
-  const lote = LoteSchema.parse(casos);
-
   const archivoCodigo = join("data/vitrina", id, "grafo-codigo.json");
   const codigoCrudo = leer(archivoCodigo);
   const v = await verificarHuella(codigoCrudo as Record<string, JsonValor>);
@@ -266,15 +313,6 @@ export async function cargarDemo(
     throw new Error(
       `vitrina: ${archivoCodigo} es el código del demo «${codigo.demo_id}», no el de «${id}»; se regenera con app_agents.exportar_grafo.`,
     );
-
-  const pbCrudo = leer(planBeneficiosRef.archivo);
-  await conHuellaDeclarada(
-    planBeneficiosRef.archivo,
-    pbCrudo,
-    planBeneficiosRef.huella,
-  );
-  const planBeneficios = PlanBeneficiosMinimoSchema.parse(pbCrudo);
-  esElPlanDeBeneficiosDeLaCorrida(planBeneficiosRef, planBeneficios, id);
 
   let spike: SpikeLeido | null = null;
   if (demo.spike) {
@@ -307,18 +345,56 @@ export async function cargarDemo(
     };
   }
 
-  return {
-    id,
+  const comunes: DatosComunes = {
     manifiesto: demo,
     plan,
     informe,
     entorno,
     corrida,
-    lote,
     codigo,
-    planBeneficios,
     spike,
   };
+  switch (id) {
+    case "demo-b": {
+      if (!m.listas)
+        throw new Error(
+          `vitrina: la corrida de «${id}» (${demo.corrida.ruta}) no declara sus listas de control; la vitrina las necesita para P3 y P6.`,
+        );
+      const listasCrudas = leer(m.listas.archivo);
+      await conHuellaDeclarada(m.listas.archivo, listasCrudas, m.listas.huella);
+      const listas = ListasSchema.parse(listasCrudas);
+      esLaListaDeLaCorrida(m.listas, listas, id);
+      return {
+        ...comunes,
+        id: "demo-b",
+        lote: LoteBSchema.parse(casos),
+        listas,
+      };
+    }
+    case "demo-a": {
+      if (!m.plan_beneficios)
+        throw new Error(
+          `vitrina: la corrida de «${id}» (${demo.corrida.ruta}) no declara su plan de beneficios; la vitrina lo necesita para P3 y P6.`,
+        );
+      const planBeneficiosRef = m.plan_beneficios;
+      const pbCrudo = leer(planBeneficiosRef.archivo);
+      await conHuellaDeclarada(
+        planBeneficiosRef.archivo,
+        pbCrudo,
+        planBeneficiosRef.huella,
+      );
+      const planBeneficios = PlanBeneficiosMinimoSchema.parse(pbCrudo);
+      esElPlanDeBeneficiosDeLaCorrida(planBeneficiosRef, planBeneficios, id);
+      return {
+        ...comunes,
+        id: "demo-a",
+        lote: LoteSchema.parse(casos),
+        planBeneficios,
+      };
+    }
+    default:
+      return demoSinDespacho(id, "cargarDemo");
+  }
 }
 
 function archivosDeCorrida(
@@ -361,17 +437,36 @@ function planDelLote(
   return null;
 }
 
-/** El único demo que la vitrina pinta hoy (las páginas no llevan segmento `[demo]`). */
-export const DEMO_PUBLICADO = "demo-a";
+/** El demo de las rutas sin prefijo (`/es/plan`…): el A conserva sus URL del S2 (ADR-014). */
+export { DEMO_PUBLICADO };
 
 const memoria = new Map<string, Promise<DatosDemo>>();
 
 /** Los datos de un demo, una sola lectura por build aunque los pidan varias páginas. */
-export function datosDemo(id = DEMO_PUBLICADO): Promise<DatosDemo> {
+export function datosDemo(id?: "demo-a"): Promise<DatosDemoA>;
+export function datosDemo(id: "demo-b"): Promise<DatosDemoB>;
+export function datosDemo(id: IdDemo): Promise<DatosDemo>;
+export function datosDemo(id: IdDemo = DEMO_PUBLICADO): Promise<DatosDemo> {
   let p = memoria.get(id);
   if (!p) {
     p = cargarDemo(id);
     memoria.set(id, p);
   }
   return p;
+}
+
+/** Los datos de cada demo por su id: un demo nuevo en `DEMOS` sin su tipo aquí no compila (ADR-014). */
+interface DatosPorDemo {
+  "demo-a": DatosDemoA;
+  "demo-b": DatosDemoB;
+}
+
+/** Los datos de todos los demos, por id: lo que cuenta la app entera (la ficha de la app y su export). */
+export type DatosDeLosDemos = { [K in IdDemo]: DatosPorDemo[K] };
+
+export async function datosDeLosDemos(): Promise<DatosDeLosDemos> {
+  const pares = await Promise.all(
+    DEMOS.map(async (id) => [id, await datosDemo(id)] as const),
+  );
+  return Object.fromEntries(pares) as DatosDeLosDemos;
 }

@@ -8,6 +8,12 @@ llamar a `decidir` sobre el estado y exige la misma rama que quedó registrada.
 Separación control/datos (regla dura 5): el enrutador decide con la orden estructurada, el verificador
 con reglas y el plan de beneficios; el texto libre solo llega al extractor y a la aclaración, enmascarado
 (D1); el redactor jamás lo ve.
+
+S3 (plan v1.5): el enrutador deja `carga_detectada` (la guardia de entrada, sin modelo; M-16) y el
+`modo_texas` resuelto por su señal; el verificador propone `aprobar_parcial` cuando el costo pasa el tope
+de cobertura del servicio (RB-08) y compara con el intérprete (M-18); la pausa recibe lo que su
+`payload_minimo` pide (M-8); y el documento adverso sale según la causal, con el servicio de la orden
+(M-15).
 """
 
 from __future__ import annotations
@@ -21,13 +27,13 @@ from langgraph.types import interrupt
 
 from app_agents.adaptador import ErrorProveedor
 from app_agents.demo_a import prompts
-from app_agents.demo_a.documento_adverso import AVISO_IA, documento_adverso
+from app_agents.demo_a.documento_adverso import aviso_ia, documento_adverso
 from app_agents.demo_a.esquemas import Carta, PreguntaAclaracion, crear_modelo_extraccion
 from app_agents.demo_a.estado import ContextoCaso, Estado
-from app_agents.demo_a.guardia import identificadores_de_entrada, revisar_salida
+from app_agents.demo_a.guardia import carga_en_entrada, identificadores_de_entrada, revisar_salida
 from app_agents.demo_a.plan_beneficios import PlanBeneficios
 from app_agents.plan import ContratoDeGrafo, PlanCargado
-from app_agents.reglas_arista import ErrorArista, decidir
+from app_agents.reglas_arista import ErrorArista, comparar, decidir
 
 ETIQUETAS_CAMPO = {
     "procedimiento": "procedimiento",
@@ -69,9 +75,14 @@ def _json(valor: Any) -> Any:
 def exigir_pausa_en_negacion(decision: str, estado: Estado) -> None:
     """Regla dura 4 como ARQUITECTURA, no como arista configurable: ninguna salida adversa llega al
     afiliado sin haber pasado por la pausa humana, aunque un plan mal escrito omita la arista que la
-    enruta (auditoría S1, M-7). Se corta el caso: no hay salida que emitir."""
+    enruta (auditoría S1, M-7). Se corta el caso: no hay salida que emitir. Con el modo Texas, tampoco la
+    aprobación parcial (plan v1.5, R10)."""
     if decision in ("negar", "rechazar") and not estado.get("pausa_humana"):
         raise ErrorArista(f"regla dura 4: «{decision}» sin pausa humana en el caso {estado.get('caso_id')}")
+    if decision == "aprobar_parcial" and estado.get("modo_texas") is True and not estado.get("pausa_humana"):
+        raise ErrorArista(
+            f"modo Texas: «aprobar_parcial» sin pausa humana en el caso {estado.get('caso_id')}"
+        )
 
 
 class NodosDemoA:
@@ -82,6 +93,19 @@ class NodosDemoA:
         self.pb = pb
         self.cg = contrato or plan.contrato_de_grafo()
         self.modelo_extraccion = crear_modelo_extraccion(pb.codigos_procedimiento(), pb.codigos_diagnostico())
+        # M-18: los umbrales se resuelven por su señal (y el tope de alto costo del plan de beneficios, por su
+        # referencia), y se comparan con el intérprete; ninguno se lee por su id ni se compara a mano.
+        self.u_confianza = plan.umbral_de_senal("senal_confianza")
+        self.u_alto_costo = plan.umbral_de_referencia(pb.tope_alto_costo, "costo_estimado")
+        self.u_texas = plan.umbral_de_senal("modo_texas")
+        # M-16 (plan v1.5): la guardia de entrada deja su señal solo si el plan la declara.
+        self.con_carga = "carga_detectada" in plan.senales_obligatorias()
+
+    def _supera(self, u: dict[str, Any], observado: Any, umbrales: dict[str, Any]) -> bool:
+        """¿La señal observada cumple la regla del umbral `u` (con el valor aplicado en esta corrida)?"""
+        return isinstance(observado, int | float) and comparar(
+            observado, u["operador"], umbrales[u["id"]], u["inclusivo"]
+        )
 
     # ── utilidades ────────────────────────────────────────────────────────────────────────────
 
@@ -169,13 +193,17 @@ class NodosDemoA:
         orden = estado["entrada"]["orden_adjunta"]
         tipo = str(orden["tipo_atencion"])
         exento = self.pb.es_exento(orden["codigo_procedimiento"])
-        paso = len(estado["pasos"]) + 1
-        _, regs = self._decidir(
-            "enrutador", {**estado, "tipo_atencion": tipo, "servicio_exento": exento}, paso
-        )
-        return {
+        senales: dict[str, Any] = {
             "tipo_atencion": tipo,
             "servicio_exento": exento,
+            "modo_texas": estado["umbrales_aplicados"][self.u_texas["id"]] is True,
+        }
+        if self.con_carga:
+            senales["carga_detectada"] = carga_en_entrada(estado["entrada"])
+        paso = len(estado["pasos"]) + 1
+        _, regs = self._decidir("enrutador", {**estado, **senales}, paso)
+        return {
+            **senales,
             "decisiones_de_arista": regs,
             "pasos": [self._paso(estado, "enrutador", inicio, reloj.ahora_ms())],
         }
@@ -301,7 +329,6 @@ class NodosDemoA:
         codigo = extraccion.get("campos", {}).get("procedimiento")
         codigo_orden = estado["entrada"]["orden_adjunta"]["codigo_procedimiento"]
         proc = self.pb.procedimiento(codigo)
-        umbrales = estado["umbrales_aplicados"]
         costo = extraccion.get("costo_estimado")
         contradiccion = codigo != codigo_orden
         reglas: list[str] = []
@@ -314,14 +341,23 @@ class NodosDemoA:
             reglas.append("RB-03")
             propuesta = "negar"
             causal = proc["causal"] if proc else None
-        alto = isinstance(costo, int | float) and costo > umbrales["U2"]
+        alto = self._supera(self.u_alto_costo, costo, estado["umbrales_aplicados"])
         if alto:
             reglas.append("RB-04")
         if contradiccion:
             reglas.append("RB-05")
+        # RB-08 (plan de beneficios v2): sobre el tope del servicio se aprueba hasta el tope y se niega
+        # el resto.
+        tope = self.pb.tope_cobertura(codigo) if estado_servicio == "requiere_autorizacion" else None
+        parcial = (
+            tope is not None and isinstance(costo, int | float) and comparar(costo, "mayor_que", tope, False)
+        )
+        if parcial:
+            reglas.append("RB-08")
+            propuesta = "aprobar_parcial"
         if not reglas:
             reglas.append("RB-07")
-        cobertura = {
+        cobertura: dict[str, Any] = {
             "alto_costo": alto,
             "causal": causal,
             "codigo_extraido": codigo,
@@ -331,6 +367,8 @@ class NodosDemoA:
             "propuesta": propuesta,
             "reglas_disparadas": sorted(reglas),
         }
+        if self.pb.con_topes():
+            cobertura["tope_cobertura"] = tope
         return {
             "contradiccion_orden_texto": contradiccion,
             "propuesta": propuesta,
@@ -373,6 +411,7 @@ class NodosDemoA:
         ext = estado.get("extraccion") or {}
         cob = estado.get("cobertura") or {}
         umbrales = estado["umbrales_aplicados"]
+        u_costo, u_conf = self.u_alto_costo["id"], self.u_confianza["id"]
         evidencia: list[dict[str, str]] = []
         contra: list[dict[str, str]] = [DUDA_A_FAVOR]
         if estado.get("proveedor_no_disponible"):
@@ -406,8 +445,33 @@ class NodosDemoA:
         if cob.get("alto_costo"):
             evidencia.append(
                 {
-                    "es": f"Costo estimado {costo} por encima del umbral de alto costo {umbrales['U2']}.",
-                    "en": f"Estimated cost {costo} above the high-cost threshold {umbrales['U2']}.",
+                    "es": f"Costo estimado {costo} por encima del umbral de alto costo {umbrales[u_costo]}.",
+                    "en": f"Estimated cost {costo} above the high-cost threshold {umbrales[u_costo]}.",
+                }
+            )
+        if cob.get("propuesta") == "aprobar_parcial":
+            tope = cob.get("tope_cobertura")
+            evidencia.append(
+                {
+                    "es": f"El costo estimado {costo} supera el tope de cobertura del servicio ({tope}): "
+                    "el plan cubre hasta el tope (RB-08).",
+                    "en": f"The estimated cost {costo} exceeds the service's coverage cap ({tope}): the plan "
+                    "covers up to the cap (RB-08).",
+                }
+            )
+            contra.append(
+                {
+                    "es": f"Hasta {tope} el servicio está cubierto: la parte cubierta se aprueba.",
+                    "en": f"Up to {tope} the service is covered: the covered part is approved.",
+                }
+            )
+        if estado.get("carga_detectada"):
+            evidencia.append(
+                {
+                    "es": "La guardia de entrada encontró instrucciones escondidas en la solicitud: lo que "
+                    "el modelo haya declarado puede estar alterado.",
+                    "en": "The input guard found hidden instructions in the request: whatever the model "
+                    "declared may have been altered.",
                 }
             )
         if cob.get("contradiccion"):
@@ -418,11 +482,11 @@ class NodosDemoA:
                 }
             )
         conf = ext.get("confianza")
-        if isinstance(conf, int | float) and conf < umbrales["U1"]:
+        if self._supera(self.u_confianza, conf, umbrales):
             evidencia.append(
                 {
-                    "es": f"Confianza del extractor {conf} por debajo de {umbrales['U1']}.",
-                    "en": f"Extractor confidence {conf} below {umbrales['U1']}.",
+                    "es": f"Confianza del extractor {conf} por debajo de {umbrales[u_conf]}.",
+                    "en": f"Extractor confidence {conf} below {umbrales[u_conf]}.",
                 }
             )
         faltan = ext.get("campos_faltantes") or []
@@ -452,7 +516,8 @@ class NodosDemoA:
         ultimo = max(d["paso"] for d in estado["decisiones_de_arista"])
         disparo = next(d for d in estado["decisiones_de_arista"] if d["paso"] == ultimo and d["resultado"])
         evidencia, contraevidencia = self._evidencias(estado)
-        payload = {
+        pausa = self.plan.contrato["pausas_humanas"][0]
+        payload: dict[str, Any] = {
             "motivo": self._motivo(disparo),
             "senal": disparo["senal"] or disparo["funcion"],
             "umbral": {"declarado": disparo["valor_declarado"], "aplicado": disparo["umbral_aplicado"]},
@@ -461,9 +526,15 @@ class NodosDemoA:
             "evidencia": evidencia,
             "contraevidencia": contraevidencia,
         }
+        # M-8: el caso completo que pide el plan (desde la v1.5: orden adjunta, aclaraciones y cobertura).
+        extras = {
+            "orden_adjunta": estado["entrada"]["orden_adjunta"],
+            "aclaraciones": estado.get("aclaraciones") or [],
+            "cobertura": estado.get("cobertura"),
+        }
+        payload.update({k: v for k, v in extras.items() if k in pausa["payload_minimo"]})
         respuesta = interrupt(payload)
         paso = len(estado["pasos"]) + 1
-        pausa = self.plan.contrato["pausas_humanas"][0]
         return {
             "pausa_humana": True,
             "decision_final": respuesta["decision"],
@@ -497,31 +568,76 @@ class NodosDemoA:
             "causal"
         )
         causal = self.pb.causal(causal_id) if causal_id else None
+        con_persona = bool(estado.get("pausa_humana"))
         lineas = [
             f"Decisión: {decision}",
             f"Procedimiento: {proc['nombre']['es'] if proc else codigo} ({codigo})",
-            f"Revisada por una persona: {'sí' if estado.get('pausa_humana') else 'no'}",
+            f"Revisada por una persona: {'sí' if con_persona else 'no'}",
         ]
         if decision == "negar" and causal:
             lineas.append(f"Causa de la negación: {causal['resumen']['es']} ({causal['norma']})")
-        parsed, raw = self._llamar(ctx, Carta, prompts.REDACTOR, "\n".join(lineas), "redactor")
+        monto = self._monto(decision, codigo, extraccion)
+        if monto is not None:
+            lineas.append(
+                f"Monto aprobado: {monto['aprobado']} de {monto['solicitado']} {monto['unidad']['es']}; "
+                f"el resto ({monto['negado']}) no lo cubre el plan (tope de cobertura del servicio)"
+            )
+        sistema = prompts.REDACTOR + (prompts.REDACTOR_TOPE if self.pb.con_topes() else "")
+        parsed, raw = self._llamar(ctx, Carta, sistema, "\n".join(lineas), "redactor")
         carta = _json(parsed)
         doc = None
-        if decision == "negar":
+        if decision in ("negar", "aprobar_parcial"):
+            # M-15: el servicio es el que pidió la orden; la regla, la de la causal (exclusión o tope).
+            orden = self.pb.procedimiento(estado["entrada"]["orden_adjunta"]["codigo_procedimiento"])
             doc = documento_adverso(
                 caso_id=estado["caso_id"],
-                procedimiento=proc,
-                causal=causal,
-                regla=self.pb.regla("RB-03"),
+                decision=decision,
+                procedimiento=orden,
+                causal=causal if decision == "negar" else self._causal_tope(monto),
+                regla=self.pb.regla("RB-03" if decision == "negar" else "RB-08"),
                 extraccion=extraccion,
                 plan={"id": self.plan.id, "version": self.plan.version, "huella": self.plan.huella},
                 plan_beneficios=self.pb.referencia(),
+                monto=monto,
+                con_persona=con_persona,
             )
         return {
             "decision_final": decision,
             "borrador": carta,
             "documento_adverso": doc,
             "pasos": [self._paso(estado, "redactor", inicio, ctx.reloj.ahora_ms(), raw)],
+        }
+
+    def _monto(self, decision: str, codigo: str, extraccion: dict[str, Any] | None) -> dict[str, Any] | None:
+        """Cuánto se aprueba y cuánto se niega en una aprobación parcial (RB-08); `None` en las demás."""
+        if decision != "aprobar_parcial":
+            return None
+        tope = self.pb.tope_cobertura(codigo)
+        costo = (extraccion or {}).get("costo_estimado")
+        if tope is None or not isinstance(costo, int | float):
+            return None
+        return {
+            "solicitado": costo,
+            "aprobado": tope,
+            "negado": costo - tope,
+            "unidad": self.pb.unidad_de_costo,
+        }
+
+    def _causal_tope(self, monto: dict[str, Any] | None) -> dict[str, Any] | None:
+        """La causal de la parte negada: el tope de cobertura del servicio en el plan (no una exclusión
+        de ley)."""
+        if monto is None:
+            return None
+        u = monto["unidad"]
+        return {
+            "id": "tope_cobertura",
+            "norma": "Plan de beneficios sintético, RB-08",
+            "resumen": {
+                "es": f"El plan cubre este servicio hasta {monto['aprobado']} {u['es']}; "
+                "el excedente no lo cubre.",
+                "en": f"The plan covers this service up to {monto['aprobado']} {u['en']}; "
+                "it does not cover the excess.",
+            },
         }
 
     def guardia_salida(self, estado: Estado, runtime: Runtime[ContextoCaso]) -> dict[str, Any]:
@@ -535,7 +651,14 @@ class NodosDemoA:
             estado.get("extraccion"),
         )
         return {
-            "salida_final": {**r["salida"], "aviso_ia": AVISO_IA},
+            "salida_final": {
+                **r["salida"],
+                "aviso_ia": aviso_ia(
+                    estado.get("decision_final") or "aprobar",
+                    bool(estado.get("pausa_humana")),
+                    self.plan.version,
+                ),
+            },
             "guardia_salida": {k: v for k, v in r.items() if k != "salida"},
             "severidad_accion": r["severidad_accion"],
             "pasos": [self._paso(estado, "guardia_salida", inicio, reloj.ahora_ms())],

@@ -91,12 +91,15 @@ export interface Consecuencias {
   evitados: string[];
   no_observados: string[];
   personas: number;
-  minutos: number;
+  /** Los casos que el plan registró con persona, sobre la misma población que `personas` (sin los no observados). */
+  personas_plan: number;
+  /** `null` si el plan no declara el costo humano por caso (el playground no lo inventa). */
+  minutos: number | null;
   /**
    * Los minutos del plan sobre la misma población que `minutos` (AU-S2-22): los casos que el plan registró con
-   * persona, sin los que con estos umbrales quedan «no observados».
+   * persona, sin los que con estos umbrales quedan «no observados». `null` como `minutos`.
    */
-  minutos_plan: number;
+  minutos_plan: number | null;
   criterios: CriterioRecalculado[];
   cumplen: number;
 }
@@ -171,6 +174,27 @@ function desvioDe(
     return { i, rama, registros, plan };
   }
   return null;
+}
+
+/**
+ * ¿La propuesta del caso es adversa con estos umbrales? Toda la que no es la favorable lo es, salvo la parcial del
+ * demo mientras su señal está apagada (con el modo Texas apagado, aprobar en parte sale sola por plan, D2 v1.5).
+ */
+export function propuestaAdversa(
+  c: Compacto,
+  senales: Readonly<Record<string, JsonValor>>,
+  umbrales: Umbrales,
+): boolean {
+  const { senal, favorable, parcial } = c.propuesta;
+  if (!Object.hasOwn(senales, senal)) return false;
+  const p = senales[senal];
+  if (p === favorable) return false;
+  if (parcial && p === parcial.valor) {
+    const s = parcial.senal_que_exige_persona;
+    const id = c.ligaduras[s];
+    return id !== undefined ? umbrales[id] === true : senales[s] === true;
+  }
+  return true;
 }
 
 function efectoDe(
@@ -345,8 +369,7 @@ export function consecuencias(c: Compacto, umbrales: Umbrales): Consecuencias {
         caso.registrado,
         ahora,
         caso.debe_escalar,
-        Object.hasOwn(v.senales, c.propuesta.senal) &&
-          v.senales[c.propuesta.senal] !== c.propuesta.favorable,
+        propuestaAdversa(c, v.senales, umbrales),
       ),
       visitas_ahorradas: caso.visitas
         .slice(d.i + 1)
@@ -391,8 +414,13 @@ export function consecuencias(c: Compacto, umbrales: Umbrales): Consecuencias {
       .filter((x) => x.efecto === "no_observado")
       .map((x) => x.id),
     personas,
-    minutos: personas * c.minutos_por_persona,
-    minutos_plan: personas_plan * c.minutos_por_persona,
+    personas_plan,
+    minutos:
+      c.minutos_por_persona === null ? null : personas * c.minutos_por_persona,
+    minutos_plan:
+      c.minutos_por_persona === null
+        ? null
+        : personas_plan * c.minutos_por_persona,
     criterios,
     cumplen: criterios.filter((x) => x.estado === "cumple").length,
   };

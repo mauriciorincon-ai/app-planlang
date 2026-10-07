@@ -2,7 +2,9 @@
 
 > Auto-cargado en cada sesión de este repo. Esta app pertenece al pipeline **AI-APPs**; su plan
 > vive en la casa planeadora. Estampada desde kit-app **v1.30.1 con `--estatico --python`** el
-> 2026-09-26; deltas del kit hasta **v1.32.1** aplicados en el S2 (2026-09-28). **Primera app híbrida TypeScript + Python del portafolio y primera cuya IA de
+> 2026-09-26; deltas del kit hasta **v1.32.1** aplicados en el S2 (2026-09-28); **copia REGENERADA por la planeadora el
+> 2026-10-04 con el kit v1.37.0** (deltas v1.33.0–v1.37.0: reglas 23–26, protecciones en vivo, `ignoreGhsas` + ADR, hook que
+> falla cerrado, degradaciones declaradas, `lighthouse-margen`) — **la app la sincroniza en la fase 0 del S3** (2-quater). **Primera app híbrida TypeScript + Python del portafolio y primera cuya IA de
 > construcción es la suscripción de Claude Code del usuario (estándar 7-S).** Segundo consumidor de
 > dos reusables de la casa (diagramador · instrumentos-de-plan). Nace con el pipeline completo
 > (Etapa de Diseño · dos filtros ⭐/⭐⭐ · cierre en dos actos · cero enlaces · bilingüe integral)
@@ -402,7 +404,12 @@ decisions/001-codigo-primero-demos.md · 002-proveedor-y-cumplimiento-suscripcio
    floja de gitleaks, 2026-07-15; contraprecedente que sí lo hizo: PR desechable con `openai`
    → anti-IA en rojo en 7 s, Velo S1). La demo puede ir en un **PR desechable** que se cierra
    sin mergear; se registra igual. Aplica también al **verificar un gate heredado** cuando un
-   sprint depende de él por primera vez.
+   sprint depende de él por primera vez. **La demo se corre con `scripts/demo-rojo.sh` (kit
+   v1.35.0):** mutación literal → gate (debe fallar) → restauración desde UNA carpeta de respaldo
+   verificada con `grep` y `cmp` → gate restaurado (debe pasar); `--puerto` mata el server viejo
+   por puerto y comprueba que no quede `EADDRINUSE`. Y la **tercera pregunta** antes de darla por
+   hecha: *¿puede fallar siquiera?* — un test de determinismo sin un miembro con azar no puede
+   *(ds S5: K-S5-8/10/11)*.
    **Y su hermana (kit v1.16.0): un gate que nunca EJECUTÓ tampoco es un gate.** `skipped` no es
    verde: un job con `needs:` sobre otro que falló queda saltado y GitHub lo lista entre los
    checks requeridos **sin alarma**, así que una columna sin rojo se lee como aprobación. Antes de
@@ -510,10 +517,20 @@ decisions/001-codigo-primero-demos.md · 002-proveedor-y-cumplimiento-suscripcio
    CI pasa VERDE porque **ninguna puerta compara el resultado contra la INTENCIÓN del PR**:
    leer la salida del install ES el gate. `pnpm peers check` corre en quality (es lo único que
    ve un peer insatisfecho). Overrides: en `pnpm-workspace.yaml`, jamás en `package.json`.
-   **Comprobación MECÁNICA (kit v1.32.0):** `scripts/verificar-dependencias.mjs` compara las
+   **Comprobación MECÁNICA (kit v1.32.0; falla CERRADO desde v1.35.0 — si no puede leer la rama
+   base sale en rojo, no «se omite»; solo un repo cuya base no tiene lockfile pasa en verde con
+   aviso):** `scripts/verificar-dependencias.mjs` compara las
    versiones de `pnpm-lock.yaml` del PR contra `origin/main` y falla si alguna quedó por debajo;
    corre en el job `quality` en cada PR. Leer la salida del install sigue siendo obligatorio; el
    script es la red que no depende de que alguien la lea.
+   **Excepciones de auditoría (kit v1.34.0):** `pnpm audit --audit-level high` es gate y su nivel no se baja. Si una
+   advisory alta o crítica **no tiene versión parcheada publicada** (GitHub la lista con `first_patched_version: null`),
+   se ignora **solo esa advisory, por id**, en `pnpm-workspace.yaml` → `auditConfig.ignoreGhsas` (pnpm 11 ya no lee
+   `pnpm.*` en `package.json`), con un **ADR en `decisions/`** que diga id, razón (ruta de la dependencia, si es solo de
+   desarrollo), fecha y **condición de retiro**. El PR que traiga el parche borra la entrada y cierra el ADR. Una
+   advisory CON parche nunca se excepciona: se sube la dependencia. *(HackGuard, estampado 2026-10-03: `braces` sin
+   parche vía `eslint-config-next`.)*
+
 19. **Todo puente entre dos lenguajes exige su GATE DE CONTRATO, en el mismo sprint que lo
    cruza (kit v1.28.0).** Donde un dato cambia de lenguaje o de runtime —Rust→TS por eventos
    de Tauri, worker→UI por `postMessage`, servidor→cliente por JSON, Swift→Rust por FFI— la
@@ -549,6 +566,30 @@ decisions/001-codigo-primero-demos.md · 002-proveedor-y-cumplimiento-suscripcio
     maqueta nace EN EL REPO desde la fase 0** de la Etapa de Diseño, con su gate de deriva byte a byte
     (regenerar = mismos bytes): un generador fuera del repo hace inauditable la regla 8 y deja la
     referencia sin fuente.
+23. **Matriz de envejecimiento (kit v1.33.0, método v1.36.0).** Todo dato con **fecha de cambio de
+    estado** (vigente → por revisar → vencido; publicado → archivado; suscripción activa → caducada) trae,
+    **desde el sprint que lo introduce**, un gate que construye o dibuja la página **en cada fecha en que
+    algo cambia de estado** (hoy, cada umbral, +100 días) y exige cero avisos. La fecha de consulta es una
+    **perilla de build** (nunca el reloj), y la guía de prueba la usa para mostrar los estados. *(Origen:
+    Big-D S1 — el atlas pasó todo en verde y se habría roto solo 27 días después, cuando el primer mapa
+    pasaba a «por revisar»; lo vio un auditor, no una prueba. Un gate que solo mira hoy no ve lo que el
+    calendario toca.)* **LCP por perfil:** si la app mide texto con una tabla de métricas (G15) y por eso
+    sirve sus fuentes con `display: block`, el presupuesto de LCP es **3,0 s declarado por ADR** (estándares
+    v2.17.0), con el subconjunto de las fuentes a su cobertura como deuda pagable.
+24. **Las protecciones del sistema del usuario se enseñan ANTES de tocarlas (kit v1.36.0, método v1.38.0 —
+    regla dura del pipeline).** Antes de crear, modificar o invocar algo que el sistema operativo protege
+    —Llavero, permisos TCC, ítems de inicio o launchd, Touch ID, Automatización, cuentas, certificados—
+    presentas una **matriz de una fila por acción: qué · para qué · qué aviso vas a ver · cómo se deshace** y
+    esperas un «sí» por acción. Vale para scripts, tests, `/release-check` y cualquier comando que corras tú:
+    si no sabes si pide permiso, se enseña. *(Origen: Angel Ghost S3 — un ítem de inicio «sh · desarrollador no
+    identificado», seis contraseñas de administrador y un `cargo test` que abrió el micrófono.)*
+    `/audita-sprint` lo pregunta (casilla 8). En apps que ya tienen esta regla con otro número, cítala por NOMBRE.
+25. **El comando de pruebas por defecto no toca hardware ni permisos (kit v1.36.0).** `pnpm test`, `cargo test`,
+    `pytest` a secas corren solo lo que no abre micrófono, cámara, audio del sistema, Llavero, red local ni
+    diálogos del sistema. Lo que los toca va detrás de una marca explícita (`#[ignore]`, una *feature*, un
+    `describe.skip` con `RUN_HARDWARE=1`) y lo corre la CI (`cargo test -- --include-ignored` en
+    `build-escritorio`) o un comando nombrado en el README. Un verde que costó un aviso del sistema al usuario
+    no es un verde.
 
 ## Estándares (los 6+1, gates en CI)
 

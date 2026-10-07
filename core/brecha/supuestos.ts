@@ -13,6 +13,10 @@ import { IDIOMAS, type TextoBilingue } from "../formatos/bilingue";
 import type { Traza } from "../formatos/traza";
 import type { Plan, Supuesto } from "../plan/esquema";
 import { esAristaTripleta } from "../plan/esquema";
+import {
+  familiaDeSupuesto,
+  TOLERANCIA_LINEA_BASE,
+} from "../plan/supuesto-medible";
 import { resolverValor } from "../playground/interprete";
 import {
   auroc,
@@ -86,7 +90,7 @@ function decidirConUmbral(
 ): { estado: EstadoSupuesto; motivo: TextoBilingue } {
   if (!umbral || Object.keys(umbral).length === 0)
     return { estado: "sin_probar", motivo: SIN_UMBRAL };
-  const fallidas: string[] = [];
+  const fallidas: TextoBilingue[] = [];
   const sinValor: string[] = [];
   for (const clave of Object.keys(umbral).sort()) {
     const lim = umbral[clave] as number;
@@ -97,8 +101,14 @@ function decidirConUmbral(
       sinValor.push(metrica);
       continue;
     }
-    const ok = m?.[2] === "max" ? valor <= lim : valor >= lim;
-    if (!ok) fallidas.push(clave);
+    const esMax = m?.[2] === "max";
+    const ok = esMax ? valor <= lim : valor >= lim;
+    // La medida frente al umbral, no el nombre de la clave (AU-S3-26: «… umbral de confirmación: tasa_min.»).
+    if (!ok)
+      fallidas.push({
+        es: `${metrica} ${numCorto(valor, "es", 4)} frente a un ${esMax ? "máximo" : "mínimo"} de ${numCorto(lim, "es", 4)}`,
+        en: `${metrica} ${numCorto(valor, "en", 4)} against a ${esMax ? "maximum" : "minimum"} of ${numCorto(lim, "en", 4)}`,
+      });
   }
   if (fallidas.length > 0) {
     const extra: TextoBilingue =
@@ -111,8 +121,8 @@ function decidirConUmbral(
     return {
       estado: "refutado",
       motivo: {
-        es: `No cumple el umbral de confirmación: ${fallidas.join(", ")}.${extra.es}`,
-        en: `It misses the confirmation threshold: ${fallidas.join(", ")}.${extra.en}`,
+        es: `No cumple el umbral de confirmación: ${fallidas.map((f) => f.es).join("; ")}.${extra.es}`,
+        en: `It misses the confirmation threshold: ${fallidas.map((f) => f.en).join("; ")}.${extra.en}`,
       },
     };
   }
@@ -389,7 +399,7 @@ export function respuestaInservible(t: Traza): boolean {
  * = cuántas veces la latencia mediana de la base se tolera. Sin claves declaradas rige la regla por defecto
  * («no peor»: 0 y 1), y el informe lo dice.
  */
-const TOLERANCIA = ["exactitud_dif_min", "latencia_mediana_razon_max"] as const;
+const TOLERANCIA = TOLERANCIA_LINEA_BASE;
 
 function reglaDeclarada(dif: number, razon: number): TextoBilingue {
   const margen = (i: "es" | "en") =>
@@ -579,13 +589,10 @@ export function evaluarSupuestos(
         comparacion: null,
         limitaciones: [],
       };
-    if (m.comparacion === "linea_base_agente_unico")
+    const familia = familiaDeSupuesto(m);
+    if (familia === "linea_base")
       return { ...cabecera, ...comparacion(s, vistas, base) };
-    if (
-      m.metricas.some(
-        (x) => x === "ece" || x === "auroc" || x === "curva_riesgo_cobertura",
-      )
-    )
+    if (familia === "calibracion")
       return { ...cabecera, ...calibracion(s, plan, vistas) };
     return { ...cabecera, ...tasa(s, plan, vistas, umbrales) };
   });

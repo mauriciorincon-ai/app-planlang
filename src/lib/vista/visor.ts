@@ -2,29 +2,48 @@
  * El lienzo del visor para la vitrina: arma el mapa del diagramador desde el grafo compilado de la corrida y el
  * contrato del plan, con los textos de cada nodo (`src/textos/agente.ts`), y lo dibuja con `core/visor`. La
  * geometría no depende del idioma y cuesta ~0,25 s: se calcula una vez por build y por grafo. Todo lo dibujado
- * sale del dato (el visual se genera, no se dibuja).
+ * sale del dato (el visual se genera, no se dibuja). El mapa que se dibuja pasa las dos fases del contrato antes
+ * de dibujarse: el esquema JSON fijado (Ajv 2020, fase 1) y las reglas V1–V17 (fase 2). Corre solo en el build.
  */
+import Ajv2020 from "ajv/dist/2020";
 import type { Idioma } from "@core/formatos/bilingue";
 import type { Grafo } from "@core/formatos/traza";
 import type { ContratoDeGrafo } from "@core/plan/esquema";
 import { esAristaTripleta } from "@core/plan/esquema";
-import { geometria, valorDeRegla, type Geometria } from "@core/visor/geometria";
+import { esRegla, nombreDeRegla, textoDeRegla } from "@core/visor/condicion";
+import { geometria, type Geometria } from "@core/visor/geometria";
 import { idDeCodigo, idDeMapa } from "@core/visor/ids";
 import {
   diagramaIgualGrafo,
   type ComparacionDiagrama,
 } from "@core/visor/igualdad";
 import {
-  SENAL_POR_DEFECTO,
   construirMapa,
-  terminales,
+  terminalesDelMapa,
   type GrafoParaMapa,
   type TextosDeNodo,
 } from "@core/visor/mapa";
+import {
+  recorridosDeTrazas,
+  type TrazaParaRecorrido,
+} from "@core/visor/recorridos";
 import { aSvg } from "@core/visor/svg";
-import type { Gramatica, Mapa, TextoIdioma } from "@core/visor/tipos";
-import { validarMapa, erroresDe } from "@core/visor/validar";
+import type {
+  CondicionFuncion,
+  CondicionTripleta,
+  Fuente,
+  Gramatica,
+  Mapa,
+  TextoIdioma,
+} from "@core/visor/tipos";
+import {
+  EXCEPCIONES_PLANLANG,
+  validarMapa,
+  erroresDe,
+} from "@core/visor/validar";
+import esquemaMapa from "../../../packages/diagramador/contrato/esquema/mapa.schema.json";
 import gramaticaJson from "../../../packages/diagramador/contrato/gramaticas/agentes-ia.json";
+import type { IdDemo } from "@/lib/demos";
 import {
   DETALLE_NODO,
   EXIGIDO_EN_LISTA,
@@ -32,11 +51,69 @@ import {
   NODOS,
   NODOS_FUERA_DEL_CONTRATO,
   REGLA_CORTA,
+  TITULO_CODIGO,
+  type TextosDeNodoVitrina,
 } from "@/textos/agente";
+import { NODOS_B, REANUDACION_B, REGLA_CORTA_B } from "@/textos/demo-b/agente";
 import { categoriaDeRegla, reglaDelPlan } from "./motivo-pausa";
 import { conPlan } from "./plan-en-texto";
 
 export const GRAMATICA = gramaticaJson as unknown as Gramatica;
+
+type TextosDelMapa = Pick<
+  TextosDeNodoVitrina,
+  "rol" | "como" | "paraQue" | "fuentes"
+>;
+
+/**
+ * Lo que el mapa dice de cada demo: los textos de sus nodos (los del contrato y los que existieron fuera de él), el
+ * nombre corto de sus reglas sin umbral y quién responde su pausa. Un demo sin entrada aquí no compila.
+ */
+const TEXTOS_DEL_DEMO: Readonly<
+  Record<
+    IdDemo,
+    {
+      nodos: Readonly<Record<string, TextosDelMapa>>;
+      fuera: Readonly<Record<string, TextosDelMapa>>;
+      donde: string;
+      reglaCorta: Readonly<Record<string, TextoIdioma>>;
+      reanudacion: TextoIdioma;
+    }
+  >
+> = {
+  "demo-a": {
+    nodos: NODOS,
+    fuera: NODOS_FUERA_DEL_CONTRATO,
+    donde: "src/textos/agente.ts",
+    reglaCorta: REGLA_CORTA,
+    reanudacion: GRAFO.lista_.reanudacion,
+  },
+  "demo-b": {
+    nodos: NODOS_B,
+    fuera: {},
+    donde: "src/textos/demo-b/agente.ts",
+    reglaCorta: REGLA_CORTA_B,
+    reanudacion: REANUDACION_B,
+  },
+};
+
+const validarEsquemaMapa = new Ajv2020({
+  allErrors: true,
+  strict: false,
+}).compile(esquemaMapa);
+
+/** Fase 1 del contrato: los errores del esquema JSON fijado, como texto (vacío si el mapa lo pasa). */
+export function erroresDeEsquema(mapa: unknown): string[] {
+  if (validarEsquemaMapa(mapa)) return [];
+  return (validarEsquemaMapa.errors ?? []).map((e) =>
+    `${e.instancePath || "/"} ${e.message ?? ""}`.trim(),
+  );
+}
+
+/** Dónde vive el código de cada nodo (`data/vitrina/<demo>/grafo-codigo.json`), por id del código. */
+export type CodigoDeNodos = Readonly<
+  Record<string, { archivo: string; desde: number; hasta: number }>
+>;
 
 export function grafoParaMapa(g: Grafo): GrafoParaMapa {
   return {
@@ -49,38 +126,62 @@ export function grafoParaMapa(g: Grafo): GrafoParaMapa {
 }
 
 function textosDeNodos(
+  demo: IdDemo,
   ids: readonly string[],
   contrato: ContratoDeGrafo,
+  codigo: CodigoDeNodos | undefined,
+  fecha: string,
 ): Record<string, TextosDeNodo> {
+  const textos = TEXTOS_DEL_DEMO[demo];
   const out: Record<string, TextosDeNodo> = {};
   // Los textos citan el plan con `{plan:…}` (AU-S2-3); en el mapa se resuelven con el contrato del lienzo.
   const p = (t: TextoIdioma): TextoIdioma => ({
-    es: conPlan(t.es, { contrato_de_grafo: contrato }, "es"),
-    en: conPlan(t.en, { contrato_de_grafo: contrato }, "en"),
+    es: conPlan(t.es, { contrato_de_grafo: contrato }, "es", demo),
+    en: conPlan(t.en, { contrato_de_grafo: contrato }, "en", demo),
   });
   for (const id of ids) {
-    const t = NODOS[id] ?? NODOS_FUERA_DEL_CONTRATO[id];
+    const t = textos.nodos[id] ?? textos.fuera[id];
     if (!t)
       throw new Error(
-        `vitrina: faltan los textos del nodo «${id}» en src/textos/agente.ts`,
+        `vitrina: faltan los textos del nodo «${id}» en ${textos.donde}`,
       );
+    // La fuente oficial (https) y, si el nodo está en el código, su archivo y líneas (`fuente.tipo: codigo`, 0.5.0).
+    const c = codigo?.[id];
+    const fuentes: Fuente[] = c
+      ? [
+          ...t.fuentes,
+          {
+            tipo: "codigo",
+            ruta: c.archivo,
+            lineas: `${c.desde}-${c.hasta}`,
+            titulo: TITULO_CODIGO,
+            fecha,
+          },
+        ]
+      : t.fuentes;
     out[id] = {
       lider: p(t.rol),
       experto: p(t.como),
       por_que_importa: p(t.paraQue),
-      fuentes: t.fuentes,
+      fuentes,
     };
   }
   return out;
 }
 
 export interface EntradaLienzo {
+  /** El demo del grafo: de él salen los textos de sus nodos y los nombres de sus reglas. */
+  demo: IdDemo;
   grafo: GrafoParaMapa;
   contrato: ContratoDeGrafo;
   sujeto: { id: string; nombre: TextoIdioma };
   version: string;
   fecha: string;
   modelo: string;
+  /** Archivo y líneas de cada nodo (fuentes de código del mapa); el spike no tiene. */
+  codigo?: CodigoDeNodos;
+  /** Las trazas de la corrida: sus caminos son los recorridos del mapa. */
+  trazas?: readonly TrazaParaRecorrido[];
 }
 
 export function mapaDe(e: EntradaLienzo): Mapa {
@@ -90,18 +191,28 @@ export function mapaDe(e: EntradaLienzo): Mapa {
       ...e.grafo.nodos.map((n) => n.id),
     ]),
   ];
+  const textos = textosDeNodos(e.demo, ids, e.contrato, e.codigo, e.fecha);
   const mapa = construirMapa({
     gramatica: GRAMATICA,
     grafo: e.grafo,
     contrato: e.contrato,
-    textos: textosDeNodos(ids, e.contrato),
+    textos,
+    recorridos: recorridosDeTrazas(e.trazas ?? [], textos),
     sujeto_id: e.sujeto.id,
     sujeto_nombre: e.sujeto.nombre,
     version: e.version,
     fecha: e.fecha,
   });
+  const esquema = erroresDeEsquema(mapa);
+  if (esquema.length)
+    throw new Error(
+      `vitrina: el mapa no pasa el esquema del contrato (fase 1): ${esquema.join(" · ")}`,
+    );
   const errores = erroresDe(
-    validarMapa(mapa, GRAMATICA, { cobertura: "letra" }),
+    validarMapa(mapa, GRAMATICA, {
+      cobertura: "letra",
+      excepciones: EXCEPCIONES_PLANLANG,
+    }),
   );
   if (errores.length)
     throw new Error(
@@ -144,7 +255,10 @@ function reglasCortas(e: EntradaLienzo): Record<string, TextoIdioma> {
       const u = a.valor.slice("umbral.".length);
       out[id] = { es: u, en: u };
     } else {
-      const corta = REGLA_CORTA[categoriaDeRegla(reglaDelPlan(a))];
+      const corta =
+        TEXTOS_DEL_DEMO[e.demo].reglaCorta[
+          categoriaDeRegla(reglaDelPlan(a), e.demo)
+        ];
       if (corta) out[id] = corta;
     }
   }
@@ -163,7 +277,7 @@ export function dibujo(
     const mapa = mapaDe(e);
     const geo = geometria(mapa, GRAMATICA, {
       idiomas: GRAMATICA.idiomas,
-      terminales: terminales(e.grafo),
+      terminales: terminalesDelMapa(mapa),
       textosTerminales: GRAFO.terminales,
       detalleNodo: detalles(e),
       reglasCortas: reglasCortas(e),
@@ -211,17 +325,15 @@ function reglasEnTexto(
   cortas: Record<string, TextoIdioma>,
 ): string {
   const reglas = mapa.flujos.filter(
-    (f) =>
-      f.origen === origen &&
-      f.destino === destino &&
-      f.condicion &&
-      f.condicion.senal !== SENAL_POR_DEFECTO,
+    (f) => f.origen === origen && f.destino === destino && esRegla(f.condicion),
   );
-  const txt = (c: NonNullable<(typeof reglas)[number]["condicion"]>) =>
-    `${idDeCodigo(c.senal)} ${{ "<": "<", "<=": "≤", "=": "=", "!=": "≠", ">=": "≥", ">": ">" }[c.operador]} ${valorDeRegla(c.valor, i)}`;
+  const regla = (f: (typeof reglas)[number]) =>
+    f.condicion as CondicionTripleta | CondicionFuncion;
   if (reglas.length >= 3)
-    return `${GRAFO.lista_.reglasEnOrden(reglas.length)[i]} (${reglas.map((f) => cortas[f.id]?.[i] ?? idDeCodigo(f.condicion!.senal)).join(" · ")})`;
-  return reglas.map((f) => txt(f.condicion!)).join(` ${GRAFO.lista_.o[i]} `);
+    return `${GRAFO.lista_.reglasEnOrden(reglas.length)[i]} (${reglas.map((f) => cortas[f.id]?.[i] ?? nombreDeRegla(regla(f))).join(" · ")})`;
+  return reglas
+    .map((f) => textoDeRegla(regla(f), i))
+    .join(` ${GRAFO.lista_.o[i]} `);
 }
 
 export function lienzo(
@@ -288,7 +400,7 @@ export function lienzo(
           );
         for (const l of salientes.filter((x) => x.modo === "reanudacion"))
           flujos.push(
-            `${nombre(n.id)} → ${terminal(l.destino)} · ${GRAFO.lista_.reanudacion[i]}`,
+            `${nombre(n.id)} → ${terminal(l.destino)} · ${TEXTOS_DEL_DEMO[e.demo].reanudacion[i]}`,
           );
         return {
           id: n.id,

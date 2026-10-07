@@ -12,14 +12,14 @@
     "enlaces.produccion": "null cuando la app no tiene URL pública. `razon` explica por qué, y es lo que la vitrina muestra en lugar del enlace. Nunca se rellena con un enlace de repositorio ni con una promesa."
   },
   "schema_version": "1.0.0",
-  "actualizado": "2026-10-04",
+  "actualizado": "2026-10-05",
   "app": {
     "slug": "planlang",
     "nombre": "planlang",
     "ciclo": "H1",
     "estado": "inicial",
     "sellado_en": null,
-    "sprints_cerrados": 2,
+    "sprints_cerrados": 3,
     "version_repo": "0.1.0"
   },
   "promesa": {
@@ -29,7 +29,7 @@
     "diferencial": "Observar trazas y evaluar respuestas ya lo hacen muchas herramientas. Lo que no hace nadie es exigir el plan antes y medir contra él después: el informe de brecha plan → resultado, con el análisis de riesgos previo, y los umbrales del plan jugables sobre las trazas reales."
   },
   "funcionalidades": {
-    "total": 16,
+    "total": 19,
     "fuente_del_conteo": "docs/MANUAL-DE-USO.md",
     "descartadas": [],
     "grupos": [
@@ -37,7 +37,7 @@
         "orden": 1,
         "estrella": false,
         "nombre": "Planear",
-        "linea": "El plan como contrato: plantillas, validador y contrato para el constructor.",
+        "linea": "El plan como contrato: la entrevista, las plantillas, el validador y el contrato para el constructor.",
         "features": [
           {
             "id": "plantillas",
@@ -52,6 +52,12 @@
             "seccion_manual": "Validar un plan"
           },
           {
+            "id": "entrevistador",
+            "nombre": "Entrevistador del plan",
+            "que_hace": "Pregunta en orden lo que la plantilla del dominio exige, redacta el borrador en español e inglés, señala sus contradicciones y nunca lo aprueba: eso lo hace el autor.",
+            "seccion_manual": "Entrevistar un plan"
+          },
+          {
             "id": "contrato",
             "nombre": "Contrato para el constructor",
             "que_hace": "El plan entrega los nodos, las aristas con señal · operador · valor, las pausas humanas y las señales que la traza debe registrar; lo que decide el agente es literalmente lo que dice el plan.",
@@ -63,7 +69,7 @@
         "orden": 2,
         "estrella": false,
         "nombre": "Correr",
-        "linea": "Casos con verdad conocida, el demo A y las corridas por lotes.",
+        "linea": "Casos con verdad conocida, los dos demos y las corridas por lotes.",
         "features": [
           {
             "id": "casos",
@@ -74,13 +80,25 @@
           {
             "id": "demo-a",
             "nombre": "Demo A: autorizaciones médicas",
-            "que_hace": "Un enrutador, un extractor, un verificador de cobertura por reglas y un redactor aprueban, niegan con causal o escalan a un auditor; ninguna negación sale sin una persona.",
+            "que_hace": "Un enrutador, un extractor, un verificador de cobertura por reglas y un redactor aprueban, aprueban en parte, niegan con causal o escalan a un auditor; ninguna negación completa sale sin una persona.",
             "seccion_manual": "Correr un lote"
+          },
+          {
+            "id": "demo-b",
+            "nombre": "Demo B: vinculación con debida diligencia",
+            "que_hace": "Un extractor, un verificador de listas, un investigador que actúa desde el inicio de la zona gris y un puntaje de riesgo por reglas aprueban, revisan o rechazan; ningún rechazo sale sin el oficial de cumplimiento.",
+            "seccion_manual": "Correr el demo B"
+          },
+          {
+            "id": "expediente",
+            "nombre": "Expediente por código",
+            "que_hace": "Cada caso del demo B termina en un expediente en español e inglés que escribe el código: cada conclusión cita la regla del plan o la coincidencia en una lista, con su versión.",
+            "seccion_manual": "Leer un expediente"
           },
           {
             "id": "documento-adverso",
             "nombre": "Documento de decisión adversa",
-            "que_hace": "Toda negación produce, por código, un documento en español e inglés con la causal, la regla, los datos usados y la vía de contradicción.",
+            "que_hace": "Toda negación, también la parcial, produce por código un documento en español e inglés con la causal, la regla, los datos usados y la vía de contradicción.",
             "seccion_manual": "Correr un lote"
           },
           {
@@ -132,7 +150,7 @@
           {
             "id": "playground",
             "nombre": "Mover los umbrales del plan",
-            "que_hace": "Deslizas la confianza mínima, el alto costo, el máximo de aclaraciones o el modo Texas y ves qué casos cambian de camino, qué errores aparecen, cuánto trabajo humano cuesta y la curva riesgo-cobertura.",
+            "que_hace": "Deslizas los umbrales de cada demo (en el A, la confianza mínima, el alto costo, el máximo de aclaraciones o el modo Texas; en el B, la similitud, la zona gris, el riesgo y las inconsistencias) y ves qué casos cambian de camino, qué errores aparecen, cuánto trabajo humano cuesta y la curva riesgo-cobertura.",
             "seccion_manual": "Mover umbrales en el playground"
           }
         ]
@@ -166,13 +184,13 @@
           {
             "id": "pestanas",
             "nombre": "Plan, Agente, Brecha y Casos",
-            "que_hace": "En lenguaje llano con detalle para expertos, en español e inglés, en un teléfono de 380 px, con el rótulo «Simulación · no operativo» y la divulgación del revisor simulado.",
+            "que_hace": "Por cada demo, en lenguaje llano con detalle para expertos, en español e inglés, en un teléfono de 380 px, con el rótulo «Simulación · no operativo» y la divulgación del revisor simulado.",
             "seccion_manual": "Abrir la vitrina"
           },
           {
             "id": "fichas",
             "nombre": "Fichas y paquete para la vitrina personal",
-            "que_hace": "La ficha de reproducibilidad, la del agente A y estos hechos de la app, con el paquete estático que hoja-de-vida publica sin un solo enlace.",
+            "que_hace": "La ficha de reproducibilidad de cada demo, la de cada agente y estos hechos de la app, con el paquete estático que hoja-de-vida publica sin un solo enlace.",
             "seccion_manual": "Entregar el paquete a hoja-de-vida"
           }
         ]
@@ -182,27 +200,27 @@
   "metricas": [
     {
       "clave": "criterios_cumplidos",
-      "etiqueta": "criterios del plan cumplidos, de 9",
-      "valor": 9,
+      "etiqueta": "criterios cumplidos en los planes de 2 demos, de 16",
+      "valor": 16,
       "unidad": "criterios",
       "fuente": "medido",
-      "detalle": "Del informe del verificador 1.2.0 sobre la corrida suscripcion-planlang-a-001-20-v1.2: 9 de 9 criterios cumplidos."
+      "detalle": "Demo A: 10 de 10, en el informe del verificador 1.3.0 sobre la corrida suscripcion-planlang-a-002-200-v1.5. Demo B: 6 de 6, en el informe del verificador 1.3.0 sobre la corrida suscripcion-planlang-b-001-20."
     },
     {
       "clave": "decisiones_cruzadas",
       "etiqueta": "decisiones rehechas en otro lenguaje, con 0 diferencias",
-      "valor": 233,
+      "valor": 1204,
       "unidad": "decisiones",
       "fuente": "medido",
-      "detalle": "Prueba cruzada RF-09.2 sobre 4 corridas: el intérprete de aristas de TypeScript rehace cada decisión que registró Python."
+      "detalle": "Prueba cruzada RF-09.2 sobre 4 corridas de 2 demos: el intérprete de aristas de TypeScript rehace cada decisión que registró Python."
     },
     {
-      "clave": "casos_por_corrida",
-      "etiqueta": "casos por corrida, en 3 corridas y una línea base",
-      "valor": 20,
+      "clave": "casos_sinteticos",
+      "etiqueta": "casos sintéticos con respuesta conocida, en 2 demos",
+      "valor": 220,
       "unidad": "casos",
       "fuente": "medido",
-      "detalle": "Corrida suscripcion-planlang-a-001-20-v1.2 con sus 2 repeticiones (pass^k) y la línea base de agente único a igual presupuesto."
+      "detalle": "Demo A: 200 casos en la corrida suscripcion-planlang-a-002-200-v1.5 y la línea base de agente único. Demo B: 20 casos en la corrida suscripcion-planlang-b-001-20 y la línea base de agente único."
     },
     {
       "clave": "llamadas_a_modelos_en_la_vitrina",
@@ -214,24 +232,24 @@
     },
     {
       "clave": "costo_de_una_corrida",
-      "etiqueta": "costo nominal de una corrida de 20 casos",
-      "valor": 0.6704,
+      "etiqueta": "costo nominal de correr una vez cada demo (220 casos)",
+      "valor": 5.2136,
       "unidad": "US$",
       "fuente": "calculada",
-      "detalle": "Suma del costo nominal que el CLI declara por llamada, en las trazas de la corrida; por la suscripción no se pagó aparte."
+      "detalle": "Demo A: US$ 4,9206 por 200 casos. Demo B: US$ 0,293 por 20 casos. Suma del costo nominal que el CLI declara por llamada, en las trazas de cada corrida; por la suscripción no se pagó aparte."
     },
     {
       "clave": "funcionalidades",
       "etiqueta": "funcionalidades construidas",
-      "valor": 16,
+      "valor": 19,
       "unidad": "funcionalidades",
       "fuente": "medido",
-      "detalle": "Las de la visión del producto marcadas para el corte de dos semanas, contadas contra docs/MANUAL-DE-USO.md; las del roadmap no cuentan."
+      "detalle": "Las de la visión del producto que ya funcionan: las del corte de dos semanas y las del roadmap que se construyeron en el S3 (el entrevistador, el demo B y su expediente), contadas contra docs/MANUAL-DE-USO.md; lo que sigue en el roadmap no cuenta."
     },
     {
       "clave": "decisiones_registradas",
       "etiqueta": "decisiones de arquitectura registradas",
-      "valor": 11,
+      "valor": 16,
       "unidad": "ADR",
       "fuente": "medido",
       "detalle": "Archivos de decisions/."
@@ -248,7 +266,7 @@
     },
     {
       "nombre": "Python 3.12 · LangGraph 1.2",
-      "papel": "el agente del demo A, con la pausa humana como interrupt"
+      "papel": "los agentes de los dos demos, con la pausa humana como interrupt"
     },
     {
       "nombre": "Claude Code por suscripción",
@@ -264,7 +282,7 @@
     }
   ],
   "privacidad": {
-    "detalle": "Todo caso, afiliado, médico y plan de beneficios es sintético, con semilla, y un validador de identificadores en CI rechaza cualquiera con forma real. La vitrina es estática: ningún visitante lanza llamadas a modelos ni a servicios.",
+    "detalle": "Todo caso, afiliado, médico, plan de beneficios, solicitante y lista de control es sintético, con semilla, y un validador de identificadores en CI rechaza cualquiera con forma real. La vitrina es estática: ningún visitante lanza llamadas a modelos ni a servicios.",
     "datos_sinteticos": true,
     "llamadas_a_modelos_en_la_vitrina": false,
     "red_saliente_en_la_vitrina": false
@@ -274,7 +292,7 @@
     "razon": "La app privada no se publica. La vitrina viaja a hoja-de-vida como paquete estático, rotulado «Simulación · no operativo», y se muestra allí.",
     "repositorio": null,
     "razon_repositorio": "El repositorio no se enlaza desde la vitrina (regla de cero enlaces del portafolio).",
-    "brochure_archivo": "pendiente: docs/BROCHURE.html nace al cierre del ciclo H1 (sprint 3)",
-    "brochure_ruta_local": "pendiente: la ruta /conoce nace con el brochure (sprint 3)"
+    "brochure_archivo": "sin archivo propio: la vitrina y sus fichas hacen de brochure (decisión del sprint 3)",
+    "brochure_ruta_local": "sin ruta /conoce: la vitrina es la presentación de la app (decisión del sprint 3)"
   }
 }

@@ -92,7 +92,8 @@ describe("paridad del playground con el informe y con RF-09.2", () => {
     expect(r.minutos).toBe(
       informe.contrato_de_grafo.pausas.casos_con_pausa * minutosDelPlan,
     );
-    expect(r.minutos).toBe(96);
+    // La corrida de 200 de la v1.5 que publica la vitrina (S3): 70 pausas de 12 minutos.
+    expect(r.minutos).toBe(840);
   });
 
   it("cada visita, recalculada con los umbrales del plan, toma la rama de ramas-esperadas.json", async () => {
@@ -150,7 +151,7 @@ describe("paridad del playground con el informe y con RF-09.2", () => {
     );
   });
 
-  it("conmutar un umbral booleano cambia las decisiones que dice el informe (U4: 0 de 62)", async () => {
+  it("conmutar un umbral booleano cambia las decisiones que dice el informe (U4: 9 de 624)", async () => {
     const { c, corrida, plan, informe } = await base();
     const delPlan = umbralesAplicados(plan) as Umbrales;
     for (const u of plan.umbrales) {
@@ -189,7 +190,8 @@ describe("paridad del playground con el informe y con RF-09.2", () => {
         });
       }).length;
       expect(n, u.id).toBe(independientes);
-      expect([n, antes.length], u.id).toEqual([0, 62]);
+      // Con la v1.5 (S3), la aprobación en parte sale sin persona con el modo Texas apagado: encenderlo la mueve.
+      expect([n, antes.length], u.id).toEqual([9, 624]);
       expect(
         informe.playground.limites.some(
           (l) =>
@@ -278,70 +280,91 @@ describe("al mover un umbral, un oráculo sacado de las señales crudas de la tr
   );
 });
 
-describe("los ejemplos de la maqueta, medidos", () => {
-  it("U1 = 0,90: A-008 (confianza 0,88) pasa a una persona; +12 min; ningún error nuevo", async () => {
+describe("los ejemplos de la corrida publicada (200 casos, plan v1.5), medidos", () => {
+  // S3: la vitrina pasó de la corrida de 20 (la de la maqueta) a la de 200; los ejemplos se midieron sobre ella y son
+  // los que citan la guía de prueba y el e2e del playground.
+  it("U1 = 0,90: once casos que salían solos pasan a una persona; +132 min; ningún error nuevo", async () => {
     const { c } = await base();
     const r = consecuencias(c, { ...umbralesDelPlan(c), U1: 0.9 });
-    expect(r.cambios.map((x) => [x.id, x.antes, x.ahora, x.efecto])).toEqual([
-      ["A-008", "solo", "persona", "revision_de_mas"],
-    ]);
-    expect(r.minutos - r.minutos_plan).toBe(12);
+    expect(r.cambios).toHaveLength(11);
+    for (const x of r.cambios) {
+      expect([x.antes, x.ahora, x.efecto], x.id).toEqual([
+        "solo",
+        "persona",
+        "revision_de_mas",
+      ]);
+      expect(x.ahora_decide?.senal, x.id).toBe("senal_confianza");
+      expect(x.ahora_decide?.umbral_aplicado, x.id).toBe(0.9);
+    }
+    expect(r.cambios.map((x) => x.id)).toContain("A-013");
+    expect(r.minutos! - r.minutos_plan!).toBe(132);
     expect(r.introducidos).toEqual([]);
-    const a008 = r.cambios[0]!;
-    expect(a008.ahora_decide?.senal).toBe("senal_confianza");
-    expect(a008.ahora_decide?.umbral_aplicado).toBe(0.9);
   });
 
-  it("U2 = 1600: A-010 (costo 1500) sale sin persona — un error — y C3 deja de cumplirse", async () => {
+  it("U2 = 1600: doce casos de alto costo salen sin persona — doce errores — y C3 deja de cumplirse", async () => {
     const { c } = await base();
     const r = consecuencias(c, { ...umbralesDelPlan(c), U2: 1600 });
-    const a010 = r.cambios.find((x) => x.id === "A-010");
-    expect(a010?.efecto).toBe("error_introducido");
-    expect(a010?.ahora_decide).toBeNull();
-    expect(a010?.ya_no_decide?.senal).toBe("costo_estimado");
-    expect(r.introducidos).toContain("A-010");
+    expect(r.cambios).toHaveLength(12);
+    for (const x of r.cambios) {
+      expect(x.efecto, x.id).toBe("error_introducido");
+      expect(x.ahora_decide, x.id).toBeNull();
+      expect(x.ya_no_decide?.senal, x.id).toBe("costo_estimado");
+    }
+    expect(r.introducidos).toContain("A-007");
     const c3 = r.criterios.find((k) => k.id === "C3")!;
     expect(c3.estado).toBe("incumple");
-    expect(c3.casos_que_incumplen).toEqual(["A-010"]);
+    expect([...c3.casos_que_incumplen].sort()).toEqual(
+      r.cambios.map((x) => x.id).sort(),
+    );
   });
 
-  it("lo que el camino nuevo no registró queda sin medir: con U1 = 0,90, C9 no puede ver la pausa de A-008", async () => {
+  it("lo que el camino nuevo no registró queda sin medir: con U1 = 0,90, C9 no puede ver esas pausas", async () => {
     const { c } = await base();
     const r = consecuencias(c, { ...umbralesDelPlan(c), U1: 0.9 });
     const c9 = r.criterios.find((k) => k.id === "C9")!;
     expect(c9.estado).toBe("indeterminado");
-    expect(c9.no_evaluables).toEqual(["A-008"]);
+    expect([...c9.no_evaluables].sort()).toEqual(
+      r.cambios.map((x) => x.id).sort(),
+    );
     expect(c9.recalculado).toBe(true);
-    // C4 no lee nada que A-008 cambie: sigue como en el informe.
+    // C4 no lee nada que esos casos cambien: sigue como en el informe.
     expect(r.criterios.find((k) => k.id === "C4")?.recalculado).toBe(false);
   });
 
-  it("U3 = 3: A-007 pediría otra aclaración que la traza no tiene → «no observado»", async () => {
+  it("U3 = 3: diez casos pedirían otra aclaración que la traza no tiene → «no observado»", async () => {
     const { c } = await base();
     const r = consecuencias(c, { ...umbralesDelPlan(c), U3: 3 });
-    expect(r.cambios.map((x) => [x.id, x.efecto])).toEqual([
-      ["A-007", "no_observado"],
-    ]);
-    expect(r.no_observados).toEqual(["A-007"]);
+    expect(r.cambios).toHaveLength(10);
+    for (const x of r.cambios) expect(x.efecto, x.id).toBe("no_observado");
+    expect(r.no_observados).toContain("A-002");
     // AU-S2-22: los minutos se comparan sobre la misma población; el caso que nadie midió no cuenta como ahorro.
-    expect(r.minutos - r.minutos_plan).toBe(0);
-    expect(r.minutos_plan).toBe(r.personas * c.minutos_por_persona);
+    expect(r.minutos! - r.minutos_plan!).toBe(0);
+    expect(r.minutos_plan).toBe(r.personas * c.minutos_por_persona!);
   });
 
-  it("U3 = 1: A-007 llega a una persona con una aclaración menos; A-008 pasa a una persona", async () => {
+  it("U3 = 1: A-002 llega a una persona con una aclaración menos; A-013 pasa a una persona", async () => {
     const { c } = await base();
     const r = consecuencias(c, { ...umbralesDelPlan(c), U3: 1 });
-    const a007 = r.cambios.find((x) => x.id === "A-007");
-    expect(a007?.efecto).toBe("mismo_destino");
-    expect(a007?.visitas_ahorradas).toBe(1);
-    expect(r.cambios.find((x) => x.id === "A-008")?.ahora).toBe("persona");
+    const a002 = r.cambios.find((x) => x.id === "A-002");
+    expect(a002?.efecto).toBe("mismo_destino");
+    expect(a002?.visitas_ahorradas).toBe(1);
+    expect(r.cambios.find((x) => x.id === "A-013")?.ahora).toBe("persona");
   });
 
-  it("encender el modo Texas no cambia ningún caso: toda propuesta adversa ya pasaba por una persona", async () => {
-    const { c } = await base();
+  it("encender el modo Texas manda a una persona las nueve aprobaciones en parte, que salían solas", async () => {
+    const { c, corrida } = await base();
     const r = consecuencias(c, { ...umbralesDelPlan(c), U4: true });
     expect(r.movidos).toEqual(["U4"]);
-    expect(r.cambios).toEqual([]);
+    // Oráculo de la traza: los casos cuya decisión final fue aprobar en parte.
+    const parciales = corrida.trazas
+      .filter((t) => t.senales.decision_final === "aprobar_parcial")
+      .map((t) => t.caso_id)
+      .sort();
+    expect(parciales).toHaveLength(9);
+    expect(r.cambios.map((x) => x.id).sort()).toEqual(parciales);
+    for (const x of r.cambios)
+      expect([x.antes, x.ahora], x.id).toEqual(["solo", "persona"]);
+    expect(r.minutos! - r.minutos_plan!).toBe(9 * c.minutos_por_persona!);
   });
 });
 
@@ -500,10 +523,12 @@ describe("los cuatro efectos dependen de la verdad conocida (DA-04)", () => {
       [false, "revision_de_mas"],
       [true, "error_evitado"],
     ] as const) {
-      const c = await conVerdad("A-008", debe);
-      const r = consecuencias(c, { ...umbralesDelPlan(c), U1: 0.9 });
+      // Con U1 = 0,85 cambian A-089 y A-144 (corrida de 200, S3); se toca la verdad de A-089.
+      const c = await conVerdad("A-089", debe);
+      const r = consecuencias(c, { ...umbralesDelPlan(c), U1: 0.85 });
       expect(r.cambios.map((x) => [x.id, x.efecto])).toEqual([
-        ["A-008", efecto],
+        ["A-089", efecto],
+        ["A-144", "revision_de_mas"],
       ]);
       expect(r.evitados.length).toBe(debe ? 1 : 0);
     }
@@ -513,30 +538,38 @@ describe("los cuatro efectos dependen de la verdad conocida (DA-04)", () => {
       [true, "error_introducido"],
       [false, "revision_ahorrada"],
     ] as const) {
-      const c = await conVerdad("A-010", debe);
+      // Con U2 = 1600 salen solos doce casos que debían escalar (corrida de 200, S3); se toca la verdad de A-007.
+      const c = await conVerdad("A-007", debe);
       const r = consecuencias(c, { ...umbralesDelPlan(c), U2: 1600 });
-      expect(r.cambios.map((x) => [x.id, x.efecto])).toEqual([
-        ["A-010", efecto],
-      ]);
-      expect(r.introducidos.length).toBe(debe ? 1 : 0);
+      expect(r.cambios.find((x) => x.id === "A-007")?.efecto).toBe(efecto);
+      expect(r.introducidos.length).toBe(debe ? 12 : 11);
     }
   });
 });
 
 describe("el compacto se niega a adivinar (las entradas)", () => {
-  it("un plan con dos costos humanos distintos en sus umbrales no se compacta", async () => {
+  it("un plan con dos costos humanos distintos en sus umbrales no se compacta; sin ninguno, no se inventa (S3)", async () => {
     const d = await datosDemo();
     const plan = structuredClone(d.plan) as Plan;
     plan.umbrales[1]!.costo_humano_por_caso_min = 15;
     expect(() =>
       compactar(plan, d.corrida, d.lote, d.informe, d.manifiesto.playground),
-    ).toThrow(/varios costo humano/);
+    ).toThrow(/varios costos humanos/);
     for (const u of plan.umbrales)
       delete (u as { costo_humano_por_caso_min?: number })
         .costo_humano_por_caso_min;
-    expect(() =>
-      compactar(plan, d.corrida, d.lote, d.informe, d.manifiesto.playground),
-    ).toThrow(/ningún costo humano/);
+    // El plan B no declara costo humano: el playground cuenta los casos que van a una persona y no pone minutos.
+    const c = compactar(
+      plan,
+      d.corrida,
+      d.lote,
+      d.informe,
+      d.manifiesto.playground,
+    );
+    expect(c.minutos_por_persona).toBe(null);
+    const r = consecuencias(c, umbralesDelPlan(c));
+    expect([r.minutos, r.minutos_plan]).toEqual([null, null]);
+    expect(r.personas).toBe(r.personas_plan);
   });
   it("un informe sin un criterio del plan, o una traza sin su caso en el lote, se nombran", async () => {
     const d = await datosDemo();
@@ -560,14 +593,14 @@ describe("el compacto se niega a adivinar (las entradas)", () => {
     const roto = {
       ...c,
       casos: c.casos.map((k) =>
-        k.id === "A-008"
+        k.id === "A-013"
           ? { ...k, evaluaciones: { ...k.evaluaciones, caminos: {} } }
           : k,
       ),
     };
     expect(() =>
       consecuencias(roto, { ...umbralesDelPlan(c), U1: 0.9 }),
-    ).toThrow(/A-008 no trae la evaluación del camino/);
+    ).toThrow(/A-013 no trae la evaluación del camino/);
   });
 });
 
@@ -591,13 +624,14 @@ describe("tiempos (en el navegador, sin modelo)", () => {
 
   it("200 casos se recalculan en menos de 100 ms (mediana)", async () => {
     const { c } = await base();
-    const grande = replicar(c, 10);
+    // Desde el S3 la corrida publicada ya tiene 200 casos; con una de 20 se replicaba diez veces.
+    const grande = replicar(c, 200 / c.casos.length);
     expect(grande.casos.length).toBe(200);
     const u = { ...umbralesDelPlan(c), U1: 0.9, U2: 1600, U3: 1 };
     expect(medianaDe(() => consecuencias(grande, u), 15)).toBeLessThan(100);
   });
 
-  it("cada movimiento sobre los 20 casos cabe en un cuadro (< 16 ms, mediana)", async () => {
+  it("cada movimiento sobre la corrida publicada cabe en un cuadro (< 16 ms, mediana)", async () => {
     const { c } = await base();
     let k = 0;
     const valores = [0.5, 0.6, 0.7, 0.8, 0.9, 0.95];
@@ -622,23 +656,24 @@ describe("AU-S2-B45: una propuesta adversa sin persona es un error, nunca una re
     x.aristas = x.aristas.filter(
       (a) => !("senal" in a) || a.senal !== x.propuesta.senal,
     );
-    const negado = x.casos.find((k) =>
-      k.visitas.some(
-        (v) =>
-          v.senales[x.propuesta.senal] !== undefined &&
-          v.senales[x.propuesta.senal] !== x.propuesta.favorable,
-      ),
-    )!;
-    negado.debe_escalar = false;
+    // «negar», no «aprobar_parcial»: la aprobación en parte ya sale sola con el modo Texas apagado (v1.5). Y una
+    // negación que otra regla también manda a una persona (carga, costo) no cambia: vale cualquiera que sí cambie.
+    const negados = x.casos.filter((k) =>
+      k.visitas.some((v) => v.senales[x.propuesta.senal] === "negar"),
+    );
+    for (const k of negados) k.debe_escalar = false;
     const r = consecuencias(x, umbralesDelPlan(x));
-    const cambio = r.cambios.find((k) => k.id === negado.id);
-    expect(cambio?.ahora).toBe("solo");
-    expect(cambio?.efecto).toBe("error_introducido");
+    const cambios = r.cambios.filter((k) => negados.some((n) => n.id === k.id));
+    expect(cambios.length).toBeGreaterThan(0);
+    for (const cambio of cambios) {
+      expect(cambio.ahora, cambio.id).toBe("solo");
+      expect(cambio.efecto, cambio.id).toBe("error_introducido");
+    }
   });
 });
 
 describe("C-2: la comprobación «N de N casos reproducen su camino» se calcula", () => {
-  it("con los umbrales del plan, los veinte reproducen el camino registrado", async () => {
+  it("con los umbrales del plan, todos los casos reproducen el camino registrado", async () => {
     const { c } = await base();
     expect(casosQueReproducen(c)).toBe(c.casos.length);
   });

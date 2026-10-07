@@ -3,7 +3,7 @@
  * huella no coincide con la declarada, si un archivo no cumple su esquema o si una traza está mal
  * formada, la corrida se RECHAZA con todos los motivos juntos — nunca se mide «lo que se pudo leer».
  *
- * Puro: recibe objetos ya parseados (los scripts leen el disco; la vitrina, IndexedDB).
+ * Puro: recibe objetos ya parseados (los scripts leen el disco; la vitrina, al compilar: ADR-008).
  */
 import type { TextoBilingue } from "../formatos/bilingue";
 import { verificarHuella } from "../formatos/huella";
@@ -19,7 +19,15 @@ import {
   type Traza,
 } from "../formatos/traza";
 import { cargarPlan, mismaVerdad, type Plan } from "../plan";
-import { LoteSchema, type Caso, type Lote } from "../sintetico/esquema";
+import {
+  casosPorId,
+  esquemaDeLote,
+  mundoDe,
+  type CasoDeDemo,
+  type LoteDeDemo,
+} from "../sintetico/de-demo";
+
+export type { LoteDeDemo } from "../sintetico/de-demo";
 
 export interface ArchivosDeCorrida {
   /** Ruta lógica de la corrida (p. ej. `runs/demo-a/<id>`), solo para los mensajes. */
@@ -97,8 +105,8 @@ export interface EntradaLeida {
   huellaPlan: string;
   /** El plan con que se ejecutaron las corridas (el mismo que `plan` salvo `planDeLaCorrida`). */
   planCorrida: { version: string; huella: string };
-  lote: Lote;
-  casos: ReadonlyMap<string, Caso>;
+  lote: LoteDeDemo;
+  casos: ReadonlyMap<string, CasoDeDemo>;
   corrida: CorridaLeida;
   repeticiones: CorridaLeida[];
   base: CorridaLeida | null;
@@ -358,21 +366,30 @@ async function leerCorrida(
 function compatible(
   c: CorridaLeida,
   plan: { huella: string; id: string; version: string },
-  lote: Lote,
-  casos: ReadonlyMap<string, Caso>,
+  lote: LoteDeDemo,
+  casos: ReadonlyMap<string, CasoDeDemo>,
   variante: "multiagente" | "agente_unico",
   motivos: MotivoLectura[],
 ): void {
   const archivo = `${c.ruta}/corrida.json`;
-  // La verdad conocida del lote se deriva también del plan de beneficios: otro plan de beneficios, otra verdad.
-  if (c.manifiesto.plan_beneficios.huella !== lote.plan_beneficios.huella)
+  // La verdad conocida del lote se deriva también de su mundo: otro plan de beneficios (A) u otras listas (B), otra
+  // verdad.
+  const mundo = mundoDe(lote);
+  if (c.manifiesto[mundo.clave]?.huella !== mundo.huella)
     motivos.push(
-      m(
-        "HUELLA_NO_COINCIDE",
-        archivo,
-        "la corrida usó otro plan de beneficios que el del lote de casos",
-        "the run used another benefits plan than the case batch's",
-      ),
+      mundo.clave === "plan_beneficios"
+        ? m(
+            "HUELLA_NO_COINCIDE",
+            archivo,
+            "la corrida usó otro plan de beneficios que el del lote de casos",
+            "the run used another benefits plan than the case batch's",
+          )
+        : m(
+            "HUELLA_NO_COINCIDE",
+            archivo,
+            "la corrida usó otras listas de control que las del lote de casos",
+            "the run used other control lists than the case batch's",
+          ),
     );
   if (
     c.manifiesto.plan.id !== plan.id ||
@@ -438,7 +455,7 @@ function compatible(
 async function loteCompatible(
   planBruto: unknown,
   huellaPlan: string,
-  lote: Lote,
+  lote: LoteDeDemo,
   planDelLote: unknown,
   motivos: MotivoLectura[],
 ): Promise<void> {
@@ -534,7 +551,7 @@ export async function leerEntrada(
         m("PLAN_INVALIDO", "plan", x.mensaje.es, x.mensaje.en),
       ),
     );
-  const lote = esquema(LoteSchema.safeParse(e.casos), "casos", motivos);
+  const lote = esquema<LoteDeDemo>(esquemaDeLote(e.casos), "casos", motivos);
   if (lote) await huellaCoincide(e.casos, "casos", motivos);
   const corrida = await leerCorrida(e.corrida, motivos);
   const repeticiones: CorridaLeida[] = [];
@@ -546,7 +563,7 @@ export async function leerEntrada(
 
   if (carga.ok && lote && corrida) {
     await loteCompatible(e.plan, carga.huella, lote, e.planDelLote, motivos);
-    const casos = new Map(lote.casos.map((c) => [c.id, c]));
+    const casos = casosPorId(lote);
     const plan = await planDeEjecucion(e, carga, corrida, motivos);
     compatible(corrida, plan, lote, casos, "multiagente", motivos);
     const casosDe = (c: CorridaLeida) =>
@@ -619,12 +636,12 @@ export async function leerCorridaVerificada(
         m("PLAN_INVALIDO", "plan", x.mensaje.es, x.mensaje.en),
       ),
     );
-  const lote = esquema(LoteSchema.safeParse(casosBruto), "casos", motivos);
+  const lote = esquema<LoteDeDemo>(esquemaDeLote(casosBruto), "casos", motivos);
   if (lote) await huellaCoincide(casosBruto, "casos", motivos);
   const corrida = await leerCorrida(a, motivos);
   if (carga.ok && lote && corrida) {
     await loteCompatible(planBruto, carga.huella, lote, planDelLote, motivos);
-    const casos = new Map(lote.casos.map((c) => [c.id, c]));
+    const casos = casosPorId(lote);
     compatible(
       corrida,
       { huella: carga.huella, id: carga.plan.id, version: carga.plan.version },

@@ -4,36 +4,33 @@
   "demos": {
     "demo-a": {
       "plan": {
-        "archivo": "plans/demo-a/v1.3.json",
-        "huella": "bbe1b9c4e3241c58c6245c1eeb7b04488058e8553ac318b51c5e5059c8386e92"
+        "archivo": "plans/demo-a/v1.5.2.json",
+        "huella": "2dc1affac8e97d19d991fe9a89fc2f2c26d1ee7cad72be13ecfdd1ea90e4051d"
       },
       "corrida": {
-        "ruta": "runs/demo-a/suscripcion-planlang-a-001-20-v1.2",
-        "huella": "60b272f60e46fa23d95e23add14292a74b74733fb8ad7ba83dd49420ff55f3f1",
-        "sprint": 1
+        "ruta": "runs/demo-a/suscripcion-planlang-a-002-200-v1.5",
+        "huella": "fdbffe765fc0e8309284bbc5c606dc67bc80b61b53cbf8a3772b3447eb8d71a0",
+        "sprint": 3
       },
-      "repeticiones": [
-        {
-          "ruta": "runs/demo-a/suscripcion-planlang-a-001-20-v1.2-r2",
-          "huella": "0f5257d5265a5bdb40e788cd1818123b3de8ef43518a41b0649433f0a989dd38"
-        },
-        {
-          "ruta": "runs/demo-a/suscripcion-planlang-a-001-20-v1.2-r3",
-          "huella": "4380307cf1505bcd0b07302a22a5c99ea84bdf026ed7619e50a8672125025d87"
-        }
-      ],
+      "repeticiones": [],
       "linea_base": {
-        "ruta": "runs/demo-a/suscripcion-planlang-a-001-20-v1.2-base",
-        "huella": "c280b82a4c12874d8e43f9ccf39c72d506174a49c6f8bbe21a1827b8e68e3491"
+        "ruta": "runs/demo-a/suscripcion-planlang-a-002-200-v1.5-base",
+        "huella": "1ab219ded7ae9d1ce14f4d7ff0e699b517926564afda1ac73c74301ea6cff5f7"
       },
       "informe": {
-        "archivo": "data/vitrina/demo-a/suscripcion-planlang-a-001-20-v1.2/informe.json",
-        "huella": "ca000282398e1e248b5f8ce86c99206e7c1fdedb99742169164bebf3126fdd9f"
+        "archivo": "data/vitrina/demo-a/suscripcion-planlang-a-002-200-v1.5/informe.json",
+        "huella": "20c0b4ae85a8b635a979996db42fb58b21e1a1d7c390343ce975ca5ba30451e6"
       },
       "playground": {
         "senal_propuesta": "propuesta",
         "valor_favorable": "aprobar",
-        "claves_previas": ["extraccion"]
+        "claves_previas": [
+          "extraccion"
+        ],
+        "parcial": {
+          "valor": "aprobar_parcial",
+          "senal_que_exige_persona": "modo_texas"
+        }
       },
       "spike": {
         "fecha": "2026-09-26",
@@ -46,6 +43,38 @@
           "archivo": "data/vitrina/demo-a/spike-2026-09-26/lectura.json",
           "sha256": "b138df37c5d1987cbeac89657059fa2e60cf51d2040a502b64ae630dd6205527"
         }
+      }
+    },
+    "demo-b": {
+      "plan": {
+        "archivo": "plans/demo-b/v1.1.json",
+        "huella": "30728d949db2731d6a84d5e7f6191c03fcc49fdc702823e20dd3149648bc5910"
+      },
+      "corrida": {
+        "ruta": "runs/demo-b/suscripcion-planlang-b-001-20",
+        "huella": "112ccac9cf602829267257782355a8c2023f965781545d1b23a558825ff5fa99",
+        "sprint": 3
+      },
+      "repeticiones": [],
+      "linea_base": {
+        "ruta": "runs/demo-b/suscripcion-planlang-b-001-20-base-v2",
+        "huella": "b4c91ee3933db445a763e6fd4ead18c91b9a54a565393247612661cbe43d7be7"
+      },
+      "informe": {
+        "archivo": "data/vitrina/demo-b/suscripcion-planlang-b-001-20/informe.json",
+        "huella": "4705b3f3d49c8c4c53590a6845620ad25c76bcff26a595125bc1050c2fee1411"
+      },
+      "playground": {
+        "senal_propuesta": "propuesta",
+        "valor_favorable": "aprobar",
+        "claves_previas": [
+          "extraccion",
+          "extraccion_correcta"
+        ],
+        "claves_del_desenlace": [
+          "conclusiones_sin_cita",
+          "inyeccion_neutralizada"
+        ]
       }
     }
   }

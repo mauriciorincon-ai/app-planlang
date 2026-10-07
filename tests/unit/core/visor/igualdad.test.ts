@@ -1,13 +1,22 @@
 /** Gate «diagrama = grafo»: verde sobre el demo A; rojo, con la falla nombrada, al quitar o inventar algo. */
 import { describe, expect, it } from "vitest";
 import { diagramaIgualGrafo } from "@core/visor/igualdad";
-import type { Mapa } from "@core/visor/tipos";
+import type { Mapa, NodoMapa } from "@core/visor/tipos";
 import { CONTRATO, GRAFO, mapaDemo } from "./_demo";
 
 const copia = (): Mapa => JSON.parse(JSON.stringify(mapaDemo())) as Mapa;
 
+/** Un nodo de carnada calcado del primero, sin su papel (el enrutador es el inicio y la carnada no). */
+function carnada(m: Mapa, id: string): NodoMapa {
+  const n: NodoMapa = { ...m.nodos[0]!, id };
+  delete n.papel;
+  return n;
+}
+
 describe("diagrama = grafo", () => {
-  it("el demo A: 8 de 8 nodos, 9 de 9 reglas, 0 fuera del contrato, 11 pares de aristas", () => {
+  // Plan v1.5 (S3): 12 reglas (la carga y el respaldo sin modelo de la v1.4 entran a la vitrina); 14 aristas de
+  // LangGraph, 12 pares dibujados (sin las dos terminales).
+  it("el demo A: 8 de 8 nodos, 12 de 12 reglas, 0 fuera del contrato, 12 pares de aristas", () => {
     const c = diagramaIgualGrafo(mapaDemo(), GRAFO, CONTRATO);
     expect(c.fallas).toEqual([]);
     expect(c.ok).toBe(true);
@@ -19,11 +28,11 @@ describe("diagrama = grafo", () => {
       fueraDelContrato: [],
     });
     expect(c.reglas).toEqual({
-      contrato: 9,
-      dibujadas: 9,
+      contrato: 12,
+      dibujadas: 12,
       exigidasAusentes: [],
     });
-    expect(c.aristas).toEqual({ grafo: 13, dibujadas: 11 });
+    expect(c.aristas).toEqual({ grafo: 14, dibujadas: 12 });
   });
 
   it("rojo si el dibujo pierde un nodo (la demo de la orden: guardia_salida fuera del mapa)", () => {
@@ -38,15 +47,26 @@ describe("diagrama = grafo", () => {
       "nodo del plan ausente del dibujo: guardia-salida",
       "nodo del grafo ausente del dibujo: guardia-salida",
       "arista del grafo sin flujo en el dibujo: redactor>guardia-salida",
+      "papel «fin» en el dibujo (ninguno) distinto del grafo (guardia-salida)",
+    ]);
+  });
+
+  it("rojo si el papel de inicio o fin no es el del grafo (contrato 0.5.0 § 3.3)", () => {
+    const m = copia();
+    for (const n of m.nodos) {
+      if (n.id === "guardia-salida") delete n.papel;
+      if (n.id === "redactor") n.papel = "fin";
+    }
+    expect(diagramaIgualGrafo(m, GRAFO, CONTRATO).fallas).toEqual([
+      "papel «fin» en el dibujo (redactor) distinto del grafo (guardia-salida)",
     ]);
   });
 
   it("rojo si una regla cambia de umbral, se pierde, o aparece una que el plan no tiene", () => {
     const m = copia();
-    m.flujos.find(
-      (f) => f.id === "decision-a-pausa-humana-r1",
-    )!.condicion!.valor = "U2";
-    m.flujos = m.flujos.filter((f) => f.id !== "extractor-a-aclaracion-r1");
+    const r2 = m.flujos.find((f) => f.id === "decision-a-pausa-humana-r2")!;
+    r2.condicion = { senal: "senal-confianza", operador: "<", valor: "U2" };
+    m.flujos = m.flujos.filter((f) => f.id !== "extractor-a-aclaracion-r2");
     m.flujos.push({
       ...m.flujos[0]!,
       id: "inventada",
@@ -55,10 +75,10 @@ describe("diagrama = grafo", () => {
     const c = diagramaIgualGrafo(m, GRAFO, CONTRATO);
     expect(c.fallas).toEqual(
       expect.arrayContaining([
-        "regla del plan sin su flujo en el dibujo: decision#1",
-        "regla del plan sin su flujo en el dibujo: extractor#1",
+        "regla del plan sin su flujo en el dibujo: decision#2",
+        "regla del plan sin su flujo en el dibujo: extractor#2",
         "flujo con una regla que el plan no declara: inventada",
-        "flujo con una regla que el plan no declara: decision-a-pausa-humana-r1",
+        "flujo con una regla que el plan no declara: decision-a-pausa-humana-r2",
       ]),
     );
   });
@@ -79,14 +99,18 @@ describe("diagrama = grafo", () => {
     expect(c.fallas).toContain(
       "nodo exigido y ausente del grafo sin la marca «exigido»: aclaracion",
     );
-    expect(c.reglas.exigidasAusentes).toEqual(["aclaracion#1", "extractor#1"]);
+    expect(c.reglas.exigidasAusentes).toEqual([
+      "aclaracion#1",
+      "aclaracion#2",
+      "extractor#2",
+    ]);
 
     const conExtra = {
       ...GRAFO,
       nodos: [...GRAFO.nodos, { id: "aprobar", tipo: "regla" }],
     };
     const m2 = copia();
-    m2.nodos.push({ ...m2.nodos[0]!, id: "aprobar" });
+    m2.nodos.push(carnada(m2, "aprobar"));
     expect(diagramaIgualGrafo(m2, conExtra, CONTRATO).fallas).toEqual([
       "nodo fuera del contrato sin su marca: aprobar",
     ]);
@@ -94,7 +118,7 @@ describe("diagrama = grafo", () => {
 
   it("rojo si el dibujo inventa un nodo o un flujo sin arista", () => {
     const m = copia();
-    m.nodos.push({ ...m.nodos[0]!, id: "fantasma" });
+    m.nodos.push(carnada(m, "fantasma"));
     m.flujos.push({
       ...m.flujos.find((f) => f.modo_id === "secuencia")!,
       id: "atajo",

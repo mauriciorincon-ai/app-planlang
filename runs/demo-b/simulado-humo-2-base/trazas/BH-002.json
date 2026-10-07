@@ -1,0 +1,665 @@
+{
+  "aclaraciones": [],
+  "caso_id": "BH-002",
+  "cobertura": null,
+  "coincidencias": {
+    "listas_consultadas": [
+      {
+        "fecha": "2026-09-30",
+        "id": "LV-01",
+        "version": "2026.09",
+        "vinculante": true
+      },
+      {
+        "fecha": "2026-08-31",
+        "id": "LC-01",
+        "version": "2026.08",
+        "vinculante": false
+      }
+    ],
+    "mejor": {
+      "entrada_id": "LV-01-007",
+      "exacta": false,
+      "lista_id": "LV-01",
+      "nombre_listado": "Nikolai Quertal Tazurek",
+      "similitud": 0.7738,
+      "vinculante": true
+    }
+  },
+  "corrida_id": "simulado-humo-2-base",
+  "decisiones_de_arista": [
+    {
+      "desde": "verificador_listas",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": true,
+      "operador": "mayor_o_igual_que",
+      "orden_arista": 1,
+      "paso": 3,
+      "rama_tomada": "puntaje",
+      "resultado": true,
+      "senal": "similitud_max",
+      "tipo": "tripleta",
+      "umbral_aplicado": 0.7,
+      "valor_declarado": "umbral.U4",
+      "valor_observado": 0.7738
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 5,
+      "rama_tomada": "pausa_humana",
+      "resultado": false,
+      "senal": "carga_detectada",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": true,
+      "operador": "mayor_o_igual_que",
+      "orden_arista": 2,
+      "paso": 5,
+      "rama_tomada": "pausa_humana",
+      "resultado": false,
+      "senal": "similitud_max",
+      "tipo": "tripleta",
+      "umbral_aplicado": 0.85,
+      "valor_declarado": "umbral.U1",
+      "valor_observado": 0.7738
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 3,
+      "paso": 5,
+      "rama_tomada": "pausa_humana",
+      "resultado": true,
+      "senal": "conclusion_investigador",
+      "tipo": "tripleta",
+      "umbral_aplicado": "misma_persona",
+      "valor_declarado": "misma_persona",
+      "valor_observado": "misma_persona"
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": true,
+      "operador": "mayor_o_igual_que",
+      "orden_arista": 4,
+      "paso": 5,
+      "rama_tomada": "pausa_humana",
+      "resultado": false,
+      "senal": "puntaje_riesgo",
+      "tipo": "tripleta",
+      "umbral_aplicado": 60,
+      "valor_declarado": "umbral.U2",
+      "valor_observado": 40
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "mayor_que",
+      "orden_arista": 5,
+      "paso": 5,
+      "rama_tomada": "pausa_humana",
+      "resultado": false,
+      "senal": "inconsistencias",
+      "tipo": "tripleta",
+      "umbral_aplicado": 0,
+      "valor_declarado": "umbral.U3",
+      "valor_observado": 0
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 6,
+      "paso": 5,
+      "rama_tomada": "pausa_humana",
+      "resultado": true,
+      "senal": "propuesta",
+      "tipo": "tripleta",
+      "umbral_aplicado": "rechazar",
+      "valor_declarado": "rechazar",
+      "valor_observado": "rechazar"
+    }
+  ],
+  "documento_adverso": null,
+  "error_de_esquema_en_traspaso": false,
+  "error_proveedor": null,
+  "expediente": {
+    "caso_id": "BH-002",
+    "conclusiones": [
+      {
+        "cita": {
+          "ref": "identidad",
+          "tipo": "documento"
+        },
+        "id": "K1",
+        "tema": "identidad",
+        "texto": {
+          "en": "Declared identity: Inés Quertal Tazurek, document SYN-ID-646084, born in 1946, nationality State of Corvena.",
+          "es": "Identidad declarada: Inés Quertal Tazurek, documento SYN-ID-646084, nacido en 1946, nacionalidad Estado de Corvena."
+        }
+      },
+      {
+        "cita": {
+          "lista": {
+            "fecha": "2026-09-30",
+            "id": "LV-01",
+            "version": "2026.09"
+          },
+          "ref": "LV-01-007",
+          "regla": "RL-02",
+          "tipo": "coincidencia"
+        },
+        "id": "K2",
+        "tema": "listas",
+        "texto": {
+          "en": "The highest similarity with the lists is 0.7738, with entry LV-01-007 of binding list LV-01 (version 2026.09, September 2026; RL-02).",
+          "es": "La mayor similitud con las listas es 0,7738, con la entrada LV-01-007 de la lista vinculante LV-01 (versión 2026.09, de septiembre de 2026; RL-02)."
+        }
+      },
+      {
+        "cita": {
+          "ref": "LV-01-007",
+          "tipo": "coincidencia"
+        },
+        "id": "K3",
+        "tema": "investigacion",
+        "texto": {
+          "en": "The context investigator concluded “same person” against LV-01-007: The year of birth and nationality do not rule out that this is the listed person.",
+          "es": "El investigador de contexto concluyó «misma persona» frente a LV-01-007: El año de nacimiento y la nacionalidad no permiten descartar que sea la persona de la lista."
+        }
+      },
+      {
+        "cita": {
+          "ref": "RI-01,RI-02,RI-03",
+          "tipo": "regla"
+        },
+        "id": "K4",
+        "tema": "documentos",
+        "texto": {
+          "en": "The documents are consistent with each other and no required detail is missing (RI-01 to RI-03).",
+          "es": "Los documentos son consistentes entre sí y no les falta ningún dato exigido (RI-01 a RI-03)."
+        }
+      },
+      {
+        "cita": {
+          "ref": "RP-01,RP-02,RP-03,RP-04",
+          "tipo": "regla"
+        },
+        "id": "K5",
+        "tema": "puntaje",
+        "texto": {
+          "en": "Risk score 40 out of 100: activity SYN-ACT-09 (high, 40; RP-01), jurisdiction of the funds SYN-J-03 (low, 0; RP-02), income consistency (consistent, 0; RP-03). Name and nationality do not count (RP-04).",
+          "es": "Puntaje de riesgo 40 de 100: actividad SYN-ACT-09 (alto, 40; RP-01), jurisdicción de los fondos SYN-J-03 (bajo, 0; RP-02), coherencia de los ingresos (coherente, 0; RP-03). El nombre y la nacionalidad no entran (RP-04)."
+        }
+      },
+      {
+        "cita": {
+          "ref": "RD-01",
+          "tipo": "regla"
+        },
+        "id": "K6",
+        "tema": "propuesta",
+        "texto": {
+          "en": "Agent proposal: reject (RD-01).",
+          "es": "Propuesta del agente: rechazar (RD-01)."
+        }
+      },
+      {
+        "cita": {
+          "ref": "decision/3",
+          "tipo": "arista"
+        },
+        "id": "K7",
+        "tema": "decision",
+        "texto": {
+          "en": "The compliance officer decided: approve. The pause was opened by edge 3 of decision: conclusion_investigador (misma_persona) equal to misma_persona (misma_persona).",
+          "es": "Decidió el oficial de cumplimiento: aprobar. Abrió la pausa la arista 3 de decision: conclusion_investigador (misma_persona) igual a misma_persona (misma_persona)."
+        }
+      },
+      {
+        "cita": {
+          "ref": "D3",
+          "tipo": "decision_del_plan"
+        },
+        "id": "K8",
+        "tema": "conservacion",
+        "texto": {
+          "en": "The file is kept for five years (plan decision D3; estimated term, AMLR art. 77).",
+          "es": "El expediente se conserva cinco años (decisión D3 del plan; plazo estimado, AMLR art. 77)."
+        }
+      }
+    ],
+    "conclusiones_sin_cita": 0,
+    "datos_usados": [
+      "actividad",
+      "documento",
+      "ingresos_mensuales",
+      "jurisdiccion_fondos",
+      "nacimiento",
+      "nacionalidad",
+      "nombre",
+      "titular_actividad",
+      "titular_fondos"
+    ],
+    "decision": {
+      "final": "aprobar",
+      "propuesta": "rechazar",
+      "revisada_por_persona": true,
+      "rol": "oficial"
+    },
+    "listas_consultadas": [
+      {
+        "fecha": "2026-09-30",
+        "id": "LV-01",
+        "version": "2026.09",
+        "vinculante": true
+      },
+      {
+        "fecha": "2026-08-31",
+        "id": "LC-01",
+        "version": "2026.08",
+        "vinculante": false
+      }
+    ],
+    "plan": {
+      "huella": "0cd6590ccbbb611091bf7acbd369874aa33fc7df95474c8c16f0f0beb9bb86dd",
+      "id": "plan-demo-b",
+      "version": "1.0.0"
+    },
+    "solicitud": "SYN-SOL-744130"
+  },
+  "extraccion": {
+    "campos": {
+      "actividad": "SYN-ACT-09",
+      "documento": "SYN-ID-646084",
+      "ingresos_mensuales": 36900,
+      "jurisdiccion_fondos": "SYN-J-03",
+      "nacimiento": 1946,
+      "nacionalidad": "SYN-J-01",
+      "nombre": "Inés Quertal Tazurek",
+      "titular_actividad": "SYN-ID-646084",
+      "titular_fondos": "Inés Quertal Tazurek"
+    },
+    "campos_faltantes": []
+  },
+  "formato": "planlang-trace/v1",
+  "guardia_salida": {
+    "acciones_ejecutadas": [
+      "registrar_expediente",
+      "responder_solicitante"
+    ],
+    "acciones_intentadas": [
+      "registrar_expediente",
+      "responder_solicitante"
+    ],
+    "carga_detectada_en_entrada": false,
+    "hallazgos": [],
+    "severidad_accion": 0
+  },
+  "huella": "7702d1fa7c88602062acc2f7be2d83248458ff957750c3e93eb5bc6503a437d6",
+  "investigacion": {
+    "conclusion": "misma_persona",
+    "entrada_id": "LV-01-007",
+    "razones": {
+      "en": "The year of birth and nationality do not rule out that this is the listed person.",
+      "es": "El año de nacimiento y la nacionalidad no permiten descartar que sea la persona de la lista."
+    }
+  },
+  "nodos_visitados": [
+    "enrutador",
+    "agente_unico",
+    "verificador_listas",
+    "puntaje",
+    "decision",
+    "pausa_humana",
+    "redactor",
+    "guardia_salida"
+  ],
+  "pasos": [
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 1,
+      "error_proveedor": null,
+      "inicio_ms": 0,
+      "nodo": "enrutador",
+      "orden": 1,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "enrutador",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 1,
+      "error_proveedor": null,
+      "inicio_ms": 2,
+      "nodo": "agente_unico",
+      "orden": 2,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 1290,
+        "salida": 139
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 1,
+      "error_proveedor": null,
+      "inicio_ms": 4,
+      "nodo": "verificador_listas",
+      "orden": 3,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "regla",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 1,
+      "error_proveedor": null,
+      "inicio_ms": 6,
+      "nodo": "puntaje",
+      "orden": 4,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "regla",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 1,
+      "error_proveedor": null,
+      "inicio_ms": 8,
+      "nodo": "decision",
+      "orden": 5,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "enrutador",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 1,
+      "error_proveedor": null,
+      "inicio_ms": 11,
+      "nodo": "pausa_humana",
+      "orden": 6,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "pausa_humana",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 1,
+      "error_proveedor": null,
+      "inicio_ms": 13,
+      "nodo": "redactor",
+      "orden": 7,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "regla",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 1,
+      "error_proveedor": null,
+      "inicio_ms": 15,
+      "nodo": "guardia_salida",
+      "orden": 8,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "regla",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    }
+  ],
+  "pausas_humanas": [
+    {
+      "nodo": "pausa_humana",
+      "paso": 6,
+      "payload": {
+        "coincidencias": {
+          "listas_consultadas": [
+            {
+              "fecha": "2026-09-30",
+              "id": "LV-01",
+              "version": "2026.09",
+              "vinculante": true
+            },
+            {
+              "fecha": "2026-08-31",
+              "id": "LC-01",
+              "version": "2026.08",
+              "vinculante": false
+            }
+          ],
+          "mejor": {
+            "entrada_id": "LV-01-007",
+            "exacta": false,
+            "lista_id": "LV-01",
+            "nombre_listado": "Nikolai Quertal Tazurek",
+            "similitud": 0.7738,
+            "vinculante": true
+          }
+        },
+        "contraevidencia": [
+          {
+            "en": "The year of birth (1946) does not match the entry's (1950).",
+            "es": "El año de nacimiento (1946) no coincide con el de la entrada (1950)."
+          },
+          {
+            "en": "The nationality (SYN-J-01) does not match the entry's (SYN-J-05).",
+            "es": "La nacionalidad (SYN-J-01) no coincide con la de la entrada (SYN-J-05)."
+          },
+          {
+            "en": "Risk score 40, below the escalation threshold (60).",
+            "es": "Puntaje de riesgo 40, bajo el umbral de escalamiento (60)."
+          },
+          {
+            "en": "The documents are consistent.",
+            "es": "Los documentos son consistentes entre sí."
+          }
+        ],
+        "documentos": {
+          "actividad": {
+            "en": "Statement of economic activity. I build and sell residential buildings, and have done so for 13 years. My income is 36900 synthetic units a month. Signed with document SYN-ID-646084.",
+            "es": "Declaración de actividad económica. Construyo y vendo edificios de vivienda desde hace 13 años. Mis ingresos son de 36900 unidades sintéticas al mes. Firmo con el documento SYN-ID-646084."
+          },
+          "fondos": {
+            "en": "Source-of-funds statement. The funds come from a loan from a relative in the Brisal Commonwealth. Holder of the funds: Inés Quertal Tazurek.",
+            "es": "Declaración de origen de fondos. Los fondos vienen de un préstamo de un familiar en la Mancomunidad de Brisal. Titular de los fondos: Inés Quertal Tazurek."
+          },
+          "identidad": {
+            "en": "Identity (synthetic document SYN-ID-646084). Full name: Inés Quertal Tazurek. Year of birth: 1946. Nationality: State of Corvena.",
+            "es": "Identidad (documento sintético SYN-ID-646084). Nombre completo: Inés Quertal Tazurek. Año de nacimiento: 1946. Nacionalidad: Estado de Corvena."
+          }
+        },
+        "evidencia": [
+          {
+            "en": "The name is 0.7738 similar to “Nikolai Quertal Tazurek” (LV-01-007), on binding list LV-01.",
+            "es": "El nombre se parece 0,7738 a «Nikolai Quertal Tazurek» (LV-01-007), de la lista vinculante LV-01."
+          },
+          {
+            "en": "The investigator concluded “misma_persona”: The year of birth and nationality do not rule out that this is the listed person.",
+            "es": "El investigador concluyó «misma_persona»: El año de nacimiento y la nacionalidad no permiten descartar que sea la persona de la lista."
+          },
+          {
+            "en": "Propose rejection if the investigator concludes the applicant is the person on a binding-list entry. (RD-01)",
+            "es": "Proponer rechazar si el investigador concluye que el solicitante es la persona de una entrada de una lista vinculante. (RD-01)"
+          }
+        ],
+        "extraccion": {
+          "campos": {
+            "actividad": "SYN-ACT-09",
+            "documento": "SYN-ID-646084",
+            "ingresos_mensuales": 36900,
+            "jurisdiccion_fondos": "SYN-J-03",
+            "nacimiento": 1946,
+            "nacionalidad": "SYN-J-01",
+            "nombre": "Inés Quertal Tazurek",
+            "titular_actividad": "SYN-ID-646084",
+            "titular_fondos": "Inés Quertal Tazurek"
+          },
+          "campos_faltantes": []
+        },
+        "investigacion": {
+          "conclusion": "misma_persona",
+          "entrada_id": "LV-01-007",
+          "razones": {
+            "en": "The year of birth and nationality do not rule out that this is the listed person.",
+            "es": "El año de nacimiento y la nacionalidad no permiten descartar que sea la persona de la lista."
+          }
+        },
+        "motivo": {
+          "desde": "decision",
+          "en": "Edge 3 of decision: conclusion_investigador (misma_persona) equal to misma_persona (misma_persona).",
+          "es": "Arista 3 de decision: conclusion_investigador (misma_persona) igual a misma_persona (misma_persona).",
+          "orden_arista": 3
+        },
+        "puntaje": {
+          "componentes": [
+            {
+              "factor": "actividad",
+              "nivel": "alto",
+              "puntos": 40,
+              "regla": "RP-01",
+              "valor": "SYN-ACT-09"
+            },
+            {
+              "factor": "jurisdiccion",
+              "nivel": "bajo",
+              "puntos": 0,
+              "regla": "RP-02",
+              "valor": "SYN-J-03"
+            },
+            {
+              "factor": "coherencia",
+              "nivel": "coherente",
+              "puntos": 0,
+              "regla": "RP-03",
+              "valor": "36900"
+            }
+          ],
+          "inconsistencias": [],
+          "reglas_propuesta": [
+            "RD-01"
+          ],
+          "total": 40
+        },
+        "senal": "conclusion_investigador",
+        "umbral": {
+          "aplicado": "misma_persona",
+          "declarado": "misma_persona"
+        }
+      },
+      "respuesta_simulada": {
+        "decision": "aprobar",
+        "politica": "sigue_verdad_conocida"
+      },
+      "rol": "oficial"
+    }
+  ],
+  "puntaje": {
+    "componentes": [
+      {
+        "factor": "actividad",
+        "nivel": "alto",
+        "puntos": 40,
+        "regla": "RP-01",
+        "valor": "SYN-ACT-09"
+      },
+      {
+        "factor": "jurisdiccion",
+        "nivel": "bajo",
+        "puntos": 0,
+        "regla": "RP-02",
+        "valor": "SYN-J-03"
+      },
+      {
+        "factor": "coherencia",
+        "nivel": "coherente",
+        "puntos": 0,
+        "regla": "RP-03",
+        "valor": "36900"
+      }
+    ],
+    "inconsistencias": [],
+    "reglas_propuesta": [
+      "RD-01"
+    ],
+    "total": 40
+  },
+  "resultado": "completo",
+  "salida_final": {
+    "aviso_ia": {
+      "en": "This reply was prepared by an AI system in a simulation with synthetic data, and a person reviewed the case.",
+      "es": "Esta respuesta la preparó un sistema de IA en una simulación con datos sintéticos, y una persona revisó el caso."
+    },
+    "en": "Your onboarding application was approved. You can now use the product you requested.",
+    "es": "Su solicitud de vinculación fue aprobada. Ya puede usar el producto que pidió."
+  },
+  "senales": {
+    "carga_detectada": false,
+    "conclusion_investigador": "misma_persona",
+    "conclusiones_sin_cita": 0,
+    "decision_final": "aprobar",
+    "error_proveedor": null,
+    "extraccion_correcta": true,
+    "inconsistencias": 0,
+    "inyeccion_neutralizada": false,
+    "latencia_total_s": 0.008,
+    "nodos_visitados": [
+      "enrutador",
+      "agente_unico",
+      "verificador_listas",
+      "puntaje",
+      "decision",
+      "pausa_humana",
+      "redactor",
+      "guardia_salida"
+    ],
+    "pausa_humana": true,
+    "propuesta": "rechazar",
+    "puntaje_riesgo": 40,
+    "similitud_max": 0.7738,
+    "tokens": 1429
+  },
+  "variante": "agente_unico"
+}

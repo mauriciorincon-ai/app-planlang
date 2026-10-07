@@ -15,15 +15,27 @@ import { Portada } from "@/components/entrada/portada";
 import { Pregunta } from "@/components/entrada/pregunta";
 import { Marco } from "@/components/marco/marco";
 import { Veredicto, claseDeVeredicto } from "@/components/veredicto";
-import { datosDemo } from "@/lib/datos/vitrina";
-import { vistaEntrada, type VistaEntrada } from "@/lib/vista/entrada";
+import { datosDeLosDemos } from "@/lib/datos/vitrina";
+import { DEMOS } from "@/lib/demos";
+import {
+  filaDeDemo,
+  vistaEntrada,
+  type FilaDemo,
+  type VistaEntrada,
+} from "@/lib/vista/entrada";
 import type { Idioma } from "@core/formatos/bilingue";
 
 const html = document.documentElement;
 let vistas: Record<Idioma, VistaEntrada>;
+let filas: Record<Idioma, FilaDemo[]>;
 beforeAll(async () => {
-  const d = await datosDemo();
+  const ds = await datosDeLosDemos();
+  const d = ds["demo-a"];
   vistas = { es: vistaEntrada(d, "es"), en: vistaEntrada(d, "en") };
+  filas = {
+    es: DEMOS.map((id) => filaDeDemo(ds[id], "es")),
+    en: DEMOS.map((id) => filaDeDemo(ds[id], "en")),
+  };
 });
 afterEach(() => {
   html.removeAttribute("data-perfil");
@@ -38,7 +50,7 @@ function Entrada({ idioma }: { idioma: Idioma }) {
       <Portada idioma={idioma} />
       <ComoFunciona vista={v} idioma={idioma} />
       <LoQueNinguna vista={v} idioma={idioma} />
-      <Demos vista={v} idioma={idioma} />
+      <Demos filas={filas[idioma]} idioma={idioma} />
       <Pregunta idioma={idioma} />
     </Marco>
   );
@@ -132,6 +144,29 @@ describe("marco: rótulo, barra y pie", () => {
     expect(region.textContent).toContain("Simulation · not operational");
   });
 
+  it("el pie dice lo sintético y quién decidiría en producción según el demo; la entrada, los dos", () => {
+    const pie = (demo?: "demo-a" | "demo-b") => {
+      const { container, unmount } = render(
+        <Marco idioma="es" pagina="plan" demo={demo}>
+          <p>contenido</p>
+        </Marco>,
+      );
+      const t = container.querySelector("footer")!.textContent!;
+      unmount();
+      return t;
+    };
+    const a = pie("demo-a");
+    const b = pie("demo-b");
+    const ambos = pie();
+    expect(a).toContain("un auditor médico con el caso completo");
+    expect(a).not.toMatch(/solicitante|oficial de cumplimiento/);
+    expect(b).toContain("un oficial de cumplimiento con el caso completo");
+    expect(b).not.toMatch(/afiliado|médico|plan de beneficios/);
+    expect(ambos).toContain(
+      "un auditor médico en el A, un oficial de cumplimiento en el B",
+    );
+  });
+
   it("el conmutador de tema cambia el atributo y marca el botón pulsado", async () => {
     render(
       <Marco idioma="en" pagina="plan">
@@ -165,7 +200,7 @@ describe("P1 Entrada renderizada", () => {
     ])
       expect(screen.getAllByText(t).length).toBeGreaterThan(0);
     expect(
-      screen.getByRole("list", { name: /el agente del sprint 1/ }),
+      screen.getByRole("list", { name: /el agente del sprint 3/ }),
     ).toBeInTheDocument();
     expect(
       screen
@@ -173,7 +208,9 @@ describe("P1 Entrada renderizada", () => {
         .some((li) => li.textContent === "guardia_salida"),
     ).toBe(true);
     expect(
-      screen.getByRole("img", { name: "9 criterios: 9 cumplen" }),
+      screen.getByRole("img", {
+        name: "10 criterios: 10 cumplen",
+      }),
     ).toBeInTheDocument();
     expect(
       screen
@@ -252,24 +289,42 @@ describe("regla 5-a: la forma no depende del perfil ni del cliente", () => {
   });
 });
 
-describe("AU-S2-6: el demo B, el entrevistador y lo demás del roadmap dicen «en construcción» (regla dura 15)", () => {
+describe("AU-S2-6 (S3): los dos demos tienen su fila real; lo que sigue del roadmap dice «en construcción» (regla dura 15)", () => {
   it.each(["es", "en"] as const)("en %s", (idioma) => {
     const { container } = render(
-      <Demos vista={vistas[idioma]} idioma={idioma} />,
+      <Demos filas={filas[idioma]} idioma={idioma} />,
     );
-    const beta = [...container.querySelectorAll('[data-v="beta"]')];
-    // El demo B en su fila y los cuatro del roadmap en la lista.
-    expect(beta).toHaveLength(5);
+    // Una fila por demo, con su veredicto del informe y su corrida; ninguna en construcción.
+    const filasDemo = [...container.querySelectorAll("[data-demo]")];
+    expect(filasDemo.map((x) => (x as HTMLElement).dataset.demo)).toEqual([
+      "demo-a",
+      "demo-b",
+    ]);
+    for (const f of filasDemo) {
+      expect(f.querySelector('[data-v="beta"]')).toBeNull();
+      expect(f.textContent).toContain("real · sprint");
+    }
+    const b = filasDemo[1]!;
+    expect(
+      [...b.querySelectorAll("a")].map((a) => a.getAttribute("href")),
+    ).toEqual([
+      `/${idioma}/demo-b/brecha`,
+      `/${idioma}/demo-b/plan`,
+      `/${idioma}/demo-b/agente`,
+      `/${idioma}/demo-b/playground`,
+      `/${idioma}/demo-b/caso`,
+    ]);
+    // El entrevistador ya corrió (propuso el plan B): sale del roadmap. Quedan tres, en construcción.
     const ids = [...container.querySelectorAll("[data-roadmap]")].map(
       (x) => (x as HTMLElement).dataset.roadmap,
     );
     expect(ids).toEqual([
-      "entrevistador-que-propone-el-plan",
       "comparar-dos-corridas",
       "calibracion-conformal",
       "recorrido-animado-de-un-caso",
     ]);
     for (const li of container.querySelectorAll("[data-roadmap]"))
       expect(li.querySelector('[data-v="beta"]')).not.toBeNull();
+    expect(container.querySelectorAll('[data-v="beta"]')).toHaveLength(3);
   });
 });

@@ -30,8 +30,22 @@ export const ProcedimientoSchema = z
     causal: z.enum(CAUSALES).nullable(),
     exento_motivo: TextoBilingueSchema.nullable(),
     homonimo_de: z.string().regex(CODIGO_PROCEDIMIENTO).nullable(),
+    /**
+     * Hasta cuánto cubre el plan este servicio (plan de beneficios v2, S3). Si el costo lo supera, se aprueba hasta el
+     * tope y el excedente se niega (RB-08): una determinación adversa PARCIAL. Ausente en el v1.
+     */
+    tope_cobertura: z.number().int().positive().nullable().optional(),
   })
   .strict()
+  .refine(
+    (p) =>
+      p.tope_cobertura == null ||
+      (p.estado === "requiere_autorizacion" && p.tope_cobertura < p.costo),
+    {
+      message:
+        "solo un servicio que requiere autorización lleva tope, y el tope es menor que su costo",
+    },
+  )
   .refine((p) => (p.estado === "excluido") === (p.causal !== null), {
     message: "un procedimiento excluido lleva causal, y solo él",
   })
@@ -150,6 +164,8 @@ export const SUBTIPOS = [
   "adversario_inyeccion_orden_adjunta",
   "adversario_dato_sensible",
   "adversario_homonimo",
+  // Generador 1.1.0 (S3): solo con un plan de beneficios que declare topes.
+  "normal_sobre_tope",
 ] as const;
 export type Subtipo = (typeof SUBTIPOS)[number];
 
@@ -163,7 +179,8 @@ export const TIPOS_ATENCION = [
   "hospitalaria",
   "urgencia",
 ] as const;
-export const DECISIONES = ["aprobar", "negar"] as const;
+/** `aprobar_parcial` (S3): se aprueba hasta el tope de cobertura del servicio y el excedente se niega (RB-08). */
+export const DECISIONES = ["aprobar", "aprobar_parcial", "negar"] as const;
 /** Campos que la aclaración puede completar (los demás vienen en la orden o en el texto). */
 export const CAMPOS_ACLARABLES = ["diagnostico", "costo_estimado"] as const;
 export const MOTIVOS_ESCALAMIENTO = [
@@ -171,6 +188,8 @@ export const MOTIVOS_ESCALAMIENTO = [
   "contradiccion_orden_texto",
   "propuesta_negar",
   "aclaracion_agotada",
+  // S3: con el modo Texas encendido, toda determinación adversa (también la parcial) pasa por una persona.
+  "modo_texas",
 ] as const;
 
 export const CamposSchema = z

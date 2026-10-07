@@ -1,9 +1,13 @@
 /**
  * Los cinco tipos de nodo de la gramática `agentes-ia` (design-system § 2.2): color + glifo + etiqueta,
- * nunca el color solo (regla dura 13). El glifo de `regla` es el HEXÁGONO que selló el usuario (desviación
- * 4 del S2 frente al `escudo` del contrato diagramador 0.3.0; enmienda propuesta en el summary).
+ * nunca el color solo (regla dura 13). El glifo de cada tipo lo dice la gramática: la 1.2.0 (contrato 0.5.0) trae el
+ * HEXÁGONO para `regla`, el que selló el usuario (antes, la desviación 4 del S2).
  */
-import type { FormaDeGlifo } from "@core/visor/glifos";
+import { formaDeGlifo, type FormaDeGlifo } from "@core/visor/glifos";
+import type { Gramatica } from "@core/visor/tipos";
+import gramaticaJson from "../../../packages/diagramador/contrato/gramaticas/agentes-ia.json";
+
+const GRAMATICA_AGENTES = gramaticaJson as unknown as Gramatica;
 
 export const TIPOS_DE_NODO = [
   "modelo",
@@ -16,13 +20,13 @@ export type TipoDeNodo = (typeof TIPOS_DE_NODO)[number];
 
 export type { FormaDeGlifo };
 
-export const GLIFO_DE_TIPO: Record<TipoDeNodo, FormaDeGlifo> = {
-  modelo: "estrella",
-  herramienta: "triangulo",
-  regla: "hexagono",
-  pausa_humana: "cuadrado",
-  enrutador: "rombo",
-};
+/** El glifo de cada tipo, leído de la gramática `agentes-ia` (la misma que dibuja el lienzo). */
+export const GLIFO_DE_TIPO = Object.fromEntries(
+  TIPOS_DE_NODO.map((t) => [
+    t,
+    formaDeGlifo(GRAMATICA_AGENTES, t.replaceAll("_", "-")),
+  ]),
+) as Record<TipoDeNodo, FormaDeGlifo>;
 
 export function tipoDeNodo(tipo: string): TipoDeNodo {
   if ((TIPOS_DE_NODO as readonly string[]).includes(tipo))

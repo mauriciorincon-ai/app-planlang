@@ -104,8 +104,8 @@ export const CAPACIDAD = {
 export const LO_QUE_NINGUNA = {
   titulo: tb("Lo que ninguna herramienta muestra", "What no tool shows"),
   nota: tb(
-    "Las tres se ven en el demo A, sobre corridas reales.",
-    "All three are visible in demo A, on real runs.",
+    "Las tres se ven en los dos demos, sobre corridas reales.",
+    "All three are visible in both demos, on real runs.",
   ),
   informe: tb(
     "El informe de brecha, con sus fallas",
@@ -139,7 +139,6 @@ export const DEMOS = {
     "B · Vinculación con debida diligencia",
     "B · Customer onboarding with due diligence",
   ),
-  demoBLlega: tb("Llega en el sprint 3.", "Arrives in sprint 3."),
   brecha: tb("Brecha", "Gap"),
   agente: tb("Agente", "Agent"),
   unCaso: tb("Un caso", "A case"),
@@ -147,24 +146,18 @@ export const DEMOS = {
 };
 
 /**
- * Lo que sigue del roadmap, «en construcción» en la Entrada (regla dura 15: el entrevistador y lo demás del roadmap
- * aparecen desde el primer día; AU-S2-6). Son los ids estables del bloque `roadmap:` de la ficha que define la
- * planeadora (`SPRINT_002.md`), menos el demo B, que tiene su fila en la tabla. Ninguno se simula.
+ * Lo que sigue del roadmap, «en construcción» en la Entrada (regla dura 15: lo del roadmap aparece desde el primer día;
+ * AU-S2-6). Son los ids estables del bloque `roadmap:` de la ficha que define la planeadora (`SPRINT_002.md`), menos lo
+ * que ya corrió en el S3: el demo B, que tiene su fila en la tabla, y el entrevistador, que propuso su plan. Ninguno se
+ * simula.
  */
 export const EN_CONSTRUCCION = {
   titulo: tb("También en construcción", "Also under construction"),
   nota: tb(
-    "Del roadmap, desde el sprint 3 en adelante.",
-    "From the roadmap, from sprint 3 on.",
+    "Del roadmap. Nada de esto se simula aquí.",
+    "From the roadmap. None of it is simulated here.",
   ),
   items: [
-    {
-      id: "entrevistador-que-propone-el-plan",
-      titulo: tb(
-        "Entrevistador que propone el plan",
-        "Interviewer that drafts the plan",
-      ),
-    },
     {
       id: "comparar-dos-corridas",
       titulo: tb(
@@ -207,8 +200,8 @@ export const LIDER = {
     "planlang writes an agent's plan as a contract that code can verify, builds the agent to that contract, runs it on cases with a known answer, and publishes the gap between what was planned and what happened, failures in plain sight.",
   ),
   avisoLider: tb(
-    "Ves qué hace planlang y qué dio con el demo A, en palabras llanas.",
-    "You see what planlang does and what it gave with demo A, in plain words.",
+    "Ves qué hace planlang y qué dieron sus demos, en palabras llanas.",
+    "You see what planlang does and what its demos gave, in plain words.",
   ),
   avisoExperto: tb(
     "Se suman cómo se sostiene cada afirmación —núcleo sin IA, trazas propias con huella, prueba cruzada entre dos lenguajes— y la fuente completa del gancho.",
@@ -235,16 +228,16 @@ export const LIDER = {
     "The plan says what should happen; the traces, what did. A verifier that uses no AI lists, criterion by criterion, what was met and what was not. Nothing is hidden.",
   ),
   umbral: tb(
-    "Sube la confianza mínima o enciende el modo Texas y mira, sobre las corridas reales, cuántos casos cambian de camino y cuántos minutos de revisión humana cuesta.",
-    "Raise the minimum confidence or switch on Texas mode and see, on the real runs, how many cases change path and how many minutes of human review it costs.",
+    "Mueve un umbral del plan —en el demo A, también el modo Texas— y mira, sobre las corridas reales, cuántos casos cambian de camino y cuántos pasan a una persona; en el A, también los minutos de revisión que cuesta.",
+    "Move one of the plan’s thresholds —in demo A, Texas mode too— and see, on the real runs, how many cases change path and how many go to a person; in demo A, also the minutes of review it costs.",
   ),
   demoA: tb(
-    "Un enrutador, un extractor, un verificador de cobertura por reglas y un redactor deciden aprobar, negar con causal o escalar a un auditor humano. Ninguna negación sale sin una persona.",
-    "A router, an extractor, a rule-based coverage checker and a writer decide to approve, deny with a stated ground, or escalate to a human auditor. No denial goes out without a person.",
+    "Un enrutador, un extractor, un verificador de cobertura por reglas y un redactor deciden aprobar, aprobar en parte, negar con causal o escalar a un auditor humano. Ninguna negación completa sale sin una persona.",
+    "A router, an extractor, a rule-based coverage checker and a writer decide to approve, approve in part, deny with a stated ground, or escalate to a human auditor. No full denial goes out without a person.",
   ),
   demoB: tb(
-    "Extractor de documentos, verificación contra listas de control por reglas y modelo en cascada, investigador de contexto para homónimos.",
-    "Document extractor, watchlist screening by rules and a cascaded model, a context investigator for namesakes.",
+    "Un enrutador, un extractor, un verificador de listas por reglas, un investigador de contexto para homónimos y un puntaje de riesgo deciden aprobar, rechazar o escalar al oficial de cumplimiento. Ningún rechazo sale sin una persona.",
+    "A router, an extractor, a rule-based watchlist checker, a context investigator for namesakes and a risk score decide to approve, reject or escalate to the compliance officer. No rejection goes out without a person.",
   ),
   respuesta: tb(
     "Con un verificador determinista sobre casos con verdad conocida y adversarios sembrados: ningún modelo de lenguaje decide si el agente acertó. Y con la brecha publicada aunque no favorezca.",
@@ -290,6 +283,14 @@ export const CATEGORIA_DE_BRECHA: Record<
     uno: tb("respuesta fuera de formato", "off-format answer"),
     varios: tb("respuestas fuera de formato", "off-format answers"),
   },
+  // Una falla que nombra un evaluador del dominio (M-20) y que ningún riesgo del plan cubría.
+  evaluador: {
+    uno: tb("falla que solo vio un evaluador", "failure only an evaluator saw"),
+    varios: tb(
+      "fallas que solo vio un evaluador",
+      "failures only an evaluator saw",
+    ),
+  },
 };
 
 /** El bloque del experto: cómo se sostiene cada afirmación. Las cifras entran por la vista. */
@@ -313,8 +314,8 @@ export const SOSTIENE = {
   humanas: {
     dt: tb("Decisiones humanas", "Human decisions"),
     dd: tb(
-      "simuladas en lote: el auditor sigue la verdad conocida de cada caso (DA-04), y la vitrina lo dice en cada pantalla",
-      "simulated in batch: the auditor follows each case’s known truth (DA-04), and the showcase says so on every screen",
+      "simuladas en lote: quien revisa —el auditor en el A, el oficial en el B— sigue la verdad conocida de cada caso (DA-04), y la vitrina lo dice en cada pantalla",
+      "simulated in batch: the reviewer —the auditor in A, the officer in B— follows each case’s known truth (DA-04), and the showcase says so on every screen",
     ),
   },
   pila: {
@@ -339,6 +340,10 @@ export const FORMAS = {
   supuestoSinProbar: {
     uno: tb("supuesto sin probar", "assumption untested"),
     varios: tb("supuestos sin probar", "assumptions untested"),
+  },
+  criterioIncompleto: {
+    uno: tb("criterio incompleto", "criterion incomplete"),
+    varios: tb("criterios incompletos", "criteria incomplete"),
   },
   corrida: { uno: tb("corrida", "run"), varios: tb("corridas", "runs") },
   decision: {
@@ -390,6 +395,15 @@ export const ARMADO = {
     id: string;
     texto: string;
   }>,
+  /** Un criterio que el informe no pudo decidir (pass^k con menos corridas de las exigidas): ni cumple ni falla. */
+  incompleto: ((p: { id: string; texto: string }) =>
+    tb(
+      `Incompleto ${p.id}: ${p.texto}`,
+      `${p.id} incomplete: ${p.texto}`,
+    )) as Plantilla<{
+    id: string;
+    texto: string;
+  }>,
   corridaCorta: ((v: string) =>
     tb(`corrida ${v}`, `run ${v}`)) as Plantilla<string>,
   criteriosCumplen: ((c: string) =>
@@ -426,11 +440,17 @@ export const ARMADO = {
     n: number;
     cumplen: number;
     incumplidos: string[];
+    incompletos: string[];
   }) =>
     tb(
-      `${p.n} criterios: ${p.cumplen} cumplen${p.incumplidos.length ? `, ${p.incumplidos.length} no cumplen (${p.incumplidos.join(", ")})` : ""}`,
-      `${p.n} criteria: ${p.cumplen} met${p.incumplidos.length ? `, ${p.incumplidos.length} not met (${p.incumplidos.join(", ")})` : ""}`,
-    )) as Plantilla<{ n: number; cumplen: number; incumplidos: string[] }>,
+      `${p.n} criterios: ${p.cumplen} cumplen${p.incumplidos.length ? `, ${p.incumplidos.length} no cumplen (${p.incumplidos.join(", ")})` : ""}${p.incompletos.length ? `, ${p.incompletos.length} ${p.incompletos.length === 1 ? "incompleto" : "incompletos"} (${p.incompletos.join(", ")})` : ""}`,
+      `${p.n} criteria: ${p.cumplen} met${p.incumplidos.length ? `, ${p.incumplidos.length} not met (${p.incumplidos.join(", ")})` : ""}${p.incompletos.length ? `, ${p.incompletos.length} incomplete (${p.incompletos.join(", ")})` : ""}`,
+    )) as Plantilla<{
+    n: number;
+    cumplen: number;
+    incumplidos: string[];
+    incompletos: string[];
+  }>,
   piePrueba: ((p: { corrida: string; casos: number; por: string }) =>
     tb(
       `${p.corrida} · ${p.casos} casos${p.por}`,

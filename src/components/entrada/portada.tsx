@@ -34,11 +34,14 @@ export function Portada({ idioma }: { idioma: Idioma }) {
           {LIDER.guia[idioma]}
         </p>
         <div className="mt-6 flex flex-wrap gap-2">
-          <BotonEnlace href={ruta(idioma, "brecha")} principal>
+          <BotonEnlace
+            href={ruta(idioma, "brecha", undefined, "demo-a")}
+            principal
+          >
             {PORTADA.verBrecha[idioma]}
             <Icono de={ArrowRight} tam={15} />
           </BotonEnlace>
-          <BotonEnlace href={ruta(idioma, "plan")}>
+          <BotonEnlace href={ruta(idioma, "plan", undefined, "demo-a")}>
             {PORTADA.recorrerPlan[idioma]}
           </BotonEnlace>
         </div>

@@ -6,7 +6,7 @@
 import type { TextoBilingue } from "../formatos/bilingue";
 import type { JsonValor } from "../formatos/jcs";
 import type { Traza } from "../formatos/traza";
-import type { Caso } from "../sintetico/esquema";
+import type { CasoDeDemo as Caso } from "../sintetico/de-demo";
 import {
   contextoDesdeObjeto,
   ErrorEvaluacion,
@@ -80,6 +80,63 @@ function clavesDePausas(t: Traza): string[] {
     .sort();
 }
 
+/** Lo que un documento adverso tiene que traer (C8; la aprobación parcial suma su monto, plan v1.5). */
+export const REQUERIDOS_DOCUMENTO = [
+  "servicio",
+  "causal",
+  "regla_disparada",
+  "datos_usados",
+  "version",
+  "via_de_contradiccion",
+  "decidido_por",
+  "aviso_ia",
+] as const;
+const IDIOMAS_DOCUMENTO = ["es", "en"] as const;
+
+function textosBilingues(v: JsonValor): Record<string, JsonValor>[] {
+  if (Array.isArray(v)) return v.flatMap(textosBilingues);
+  if (v === null || typeof v !== "object") return [];
+  const claves = Object.keys(v).sort();
+  if (claves.length === 2 && claves[0] === "en" && claves[1] === "es")
+    return [v];
+  return Object.values(v).flatMap(textosBilingues);
+}
+
+const vacio = (v: JsonValor | undefined): boolean =>
+  v === undefined ||
+  v === null ||
+  (Array.isArray(v) && v.length === 0) ||
+  (typeof v === "object" && !Array.isArray(v) && Object.keys(v).length === 0);
+
+/**
+ * M-15: el verificador NO le cree al emisor. `completo` e `idiomas` del documento adverso se recalculan aquí, desde
+ * sus campos: completo si trae cada campo requerido (y el monto, si aprueba en parte); un idioma cuenta si TODO texto
+ * bilingüe del documento lo trae, no vacío. Lo que declaró el emisor no entra a la condición de C8.
+ */
+export function documentoVerificado(doc: JsonValor | undefined): JsonValor {
+  if (
+    doc === undefined ||
+    doc === null ||
+    typeof doc !== "object" ||
+    Array.isArray(doc)
+  )
+    return null;
+  const requeridos: readonly string[] =
+    doc.decision === "aprobar_parcial"
+      ? [...REQUERIDOS_DOCUMENTO, "monto"]
+      : REQUERIDOS_DOCUMENTO;
+  const textos = textosBilingues(doc);
+  return {
+    ...doc,
+    completo: requeridos.every((k) => !vacio(doc[k])),
+    idiomas: IDIOMAS_DOCUMENTO.filter(
+      (i) =>
+        textos.length > 0 &&
+        textos.every((t) => typeof t[i] === "string" && t[i].trim() !== ""),
+    ),
+  };
+}
+
 export function objetoDeCaso(
   caso: Caso,
   traza: Traza,
@@ -93,7 +150,9 @@ export function objetoDeCaso(
     salida_final: traza.salida_final
       ? `${traza.salida_final.es}\n${traza.salida_final.en}`
       : null,
-    documento_adverso: (traza.documento_adverso ?? null) as JsonValor,
+    documento_adverso: documentoVerificado(
+      (traza.documento_adverso ?? null) as JsonValor,
+    ),
     interrupt_payload: clavesDePausas(traza),
     error_de_esquema_en_traspaso: traza.error_de_esquema_en_traspaso,
     tipo: caso.tipo,

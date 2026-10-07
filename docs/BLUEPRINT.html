@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>planlang — Blueprint de infraestructura (as-built)</title>
+<style>
+  :root {
+    --fondo: #fafaf9; --tinta: #1c1917; --tinta-suave: #57534e;
+    --borde: #d6d3d1; --tarjeta: #ffffff; --acento: #1d4ed8;
+    --acento-suave: #dbeafe; --ok: #15803d; --alerta: #b45309;
+    --futuro: #9333ea; --caja-svg: #ffffff; --bd-svg: #eff6ff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --fondo: #1c1917; --tinta: #fafaf9; --tinta-suave: #a8a29e;
+      --borde: #44403c; --tarjeta: #292524; --acento: #60a5fa;
+      --acento-suave: #1e3a5f; --ok: #4ade80; --alerta: #fbbf24;
+      --futuro: #c084fc; --caja-svg: #292524; --bd-svg: #1e3a5f;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 2rem 1rem 4rem; background: var(--fondo); color: var(--tinta);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif; line-height: 1.55;
+  }
+  main { max-width: 980px; margin: 0 auto; }
+  h1 { font-size: 1.6rem; margin: 0 0 .25rem; }
+  h2 { font-size: 1.15rem; margin: 2.2rem 0 .8rem; border-bottom: 2px solid var(--borde); padding-bottom: .35rem; }
+  .badge {
+    display: inline-block; font-size: .72rem; font-weight: 700; letter-spacing: .05em;
+    background: var(--acento-suave); color: var(--acento); border-radius: 999px;
+    padding: .15rem .6rem; vertical-align: middle; text-transform: uppercase;
+  }
+  .meta { color: var(--tinta-suave); font-size: .9rem; margin: .2rem 0 1rem; }
+  .nota {
+    background: var(--tarjeta); border: 1px solid var(--borde); border-left: 4px solid var(--acento);
+    border-radius: 8px; padding: .8rem 1rem; font-size: .88rem; color: var(--tinta-suave);
+  }
+  .nota strong { color: var(--tinta); }
+  .diagrama { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 12px; padding: 1rem; overflow-x: auto; }
+  .diagrama svg { display: block; min-width: 720px; width: 100%; height: auto; color: var(--tinta-suave); }
+  .caja { fill: var(--caja-svg); stroke: var(--borde); stroke-width: 1.5; }
+  .caja-principal { stroke: var(--acento); stroke-width: 2; }
+  .caja-bd { fill: var(--bd-svg); stroke: var(--acento); stroke-width: 1.5; }
+  .caja-futuro { fill: none; stroke: var(--futuro); stroke-width: 1.5; stroke-dasharray: 6 5; }
+  .titulo-caja { font: 700 13px system-ui, sans-serif; fill: var(--tinta); }
+  .detalle-caja { font: 400 11px system-ui, sans-serif; fill: var(--tinta-suave); }
+  .detalle-futuro { fill: var(--futuro); }
+  .flecha { stroke: var(--tinta-suave); stroke-width: 1.5; fill: none; marker-end: url(#punta); }
+  .flecha-futura { stroke: var(--futuro); stroke-dasharray: 6 5; }
+  .flecha-cortada { stroke: var(--alerta); stroke-dasharray: 2 4; stroke-width: 2; fill: none; }
+  .etiqueta-flecha { font: 600 10.5px system-ui, sans-serif; fill: var(--tinta-suave); }
+  .etiqueta-alerta { font: 700 10.5px system-ui, sans-serif; fill: var(--alerta); }
+  .etiqueta-futuro { font: 600 10.5px system-ui, sans-serif; fill: var(--futuro); }
+  .leyenda { display: flex; flex-wrap: wrap; gap: .4rem 1.4rem; font-size: .8rem; color: var(--tinta-suave); margin: .6rem 0 0; padding: 0; list-style: none; }
+  .leyenda svg { vertical-align: middle; margin-right: .35rem; color: var(--tinta-suave); }
+  table { width: 100%; border-collapse: collapse; font-size: .88rem; background: var(--tarjeta); border-radius: 8px; overflow: hidden; }
+  th, td { text-align: left; padding: .55rem .7rem; border: 1px solid var(--borde); vertical-align: top; }
+  th { background: var(--acento-suave); font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; }
+  tr.critica td { font-weight: 700; }
+  tr.critica td:last-child { font-weight: 400; }
+  .tabla-scroll { overflow-x: auto; }
+  .tabla-scroll table { min-width: 640px; }
+  code { font-size: .85em; }
+  .nadie { font-weight: 700; color: var(--alerta); }
+  footer { margin-top: 3rem; font-size: .8rem; color: var(--tinta-suave); border-top: 1px solid var(--borde); padding-top: .8rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>planlang — Blueprint de infraestructura <span class="badge">as-built</span></h1>
+  <p class="meta">Ciclo: <strong>H1</strong> · Acto 1 (de construcción): se cierra con el merge del S3 · Sprints del ciclo: <strong>S1–S3</strong> · Última actualización: <strong>2026-10-05</strong></p>
+  <p class="nota"><strong>Qué es.</strong> El mapa de toda la infraestructura que sostiene planlang, escrito con lo que está desplegado de verdad. Es vivo y acumulativo: el ciclo siguiente lo actualiza y anota sus cambios en el historial del pie. <strong>No trae ninguna URL de producción ni de previews</strong> (regla 17 del repo): la producción se describe por quién puede verla, nunca por dónde entrar.</p>
+
+  <h2>Diagrama</h2>
+  <div class="diagrama">
+  <svg viewBox="0 0 960 540" role="img" aria-label="Diagrama de infraestructura de planlang: tu Mac corre los agentes con la suscripción de Claude Code y empuja al repositorio público de GitHub; GitHub Actions corre cinco checks y Vercel publica la app privada, que nadie ve sin sesión; la vitrina viaja por copia a hoja-de-vida, que es lo único que ve un visitante.">
+    <defs>
+      <marker id="punta" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor" opacity="0.75"/>
+      </marker>
+    </defs>
+
+    <!-- Columna A: tu Mac · hoja-de-vida · visitante -->
+    <rect class="caja caja-principal" x="20" y="30" width="240" height="118" rx="10"/>
+    <text class="titulo-caja" x="140" y="56" text-anchor="middle">Tu Mac (el builder)</text>
+    <text class="detalle-caja" x="140" y="76" text-anchor="middle">agents/ · Python 3.12 · LangGraph 1.2</text>
+    <text class="detalle-caja" x="140" y="93" text-anchor="middle">lotes fuera de CI, de 20 en 20, espaciados</text>
+    <text class="detalle-caja" x="140" y="110" text-anchor="middle">entrevistador · paquete de la vitrina</text>
+    <text class="detalle-caja" x="140" y="127" text-anchor="middle">binario oficial <tspan font-family="ui-monospace, monospace">claude</tspan> con tu sesión</text>
+
+    <rect class="caja" x="20" y="250" width="240" height="96" rx="10"/>
+    <text class="titulo-caja" x="140" y="276" text-anchor="middle">hoja-de-vida (otra app)</text>
+    <text class="detalle-caja" x="140" y="296" text-anchor="middle">la vitrina de planlang como página</text>
+    <text class="detalle-caja" x="140" y="313" text-anchor="middle">del proyecto, rotulada</text>
+    <text class="detalle-caja" x="140" y="330" text-anchor="middle">«Simulación · no operativo»</text>
+
+    <rect class="caja" x="20" y="430" width="240" height="80" rx="10"/>
+    <text class="titulo-caja" x="140" y="456" text-anchor="middle">Visitante</text>
+    <text class="detalle-caja" x="140" y="476" text-anchor="middle">cualquier navegador, sin sesión</text>
+    <text class="detalle-caja" x="140" y="493" text-anchor="middle">no lanza llamadas a ningún modelo</text>
+
+    <!-- Columna B: suscripción · GitHub · Vercel -->
+    <rect class="caja" x="360" y="30" width="250" height="100" rx="10"/>
+    <text class="titulo-caja" x="485" y="56" text-anchor="middle">Suscripción de Claude Code</text>
+    <text class="detalle-caja" x="485" y="76" text-anchor="middle">Anthropic · el plan que ya pagas</text>
+    <text class="detalle-caja" x="485" y="93" text-anchor="middle">modelo de los agentes y del entrevistador</text>
+    <text class="detalle-caja" x="485" y="110" text-anchor="middle">jamás en CI ni en la vitrina</text>
+
+    <rect class="caja caja-principal" x="360" y="230" width="250" height="118" rx="10"/>
+    <text class="titulo-caja" x="485" y="256" text-anchor="middle">GitHub · repositorio público</text>
+    <text class="detalle-caja" x="485" y="276" text-anchor="middle">código · planes · casos · corridas · informes</text>
+    <text class="detalle-caja" x="485" y="293" text-anchor="middle">ruleset main-protegida: 4 checks</text>
+    <text class="detalle-caja" x="485" y="310" text-anchor="middle">sin push directo a main · merge del usuario</text>
+    <text class="detalle-caja" x="485" y="327" text-anchor="middle">gitleaks en cada commit</text>
+
+    <rect class="caja" x="360" y="430" width="250" height="96" rx="10"/>
+    <text class="titulo-caja" x="485" y="456" text-anchor="middle">Vercel Hobby · app privada</text>
+    <text class="detalle-caja" x="485" y="476" text-anchor="middle">export estático (Next.js 16)</text>
+    <text class="detalle-caja" x="485" y="493" text-anchor="middle">preview por PR · producción desde main</text>
+    <text class="detalle-caja" x="485" y="510" text-anchor="middle">Vercel Authentication en todo despliegue</text>
+
+    <!-- Columna C: LangSmith (futuro) · Actions · sin BD -->
+    <rect class="caja-futuro" x="700" y="30" width="240" height="100" rx="10"/>
+    <text class="titulo-caja detalle-futuro" x="820" y="56" text-anchor="middle">LangSmith Developer (futuro)</text>
+    <text class="detalle-caja detalle-futuro" x="820" y="76" text-anchor="middle">espejo opcional de las corridas</text>
+    <text class="detalle-caja detalle-futuro" x="820" y="93" text-anchor="middle">sin aprovisionar al cierre del H1</text>
+    <text class="detalle-caja detalle-futuro" x="820" y="110" text-anchor="middle">prueba c1 de la guía, si lo creas</text>
+
+    <rect class="caja" x="700" y="230" width="240" height="118" rx="10"/>
+    <text class="titulo-caja" x="820" y="256" text-anchor="middle">GitHub Actions</text>
+    <text class="detalle-caja" x="820" y="276" text-anchor="middle">quality → e2e · lighthouse</text>
+    <text class="detalle-caja" x="820" y="293" text-anchor="middle">python (CI Python)</text>
+    <text class="detalle-caja" x="820" y="310" text-anchor="middle">modelo simulado: cero llamadas reales</text>
+    <text class="detalle-caja" x="820" y="327" text-anchor="middle">sin secretos</text>
+
+    <rect class="caja caja-bd" x="700" y="430" width="240" height="96" rx="10"/>
+    <text class="titulo-caja" x="820" y="456" text-anchor="middle">Sin base de datos</text>
+    <text class="detalle-caja" x="820" y="476" text-anchor="middle">archivos versionados con huella</text>
+    <text class="detalle-caja" x="820" y="493" text-anchor="middle">SHA-256 sobre JSON canónico</text>
+    <text class="detalle-caja" x="820" y="510" text-anchor="middle">runs/ solo admite agregar</text>
+
+    <!-- Flechas -->
+    <path class="flecha" d="M 260 80 L 355 80"/>
+    <text class="etiqueta-flecha" x="307" y="72" text-anchor="middle">claude -p</text>
+
+    <path class="flecha flecha-futura" d="M 200 30 C 230 4, 760 4, 800 26"/>
+    <text class="etiqueta-futuro" x="660" y="24" text-anchor="middle">espejo de trazas (futuro)</text>
+
+    <path class="flecha" d="M 240 148 L 400 226"/>
+    <text class="etiqueta-flecha" x="345" y="178" text-anchor="middle">git push</text>
+
+    <path class="flecha" d="M 140 148 L 140 245"/>
+    <text class="etiqueta-flecha" x="148" y="190">paquete por copia</text>
+    <text class="etiqueta-flecha" x="148" y="204">(PR de contenido)</text>
+
+    <path class="flecha" d="M 610 289 L 695 289"/>
+    <text class="etiqueta-flecha" x="652" y="281" text-anchor="middle">cada PR</text>
+
+    <path class="flecha" d="M 485 348 L 485 425"/>
+    <text class="etiqueta-flecha" x="493" y="392">deploy</text>
+
+    <path class="flecha" d="M 610 330 L 698 440"/>
+    <text class="etiqueta-flecha" x="672" y="372" text-anchor="middle">viven en</text>
+
+    <path class="flecha" d="M 140 430 L 140 351"/>
+    <text class="etiqueta-flecha" x="148" y="396">HTTPS, sin sesión</text>
+
+    <path class="flecha-cortada" d="M 260 470 L 350 470"/>
+    <text class="etiqueta-alerta" x="305" y="462" text-anchor="middle">✕ sin sesión</text>
+    <text class="etiqueta-alerta" x="305" y="488" text-anchor="middle">login de Vercel</text>
+  </svg>
+  </div>
+  <ul class="leyenda" aria-label="Leyenda">
+    <li><svg width="34" height="10" aria-hidden="true"><line x1="0" y1="5" x2="34" y2="5" stroke="currentColor" stroke-width="1.5"/></svg>flujo que existe hoy</li>
+    <li><svg width="34" height="10" aria-hidden="true"><line x1="0" y1="5" x2="34" y2="5" stroke="#9333ea" stroke-width="1.5" stroke-dasharray="6 5"/></svg>previsto, no desplegado (rótulo «futuro»)</li>
+    <li><svg width="34" height="10" aria-hidden="true"><line x1="0" y1="5" x2="34" y2="5" stroke="#b45309" stroke-width="2" stroke-dasharray="2 4"/></svg>camino cortado (glifo ✕ y texto)</li>
+  </ul>
+
+  <h2>Qué ve quién sin sesión</h2>
+  <div class="tabla-scroll">
+  <table>
+    <thead><tr><th>Quién</th><th>Qué ve</th><th>Cómo se comprobó</th></tr></thead>
+    <tbody>
+      <tr><td>Un visitante cualquiera, sin sesión de Vercel</td><td><span class="nadie">Nada de la app privada.</span> Todo despliegue, de preview o de producción, lo manda al login de Vercel.</td><td>2026-10-04: petición anónima a la raíz, a <code>/es</code> y a <code>/es/demo-b/brecha</code> del preview del PR #14 y a la raíz de producción → 302 al inicio de sesión de Vercel. La URL no se escribe aquí.</td></tr>
+      <tr><td>Un visitante de hoja-de-vida</td><td>La vitrina de planlang como página del proyecto: los dos demos, sus informes de brecha y sus fichas, con el rótulo «Simulación · no operativo». Es un paquete estático; no llama a ningún modelo ni a LangSmith.</td><td>El paquete sale de <code>pnpm paquete:vitrina</code> y lo comprueban <code>pnpm paquete:verificar</code> y su e2e (sin URL, sin maqueta, con el manifiesto de huellas).</td></tr>
+      <tr><td>Tú, con tu sesión de Vercel</td><td>La app privada completa: cada preview de PR y la producción.</td><td>Es como se recorre el preview de cada PR.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h2>Tabla por pieza</h2>
+  <div class="tabla-scroll">
+  <table>
+    <thead><tr><th>Pieza</th><th>Servicio + plan</th><th>Detalle operativo</th></tr></thead>
+    <tbody>
+      <tr><td>Código / versionamiento</td><td>GitHub <code>mauriciorincon-ai/app-planlang</code> (público), plan Free</td><td>Ruleset <code>main-protegida</code>: sin borrado ni push forzado, PR obligatorio y cuatro checks requeridos (<code>quality</code>, <code>e2e</code>, <code>lighthouse</code>, <code>python</code>). Rama por sprint; el merge lo hace el usuario con squash. El campo «website» del repo apunta al propio repo.</td></tr>
+      <tr><td>CI/CD</td><td>GitHub Actions (minutos sin costo en repo público)</td><td><code>CI</code>: <code>quality</code> (dependencias contra main, typecheck, lint, pruebas con cobertura, trazas, build, export, diagrama = grafo, auditoría) → <code>e2e</code> (Playwright con axe, dos idiomas, dos temas, 380 px y escritorio, paridad en Chromium, Firefox y WebKit) y <code>lighthouse</code> (presupuestos, categorías y margen de LCP). <code>CI Python</code>: <code>python</code> (ruff, pytest con cobertura ≥ 70 %, <code>pip-audit</code>). Las corridas en CI usan el modelo simulado.</td></tr>
+      <tr><td>Hosting / publicación</td><td>Vercel Hobby (app privada) · paquete estático para hoja-de-vida</td><td>Export estático de Next.js 16 (<code>output: "export"</code>). Preview por PR y producción desde <code>main</code>, los dos con Vercel Authentication. Hobby es de uso no comercial: planlang es una pieza de portafolio. La vitrina pública vive dentro de hoja-de-vida, que la recibe por copia.</td></tr>
+      <tr><td>Base de datos</td><td><strong>Sin BD</strong></td><td>Planes (<code>plans/</code>), dominios y casos sintéticos (<code>data/</code>), corridas <code>planlang-trace/v1</code> (<code>runs/</code>, solo de agregar) e informes son archivos versionados con huella SHA-256 sobre JSON canónico (RFC 8785). La vitrina los lee y los verifica al compilar; en el navegador no se consulta nada.</td></tr>
+      <tr><td>Auth</td><td>No aplica dentro de la app</td><td>No hay cuentas ni sesiones propias. Lo único que restringe el acceso es Vercel Authentication sobre los despliegues.</td></tr>
+      <tr><td>Almacenamiento de archivos</td><td>No aplica</td><td>Todo vive en el repo. Las capturas de diseño van con techo de peso por mirada (2 MB).</td></tr>
+      <tr><td>Email / notificaciones</td><td>No aplica</td><td>—</td></tr>
+      <tr><td>IA embebida</td><td>Suscripción de Claude Code del usuario, <strong>solo dentro de los demos y del entrevistador</strong>; nunca en el núcleo ni en la vitrina</td><td>Binario oficial en modo no interactivo (<code>claude -p</code>, directorio temporal limpio, MCP vacío, nunca <code>--bare</code>) a través de <code>ChatClaudeCode</code>. ADR-001 (código primero de los demos), ADR-002 (proveedor y cumplimiento, con interruptor a la API de Anthropic o a Groq), ADR-012 (entrevistador) y ADR-013 (agente B, cuyo redactor no usa modelo). Lotes fuera de CI, de 20 en 20, espaciados.</td></tr>
+      <tr><td>Observabilidad</td><td>Trazas propias · Sentry inerte · LangSmith opcional</td><td>Cada corrida deja sus trazas <code>planlang-trace/v1</code> con huella, y el lote escribe un evento JSON por caso (logger de <code>agents/</code>). La vitrina no tiene servidor, así que no hay registro de peticiones; Pino está entre las dependencias del estampado y nada lo usa. Sentry viene cableado solo en el cliente y solo con metadatos, inerte mientras no haya <code>NEXT_PUBLIC_SENTRY_DSN</code> (el repo no la fija). LangSmith sin aprovisionar: las corridas del H1 corrieron sin espejo.</td></tr>
+      <tr><td>Crons / keep-alives</td><td><strong>Ninguno</strong></td><td>No hay servidor que mantener despierto. Los lotes se lanzan a mano desde tu Mac.</td></tr>
+      <tr><td>Secretos</td><td>Ninguno en el repo</td><td>Doble cinturón de gitleaks (hook de git y hook de Claude Code). La sesión de Claude Code la guarda el binario oficial; jamás entra al entorno, a las trazas ni al repo. <code>LANGSMITH_*</code> iría en la shell del builder; una DSN de Sentry iría en las variables del proyecto en Vercel.</td></tr>
+      <tr><td>Dominio</td><td>Subdominio del hosting, sin dominio propio</td><td>Se administra en el panel de Vercel. La URL exacta vive en la planeadora (privada), nunca en este repo.</td></tr>
+      <tr class="critica"><td>Costo real / mes</td><td>US$0</td><td>GitHub Free y Actions sin costo (repo público) · Vercel Hobby US$0 (tráfico solo del builder: todo está protegido) · suscripción de Claude Code: la que ya pagas, costo marginal US$0 (el costo nominal que reporta el CLI, p. ej. US$4,92 por los 200 casos de la corrida v1.5 del A, no se cobra por llamada) · LangSmith: sin cuenta, US$0 · Sentry inerte.</td></tr>
+      <tr class="critica"><td>Punto único de falla</td><td>La suscripción de Claude Code del usuario</td><td>Sin ella no corren lotes nuevos ni el entrevistador. La vitrina no depende de ella: publica corridas ya versionadas. Mitigación: interruptor a la API de Anthropic (Haiku 4.5, con techo declarado) o a Groq por configuración, sin tocar el grafo (ADR-002); humo real de tres llamadas antes de cada lote; un límite de uso detiene la sesión y el caso se reintenta después, sin duplicarse.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h2>Historial del blueprint</h2>
+  <div class="tabla-scroll">
+  <table>
+    <thead><tr><th>Fecha</th><th>Ciclo</th><th>Cambios</th></tr></thead>
+    <tbody>
+      <tr><td>2026-10-04</td><td>H1 (S1–S3)</td><td>Versión inicial, en el cierre de construcción del ciclo.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <footer>Blueprint as-built de planlang · pipeline AI-APPs · se actualiza en cada cierre de ciclo. Archivo del repo, sin CDNs ni dependencias externas.</footer>
+</main>
+</body>
+</html>

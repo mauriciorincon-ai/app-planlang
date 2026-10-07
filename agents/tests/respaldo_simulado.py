@@ -14,6 +14,7 @@ from typing import Any
 
 from app_agents import lotes
 from app_agents.adaptador import ErrorProveedor
+from app_agents.demo_a import simulacion as simulacion_a
 from app_agents.demo_a.simulacion import RespondedorSimulado
 from app_agents.plan import RAIZ_REPO
 
@@ -42,8 +43,8 @@ def con_fallas(fallas: dict[str, tuple[str, str]]) -> type[RespondedorSimulado]:
 
 
 def generar(salida: Path, fallas: dict[str, tuple[str, str]] = FALLAS, n: int = 8) -> lotes.ResumenSesion:
-    previo = lotes.RespondedorSimulado
-    lotes.RespondedorSimulado = con_fallas(fallas)  # type: ignore[misc]
+    previo = simulacion_a.RespondedorSimulado
+    simulacion_a.RespondedorSimulado = con_fallas(fallas)  # type: ignore[misc]
     try:
         return lotes.ejecutar_lote(
             corrida_id=CORRIDA,
@@ -56,7 +57,7 @@ def generar(salida: Path, fallas: dict[str, tuple[str, str]] = FALLAS, n: int = 
             reloj="fijo",
         )
     finally:
-        lotes.RespondedorSimulado = previo  # type: ignore[misc]
+        simulacion_a.RespondedorSimulado = previo  # type: ignore[misc]
 
 
 if __name__ == "__main__":

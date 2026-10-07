@@ -1,0 +1,325 @@
+{
+  "aristas_condicionales": [
+    {
+      "desde": "decision",
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden": 1,
+      "senal": "carga_detectada",
+      "si_verdadero": "pausa_humana",
+      "valor": true
+    },
+    {
+      "desde": "decision",
+      "inclusivo": false,
+      "operador": "menor_que",
+      "orden": 2,
+      "senal": "senal_confianza",
+      "si_verdadero": "pausa_humana",
+      "valor": "umbral.U1"
+    },
+    {
+      "desde": "decision",
+      "inclusivo": false,
+      "operador": "mayor_que",
+      "orden": 3,
+      "senal": "costo_estimado",
+      "si_verdadero": "pausa_humana",
+      "valor": "umbral.U2"
+    },
+    {
+      "desde": "decision",
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden": 4,
+      "senal": "contradiccion_orden_texto",
+      "si_verdadero": "pausa_humana",
+      "valor": true
+    },
+    {
+      "desde": "decision",
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden": 5,
+      "senal": "propuesta",
+      "si_verdadero": "pausa_humana",
+      "valor": "negar"
+    },
+    {
+      "desde": "decision",
+      "funcion": {
+        "entradas": [
+          "modo_texas",
+          "propuesta"
+        ],
+        "nombre": "texas_y_no_aprobar"
+      },
+      "nota": {
+        "en": "Texas mode: when it is on and the proposal is not approve (deny or approve in part), the adverse determination goes to a person (TX SB 815).",
+        "es": "Modo Texas: si está encendido y la propuesta no es aprobar (negar o aprobar en parte), la determinación adversa pasa por una persona (TX SB 815)."
+      },
+      "orden": 6,
+      "si_verdadero": "pausa_humana"
+    },
+    {
+      "desde": "enrutador",
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden": 1,
+      "senal": "tipo_atencion",
+      "si_verdadero": "cierre",
+      "valor": "urgencia"
+    },
+    {
+      "desde": "enrutador",
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden": 2,
+      "senal": "servicio_exento",
+      "si_verdadero": "cierre",
+      "valor": true
+    },
+    {
+      "desde": "agente_unico",
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden": 1,
+      "senal": "proveedor_no_disponible",
+      "si_verdadero": "pausa_humana",
+      "valor": true
+    },
+    {
+      "desde": "agente_unico",
+      "inclusivo": false,
+      "operador": "mayor_que",
+      "orden": 2,
+      "senal": "campos_faltantes_count",
+      "si_verdadero": "pausa_humana",
+      "valor": 0
+    }
+  ],
+  "demo_id": "demo-a",
+  "formato": "planlang-grafo/v1",
+  "huella": "3066e73cef3823be98b4d6f454546fad48b580e7c5ad0da5f6201cb4c706e6c5",
+  "langgraph": {
+    "edges": [
+      {
+        "source": "__start__",
+        "target": "enrutador"
+      },
+      {
+        "conditional": true,
+        "source": "agente_unico",
+        "target": "pausa_humana"
+      },
+      {
+        "conditional": true,
+        "source": "agente_unico",
+        "target": "verificador_cobertura"
+      },
+      {
+        "source": "cierre",
+        "target": "guardia_salida"
+      },
+      {
+        "conditional": true,
+        "source": "decision",
+        "target": "cierre"
+      },
+      {
+        "conditional": true,
+        "source": "decision",
+        "target": "pausa_humana"
+      },
+      {
+        "conditional": true,
+        "source": "enrutador",
+        "target": "agente_unico"
+      },
+      {
+        "conditional": true,
+        "source": "enrutador",
+        "target": "cierre"
+      },
+      {
+        "source": "pausa_humana",
+        "target": "cierre"
+      },
+      {
+        "source": "verificador_cobertura",
+        "target": "decision"
+      },
+      {
+        "source": "guardia_salida",
+        "target": "__end__"
+      }
+    ],
+    "nodes": [
+      {
+        "data": {
+          "id": [
+            "langgraph",
+            "_internal",
+            "_runnable",
+            "RunnableCallable"
+          ],
+          "name": "__start__"
+        },
+        "id": "__start__",
+        "type": "runnable"
+      },
+      {
+        "data": {
+          "id": [
+            "langgraph",
+            "_internal",
+            "_runnable",
+            "RunnableCallable"
+          ],
+          "name": "enrutador"
+        },
+        "id": "enrutador",
+        "type": "runnable"
+      },
+      {
+        "data": {
+          "id": [
+            "langgraph",
+            "_internal",
+            "_runnable",
+            "RunnableCallable"
+          ],
+          "name": "agente_unico"
+        },
+        "id": "agente_unico",
+        "type": "runnable"
+      },
+      {
+        "data": {
+          "id": [
+            "langgraph",
+            "_internal",
+            "_runnable",
+            "RunnableCallable"
+          ],
+          "name": "verificador_cobertura"
+        },
+        "id": "verificador_cobertura",
+        "type": "runnable"
+      },
+      {
+        "data": {
+          "id": [
+            "langgraph",
+            "_internal",
+            "_runnable",
+            "RunnableCallable"
+          ],
+          "name": "decision"
+        },
+        "id": "decision",
+        "type": "runnable"
+      },
+      {
+        "data": {
+          "id": [
+            "langgraph",
+            "_internal",
+            "_runnable",
+            "RunnableCallable"
+          ],
+          "name": "pausa_humana"
+        },
+        "id": "pausa_humana",
+        "type": "runnable"
+      },
+      {
+        "data": {
+          "id": [
+            "langgraph",
+            "_internal",
+            "_runnable",
+            "RunnableCallable"
+          ],
+          "name": "cierre"
+        },
+        "id": "cierre",
+        "type": "runnable"
+      },
+      {
+        "data": {
+          "id": [
+            "langgraph",
+            "_internal",
+            "_runnable",
+            "RunnableCallable"
+          ],
+          "name": "guardia_salida"
+        },
+        "id": "guardia_salida",
+        "type": "runnable"
+      },
+      {
+        "id": "__end__"
+      }
+    ]
+  },
+  "nodos": [
+    {
+      "id": "agente_unico",
+      "tipo": "modelo"
+    },
+    {
+      "id": "cierre",
+      "tipo": "regla"
+    },
+    {
+      "id": "decision",
+      "tipo": "enrutador"
+    },
+    {
+      "id": "enrutador",
+      "tipo": "enrutador"
+    },
+    {
+      "id": "guardia_salida",
+      "tipo": "regla"
+    },
+    {
+      "id": "pausa_humana",
+      "tipo": "pausa_humana"
+    },
+    {
+      "id": "verificador_cobertura",
+      "tipo": "regla"
+    }
+  ],
+  "pausas_humanas": [
+    {
+      "nodo": "pausa_humana",
+      "payload_minimo": [
+        "motivo",
+        "senal",
+        "umbral",
+        "extraccion",
+        "texto_original",
+        "evidencia",
+        "contraevidencia",
+        "orden_adjunta",
+        "aclaraciones",
+        "cobertura"
+      ],
+      "politica_simulada": {
+        "en": "In batches, the simulated reviewer follows the case's known truth (DA-04); the showcase discloses it.",
+        "es": "En lotes, el revisor simulado sigue la verdad conocida del caso (DA-04); la vitrina lo divulga."
+      },
+      "rol": "auditor"
+    }
+  ],
+  "ramas_por_defecto": {
+    "agente_unico": "verificador_cobertura",
+    "decision": "cierre",
+    "enrutador": "agente_unico"
+  },
+  "variante": "agente_unico"
+}

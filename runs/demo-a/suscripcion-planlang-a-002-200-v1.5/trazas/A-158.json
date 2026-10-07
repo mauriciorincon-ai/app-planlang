@@ -1,0 +1,141 @@
+{
+  "aclaraciones": [],
+  "caso_id": "A-158",
+  "cobertura": null,
+  "corrida_id": "suscripcion-planlang-a-002-200-v1.5",
+  "decisiones_de_arista": [
+    {
+      "desde": "enrutador",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 1,
+      "rama_tomada": "redactor",
+      "resultado": true,
+      "senal": "tipo_atencion",
+      "tipo": "tripleta",
+      "umbral_aplicado": "urgencia",
+      "valor_declarado": "urgencia",
+      "valor_observado": "urgencia"
+    },
+    {
+      "desde": "enrutador",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 2,
+      "paso": 1,
+      "rama_tomada": "redactor",
+      "resultado": false,
+      "senal": "servicio_exento",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    }
+  ],
+  "documento_adverso": null,
+  "error_de_esquema_en_traspaso": false,
+  "error_proveedor": null,
+  "extraccion": null,
+  "formato": "planlang-trace/v1",
+  "guardia_salida": {
+    "acciones_ejecutadas": [
+      "responder_afiliado"
+    ],
+    "acciones_intentadas": [
+      "responder_afiliado"
+    ],
+    "carga_detectada_en_entrada": false,
+    "hallazgos": [],
+    "severidad_accion": 0
+  },
+  "huella": "c98f2163eecd484748597f3ac1a7c200df41c689123ad862848462dfadef7720",
+  "nodos_visitados": [
+    "enrutador",
+    "redactor",
+    "guardia_salida"
+  ],
+  "pasos": [
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 1,
+      "error_proveedor": null,
+      "inicio_ms": 3,
+      "nodo": "enrutador",
+      "orden": 1,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "enrutador",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0.008664,
+      "duracion_ms": 4708,
+      "error_proveedor": null,
+      "inicio_ms": 5,
+      "nodo": "redactor",
+      "orden": 2,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 1344,
+        "salida": 512
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 4714,
+      "nodo": "guardia_salida",
+      "orden": 3,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "regla",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    }
+  ],
+  "pausas_humanas": [],
+  "resultado": "completo",
+  "salida_final": {
+    "aviso_ia": {
+      "en": "Notice: this reply was drafted by an artificial intelligence in a simulation with synthetic data. No denial is issued without review by a person.",
+      "es": "Aviso: esta respuesta la redactó una inteligencia artificial en una simulación con datos sintéticos. Ninguna negación se emite sin la revisión de una persona."
+    },
+    "en": "Your request for a laparoscopic cholecystectomy (keyhole surgery to remove the gallbladder) has been approved. You can proceed with the procedure as directed by your medical team. You will later receive a document with the details of this decision.",
+    "es": "Su solicitud para la colecistectomía laparoscópica (cirugía para extraer la vesícula biliar por laparoscopia) fue aprobada. Puede continuar con el procedimiento según las indicaciones de su equipo médico. Más adelante recibirá un documento con los detalles de esta decisión."
+  },
+  "senales": {
+    "campos_faltantes_count": null,
+    "carga_detectada": false,
+    "ciclos_aclaracion": 0,
+    "contradiccion_orden_texto": null,
+    "costo_estimado": null,
+    "decision_final": "aprobar",
+    "error_proveedor": null,
+    "latencia_total_s": 4.709,
+    "modo_texas": false,
+    "nodos_visitados": [
+      "enrutador",
+      "redactor",
+      "guardia_salida"
+    ],
+    "pausa_humana": false,
+    "propuesta": null,
+    "proveedor_no_disponible": false,
+    "senal_confianza": null,
+    "servicio_exento": false,
+    "severidad_accion": 0,
+    "tipo_atencion": "urgencia",
+    "tokens": 1856
+  },
+  "variante": "multiagente"
+}

@@ -31,6 +31,16 @@ export const ManifiestoVitrinaSchema = z.object({
           senal_propuesta: z.string().min(1),
           valor_favorable: z.string().min(1),
           claves_previas: z.array(z.string().min(1)),
+          // Señales del demo que se escriben después de decidir (el B: el redactor y la guardia de salida).
+          claves_del_desenlace: z.array(z.string().min(1)).optional(),
+          // Plan v1.5 del A: la aprobación parcial sale sola mientras el modo Texas esté apagado.
+          parcial: z
+            .object({
+              valor: z.string().min(1),
+              senal_que_exige_persona: z.string().min(1),
+            })
+            .strict()
+            .optional(),
         })
         .strict(),
       /**
@@ -219,6 +229,27 @@ export const PayloadPausaSchema = z
     texto_original: Bilingue,
     evidencia: z.array(Bilingue),
     contraevidencia: z.array(Bilingue),
+    // M-8 (plan v1.5): el auditor recibe el caso completo. Las corridas anteriores a la v1.5 no lo traen.
+    orden_adjunta: z
+      .object({
+        codigo_procedimiento: z.string(),
+        tipo_atencion: z.string(),
+        observaciones: Bilingue,
+      })
+      .strict()
+      .optional(),
+    /** Nula si la pausa llega antes del verificador de cobertura (la guardia de entrada, una aclaración). */
+    cobertura: z
+      .object({
+        estado_servicio: z.string(),
+        alto_costo: z.boolean(),
+        reglas_disparadas: z.array(z.string()),
+        causal: z.string().nullable(),
+      })
+      .loose()
+      .nullable()
+      .optional(),
+    aclaraciones: z.array(AclaracionTrazaSchema).optional(),
   })
   .strict();
 export type PayloadPausa = z.infer<typeof PayloadPausaSchema>;
@@ -254,9 +285,68 @@ export const DocumentoAdversoVistaSchema = z
     decidido_por: Bilingue,
     via_de_contradiccion: Bilingue,
     aviso_ia: Bilingue,
+    /** M-15 (plan v1.5): solo en la aprobación parcial. */
+    monto: z
+      .object({
+        solicitado: z.number(),
+        aprobado: z.number(),
+        negado: z.number(),
+        unidad: Bilingue,
+      })
+      .strict()
+      .optional(),
   })
   .loose();
 export type DocumentoAdversoVista = z.infer<typeof DocumentoAdversoVistaSchema>;
+
+const Version = z
+  .object({ id: z.string(), version: z.string(), huella: z.string() })
+  .strict();
+
+/**
+ * Demo B: lo que ve el oficial en la pausa (M-8: el `payload_minimo` del plan B entero). Los documentos, las
+ * coincidencias, la investigación y el puntaje los lee P6 desde la traza, que ya los valida; aquí se exige que viajen.
+ */
+export const PayloadPausaBSchema = z
+  .object({
+    motivo: Bilingue.extend({
+      desde: z.string().min(1),
+      orden_arista: z.number().int().min(1),
+    }),
+    senal: z.string().min(1),
+    umbral: z.object({ declarado: z.unknown(), aplicado: z.unknown() }),
+    extraccion: z
+      .object({
+        campos: z.record(z.string(), z.unknown()),
+        campos_faltantes: z.array(z.string()),
+      })
+      .strict()
+      .nullable(),
+    documentos: z.record(z.string(), Bilingue.nullable()),
+    coincidencias: z.unknown(),
+    investigacion: z.unknown(),
+    puntaje: z.unknown(),
+    evidencia: z.array(Bilingue),
+    contraevidencia: z.array(Bilingue),
+  })
+  .strict();
+
+/** Demo B: el documento de rechazo como lo arma el código del redactor (RF-04b.7). */
+export const DocumentoRechazoVistaSchema = z
+  .object({
+    completo: z.boolean(),
+    idiomas: z.array(z.string()),
+    causal: z.object({ id: z.string(), norma: z.string(), resumen: Bilingue }),
+    regla: z.object({ id: z.string(), texto: Bilingue }),
+    datos_usados: z.array(z.string()),
+    revisado_por_persona: z.boolean(),
+    texto: Bilingue,
+    version: z.object({ plan: Version, listas: Version }).strict(),
+    via_de_contradiccion: Bilingue,
+    // Desde la fase 4 del S3 el agente B lo escribe (regla dura 12); la corrida de 20 no lo trae.
+    aviso_ia: Bilingue.optional(),
+  })
+  .strict();
 
 /** Los casos ejemplares que el informe nombra (P6 marca el suyo). */
 export const CasosEjemplaresSchema = z

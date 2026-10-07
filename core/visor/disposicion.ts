@@ -7,7 +7,7 @@
  * cuando vuelve atrás. Los nodos fuera del camino se colocan en la fila intermedia, en profundidad desde el
  * nodo del camino que los alcanza primero (el orden de los flujos decide). Sin azar ni fuerzas (D3).
  */
-import { SENAL_POR_DEFECTO } from "./mapa";
+import { esPorDefecto } from "./condicion";
 import type { Gramatica, Mapa } from "./tipos";
 
 export const MARGEN = 10;
@@ -58,7 +58,7 @@ export function disponer(
   const salientes = (id: string) => mapa.flujos.filter((f) => f.origen === id);
   const siguiente = (id: string): string | undefined => {
     const s = salientes(id);
-    const defecto = s.find((f) => f.condicion?.senal === SENAL_POR_DEFECTO);
+    const defecto = s.find((f) => esPorDefecto(f.condicion));
     if (defecto) return defecto.destino;
     const secuencias = [
       ...new Set(

@@ -3,6 +3,7 @@
  * mapa `{ es, en }` y se redactan en los dos idiomas (regla 20): ninguno se traduce al pintar.
  */
 import { tb, type TextoBilingue } from "@core/formatos/bilingue";
+import type { IdDemo } from "@/lib/demos";
 import type { Pantalla } from "@/lib/ruta";
 
 export const MARCA = "planlang";
@@ -10,8 +11,8 @@ export const MARCA = "planlang";
 export const ROTULO = {
   simulacion: tb("Simulación · no operativo", "Simulation · not operational"),
   divulgacion: tb(
-    "Datos 100 % sintéticos · las decisiones humanas de este demo se simularon en lote",
-    "100% synthetic data · this demo’s human decisions were simulated in batch",
+    "Datos 100 % sintéticos · las decisiones humanas de los demos se simularon en lote",
+    "100% synthetic data · the demos’ human decisions were simulated in batch",
   ),
   /** El nombre de su región: el rótulo vive dentro de un landmark (AU-S2-B24). */
   region: tb("Aviso de simulación", "Simulation notice"),
@@ -39,6 +40,10 @@ export const BARRA = {
   inicio: tb("planlang, entrada", "planlang, home"),
   espanol: tb("Español", "Spanish"),
   ingles: tb("Inglés", "English"),
+  /** El conmutador de demo en las pantallas del B (ADR-014). */
+  demo: tb("Demo", "Demo"),
+  demoA: tb("Demo A · autorización previa", "Demo A · prior authorization"),
+  demoB: tb("Demo B · vinculación", "Demo B · onboarding"),
 };
 
 export const PERFIL = {
@@ -65,12 +70,26 @@ export const VEREDICTOS = {
   en_construccion: tb("En construcción", "Under construction"),
 };
 
+/** Un caso que se nombra sin enlace: la corrida de 200 publica página solo de algunos casos (S3). */
+export const SIN_PAGINA = tb("sin página propia", "no page of its own");
+
 export const PIE = {
   simulacion: tb("Simulación · no operativo.", "Simulation · not operational."),
-  sintetico: tb(
-    "Todo caso, afiliado, médico y plan de beneficios es sintético. Las decisiones humanas de este demo se simularon en lote siguiendo la verdad conocida; en producción las tomaría un auditor médico con el caso completo.",
-    "Every case, member, physician and benefit plan is synthetic. This demo's human decisions were simulated in batch following the known truth; in production a medical auditor would make them with the full case.",
-  ),
+  /** Por demo; `ambos` es el de la entrada, que presenta los dos. */
+  sintetico: {
+    "demo-a": tb(
+      "Todo caso, afiliado, médico y plan de beneficios es sintético. Las decisiones humanas de este demo se simularon en lote siguiendo la verdad conocida; en producción las tomaría un auditor médico con el caso completo.",
+      "Every case, member, physician and benefit plan is synthetic. This demo's human decisions were simulated in batch following the known truth; in production a medical auditor would make them with the full case.",
+    ),
+    "demo-b": tb(
+      "Todo caso, solicitante, documento y lista de control es sintético. Las decisiones humanas de este demo se simularon en lote siguiendo la verdad conocida; en producción las tomaría un oficial de cumplimiento con el caso completo.",
+      "Every case, applicant, document and watchlist is synthetic. This demo's human decisions were simulated in batch following the known truth; in production a compliance officer would make them with the full case.",
+    ),
+    ambos: tb(
+      "Todo caso, afiliado, médico, plan de beneficios, solicitante y lista de control es sintético. Las decisiones humanas de los dos demos se simularon en lote siguiendo la verdad conocida; en producción las tomaría una persona con el caso completo: un auditor médico en el A, un oficial de cumplimiento en el B.",
+      "Every case, member, physician, benefit plan, applicant and watchlist is synthetic. Both demos' human decisions were simulated in batch following the known truth; in production a person would make them with the full case: a medical auditor in A, a compliance officer in B.",
+    ),
+  } as Record<IdDemo | "ambos", TextoBilingue>,
   modelo: tb(
     "El modelo de los agentes corrió con la suscripción de Claude Code del autor. Ningún visitante lanza llamadas a modelos: esta página es estática. LangChain, LangGraph, LangSmith y Anthropic son marcas de sus titulares; aquí solo se nombran.",
     "The agents' model ran on the author's Claude Code subscription. No visitor triggers model calls: this page is static. LangChain, LangGraph, LangSmith and Anthropic are trademarks of their owners; they are only named here.",

@@ -432,6 +432,7 @@
       "fuera_por_senal_nula": 0,
       "id": "C5",
       "k": {
+        "aplica": true,
         "aplica_a": "lote_demo_20",
         "observado": 3,
         "requerido": 3
@@ -608,11 +609,11 @@
     },
     "verificador": {
       "formato": "planlang-informe/v1",
-      "version": "1.2.0"
+      "version": "1.3.0"
     }
   },
   "formato": "planlang-informe/v1",
-  "huella": "f0c6b2a905ae67a2485be441526c229d4d3826d64c661d4954febb9c1251031b",
+  "huella": "5e7004477a40966839320d5c65f23e21e7b4d52e167a82cbb500c265cad4f1c8",
   "plan_en_breve": {
     "decisiones_una_via": [
       {
@@ -1230,5 +1231,5 @@
     "bloqueantes": [],
     "valor": "cumple_con_alertas"
   },
-  "version_verificador": "1.2.0"
+  "version_verificador": "1.3.0"
 }

@@ -10,6 +10,21 @@ export const REPRODUCIBILIDAD = {
   plan: tb("Plan", "Plan"),
   planConQueCorrio: tb("Plan con que corrió", "Plan it ran with"),
   casos: tb("Casos", "Cases"),
+  generador: tb("Generador", "Generator"),
+  /** Cómo se generó el lote (AU-S3-28): receta, versión del generador y casos por tipo. */
+  generadorValor: ((p: {
+    receta: string;
+    version: string;
+    composicion: Array<{ tipo: TextoBilingue; n: number }>;
+  }) =>
+    tb(
+      `receta ${p.receta} · versión ${p.version} · ${p.composicion.map((c) => `${c.tipo.es} ${c.n}`).join(" · ")}`,
+      `recipe ${p.receta} · version ${p.version} · ${p.composicion.map((c) => `${c.tipo.en} ${c.n}`).join(" · ")}`,
+    )) as (p: {
+    receta: string;
+    version: string;
+    composicion: Array<{ tipo: TextoBilingue; n: number }>;
+  }) => TextoBilingue,
   corrida: tb("Corrida", "Run"),
   grafo: tb("Grafo", "Graph"),
   grafoCompilado: tb("Grafo compilado", "Compiled graph"),

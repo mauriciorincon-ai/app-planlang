@@ -56,6 +56,7 @@ import { TablaF } from "../tabla-f";
 import { Veredicto } from "../veredicto";
 import { SinProbar } from "../sin-probar";
 import { TituloNumerado } from "../titulo-numerado";
+import { ChipCaso } from "./chip-caso";
 
 const MONO = "font-mono text-dato leading-normal [overflow-wrap:anywhere]";
 const LECTURA = "mb-6 max-w-[72ch] text-texto leading-[1.6]";
@@ -96,20 +97,16 @@ function Estado({ e }: { e: { texto: string; clase: string } }) {
 
 function ChipsCasos({
   casos,
+  idioma,
 }: {
-  casos: readonly { id: string; href: string }[];
+  casos: readonly { id: string; href: string | null }[];
+  idioma: Idioma;
 }) {
   if (casos.length === 0) return null;
   return (
     <span className="flex flex-wrap gap-1">
       {casos.map((c) => (
-        <a
-          key={c.id}
-          href={c.href}
-          className="rounded-chip border border-linea bg-sup-1 px-1.5 py-px font-mono text-dato text-tinta-1 no-underline hover:border-tinta-2"
-        >
-          {c.id}
-        </a>
+        <ChipCaso key={c.id} c={c} idioma={idioma} className="text-dato" />
       ))}
     </span>
   );
@@ -305,7 +302,7 @@ export function Criterios({ v, idioma }: { v: VistaBrecha; idioma: Idioma }) {
             </div>
             <div className="col-start-2 flex flex-wrap items-center gap-1.5 escritorio:col-start-auto escritorio:grid escritorio:justify-items-start">
               <Estado e={f.estado} />
-              <ChipsCasos casos={f.casos} />
+              <ChipsCasos casos={f.casos} idioma={idioma} />
             </div>
           </div>
         ))}
@@ -375,7 +372,7 @@ export function Riesgos({ v, idioma }: { v: VistaBrecha; idioma: Idioma }) {
             </div>
             <div className="col-start-2 flex flex-wrap items-center gap-1.5 escritorio:col-start-auto">
               <Estado e={f.estado} />
-              <ChipsCasos casos={f.casos} />
+              <ChipsCasos casos={f.casos} idioma={idioma} />
             </div>
           </div>
         ))}
@@ -841,7 +838,7 @@ export function Playground({ v, idioma }: { v: VistaBrecha; idioma: Idioma }) {
             u.rango,
             u.observado,
             u.justo.length ? (
-              <ChipsCasos key="j" casos={u.justo} />
+              <ChipsCasos key="j" casos={u.justo} idioma={idioma} />
             ) : (
               <span key="j" className="text-tinta-2">
                 —

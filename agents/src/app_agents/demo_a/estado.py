@@ -24,6 +24,8 @@ class Estado(TypedDict, total=False):
     # Señales del plan (nombres del contrato de grafo).
     tipo_atencion: str
     servicio_exento: bool
+    # M-16 (plan v1.5): la guardia de entrada, sin modelo; solo si el plan declara la señal.
+    carga_detectada: bool
     senal_confianza: float | None
     campos_faltantes_count: int | None
     ciclos_aclaracion: int
@@ -67,7 +69,9 @@ def estado_inicial(caso: dict[str, Any], umbrales: dict[str, Any]) -> Estado:
         "caso_id": caso["id"],
         "entrada": caso["entrada"],
         "umbrales_aplicados": umbrales,
-        "modo_texas": bool(umbrales["U4"]),
+        # M-18: el enrutador (primer nodo) lo resuelve por la señal `modo_texas` del plan; aquí no se lee
+        # por id.
+        "modo_texas": False,
         "pausa_humana": False,
         "ciclos_aclaracion": 0,
         "aclaraciones_hechas": 0,

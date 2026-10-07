@@ -105,3 +105,16 @@ Antes del merge, correr este checklist sobre la **preview real** (no screenshots
 
 Ítem rojo ⇒ se corrige antes del merge o se registra como deuda de diseño explícita en el summary
 (con sprint de pago), igual que cualquier estándar.
+
+## 5. Reglas de producto para apps con perfiles de lectura (kit v1.37.0 — del usuario, planlang 2026-09-27)
+
+Cuando una pantalla se lee con más de un perfil (líder · experto, o equivalentes), rigen cuatro reglas que el
+usuario selló mirando la maqueta y que el gate de revisión de diseño verifica:
+
+1. **Ficha general primero.** Toda pantalla abre con su ficha (objetivo · qué recibe · qué hace · qué entrega ·
+   capacidad) antes del detalle por perfil. Quien llega sin contexto entiende qué es antes de ver cómo.
+2. **Cambiar de perfil cambia el contenido a la vista**, no solo un rótulo: textos, cifras y ejemplos distintos,
+   y el cambio se nota sin desplazarse (test: el DOM visible difiere entre perfiles).
+3. **Texto de lectura a 15 px o más.** Los tamaños de apoyo (etiquetas, chips) pueden bajar; la prosa no.
+4. **Cada falla se nombra**, no solo se señala: «S3 refutado: el multiagente acierta más pero tarda más» en vez
+   de un ícono rojo. Forma antes que color (regla 13) y el nombre antes que la forma.

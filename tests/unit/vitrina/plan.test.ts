@@ -1,8 +1,8 @@
 /**
  * P2 Plan: la vista se arma desde el plan que declara el manifiesto y el informe que lo midió. Las cifras se cuentan;
  * los riesgos van por prioridad de acción efectiva (con el control legal visible); cada sección muestra 5 y el resto
- * tras «Ver N más»; el contrato del grafo lista las 9 reglas con su «si no»; y un plan sin lo de un plan aprobado no
- * se pinta.
+ * tras «Ver N más»; el contrato del grafo lista las 12 reglas del plan v1.5 con su «si no»; y un plan sin lo de un plan
+ * aprobado no se pinta.
  */
 import { beforeAll, describe, expect, it } from "vitest";
 import { datosDemo, type DatosDemo } from "@/lib/datos/vitrina";
@@ -31,22 +31,24 @@ describe("las cifras se cuentan en el plan y el informe", () => {
       [
         ["6", "decisiones", "2 de una vía", "#p-dec"],
         [
-          "8",
+          "10",
           "riesgos",
-          "5 con prioridad alta, 2 por control legal",
+          "6 con prioridad alta, 3 por control legal",
           "#p-ries",
         ],
         [
           "3",
           "supuestos",
-          "1 confirmado · 1 refutado · 1 sin probar",
+          "1 confirmado · 2 refutados · 0 sin probar",
           "#p-sup",
         ],
-        ["9", "criterios", "9 cumplieron en la corrida", "#p-crit"],
+        // Verificador 1.3.0: C5 pide k = 3 solo en lotes de 20; en el de 200 se mide en una corrida y cumple.
+        ["10", "criterios", "10 cumplieron en la corrida", "#p-crit"],
         ["4", "umbrales", "jugables en el playground", "#p-umb"],
       ],
     );
-    expect(en.cifras[1]!.detalle).toBe("5 high priority, 2 by legal control");
+    expect(en.cifras[1]!.detalle).toBe("6 high priority, 3 by legal control");
+    expect(en.cifras[3]!.detalle).toBe("10 met in the run");
   });
 
   it("cada cifra lleva a una sección que existe", () => {
@@ -70,21 +72,29 @@ describe("las secciones", () => {
       expect(s.mas === null, s.id).toBe(s.resto.length === 0);
     }
     expect(seccion(es, "p-dec").mas).toBe("Ver 1 más: D6");
-    expect(seccion(en, "p-crit").mas).toBe("Show 4 more: C6, C7, C8, C9");
+    expect(seccion(en, "p-crit").mas).toBe("Show 5 more: C6, C7, C8, C9, C10");
   });
 
-  it("riesgos por prioridad efectiva: el control legal sube R1 y R6 y lo dice", () => {
+  it("riesgos por prioridad efectiva: el control legal sube R1, R10 y R6 y lo dice", () => {
     expect(todas(es, "p-ries").map((f) => f.id)).toEqual([
       "R2",
       "R3",
       "R1",
+      "R10",
       "R6",
       "R5",
       "R7",
+      "R9",
       "R4",
       "R8",
     ]);
-    expect(seccion(es, "p-ries").mas).toBe("Ver 3 más: R7, R4, R8");
+    expect(seccion(es, "p-ries").mas).toBe("Ver 5 más: R5, R7, R9, R4, R8");
+    const r10 = todas(es, "p-ries").find((f) => f.id === "R10")!;
+    expect(r10.lado).toMatchObject({
+      ap: { barras: 3, texto: "AP alta" },
+      factores: "S9 · O2 · D3",
+      legal: "control legal (tabla: baja)",
+    });
     const r1 = todas(es, "p-ries").find((f) => f.id === "R1")!;
     expect(r1.lado).toMatchObject({
       tipo: "riesgo",
@@ -127,17 +137,23 @@ describe("las secciones", () => {
     const s = todas(es, "p-sup");
     expect(
       s.map((f) => (f.lado.tipo === "supuesto" ? f.lado.estado.texto : "")),
-    ).toEqual(["Sin probar", "Confirmado", "Refutado"]);
+    ).toEqual(["Confirmado", "Refutado", "Refutado"]);
     expect(s[0]!.lado).toMatchObject({ enPlan: "en el plan: sin probar" });
     expect(s[0]!.tecnica).toBe(
       "ece · auroc · curva_riesgo_cobertura · verdad_conocida.presente · auroc_min 0.75 · ece_max 0.1",
     );
-    expect(s[0]!.abrir!.filas[1]!.v).toMatch(/auroc/);
+    // S1 se midió sobre los 159 casos con verdad conocida (ECE 0,03 y AUROC 0,77): confirmado.
+    expect(s[0]!.abrir!.filas[1]!.v).toBe(
+      "Todas las medidas cumplen el umbral de confirmación del plan.",
+    );
   });
 
   it("criterios: cada uno con su frase llana, su objetivo y su regla tal cual", () => {
+    expect(CRITERIO.lider["demo-a"]!.C10!.es).toBe(
+      "Con el modo Texas encendido, ninguna negación, ni siquiera en parte, sale sin una persona.",
+    );
     for (const c of d.plan.criterios_aceptacion)
-      expect(CRITERIO.lider, c.id).toHaveProperty(c.id);
+      expect(CRITERIO.lider["demo-a"], c.id).toHaveProperty(c.id);
     const c = todas(es, "p-crit");
     expect(c[0]!.resumen).toBe(
       "Objetivo: todos los casos · plantilla del dominio",
@@ -145,13 +161,22 @@ describe("las secciones", () => {
     expect(c[4]!.resumen).toBe("Objetivo: ≥ 90\u00a0% · lo pidió el autor");
     expect(c[6]!.resumen).toBe("Objetivo: ≤ 30 s · lo pidió el autor");
     expect(c[4]!.tecnica).toBe(
-      "Exactitud de extracción ≥ 90 % sobre casos con verdad conocida. — verdad_conocida.presente → extraccion.campos == verdad_conocida.campos · pass^k · k = 3",
+      "Exactitud de extracción ≥ 90 % sobre casos con verdad conocida. — verdad_conocida.presente → extraccion.campos == verdad_conocida.campos · pass^k · k = 3 · k_aplica_a = lote_demo_20",
     );
     expect(
-      c.every(
-        (f) => f.lado.tipo === "criterio" && f.lado.estado.clase === "cumple",
-      ),
-    ).toBe(true);
+      c.map((f) => (f.lado.tipo === "criterio" ? f.lado.estado.texto : "")),
+    ).toEqual([
+      "Cumplió",
+      "Cumplió",
+      "Cumplió",
+      "Cumplió",
+      "Cumplió",
+      "Cumplió",
+      "Cumplió",
+      "Cumplió",
+      "Cumplió",
+      "Cumplió",
+    ]);
   });
 
   it("umbrales: su valor como lo lee una persona y el enlace al playground", () => {
@@ -178,29 +203,37 @@ describe("las secciones", () => {
 });
 
 describe("el contrato del grafo", () => {
-  it("las 9 reglas con su «si se cumple» y su «si no»", () => {
+  it("las 12 reglas con su «si se cumple» y su «si no»", () => {
     const t = es.contrato.tabla;
-    expect(t).toHaveLength(9);
+    expect(t).toHaveLength(12);
+    // En el orden del plan v1.5: la carga (M-16) es la primera regla del plan y vive en decision.
     expect(t[0]).toEqual({
+      desde: "decision",
+      n: 1,
+      regla: "carga_detectada · igual_a · true",
+      si: "pausa_humana",
+      no: "redactor",
+    });
+    expect(t[1]).toEqual({
       desde: "enrutador",
       n: 1,
       regla: "tipo_atencion · igual_a · urgencia",
       si: "redactor",
       no: "extractor",
     });
-    expect(t[3]).toEqual({
+    expect(t[6]).toEqual({
       desde: "aclaracion",
-      n: 1,
+      n: 2,
       regla:
         "ciclos_aclaracion · mayor_o_igual_que · umbral.U3 (2) · inclusivo",
       si: "pausa_humana",
       no: "extractor",
     });
-    expect(t[4]!.regla).toBe("senal_confianza · menor_que · umbral.U1 (0,75)");
-    expect(en.contrato.tabla[4]!.regla).toBe(
+    expect(t[7]!.regla).toBe("senal_confianza · menor_que · umbral.U1 (0,75)");
+    expect(en.contrato.tabla[7]!.regla).toBe(
       "senal_confianza · menor_que · umbral.U1 (0.75)",
     );
-    expect(t[8]).toMatchObject({
+    expect(t[11]).toMatchObject({
       regla: "texas_y_no_aprobar(modo_texas, propuesta)",
       no: "redactor",
     });
@@ -208,9 +241,20 @@ describe("el contrato del grafo", () => {
 
   it("las piezas, el flujo y la prueba cruzada con sus cifras", () => {
     expect(es.contrato.piezas).toHaveLength(8);
-    expect(es.contrato.flujo).toHaveLength(7);
+    expect(es.contrato.flujo).toHaveLength(9);
     expect(es.contrato.piezasTitulo).toBe("Las 8 piezas exigidas");
-    expect(es.contrato.apartado).toContain("sus 233 decisiones");
+    // RF-09.2 sobre las corridas del informe (la de 200 y su línea base): la frase lo dice en plural y suma las dos.
+    const rf = d.informe.contrato_de_grafo.rf_09_2;
+    expect(rf.map((r) => r.corrida_id)).toEqual([
+      d.informe.corrida_id,
+      `${d.informe.corrida_id}-base`,
+    ]);
+    const m = es.contrato.apartado.match(
+      /las 2 corridas medidas rehicieron sus ([\d.]+) decisiones/,
+    );
+    expect(Number(m![1]!.replace(/\./g, ""))).toBe(
+      rf.reduce((a, r) => a + r.visitas, 0),
+    );
     expect(es.contrato.apartado).toContain("no hubo una sola diferencia");
     expect(es.contrato.lineas[0]).toMatch(
       /^señales obligatorias en toda traza: tipo_atencion, /,
@@ -221,17 +265,17 @@ describe("el contrato del grafo", () => {
 describe("la mirada general", () => {
   it("parte de, hace y entrega, desde el plan", () => {
     expect(es.portada.antetitulo).toBe(
-      "Demo A · plan-demo-a 1.3.0 · aprobado el 2026-09-28",
+      "Demo A · plan-demo-a 1.5.2 · aprobado el 2026-10-05",
     );
     expect(es.parteDe[1]!.detalle).toBe(
-      "plan de beneficios sintético: 40 procedimientos, 5 exentos, 6 exclusiones con causal",
+      "plan de beneficios sintético: 40 procedimientos, 5 exentos, 6 exclusiones con causal y 6 topes de cobertura",
     );
     expect(es.hace.hecho).toBe(true);
     expect(es.entrega[0]!.detalle).toMatch(
-      /^plan-demo-a 1\.3\.0 · [0-9a-f]{12}…$/,
+      /^plan-demo-a 1\.5\.2 · [0-9a-f]{12}…$/,
     );
     expect(es.entrega[1]!.detalle).toBe(
-      "8 nodos, 9 aristas con su regla y 16 señales que toda traza debe dejar",
+      "8 nodos, 12 aristas con su regla y 18 señales que toda traza debe dejar",
     );
     expect(es.ficha.map((f) => f.k)).toEqual([
       "Id",
@@ -350,5 +394,21 @@ describe("C-7: la vitrina dibuja una pausa humana; con más, se detiene nombrán
     const sin = { ...d, plan: structuredClone(d.plan) };
     sin.plan.contrato_de_grafo.pausas_humanas = [];
     expect(() => vistaPlan(sin, "es")).toThrow("no declara pausa humana");
+  });
+});
+
+describe("el mundo del plan lee sus fuentes (AU-S3-28)", () => {
+  it("el B nombra cada lista, si es vinculante, cuántas personas trae y qué imita; el A cuenta sus topes", async () => {
+    const b = await datosDemo("demo-b");
+    expect(JSON.stringify(vistaPlan(b, "es"))).toContain(
+      "Lista vinculante sintética de sanciones (LV-01, vinculante, 12 personas; imita la forma de una lista de sanciones del Consejo de Seguridad de la ONU)",
+    );
+    expect(JSON.stringify(vistaPlan(b, "en"))).toContain(
+      "Synthetic reference list of politically exposed persons (LC-01, for reference, 10 people; mimics the shape of a politically exposed persons list)",
+    );
+    const a = await datosDemo("demo-a");
+    expect(JSON.stringify(vistaPlan(a, "en"))).toContain(
+      "6 exclusions with a ground and 6 coverage caps",
+    );
   });
 });

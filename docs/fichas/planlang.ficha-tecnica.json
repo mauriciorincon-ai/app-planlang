@@ -1,6 +1,6 @@
 {
   "schema_version": "1.3.1",
-  "actualizado": "2026-10-04",
+  "actualizado": "2026-10-05",
   "pieza": {
     "slug": "planlang",
     "nombre": "planlang",
@@ -9,7 +9,7 @@
     "ciclo": "H1",
     "version": "0.1.0",
     "sellado_en": null,
-    "sprints_cerrados": 2
+    "sprints_cerrados": 3
   },
   "promesa": {
     "tagline": "Planeé, construí y medí la brecha.",
@@ -28,7 +28,7 @@
     },
     {
       "nombre": "Python 3.12 · LangGraph 1.2",
-      "papel": "el agente del demo A, con la pausa humana como interrupt"
+      "papel": "los agentes de los dos demos, con la pausa humana como interrupt"
     },
     {
       "nombre": "Claude Code por suscripción",
@@ -46,27 +46,27 @@
   "cifras": [
     {
       "clave": "criterios_cumplidos",
-      "valor": 9,
+      "valor": 16,
       "unidad": "criterios",
-      "etiqueta": "criterios del plan cumplidos, de 9",
+      "etiqueta": "criterios cumplidos en los planes de 2 demos, de 16",
       "fuente": "medido",
-      "detalle": "Del informe del verificador 1.2.0 sobre la corrida suscripcion-planlang-a-001-20-v1.2: 9 de 9 criterios cumplidos."
+      "detalle": "Demo A: 10 de 10, en el informe del verificador 1.3.0 sobre la corrida suscripcion-planlang-a-002-200-v1.5. Demo B: 6 de 6, en el informe del verificador 1.3.0 sobre la corrida suscripcion-planlang-b-001-20."
     },
     {
       "clave": "decisiones_cruzadas",
-      "valor": 233,
+      "valor": 1204,
       "unidad": "decisiones",
       "etiqueta": "decisiones rehechas en otro lenguaje, con 0 diferencias",
       "fuente": "medido",
-      "detalle": "Prueba cruzada RF-09.2 sobre 4 corridas: el intérprete de aristas de TypeScript rehace cada decisión que registró Python."
+      "detalle": "Prueba cruzada RF-09.2 sobre 4 corridas de 2 demos: el intérprete de aristas de TypeScript rehace cada decisión que registró Python."
     },
     {
-      "clave": "casos_por_corrida",
-      "valor": 20,
+      "clave": "casos_sinteticos",
+      "valor": 220,
       "unidad": "casos",
-      "etiqueta": "casos por corrida, en 3 corridas y una línea base",
+      "etiqueta": "casos sintéticos con respuesta conocida, en 2 demos",
       "fuente": "medido",
-      "detalle": "Corrida suscripcion-planlang-a-001-20-v1.2 con sus 2 repeticiones (pass^k) y la línea base de agente único a igual presupuesto."
+      "detalle": "Demo A: 200 casos en la corrida suscripcion-planlang-a-002-200-v1.5 y la línea base de agente único. Demo B: 20 casos en la corrida suscripcion-planlang-b-001-20 y la línea base de agente único."
     },
     {
       "clave": "llamadas_a_modelos_en_la_vitrina",
@@ -78,25 +78,25 @@
     },
     {
       "clave": "costo_de_una_corrida",
-      "valor": 0.6704,
+      "valor": 5.2136,
       "unidad": "US$",
-      "etiqueta": "costo nominal de una corrida de 20 casos",
+      "etiqueta": "costo nominal de correr una vez cada demo (220 casos)",
       "fuente": "calculada",
-      "detalle": "Suma del costo nominal que el CLI declara por llamada, en las trazas de la corrida; por la suscripción no se pagó aparte."
+      "detalle": "Demo A: US$ 4,9206 por 200 casos. Demo B: US$ 0,293 por 20 casos. Suma del costo nominal que el CLI declara por llamada, en las trazas de cada corrida; por la suscripción no se pagó aparte."
     }
   ],
   "bloques": [
     {
       "orden": 1,
       "nombre": "Planear",
-      "linea": "El plan como contrato: plantillas, validador y contrato para el constructor.",
-      "cuenta": 3
+      "linea": "El plan como contrato: la entrevista, las plantillas, el validador y el contrato para el constructor.",
+      "cuenta": 4
     },
     {
       "orden": 2,
       "nombre": "Correr",
-      "linea": "Casos con verdad conocida, el demo A y las corridas por lotes.",
-      "cuenta": 4
+      "linea": "Casos con verdad conocida, los dos demos y las corridas por lotes.",
+      "cuenta": 6
     },
     {
       "orden": 3,
@@ -125,13 +125,13 @@
   ],
   "limites": [
     "Es una simulación: no opera casos reales ni decide sobre personas.",
-    "El demo B y el entrevistador llegan después; hasta entonces dicen «en construcción».",
+    "El entrevistador corre en la consola, no en la vitrina: aquí se ve el plan que propuso para el demo B, revisado y aprobado por una persona.",
     "Mide lo que el plan declaró; lo que no previó aparece como brecha, no como veredicto."
   ],
   "nunca": [
-    "Usa datos reales: todo caso, afiliado y médico es sintético.",
+    "Usa datos reales: todo caso, afiliado, médico, solicitante y lista de control es sintético.",
     "Deja que un modelo decida si el agente acertó.",
-    "Niega un caso sin que lo revise una persona.",
+    "Niega o rechaza un caso sin que lo revise una persona.",
     "Esconde un resultado desfavorable."
   ],
   "hitos": [
@@ -140,7 +140,7 @@
       "etiqueta": "ciclo"
     },
     {
-      "valor": "2",
+      "valor": "3",
       "etiqueta": "sprints"
     },
     {
@@ -152,7 +152,7 @@
       "etiqueta": "version"
     },
     {
-      "valor": "11",
+      "valor": "16",
       "etiqueta": "decisiones"
     }
   ]

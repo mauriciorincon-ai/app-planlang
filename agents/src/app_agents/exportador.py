@@ -38,8 +38,14 @@ def traza_de_estado(
     senales_obligatorias: list[str],
     error: dict[str, Any] | None = None,
     tipo_de_nodo: Any = None,
+    extras: tuple[str, ...] = (),
 ) -> dict[str, Any]:
-    """Traza de UN caso desde su estado final (o parcial, si el proveedor falló)."""
+    """Traza de UN caso desde su estado final (o parcial, si el proveedor falló).
+
+    Las señales son las que el plan declara obligatorias: las que el exportador calcula (pasos, latencia,
+    tokens, errores) y las demás tal como el grafo (o el arnés, si son de medición) las dejó en el estado.
+    `extras`: campos propios de un demo que viajan en la traza (el B: coincidencias, investigación, puntaje y
+    expediente)."""
     pasos = [dict(p) for p in estado.get("pasos", [])]
     if error is not None:
         fin = (pasos[-1]["inicio_ms"] + pasos[-1]["duracion_ms"]) if pasos else 0
@@ -59,20 +65,11 @@ def traza_de_estado(
     nodos = [p["nodo"] for p in pasos]
     # El primer paso que falló: el error que cortó el caso o el que el plan pasó a una persona (AU-9).
     primer_error = next((p["error_proveedor"] for p in pasos if p["error_proveedor"]), None)
-    finales = {
-        "tipo_atencion": estado.get("tipo_atencion"),
-        "servicio_exento": estado.get("servicio_exento"),
-        "senal_confianza": estado.get("senal_confianza"),
-        "campos_faltantes_count": estado.get("campos_faltantes_count"),
+    calculadas = {
         "ciclos_aclaracion": int(estado.get("aclaraciones_hechas", 0)),
-        "costo_estimado": estado.get("costo_estimado"),
-        "contradiccion_orden_texto": estado.get("contradiccion_orden_texto"),
-        "propuesta": estado.get("propuesta"),
-        "modo_texas": estado.get("modo_texas"),
         "decision_final": estado.get("decision_final") if error is None else None,
         "pausa_humana": bool(estado.get("pausa_humana", False)),
         "nodos_visitados": nodos,
-        "severidad_accion": estado.get("severidad_accion"),
         "latencia_total_s": round(sum(int(p["duracion_ms"]) for p in pasos) / 1000, 3),
         "tokens": _suma_tokens(pasos),
         "error_proveedor": primer_error,
@@ -86,7 +83,7 @@ def traza_de_estado(
         "resultado": "error" if error else "completo",
         "pasos": pasos,
         "nodos_visitados": nodos,
-        "senales": {k: finales.get(k) for k in senales_obligatorias},
+        "senales": {k: calculadas[k] if k in calculadas else estado.get(k) for k in senales_obligatorias},
         "decisiones_de_arista": sorted(
             estado.get("decisiones_de_arista", []), key=lambda d: (d["paso"], d["orden_arista"])
         ),
@@ -100,6 +97,8 @@ def traza_de_estado(
         "error_proveedor": primer_error,
         "error_de_esquema_en_traspaso": any(p["error_proveedor"] == "esquema_invalido" for p in pasos),
     }
+    for k in extras:
+        traza[k] = estado.get(k) if error is None or k != "expediente" else None
     return con_huella(traza)
 
 

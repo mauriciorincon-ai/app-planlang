@@ -71,3 +71,12 @@ export function enumerar(items: readonly string[], idioma: Idioma): string {
   const y = idioma === "es" ? "y" : "and";
   return `${items.slice(0, -1).join(", ")} ${y} ${items[items.length - 1]}`;
 }
+
+/**
+ * Cuántos decimales muestra un valor medido: los que trae, entre 2 y 4. Redondear a 2 una similitud de 0,6988 la
+ * pinta igual que el umbral 0,70 que no alcanzó.
+ */
+export function decimalesDe(v: number): number {
+  const d = /\.(\d+)/.exec(String(v))?.[1]?.length ?? 0;
+  return Math.min(4, Math.max(2, d));
+}

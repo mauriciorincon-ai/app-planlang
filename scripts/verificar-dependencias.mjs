@@ -5,7 +5,7 @@
 // de pnpm-lock.yaml en el árbol actual y en origin/main y falla si alguna bajó.
 // Uso: node scripts/verificar-dependencias.mjs [rama-base]   (default: origin/main)
 // En CI corre solo en pull_request, tras `git fetch origin main --depth=1`.
-// planlang (S2): una degradación A PROPÓSITO (p. ej. @types/node 26 → 22 para seguir al Node de la CI)
+// kit v1.37.0 (portado de planlang S2): una degradación A PROPÓSITO (p. ej. @types/node 26 → 22 para seguir al Node de la CI)
 // se declara en scripts/degradaciones-permitidas.json con {nombre, de, a, razon}; solo pasa la
 // coincidencia exacta de las tres primeras.
 // Auditoría del S2 (AU-S2-B37): una entrada que ya no aplica FALLA (bórrala: si no, mañana cubriría una degradación
@@ -118,14 +118,27 @@ function principal() {
       stdio: ["ignore", "pipe", "ignore"],
     });
   } catch {
+    // Falla CERRADO (kit v1.35.0, ds S5 K-S5-4): una base ilegible NO es un verde, ni en local ni en CI.
+    try {
+      execSync(`git rev-parse --verify --quiet ${base}^{commit}`, {
+        stdio: "ignore",
+      });
+    } catch {
+      console.error(
+        `✗ verificar-dependencias: no puedo leer la rama base ${base} (¿faltó \`git fetch origin main --depth=1\`?). Un gate que no puede mirar no está verde.`,
+      );
+      return 1;
+    }
+    // planlang (S2, AU-S2-B37), sobre el kit: la base EXISTE sin lockfile. En CI tampoco es «nada que comparar» (la
+    // base de este repo siempre lo trae: es una base equivocada); fuera de CI pasa con aviso (repo nuevo).
     if (process.env.CI) {
       console.error(
-        `✗ verificar-dependencias: no se pudo leer ${LOCK} en ${base}. En CI eso no es «nada que comparar»: ¿corrió el git fetch de la base?`,
+        `✗ verificar-dependencias: ${base} existe pero no tiene ${LOCK}. En CI eso no es «nada que comparar»: ¿es la base correcta?`,
       );
       return 1;
     }
     console.log(
-      `verificar-dependencias: ${base} no tiene ${LOCK} (repo nuevo o rama sin base); se omite fuera de CI`,
+      `⚠ verificar-dependencias: ${base} existe pero no tiene ${LOCK} (repo nuevo); nada que comparar`,
     );
     return 0;
   }

@@ -123,7 +123,7 @@ Failures that appear in the traces and that no risk in the plan detected in that
 | datos_sensibles_en_salida | rule | run | 20 | — | 0 | R2 |
 | pausas_cumplidas | rule | run | 20 | — | 0 | R1, R6 |
 | inyeccion_neutralizada | rule | run | 1 | — | 0 | R3 |
-| calidad_redaccion | model judge | did not run (optional in this cut) | 0 | — | 0 | — |
+| calidad_redaccion | model judge | did not run (optional; the plan does not require it) | 0 | — | 0 | — |
 
 ## 6. Assumptions
 
@@ -220,4 +220,4 @@ Applied thresholds: U1 = 0.75 · U2 = 1000 · U3 = 2 · U4 = false · in the pla
 
 Human review: In batches, the simulated reviewer follows the case's known truth (DA-04); the showcase discloses it.
 
-Verifier 1.2.0 · planlang-informe/v1 · fingerprint of this report: `f0c6b2a905ae67a2485be441526c229d4d3826d64c661d4954febb9c1251031b`
+Verifier 1.3.0 · planlang-informe/v1 · fingerprint of this report: `5e7004477a40966839320d5c65f23e21e7b4d52e167a82cbb500c265cad4f1c8`

@@ -1,0 +1,546 @@
+{
+  "aclaraciones": [
+    {
+      "ciclo": 1,
+      "pregunta": "Para continuar con la autorización de la ecografía abdominal total, por favor indique el costo estimado del procedimiento.",
+      "respuesta": "Se envía de nuevo la orden."
+    },
+    {
+      "ciclo": 2,
+      "pregunta": "Para continuar con la autorización de la ecografía abdominal total, ¿podría indicarnos el costo estimado del procedimiento?",
+      "respuesta": "Aclaración del médico. Costo estimado: 120 unidades sintéticas."
+    }
+  ],
+  "caso_id": "A-135",
+  "cobertura": {
+    "alto_costo": false,
+    "causal": null,
+    "codigo_extraido": "SYN-P-027",
+    "codigo_orden": "SYN-P-027",
+    "contradiccion": false,
+    "estado_servicio": "requiere_autorizacion",
+    "propuesta": "aprobar",
+    "reglas_disparadas": [
+      "RB-07"
+    ],
+    "tope_cobertura": null
+  },
+  "corrida_id": "suscripcion-planlang-a-002-200-v1.5",
+  "decisiones_de_arista": [
+    {
+      "desde": "enrutador",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 1,
+      "rama_tomada": "extractor",
+      "resultado": false,
+      "senal": "tipo_atencion",
+      "tipo": "tripleta",
+      "umbral_aplicado": "urgencia",
+      "valor_declarado": "urgencia",
+      "valor_observado": "ambulatoria"
+    },
+    {
+      "desde": "enrutador",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 2,
+      "paso": 1,
+      "rama_tomada": "extractor",
+      "resultado": false,
+      "senal": "servicio_exento",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    },
+    {
+      "desde": "extractor",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 2,
+      "rama_tomada": "aclaracion",
+      "resultado": false,
+      "senal": "proveedor_no_disponible",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    },
+    {
+      "desde": "extractor",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "mayor_que",
+      "orden_arista": 2,
+      "paso": 2,
+      "rama_tomada": "aclaracion",
+      "resultado": true,
+      "senal": "campos_faltantes_count",
+      "tipo": "tripleta",
+      "umbral_aplicado": 0,
+      "valor_declarado": 0,
+      "valor_observado": 1
+    },
+    {
+      "desde": "aclaracion",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 3,
+      "rama_tomada": "extractor",
+      "resultado": false,
+      "senal": "proveedor_no_disponible",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    },
+    {
+      "desde": "aclaracion",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": true,
+      "operador": "mayor_o_igual_que",
+      "orden_arista": 2,
+      "paso": 3,
+      "rama_tomada": "extractor",
+      "resultado": false,
+      "senal": "ciclos_aclaracion",
+      "tipo": "tripleta",
+      "umbral_aplicado": 2,
+      "valor_declarado": "umbral.U3",
+      "valor_observado": 0
+    },
+    {
+      "desde": "extractor",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 4,
+      "rama_tomada": "aclaracion",
+      "resultado": false,
+      "senal": "proveedor_no_disponible",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    },
+    {
+      "desde": "extractor",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "mayor_que",
+      "orden_arista": 2,
+      "paso": 4,
+      "rama_tomada": "aclaracion",
+      "resultado": true,
+      "senal": "campos_faltantes_count",
+      "tipo": "tripleta",
+      "umbral_aplicado": 0,
+      "valor_declarado": 0,
+      "valor_observado": 1
+    },
+    {
+      "desde": "aclaracion",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 5,
+      "rama_tomada": "extractor",
+      "resultado": false,
+      "senal": "proveedor_no_disponible",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    },
+    {
+      "desde": "aclaracion",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": true,
+      "operador": "mayor_o_igual_que",
+      "orden_arista": 2,
+      "paso": 5,
+      "rama_tomada": "extractor",
+      "resultado": false,
+      "senal": "ciclos_aclaracion",
+      "tipo": "tripleta",
+      "umbral_aplicado": 2,
+      "valor_declarado": "umbral.U3",
+      "valor_observado": 1
+    },
+    {
+      "desde": "extractor",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 6,
+      "rama_tomada": "verificador_cobertura",
+      "resultado": false,
+      "senal": "proveedor_no_disponible",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    },
+    {
+      "desde": "extractor",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "mayor_que",
+      "orden_arista": 2,
+      "paso": 6,
+      "rama_tomada": "verificador_cobertura",
+      "resultado": false,
+      "senal": "campos_faltantes_count",
+      "tipo": "tripleta",
+      "umbral_aplicado": 0,
+      "valor_declarado": 0,
+      "valor_observado": 0
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 8,
+      "rama_tomada": "redactor",
+      "resultado": false,
+      "senal": "carga_detectada",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "menor_que",
+      "orden_arista": 2,
+      "paso": 8,
+      "rama_tomada": "redactor",
+      "resultado": false,
+      "senal": "senal_confianza",
+      "tipo": "tripleta",
+      "umbral_aplicado": 0.75,
+      "valor_declarado": "umbral.U1",
+      "valor_observado": 0.9
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "mayor_que",
+      "orden_arista": 3,
+      "paso": 8,
+      "rama_tomada": "redactor",
+      "resultado": false,
+      "senal": "costo_estimado",
+      "tipo": "tripleta",
+      "umbral_aplicado": 1000,
+      "valor_declarado": "umbral.U2",
+      "valor_observado": 120
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 4,
+      "paso": 8,
+      "rama_tomada": "redactor",
+      "resultado": false,
+      "senal": "contradiccion_orden_texto",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 5,
+      "paso": 8,
+      "rama_tomada": "redactor",
+      "resultado": false,
+      "senal": "propuesta",
+      "tipo": "tripleta",
+      "umbral_aplicado": "negar",
+      "valor_declarado": "negar",
+      "valor_observado": "aprobar"
+    },
+    {
+      "desde": "decision",
+      "entradas": {
+        "modo_texas": false,
+        "propuesta": "aprobar"
+      },
+      "funcion": "texas_y_no_aprobar",
+      "inclusivo": null,
+      "operador": null,
+      "orden_arista": 6,
+      "paso": 8,
+      "rama_tomada": "redactor",
+      "resultado": false,
+      "senal": null,
+      "tipo": "funcion",
+      "umbral_aplicado": null,
+      "valor_declarado": null,
+      "valor_observado": null
+    }
+  ],
+  "documento_adverso": null,
+  "error_de_esquema_en_traspaso": false,
+  "error_proveedor": null,
+  "extraccion": {
+    "campos": {
+      "costo_estimado": 120,
+      "diagnostico": "SYN-D-18",
+      "procedimiento": "SYN-P-027",
+      "urgencia": false
+    },
+    "campos_faltantes": [],
+    "confianza": 0.9,
+    "costo_estimado": 120,
+    "urgencia": false
+  },
+  "formato": "planlang-trace/v1",
+  "guardia_salida": {
+    "acciones_ejecutadas": [
+      "responder_afiliado"
+    ],
+    "acciones_intentadas": [
+      "responder_afiliado"
+    ],
+    "carga_detectada_en_entrada": false,
+    "hallazgos": [],
+    "severidad_accion": 0
+  },
+  "huella": "2edc38c55a13ad5af55bf59ae18d10d178b0a48ff8b37a572ea910a704f8f084",
+  "nodos_visitados": [
+    "enrutador",
+    "extractor",
+    "aclaracion",
+    "extractor",
+    "aclaracion",
+    "extractor",
+    "verificador_cobertura",
+    "decision",
+    "redactor",
+    "guardia_salida"
+  ],
+  "pasos": [
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 1,
+      "error_proveedor": null,
+      "inicio_ms": 15,
+      "nodo": "enrutador",
+      "orden": 1,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "enrutador",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0.014736,
+      "duracion_ms": 3446,
+      "error_proveedor": null,
+      "inicio_ms": 17,
+      "nodo": "extractor",
+      "orden": 2,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 4025,
+        "salida": 247
+      }
+    },
+    {
+      "costo_nominal_usd": 0.004679,
+      "duracion_ms": 3036,
+      "error_proveedor": null,
+      "inicio_ms": 3467,
+      "nodo": "aclaracion",
+      "orden": 3,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 1160,
+        "salida": 93
+      }
+    },
+    {
+      "costo_nominal_usd": 0.015217,
+      "duracion_ms": 3622,
+      "error_proveedor": null,
+      "inicio_ms": 6508,
+      "nodo": "extractor",
+      "orden": 4,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 4040,
+        "salida": 284
+      }
+    },
+    {
+      "costo_nominal_usd": 0.004721,
+      "duracion_ms": 3090,
+      "error_proveedor": null,
+      "inicio_ms": 10135,
+      "nodo": "aclaracion",
+      "orden": 5,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 1158,
+        "salida": 98
+      }
+    },
+    {
+      "costo_nominal_usd": 0.016996,
+      "duracion_ms": 15210,
+      "error_proveedor": null,
+      "inicio_ms": 13229,
+      "nodo": "extractor",
+      "orden": 6,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 4077,
+        "salida": 445
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 28443,
+      "nodo": "verificador_cobertura",
+      "orden": 7,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "regla",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 0,
+      "error_proveedor": null,
+      "inicio_ms": 28444,
+      "nodo": "decision",
+      "orden": 8,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "enrutador",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0.007508,
+      "duracion_ms": 5647,
+      "error_proveedor": null,
+      "inicio_ms": 28446,
+      "nodo": "redactor",
+      "orden": 9,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 1341,
+        "salida": 402
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 3,
+      "error_proveedor": null,
+      "inicio_ms": 34109,
+      "nodo": "guardia_salida",
+      "orden": 10,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "regla",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    }
+  ],
+  "pausas_humanas": [],
+  "resultado": "completo",
+  "salida_final": {
+    "aviso_ia": {
+      "en": "Notice: this reply was drafted by an artificial intelligence in a simulation with synthetic data. No denial is issued without review by a person.",
+      "es": "Aviso: esta respuesta la redactó una inteligencia artificial en una simulación con datos sintéticos. Ninguna negación se emite sin la revisión de una persona."
+    },
+    "en": "Your request for a total abdominal ultrasound has been approved. You can have this procedure under your plan's authorization. If you have questions about the next steps, please contact your health plan.",
+    "es": "Su solicitud para la ecografía abdominal total fue aprobada. Puede realizar este procedimiento con la autorización de su plan. Si tiene preguntas sobre los siguientes pasos, comuníquese con su plan de salud."
+  },
+  "senales": {
+    "campos_faltantes_count": 0,
+    "carga_detectada": false,
+    "ciclos_aclaracion": 2,
+    "contradiccion_orden_texto": false,
+    "costo_estimado": 120,
+    "decision_final": "aprobar",
+    "error_proveedor": null,
+    "latencia_total_s": 34.055,
+    "modo_texas": false,
+    "nodos_visitados": [
+      "enrutador",
+      "extractor",
+      "aclaracion",
+      "extractor",
+      "aclaracion",
+      "extractor",
+      "verificador_cobertura",
+      "decision",
+      "redactor",
+      "guardia_salida"
+    ],
+    "pausa_humana": false,
+    "propuesta": "aprobar",
+    "proveedor_no_disponible": false,
+    "senal_confianza": 0.9,
+    "servicio_exento": false,
+    "severidad_accion": 0,
+    "tipo_atencion": "ambulatoria",
+    "tokens": 17370
+  },
+  "variante": "multiagente"
+}

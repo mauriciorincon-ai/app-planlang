@@ -21,10 +21,17 @@ un agente construido según ese plan corre sobre casos inventados cuya respuesta
 un verificador compara lo planeado con lo que pasó: **la brecha**. El informe publica también lo que
 falló.
 
-Se usa de dos maneras. La **vitrina** es un sitio de siete pantallas que se lee en el navegador: no tiene
-servidor ni llama a ningún modelo, y todo lo que muestra se calculó antes y se comprobó al construirla. La
-**terminal**, en la raíz del repositorio, sirve para validar planes, generar casos, correr lotes y producir
-informes.
+Hay dos demos, cada uno con su plan, su agente y su informe:
+
+- el **A** autoriza servicios de salud;
+- el **B** vincula clientes con debida diligencia, y su plan salió del **entrevistador**.
+
+Se usa de dos maneras:
+
+- La **vitrina** es un sitio que se lee en el navegador, con siete pantallas por demo. No tiene servidor ni llama a
+  ningún modelo: todo lo que muestra se calculó antes y se comprobó al construirla.
+- La **terminal**, en la raíz del repositorio, sirve para entrevistar y validar planes, generar casos, correr lotes y
+  producir informes.
 
 ### Primeros pasos
 
@@ -47,13 +54,46 @@ informes.
      aprueba y sella el plan.
   3. `pnpm plan:validar --verificar plans/demo-a/v1.2.json`: comprueba que un plan aprobado no cambió.
 - **Las versiones del plan del demo A:**
-  - la **v1.3** es la que publica la vitrina: solo cambió cómo se miden algunas cosas y escribió todo el plan
-    en los dos idiomas, así que se lee sobre la corrida de la v1.2;
-  - la **v1.4** añadió el respaldo «sin modelo, el caso va a una persona» (ver «Correr un lote») y con ella
-    corrió el lote de 200;
-  - las versiones 1, 1.1 y 1.2 se conservan como historia.
-- **Limitaciones:** el plan se escribe a mano como archivo. El entrevistador que lo construye conversando
-  llega en un sprint posterior.
+  - la **v1.5.2** es la que publica la vitrina desde el sprint 3: la **v1.5.1** y la v1.5.2 solo corrigen la redacción
+    de la **v1.5** (misma verdad, ADR-005). La v1.5 añade la **aprobación en parte**: si el costo supera
+    el tope que el plan de beneficios cubre para ese servicio, se aprueba hasta el tope y el excedente se niega. Además,
+    el caso con una instrucción escondida pasa a una persona. Con ella corrió el lote de 200 que publica la vitrina;
+  - la **v1.4** añadió el respaldo «sin modelo, el caso va a una persona» (ver «Correr un lote»);
+  - las versiones 1 a 1.3 se conservan como historia.
+- **El plan del demo B** se construyó con el entrevistador (abajo): la **v1** es la aprobada y la **v1.1** solo cambia
+  cómo se mide y redacta en inglés lo que faltaba. La vitrina del B se mide con la v1.1.
+- **Limitaciones:** el plan del A se escribió a mano como archivo; el del B, conversando.
+
+### Entrevistar un plan · desde el sprint 3
+
+- **Qué hace:**
+  - El entrevistador te hace, en orden fijo, las preguntas de la plantilla del dominio: quién participa, el flujo,
+    las decisiones que no se pueden deshacer, los riesgos con su severidad, los supuestos, los criterios con su
+    forma de medirse, los umbrales con su señal (la zona gris incluida), el contrato del grafo y los lotes. Cada
+    pregunta trae un ejemplo.
+  - Con tus respuestas redacta un **borrador** del plan en español y en inglés.
+  - Al terminar, lo revisa: lo que le falta para aprobarse y las **contradicciones**. Por ejemplo, un riesgo grave
+    sin criterio que lo controle, o una pausa humana sin umbral que la dispare.
+  - **Nunca aprueba por ti.**
+- **Cómo se usa:**
+  1. `pnpm entrevistar --demo b`: las preguntas aparecen en la terminal y respondes escribiendo. Si lo dejas a
+     medias, `pnpm entrevistar --demo b --retomar` vuelve a las preguntas pendientes.
+  2. Al terminar quedan, en `plans/demo-b/`, el borrador (`v0-borrador.json`), las contradicciones
+     (`contradicciones.json`) y una revisión para leer (`revision.es.md` y `revision.en.md`).
+  3. Lee la revisión. Si estás de acuerdo, apruébalo:
+     `pnpm plan:aprobar --demo b --por "<tu nombre>" --el <AAAA-MM-DD>`. Escribe `plans/demo-b/v1.json` sellado
+     con su huella.
+  4. Si quedan contradicciones, el comando se niega a aprobar. Aceptarlas es tu decisión: se hace con
+     `--con-contradicciones` y queda registrado.
+  5. Si el plan ya está aprobado (`v1.json` existe), la entrevista no escribe en `plans/demo-b/`: esa carpeta es el
+     registro de lo que aprobaste. Indícale otra con `--salida <carpeta>` y allí quedan el borrador, las
+     contradicciones y la revisión. `plan:aprobar` no la convierte en `v1.json`, que ya existe.
+- **Los idiomas:** tu respuesta queda tal cual, en el idioma en que la escribiste. El otro idioma lo redacta el
+  modelo y queda marcado como suyo, para que lo revises antes de aprobar. Sin modelo (`--sin-modelo`), el otro
+  idioma queda pendiente.
+- **Limitaciones:** solo existen las plantillas de los dos dominios de los demos. La entrevista del plan B de este
+  repositorio se corrió por delegación: las respuestas las escribió el constructor y el autor aprobó el plan con
+  su frase, registrada en la bitácora del sprint 3.
 
 ### Generar casos sintéticos · desde el sprint 1
 
@@ -67,37 +107,90 @@ informes.
 - **Privacidad:** antes de escribir, un validador comprueba que ningún identificador tenga formato real
   (cédulas, NIT, teléfonos, correos…). La afirmación de privacidad está en
   `data/casos/demo-a/AFIRMACION-DE-PRIVACIDAD.md`.
-- **Lotes guardados en el repositorio:** el de 20 y el de prueba rápida se generaron con el plan v1.1, y el de
-  200 con el v1.4. El de 20 es exactamente el primer bloque del de 200.
-- **Limitaciones:** solo existe el dominio del demo A (autorizaciones médicas); el demo B llega después.
+- **Lotes guardados en el repositorio:**
+  - demo A: el de 20 y el de prueba rápida se generaron con el plan v1.1, y el de 200 que publica la vitrina
+    (`planlang-a-002-200`) con el v1.5, que siembra también casos sobre el tope de cobertura;
+  - demo B: el de 20 y el de 200 (`planlang-b-001-20` y `planlang-b-001-200`), con las listas sintéticas de
+    `data/listas/demo-b.json`. `pnpm casos:generar --versionados --demo b` los regenera y comprueba que salen
+    idénticos.
+- **Limitaciones:** los nombres de las listas del B son composiciones inventadas con semilla; el validador de
+  identificadores también las revisa.
 
-### Correr un lote · desde el sprint 1 (mejorado en el sprint 2)
+### Correr un lote · desde el sprint 1 (mejorado en el sprint 3)
 
-- **Qué hace:** el agente del demo A decide cada caso: aprobar, negar o pasar a un auditor humano.
-  Toda negación pasa por una persona; en el lote, esa persona se simula siguiendo la respuesta correcta
-  del caso. Cada caso deja una traza con cada decisión, su señal y el umbral aplicado.
+- **Qué hace:** el agente del demo A decide cada caso: aprobar, aprobar en parte (hasta el tope del servicio), negar
+  o pasar a un auditor humano. Toda negación completa pasa por una persona, y la parcial también cuando el modo Texas
+  está encendido; en el lote, esa persona se simula siguiendo la respuesta correcta del caso. Cada caso deja una traza con cada decisión, su señal y el umbral aplicado.
 - **Cómo se usa:**
   1. Revisa en tu cuenta de Claude cuánta cuota te queda.
   2. `pnpm lote:demo --corrida <nombre-nuevo> --fecha <AAAA-MM-DD>`: corre los 20 casos con tu
      suscripción de Claude Code, con 2 segundos entre caso y caso. Sin `--plan`, usa el plan
-     `plans/demo-a/v1.2.json` y el lote `data/casos/demo-a/planlang-a-001-20.json`: los de la corrida que
-     publica la vitrina (para el plan v1.4, el paso 5). Tarda unos 5 minutos. Con la
+     `plans/demo-a/v1.2.json` y el lote `data/casos/demo-a/planlang-a-001-20.json`, los de la primera corrida
+     del demo; para la que publica la vitrina, el paso 5. Tarda unos 5 minutos. Con la
      suscripción, el comando se niega a correr más casos por sesión de los que fija el plan (20) o a
      correr sin pausa.
   3. `pnpm lote:base --corrida <nombre-nuevo>-base --fecha <AAAA-MM-DD>`: la misma prueba con un solo
      agente, para comparar.
   4. Si se corta por límite de uso, vuelve a correr el mismo comando más tarde: retoma donde quedó, sin
      repetir casos.
-  5. Para el lote de 200 con el plan v1.4, añade `--plan plans/demo-a/v1.4.json --casos
-data/casos/demo-a/planlang-a-001-200.json` y repite el comando hasta completar los 200, de 20 en 20.
-     Deja unos minutos entre una sesión y la siguiente.
-- **Si el modelo no responde** (con el plan v1.4): cuando falla al extraer los datos o al preparar una
+  5. Para el lote de 200 con el plan v1.5 (con el que corrió la corrida que publica la vitrina; la vitrina la mide con
+     el v1.5.2, que solo corrige la redacción), añade `--plan plans/demo-a/v1.5.json --casos
+data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar los 200, de 20 en 20. Deja unos
+     minutos entre una sesión y la siguiente.
+  6. Para ver un solo caso de punta a punta en un par de minutos, añade `--caso <id>` (por ejemplo `--caso A-016`).
+- **Si el modelo no responde** (desde el plan v1.4): cuando falla al extraer los datos o al preparar una
   aclaración, el caso no se inventa ni queda sin decisión, sino que pasa a una persona con todo lo que haya.
   La traza guarda qué falló y cuánto costó. Si lo que falla es la carta final, la decisión ya está tomada y
   el caso queda sin carta. Si se acaba la cuota, la sesión se detiene y el caso se reintenta después.
 - **Dónde queda:** `runs/demo-a/<nombre>/`. Nunca se guardan claves ni identificadores de sesión.
 - **Limitaciones:** los lotes se corren fuera de la integración continua, de a 20 y espaciados. El
   espejo en LangSmith solo se llena si su clave está en tu terminal (nunca en el repositorio).
+
+### Correr el demo B · desde el sprint 3
+
+- **Qué hace:** el agente del demo B decide si un cliente se vincula. Recibe la solicitud con sus documentos:
+  - un extractor lee los documentos;
+  - el verificador de listas busca el nombre en listas vinculantes y de consulta, por coincidencia exacta y por
+    parecido;
+  - un investigador mira el contexto cuando el parecido llega al inicio de la zona gris del plan (U4) o lo pasa; por
+    encima del umbral de coincidencia (U1) el caso va igual al oficial, y la conclusión del investigador es evidencia
+    para él;
+  - un puntaje de riesgo se calcula por reglas, sin leer atributos protegidos;
+  - con eso propone aprobar, revisar o rechazar.
+
+  Todo rechazo y todo caso que el puntaje marca de riesgo alto pasan por una persona (el oficial de cumplimiento,
+  simulado en los lotes).
+
+- **Cómo se usa:**
+  1. `pnpm lote:demo-b --corrida <nombre-nuevo> --fecha <AAAA-MM-DD>` corre los 20 casos de
+     `data/casos/demo-b/planlang-b-001-20.json` con el plan `plans/demo-b/v1.json`, con tu suscripción y con pausa
+     entre casos.
+  2. `pnpm lote:demo-b --caso B-010 --corrida <nombre-nuevo> --fecha <AAAA-MM-DD>` corre un solo caso.
+  3. `pnpm brecha:informe --corrida runs/demo-b/<nombre> --plan plans/demo-b/v1.1.json` escribe su informe, medido
+     con la v1.1.
+- **Limitaciones:**
+  - las listas son sintéticas;
+  - el plan B no declara respaldo por proveedor: si el modelo no responde, el caso no se decide y se reintenta;
+  - el plan B no declara costo humano por caso, así que su playground cuenta casos, no minutos;
+  - la vitrina del B publica su corrida de 20;
+  - en el lote de 200 (registro, fuera de la vitrina), B-180 salió aprobado sin el oficial: el extractor leyó mal la
+    jurisdicción de los fondos y el puntaje, que no puede verlo, dio 30 en vez de 60.
+
+### Leer un expediente · desde el sprint 3
+
+- **Qué hace:** cada caso del demo B termina en un **expediente** que escribe el código, no el modelo, en español y
+  en inglés. Trae:
+  - las conclusiones, numeradas: cada una cita la regla del plan o la coincidencia en una lista, con su versión y su
+    fecha;
+  - la decisión;
+  - si fue un rechazo, el documento con su aviso de IA y cómo contradecirlo.
+- **Cómo se lee:** en la vitrina, entra al demo B desde su fila en la entrada y abre «Casos». Por ejemplo,
+  `/es/demo-b/caso/B-010`. «Recibe» muestra los documentos tal como llegaron, con la instrucción escondida marcada
+  aparte si la hay. El expediente va al final del recorrido.
+- **Limitaciones:**
+  - el texto del investigador lo escribió el modelo y se muestra en el idioma en que lo escribió;
+  - en la corrida de 20 que publica la vitrina, los tres rechazos (B-005, B-006 y B-014) salieron sin aviso de IA: la
+    corrida es anterior al arreglo, y la vitrina lo marca con «Sin aviso de IA».
 
 ### Leer el informe de brecha · desde el sprint 1
 
@@ -110,7 +203,10 @@ data/casos/demo-a/planlang-a-001-200.json` y repite el comando hasta completar l
      `informe.en.md` dentro de la corrida. Si existen `<nombre>-base` o `<nombre>-r2`, `-r3`, las usa
      como línea base y como repeticiones.
   2. Abre `informe.es.md` (en VS Code: `Cmd+Shift+V` para verlo formateado).
-- **Cómo leer los estados:** ✓ cumple · ✗ incumple · ◐ incompleto (faltan corridas) · ? indeterminado
+- **Cómo leer los estados:** ✓ cumple · ✗ incumple · ◐ incompleto (faltan corridas: un criterio que pide varias
+  corridas seguidas y se midió con menos queda incompleto, y se dice. Si el plan limita esas corridas a un tamaño de
+  lote, rigen solo ahí: la C5 del A pide tres solo en los lotes de 20, así que en el de 200 se mide en una corrida y la
+  nota del informe lo explica) · ? indeterminado
   (hubo casos que no se pudieron evaluar) · — sin casos que lo prueben · ⚠ regla mal formada (el
   problema está en el plan, no en el agente).
 - **Las decisiones que no se pueden deshacer** dicen en el informe qué se eligió, si el plan escribió la opción en
@@ -125,30 +221,35 @@ data/casos/demo-a/planlang-a-001-200.json` y repite el comando hasta completar l
 - `pnpm m9:reporte`: siembra fallas a propósito en una corrida limpia y comprueba que el verificador las
   detecta todas. El resultado queda en `docs/kit-de-prueba/M9-brechas-sembradas.md`.
 
-### Abrir la vitrina · desde el sprint 2
+### Abrir la vitrina · desde el sprint 2 (mejorado en el sprint 3)
 
-- **Qué hace:** muestra el demo A de punta a punta en siete pantallas, en español y en inglés, con tema
+- **Qué hace:** muestra los dos demos de punta a punta, siete pantallas cada uno, en español y en inglés, con tema
   oscuro y claro y en el teléfono o el escritorio. Toda pantalla lleva el rótulo «Simulación · no operativo ·
-  datos sintéticos».
+  datos sintéticos». La entrada tiene una fila por demo y desde ella se entra a cada uno. En las pantallas del B, el
+  conmutador «A · B» de la barra lleva a la misma pantalla del A: el A vive en `/es/plan`, `/es/agente`…, y el B en `/es/demo-b/plan`, `/es/demo-b/agente`…
 - **Cómo se abre:**
   1. `pnpm build` y después `pnpm start`. Abre en el navegador la dirección local que imprime.
   2. La portada elige el idioma de tu navegador. Puedes cambiarlo arriba a la derecha, igual que el tema.
   3. «Ver como líder» y «Ver como experto» cambian el nivel de detalle sin cambiar la pantalla: el líder lee
      frases cortas y el experto ve además las reglas, las señales y de dónde sale cada cifra.
 - **Las siete pantallas:**
-  - **Entrada:** qué es planlang, el veredicto del demo A y la capacidad medida, cada cifra con su origen.
+  - **Entrada:** qué es planlang, una fila por demo con su veredicto y su corrida, y la capacidad medida con el demo A,
+    cada cifra con su origen.
   - **Plan:** las decisiones, los riesgos con su prioridad (y cuáles son control legal), los supuestos con su
     estado, los criterios con su regla, los umbrales con su señal y el contrato del grafo.
   - **Agente:** primero la ficha del agente y después el diagrama dibujado desde el grafo que corrió. Al tocar
     un nodo o una flecha ves qué hace, su código y los casos reales que pasaron por ahí.
   - **Brecha:** el informe completo, con lo que falló a la vista.
   - **Playground:** mover umbrales (abajo).
-  - **Casos:** los 20 casos, uno por página, con su recorrido, las señales en cada flecha, la pausa con la
-    persona, la carta y el documento de decisión adversa cuando lo hay.
+  - **Casos:** uno por página, con su recorrido, las señales en cada flecha, la pausa con la persona, la carta y el
+    documento de decisión adversa cuando lo hay (en el B, el expediente). En el A, que publica 200 casos, tienen
+    página los 20 primeros y los que el informe nombra. Los demás aparecen sin enlace, con borde punteado, en la
+    Brecha y en el Playground.
   - **Fichas:** la ficha para repetir la corrida y las dos fichas que viajan a hoja-de-vida.
 - **Limitaciones:**
-  - La vitrina muestra la corrida de 20 casos (tres veces) con el plan v1.3. La corrida de 200 del plan v1.4
-    queda guardada como dato y entra en la vitrina en un sprint posterior.
+  - El demo A publica la corrida de 200 del plan v1.5, con su línea base de un solo agente. El Agente lista las
+    trazas de los 20 primeros casos y cuenta los demás.
+  - El demo B publica su corrida de 20.
   - Las aclaraciones y cartas que escribió el modelo se muestran en el idioma en que se escribieron (español).
 
 ### Mover umbrales en el playground · desde el sprint 2
@@ -164,22 +265,26 @@ data/casos/demo-a/planlang-a-001-200.json` y repite el comando hasta completar l
      5.000) o el máximo de aclaraciones (U3, de 0 a 4).
   3. Lee los casos que cambian y abre cualquiera con «ver su traza»: el caso se abre en el paso donde su camino
      se separa del que tomó el agente. La curva riesgo-cobertura marca dónde está el plan.
-- **El modo Texas (U4)** obliga a que ninguna determinación adversa sea automática. En esta corrida
-  encenderlo no cambia ningún caso, porque toda propuesta adversa ya pasaba por una persona, y la pantalla
-  lo explica.
+- **El modo Texas (U4)** obliga a que ninguna determinación adversa sea automática, ni siquiera la parcial. En la
+  corrida de 200, encenderlo manda a una persona las nueve aprobaciones en parte. La pantalla dice que es la
+  revisión que el modo Texas exige, no una de más.
+- **En el demo B** se mueven cuatro umbrales: la similitud con una lista, el inicio de la zona gris del investigador,
+  el puntaje de riesgo y las inconsistencias. No hay modo Texas, y se cuentan casos, no minutos.
 - **Limitaciones:** fuera del rango que se observó en la corrida, el resultado se marca «no observado». Los
   criterios que dependen de lo que pasó después de un cambio quedan sin poder medirse en el caso que cambia:
   la traza no registró lo que no ocurrió.
 
 ### Las fichas · desde el sprint 2
 
-- **Qué hace:** produce tres fichas.
+- **Qué hace:** produce una ficha de reproducibilidad por demo y tres fichas que viajan.
   - La **de reproducibilidad** tiene versiones, huellas, semilla, modelo, fecha y los pasos para repetir la
     corrida.
-  - La **de la app** sale de `docs/brochure-export.json`; hoja-de-vida la arma con su propio diseño.
-  - La **del agente A** está en `content/agentes/planlang-demo-a.ficha-tecnica.json`.
+  - La **de la app** sale de `docs/brochure-export.json` y suma los dos demos; hoja-de-vida la arma con su propio
+    diseño.
+  - La **del agente A** y la **del agente B** están en `content/agentes/planlang-demo-a.ficha-tecnica.json` y
+    `content/agentes/planlang-demo-b.ficha-tecnica.json`.
 
-  Las dos que viajan se validan contra el contrato de hoja-de-vida antes de escribirse.
+  Las que viajan se validan contra el contrato de hoja-de-vida antes de escribirse.
 
 - **Cómo se usa:** `pnpm fichas` las regenera; `pnpm fichas --verificar` solo dice si alguna está desactualizada.
 - **Limitaciones:** las fichas que viajan van en español, porque así lo pide el contrato de hoja-de-vida. En
@@ -206,16 +311,32 @@ data/casos/demo-a/planlang-a-001-200.json` y repite el comando hasta completar l
   producción. El script se niega a armar el paquete con cambios sin commit (`--permitir-arbol-sucio` lo arma para
   probar, pero ese no se entrega).
 
+### Publicar el design system · desde el sprint 3
+
+- **Qué hace:** publica en Claude Design el sistema de diseño consolidado de la app (colores, tipografía, espacio,
+  movimiento y los componentes canon que fijan su gramática visual), como activo estable entre ciclos. Las pantallas no
+  viajan: viven en la vitrina.
+- **Cómo se usa:**
+  1. Se hace **después** del gate corto ⭐⭐ del cierre: no se publica un sistema que el autor no ha juzgado.
+  2. En Claude Code, el autor escribe `/design-sync`; el constructor arma y publica.
+  3. El destino está en `design-sync/project.json`. Antes de publicar se ve la lista exacta de archivos.
+- **De dónde sale:** `design-system.md` es la fuente; `design-sync/` es el paquete que se publica, al día en cada
+  sprint con pantallas. El proyecto remoto nunca se edita allá.
+- **Limitaciones:** solo lo dispara el autor; si decide no publicarlo, el resumen del sprint lo registra.
+
 ### Preguntas frecuentes
 
-- **¿Por qué el informe dice «cumple con alertas» si se cumplieron todos los criterios?** Porque el
-  veredicto no mira solo los criterios: también los supuestos, los riesgos y las fallas que el plan no
-  previó. En el informe que publica la vitrina, el supuesto S3 quedó refutado, el S1 no se pudo probar y
-  aparecieron 5 fallas no previstas. Lo que no se pudo medir también es una alerta, nunca un silencio.
+- **¿Por qué el informe dice «cumple con alertas»?** Porque el veredicto no mira solo los criterios: también los
+  supuestos, los riesgos y las fallas que el plan no previó. En el informe que publica la vitrina del A:
+  - los supuestos S2 y S3 quedaron refutados;
+  - aparecieron fallas que vio un evaluador y ningún riesgo del plan cubría.
+
+  Lo que no se pudo medir también es una alerta, nunca un silencio.
+
+- **¿Por qué algunos casos no tienen página?** Una página por caso de la corrida de 200 llevaría el paquete de la
+  vitrina de unos 30 MB a más de 100. Tienen página los 20 primeros y los que el informe nombra. Los demás siguen en
+  la corrida, con su traza y su huella.
 - **¿Puedo cambiar un umbral y ver qué habría pasado?** Sí, en el playground de la vitrina (arriba).
-- **¿Y con 200 casos?** El informe de la corrida de 200 del plan v1.4 está en
-  `runs/demo-a/suscripcion-planlang-a-001-200-v1.4/informe.es.md`: con más casos el supuesto S1 quedó
-  confirmado y el S2 refutado.
 
 ---
 
@@ -229,10 +350,17 @@ agent built from that plan then runs on made-up cases whose right answer is alre
 verifier compares what was planned with what happened: **the gap**. The report also publishes what
 failed.
 
-There are two ways to use it. The **showcase** is a seven-screen site read in the browser: it has no server
-and calls no model, and everything it shows was computed beforehand and checked when it was built. The
-**terminal**, at the repository root, is for validating plans, generating cases, running batches and
-producing reports.
+There are two demos, each with its own plan, agent and report:
+
+- **A** authorizes health services;
+- **B** onboards customers with due diligence, and its plan came out of the **interviewer**.
+
+There are two ways to use it:
+
+- The **showcase** is a site read in the browser, with seven screens per demo. It has no server and calls no model:
+  everything it shows was computed beforehand and checked when it was built.
+- The **terminal**, at the repository root, is for interviewing and validating plans, generating cases, running
+  batches and producing reports.
 
 ### Getting started
 
@@ -254,13 +382,47 @@ producing reports.
      approves and seals the plan.
   3. `pnpm plan:validar --verificar plans/demo-a/v1.2.json`: checks an approved plan did not change.
 - **Demo A's plan versions:**
-  - **v1.3** is the one the showcase publishes: it only changed how some things are measured and wrote the
-    whole plan in both languages, so it is read over the v1.2 run;
-  - **v1.4** added the fallback "no model, the case goes to a person" (see "Run a batch"), and the 200-case
-    batch ran with it;
-  - versions 1, 1.1 and 1.2 are kept as history.
-- **Limitations:** the plan is written by hand as a file. The interviewer that builds it through a
-  conversation comes in a later sprint.
+  - **v1.5.2** is the one the showcase publishes since sprint 3: **v1.5.1** and v1.5.2 only fix **v1.5**'s wording
+    (same truth, ADR-005). v1.5 adds **partial approval**: when the cost is above
+    the cap the benefits plan covers for that service, the service is approved up to the cap and the excess is
+    denied. A case carrying a hidden instruction also goes to a person. The 200-case batch the showcase publishes
+    ran with it;
+  - **v1.4** added the fallback "no model, the case goes to a person" (see "Run a batch");
+  - versions 1 to 1.3 are kept as history.
+- **Demo B's plan** was built with the interviewer (below): **v1** is the approved one, and **v1.1** only changes how
+  things are measured and writes in English what was missing. Demo B's showcase is measured with v1.1.
+- **Limitations:** demo A's plan was written by hand as a file; demo B's, through a conversation.
+
+### Interview a plan · since sprint 3
+
+- **What it does:**
+  - The interviewer asks you, in a fixed order, the questions in the domain template: who takes part, the flow,
+    the decisions that cannot be undone, the risks with their severity, the assumptions, the criteria with how they
+    are measured, the thresholds with their signal (the gray zone included), the graph contract and the batches.
+    Each question comes with an example.
+  - From your answers it drafts the plan in Spanish and English.
+  - When it is done, it reviews the draft: what is still missing for approval, and the **contradictions**. For
+    example, a serious risk with no criterion to control it, or a human pause with no threshold to trigger it.
+  - **It never approves for you.**
+- **How to use it:**
+  1. `pnpm entrevistar --demo b`: the questions show up in the terminal and you answer by typing. If you stop
+     halfway, `pnpm entrevistar --demo b --retomar` goes back to the pending questions.
+  2. When it finishes, `plans/demo-b/` holds the draft (`v0-borrador.json`), the contradictions
+     (`contradicciones.json`) and a review to read (`revision.es.md` and `revision.en.md`).
+  3. Read the review. If you agree, approve it:
+     `pnpm plan:aprobar --demo b --por "<your name>" --el <YYYY-MM-DD>`. It writes `plans/demo-b/v1.json`, sealed
+     with its fingerprint.
+  4. If contradictions remain, the command refuses to approve. Accepting them is your call: you do it with
+     `--con-contradicciones`, and it gets recorded.
+  5. If the plan is already approved (`v1.json` exists), the interview does not write to `plans/demo-b/`: that
+     folder is the record of what you approved. Give it another one with `--salida <folder>` and the draft, the
+     contradictions and the review land there. `plan:aprobar` does not turn it into `v1.json`, which already exists.
+- **Languages:** your answer stays as you wrote it, in your language. The model drafts the other language and it is
+  marked as the model's, so you review it before approving. Without a model (`--sin-modelo`), the other language
+  stays pending.
+- **Limitations:** only the templates of the two demo domains exist. The interview for this repository's plan B was
+  run by delegation: the builder wrote the answers and the author approved the plan with their own sentence, recorded
+  in the sprint 3 log.
 
 ### Generate synthetic cases · since sprint 1
 
@@ -273,31 +435,39 @@ producing reports.
      identical.
 - **Privacy:** before writing, a validator checks that no identifier looks real (national IDs, tax IDs,
   phone numbers, emails…). The privacy statement is in `data/casos/demo-a/AFIRMACION-DE-PRIVACIDAD.md`.
-- **Batches stored in the repository:** the 20-case and the quick-test batches were generated with plan
-  v1.1, and the 200-case batch with v1.4. The 20-case batch is exactly the first block of the 200.
-- **Limitations:** only demo A's domain exists (medical prior authorizations); demo B comes later.
+- **Batches stored in the repository:**
+  - demo A: the 20-case and the quick-test batches were generated with plan v1.1, and the 200-case batch the
+    showcase publishes (`planlang-a-002-200`) with v1.5, which also seeds cases above the coverage cap;
+  - demo B: the 20 and the 200-case batches (`planlang-b-001-20` and `planlang-b-001-200`), with the synthetic lists
+    in `data/listas/demo-b.json`. `pnpm casos:generar --versionados --demo b` regenerates them and checks they come
+    out identical.
+- **Limitations:** the names on demo B's lists are seeded made-up combinations; the identifier validator checks them
+  too.
 
-### Run a batch · since sprint 1 (improved in sprint 2)
+### Run a batch · since sprint 1 (improved in sprint 3)
 
-- **What it does:** demo A's agent decides each case: approve, deny or hand it to a human auditor. Every
-  denial goes to a person; in a batch, that person is simulated and follows the case's right answer.
+- **What it does:** demo A's agent decides each case: approve, approve in part (up to the service's cap), deny or
+  hand it to a human auditor. Every full denial goes to a person, and a partial one too when Texas mode is on; in a
+  batch, that person is simulated and follows the case's right answer.
   Each case leaves a trace with every decision, its signal and the threshold applied.
 - **How to use it:**
   1. Check how much quota you have left in your Claude account.
   2. `pnpm lote:demo --corrida <new-name> --fecha <YYYY-MM-DD>`: runs the 20 cases with your Claude
      Code subscription, leaving 2 seconds between cases. Without `--plan`, it uses the plan
-     `plans/demo-a/v1.2.json` and the batch `data/casos/demo-a/planlang-a-001-20.json`: those of the run the
-     showcase publishes (for plan v1.4, step 5). It takes about 5 minutes. With the
+     `plans/demo-a/v1.2.json` and the batch `data/casos/demo-a/planlang-a-001-20.json`, those of the demo's first
+     run; for the one the showcase publishes, step 5. It takes about 5 minutes. With the
      subscription, the command refuses to run more cases per session than the plan allows (20) or to
      run them back to back.
   3. `pnpm lote:base --corrida <new-name>-base --fecha <YYYY-MM-DD>`: the same test with a single agent,
      to compare.
   4. If it stops at a usage limit, run the same command later: it resumes where it stopped, without
      repeating cases.
-  5. For the 200-case batch with plan v1.4, add `--plan plans/demo-a/v1.4.json --casos
-data/casos/demo-a/planlang-a-001-200.json` and repeat the command until all 200 are done, 20 at a time.
+  5. For the 200-case batch with plan v1.5 (the one the showcase's published run ran with; the showcase measures it
+     with v1.5.2, which only fixes the wording), add `--plan plans/demo-a/v1.5.json
+--casos data/casos/demo-a/planlang-a-002-200.json` and repeat the command until all 200 are done, 20 at a time.
      Leave a few minutes between one session and the next.
-- **If the model does not respond** (with plan v1.4): when it fails while extracting the details or
+  6. To watch a single case end to end in a couple of minutes, add `--caso <id>` (for example `--caso A-016`).
+- **If the model does not respond** (since plan v1.4): when it fails while extracting the details or
   preparing a clarification, the case is not made up or left without a decision; it goes to a person with
   whatever there is. The trace keeps what failed and what it cost. If it is the final letter that fails, the
   decision is already made and the case is left without a letter. If the quota runs out, the session stops
@@ -305,6 +475,51 @@ data/casos/demo-a/planlang-a-001-200.json` and repeat the command until all 200 
 - **Where it goes:** `runs/demo-a/<name>/`. Keys and session identifiers are never stored.
 - **Limitations:** batches run outside continuous integration, 20 at a time and spaced out. The
   LangSmith mirror only fills if its key is in your terminal (never in the repository).
+
+### Run demo B · since sprint 3
+
+- **What it does:** demo B's agent decides whether a customer is onboarded. It receives the application with its
+  documents:
+  - an extractor reads the documents;
+  - the list checker looks the name up in binding and reference lists, by exact match and by similarity;
+  - an investigator looks at the context when the similarity reaches the start of the plan's gray zone (U4) or goes
+    past it; above the match threshold (U1) the case goes to the officer anyway, and the investigator's conclusion is
+    evidence for them;
+  - a risk score is computed by rules, without reading protected attributes;
+  - with all that, it proposes to approve, review or reject.
+
+  Every rejection and every case the score marks high-risk goes to a person (the compliance officer, simulated in
+  batches).
+
+- **How to use it:**
+  1. `pnpm lote:demo-b --corrida <new-name> --fecha <YYYY-MM-DD>` runs the 20 cases of
+     `data/casos/demo-b/planlang-b-001-20.json` with plan `plans/demo-b/v1.json`, on your subscription and with a
+     pause between cases.
+  2. `pnpm lote:demo-b --caso B-010 --corrida <new-name> --fecha <YYYY-MM-DD>` runs a single case.
+  3. `pnpm brecha:informe --corrida runs/demo-b/<name> --plan plans/demo-b/v1.1.json` writes its report, measured
+     with v1.1.
+- **Limitations:**
+  - the lists are synthetic;
+  - plan B declares no provider fallback: if the model does not respond, the case is not decided and is retried;
+  - plan B declares no human cost per case, so its playground counts cases, not minutes;
+  - demo B's showcase publishes its 20-case run;
+  - in the 200-case batch (a record, not on the showcase), B-180 was approved without the officer: the extractor
+    misread the funds' jurisdiction and the score, which cannot see that, gave 30 instead of 60.
+
+### Read a case file · since sprint 3
+
+- **What it does:** every demo B case ends in a **case file** written by code, not by the model, in Spanish and
+  English. It holds:
+  - the conclusions, numbered: each one cites the plan rule or the list match, with its version and date;
+  - the decision;
+  - if it was a rejection, the document with its AI notice and how to appeal it.
+- **How to read it:** in the showcase, go into demo B from its row on the home page and open "Cases". For example,
+  `/en/demo-b/caso/B-010`. "Receives" shows the documents as they arrived, with any hidden instruction marked
+  apart. The case file comes at the end of the path.
+- **Limitations:**
+  - the investigator's text was written by the model and is shown in the language it was written in;
+  - in the 20-case run the showcase publishes, the three rejections (B-005, B-006 and B-014) went out without an AI
+    notice: the run predates the fix, and the showcase marks it "No AI notice".
 
 ### Read the gap report · since sprint 1
 
@@ -317,7 +532,10 @@ data/casos/demo-a/planlang-a-001-200.json` and repeat the command until all 200 
      `informe.en.md` inside the run. If `<name>-base` or `<name>-r2`, `-r3` exist, it uses them as the
      baseline and as repetitions.
   2. Open `informe.en.md` (in VS Code: `Cmd+Shift+V` to see it formatted).
-- **How to read the statuses:** ✓ met · ✗ not met · ◐ incomplete (runs missing) · ? undetermined (some
+- **How to read the statuses:** ✓ met · ✗ not met · ◐ incomplete (runs missing: a criterion that asks for several
+  runs in a row and was measured with fewer is left incomplete, and says so. If the plan limits those runs to one batch
+  size, they only apply there: demo A's C5 asks for three only in 20-case batches, so the 200-case batch measures it in
+  one run and the report's note explains why) · ? undetermined (some
   cases could not be evaluated) · — no case tests it · ⚠ malformed rule (the problem is in the plan,
   not in the agent).
 - **One-way decisions** state in the report what was chosen, if the plan wrote the option in both languages
@@ -332,18 +550,21 @@ data/casos/demo-a/planlang-a-001-200.json` and repeat the command until all 200 
 - `pnpm m9:reporte`: plants failures on purpose in a clean run and checks the verifier catches all of
   them. The result goes to `docs/kit-de-prueba/M9-brechas-sembradas.md`.
 
-### Open the showcase · since sprint 2
+### Open the showcase · since sprint 2 (improved in sprint 3)
 
-- **What it does:** shows demo A end to end in seven screens, in Spanish and English, in dark and light
-  themes, on a phone or a desktop. Every screen carries the label "Simulation · not operational · synthetic
-  data".
+- **What it does:** shows both demos end to end, seven screens each, in Spanish and English, in dark and light
+  themes, on a phone or a desktop. Every screen carries the label "Simulation · not operational · synthetic data".
+  The home page has one row per demo, and each demo is entered from it. On demo B's screens, the "A · B" switch in
+  the bar takes you to the same screen of demo A: A lives at
+  `/en/plan`, `/en/agente`…, and B at `/en/demo-b/plan`, `/en/demo-b/agente`…
 - **How to open it:**
   1. `pnpm build`, then `pnpm start`. Open the local address it prints in your browser.
   2. The home page picks your browser's language. You can switch it at the top right, like the theme.
   3. "View as lead" and "View as expert" change the level of detail without changing the screen: the lead
      reads short sentences and the expert also sees the rules, the signals and where each figure comes from.
 - **The seven screens:**
-  - **Home:** what planlang is, demo A's verdict and its measured capability, each figure with its source.
+  - **Home:** what planlang is, one row per demo with its verdict and its run, and the capability measured with demo A,
+    each figure with its source.
   - **Plan:** the decisions, the risks with their priority (and which ones are legal controls), the
     assumptions with their status, the criteria with their rule, the thresholds with their signal and the
     graph contract.
@@ -351,12 +572,15 @@ data/casos/demo-a/planlang-a-001-200.json` and repeat the command until all 200 
     arrow to see what it does, its code and the real cases that went through it.
   - **Gap:** the full report, with what failed in plain sight.
   - **Playground:** move thresholds (below).
-  - **Cases:** the 20 cases, one per page, with their path, the signals on each arrow, the pause with the
-    person, the letter and the adverse-decision document when there is one.
+  - **Cases:** one per page, with their path, the signals on each arrow, the pause with the person, the letter and
+    the adverse-decision document when there is one (in B, the case file). In A, which publishes 200 cases, the
+    first 20 and the ones the report names have a page. The rest show up without a link, with a dotted border, in
+    the Gap and the Playground.
   - **Records:** the record to repeat the run and the two records that travel to hoja-de-vida.
 - **Limitations:**
-  - The showcase shows the 20-case run (three times over) with plan v1.3. The 200-case run of plan v1.4 is
-    stored as data and comes into the showcase in a later sprint.
+  - Demo A publishes plan v1.5's 200-case run, with its single-agent baseline. The Agent screen lists the traces of
+    the first 20 cases and counts the rest.
+  - Demo B publishes its 20-case run.
   - The clarifications and letters the model wrote are shown in the language they were written in (Spanish).
 
 ### Move thresholds in the playground · since sprint 2
@@ -372,21 +596,26 @@ data/casos/demo-a/planlang-a-001-200.json` and repeat the command until all 200 
      or the clarification limit (U3, 0 to 4).
   3. Read the cases that change and open any of them with "see its trace": the case opens at the step where its
      path splits from the one the agent took. The risk-coverage curve marks where the plan sits.
-- **Texas mode (U4)** makes sure no adverse determination is automatic. In this run, turning it on changes no
-  case, because every adverse proposal already went to a person, and the screen explains it.
+- **Texas mode (U4)** makes sure no adverse determination is automatic, not even a partial one. In the 200-case
+  run, turning it on sends the nine partial approvals to a person. The screen says it is the review Texas mode
+  requires, not an extra one.
+- **In demo B** four thresholds move: the similarity to a list, the start of the investigator's gray zone, the risk
+  score and the inconsistencies. There is no Texas mode, and it counts cases, not minutes.
 - **Limitations:** outside the range seen in the run, the result is marked "not observed". Criteria that
   depend on what happened after a change cannot be measured in the case that changes: the trace did not
   record what did not happen.
 
 ### The records · since sprint 2
 
-- **What it does:** produces three records.
+- **What it does:** produces one reproducibility record per demo and three records that travel.
   - The **reproducibility** record has versions, fingerprints, seed, model, date and the steps to repeat
     the run.
-  - The **app** record comes from `docs/brochure-export.json`; hoja-de-vida builds it with its own design.
-  - The **agent A** record is in `content/agentes/planlang-demo-a.ficha-tecnica.json`.
+  - The **app** record comes from `docs/brochure-export.json` and adds up both demos; hoja-de-vida builds it with
+    its own design.
+  - The **agent A** and **agent B** records are in `content/agentes/planlang-demo-a.ficha-tecnica.json` and
+    `content/agentes/planlang-demo-b.ficha-tecnica.json`.
 
-  The two that travel are checked against hoja-de-vida's contract before they are written.
+  The ones that travel are checked against hoja-de-vida's contract before they are written.
 
 - **How to use it:** `pnpm fichas` regenerates them; `pnpm fichas --verificar` only says whether one is out
   of date.
@@ -414,22 +643,39 @@ data/casos/demo-a/planlang-a-001-200.json` and repeat the command until all 200 
   refuses to build the package with uncommitted changes (`--permitir-arbol-sucio` builds it for testing, but that one
   is not delivered).
 
+### Publish the design system · since sprint 3
+
+- **What it does:** publishes the app's consolidated design system to Claude Design (colors, type, spacing, motion
+  and the canon components that set its visual grammar), as an asset that stays stable between cycles. The screens do
+  not travel: they live in the showcase.
+- **How to use it:**
+  1. It happens **after** the short ⭐⭐ gate at closing: a system the author has not judged is never published.
+  2. In Claude Code, the author types `/design-sync`; the builder assembles and publishes it.
+  3. The destination is in `design-sync/project.json`. The exact list of files is shown before publishing.
+- **Where it comes from:** `design-system.md` is the source; `design-sync/` is the bundle that gets published, kept
+  up to date in every sprint with screens. The remote project is never edited over there.
+- **Limitations:** only the author triggers it; if they decide not to publish, the sprint summary records it.
+
 ### Frequently asked questions
 
-- **Why does the report say “met with alerts” when every criterion was met?** Because the verdict
-  looks beyond the criteria: at the assumptions, the risks and the failures the plan did not foresee. In
-  the report the showcase publishes, assumption S3 was refuted, S1 could not be tested and 5 unforeseen
-  failures showed up. Whatever could not be measured is an alert too, never a silence.
+- **Why does the report say “met with alerts”?** Because the verdict looks beyond the criteria: at the assumptions,
+  the risks and the failures the plan did not foresee. In demo A's published report:
+  - assumptions S2 and S3 were refuted;
+  - an evaluator saw failures that no risk in the plan covered.
+
+  Whatever could not be measured is an alert too, never a silence.
+
+- **Why do some cases have no page?** One page per case of the 200-case run would take the showcase package from
+  about 30 MB to over 100. The first 20 and the ones the report names have a page. The rest stay in the run, with
+  their trace and fingerprint.
 - **Can I change a threshold and see what would have happened?** Yes, in the showcase playground (above).
-- **And with 200 cases?** The report of plan v1.4's 200-case run is in
-  `runs/demo-a/suscripcion-planlang-a-001-200-v1.4/informe.en.md`: with more cases, assumption S1 was
-  confirmed and S2 was refuted.
 
 ---
 
 ## Historial · History
 
-| Sprint          | Features añadidas a este manual · Features added to this manual                                                                                                                      |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| S1 · 2026-09-27 | Validar un plan · generar casos sintéticos · correr un lote de 20 · leer el informe de brecha · verificar corridas e instrumento                                                     |
-| S2 · 2026-10-02 | Abrir la vitrina (7 pantallas) · mover umbrales en el playground · las fichas · entregar el paquete a hoja-de-vida · lote de 200 y respaldo sin modelo (mejorado) · plan v1.3 y v1.4 |
+| Sprint          | Features añadidas a este manual · Features added to this manual                                                                                                                                        |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| S1 · 2026-09-27 | Validar un plan · generar casos sintéticos · correr un lote de 20 · leer el informe de brecha · verificar corridas e instrumento                                                                       |
+| S2 · 2026-10-02 | Abrir la vitrina (7 pantallas) · mover umbrales en el playground · las fichas · entregar el paquete a hoja-de-vida · lote de 200 y respaldo sin modelo (mejorado) · plan v1.3 y v1.4                   |
+| S3 · 2026-10-05 | Entrevistar un plan · correr el demo B · leer un expediente · publicar el design system · la vitrina con dos demos y la corrida de 200 del A (mejorado) · `--caso` en los lotes (mejorado) · plan v1.5 |

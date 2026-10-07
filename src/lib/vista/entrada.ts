@@ -5,6 +5,7 @@
  */
 import type { Idioma } from "@core/formatos/bilingue";
 import type { DatosDemo } from "@/lib/datos/vitrina";
+import type { IdDemo } from "@/lib/demos";
 import {
   ARMADO,
   CATEGORIA_DE_BRECHA,
@@ -62,6 +63,81 @@ export interface VistaEntrada {
 }
 
 const X = `${ESPACIO_DURO}×${ESPACIO_DURO}`;
+
+/** La fila de un demo en «Los demos»: su veredicto con el balance y su corrida. */
+export interface FilaDemo {
+  id: IdDemo;
+  veredicto: { valor: ValorVeredicto; detalle: string };
+  corrida: { texto: string; chip: string };
+}
+
+/**
+ * La fila de cualquier demo, del informe y el manifiesto: criterios cumplidos, riesgos ocurridos, cuántas fallas
+ * y supuestos sin probar quedan a la vista (sin nombrarlos: eso lo hace la miniatura del A), y la corrida.
+ */
+export function filaDeDemo(datos: DatosDemo, idioma: Idioma): FilaDemo {
+  const { informe, manifiesto } = datos;
+  const ficha = informe.ficha_reproducibilidad;
+  const nCrit = informe.criterios.length;
+  const cumplen = informe.criterios.filter((c) => c.estado === "cumple").length;
+  const nRiesgos = informe.riesgos.length;
+  const ocurridos = informe.riesgos.filter(
+    (r) => r.estado === "ocurrio",
+  ).length;
+  const sinProbar = informe.supuestos.filter(
+    (s) => s.estado === "sin_probar",
+  ).length;
+  const incompletosN = informe.criterios.filter(
+    (c) => c.estado === "incompleto",
+  ).length;
+  // Las mismas fallas que nombra «Medí la brecha»: criterios incumplidos, riesgos ocurridos, supuestos refutados y,
+  // si las hay, las brechas no previstas como una sola.
+  const nFallas =
+    informe.criterios.filter((c) => c.estado === "incumple").length +
+    ocurridos +
+    informe.supuestos.filter((s) => s.estado === "refutado").length +
+    (informe.brechas_no_previstas.brechas.length > 0 ? 1 : 0);
+
+  const detallePartes = [
+    ARMADO.criterios(deCada(cumplen, nCrit, idioma))[idioma],
+    ARMADO.riesgos(deCada(ocurridos, nRiesgos, idioma))[idioma],
+  ];
+  const cola = [
+    ...(nFallas > 0 ? [conteo(nFallas, FORMAS.falla, idioma)] : []),
+    ...(incompletosN > 0
+      ? [conteo(incompletosN, FORMAS.criterioIncompleto, idioma)]
+      : []),
+    ...(sinProbar > 0
+      ? [conteo(sinProbar, FORMAS.supuestoSinProbar, idioma)]
+      : []),
+  ];
+  if (cola.length > 0) detallePartes.push(enumerar(cola, idioma));
+
+  const vEjec = versionCorta(ficha.corrida.plan_de_ejecucion.version);
+  const vPlan = versionCorta(ficha.plan.version);
+  const nCorridas = 1 + ficha.repeticiones.length;
+  const corridaTexto = [
+    ARMADO.planYCorrida({ plan: vPlan, ejecucion: vEjec })[idioma],
+    ARMADO.casosPorCorridas({
+      casos: ficha.corrida.casos_ejecutados,
+      por: `${X}${nCorridas}`,
+      lineaBase: ficha.linea_base !== null,
+    })[idioma],
+    ficha.corrida.fecha,
+  ].join(" · ");
+
+  return {
+    id: datos.id,
+    veredicto: {
+      valor: informe.veredicto.valor,
+      detalle: detallePartes.join(" · "),
+    },
+    corrida: {
+      texto: corridaTexto,
+      chip: `real · sprint ${manifiesto.corrida.sprint}`,
+    },
+  };
+}
 
 function lecturaDeSupuesto(id: string, idioma: Idioma): string {
   const l = LECTURA_DE_SUPUESTO[id];
@@ -131,6 +207,10 @@ export function vistaEntrada(datos: DatosDemo, idioma: Idioma): VistaEntrada {
   const nCrit = cuadros.length;
   const cumplen = cuadros.filter((c) => c.estado === "cumple").length;
   const incumplidos = informe.criterios.filter((c) => c.estado === "incumple");
+  // Incompleto: el informe no pudo decidirlo (pass^k con menos corridas de las exigidas); se nombra, no se calla.
+  const incompletos = informe.criterios.filter(
+    (c) => c.estado === "incompleto",
+  );
   const nRiesgos = informe.riesgos.length;
   const ocurridos = informe.riesgos.filter((r) => r.estado === "ocurrio");
   const refutados = informe.supuestos.filter((s) => s.estado === "refutado");
@@ -166,6 +246,12 @@ export function vistaEntrada(datos: DatosDemo, idioma: Idioma): VistaEntrada {
           },
         ]
       : []),
+    ...incompletos.map((c) => ({
+      tipo: "sin-probar" as const,
+      texto: ARMADO.incompleto({ id: c.id, texto: c.enunciado[idioma] })[
+        idioma
+      ],
+    })),
     ...sinProbar.map((s) => ({
       tipo: "sin-probar" as const,
       texto: ARMADO.sinProbar({
@@ -177,7 +263,6 @@ export function vistaEntrada(datos: DatosDemo, idioma: Idioma): VistaEntrada {
   const nFallas = fallas.filter((f) => f.tipo === "fallo").length;
 
   const vEjec = versionCorta(ficha.corrida.plan_de_ejecucion.version);
-  const vPlan = versionCorta(ficha.plan.version);
   const nCorridas = 1 + ficha.repeticiones.length;
   const casos = ficha.corrida.casos_ejecutados;
   const casosPorCorridas = `${casos}${X}${nCorridas}`;
@@ -196,27 +281,9 @@ export function vistaEntrada(datos: DatosDemo, idioma: Idioma): VistaEntrada {
     deCada(ocurridos.length, nRiesgos, idioma),
   )[idioma];
 
-  // Veredicto de la fila del demo: criterios, riesgos, fallas y supuestos sin probar.
-  const detallePartes = [
-    ARMADO.criterios(deCada(cumplen, nCrit, idioma))[idioma],
-    ARMADO.riesgos(deCada(ocurridos.length, nRiesgos, idioma))[idioma],
-  ];
-  const cola = [
-    ...(nFallas > 0 ? [conteo(nFallas, FORMAS.falla, idioma)] : []),
-    ...(sinProbar.length > 0
-      ? [conteo(sinProbar.length, FORMAS.supuestoSinProbar, idioma)]
-      : []),
-  ];
-  if (cola.length > 0) detallePartes.push(enumerar(cola, idioma));
-
+  // La fila del demo en «Los demos» (la misma función arma la del B).
+  const fila = filaDeDemo(datos, idioma);
   const lineaBase = ficha.linea_base !== null;
-  const corridaTexto = [
-    ARMADO.planYCorrida({ plan: vPlan, ejecucion: vEjec })[idioma],
-    ARMADO.casosPorCorridas({ casos, por: `${X}${nCorridas}`, lineaBase })[
-      idioma
-    ],
-    ficha.corrida.fecha,
-  ].join(" · ");
 
   const version = (s: string) => s.match(/\d+(\.\d+)+/)?.[0] ?? s;
   const pythonMenor = version(entorno.python).split(".").slice(0, 2).join(".");
@@ -227,16 +294,21 @@ export function vistaEntrada(datos: DatosDemo, idioma: Idioma): VistaEntrada {
     `Claude Code ${version(entorno.claude_cli)}`,
   ].join(" · ");
 
+  // Los lotes de la regla 6 son las sesiones (20 casos espaciados), no el archivo de casos: la corrida de 200 corrió
+  // en 10 sesiones de 20 («en lotes de 200» decía lo contrario de lo que pasó).
+  const casosPorSesion = Math.ceil(
+    ficha.corrida.casos_ejecutados / Math.max(1, ficha.corrida.sesiones),
+  );
   const modelo = (
     ficha.corrida.proveedor === "suscripcion"
       ? ARMADO.modeloSuscripcion({
           modelo: ficha.corrida.modelo,
-          lote: ficha.casos.n_lote,
+          lote: casosPorSesion,
         })
       : ARMADO.modeloProveedor({
           modelo: ficha.corrida.modelo,
           proveedor: ficha.corrida.proveedor,
-          lote: ficha.casos.n_lote,
+          lote: casosPorSesion,
         })
   )[idioma];
 
@@ -249,6 +321,7 @@ export function vistaEntrada(datos: DatosDemo, idioma: Idioma): VistaEntrada {
         n: nCrit,
         cumplen,
         incumplidos: incumplidos.map((c) => c.id),
+        incompletos: incompletos.map((c) => c.id),
       })[idioma],
       leyenda: {
         criteriosCumplen: leyendaCrit,
@@ -280,14 +353,8 @@ export function vistaEntrada(datos: DatosDemo, idioma: Idioma): VistaEntrada {
       },
       balance: { cifra: balanceCifra },
     },
-    veredicto: {
-      valor: informe.veredicto.valor,
-      detalle: detallePartes.join(" · "),
-    },
-    corrida: {
-      texto: corridaTexto,
-      chip: `real · sprint ${sprint}`,
-    },
+    veredicto: fila.veredicto,
+    corrida: fila.corrida,
     experto: {
       cruzada: ARMADO.cruzada({
         diferencias: conteo(diferencias, FORMAS.diferencia, idioma),

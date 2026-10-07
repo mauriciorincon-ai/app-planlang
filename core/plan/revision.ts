@@ -1,0 +1,663 @@
+/**
+ * Revisión de un borrador que entregó el entrevistador (M2): lo que el usuario mira antes de decir «apruebo».
+ * Reúne M1 (lo que impediría aprobar), las contradicciones (RF-02.5), lo pendiente y los textos que redactó el
+ * entrevistador en el idioma que el usuario no escribió (ADR-012), y lo pone en un documento ES/EN.
+ *
+ * La transcripción la escribe Python (`agents/…/entrevistador/transcripcion.py`); aquí se declara con Zod y el gate
+ * de contrato la valida contra el fixture que escribe el serializador real (regla 19).
+ */
+import { z } from "zod";
+import type { TextoBilingue } from "../formatos/bilingue";
+import { TextoBilingueSchema } from "../formatos/bilingue-esquema";
+import {
+  contradicciones,
+  MARCA_PENDIENTE,
+  type Contradiccion,
+  type PreguntaPendiente,
+} from "./contradicciones";
+import { validarPlan, type Motivo } from "./validador";
+
+const IDIOMA = z.enum(["es", "en"]);
+const QUIEN_REDACTA = z.enum(["usuario", "entrevistador", "pendiente"]);
+
+export const TurnoSchema = z
+  .object({
+    pasada: z.number().int().min(1),
+    respuesta: z.object({ texto: z.string(), idioma: IDIOMA }).strict(),
+    resultado: z.enum([
+      "redactada",
+      "aceptada",
+      "pendiente",
+      "literal",
+      "literal_sin_redactar",
+    ]),
+    motivo: z.string().optional(),
+    elementos: z
+      .array(z.object({ id: z.string(), origen: z.string() }).strict())
+      .optional(),
+    explicaciones: z
+      .array(
+        z
+          .object({ elemento: z.string(), es: z.string(), en: z.string() })
+          .strict(),
+      )
+      .optional(),
+    /** Los elementos que el modelo descartó y el código devolvió desde la propuesta (Python: `grafo.py`, AU-S3-01). */
+    restaurados: z.array(z.string().min(1)).min(1).optional(),
+    redaccion: z.object({ es: QUIEN_REDACTA, en: QUIEN_REDACTA }).optional(),
+    costo_nominal_usd: z.number().nonnegative().optional(),
+    tokens_entrada: z.number().int().nonnegative().optional(),
+    tokens_salida: z.number().int().nonnegative().optional(),
+  })
+  .strict();
+
+export const TranscripcionSchema = z
+  .object({
+    formato: z.literal("planlang-transcripcion/v1"),
+    demo_id: z.string().min(1),
+    plan_id: z.string().min(1),
+    plantilla: z
+      .object({
+        id: z.string(),
+        version: z.string(),
+        huella: z.string().regex(/^[0-9a-f]{64}$/),
+      })
+      .strict(),
+    idioma: IDIOMA,
+    fecha: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    proveedor: z.string().min(1),
+    modelo: z.string().min(1),
+    pasadas: z.number().int().min(1),
+    preguntas: z.array(
+      z
+        .object({
+          id: z.string(),
+          seccion: z.string(),
+          pregunta: TextoBilingueSchema,
+          ejemplo: TextoBilingueSchema,
+          obligatoria: z.boolean(),
+          estado: z.enum([
+            "sin_responder",
+            "respondida",
+            "aceptada",
+            "pendiente",
+          ]),
+          turnos: z.array(TurnoSchema),
+        })
+        .strict(),
+    ),
+    senales_derivadas: z.array(
+      z
+        .object({ senal: z.string(), leida_por: z.array(z.string()).min(1) })
+        .strict(),
+    ),
+    llamadas_al_modelo: z.number().int().nonnegative(),
+    costo_nominal_usd: z.number().nonnegative(),
+    huella: z.string().regex(/^[0-9a-f]{64}$/),
+  })
+  .strict();
+export type Transcripcion = z.infer<typeof TranscripcionSchema>;
+
+export interface Revision {
+  plan_id: string;
+  /** M1 sobre el borrador; `bloquea` suma las advertencias que `aprobarPlan` convierte en motivo (M-23). */
+  m1: { ok: boolean; motivos: Motivo[]; advertencias: Motivo[] };
+  contradicciones: Contradiccion[];
+  pendientes: PreguntaPendiente[];
+  /** Respuestas cuyo otro idioma redactó el entrevistador: hay que leerlas antes de aprobar. */
+  redactado_por_entrevistador: { pregunta: string; idioma: "es" | "en" }[];
+  senales_derivadas: Transcripcion["senales_derivadas"];
+  llamadas_al_modelo: number;
+  costo_nominal_usd: number;
+  /** Elementos que el modelo omitió y el código devolvió desde la propuesta, por pregunta (AU-S3-01). */
+  restaurados_por_el_codigo: { pregunta: string; elementos: string[] }[];
+  /** De dónde salió la entrevista: plantilla, proveedor, modelo, fecha, pasadas y tokens (AU-S3-13). */
+  cabecera: {
+    plantilla: { id: string; version: string };
+    proveedor: string;
+    modelo: string;
+    fecha: string;
+    pasadas: number;
+    tokens_entrada: number;
+    tokens_salida: number;
+  };
+  /** Cada pregunta con su último turno: lo que respondió el usuario, tal cual, y lo que hizo el entrevistador. */
+  entrevista: {
+    id: string;
+    seccion: string;
+    pregunta: TextoBilingue;
+    estado: string;
+    respuesta: { texto: string; idioma: "es" | "en" } | null;
+    resultado: string | null;
+    motivo: string | null;
+    elementos: { id: string; origen: string }[];
+    explicaciones: { elemento: string; es: string; en: string }[];
+  }[];
+}
+
+export function pendientesDe(t: Transcripcion): PreguntaPendiente[] {
+  return t.preguntas
+    .filter((p) => p.estado === "pendiente" || p.estado === "sin_responder")
+    .map((p) => ({ id: p.id, seccion: p.seccion }));
+}
+
+/**
+ * El demo de un plan, derivado de su id (`plan-demo-b` → `b`): los comandos y textos de la revisión salen de aquí y
+ * no nombran un demo fijo (AU-S3-24). Un id sin esa forma detiene la revisión nombrándolo.
+ */
+export function demoDelPlan(planId: string): string {
+  const m = /^plan-demo-([a-z0-9]+)$/.exec(planId);
+  if (!m) throw new Error(`revisión: el plan_id «${planId}» no dice de qué demo es (plan-demo-<x>)`);
+  return m[1]!;
+}
+
+/** El comando que retoma la entrevista del plan: las pendientes lo citan. */
+export const comandoRetomar = (planId: string) =>
+  `pnpm entrevistar --demo ${demoDelPlan(planId)} --retomar`;
+
+export function revisarBorrador(borrador: unknown, t: Transcripcion): Revision {
+  const v = validarPlan(borrador);
+  const bloqueantes = v.advertencias.filter(
+    (m) => m.codigo === "SENAL_NO_DECLARADA",
+  );
+  const motivos = v.ok ? bloqueantes : [...v.motivos, ...bloqueantes];
+  const pendientes = pendientesDe(t);
+  const redactado = t.preguntas.flatMap((p) => {
+    const ultimo = p.turnos.at(-1);
+    if (!ultimo?.redaccion) return [];
+    return (["es", "en"] as const)
+      .filter((i) => ultimo.redaccion![i] === "entrevistador")
+      .map((idioma) => ({ pregunta: p.id, idioma }));
+  });
+  return {
+    plan_id: t.plan_id,
+    m1: {
+      ok: motivos.length === 0,
+      motivos,
+      advertencias: v.advertencias.filter(
+        (m) => m.codigo !== "SENAL_NO_DECLARADA",
+      ),
+    },
+    contradicciones: contradicciones(
+      borrador,
+      pendientes,
+      comandoRetomar(t.plan_id),
+    ),
+    pendientes,
+    redactado_por_entrevistador: redactado,
+    senales_derivadas: t.senales_derivadas,
+    llamadas_al_modelo: t.llamadas_al_modelo,
+    costo_nominal_usd: t.costo_nominal_usd,
+    restaurados_por_el_codigo: t.preguntas.flatMap((p) =>
+      p.turnos
+        .filter((x) => x.restaurados)
+        .map((x) => ({ pregunta: p.id, elementos: x.restaurados! })),
+    ),
+    cabecera: {
+      plantilla: { id: t.plantilla.id, version: t.plantilla.version },
+      proveedor: t.proveedor,
+      modelo: t.modelo,
+      fecha: t.fecha,
+      pasadas: t.pasadas,
+      tokens_entrada: t.preguntas.reduce(
+        (a, p) => a + p.turnos.reduce((b, x) => b + (x.tokens_entrada ?? 0), 0),
+        0,
+      ),
+      tokens_salida: t.preguntas.reduce(
+        (a, p) => a + p.turnos.reduce((b, x) => b + (x.tokens_salida ?? 0), 0),
+        0,
+      ),
+    },
+    entrevista: t.preguntas.map((p) => {
+      const u = p.turnos.at(-1);
+      return {
+        id: p.id,
+        seccion: p.seccion,
+        pregunta: p.pregunta,
+        estado: p.estado,
+        respuesta: u ? u.respuesta : null,
+        resultado: u ? u.resultado : null,
+        motivo: u?.motivo ?? null,
+        elementos: u?.elementos ?? [],
+        explicaciones: u?.explicaciones ?? [],
+      };
+    }),
+  };
+}
+
+/** Lo que impide aprobar: M1, lo pendiente y, salvo que el usuario las acepte, las contradicciones. */
+export function impideAprobar(
+  r: Revision,
+  aceptaContradicciones: boolean,
+): boolean {
+  const hayPendientes = r.contradicciones.some((c) => c.codigo === "PENDIENTE");
+  const otras = r.contradicciones.some((c) => c.codigo !== "PENDIENTE");
+  return !r.m1.ok || hayPendientes || (otras && !aceptaContradicciones);
+}
+
+// ------------------------------------------------------------------------------------------- documento ES/EN
+
+/** El nombre de cada idioma, dicho en cada idioma. */
+const NOMBRE_IDIOMA: Readonly<
+  Record<"es" | "en", Readonly<Record<string, string>>>
+> = {
+  es: { es: "español", en: "inglés" },
+  en: { es: "Spanish", en: "English" },
+};
+
+const T = {
+  es: {
+    titulo: "Revisión del borrador",
+    intro: (d: string) =>
+      `Lo propuso el entrevistador con tus respuestas. Nada está aprobado: el plan pasa a v1 solo cuando dices «apruebo el plan ${d.toUpperCase()}».`,
+    estado: "Estado",
+    listo:
+      "M1 lo acepta: se puede aprobar si estás de acuerdo con lo de abajo.",
+    noListo: "M1 todavía no lo acepta: corrige lo de abajo antes de aprobar.",
+    m1: "Lo que M1 rechaza",
+    contr: "Contradicciones que señala el entrevistador",
+    ninguna: "Ninguna.",
+    redactado: "Textos que redactó el entrevistador (léelos)",
+    redactadoLinea: (p: string, i: string) =>
+      `${p}: el texto en ${NOMBRE_IDIOMA.es[i] ?? i} lo redactó el entrevistador desde tu respuesta.`,
+    senales: "Señales que el agente tendrá que registrar y que sumó el código",
+    restaurados: "Elementos que el modelo omitió y el código devolvió",
+    restauradoLinea: (p: string, ids: string[]) =>
+      `${p}: el modelo omitió ${ids.join(", ")}; el código los devolvió desde la propuesta.`,
+    advertencias: "Advertencias de M1 (no impiden aprobar)",
+    cabecera: (c: Revision["cabecera"]) =>
+      `Plantilla ${c.plantilla.id} ${c.plantilla.version} · ${c.proveedor} / ${c.modelo} · ${c.fecha} · ${c.pasadas} ${c.pasadas === 1 ? "pasada" : "pasadas"} · ${c.tokens_entrada} tokens de entrada y ${c.tokens_salida} de salida.`,
+    entrevista: "La entrevista, pregunta por pregunta",
+    respuesta: "Tu respuesta",
+    sinRespuesta: "sin respuesta",
+    resultado: "Resultado",
+    elementos: "Elementos",
+    explicaciones: "Lo que explicó el entrevistador",
+    motivoLiteral: "Por qué quedó literal",
+    senalLinea: (s: string, q: string[]) => `\`${s}\`: la lee ${q.join(", ")}.`,
+    plan: "El plan, sección por sección",
+    origen: "origen",
+    costo: (n: number, c: number) =>
+      `${n} llamadas al modelo · costo nominal US$ ${c.toFixed(4)} (la suscripción no cobra por llamada).`,
+    aprobar: "Cómo se aprueba",
+    aprobarTexto: (d: string) =>
+      `Si estás de acuerdo, dile al constructor «apruebo el plan ${d.toUpperCase()}». Él corre \`pnpm plan:aprobar --demo ${d} --por "<tu nombre>" --el <fecha>\`, que vuelve a validar y escribe \`plans/demo-${d}/v1.json\` con su huella.`,
+    secciones: {
+      problema: "Problema",
+      actores: "Actores",
+      flujo: "Flujo",
+      decisiones: "Decisiones",
+      riesgos: "Riesgos",
+      supuestos: "Supuestos",
+      criterios: "Criterios de aceptación",
+      umbrales: "Umbrales",
+      contrato: "Contrato de grafo",
+      lotes: "Lotes",
+    },
+    pendiente: "pendiente",
+    cab: {
+      actores: ["id", "actor", "tipo"],
+      decisiones: ["id", "pregunta", "elegida", "reversibilidad"],
+      riesgos: ["id", "modo de falla", "S·O·D", "detector"],
+      supuestos: ["id", "supuesto", "prueba barata"],
+      criterios: ["id", "enunciado", "objetivo", "regla", "controla"],
+      umbrales: [
+        "id",
+        "nombre",
+        "señal · operador · valor",
+        "rango",
+        "si se cumple",
+      ],
+    },
+    nodos: "Nodos",
+    porDefecto: "por defecto",
+    senalesObligatorias: "Señales obligatorias",
+  },
+  en: {
+    titulo: "Draft review",
+    intro: (d: string) =>
+      `The interviewer proposed it from your answers. Nothing is approved: the plan becomes v1 only when you say “I approve plan ${d.toUpperCase()}”.`,
+    estado: "Status",
+    listo: "M1 accepts it: it can be approved if you agree with what follows.",
+    noListo: "M1 does not accept it yet: fix what follows before approving.",
+    m1: "What M1 rejects",
+    contr: "Contradictions the interviewer flags",
+    ninguna: "None.",
+    redactado: "Texts the interviewer wrote (read them)",
+    redactadoLinea: (p: string, i: string) =>
+      `${p}: the ${NOMBRE_IDIOMA.en[i] ?? i} text was written by the interviewer from your answer.`,
+    senales: "Signals the agent will have to record, added by code",
+    restaurados: "Elements the model left out and the code put back",
+    restauradoLinea: (p: string, ids: string[]) =>
+      `${p}: the model left out ${ids.join(", ")}; the code put them back from the proposal.`,
+    advertencias: "M1 warnings (they do not block approval)",
+    cabecera: (c: Revision["cabecera"]) =>
+      `Template ${c.plantilla.id} ${c.plantilla.version} · ${c.proveedor} / ${c.modelo} · ${c.fecha} · ${c.pasadas} ${c.pasadas === 1 ? "pass" : "passes"} · ${c.tokens_entrada} input tokens and ${c.tokens_salida} output tokens.`,
+    entrevista: "The interview, question by question",
+    respuesta: "Your answer",
+    sinRespuesta: "no answer",
+    resultado: "Result",
+    elementos: "Elements",
+    explicaciones: "What the interviewer explained",
+    motivoLiteral: "Why it stayed literal",
+    senalLinea: (s: string, q: string[]) =>
+      `\`${s}\`: read by ${q.join(", ")}.`,
+    plan: "The plan, section by section",
+    origen: "origin",
+    costo: (n: number, c: number) =>
+      `${n} model calls · nominal cost US$ ${c.toFixed(4)} (the subscription does not charge per call).`,
+    aprobar: "How to approve",
+    aprobarTexto: (d: string) =>
+      `If you agree, tell the builder “I approve plan ${d.toUpperCase()}”. They run \`pnpm plan:aprobar --demo ${d} --por "<your name>" --el <date>\`, which validates again and writes \`plans/demo-${d}/v1.json\` with its fingerprint.`,
+    secciones: {
+      problema: "Problem",
+      actores: "Actors",
+      flujo: "Flow",
+      decisiones: "Decisions",
+      riesgos: "Risks",
+      supuestos: "Assumptions",
+      criterios: "Acceptance criteria",
+      umbrales: "Thresholds",
+      contrato: "Graph contract",
+      lotes: "Batches",
+    },
+    pendiente: "pending",
+    cab: {
+      actores: ["id", "actor", "type"],
+      decisiones: ["id", "question", "chosen", "reversibility"],
+      riesgos: ["id", "failure mode", "S·O·D", "detector"],
+      supuestos: ["id", "assumption", "cheap test"],
+      criterios: ["id", "statement", "target", "rule", "controls"],
+      umbrales: ["id", "name", "signal · operator · value", "range", "if true"],
+    },
+    nodos: "Nodes",
+    porDefecto: "by default",
+    senalesObligatorias: "Required signals",
+  },
+} as const;
+
+type Idioma = "es" | "en";
+type Obj = Record<string, unknown>;
+const esObj = (v: unknown): v is Obj =>
+  typeof v === "object" && v !== null && !Array.isArray(v);
+const lista = (v: unknown): Obj[] => (Array.isArray(v) ? v.filter(esObj) : []);
+
+function txt(v: unknown, idioma: Idioma): string {
+  const s =
+    typeof v === "string"
+      ? v
+      : esObj(v) && typeof v[idioma] === "string"
+        ? (v[idioma] as string)
+        : "";
+  return !s || s.includes(MARCA_PENDIENTE) ? `_${T[idioma].pendiente}_` : s;
+}
+
+const celda = (s: string) => s.replace(/\|/g, "\\|").replace(/\n/g, " ");
+
+function tabla(cabeza: string[], filas: string[][]): string[] {
+  return [
+    `| ${cabeza.join(" | ")} |`,
+    `|${cabeza.map(() => "---").join("|")}|`,
+    ...filas.map((f) => `| ${f.map(celda).join(" | ")} |`),
+  ];
+}
+
+function seccionesDelPlan(b: Obj, idioma: Idioma): string[] {
+  const t = T[idioma];
+  const s = t.secciones;
+  const o = t.origen;
+  const out: string[] = [];
+  out.push(`### ${s.problema}`, "", `**${txt(b.nombre, idioma)}**`, "");
+  out.push(txt(b.problema, idioma), "");
+  out.push(
+    `### ${s.actores}`,
+    "",
+    ...tabla(
+      [...t.cab.actores, o],
+      lista(b.actores).map((a) => [
+        String(a.id),
+        txt(a, idioma),
+        String(a.tipo),
+        String(a.origen ?? ""),
+      ]),
+    ),
+    "",
+  );
+  out.push(
+    `### ${s.flujo}`,
+    "",
+    ...(Array.isArray(b.flujo_objetivo) ? b.flujo_objetivo : []).map(
+      (p, i) => `${i + 1}. ${txt(p, idioma)}`,
+    ),
+    "",
+  );
+  out.push(
+    `### ${s.decisiones}`,
+    "",
+    ...tabla(
+      [...t.cab.decisiones, o],
+      lista(b.decisiones).map((d) => [
+        String(d.id),
+        txt(d.pregunta, idioma),
+        d.opcion_elegida
+          ? txt(d.opcion_elegida, idioma)
+          : `_${String(d.estado)}_`,
+        String(d.reversibilidad),
+        String(d.origen ?? ""),
+      ]),
+    ),
+    "",
+  );
+  out.push(
+    `### ${s.riesgos}`,
+    "",
+    ...tabla(
+      [...t.cab.riesgos, o],
+      lista(b.riesgos).map((r) => {
+        const d = esObj(r.detector_en_trazas) ? r.detector_en_trazas : null;
+        return [
+          String(r.id),
+          txt(r.modo, idioma),
+          `${String(r.severidad)}·${String(r.ocurrencia)}·${String(r.deteccion)}`,
+          d
+            ? `\`${String(d.condicion)}\``
+            : txt(r.no_detectable_en_trazas, idioma),
+          String(r.origen ?? ""),
+        ];
+      }),
+    ),
+    "",
+  );
+  out.push(
+    `### ${s.supuestos}`,
+    "",
+    ...tabla(
+      [...t.cab.supuestos, o],
+      lista(b.supuestos).map((x) => [
+        String(x.id),
+        txt(x.enunciado, idioma),
+        txt(x.prueba_barata, idioma),
+        String(x.origen ?? ""),
+      ]),
+    ),
+    "",
+  );
+  out.push(
+    `### ${s.criterios}`,
+    "",
+    ...tabla(
+      [...t.cab.criterios, o],
+      lista(b.criterios_aceptacion).map((c) => {
+        const r = esObj(c.regla_de_medicion) ? c.regla_de_medicion : {};
+        const regla = [r.poblacion, r.condicion ?? r.metrica]
+          .filter(Boolean)
+          .map((x) => `\`${String(x)}\``)
+          .join(" → ");
+        return [
+          String(c.id),
+          txt(c.enunciado, idioma),
+          `${String(c.tipo)} · ${String(c.valor_objetivo)}`,
+          `${regla} (${String(r.agregacion)})`,
+          (Array.isArray(c.riesgos_controlados)
+            ? c.riesgos_controlados
+            : []
+          ).join(", "),
+          String(c.origen ?? ""),
+        ];
+      }),
+    ),
+    "",
+  );
+  out.push(
+    `### ${s.umbrales}`,
+    "",
+    ...tabla(
+      [...t.cab.umbrales, o],
+      lista(b.umbrales).map((u) => {
+        const r = esObj(u.rango_jugable) ? u.rango_jugable : {};
+        return [
+          String(u.id),
+          txt(u.nombre, idioma),
+          `\`${String(u.senal)}\` · ${String(u.operador)} · ${u.valor_en_plan === null || u.valor_en_plan === undefined ? `_${T[idioma].pendiente}_` : String(u.valor_en_plan)}`,
+          "tipo" in r
+            ? String(r.tipo)
+            : `${String(r.min)}–${String(r.max)} (${String(r.paso)})`,
+          String(u.consecuencia_si_verdadero),
+          String(u.origen ?? ""),
+        ];
+      }),
+    ),
+    "",
+  );
+  const cg = esObj(b.contrato_de_grafo) ? b.contrato_de_grafo : null;
+  out.push(`### ${s.contrato}`, "");
+  if (cg) {
+    out.push(
+      `- ${t.nodos}: ${lista(cg.nodos_esperados)
+        .map((n) => `\`${String(n.id)}\` (${String(n.tipo)})`)
+        .join(", ")}`,
+      ...lista(cg.aristas_condicionales).map((a) => {
+        const f = esObj(a.funcion) ? a.funcion : null;
+        const cond = f
+          ? `${String(f.nombre)}(${(Array.isArray(f.entradas) ? f.entradas : []).join(", ")})`
+          : `${String(a.senal)} ${String(a.operador)} ${JSON.stringify(a.valor)}`;
+        return `- \`${String(a.desde)}\` #${String(a.orden)}: \`${cond}\` → \`${String(a.si_verdadero)}\``;
+      }),
+      ...Object.entries(
+        esObj(cg.ramas_por_defecto) ? cg.ramas_por_defecto : {},
+      ).map(([d, h]) => `- \`${d}\` ${t.porDefecto} → \`${String(h)}\``),
+      ...lista(cg.pausas_humanas).map(
+        (p) =>
+          `- ⏸ \`${String(p.nodo)}\` · ${String(p.rol)} · ${(Array.isArray(p.payload_minimo) ? p.payload_minimo : []).join(", ")}`,
+      ),
+      `- ${t.senalesObligatorias}: ${(Array.isArray(cg.senales_obligatorias_en_traza) ? cg.senales_obligatorias_en_traza : []).map((x) => `\`${String(x)}\``).join(", ")}`,
+      `- ${o}: ${String(cg.origen ?? "")}`,
+      "",
+    );
+  } else out.push(`_${T[idioma].pendiente}_`, "");
+  const l = esObj(b.lotes) ? b.lotes : null;
+  out.push(
+    `### ${s.lotes}`,
+    "",
+    l
+      ? `${String(l.demo)} / ${String(l.completo)} · ${String(l.corridas_espaciadas_de)} · ${String(l.proveedor)} · ${String(l.modelo_alias)} · ${o}: ${String(l.origen ?? "")}`
+      : `_${T[idioma].pendiente}_`,
+    "",
+  );
+  return out;
+}
+
+export function textoDeRevision(
+  borrador: unknown,
+  r: Revision,
+  idioma: Idioma,
+): string {
+  const t = T[idioma];
+  const d = demoDelPlan(r.plan_id);
+  const b = esObj(borrador) ? borrador : {};
+  const linea = (m: {
+    codigo: string;
+    elemento: string;
+    mensaje: TextoBilingue;
+  }) => `- \`${m.codigo}\` · ${m.elemento}: ${m.mensaje[idioma]}`;
+  return [
+    `# ${t.titulo} — ${r.plan_id}`,
+    "",
+    t.intro(d),
+    "",
+    `## ${t.estado}`,
+    "",
+    r.m1.ok ? t.listo : t.noListo,
+    "",
+    t.costo(r.llamadas_al_modelo, r.costo_nominal_usd),
+    "",
+    t.cabecera(r.cabecera),
+    "",
+    `## ${t.m1}`,
+    "",
+    ...(r.m1.motivos.length ? r.m1.motivos.map(linea) : [t.ninguna]),
+    "",
+    `## ${t.advertencias}`,
+    "",
+    ...(r.m1.advertencias.length ? r.m1.advertencias.map(linea) : [t.ninguna]),
+    "",
+    `## ${t.contr}`,
+    "",
+    ...(r.contradicciones.length ? r.contradicciones.map(linea) : [t.ninguna]),
+    "",
+    `## ${t.redactado}`,
+    "",
+    ...(r.redactado_por_entrevistador.length
+      ? r.redactado_por_entrevistador.map(
+          (x) => `- ${t.redactadoLinea(x.pregunta, x.idioma)}`,
+        )
+      : [t.ninguna]),
+    "",
+    `## ${t.senales}`,
+    "",
+    ...(r.senales_derivadas.length
+      ? r.senales_derivadas.map(
+          (s) => `- ${t.senalLinea(s.senal, s.leida_por)}`,
+        )
+      : [t.ninguna]),
+    "",
+    `## ${t.restaurados}`,
+    "",
+    ...(r.restaurados_por_el_codigo.length
+      ? r.restaurados_por_el_codigo.map(
+          (x) => `- ${t.restauradoLinea(x.pregunta, x.elementos)}`,
+        )
+      : [t.ninguna]),
+    "",
+    `## ${t.entrevista}`,
+    "",
+    ...r.entrevista.flatMap((p) => [
+      `### ${p.id} · ${p.seccion} · ${p.estado}`,
+      "",
+      `> ${p.pregunta[idioma]}`,
+      "",
+      `- ${t.respuesta}: ${p.respuesta ? `«${p.respuesta.texto}» (${NOMBRE_IDIOMA[idioma][p.respuesta.idioma]})` : t.sinRespuesta}`,
+      ...(p.resultado ? [`- ${t.resultado}: \`${p.resultado}\``] : []),
+      ...(p.motivo ? [`- ${t.motivoLiteral}: ${p.motivo}`] : []),
+      ...(p.elementos.length
+        ? [
+            `- ${t.elementos}: ${p.elementos.map((e) => `${e.id} (${e.origen})`).join(", ")}`,
+          ]
+        : []),
+      ...(p.explicaciones.length
+        ? [
+            `- ${t.explicaciones}:`,
+            ...p.explicaciones.map((e) => `  - ${e.elemento}: ${e[idioma]}`),
+          ]
+        : []),
+      "",
+    ]),
+    `## ${t.plan}`,
+    "",
+    ...seccionesDelPlan(b, idioma),
+    `## ${t.aprobar}`,
+    "",
+    t.aprobarTexto(d),
+    "",
+  ].join("\n");
+}

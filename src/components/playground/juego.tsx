@@ -326,11 +326,40 @@ export function porque(x: CambioDeCaso, i: Idioma): string {
   return PORQUE.ninguna[i];
 }
 
-function reglaAplicada(x: CambioDeCaso): string {
+/**
+ * La regla que decidió, con las señales que leyó. Una señal que ES un umbral (un interruptor como el modo Texas) se
+ * dice con el valor movido, como la evalúa el núcleo: con el modo Texas encendido, «modo_texas false» contradecía el
+ * interruptor (S3).
+ */
+function reglaAplicada(
+  x: CambioDeCaso,
+  ligaduras: Readonly<Record<string, string>>,
+  u: Umbrales,
+): string {
   const s = Object.entries(x.senales)
-    .map(([k, v]) => `${k} ${v === null ? "null" : String(v)}`)
+    .map(([k, v]) => {
+      const id = ligaduras[k];
+      const valor = id !== undefined && Object.hasOwn(u, id) ? u[id] : v;
+      return `${k} ${valor === null ? "null" : String(valor)}`;
+    })
     .join(" · ");
   return `${x.nodo} · ${s} → ${x.rama_nueva}`;
+}
+
+/** El interruptor encendido que manda el caso a una persona, si es una función que lee uno (el modo Texas). */
+function interruptorQueExige(
+  x: CambioDeCaso,
+  ligaduras: Readonly<Record<string, string>>,
+  u: Umbrales,
+): string | null {
+  const d = x.ahora_decide;
+  if (x.ahora !== "persona" || d?.tipo !== "funcion" || !d.entradas)
+    return null;
+  for (const s of Object.keys(d.entradas)) {
+    const id = ligaduras[s];
+    if (id !== undefined && u[id] === true && INTERRUPTOR[id]) return id;
+  }
+  return null;
 }
 
 function frase(r: Consecuencias, d: DatosIsla, i: Idioma): string {
@@ -369,11 +398,17 @@ function frase(r: Consecuencias, d: DatosIsla, i: Idioma): string {
     );
   if (r.evitados.length) partes.push(FRASE.evitados(r.evitados.length)[i]);
   partes.push(
-    FRASE.minutos({
-      minutos: r.minutos,
-      delta: r.minutos - r.minutos_plan,
-      sinContar: r.no_observados.length,
-    })[i],
+    r.minutos === null || r.minutos_plan === null
+      ? FRASE.personas({
+          personas: r.personas,
+          delta: r.personas - r.personas_plan,
+          sinContar: r.no_observados.length,
+        })[i]
+      : FRASE.minutos({
+          minutos: r.minutos,
+          delta: r.minutos - r.minutos_plan,
+          sinContar: r.no_observados.length,
+        })[i],
   );
   const dejan = r.criterios
     .filter((c) => c.estado === "incumple" && c.estado_informe !== "incumple")
@@ -445,11 +480,20 @@ function Efecto({
   x,
   minutos,
   i,
+  interruptor,
 }: {
   x: CambioDeCaso;
-  minutos: number;
+  minutos: number | null;
   i: Idioma;
+  /** El interruptor que exige la persona (`interruptorQueExige`), si lo hay. */
+  interruptor: string | null;
 }) {
+  if (interruptor && x.efecto === "revision_de_mas")
+    return (
+      <Chip procedencia="declarado">
+        {INTERRUPTOR[interruptor]!.exige(minutos)[i]}
+      </Chip>
+    );
   switch (x.efecto) {
     case "error_introducido":
       return (
@@ -801,17 +845,32 @@ export function Juego({ datos }: { datos: DatosIsla }) {
                   texto={CIFRAS.introducidos[i]}
                   sub={CIFRAS.evitados(r.evitados.length)[i]}
                 />
-                <Cifra
-                  id="k-min"
-                  cifra={r.minutos}
-                  texto={CIFRAS.minutos[i]}
-                  sub={
-                    CIFRAS.minutosPlan({
-                      plan: r.minutos_plan,
-                      delta: r.minutos - r.minutos_plan,
-                    })[i]
-                  }
-                />
+                {r.minutos === null || r.minutos_plan === null ? (
+                  // El plan no declara el costo humano (el B): la cifra cuenta los casos, no inventa minutos.
+                  <Cifra
+                    id="k-min"
+                    cifra={r.personas}
+                    texto={CIFRAS.personas[i]}
+                    sub={
+                      CIFRAS.minutosPlan({
+                        plan: r.personas_plan,
+                        delta: r.personas - r.personas_plan,
+                      })[i]
+                    }
+                  />
+                ) : (
+                  <Cifra
+                    id="k-min"
+                    cifra={r.minutos}
+                    texto={CIFRAS.minutos[i]}
+                    sub={
+                      CIFRAS.minutosPlan({
+                        plan: r.minutos_plan,
+                        delta: r.minutos - r.minutos_plan,
+                      })[i]
+                    }
+                  />
+                )}
                 <Cifra
                   id="k-crit"
                   cifra={r.cumplen}
@@ -872,6 +931,7 @@ export function Juego({ datos }: { datos: DatosIsla }) {
                         introducidos: r.introducidos.length,
                         evitados: r.evitados.length,
                         minutos: r.minutos,
+                        personas: r.personas,
                         cumplen: r.cumplen,
                         criterios: r.criterios.length,
                       })[i]
@@ -964,7 +1024,7 @@ export function Juego({ datos }: { datos: DatosIsla }) {
                               "text-tinta-2",
                             )}
                           >
-                            {reglaAplicada(x)}
+                            {reglaAplicada(x, c.ligaduras, u)}
                           </span>
                         </span>
                         {/* En la columna angosta la marca de la consecuencia se parte en dos líneas, como en la maqueta. */}
@@ -972,8 +1032,13 @@ export function Juego({ datos }: { datos: DatosIsla }) {
                           role="cell"
                           className="col-start-2 grid justify-items-start gap-1 escritorio:col-start-auto [&>span]:h-auto [&>span]:min-h-5 [&>span]:py-0.5 [&>span]:leading-[1.3] [&>span]:whitespace-normal"
                         >
-                          <Efecto x={x} minutos={minutos} i={i} />
-                          {caso ? (
+                          <Efecto
+                            x={x}
+                            minutos={minutos}
+                            i={i}
+                            interruptor={interruptorQueExige(x, c.ligaduras, u)}
+                          />
+                          {caso?.href ? (
                             <a
                               href={`${caso.href}#paso-${x.paso}`}
                               className="inline-flex items-center gap-1 text-dato text-tinta-1 underline underline-offset-3"
@@ -986,6 +1051,11 @@ export function Juego({ datos }: { datos: DatosIsla }) {
                               {EFECTO.traza[i]}
                               <span className="sr-only"> {x.id}</span>
                             </a>
+                          ) : caso ? (
+                            // Con la corrida de 200, no todo caso tiene página (decisión del usuario, S3).
+                            <span className="text-dato text-tinta-2">
+                              {EFECTO.sinPagina[i]}
+                            </span>
                           ) : null}
                         </span>
                       </div>

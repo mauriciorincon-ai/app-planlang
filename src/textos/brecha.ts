@@ -6,21 +6,43 @@
  */
 import type { CategoriaBrecha } from "@core/brecha/brechas-no-previstas";
 import { tb, type TextoBilingue } from "@core/formatos/bilingue";
+import type { IdDemo } from "@/lib/demos";
+import {
+  DIO_SUPUESTO_B,
+  LECTURA_SUPUESTO_B,
+  NODO_EN_FRASE_B,
+} from "./demo-b/brecha";
 
 type Plantilla<P> = (p: P) => TextoBilingue;
 
 export const TITULO_PAGINA = tb("La brecha · planlang", "The gap · planlang");
-export const DESCRIPCION_PAGINA = tb(
-  "El informe de brecha del demo A: un verificador sin modelo de lenguaje compara lo que el plan prometió con lo que el agente hizo y lo publica con sus fallas. Simulación · no operativo.",
-  "Demo A's gap report: a verifier with no language model compares what the plan promised with what the agent did and publishes it with its failures. Simulation · not operational.",
-);
+export const DESCRIPCION_PAGINA: Record<IdDemo, TextoBilingue> = {
+  "demo-a": tb(
+    "El informe de brecha del demo A: un verificador sin modelo de lenguaje compara lo que el plan prometió con lo que el agente hizo y lo publica con sus fallas. Simulación · no operativo.",
+    "Demo A's gap report: a verifier with no language model compares what the plan promised with what the agent did and publishes it with its failures. Simulation · not operational.",
+  ),
+  "demo-b": tb(
+    "El informe de brecha del demo B: un verificador sin modelo de lenguaje compara lo que el plan prometió con lo que el agente hizo y lo publica con sus fallas. Simulación · no operativo.",
+    "Demo B's gap report: a verifier with no language model compares what the plan promised with what the agent did and publishes it with its failures. Simulation · not operational.",
+  ),
+};
 
 export const PORTADA = {
-  antetitulo: ((p: { corrida: string; fecha: string }) =>
+  antetitulo: ((p: {
+    demo: TextoBilingue;
+    dominio: TextoBilingue;
+    corrida: string;
+    fecha: string;
+  }) =>
     tb(
-      `Demo A · autorizaciones médicas · corrida ${p.corrida} · ${p.fecha}`,
-      `Demo A · medical prior authorizations · run ${p.corrida} · ${p.fecha}`,
-    )) as Plantilla<{ corrida: string; fecha: string }>,
+      `${p.demo.es} · ${p.dominio.es} · corrida ${p.corrida} · ${p.fecha}`,
+      `${p.demo.en} · ${p.dominio.en} · run ${p.corrida} · ${p.fecha}`,
+    )) as Plantilla<{
+    demo: TextoBilingue;
+    dominio: TextoBilingue;
+    corrida: string;
+    fecha: string;
+  }>,
   titulo: tb(
     "La brecha entre el plan y lo que hizo el agente",
     "The gap between the plan and what the agent did",
@@ -112,6 +134,18 @@ export const FRASE = {
       `Y quedó sin probar ${unir(p.es, "ni")}.`,
       `And it was left untested ${unir(p.en, "or")}.`,
     )) as Plantilla<{ es: string[]; en: string[] }>,
+  /** Un criterio medido que no pudo decidirse (pass^k con menos corridas de las exigidas): se dice, no se calla. */
+  incompletos: ((ids: string[]) => {
+    // Ids, sin la coma de la maqueta antes de la conjunción: «C5 y C7», «C5, C6 y C7».
+    const y = (c: string) =>
+      ids.length <= 1
+        ? ids.join("")
+        : `${ids.slice(0, -1).join(", ")} ${c} ${ids[ids.length - 1]}`;
+    return tb(
+      `Y ${y("y")} ${ids.length === 1 ? "quedó incompleto: se midió" : "quedaron incompletos: se midieron"} con menos corridas de las que pide su regla.`,
+      `And ${y("and")} ${ids.length === 1 ? "was" : "were"} left incomplete: measured with fewer runs than ${ids.length === 1 ? "its rule asks" : "their rules ask"} for.`,
+    );
+  }) as Plantilla<string[]>,
 };
 
 function mayuscula(s: string): string {
@@ -135,7 +169,53 @@ export interface LecturaDeFalla {
   significa: TextoBilingue;
 }
 
-export const LECTURA_SUPUESTO: Record<string, LecturaDeFalla> = {
+/** Lo que comparó S3 (multiagente frente a la línea base), con el sentido de cada diferencia sacado de las cifras. */
+interface ComparacionS3 {
+  acerto: "mas" | "menos" | "igual";
+  tardo: "mas" | "menos" | "igual";
+  exactitud: string;
+  exactitudBase: string;
+  latencia: string;
+  latenciaBase: string;
+}
+
+/** «Acertó más (98 % frente a 90 %) pero tardó más (8,1 s frente a 5,1 s)»: el conector dice si las dos van juntas. */
+function comparacionS3(p: ComparacionS3): TextoBilingue {
+  const bienA = p.acerto !== "menos";
+  const bienT = p.tardo !== "mas";
+  const pero = bienA !== bienT;
+  const a = {
+    mas: tb("Acertó más", "It got more right"),
+    menos: tb("Acertó menos", "It got fewer right"),
+    igual: tb("Acertó lo mismo", "It got the same right"),
+  }[p.acerto];
+  const t = {
+    mas: tb("tardó más", "took longer"),
+    menos: tb("tardó menos", "took less time"),
+    igual: tb("tardó lo mismo", "took the same time"),
+  }[p.tardo];
+  return tb(
+    `${a.es} (${p.exactitud} frente a ${p.exactitudBase}) ${pero ? "pero" : "y"} ${t.es} (${p.latencia} frente a ${p.latenciaBase})`,
+    `${a.en} (${p.exactitud} against ${p.exactitudBase}) ${pero ? "but" : "and"} ${t.en} (${p.latencia} against ${p.latenciaBase})`,
+  );
+}
+
+const LECTURA_SUPUESTO_A: Record<string, LecturaDeFalla> = {
+  "S2:refutado": {
+    frase: tb(
+      "dos ciclos de aclaración no completaron los datos en tantos casos como el plan esperaba (S2)",
+      "two clarification cycles did not complete the data in as many cases as the plan expected (S2)",
+    ),
+    titulo: tb("Las preguntas al médico", "The questions to the physician"),
+    planeo: tb(
+      "Dos ciclos de aclaración bastan para completar los datos en el 95 % de los casos incompletos. En eso se apoya el tope de aclaraciones U3 ({plan:U3}).",
+      "Two clarification cycles are enough to complete the data in 95% of incomplete cases. The clarification cap U3 ({plan:U3}) relies on it.",
+    ),
+    significa: tb(
+      "Más casos de los planeados llegan a una persona con datos incompletos. O el plan acepta esa carga, o el tope U3 sube, o las preguntas tienen que pedir mejor lo que falta.",
+      "More cases than planned reach a person with incomplete data. Either the plan accepts that load, or cap U3 goes up, or the questions have to ask better for what is missing.",
+    ),
+  },
   "S3:refutado": {
     frase: tb(
       "repartir el trabajo entre varios agentes resultó más lento que un solo agente (S3)",
@@ -165,10 +245,19 @@ export const LECTURA_SUPUESTO: Record<string, LecturaDeFalla> = {
       "The confidence the model declares when extracting separates its hits from its errors. Threshold U1 ({plan:U1}) relies on it to decide when to call a person.",
     ),
     significa: tb(
-      "En esta corrida el umbral U1 quedó sin respaldo medido: faltaron casos donde el modelo se equivocara. La corrida de 200 del plan v1.4 confirmó S1 y entra a la vitrina en el sprint 3.",
-      "In this run threshold U1 was left without measured backing: there were no cases where the model got things wrong. The 200-case run of plan v1.4 confirmed S1 and joins the showcase in sprint 3.",
+      "En esta corrida el umbral U1 quedó sin respaldo medido: faltaron casos donde el modelo se equivocara.",
+      "In this run threshold U1 was left without measured backing: there were no cases where the model got things wrong.",
     ),
   },
+};
+
+/** Las lecturas de cada demo: los ids de sus planes se cruzan (S1, C3…), por eso van por demo. */
+export const LECTURA_SUPUESTO: Record<
+  IdDemo,
+  Record<string, LecturaDeFalla>
+> = {
+  "demo-a": LECTURA_SUPUESTO_A,
+  "demo-b": LECTURA_SUPUESTO_B,
 };
 
 export const LECTURA_BRECHA: Record<
@@ -198,10 +287,31 @@ export const LECTURA_BRECHA: Record<
       "Every retry adds time and cost. The plan should add it as a new risk, with its detector.",
     ),
   },
+  // M-20: una falla que nombra un evaluador del dominio y que ningún detector de riesgo del plan mira.
+  evaluador: {
+    frase: ((n: number) =>
+      tb(
+        `${n} ${n === 1 ? "caso tuvo una falla" : "casos tuvieron una falla"} que vio un evaluador y ningún riesgo del plan cubría`,
+        `${n} ${n === 1 ? "case had a failure" : "cases had a failure"} that an evaluator saw and no risk in the plan covered`,
+      )) as Plantilla<number>,
+    titulo: tb(
+      "Fallas que solo vio un evaluador",
+      "Failures only an evaluator saw",
+    ),
+    planeo: ((riesgos: number) =>
+      tb(
+        `Nada: ninguno de los ${riesgos} riesgos del plan tiene un detector que mire esta falla; la midió un evaluador del dominio.`,
+        `Nothing: none of the plan’s ${riesgos} risks has a detector that looks at this failure; a domain evaluator measured it.`,
+      )) as Plantilla<number>,
+    significa: tb(
+      "El evaluador mide algo que el plan no vigila como riesgo. El plan debe sumarlo como riesgo, con su detector, o decir por qué lo acepta.",
+      "The evaluator measures something the plan does not watch as a risk. The plan should add it as a risk, with its detector, or say why it accepts it.",
+    ),
+  },
 };
 
 /** El renglón de un criterio que se cumplió con una nota: lo que la nota significa. */
-export const LECTURA_NOTA: Record<string, Plantilla<number>> = {
+const LECTURA_NOTA_A: Record<string, Plantilla<number>> = {
   C7: (() =>
     tb(
       "Cumple, porque la regla mira la mediana. Si el límite debe valer caso por caso, la regla tiene que decirlo.",
@@ -218,7 +328,7 @@ export const LECTURA_NOTA: Record<string, Plantilla<number>> = {
  * «Qué pasó» de un criterio con casos fuera de su población, dicho con el nombre de esa población (editorial por
  * criterio; sin entrada, la vista usa `PASO.fuera`, que lo dice en general).
  */
-export const PASO_FUERA: Record<
+const PASO_FUERA_A: Record<
   string,
   Plantilla<{ dentro: number; fuera: number }>
 > = {
@@ -227,6 +337,19 @@ export const PASO_FUERA: Record<
       `Los ${p.dentro} casos de alto costo pasaron por una persona. Otros ${p.fuera} no tienen costo medido —el paso que lo escribe no corrió en ellos— y quedan fuera de la cuenta.`,
       `The ${p.dentro} high-cost cases went through a person. Another ${p.fuera} have no measured cost —the step that writes it did not run for them— and are left out of the count.`,
     )) as Plantilla<{ dentro: number; fuera: number }>,
+};
+
+/** Por demo (los ids de criterio de sus planes se cruzan); el B no tiene criterios con nota ni casos fuera. */
+export const LECTURA_NOTA: Record<IdDemo, Record<string, Plantilla<number>>> = {
+  "demo-a": LECTURA_NOTA_A,
+  "demo-b": {},
+};
+export const PASO_FUERA: Record<
+  IdDemo,
+  Record<string, Plantilla<{ dentro: number; fuera: number }>>
+> = {
+  "demo-a": PASO_FUERA_A,
+  "demo-b": {},
 };
 
 /** Lo que pasó, armado con las cifras del informe. */
@@ -254,6 +377,27 @@ export const PASO = {
     llamadas: number;
     llamadasBase: number;
   }>,
+  /** Lo que midió un supuesto frente a lo que pide el plan (en lugar del motivo crudo del verificador). */
+  contraUmbral: ((p: { partes: TextoBilingue[]; n: number }) =>
+    tb(
+      `Midió ${p.partes.map((x) => x.es).join(" y ")}, sobre ${p.n} casos.`,
+      `It measured ${p.partes.map((x) => x.en).join(" and ")}, on ${p.n} cases.`,
+    )) as Plantilla<{ partes: TextoBilingue[]; n: number }>,
+  medidaContra: ((p: {
+    nombre: TextoBilingue;
+    valor: TextoBilingue;
+    op: string;
+    umbral: TextoBilingue;
+  }) =>
+    tb(
+      `${p.nombre.es} ${p.valor.es} (el plan pide ${p.op} ${p.umbral.es})`,
+      `${p.nombre.en} ${p.valor.en} (the plan asks ${p.op} ${p.umbral.en})`,
+    )) as Plantilla<{
+    nombre: TextoBilingue;
+    valor: TextoBilingue;
+    op: string;
+    umbral: TextoBilingue;
+  }>,
   sinErrores: ((n: number) =>
     tb(
       `No se pudo comprobar: el modelo acertó los ${n} casos medidos y, sin un solo error, no hay con qué comparar su confianza.`,
@@ -276,25 +420,40 @@ export const PASO = {
     reintentos: number;
     corridas: number;
   }>,
-  mediana: ((p: { mediana: string; casos: string; valores: string }) =>
+  mediana: ((p: {
+    mediana: string;
+    casos: string;
+    valores: string;
+    n: number;
+  }) =>
     tb(
-      `La mediana fue ${p.mediana}. Pero ${p.casos} pasó el objetivo uno a uno: ${p.valores}.`,
+      `La mediana fue ${p.mediana}. Pero ${p.casos} ${p.n === 1 ? "pasó" : "pasaron"} el objetivo uno a uno: ${p.valores}.`,
       `The median was ${p.mediana}. But ${p.casos} went past the target one by one: ${p.valores}.`,
-    )) as Plantilla<{ mediana: string; casos: string; valores: string }>,
+    )) as Plantilla<{
+    mediana: string;
+    casos: string;
+    valores: string;
+    n: number;
+  }>,
   fuera: ((p: { dentro: number; fuera: number }) =>
     tb(
       `Los ${p.dentro} casos de la población cumplieron. Otros ${p.fuera} no tienen la señal que la define —el paso que la escribe no corrió en ellos— y quedan fuera de la cuenta.`,
       `The ${p.dentro} cases in the population met it. Another ${p.fuera} lack the signal that defines it —the step that writes it did not run for them— and are left out of the count.`,
     )) as Plantilla<{ dentro: number; fuera: number }>,
-  playground: ((p: { umbral: string; valor: string; caso: string }) =>
+  playground: ((p: {
+    umbral: string;
+    valor: string;
+    caso: string;
+    n: number;
+  }) =>
     tb(
-      `En el playground, con ${p.umbral} en ${p.valor}, deja de cumplirse (${p.caso} saldría sin persona).`,
+      `En el playground, con ${p.umbral} en ${p.valor}, deja de cumplirse (${p.caso} ${p.n === 1 ? "saldría" : "saldrían"} sin persona).`,
       `In the playground, with ${p.umbral} at ${p.valor}, it stops being met (${p.caso} would go out without a person).`,
-    )) as Plantilla<{ umbral: string; valor: string; caso: string }>,
+    )) as Plantilla<{ umbral: string; valor: string; caso: string; n: number }>,
 };
 
 /** Nombre llano de cada nodo dentro de una frase («el extractor no entregó…»). */
-export const NODO_EN_FRASE: Record<string, TextoBilingue> = {
+const NODO_EN_FRASE_A: Record<string, TextoBilingue> = {
   enrutador: tb("el enrutador", "the router"),
   extractor: tb("el extractor", "the extractor"),
   aclaracion: tb("el nodo de aclaración", "the clarification node"),
@@ -306,6 +465,11 @@ export const NODO_EN_FRASE: Record<string, TextoBilingue> = {
   pausa_humana: tb("la pausa humana", "the human pause"),
   redactor: tb("el redactor", "the writer"),
   guardia_salida: tb("la guardia de salida", "the output guard"),
+};
+
+export const NODO_EN_FRASE: Record<IdDemo, Record<string, TextoBilingue>> = {
+  "demo-a": NODO_EN_FRASE_A,
+  "demo-b": NODO_EN_FRASE_B,
 };
 
 export const BALANCE = {
@@ -455,6 +619,8 @@ export const COLUMNAS = {
 export const ETIQUETA_FILA = {
   fallo: tb("Falló", "Failed"),
   sinProbar: tb("Sin probar", "Untested"),
+  /** Medido, pero sin poder decidirse (pass^k con menos corridas de las exigidas): no es «sin probar». */
+  incompleto: tb("Incompleto", "Incomplete"),
   conNota: tb("Cumple, con nota", "Met, with a note"),
   noPrevisto: tb("no previsto", "unforeseen"),
 };
@@ -490,11 +656,26 @@ export const CUMPLIDO = {
       `${p.a} de ${p.b} ${p.b === 1 ? "sesión" : "sesiones"}`,
       `${p.a} of ${p.b} ${p.b === 1 ? "session" : "sessions"}`,
     )) as Plantilla<{ a: number; b: number }>,
-  corridas: ((p: { valor: string; k: number; de: number }) =>
-    tb(
-      `${p.valor} · ${p.k} de ${p.de} corridas`,
-      `${p.valor} · ${p.k} of ${p.de} runs`,
-    )) as Plantilla<{ valor: string; k: number; de: number }>,
+  corridas: ((p: {
+    valor: string;
+    k: number;
+    de: number;
+    lote?: number | null;
+  }) =>
+    p.lote
+      ? tb(
+          `${p.valor} · ${p.k === 1 ? "1 corrida" : `${p.k} corridas`} (pide ${p.de} solo en lotes de ${p.lote})`,
+          `${p.valor} · ${p.k === 1 ? "1 run" : `${p.k} runs`} (asks for ${p.de} only in batches of ${p.lote})`,
+        )
+      : tb(
+          `${p.valor} · ${p.k} de ${p.de} corridas`,
+          `${p.valor} · ${p.k} of ${p.de} runs`,
+        )) as Plantilla<{
+    valor: string;
+    k: number;
+    de: number;
+    lote?: number | null;
+  }>,
 };
 
 export const IPO = {
@@ -694,23 +875,48 @@ export const PLAN_EN_BREVE = {
 export const CRITERIOS = {
   chip: ((p: { n: number; k: number }) =>
     tb(
-      `real · ${p.n} casos × ${p.k} corridas`,
-      `real · ${p.n} cases × ${p.k} runs`,
+      `real · ${p.n} casos × ${p.k} ${p.k === 1 ? "corrida" : "corridas"}`,
+      `real · ${p.n} cases × ${p.k} ${p.k === 1 ? "run" : "runs"}`,
     )) as Plantilla<{ n: number; k: number }>,
   lectura: ((p: {
     n: number;
     cumplen: number;
     exigente: string | null;
     k: number;
-  }) =>
-    tb(
-      `Cada criterio es una promesa del plan con su regla de medición. ${p.cumplen === p.n ? `Los ${p.n} se cumplieron` : `Se cumplieron ${p.cumplen} de ${p.n}`}${p.exigente ? `; el más exigente, ${p.exigente}, tenía que cumplirse en las ${p.k} corridas seguidas` : ""}.`,
-      `Each criterion is a promise of the plan with its measurement rule. ${p.cumplen === p.n ? `All ${p.n} were met` : `${p.cumplen} of ${p.n} were met`}${p.exigente ? `; the most demanding, ${p.exigente}, had to be met in the ${p.k} runs in a row` : ""}.`,
-    )) as Plantilla<{
+    /** Las corridas que hubo y si el criterio quedó incompleto por faltar (F7). */
+    corridas: number;
+    incompleto: boolean;
+    /** Si el plan limita su k a lotes de otro tamaño (verificador 1.3.0): ese tamaño; si no, `null`. */
+    soloEnLotesDe: number | null;
+  }) => {
+    const exigente: TextoBilingue = !p.exigente
+      ? { es: "", en: "" }
+      : p.soloEnLotesDe
+        ? {
+            es: `; el más exigente, ${p.exigente}, pide ${p.k} corridas seguidas solo en los lotes de ${p.soloEnLotesDe} casos: en este se midió en ${p.corridas === 1 ? "una corrida" : `${p.corridas} corridas`}`,
+            en: `; the most demanding, ${p.exigente}, asks for ${p.k} runs in a row only in batches of ${p.soloEnLotesDe} cases: this one was measured in ${p.corridas === 1 ? "one run" : `${p.corridas} runs`}`,
+          }
+        : p.incompleto
+          ? {
+              es: `; el más exigente, ${p.exigente}, pide ${p.k} corridas seguidas y aquí hubo ${p.corridas}: quedó incompleto`,
+              en: `; the most demanding, ${p.exigente}, asks for ${p.k} runs in a row and there ${p.corridas === 1 ? "was" : "were"} ${p.corridas} here: it was left incomplete`,
+            }
+          : {
+              es: `; el más exigente, ${p.exigente}, tenía que cumplirse en las ${p.k} corridas seguidas`,
+              en: `; the most demanding, ${p.exigente}, had to be met in the ${p.k} runs in a row`,
+            };
+    return tb(
+      `Cada criterio es una promesa del plan con su regla de medición. ${p.cumplen === p.n ? `Los ${p.n} se cumplieron` : `Se cumplieron ${p.cumplen} de ${p.n}`}${exigente.es}.`,
+      `Each criterion is a promise of the plan with its measurement rule. ${p.cumplen === p.n ? `All ${p.n} were met` : `${p.cumplen} of ${p.n} were met`}${exigente.en}.`,
+    );
+  }) as Plantilla<{
     n: number;
     cumplen: number;
     exigente: string | null;
     k: number;
+    corridas: number;
+    incompleto: boolean;
+    soloEnLotesDe: number | null;
   }>,
   columnas: {
     criterio: tb("Criterio", "Criterion"),
@@ -728,21 +934,31 @@ export const CRITERIOS = {
   maximo: tb("máximo", "maximum"),
   objetivo: tb("objetivo", "target"),
   todos: tb("todos", "all"),
-  corridas: ((p: { k: number; de: number; n: number }) =>
-    tb(
-      `${p.k} de ${p.de} corridas · ${p.n} casos`,
-      `${p.k} of ${p.de} runs · ${p.n} cases`,
-    )) as Plantilla<{ k: number; de: number; n: number }>,
+  corridas: ((p: { k: number; de: number; n: number; lote?: number | null }) =>
+    p.lote
+      ? tb(
+          `${p.k === 1 ? "1 corrida" : `${p.k} corridas`} · ${p.n} casos (pide ${p.de} solo en lotes de ${p.lote})`,
+          `${p.k === 1 ? "1 run" : `${p.k} runs`} · ${p.n} cases (asks for ${p.de} only in batches of ${p.lote})`,
+        )
+      : tb(
+          `${p.k} de ${p.de} corridas · ${p.n} casos`,
+          `${p.k} of ${p.de} runs · ${p.n} cases`,
+        )) as Plantilla<{
+    k: number;
+    de: number;
+    n: number;
+    lote?: number | null;
+  }>,
   fuera: ((n: number) =>
     tb(
       `${n} ${n === 1 ? "caso queda" : "casos quedan"} fuera: en ${n === 1 ? "él" : "ellos"} la señal que define la población no existe, porque el paso que la escribe no corrió.`,
       `${n} ${n === 1 ? "case is" : "cases are"} left out: the signal that defines the population does not exist for ${n === 1 ? "it" : "them"}, because the step that writes it did not run.`,
     )) as Plantilla<number>,
-  unoAUno: ((p: { casos: string; valores: string }) =>
+  unoAUno: ((p: { casos: string; valores: string; n: number }) =>
     tb(
-      `Se mide sobre el agregado. Uno a uno, ${p.casos} pasó el objetivo: ${p.valores}.`,
+      `Se mide sobre el agregado. Uno a uno, ${p.casos} ${p.n === 1 ? "pasó" : "pasaron"} el objetivo: ${p.valores}.`,
       `It is measured on the aggregate. One by one, ${p.casos} went past the target: ${p.valores}.`,
-    )) as Plantilla<{ casos: string; valores: string }>,
+    )) as Plantilla<{ casos: string; valores: string; n: number }>,
   noEvaluables: ((p: { n: number; casos: string }) =>
     tb(
       `${p.n} ${p.n === 1 ? "caso no se pudo" : "casos no se pudieron"} evaluar: ${p.casos}.`,
@@ -888,8 +1104,14 @@ export const CATEGORIA_CORTA: Record<CategoriaBrecha, TextoBilingue> = {
 };
 
 /** El nombre corto del criterio más exigente (el de `pass^k`), en la lectura de § 3. */
-export const CRITERIO_EXIGENTE: Record<string, TextoBilingue> = {
-  C5: tb("la exactitud de extracción", "extraction accuracy"),
+export const CRITERIO_EXIGENTE: Record<
+  IdDemo,
+  Record<string, TextoBilingue>
+> = {
+  "demo-a": {
+    C5: tb("la exactitud de extracción", "extraction accuracy"),
+  },
+  "demo-b": {},
 };
 
 export const CATEGORIA_LECTURA: Record<string, TextoBilingue> = {
@@ -908,8 +1130,8 @@ export const TIPO_EVALUADOR: Record<string, TextoBilingue> = {
 export const ESTADO_EVALUADOR: Record<string, TextoBilingue> = {
   ejecutado: tb("ejecutado", "run"),
   no_ejecutado_opcional: tb(
-    "no corrió (opcional en este corte)",
-    "did not run (optional in this cut)",
+    "no corrió (opcional; el plan no lo exige)",
+    "did not run (optional; the plan does not require it)",
   ),
   no_ejecutado: tb("no corrió", "did not run"),
   sin_implementacion: tb("sin implementación", "not implemented"),
@@ -921,34 +1143,48 @@ export const SUPUESTOS = {
     "Los supuestos son lo que el plan dio por cierto sin haberlo probado. Cada uno trae una prueba barata; el verificador la corre y dice si se confirmó, se refutó o quedó sin probar.",
     "Assumptions are what the plan took as true without having tested it. Each comes with a cheap test; the verifier runs it and says whether it was confirmed, refuted or left untested.",
   ),
-  /** La lectura llana de lo que salió de cada supuesto, por id y estado. */
+  /** La lectura llana de lo que salió de cada supuesto, por demo, id y estado (los ids de sus planes se cruzan). */
   dio: {
-    "S1:sin_probar": ((n: number) =>
-      tb(
-        `La prueba pedía medir si la confianza del modelo separa aciertos de errores. El modelo acertó los ${n} casos: sin errores, esa medida no existe y el supuesto queda abierto.`,
-        `The test asked whether the model’s confidence separates hits from errors. The model got all ${n} cases right: with no errors, that measure does not exist and the assumption stays open.`,
-      )) as Plantilla<number>,
-    "S3:refutado": ((p: {
-      exactitud: string;
-      exactitudBase: string;
-      latencia: string;
-      latenciaBase: string;
-    }) =>
-      tb(
-        `El plan suponía que repartir el trabajo entre varios agentes no rendiría peor que uno solo. Acertó más (${p.exactitud} frente a ${p.exactitudBase}) pero tardó más (${p.latencia} frente a ${p.latenciaBase}), y el plan solo tolera la misma demora: refutado.`,
-        `The plan assumed that splitting the work among several agents would do no worse than one. It got more right (${p.exactitud} against ${p.exactitudBase}) but took longer (${p.latencia} against ${p.latenciaBase}), and the plan only tolerates the same delay: refuted.`,
-      )) as Plantilla<{
-      exactitud: string;
-      exactitudBase: string;
-      latencia: string;
-      latenciaBase: string;
-    }>,
-    "S2:confirmado": ((p: { n: number; u: number }) =>
-      tb(
-        `Los ${p.n} casos con datos faltantes que recibieron respuesta se cerraron en ${p.u} aclaraciones o menos.`,
-        `The ${p.n} cases with missing data that got an answer were closed in ${p.u} clarifications or fewer.`,
-      )) as Plantilla<{ n: number; u: number }>,
-  } as Record<string, (p: never) => TextoBilingue>,
+    "demo-a": {
+      "S1:sin_probar": ((n: number) =>
+        tb(
+          `La prueba pedía medir si la confianza del modelo separa aciertos de errores. El modelo acertó los ${n} casos: sin errores, esa medida no existe y el supuesto queda abierto.`,
+          `The test asked whether the model’s confidence separates hits from errors. The model got all ${n} cases right: with no errors, that measure does not exist and the assumption stays open.`,
+        )) as Plantilla<number>,
+      "S3:refutado": ((p: ComparacionS3) =>
+        tb(
+          `El plan suponía que repartir el trabajo entre varios agentes no rendiría peor que uno solo. ${comparacionS3(p).es}, y el plan no tolera rendir peor en ninguna de las dos: refutado.`,
+          `The plan assumed that splitting the work among several agents would do no worse than one. ${comparacionS3(p).en}, and the plan tolerates doing worse on neither: refuted.`,
+        )) as Plantilla<ComparacionS3>,
+      "S3:confirmado": ((p: ComparacionS3) =>
+        tb(
+          `El plan suponía que repartir el trabajo entre varios agentes no rendiría peor que uno solo. ${comparacionS3(p).es}: confirmado.`,
+          `The plan assumed that splitting the work among several agents would do no worse than one. ${comparacionS3(p).en}: confirmed.`,
+        )) as Plantilla<ComparacionS3>,
+      "S2:confirmado": ((p: { n: number; u: number }) =>
+        tb(
+          `Los ${p.n} casos con datos faltantes que recibieron respuesta se cerraron en ${p.u} aclaraciones o menos.`,
+          `The ${p.n} cases with missing data that got an answer were closed in ${p.u} clarifications or fewer.`,
+        )) as Plantilla<{ n: number; u: number }>,
+      // Corrida de 200 del plan v1.5 (S3).
+      "S2:refutado": ((p: { n: number; u: number; a: number }) =>
+        tb(
+          `De los ${p.n} casos con datos faltantes que recibieron respuesta, ${p.a} se cerraron en ${p.u} aclaraciones o menos: menos de los que el plan suponía.`,
+          `Of the ${p.n} cases with missing data that got an answer, ${p.a} were closed in ${p.u} clarifications or fewer: fewer than the plan assumed.`,
+        )) as Plantilla<{ n: number; u: number; a: number }>,
+      "S1:confirmado": ((n: number) =>
+        tb(
+          `La prueba pedía medir si la confianza del modelo separa aciertos de errores. Sobre ${n} casos medidos, sí: el umbral U1 tiene respaldo medido.`,
+          `The test asked whether the model’s confidence separates hits from errors. Over ${n} measured cases it does: threshold U1 has measured backing.`,
+        )) as Plantilla<number>,
+    },
+    "demo-b": DIO_SUPUESTO_B,
+  } as Record<IdDemo, Record<string, (p: never) => TextoBilingue>>,
+  /** La nota de la cifra de un supuesto de tasa cuando el plan no la ata a un tope (el B). */
+  aciertosNota: tb(
+    "resueltos como dice la verdad conocida",
+    "resolved as the known truth says",
+  ),
   noExiste: tb(
     "no existe: no hubo errores",
     "does not exist: there were no errors",
@@ -1302,8 +1538,8 @@ export const EXPERTO = {
     juezSinCorrer: boolean;
   }) =>
     tb(
-      `${p.corridas} corridas · ${p.ejecutados} evaluadores de regla ejecutados, ${p.fallas} ${p.fallas === 1 ? "falla" : "fallas"}${p.juezSinCorrer ? " · el juez con modelo no corrió (opcional en este corte)" : ""}`,
-      `${p.corridas} runs · ${p.ejecutados} rule evaluators run, ${p.fallas} ${p.fallas === 1 ? "failure" : "failures"}${p.juezSinCorrer ? " · the model judge did not run (optional in this cut)" : ""}`,
+      `${p.corridas} ${p.corridas === 1 ? "corrida" : "corridas"} · ${p.ejecutados} evaluadores de regla ejecutados, ${p.fallas} ${p.fallas === 1 ? "falla" : "fallas"}${p.juezSinCorrer ? " · el juez con modelo no corrió (opcional; el plan no lo exige)" : ""}`,
+      `${p.corridas} ${p.corridas === 1 ? "run" : "runs"} · ${p.ejecutados} rule evaluators run, ${p.fallas} ${p.fallas === 1 ? "failure" : "failures"}${p.juezSinCorrer ? " · the model judge did not run (optional; the plan does not require it)" : ""}`,
     )) as Plantilla<{
     corridas: number;
     ejecutados: number;

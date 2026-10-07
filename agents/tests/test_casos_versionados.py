@@ -20,6 +20,7 @@ def test_hay_lotes_versionados() -> None:
         "planlang-a-001-20.json",
         "planlang-a-001-200.json",
         "planlang-a-humo-3.json",
+        "planlang-a-002-200.json",
     }
 
 
@@ -28,8 +29,9 @@ def test_la_huella_del_lote_verifica_desde_python(ruta: Path) -> None:
     lote = leer_verificando(ruta)
     assert lote["formato"] == "planlang-casos/v1"
     assert len(lote["casos"]) == lote["n"]
-    # El de 200 pasó a la v1.4 en el S2 (AU-9 cambió el contrato de grafo); el de 20 y el de humo, v1.1.
-    version = "v1.4" if lote["n"] == 200 else "v1.1"
+    # El de 200 pasó a la v1.4 en el S2 (AU-9 cambió el contrato de grafo); el de 20 y el de humo, v1.1;
+    # el 002 es el de 200 de la v1.5 (S3: aprobación parcial con el plan de beneficios v2).
+    version = "v1.5" if lote["semilla"] == "planlang-a-002" else "v1.4" if lote["n"] == 200 else "v1.1"
     plan = leer_verificando(RAIZ / "plans" / "demo-a" / f"{version}.json")
     assert lote["plan"]["huella"] == plan["huella"]
 

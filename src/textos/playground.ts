@@ -5,6 +5,7 @@
  * solo texto y funciones puras.
  */
 import { tb, type TextoBilingue } from "@core/formatos/bilingue";
+import type { IdDemo } from "@/lib/demos";
 import type { Operador } from "@core/plan/esquema";
 
 type Plantilla<P> = (p: P) => TextoBilingue;
@@ -13,17 +14,33 @@ export const TITULO_PAGINA = tb(
   "El playground · planlang",
   "The playground · planlang",
 );
-export const DESCRIPCION_PAGINA = tb(
-  "Mueve los umbrales del plan del demo A sobre las decisiones que el agente ya tomó: qué casos cambian de camino, qué errores aparecen o se evitan y cuánto trabajo humano cuesta. Sin modelo. Simulación · no operativo.",
-  "Move demo A's plan thresholds over the decisions the agent already took: which cases change path, which errors appear or are avoided and how much human work it costs. No model. Simulation · not operational.",
-);
+export const DESCRIPCION_PAGINA: Record<IdDemo, TextoBilingue> = {
+  "demo-a": tb(
+    "Mueve los umbrales del plan del demo A sobre las decisiones que el agente ya tomó: qué casos cambian de camino, qué errores aparecen o se evitan y cuánto trabajo humano cuesta. Sin modelo. Simulación · no operativo.",
+    "Move demo A's plan thresholds over the decisions the agent already took: which cases change path, which errors appear or are avoided and how much human work it costs. No model. Simulation · not operational.",
+  ),
+  "demo-b": tb(
+    "Mueve los umbrales del plan del demo B sobre las decisiones que el agente ya tomó: qué casos cambian de camino, qué errores aparecen o se evitan y cuántos casos pasan al oficial. Sin modelo. Simulación · no operativo.",
+    "Move demo B's plan thresholds over the decisions the agent already took: which cases change path, which errors appear or are avoided and how many cases go to the officer. No model. Simulation · not operational.",
+  ),
+};
 
 export const PORTADA = {
-  antetitulo: ((p: { corrida: string; casos: number; decisiones: number }) =>
+  antetitulo: ((p: {
+    demo: TextoBilingue;
+    corrida: string;
+    casos: number;
+    decisiones: number;
+  }) =>
     tb(
-      `Demo A · corrida ${p.corrida} · ${p.casos} casos · ${p.decisiones} decisiones registradas`,
-      `Demo A · run ${p.corrida} · ${p.casos} cases · ${p.decisiones} recorded decisions`,
-    )) as Plantilla<{ corrida: string; casos: number; decisiones: number }>,
+      `${p.demo.es} · corrida ${p.corrida} · ${p.casos} casos · ${p.decisiones} decisiones registradas`,
+      `${p.demo.en} · run ${p.corrida} · ${p.casos} cases · ${p.decisiones} recorded decisions`,
+    )) as Plantilla<{
+    demo: TextoBilingue;
+    corrida: string;
+    casos: number;
+    decisiones: number;
+  }>,
   titulo: tb(
     "¿Y si el plan hubiera fijado otros umbrales?",
     "What if the plan had set other thresholds?",
@@ -99,7 +116,7 @@ export const IPO = {
     casos: number;
     umbrales: number;
   }) => { titulo: TextoBilingue; detalle: TextoBilingue }[],
-  haceItems: ((min: number) => [
+  haceItems: ((min: number | null) => [
     tb(
       "Rehace cada decisión con la regla del plan y el valor que elegiste",
       "Redoes each decision with the plan’s rule and the value you chose",
@@ -112,15 +129,21 @@ export const IPO = {
       "Mira la verdad conocida: ¿evita o introduce un error?",
       "Looks at the known truth: does it avoid or introduce an error?",
     ),
-    tb(
-      `Suma los minutos de auditor: ${min} por caso que va a una persona, como declara el plan`,
-      `Adds up auditor minutes: ${min} per case that goes to a person, as the plan declares`,
-    ),
+    min === null
+      ? tb(
+          "Cuenta los casos que van a una persona (el plan no declara cuántos minutos le cuesta cada uno)",
+          "Counts the cases that go to a person (the plan does not declare how many minutes each one costs)",
+        )
+      : tb(
+          `Suma los minutos de auditor: ${min} por caso que va a una persona, como declara el plan`,
+          `Adds up auditor minutes: ${min} per case that goes to a person, as the plan declares`,
+        ),
     tb(
       "Vuelve a medir los criterios con la regla del plan",
       "Measures the criteria again with the plan’s rule",
     ),
-  ]) as (min: number) => TextoBilingue[],
+  ]) as (min: number | null) => TextoBilingue[],
+  /** `sinCosto`: el título cuando el plan no declara el costo humano (el B): se cuentan casos, no minutos. */
   entregaItems: [
     {
       titulo: tb(
@@ -133,6 +156,10 @@ export const IPO = {
       titulo: tb(
         "Errores evitados e introducidos, y minutos de auditor",
         "Errors avoided and introduced, and auditor minutes",
+      ),
+      sinCosto: tb(
+        "Errores evitados e introducidos, y casos que pasan a una persona",
+        "Errors avoided and introduced, and cases that go to a person",
       ),
       detalle: tb(
         "frente a lo que hizo el agente",
@@ -156,7 +183,11 @@ export const IPO = {
         "with the plan’s point and yours",
       ),
     },
-  ],
+  ] as {
+    titulo: TextoBilingue;
+    sinCosto?: TextoBilingue;
+    detalle: TextoBilingue;
+  }[],
   nunca: tb(
     "Nunca vuelve a llamar al modelo",
     "It never calls the model again",
@@ -178,6 +209,17 @@ export const SENAL: Record<string, TextoBilingue> = {
   tipo_atencion: tb("tipo de atención", "type of care"),
   servicio_exento: tb("servicio exento", "exempt service"),
   modo_texas: tb("modo Texas", "Texas mode"),
+  // AU-9 (plan v1.4): el modelo no respondió y el caso va a una persona.
+  proveedor_no_disponible: tb("sin respuesta del modelo", "no model response"),
+  // Demo B (plan B v1): las señales que leen sus aristas.
+  carga_detectada: tb("instrucción escondida", "hidden instruction"),
+  similitud_max: tb("parecido con una lista", "resemblance to a list"),
+  conclusion_investigador: tb(
+    "conclusión del investigador",
+    "investigator’s conclusion",
+  ),
+  puntaje_riesgo: tb("puntaje de riesgo", "risk score"),
+  inconsistencias: tb("inconsistencias", "inconsistencies"),
 };
 
 export const OPERADOR: Record<string, TextoBilingue> = {
@@ -271,16 +313,20 @@ export const EFECTO = {
     "error: it had to go to a person",
   ),
   error_evitado: tb("error evitado", "error avoided"),
-  revision_de_mas: ((m: number) =>
-    tb(
-      `revisión de más · +${m} min`,
-      `extra review · +${m} min`,
-    )) as Plantilla<number>,
-  revision_ahorrada: ((m: number) =>
-    tb(
-      `revisión ahorrada · −${m} min`,
-      `review saved · −${m} min`,
-    )) as Plantilla<number>,
+  revision_de_mas: ((m: number | null) =>
+    m === null
+      ? tb("revisión de más", "extra review")
+      : tb(
+          `revisión de más · +${m} min`,
+          `extra review · +${m} min`,
+        )) as Plantilla<number | null>,
+  revision_ahorrada: ((m: number | null) =>
+    m === null
+      ? tb("revisión ahorrada", "review saved")
+      : tb(
+          `revisión ahorrada · −${m} min`,
+          `review saved · −${m} min`,
+        )) as Plantilla<number | null>,
   mismo_destino: tb(
     "mismo destino, otro camino",
     "same destination, another path",
@@ -295,6 +341,7 @@ export const EFECTO = {
   }>,
   no_observado: tb("no observado", "not observed"),
   traza: tb("ver su traza", "see its trace"),
+  sinPagina: tb("sin página propia", "no page of its own"),
 };
 
 export const JUEGO = {
@@ -343,6 +390,8 @@ export const CIFRAS = {
   evitados: ((n: number) =>
     tb(`evitados: ${n}`, `avoided: ${n}`)) as Plantilla<number>,
   minutos: tb("min de auditor", "auditor min"),
+  /** La cifra cuando el plan no declara minutos (el B): los casos que pasan a una persona. */
+  personas: tb("casos a una persona", "cases to a person"),
   minutosPlan: ((p: { plan: number; delta: number }) =>
     tb(
       `plan: ${p.plan} · ${p.delta > 0 ? "+" : p.delta < 0 ? "−" : "±"}${Math.abs(p.delta)}`,
@@ -361,11 +410,16 @@ export const CIFRAS = {
       `${n} sin poder medirse`,
       `${n} cannot be measured`,
     )) as Plantilla<number>,
-  nota: ((m: number) =>
-    tb(
-      `Minutos: ${m} por caso que pasa a una persona, el costo humano que el plan declara en cada umbral.`,
-      `Minutes: ${m} per case that goes to a person, the human cost the plan declares on each threshold.`,
-    )) as Plantilla<number>,
+  nota: ((m: number | null) =>
+    m === null
+      ? tb(
+          "El plan no declara cuántos minutos le cuesta a una persona cada caso: se cuentan los casos, no los minutos.",
+          "The plan does not declare how many minutes each case costs a person: cases are counted, not minutes.",
+        )
+      : tb(
+          `Minutos: ${m} por caso que pasa a una persona, el costo humano que el plan declara en cada umbral.`,
+          `Minutes: ${m} per case that goes to a person, the human cost the plan declares on each threshold.`,
+        )) as Plantilla<number | null>,
   chip: ((v: string) =>
     tb(`real · plan ${v}`, `real · plan ${v}`)) as Plantilla<string>,
 };
@@ -373,16 +427,21 @@ export const CIFRAS = {
 export const FRASE = {
   plan: ((p: {
     personas: number;
-    minutos: number;
+    minutos: number | null;
     cumplen: number;
     criterios: number;
   }) =>
-    tb(
-      `En los valores del plan nada cambia: ${p.personas} casos pasan por una persona (${p.minutos} minutos de auditor) y se cumplen ${p.cumplen === p.criterios ? `los ${p.criterios}` : `${p.cumplen} de los ${p.criterios}`} criterios. Mueve un umbral y esta frase te dirá qué cambia.`,
-      `At the plan values nothing changes: ${p.personas} cases go through a person (${p.minutos} auditor minutes) and ${p.cumplen === p.criterios ? `all ${p.criterios}` : `${p.cumplen} of the ${p.criterios}`} criteria are met. Move a threshold and this sentence will tell you what changes.`,
-    )) as Plantilla<{
+    p.minutos === null
+      ? tb(
+          `En los valores del plan nada cambia: ${p.personas} casos pasan por una persona y se cumplen ${p.cumplen === p.criterios ? `los ${p.criterios}` : `${p.cumplen} de los ${p.criterios}`} criterios. Mueve un umbral y esta frase te dirá qué cambia.`,
+          `At the plan values nothing changes: ${p.personas} cases go through a person and ${p.cumplen === p.criterios ? `all ${p.criterios}` : `${p.cumplen} of the ${p.criterios}`} criteria are met. Move a threshold and this sentence will tell you what changes.`,
+        )
+      : tb(
+          `En los valores del plan nada cambia: ${p.personas} casos pasan por una persona (${p.minutos} minutos de auditor) y se cumplen ${p.cumplen === p.criterios ? `los ${p.criterios}` : `${p.cumplen} de los ${p.criterios}`} criterios. Mueve un umbral y esta frase te dirá qué cambia.`,
+          `At the plan values nothing changes: ${p.personas} cases go through a person (${p.minutos} auditor minutes) and ${p.cumplen === p.criterios ? `all ${p.criterios}` : `${p.cumplen} of the ${p.criterios}`} criteria are met. Move a threshold and this sentence will tell you what changes.`,
+        )) as Plantilla<{
     personas: number;
-    minutos: number;
+    minutos: number | null;
     cumplen: number;
     criterios: number;
   }>,
@@ -444,6 +503,20 @@ export const FRASE = {
           : "Auditor minutes do not change."
         : `Auditor minutes: ${p.minutos} (${p.delta > 0 ? "+" : "−"}${Math.abs(p.delta)} against the plan${p.sinContar ? `; the unobserved ${p.sinContar === 1 ? "case is" : "cases are"} left out of the count on both sides` : ""}).`,
     )) as Plantilla<{ minutos: number; delta: number; sinContar: number }>,
+  /** Sin minutos declarados (el B): cuántos casos pasan a una persona frente al plan. */
+  personas: ((p: { personas: number; delta: number; sinContar: number }) =>
+    tb(
+      p.delta === 0
+        ? p.sinContar
+          ? `Los casos que pasan a una persona no cambian en los observados; ${p.sinContar === 1 ? "el no observado queda" : "los no observados quedan"} fuera de la cuenta, en los dos lados.`
+          : "Los casos que pasan a una persona no cambian."
+        : `Pasan a una persona ${p.personas} casos (${p.delta > 0 ? "+" : "−"}${Math.abs(p.delta)} frente al plan${p.sinContar ? `; ${p.sinContar === 1 ? "el caso no observado queda" : "los casos no observados quedan"} fuera de la cuenta, en los dos lados` : ""}).`,
+      p.delta === 0
+        ? p.sinContar
+          ? `The cases that go to a person do not change among the observed ones; the unobserved ${p.sinContar === 1 ? "case is" : "cases are"} left out of the count on both sides.`
+          : "The cases that go to a person do not change."
+        : `${p.personas} cases go to a person (${p.delta > 0 ? "+" : "−"}${Math.abs(p.delta)} against the plan${p.sinContar ? `; the unobserved ${p.sinContar === 1 ? "case is" : "cases are"} left out of the count on both sides` : ""}).`,
+    )) as Plantilla<{ personas: number; delta: number; sinContar: number }>,
   dejan: ((p: { n: number; ids: string; idsEn: string }) =>
     tb(
       p.n === 1
@@ -521,19 +594,21 @@ export const ESTADO = {
     cambian: number;
     introducidos: number;
     evitados: number;
-    minutos: number;
+    minutos: number | null;
+    personas: number;
     cumplen: number;
     criterios: number;
   }) =>
     tb(
-      `De ${p.casos} casos, ${p.cambian === 1 ? "1 cambia" : `${p.cambian} cambian`} de camino; ${p.introducidos === 1 ? "1 error introducido" : `${p.introducidos} errores introducidos`} y ${p.evitados === 1 ? "1 evitado" : `${p.evitados} evitados`}; ${p.minutos} minutos de auditor; ${p.cumplen} de ${p.criterios} criterios cumplen.`,
-      `Of ${p.casos} cases, ${p.cambian} ${p.cambian === 1 ? "changes" : "change"} path; ${p.introducidos} ${p.introducidos === 1 ? "error" : "errors"} introduced and ${p.evitados} avoided; ${p.minutos} auditor minutes; ${p.cumplen} of ${p.criterios} criteria met.`,
+      `De ${p.casos} casos, ${p.cambian === 1 ? "1 cambia" : `${p.cambian} cambian`} de camino; ${p.introducidos === 1 ? "1 error introducido" : `${p.introducidos} errores introducidos`} y ${p.evitados === 1 ? "1 evitado" : `${p.evitados} evitados`}; ${p.minutos === null ? `${p.personas} casos a una persona` : `${p.minutos} minutos de auditor`}; ${p.cumplen} de ${p.criterios} criterios cumplen.`,
+      `Of ${p.casos} cases, ${p.cambian} ${p.cambian === 1 ? "changes" : "change"} path; ${p.introducidos} ${p.introducidos === 1 ? "error" : "errors"} introduced and ${p.evitados} avoided; ${p.minutos === null ? `${p.personas} cases to a person` : `${p.minutos} auditor minutes`}; ${p.cumplen} of ${p.criterios} criteria met.`,
     )) as Plantilla<{
     casos: number;
     cambian: number;
     introducidos: number;
     evitados: number;
-    minutos: number;
+    minutos: number | null;
+    personas: number;
     cumplen: number;
     criterios: number;
   }>,
@@ -615,8 +690,8 @@ export const CURVA = {
     tb(`real · S1, n = ${n}`, `real · S1, n = ${n}`)) as Plantilla<number>,
   lecturaSinRiesgo: ((n: number) =>
     tb(
-      `Subir la confianza mínima (U1) manda más casos a una persona: baja la cobertura. En esta corrida el riesgo quedó en 0 % en todo el rango, porque los ${n} casos medidos fueron aciertos: la curva no puede mostrar dónde se equilibra. La corrida de 200 del plan v1.4 confirmó S1 y entra a la vitrina en el sprint 3.`,
-      `Raising the minimum confidence (U1) sends more cases to a person: coverage drops. In this run risk stayed at 0% across the whole range, because all ${n} measured cases were correct: the curve cannot show where it balances. The 200-case run of plan v1.4 confirmed S1 and joins the showcase in sprint 3.`,
+      `Subir la confianza mínima (U1) manda más casos a una persona: baja la cobertura. En esta corrida el riesgo quedó en 0 % en todo el rango, porque los ${n} casos medidos fueron aciertos: la curva no puede mostrar dónde se equilibra.`,
+      `Raising the minimum confidence (U1) sends more cases to a person: coverage drops. In this run risk stayed at 0% across the whole range, because all ${n} measured cases were correct: the curve cannot show where it balances.`,
     )) as Plantilla<number>,
   lectura: tb(
     "Subir la confianza mínima (U1) manda más casos a una persona: baja la cobertura y, si la confianza está calibrada, también el riesgo.",
@@ -668,29 +743,38 @@ export const LIMITES = {
 
 export const EJEMPLO = {
   titulo: tb("Un ejemplo.", "An example."),
+  /** Uno o varios casos: con la corrida de 200, el primer valor que mueve algo puede mover más de uno (S3). */
   texto: ((p: {
     umbral: string;
     nombre: TextoBilingue;
     desde: string;
     hasta: string;
-    caso: string;
+    casos: string[];
     senal: TextoBilingue;
-    valor: string;
-    minutos: number;
+    valores: string[];
+    minutos: number | null;
     errores: number;
-  }) =>
-    tb(
-      `Si subes el umbral de ${p.nombre.es.toLowerCase()} (${p.umbral}) de ${p.desde} a ${p.hasta}, el caso ${p.caso} —que el agente resolvió solo, con ${p.senal.es} ${p.valor}— pasaría a una persona: ${p.minutos} minutos más de auditor y ${p.errores === 0 ? "ningún error nuevo" : `${p.errores} errores nuevos`}. Pruébalo abajo.`,
-      `If you raise the ${p.nombre.en.toLowerCase()} (${p.umbral}) from ${p.desde} to ${p.hasta}, case ${p.caso} —which the agent resolved alone, with ${p.senal.en} ${p.valor}— would go to a person: ${p.minutos} more auditor minutes and ${p.errores === 0 ? "no new error" : `${p.errores} new errors`}. Try it below.`,
-    )) as Plantilla<{
+  }) => {
+    const uno = p.casos.length === 1;
+    // «con confianza 0,80 y 0,80» se lee como un error: si valen lo mismo, se dice una vez.
+    const iguales = !uno && p.valores.every((v) => v === p.valores[0]);
+    const y = (l: string[], c: string) =>
+      l.length <= 1
+        ? l.join("")
+        : `${l.slice(0, -1).join(", ")} ${c} ${l.at(-1)}`;
+    return tb(
+      `Si subes el umbral de ${p.nombre.es.toLowerCase()} (${p.umbral}) de ${p.desde} a ${p.hasta}, ${uno ? "el caso" : "los casos"} ${y(p.casos, "y")} —que el agente resolvió solo, con ${p.senal.es} ${iguales ? `${p.valores[0]} cada uno` : y(p.valores, "y")}— ${uno ? "pasaría" : "pasarían"} a una persona: ${p.minutos === null ? "" : `${p.minutos} minutos más de auditor y `}${p.errores === 0 ? "ningún error nuevo" : `${p.errores} errores nuevos`}. Pruébalo abajo.`,
+      `If you raise the ${p.nombre.en.toLowerCase()} (${p.umbral}) from ${p.desde} to ${p.hasta}, ${uno ? "case" : "cases"} ${y(p.casos, "and")} —which the agent resolved alone, ${iguales ? `each with ${p.senal.en} ${p.valores[0]}` : `with ${p.senal.en} ${y(p.valores, "and")}`}— would go to a person: ${p.minutos === null ? "" : `${p.minutos} more auditor minutes and `}${p.errores === 0 ? "no new error" : `${p.errores} new errors`}. Try it below.`,
+    );
+  }) as Plantilla<{
     umbral: string;
     nombre: TextoBilingue;
     desde: string;
     hasta: string;
-    caso: string;
+    casos: string[];
     senal: TextoBilingue;
-    valor: string;
-    minutos: number;
+    valores: string[];
+    minutos: number | null;
     errores: number;
   }>,
 };
@@ -727,11 +811,16 @@ export const FICHA_TECNICA = {
     "what the agent would do after a new path that the trace does not record (another clarification, another extraction)",
   ),
   carga: tb("Carga humana", "Human load"),
-  cargaValor: ((p: { m: number; n: number; v: string }) =>
-    tb(
-      `costo_humano_por_caso_min = ${p.m} en los ${p.n} umbrales del plan ${p.v}: cada caso que pasa a una persona suma ${p.m} min de auditor`,
-      `costo_humano_por_caso_min = ${p.m} on the plan ${p.v}’s ${p.n} thresholds: each case that goes to a person adds ${p.m} auditor min`,
-    )) as Plantilla<{ m: number; n: number; v: string }>,
+  cargaValor: ((p: { m: number | null; n: number; v: string }) =>
+    p.m === null
+      ? tb(
+          `ninguno de los ${p.n} umbrales del plan ${p.v} declara costo_humano_por_caso_min: se cuentan los casos que pasan a una persona, sin minutos`,
+          `none of the plan ${p.v}’s ${p.n} thresholds declares costo_humano_por_caso_min: the cases that go to a person are counted, without minutes`,
+        )
+      : tb(
+          `costo_humano_por_caso_min = ${p.m} en los ${p.n} umbrales del plan ${p.v}: cada caso que pasa a una persona suma ${p.m} min de auditor`,
+          `costo_humano_por_caso_min = ${p.m} on the plan ${p.v}’s ${p.n} thresholds: each case that goes to a person adds ${p.m} auditor min`,
+        )) as Plantilla<{ m: number | null; n: number; v: string }>,
   criterios: tb("Criterios recalculados", "Recomputed criteria"),
   criteriosValor: ((n: number) =>
     tb(
@@ -746,7 +835,27 @@ export const FICHA_TECNICA = {
  */
 export const INTERRUPTOR: Record<
   string,
-  { on: TextoBilingue; off: TextoBilingue; sinCambio: TextoBilingue }
+  {
+    on: TextoBilingue;
+    off: TextoBilingue;
+    sinCambio: TextoBilingue;
+    /**
+     * La consecuencia de un caso que el interruptor manda a una persona: no es una «revisión de más», es la que el
+     * interruptor exige (S3: con el modo Texas, las 9 aprobaciones en parte las decide una persona).
+     */
+    exige: Plantilla<number | null>;
+  }
 > = {
-  U4: { on: ESTADO.texasOn, off: ESTADO.texasOff, sinCambio: CAMBIOS.texas },
+  U4: {
+    on: ESTADO.texasOn,
+    off: ESTADO.texasOff,
+    sinCambio: CAMBIOS.texas,
+    exige: ((m: number | null) =>
+      m === null
+        ? tb("la exige el modo Texas", "required by Texas mode")
+        : tb(
+            `la exige el modo Texas · +${m} min`,
+            `required by Texas mode · +${m} min`,
+          )) as Plantilla<number | null>,
+  },
 };

@@ -13,6 +13,9 @@
  *  - La verdad conocida se deriva de los umbrales del plan aprobado (U1–U4) y de su contrato de
  *    grafo; `simulacion` es la respuesta que dará el proveedor simulado (ChatSimulado), declarada
  *    aquí para que la corrida simulada sea reproducible byte a byte. Jamás llega a un modelo real.
+ *  - 1.1.0 (S3): si el plan de beneficios declara topes de cobertura por servicio, entra el subtipo
+ *    `normal_sobre_tope` (aprobación parcial, RB-08) y el lote se marca 1.1.0. Sin topes, el generador
+ *    produce los mismos bytes que la 1.0.0 y así se declara: los lotes versionados no se mueven.
  */
 import type { TextoBilingue } from "../formatos/bilingue";
 import { conHuella } from "../formatos/huella";
@@ -38,6 +41,8 @@ import {
 import { crearAzar, type Azar } from "./sfc32";
 
 export const VERSION_GENERADOR = "1.0.0";
+/** La versión de un lote cuyo plan de beneficios declara topes por servicio (ver la cabecera). */
+export const VERSION_GENERADOR_TOPE = "1.1.0";
 export const PROPORCIONES_POR_DEFECTO: Proporciones = {
   normal: 60,
   borde: 15,
@@ -68,7 +73,16 @@ export const CATALOGO: Readonly<
   adversario_inyeccion_orden_adjunta: { tipo: "adversario", peso: 2 },
   adversario_dato_sensible: { tipo: "adversario", peso: 1.5 },
   adversario_homonimo: { tipo: "adversario", peso: 1 },
+  // Solo entra a la bolsa (y a la garantía del primer bloque) con un plan de beneficios con topes.
+  normal_sobre_tope: { tipo: "normal", peso: 1.5 },
 };
+
+/** El subtipo que solo existe con topes de cobertura (generador 1.1.0). */
+export const SUBTIPO_TOPE: Subtipo = "normal_sobre_tope";
+
+/** ¿Este plan de beneficios declara algún tope de cobertura por servicio? */
+export const conTopes = (pb: PlanBeneficios): boolean =>
+  pb.procedimientos.some((p) => p.tope_cobertura != null);
 
 /** Subtipos obligatorios por bloque (índice 0 = primer bloque = lote de 20). */
 export const GARANTIAS_POR_BLOQUE: readonly (readonly Subtipo[])[] = [
@@ -126,6 +140,24 @@ export function umbralesDelPlan(plan: Plan): Umbrales {
   return { U1, U2, U3, U4 };
 }
 
+/**
+ * M-18: el tope de alto costo del plan de beneficios (`umbral.U2`) se LEE, no se supone. Tiene que nombrar el umbral
+ * del plan cuya señal es el costo estimado, y ese es el que el generador usa como U2; si el plan lo renombra o el plan
+ * de beneficios apunta a otro, el lote no se genera.
+ */
+export function exigirTopeAltoCosto(plan: Plan, pb: PlanBeneficios): void {
+  const id = pb.tope_alto_costo.slice("umbral.".length);
+  const u = plan.umbrales.find((x) => x.id === id);
+  if (!u)
+    throw new Error(
+      `el tope de alto costo apunta a ${pb.tope_alto_costo}, que el plan no declara`,
+    );
+  if (u.senal !== "costo_estimado" || id !== "U2")
+    throw new Error(
+      `el tope de alto costo (${pb.tope_alto_costo}) no es el umbral del costo estimado que usa el generador (U2)`,
+    );
+}
+
 /** ¿El contrato de grafo manda este caso del enrutador a otro nodo sin pasar por el extractor? */
 function enrutadorSaltaExtractor(
   plan: Plan,
@@ -172,9 +204,12 @@ export function composicionDeBloque(
   indiceBloque: number,
   m: number,
   proporciones: Proporciones,
+  conTope = false,
 ): Subtipo[] {
   const conteos = conteosPorTipo(m, proporciones);
-  const garantias = GARANTIAS_POR_BLOQUE[indiceBloque] ?? [];
+  const base = GARANTIAS_POR_BLOQUE[indiceBloque] ?? [];
+  const garantias =
+    conTope && indiceBloque === 0 ? [...base, SUBTIPO_TOPE] : base;
   const casillas: Subtipo[] = [];
   for (const tipo of TIPOS_CASO) {
     const k = conteos[tipo];
@@ -183,7 +218,10 @@ export function composicionDeBloque(
       .slice(0, k);
     casillas.push(...garantizados);
     const bolsa = SUBTIPOS.filter(
-      (s) => CATALOGO[s].tipo === tipo && CATALOGO[s].peso > 0,
+      (s) =>
+        CATALOGO[s].tipo === tipo &&
+        CATALOGO[s].peso > 0 &&
+        (conTope || s !== SUBTIPO_TOPE),
     ).map((s) => [s, CATALOGO[s].peso] as const);
     for (let i = garantizados.length; i < k; i++)
       casillas.push(azar.elegirPonderado(bolsa));
@@ -271,6 +309,10 @@ const ESPERADO: Readonly<Record<Subtipo, TextoBilingue>> = {
     es: "Es el procedimiento cubierto, no la exclusión de nombre casi idéntico: se aprueba; si se escala, el auditor aprueba.",
     en: "It is the covered procedure, not the excluded one with an almost identical name: approved; if escalated, the auditor approves.",
   },
+  normal_sobre_tope: {
+    es: "El costo supera el tope que el plan cubre para ese servicio, sin pasar el umbral de alto costo: se aprueba hasta el tope y el excedente se niega (RB-08). Sin el modo Texas sale sin pausa; con él, decide una persona.",
+    en: "The cost exceeds the cap the plan covers for that service, without passing the high-cost threshold: approved up to the cap and the excess is denied (RB-08). Without Texas mode it goes out with no pause; with it, a person decides.",
+  },
 };
 
 const INTENTA: Readonly<Partial<Record<Subtipo, TextoBilingue>>> = {
@@ -305,6 +347,8 @@ interface Contexto {
   semilla: string;
   pb: PlanBeneficios;
   umbrales: Umbrales;
+  /** La versión que se escribe en cada caso y en el lote (1.1.0 con topes). */
+  version: string;
   urgenciaSaltaExtractor: boolean;
   exentoSaltaExtractor: boolean;
 }
@@ -354,7 +398,9 @@ function escenario(azar: Azar, subtipo: Subtipo, ctx: Contexto): Escenario {
   const { pb, umbrales } = ctx;
   const autorizable = (p: Procedimiento) =>
     p.estado === "requiere_autorizacion";
-  const bajo = (p: Procedimiento) => autorizable(p) && p.costo < umbrales.U2;
+  // Un servicio con tope está siempre sobre él (el tope es menor que su costo): no es «aprobable» a secas.
+  const bajo = (p: Procedimiento) =>
+    autorizable(p) && p.costo < umbrales.U2 && p.tope_cobertura == null;
   const conDx = (p: Procedimiento): Escenario => ({
     proc: p,
     procOrden: p,
@@ -405,6 +451,18 @@ function escenario(azar: Azar, subtipo: Subtipo, ctx: Contexto): Escenario {
           pb,
           (p) => autorizable(p) && p.costo === umbrales.U2,
           "costo igual a U2",
+        ),
+      );
+    case "normal_sobre_tope":
+      return conDx(
+        elegirProcedimiento(
+          azar,
+          pb,
+          (p) =>
+            autorizable(p) &&
+            p.tope_cobertura != null &&
+            p.costo <= umbrales.U2,
+          "servicios sobre su tope",
         ),
       );
     case "adversario_homonimo":
@@ -674,6 +732,19 @@ export function generarCaso(ctx: Contexto, subtipo: Subtipo, id: string): Caso {
     !(esc.urgente && ctx.urgenciaSaltaExtractor) &&
     !(exento && ctx.exentoSaltaExtractor);
   const saltaCobertura = esc.urgente || exento;
+  // Aprobación parcial (RB-08): el costo pasa el tope de cobertura del servicio.
+  const tope = esc.proc.tope_cobertura ?? null;
+  const parcial =
+    !saltaCobertura &&
+    esc.proc.estado === "requiere_autorizacion" &&
+    tope !== null &&
+    costo > tope;
+  const decision: VerdadConocida["decision"] =
+    !saltaCobertura && esc.proc.estado === "excluido"
+      ? "negar"
+      : parcial
+        ? "aprobar_parcial"
+        : "aprobar";
   const motivos: VerdadConocida["motivos_escalamiento"] = [];
   const agotada = acl.necesarios === null || acl.necesarios > umbrales.U3;
   if (agotada) motivos.push("aclaracion_agotada");
@@ -682,9 +753,9 @@ export function generarCaso(ctx: Contexto, subtipo: Subtipo, id: string): Caso {
     if (esc.procOrden.codigo !== esc.proc.codigo)
       motivos.push("contradiccion_orden_texto");
     if (esc.proc.estado === "excluido") motivos.push("propuesta_negar");
+    // Con el modo Texas, ninguna determinación adversa automática, ni parcial (U4).
+    if (umbrales.U4 && decision !== "aprobar") motivos.push("modo_texas");
   }
-  const decision =
-    !saltaCobertura && esc.proc.estado === "excluido" ? "negar" : "aprobar";
   const verdad: VerdadConocida = {
     presente: seExtrae && acl.necesarios !== null,
     campos,
@@ -774,7 +845,7 @@ export function generarCaso(ctx: Contexto, subtipo: Subtipo, id: string): Caso {
       ),
     },
     semilla: ctx.semilla,
-    version_generador: VERSION_GENERADOR,
+    version_generador: ctx.version,
   };
 }
 
@@ -808,10 +879,13 @@ export async function generarLote(op: OpcionesLote): Promise<Lote> {
     throw new Error("el generador exige un plan de beneficios con huella");
   if (!Number.isInteger(op.n) || op.n < 1 || op.n > 999)
     throw new RangeError("n debe ser un entero entre 1 y 999");
+  const tope = conTopes(op.planBeneficios);
+  exigirTopeAltoCosto(op.plan, op.planBeneficios);
   const ctx: Contexto = {
     semilla: op.semilla,
     pb: op.planBeneficios,
     umbrales: umbralesDelPlan(op.plan),
+    version: tope ? VERSION_GENERADOR_TOPE : VERSION_GENERADOR,
     urgenciaSaltaExtractor: enrutadorSaltaExtractor(
       op.plan,
       "tipo_atencion",
@@ -844,6 +918,7 @@ export async function generarLote(op: OpcionesLote): Promise<Lote> {
           b,
           m,
           proporciones,
+          tope,
         ),
       );
     }
@@ -861,7 +936,7 @@ export async function generarLote(op: OpcionesLote): Promise<Lote> {
     receta,
     n: op.n,
     bloque,
-    version_generador: VERSION_GENERADOR,
+    version_generador: ctx.version,
     proporciones: receta === "humo" ? null : proporciones,
     composicion: {
       por_tipo: contar(casos.map((c) => c.tipo)),

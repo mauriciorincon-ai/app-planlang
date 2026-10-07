@@ -6,7 +6,7 @@
  *  2. **Build del paquete** (`PLANLANG_PAQUETE=1`, sin DSN de Sentry): base `/piezas/planlang`, enlaces `.html`, su
  *     propia carpeta (`.next-paquete/`), id de build fijo. Y el diagrama = grafo sobre ese export.
  *  3. **Copia** a `dist/paquete-hoja-de-vida/`, con el árbol de hoja-de-vida: `public/piezas/planlang/` (la vitrina,
- *     sin las cargas RSC), `content/agentes/` (la ficha del agente A), `content/vitrina/` (el export de la app) y
+ *     sin las cargas RSC), `content/agentes/` (las fichas de los agentes A y B), `content/vitrina/` (el export de la app) y
  *     `data/fichas/planlang.yaml` (el complemento que planlang propone).
  *  4. **Barridos** (`scripts/paquete/barridos.ts`): toda dirección bajo la base y con archivo, enlaces con `.html`,
  *     nada externo, sin localhost, Sentry, dominios de despliegue ni maqueta, y el rótulo en cada página.
@@ -40,6 +40,7 @@ import {
   RUTA_EXPORT_EN_HOJA_DE_VIDA,
   RUTA_FICHA_AGENTE,
 } from "../src/lib/fichas/rutas";
+import { DEMOS } from "../src/lib/demos";
 import { argumentos } from "./_io";
 import { arbolEnDisco } from "./paquete/arbol-disco";
 import { fusionarComplemento } from "./paquete/complemento";
@@ -185,7 +186,7 @@ async function main() {
     mkdirSync(dirname(join(DESTINO, a)), { recursive: true });
     cpSync(join(RAIZ, de), join(DESTINO, a));
   };
-  copiar(RUTA_FICHA_AGENTE, RUTA_FICHA_AGENTE);
+  for (const ruta of Object.values(RUTA_FICHA_AGENTE)) copiar(ruta, ruta);
   copiar(RUTA_EXPORT, RUTA_EXPORT_EN_HOJA_DE_VIDA);
   const complemento = JSON.parse(
     readFileSync(join(RAIZ, RUTA_COMPLEMENTO), "utf8"),
@@ -292,8 +293,12 @@ async function main() {
     copiar_a_hoja_de_vida: {
       "public/piezas/planlang/":
         "la vitrina (export estático, enlaces .html); borrar la carpeta en hoja-de-vida antes de copiar",
-      [RUTA_FICHA_AGENTE]:
-        "la ficha del agente A (contrato ficha técnica 1.3.1)",
+      ...Object.fromEntries(
+        DEMOS.map((d) => [
+          RUTA_FICHA_AGENTE[d],
+          `la ficha del agente ${d.slice("demo-".length).toUpperCase()} (contrato ficha técnica 1.3.1)`,
+        ]),
+      ),
       [RUTA_EXPORT_EN_HOJA_DE_VIDA]:
         "los hechos de la app (contrato brochure-export 1.0.0)",
       [RUTA_COMPLEMENTO_EN_HOJA_DE_VIDA]:

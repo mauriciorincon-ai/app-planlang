@@ -389,29 +389,69 @@ export async function validarInstrumento(
   };
 }
 
+/** Los textos del reporte de M9, redactados enteros en cada idioma (regla 20). */
+const TEXTOS_M9: Readonly<
+  Record<
+    "es" | "en",
+    {
+      titulo: string;
+      intro: (
+        corrida: string,
+        detectadas: number,
+        sembradas: number,
+        limpio: boolean,
+      ) => string;
+      cabecera: readonly string[];
+      detectada: string;
+      noDetectada: string;
+      pie: string;
+    }
+  >
+> = {
+  es: {
+    titulo: "## Español",
+    intro: (corrida, detectadas, sembradas, limpio) =>
+      `Sobre la corrida limpia \`${corrida}\` se siembra, una por vez, cada brecha de la tabla, y se corre el verificador. **Detectadas: ${detectadas} de ${sembradas}.** Control sin sembrar: ${limpio ? "ninguna detección (sin falsos positivos)" : "✗ HUBO DETECCIONES EN LA CORRIDA LIMPIA"}.`,
+    cabecera: [
+      "Siembra",
+      "Caso",
+      "Qué se siembra",
+      "Quién debe detectarla",
+      "Resultado",
+    ],
+    detectada: "✓ detectada",
+    noDetectada: "✗ NO detectada",
+    pie: "Lo corre la CI en cada cambio (`tests/unit/core/brecha/m9.test.ts`); este archivo se regenera con `pnpm m9:reporte` y un test verifica que está al día.",
+  },
+  en: {
+    titulo: "## English",
+    intro: (corrida, detectadas, sembradas, limpio) =>
+      `On the clean run \`${corrida}\`, each gap in the table is seeded one at a time and the verifier is run. **Detected: ${detectadas} of ${sembradas}.** Unseeded control: ${limpio ? "no detection (no false positives)" : "✗ THE CLEAN RUN TRIGGERED DETECTIONS"}.`,
+    cabecera: [
+      "Seed",
+      "Case",
+      "What is seeded",
+      "Who must detect it",
+      "Result",
+    ],
+    detectada: "✓ detected",
+    noDetectada: "✗ NOT detected",
+    pie: "CI runs it on every change (`tests/unit/core/brecha/m9.test.ts`); this file is regenerated with `pnpm m9:reporte` and a test checks it is up to date.",
+  },
+};
+
 /** El reporte de M9 para el kit de prueba, en español y en inglés (un solo archivo, dos secciones). */
 export function renderizarM9(r: ResultadoM9, corrida: string): string {
   const fila = (xs: readonly string[]) =>
     `| ${xs.map((x) => x.replace(/\|/g, "\\|")).join(" | ")} |`;
-  const seccion = (i: "es" | "en") =>
-    [
-      i === "es" ? "## Español" : "## English",
+  const seccion = (i: "es" | "en") => {
+    const t = TEXTOS_M9[i];
+    return [
+      t.titulo,
       "",
-      i === "es"
-        ? `Sobre la corrida limpia \`${corrida}\` se siembra, una por vez, cada brecha de la tabla, y se corre el verificador. **Detectadas: ${r.detectadas} de ${r.sembradas}.** Control sin sembrar: ${r.control_limpio ? "ninguna detección (sin falsos positivos)" : "✗ HUBO DETECCIONES EN LA CORRIDA LIMPIA"}.`
-        : `On the clean run \`${corrida}\`, each gap in the table is seeded one at a time and the verifier is run. **Detected: ${r.detectadas} of ${r.sembradas}.** Unseeded control: ${r.control_limpio ? "no detection (no false positives)" : "✗ THE CLEAN RUN TRIGGERED DETECTIONS"}.`,
+      t.intro(corrida, r.detectadas, r.sembradas, r.control_limpio),
       "",
-      fila(
-        i === "es"
-          ? [
-              "Siembra",
-              "Caso",
-              "Qué se siembra",
-              "Quién debe detectarla",
-              "Resultado",
-            ]
-          : ["Seed", "Case", "What is seeded", "Who must detect it", "Result"],
-      ),
+      fila(t.cabecera),
       fila(["---", "---", "---", "---", "---"]),
       ...r.siembras.map((s) =>
         fila([
@@ -419,20 +459,13 @@ export function renderizarM9(r: ResultadoM9, corrida: string): string {
           s.caso_id,
           s.que_se_siembra[i],
           s.quien_debe_detectarla[i],
-          s.detectada
-            ? i === "es"
-              ? "✓ detectada"
-              : "✓ detected"
-            : i === "es"
-              ? "✗ NO detectada"
-              : "✗ NOT detected",
+          s.detectada ? t.detectada : t.noDetectada,
         ]),
       ),
       "",
-      i === "es"
-        ? "Lo corre la CI en cada cambio (`tests/unit/core/brecha/m9.test.ts`); este archivo se regenera con `pnpm m9:reporte` y un test verifica que está al día."
-        : "CI runs it on every change (`tests/unit/core/brecha/m9.test.ts`); this file is regenerated with `pnpm m9:reporte` and a test checks it is up to date.",
+      t.pie,
     ].join("\n");
+  };
   return [
     "# M9 — Brechas sembradas · Seeded gaps",
     "",

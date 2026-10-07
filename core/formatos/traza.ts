@@ -97,6 +97,107 @@ export const ExtraccionSchema = z
   })
   .strict();
 
+/** Demo B (S3): la extracción de los tres documentos de la solicitud. */
+export const ExtraccionBSchema = z
+  .object({
+    campos: z.record(z.string(), Json),
+    campos_faltantes: z.array(z.string()),
+  })
+  .strict();
+
+const TextoBilingueTraza = z
+  .object({ es: z.string(), en: z.string() })
+  .strict();
+
+/** Demo B: la mejor coincidencia con las listas y la versión y fecha de cada lista consultada (D3). */
+export const CoincidenciasSchema = z
+  .object({
+    listas_consultadas: z.array(
+      z
+        .object({
+          fecha: z.string(),
+          id: z.string().min(1),
+          version: z.string().min(1),
+          vinculante: z.boolean(),
+        })
+        .strict(),
+    ),
+    mejor: z
+      .object({
+        entrada_id: z.string().min(1),
+        exacta: z.boolean(),
+        lista_id: z.string().min(1),
+        nombre_listado: z.string().min(1),
+        similitud: z.number().min(0).max(1),
+        vinculante: z.boolean(),
+      })
+      .strict()
+      .nullable(),
+  })
+  .strict();
+
+export const InvestigacionSchema = z
+  .object({
+    conclusion: z.enum(["misma_persona", "homonimo"]),
+    entrada_id: z.string().min(1),
+    razones: TextoBilingueTraza,
+  })
+  .strict();
+
+export const PuntajeTrazaSchema = z
+  .object({
+    total: z.number().int().min(0),
+    componentes: z.array(
+      z
+        .object({
+          factor: z.string().min(1),
+          nivel: z.string().min(1),
+          puntos: z.number().int().min(0),
+          regla: z.string().min(1),
+          valor: z.string().nullable(),
+        })
+        .strict(),
+    ),
+    inconsistencias: z.array(
+      z.object({ campo: z.string().min(1), regla: z.string().min(1) }).strict(),
+    ),
+    reglas_propuesta: z.array(z.string().min(1)).min(1),
+  })
+  .strict();
+
+/** El expediente que escribe el código (RF-04b.7): cada conclusión con su cita. */
+export const ExpedienteSchema = z
+  .object({
+    caso_id: z.string().min(1),
+    conclusiones: z.array(
+      z
+        .object({
+          cita: z
+            .object({ tipo: z.string().min(1), ref: z.string() })
+            .catchall(Json)
+            .nullable(),
+          id: z.string().min(1),
+          tema: z.string().min(1),
+          texto: TextoBilingueTraza,
+        })
+        .strict(),
+    ),
+    conclusiones_sin_cita: z.number().int().min(0),
+    datos_usados: z.array(z.string()),
+    decision: z
+      .object({
+        final: z.string().min(1),
+        propuesta: z.string().min(1),
+        revisada_por_persona: z.boolean(),
+        rol: z.string().nullable(),
+      })
+      .strict(),
+    listas_consultadas: z.array(z.record(z.string(), Json)),
+    plan: z.record(z.string(), Json),
+    solicitud: z.string().min(1),
+  })
+  .strict();
+
 export const SalidaFinalSchema = z
   .object({ es: z.string(), en: z.string(), aviso_ia: TextoBilingueSchema })
   .strict();
@@ -127,7 +228,7 @@ export const TrazaSchema = z
     senales: z.record(z.string(), Json),
     decisiones_de_arista: z.array(DecisionDeAristaSchema),
     pausas_humanas: z.array(PausaRegistradaSchema),
-    extraccion: ExtraccionSchema.nullable(),
+    extraccion: z.union([ExtraccionSchema, ExtraccionBSchema]).nullable(),
     aclaraciones: z.array(z.record(z.string(), Json)),
     cobertura: z.record(z.string(), Json).nullable(),
     salida_final: SalidaFinalSchema.nullable(),
@@ -135,10 +236,22 @@ export const TrazaSchema = z
     guardia_salida: GuardiaSalidaSchema.nullable(),
     error_proveedor: ErrorProveedorSchema,
     error_de_esquema_en_traspaso: z.boolean(),
+    // Demo B (S3): ausentes en las trazas del A.
+    coincidencias: CoincidenciasSchema.nullable().optional(),
+    investigacion: InvestigacionSchema.nullable().optional(),
+    puntaje: PuntajeTrazaSchema.nullable().optional(),
+    expediente: ExpedienteSchema.nullable().optional(),
     huella: Huella,
   })
   .strict();
 export type Traza = z.infer<typeof TrazaSchema>;
+export type ExtraccionA = z.infer<typeof ExtraccionSchema>;
+
+/** La extracción del demo A (con su confianza), o `null` si la traza no extrajo o es de otro demo. */
+export const extraccionA = (
+  t: Pick<Traza, "extraccion">,
+): ExtraccionA | null =>
+  t.extraccion !== null && "confianza" in t.extraccion ? t.extraccion : null;
 
 const Referencia = z
   .object({
@@ -170,7 +283,9 @@ export const CorridaSchema = z
     proveedor: z.string().min(1),
     modelo: z.string().min(1),
     plan: Referencia,
-    plan_beneficios: Referencia,
+    /** El mundo con que se derivó la verdad del lote: el plan de beneficios del A o las listas del B. */
+    plan_beneficios: Referencia.optional(),
+    listas: Referencia.optional(),
     casos: z
       .object({
         archivo: z.string().min(1),
@@ -211,7 +326,14 @@ export const CorridaSchema = z
     revisor_simulado: TextoBilingueSchema,
     huella: Huella,
   })
-  .strict();
+  .strict()
+  .refine(
+    (c) => (c.plan_beneficios === undefined) !== (c.listas === undefined),
+    {
+      message:
+        "la corrida cita un solo mundo: plan de beneficios (A) o listas (B)",
+    },
+  );
 export type Corrida = z.infer<typeof CorridaSchema>;
 
 export const GrafoSchema = z

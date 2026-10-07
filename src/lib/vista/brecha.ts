@@ -17,8 +17,11 @@ import type { Compacto } from "@core/playground/compacto";
 import { consecuencias, umbralesDelPlan } from "@core/playground/consecuencias";
 import type { Plan } from "@core/plan/esquema";
 import type { DatosDemo } from "@/lib/datos/vitrina";
+import type { IdDemo } from "@/lib/demos";
+import { DEMO_TEXTO } from "@/textos/demo";
 import { ruta } from "@/lib/ruta";
-import { umbralDeCategoria } from "./motivo-pausa";
+import { loteDeK } from "@core/brecha/criterios";
+import { umbralDeCategoria, type CategoriaRegla } from "./motivo-pausa";
 import { delVocabulario } from "./vocabulario";
 import { conPlan } from "./plan-en-texto";
 import {
@@ -53,7 +56,6 @@ import {
   VARIANTE,
 } from "@/textos/brecha";
 import { CRITERIO } from "@/textos/plan";
-import { SUBTIPO } from "@/textos/caso";
 import { VEREDICTOS } from "@/textos/comun";
 import { APAGADO, ENCENDIDO } from "@/textos/plan-comun";
 import {
@@ -61,7 +63,8 @@ import {
   type ClaseDeVeredicto,
 } from "@/components/veredicto";
 import type { Fila } from "./agente";
-import { pieDeCorrida } from "./caso";
+import { nombreDeSubtipo, pieDeCorrida } from "./caso";
+import { enlaceACaso } from "./paginas-caso";
 import { filasDeReproducibilidad } from "./reproducibilidad";
 import {
   decimal,
@@ -91,6 +94,15 @@ const X = (t: TextoBilingue, i: Idioma) => t[i];
  */
 const TODOS_EN_EL_PLAN = "todos";
 
+/**
+ * La regla del plan cuyo umbral acota la tasa de un supuesto (§ 3 de la Brecha), por demo: el A la ata al tope de
+ * aclaraciones; el B no ata su tasa a ningún tope.
+ */
+const TOPE_DE_LA_TASA: Readonly<Record<IdDemo, CategoriaRegla | null>> = {
+  "demo-a": "tope",
+  "demo-b": null,
+};
+
 /** El veredicto en palabras, en minúscula para la línea del experto; uno sin nombre detiene el build. */
 function textoDeVeredicto(valor: string, i: Idioma): string {
   const t = (VEREDICTOS as Record<string, TextoBilingue>)[valor];
@@ -101,8 +113,8 @@ function textoDeVeredicto(valor: string, i: Idioma): string {
   return t[i].toLowerCase();
 }
 
-function criterioExigente(id: string): TextoBilingue {
-  const t = CRITERIO_EXIGENTE[id];
+function criterioExigente(demo: IdDemo, id: string): TextoBilingue {
+  const t = CRITERIO_EXIGENTE[demo][id];
   if (!t)
     throw new Error(
       `vitrina: el criterio «${id}» es el más exigente (pass^k) y no tiene su nombre corto en src/textos/brecha.ts (CRITERIO_EXIGENTE)`,
@@ -146,7 +158,7 @@ export interface FilaFallo {
   titulo: string;
   lider: [string, string, string];
   experto: [string, string, string];
-  casos: { id: string; href: string }[];
+  casos: { id: string; href: string | null }[];
   enlaces: { href: string; texto: string }[];
 }
 
@@ -170,7 +182,7 @@ export interface FilaCriterio {
   pista: { medido: number; meta: number };
   ejes: { desde: string; centro: string | null; hasta: string } | null;
   estado: EstadoMedido;
-  casos: { id: string; href: string }[];
+  casos: { id: string; href: string | null }[];
 }
 
 export interface FilaRiesgo {
@@ -185,7 +197,7 @@ export interface FilaRiesgo {
   /** «control legal (tabla: baja)» cuando el control legal sube la prioridad de la tabla (instrumentos 0.2.0). */
   legal: string | null;
   estado: EstadoMedido;
-  casos: { id: string; href: string }[];
+  casos: { id: string; href: string | null }[];
 }
 
 export interface SupuestoVista {
@@ -343,7 +355,7 @@ export interface VistaBrecha {
       regla: string;
       rango: string;
       observado: string;
-      justo: { id: string; href: string }[];
+      justo: { id: string; href: string | null }[];
     }[];
     limites: string[];
     href: string;
@@ -368,8 +380,9 @@ const NO_MEDIDOS_RIESGO = new Set([
 ]);
 const MENOR_ES_MEJOR = new Set(["latencia", "costo"]);
 
-function casosEnlazados(ids: readonly string[], i: Idioma) {
-  return ids.map((id) => ({ id, href: ruta(i, "caso", id) }));
+/** Los casos que una fila nombra; solo enlaza los que tienen página (corrida de 200, `paginas-caso.ts`). */
+function casosEnlazados(ids: readonly string[], d: DatosDemo, i: Idioma) {
+  return ids.map((id) => ({ id, href: enlaceACaso(d, id, i) }));
 }
 
 /** «C1–C9» si son los del plan en orden y sin huecos; si no, la lista. */
@@ -419,17 +432,28 @@ function valorDe(c: ResultadoCriterio, i: Idioma): string {
   return porcentaje(c.valor_medido, i);
 }
 
+/** La k con que se mide el criterio: la del plan si rige en este lote; si el plan la limita a otro tamaño, la medida. */
+const kMedida = (k: {
+  requerido: number;
+  observado: number;
+  aplica: boolean;
+}) => (k.aplica ? k.requerido : k.observado);
+
+/** El tamaño de lote al que el plan limita la k, si ESTE lote no lo tiene (verificador 1.3.0); si k rige, `null`. */
+const loteDeLaK = (k: { aplica: boolean; aplica_a: string | null }) =>
+  k.aplica ? null : (loteDeK(k.aplica_a ?? undefined) ?? null);
+
 function reglaDe(c: ResultadoCriterio): string {
   const partes = [c.poblacion];
   if (c.condicion) partes.push(c.condicion);
   const base = c.metrica ? `${c.agregacion}(${c.metrica})` : partes.join(" → ");
   return c.metrica
     ? base
-    : `${base} · ${c.agregacion === "pass^k" && c.k ? `pass^${c.k.requerido}` : c.agregacion}`;
+    : `${base} · ${c.agregacion === "pass^k" && c.k ? `pass^${kMedida(c.k)}` : c.agregacion}`;
 }
 
-function lecturaSupuesto(s: ResultadoSupuesto) {
-  const l = LECTURA_SUPUESTO[`${s.id}:${s.estado}`];
+function lecturaSupuesto(demo: IdDemo, s: ResultadoSupuesto) {
+  const l = LECTURA_SUPUESTO[demo][`${s.id}:${s.estado}`];
   if (!l)
     throw new Error(
       `vitrina: el informe marca ${s.id} «${s.estado}» y Brecha no tiene su lectura (src/textos/brecha.ts, LECTURA_SUPUESTO).`,
@@ -565,7 +589,7 @@ export function vistaBrecha(d: DatosDemo, i: Idioma): VistaBrecha {
   const fallaronEs: string[] = [];
   const fallaronEn: string[] = [];
   for (const s of supRefutados) {
-    const f = lecturaSupuesto(s).frase;
+    const f = lecturaSupuesto(d.id, s).frase;
     fallaronEs.push(f.es);
     fallaronEn.push(f.en);
   }
@@ -614,7 +638,7 @@ export function vistaBrecha(d: DatosDemo, i: Idioma): VistaBrecha {
       ),
     );
   if (supSinProbar.length > 0) {
-    const ls = supSinProbar.map((s) => lecturaSupuesto(s).frase);
+    const ls = supSinProbar.map((s) => lecturaSupuesto(d.id, s).frase);
     frases.push(
       X(
         FRASE.sinProbar({ es: ls.map((l) => l.es), en: ls.map((l) => l.en) }),
@@ -622,6 +646,10 @@ export function vistaBrecha(d: DatosDemo, i: Idioma): VistaBrecha {
       ),
     );
   }
+  const incompletos = inf.criterios
+    .filter((c) => c.estado === "incompleto")
+    .map((c) => c.id);
+  if (incompletos.length > 0) frases.push(X(FRASE.incompletos(incompletos), i));
   const totalReintentos = brechas.reduce((n, b) => n + (b.reintentos ?? 0), 0);
   const experto = [
     X(EXPERTO.veredicto(textoDeVeredicto(inf.veredicto.valor, i)), i),
@@ -684,7 +712,7 @@ export function vistaBrecha(d: DatosDemo, i: Idioma): VistaBrecha {
       .map((c) => {
         const ag =
           c.agregacion === "pass^k" && c.k
-            ? `pass^${c.k.requerido}`
+            ? `pass^${kMedida(c.k)}`
             : c.agregacion;
         const op = MENOR_ES_MEJOR.has(c.tipo) ? "≤" : "≥";
         const v =
@@ -890,9 +918,10 @@ export function vistaBrecha(d: DatosDemo, i: Idioma): VistaBrecha {
   // --------------------------------------------------------------------- lo que falló / sin probar / con nota
   const fallos: FilaFallo[] = [];
   for (const s of supRefutados)
-    fallos.push(filaSupuesto(s, "fallo", plan, vCorrida, i));
-  for (const c of criteriosFallan) fallos.push(filaCriterioFallido(c, i));
-  for (const r of riesgosOcurridos) fallos.push(filaRiesgoOcurrido(r, plan, i));
+    fallos.push(filaSupuesto(s, "fallo", plan, vCorrida, d, i));
+  for (const c of criteriosFallan) fallos.push(filaCriterioFallido(c, d, i));
+  for (const r of riesgosOcurridos)
+    fallos.push(filaRiesgoOcurrido(r, plan, d, i));
   for (const [cat, bs] of porCategoria)
     fallos.push(
       filaBrecha(
@@ -903,15 +932,18 @@ export function vistaBrecha(d: DatosDemo, i: Idioma): VistaBrecha {
         inf.brechas_no_previstas.evaluadores,
         corridaId,
         vCorrida,
+        d,
         i,
       ),
     );
   const sinProbar: FilaFallo[] = [
-    ...supSinProbar.map((s) => filaSupuesto(s, "sinProbar", plan, vCorrida, i)),
-    ...criteriosSinProbar.map((c) => filaCriterioFallido(c, i, true)),
+    ...supSinProbar.map((s) =>
+      filaSupuesto(s, "sinProbar", plan, vCorrida, d, i),
+    ),
+    ...criteriosSinProbar.map((c) => filaCriterioFallido(c, d, i, true)),
   ];
   const filasConNota = conNota.map((c) =>
-    filaConNota(c, compacto, latenciaDe, plan, i),
+    filaConNota(c, compacto, latenciaDe, plan, d, i),
   );
 
   // --------------------------------------------------------------------- lo que se cumplió
@@ -930,6 +962,7 @@ export function vistaBrecha(d: DatosDemo, i: Idioma): VistaBrecha {
               valor: porcentaje(c.valor_medido, i),
               k: c.k.observado,
               de: c.k.requerido,
+              lote: loteDeLaK(c.k),
             }),
             i,
           )
@@ -1022,7 +1055,11 @@ export function vistaBrecha(d: DatosDemo, i: Idioma): VistaBrecha {
   const composicion = { normal: 0, borde: 0, faltante: 0, adversario: 0 };
   for (const c of d.lote.casos)
     composicion[c.tipo as keyof typeof composicion]++;
-  const kMax = Math.max(1, ...inf.criterios.map((c) => c.k?.requerido ?? 1));
+  // Solo las k que rigen en este lote (verificador 1.3.0): una que el plan limita a otro tamaño no se exigió aquí.
+  const kMax = Math.max(
+    1,
+    ...inf.criterios.map((c) => (c.k?.aplica ? c.k.requerido : 1)),
+  );
   const ipo = {
     recibe: [
       {
@@ -1154,12 +1191,15 @@ export function vistaBrecha(d: DatosDemo, i: Idioma): VistaBrecha {
       CRITERIOS.lectura({
         n: inf.criterios.length,
         cumplen: criteriosCumplen.length,
-        exigente: exigente ? X(criterioExigente(exigente.id), i) : null,
+        exigente: exigente ? X(criterioExigente(d.id, exigente.id), i) : null,
         k: exigente?.k?.requerido ?? 1,
+        corridas: exigente?.k?.observado ?? 1,
+        incompleto: exigente?.estado === "incompleto",
+        soloEnLotesDe: exigente?.k ? loteDeLaK(exigente.k) : null,
       }),
       i,
     ),
-    filas: inf.criterios.map((c) => filaCriterio(c, latenciaDe, i)),
+    filas: inf.criterios.map((c) => filaCriterio(c, latenciaDe, d, i)),
   };
 
   // --------------------------------------------------------------------- § 4 riesgos
@@ -1187,7 +1227,7 @@ export function vistaBrecha(d: DatosDemo, i: Idioma): VistaBrecha {
       }),
       i,
     ),
-    filas: inf.riesgos.map((r) => filaRiesgo(r, plan, i)),
+    filas: inf.riesgos.map((r) => filaRiesgo(r, plan, d, i)),
     construidoNota: X(
       RIESGOS.construidoNota({
         n: ct.nodos.length,
@@ -1254,7 +1294,7 @@ export function vistaBrecha(d: DatosDemo, i: Idioma): VistaBrecha {
       caso: b.caso_id,
       href:
         b.caso_id && b.corrida_id === corridaId
-          ? ruta(i, "caso", b.caso_id)
+          ? enlaceACaso(d, b.caso_id, i)
           : null,
       corrida:
         b.corrida_id === corridaId
@@ -1300,6 +1340,7 @@ export function vistaBrecha(d: DatosDemo, i: Idioma): VistaBrecha {
         vCorrida,
         inf.ficha_reproducibilidad.linea_base?.corrida_id ?? null,
         corta,
+        d,
         i,
       ),
     );
@@ -1337,7 +1378,7 @@ export function vistaBrecha(d: DatosDemo, i: Idioma): VistaBrecha {
         rol: X(EJEMPLARES.rol[rol]!, i),
         caso: {
           id: e.caso_id,
-          tipo: X(SUBTIPO[e.subtipo] ?? { es: e.subtipo, en: e.subtipo }, i),
+          tipo: X(nombreDeSubtipo(d.id, e.subtipo), i),
         },
         texto: X(e.por_que, i),
         cadena: cadena.map((n) => ({
@@ -1351,7 +1392,7 @@ export function vistaBrecha(d: DatosDemo, i: Idioma): VistaBrecha {
             : EJEMPLARES.sinPersona,
           i,
         ),
-        href: ruta(i, "caso", e.caso_id),
+        href: ruta(i, "caso", e.caso_id, d.id),
         etiquetaCadena: X(EJEMPLARES.cadena(e.caso_id), i),
       };
     }),
@@ -1402,11 +1443,11 @@ export function vistaBrecha(d: DatosDemo, i: Idioma): VistaBrecha {
           o.verdaderos !== null
             ? X(PLAYGROUND.verdaderos({ a: o.verdaderos, b: o.n }), i)
             : `${o.min === null ? "—" : numeroDato(o.min, i)} · ${o.mediana === null ? "—" : numeroDato(o.mediana, i)} · ${o.max === null ? "—" : numeroDato(o.max, i)} (n = ${o.n})`,
-        justo: casosEnlazados(u.casos_en_el_umbral, i),
+        justo: casosEnlazados(u.casos_en_el_umbral, d, i),
       };
     }),
     limites: inf.playground.limites.map((l) => X(l, i)),
-    href: ruta(i, "playground"),
+    href: ruta(i, "playground", undefined, d.id),
   };
 
   // --------------------------------------------------------------------- § 9 ficha
@@ -1418,7 +1459,12 @@ export function vistaBrecha(d: DatosDemo, i: Idioma): VistaBrecha {
   return {
     portada: {
       antetitulo: X(
-        PORTADA.antetitulo({ corrida: corridaId, fecha: inf.fecha }),
+        PORTADA.antetitulo({
+          demo: DEMO_TEXTO[d.id].corto,
+          dominio: DEMO_TEXTO[d.id].dominio,
+          corrida: corridaId,
+          fecha: inf.fecha,
+        }),
         i,
       ),
     },
@@ -1480,6 +1526,49 @@ function nombreMetrica(k: string, i: Idioma): string {
 /** Valor de una métrica con hasta 4 decimales, sin ceros sobrantes (0,0807 · 1). */
 function valorMetrica(v: number, i: Idioma): string {
   return numCorto(v, i, 4);
+}
+
+/**
+ * Lo que midió un supuesto no confirmado frente a lo que pide el plan: «Midió tasa 83 % (el plan pide ≥ 95 %), sobre 24
+ * casos.» Nulo si está confirmado, si el plan no declara su umbral o si falta alguna medida: entonces queda el motivo
+ * del verificador. Lo usan la Brecha y el Plan (S3: los dos decían «No cumple el umbral de confirmación: tasa_min.»).
+ */
+export function medidaContraElPlan(
+  s: {
+    estado: string;
+    metricas: Readonly<Record<string, number | null>>;
+    n: number;
+  },
+  umbral: Readonly<Record<string, unknown>>,
+  i: Idioma,
+): string | null {
+  if (s.estado === "confirmado") return null;
+  const ambos = (f: (j: Idioma) => string): TextoBilingue => ({
+    es: f("es"),
+    en: f("en"),
+  });
+  const partes = Object.entries(umbral).flatMap(([k, v]) => {
+    const m = k.replace(/_(min|max)$/, "");
+    const valor = s.metricas[m];
+    if (typeof valor !== "number") return [];
+    // Una tasa o una exactitud se lee en porcentaje; ECE y AUROC, como el número que son.
+    const proporcion = m === "tasa" || m === "exactitud";
+    return [
+      PASO.medidaContra({
+        nombre: ambos((j) => nombreMetrica(m, j)),
+        valor: ambos((j) =>
+          proporcion ? porcentaje(valor, j) : valorMetrica(valor, j),
+        ),
+        op: k.endsWith("_max") ? "≤" : "≥",
+        umbral: ambos((j) =>
+          proporcion ? porcentaje(Number(v), j) : decimal(Number(v), 2, j),
+        ),
+      }),
+    ];
+  });
+  if (partes.length === 0 || partes.length !== Object.keys(umbral).length)
+    return null;
+  return X(PASO.contraUmbral({ partes, n: s.n }), i);
 }
 
 /** Una cifra que el informe debe traer para pintar esa parte: si falta, la vista lo dice en vez de pintar «NaN». */
@@ -1556,9 +1645,11 @@ function filaSupuesto(
   grupo: "fallo" | "sinProbar",
   plan: Plan,
   vCorrida: string,
+  d: DatosDemo,
   i: Idioma,
 ): FilaFallo {
-  const l = lecturaSupuesto(s);
+  const demo = d.id;
+  const l = lecturaSupuesto(demo, s);
   const p = plan.supuestos.find((x) => x.id === s.id);
   let paso = "";
   let medido = "";
@@ -1666,7 +1757,16 @@ function filaSupuesto(
     const n = s.n;
     const exactitud =
       typeof s.metricas.exactitud === "number" ? s.metricas.exactitud : null;
-    paso = exactitud === 1 ? X(PASO.sinErrores(n), i) : X(s.motivo, i);
+    // Lo que midió frente a lo que pide el plan; el motivo crudo del verificador («No cumple el umbral de
+    // confirmación: tasa_min.») solo queda si el plan no declara el umbral o falta la medida (S3).
+    paso =
+      exactitud === 1
+        ? X(PASO.sinErrores(n), i)
+        : (medidaContraElPlan(
+            s,
+            p?.medible_en_trazas?.umbral_confirmacion ?? {},
+            i,
+          ) ?? X(s.motivo, i));
     medido = `${Object.entries(s.metricas)
       .map(([k, v]) =>
         X(
@@ -1712,7 +1812,7 @@ function filaSupuesto(
     );
   }
   // El valor del umbral que la lectura cita sale del plan, no de la copia (AU-S2-3).
-  const planeo = conPlan(X(l.planeo, i), plan, i);
+  const planeo = conPlan(X(l.planeo, i), plan, i, demo);
   const estado = estadoDeSupuesto(s.estado, i);
   return {
     ancla: `f-${s.id}`,
@@ -1725,13 +1825,54 @@ function filaSupuesto(
     titulo: X(l.titulo, i),
     lider: [planeo, paso, X(l.significa, i)],
     experto: [regla, medido, evidencia],
-    casos: casosEnlazados(casos, i),
+    casos: casosEnlazados(casos, d, i),
     enlaces: [{ href: "#b6", texto: `§ 6 ${X(SECCIONES.b6, i)}` }],
   };
 }
 
+/**
+ * El criterio en palabras llanas, con sus valores leídos del plan (`{plan:C5.objetivo}`): la Brecha lo pintaba sin
+ * resolver en C5 y C7 (S3), y la prueba de plantillas sin resolver no miraba esta vista.
+ */
+function liderDeCriterio(
+  c: ResultadoCriterio,
+  d: DatosDemo,
+  i: Idioma,
+): string {
+  return conPlan(
+    X(CRITERIO.lider[d.id][c.id] ?? c.enunciado, i),
+    d.plan,
+    i,
+    d.id,
+  );
+}
+
+/**
+ * Lo que vio cada brecha, una vez por detalle y con sus casos: «La extracción no coincide con la verdad conocida
+ * (A-022, A-126 y A-139).» Antes se enumeraba el detalle de cada brecha y tres iguales se leían como una frase
+ * repetida tres veces (S3).
+ */
+function detallesAgrupados(
+  bs: ReadonlyArray<{ detalle: TextoBilingue; caso_id: string | null }>,
+  i: Idioma,
+): string {
+  const porDetalle = new Map<string, string[]>();
+  for (const b of bs) {
+    const t = X(b.detalle, i).replace(/\.\s*$/, "");
+    const l = porDetalle.get(t) ?? [];
+    if (b.caso_id && !l.includes(b.caso_id)) l.push(b.caso_id);
+    porDetalle.set(t, l);
+  }
+  return [...porDetalle]
+    .map(([t, casos]) =>
+      casos.length ? `${t} (${enumerar(casos, i)}).` : `${t}.`,
+    )
+    .join(" ");
+}
+
 function filaCriterioFallido(
   c: ResultadoCriterio,
+  d: DatosDemo,
   i: Idioma,
   sinProbar = false,
 ): FilaFallo {
@@ -1739,11 +1880,18 @@ function filaCriterioFallido(
   return {
     ancla: `f-${c.id}`,
     clase: sinProbar ? "beta" : estado.clase,
-    etiqueta: X(sinProbar ? ETIQUETA_FILA.sinProbar : ETIQUETA_FILA.fallo, i),
+    etiqueta: X(
+      !sinProbar
+        ? ETIQUETA_FILA.fallo
+        : c.estado === "incompleto"
+          ? ETIQUETA_FILA.incompleto
+          : ETIQUETA_FILA.sinProbar,
+      i,
+    ),
     codigo: c.id,
     titulo: X(c.enunciado, i),
     lider: [
-      X(CRITERIO.lider[c.id] ?? c.enunciado, i),
+      liderDeCriterio(c, d, i),
       `${valorDe(c, i)} · ${estado.texto}`,
       c.nota ? X(c.nota, i) : estado.texto,
     ],
@@ -1752,7 +1900,7 @@ function filaCriterioFallido(
       `${valorDe(c, i)} · n = ${c.n_poblacion}`,
       c.casos_que_incumplen.join(", ") || "—",
     ],
-    casos: casosEnlazados(c.casos_que_incumplen, i),
+    casos: casosEnlazados(c.casos_que_incumplen, d, i),
     enlaces: [{ href: "#b3", texto: `§ 3 ${X(SECCIONES.b3, i)}` }],
   };
 }
@@ -1760,6 +1908,7 @@ function filaCriterioFallido(
 function filaRiesgoOcurrido(
   r: ResultadoRiesgo,
   plan: Plan,
+  d: DatosDemo,
   i: Idioma,
 ): FilaFallo {
   const p = plan.riesgos.find((x) => x.id === r.id);
@@ -1783,7 +1932,7 @@ function filaRiesgoOcurrido(
       `${r.valor ?? "—"} · ${r.ocurre_si ?? ""}`,
       r.casos.join(", "),
     ],
-    casos: casosEnlazados(r.casos, i),
+    casos: casosEnlazados(r.casos, d, i),
     enlaces: [{ href: "#b4", texto: `§ 4 ${X(SECCIONES.b4, i)}` }],
   };
 }
@@ -1796,8 +1945,10 @@ function filaBrecha(
   evaluadores: readonly { estado: string; tipo: string; fallas: string[] }[],
   corridaId: string,
   vCorrida: string,
+  d: DatosDemo,
   i: Idioma,
 ): FilaFallo {
+  const demo = d.id;
   const l = lecturaBrecha(categoria);
   const casos = [
     ...new Set(bs.map((b) => b.caso_id).filter((x): x is string => x !== null)),
@@ -1809,7 +1960,7 @@ function filaBrecha(
   const nodo =
     nodos.length === 1
       ? delVocabulario(
-          NODO_EN_FRASE,
+          NODO_EN_FRASE[demo],
           nodos[0]!,
           "NODO_EN_FRASE (src/textos/brecha.ts)",
         )
@@ -1843,10 +1994,7 @@ function filaBrecha(
             }),
             i,
           )
-        : enumerar(
-            bs.map((b) => X(b.detalle, i)),
-            i,
-          ),
+        : detallesAgrupados(bs, i),
       X(l.significa, i),
     ],
     experto: [
@@ -1875,7 +2023,7 @@ function filaBrecha(
         i,
       ),
     ],
-    casos: casos.map((id) => ({ id, href: ruta(i, "caso", id) })),
+    casos: casosEnlazados(casos, d, i),
     enlaces: [{ href: "#b5", texto: `§ 5 ${X(SECCIONES.b5, i)}` }],
   };
 }
@@ -1885,8 +2033,10 @@ function filaConNota(
   compacto: Compacto,
   latenciaDe: ReadonlyMap<string, number>,
   plan: Plan,
+  d: DatosDemo,
   i: Idioma,
 ): FilaFallo {
+  const demo = d.id;
   const rompe = umbralQueLoRompe(compacto, c.id);
   const rompeTexto = rompe
     ? X(
@@ -1894,6 +2044,7 @@ function filaConNota(
           umbral: rompe.umbral,
           valor: numeroDato(rompe.valor, i),
           caso: enumerar(rompe.casos, i),
+          n: rompe.casos.length,
         }),
         i,
       )
@@ -1913,13 +2064,14 @@ function filaConNota(
         mediana: segundos(c.valor_medido, i),
         casos: enumerar(c.casos_que_incumplen, i),
         valores: unoAUno.map((x) => x.split(": ")[1]).join(", "),
+        n: c.casos_que_incumplen.length,
       }),
       i,
     );
     medido = `${decimal(c.valor_medido, 3, i)} s · ${c.casos_que_incumplen.map((id) => `${id}: ${decimal(latenciaDe.get(id) ?? Number.NaN, 3, i)} s`).join(" · ")}`;
   } else {
     paso = X(
-      (PASO_FUERA[c.id] ?? PASO.fuera)({
+      (PASO_FUERA[demo][c.id] ?? PASO.fuera)({
         dentro: c.n_poblacion,
         fuera: c.fuera_por_senal_nula,
       }),
@@ -1937,7 +2089,7 @@ function filaConNota(
       i,
     );
   }
-  const lectura = LECTURA_NOTA[c.id]?.(c.n_poblacion);
+  const lectura = LECTURA_NOTA[demo][c.id]?.(c.n_poblacion);
   const significa = [
     lectura ? X(lectura, i) : c.nota ? X(c.nota, i) : "",
     rompeTexto ?? "",
@@ -1951,7 +2103,7 @@ function filaConNota(
     etiqueta: X(ETIQUETA_FILA.conNota, i),
     codigo: c.id,
     titulo: X(c.enunciado, i),
-    lider: [X(CRITERIO.lider[c.id] ?? c.enunciado, i), paso, significa],
+    lider: [liderDeCriterio(c, d, i), paso, significa],
     experto: [
       c.metrica
         ? `${c.agregacion}(${c.metrica}) ${MENOR_ES_MEJOR.has(c.tipo) ? "≤" : "≥"} ${numeroDato(Number(c.objetivo), i)} · n = ${c.n_poblacion}`
@@ -1980,10 +2132,17 @@ function filaConNota(
           ? X(EXPERTO.notaVerificador(X(c.nota, i)), i)
           : "—",
     ],
-    casos: casosEnlazados(c.casos_que_incumplen, i),
+    casos: casosEnlazados(c.casos_que_incumplen, d, i),
     enlaces: [
       { href: "#b3", texto: `§ 3 ${X(SECCIONES.b3, i)}` },
-      ...(rompe ? [{ href: ruta(i, "playground"), texto: "Playground" }] : []),
+      ...(rompe
+        ? [
+            {
+              href: ruta(i, "playground", undefined, demo),
+              texto: "Playground",
+            },
+          ]
+        : []),
     ],
   };
 }
@@ -1991,6 +2150,7 @@ function filaConNota(
 function filaCriterio(
   c: ResultadoCriterio,
   latenciaDe: ReadonlyMap<string, number>,
+  d: DatosDemo,
   i: Idioma,
 ): FilaCriterio {
   const estado = estadoDeCriterio(c.estado, i, "informe");
@@ -2043,6 +2203,7 @@ function filaCriterio(
               k: c.k.observado,
               de: c.k.requerido,
               n: c.n_poblacion,
+              lote: loteDeLaK(c.k),
             }),
             i,
           )
@@ -2061,6 +2222,7 @@ function filaCriterio(
           valores: c.casos_que_incumplen
             .map((id) => segundos(latenciaDe.get(id) ?? Number.NaN, i))
             .join(", "),
+          n: c.casos_que_incumplen.length,
         }),
         i,
       ),
@@ -2091,11 +2253,16 @@ function filaCriterio(
     },
     ejes,
     estado,
-    casos: casosEnlazados(c.casos_que_incumplen, i),
+    casos: casosEnlazados(c.casos_que_incumplen, d, i),
   };
 }
 
-function filaRiesgo(r: ResultadoRiesgo, plan: Plan, i: Idioma): FilaRiesgo {
+function filaRiesgo(
+  r: ResultadoRiesgo,
+  plan: Plan,
+  d: DatosDemo,
+  i: Idioma,
+): FilaRiesgo {
   const p = plan.riesgos.find((x) => x.id === r.id);
   const det = p?.detector_en_trazas;
   const tasa = r.tipo_detector === "tasa";
@@ -2118,7 +2285,7 @@ function filaRiesgo(r: ResultadoRiesgo, plan: Plan, i: Idioma): FilaRiesgo {
     rpn: `S${r.severidad} · O${r.ocurrencia} · D${r.deteccion} · RPN ${r.rpn}`,
     legal: controlLegal(r, i),
     estado: estadoDeRiesgo(r.estado, i),
-    casos: casosEnlazados(r.casos, i),
+    casos: casosEnlazados(r.casos, d, i),
   };
 }
 
@@ -2128,12 +2295,14 @@ function vistaSupuesto(
   vCorrida: string,
   base: string | null,
   corta: (id: string) => string,
+  d: DatosDemo,
   i: Idioma,
 ): SupuestoVista {
+  const demo = d.id;
   const p = plan.supuestos.find((x) => x.id === s.id);
   const estado = estadoDeSupuesto(s.estado, i);
   const clave = `${s.id}:${s.estado}`;
-  const dio = SUPUESTOS.dio[clave] as
+  const dio = SUPUESTOS.dio[demo][clave] as
     ((p: unknown) => TextoBilingue) | undefined;
   if (!dio)
     throw new Error(
@@ -2144,7 +2313,24 @@ function vistaSupuesto(
   let grafico: SupuestoVista["grafico"] = null;
   if (s.comparacion) {
     const c = s.comparacion;
+    const latM = cifra(
+      c.latencia_mediana_s.multiagente,
+      "la latencia mediana del multiagente",
+    );
+    const latB = cifra(
+      c.latencia_mediana_s.agente_unico,
+      "la latencia mediana de la línea base",
+    );
+    const sentido = (a: number, b: number) =>
+      a > b
+        ? ("mas" as const)
+        : a < b
+          ? ("menos" as const)
+          : ("igual" as const);
     texto = dio({
+      // El sentido sale de las cifras, no de la copia (S3: la frase decía «acertó más pero tardó más» fija).
+      acerto: sentido(c.exactitud.multiagente, c.exactitud.agente_unico),
+      tardo: sentido(latM, latB),
       exactitud: porcentaje(c.exactitud.multiagente, i),
       exactitudBase: porcentaje(c.exactitud.agente_unico, i),
       latencia: segundos(
@@ -2286,12 +2472,19 @@ function vistaSupuesto(
       n: s.n,
     };
   } else {
-    // El tope de aclaraciones lo dice la regla del plan que lo aplica; sin ella, la página no inventa un «0»
-    // (AU-S2-16).
-    const tope = umbralDeCategoria(plan, "tope");
+    // En el A, el tope de aclaraciones lo dice la regla del plan que lo aplica; sin ella, la página no inventa un
+    // «0» (AU-S2-16). El B no ata su tasa a ningún tope: la cifra dice cuántos se resolvieron como dice la verdad.
+    const categoria = TOPE_DE_LA_TASA[demo];
+    const tope = categoria ? umbralDeCategoria(plan, categoria, demo) : null;
     // Un tope que no sea número no llega aquí: el intérprete de aristas lo rechaza al compactar las señales.
-    const topeValor = tope.valor_en_plan as number;
-    texto = dio({ n: s.n, u: topeValor });
+    const topeValor = tope ? (tope.valor_en_plan as number) : null;
+    const tasaMedida =
+      typeof s.metricas.tasa === "number" ? s.metricas.tasa : null;
+    texto = dio({
+      n: s.n,
+      u: topeValor,
+      a: tasaMedida === null ? 0 : Math.round(tasaMedida * s.n),
+    });
     medidas = Object.entries(s.metricas).map(([k, v]) => ({
       k: k === "tasa" ? X(SUPUESTOS.tasa, i) : k,
       v: `${v === null ? "—" : numeroDato(v, i)} · n = ${s.n}`,
@@ -2311,7 +2504,12 @@ function vistaSupuesto(
             }),
             i,
           ),
-          texto: X(SUPUESTOS.cerradosNota(topeValor), i),
+          texto: X(
+            topeValor === null
+              ? SUPUESTOS.aciertosNota
+              : SUPUESTOS.cerradosNota(topeValor),
+            i,
+          ),
         },
         { cifra: porcentaje(minimo, i), texto: X(SUPUESTOS.pideElPlan, i) },
       ],

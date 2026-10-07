@@ -1,0 +1,1746 @@
+{
+  "casos": {
+    "archivo": "data/casos/demo-a/planlang-a-002-200.json",
+    "huella": "5e76ef4cf562852c25aab2e041d55f17f809043450fe48e35c045cb419c8e62f",
+    "id": "planlang-a-002-200",
+    "n_lote": 200,
+    "semilla": "planlang-a-002"
+  },
+  "casos_con_error": [],
+  "casos_ejecutados": [
+    "A-001",
+    "A-002",
+    "A-003",
+    "A-004",
+    "A-005",
+    "A-006",
+    "A-007",
+    "A-008",
+    "A-009",
+    "A-010",
+    "A-011",
+    "A-012",
+    "A-013",
+    "A-014",
+    "A-015",
+    "A-016",
+    "A-017",
+    "A-018",
+    "A-019",
+    "A-020",
+    "A-021",
+    "A-022",
+    "A-023",
+    "A-024",
+    "A-025",
+    "A-026",
+    "A-027",
+    "A-028",
+    "A-029",
+    "A-030",
+    "A-031",
+    "A-032",
+    "A-033",
+    "A-034",
+    "A-035",
+    "A-036",
+    "A-037",
+    "A-038",
+    "A-039",
+    "A-040",
+    "A-041",
+    "A-042",
+    "A-043",
+    "A-044",
+    "A-045",
+    "A-046",
+    "A-047",
+    "A-048",
+    "A-049",
+    "A-050",
+    "A-051",
+    "A-052",
+    "A-053",
+    "A-054",
+    "A-055",
+    "A-056",
+    "A-057",
+    "A-058",
+    "A-059",
+    "A-060",
+    "A-061",
+    "A-062",
+    "A-063",
+    "A-064",
+    "A-065",
+    "A-066",
+    "A-067",
+    "A-068",
+    "A-069",
+    "A-070",
+    "A-071",
+    "A-072",
+    "A-073",
+    "A-074",
+    "A-075",
+    "A-076",
+    "A-077",
+    "A-078",
+    "A-079",
+    "A-080",
+    "A-081",
+    "A-082",
+    "A-083",
+    "A-084",
+    "A-085",
+    "A-086",
+    "A-087",
+    "A-088",
+    "A-089",
+    "A-090",
+    "A-091",
+    "A-092",
+    "A-093",
+    "A-094",
+    "A-095",
+    "A-096",
+    "A-097",
+    "A-098",
+    "A-099",
+    "A-100",
+    "A-101",
+    "A-102",
+    "A-103",
+    "A-104",
+    "A-105",
+    "A-106",
+    "A-107",
+    "A-108",
+    "A-109",
+    "A-110",
+    "A-111",
+    "A-112",
+    "A-113",
+    "A-114",
+    "A-115",
+    "A-116",
+    "A-117",
+    "A-118",
+    "A-119",
+    "A-120",
+    "A-121",
+    "A-122",
+    "A-123",
+    "A-124",
+    "A-125",
+    "A-126",
+    "A-127",
+    "A-128",
+    "A-129",
+    "A-130",
+    "A-131",
+    "A-132",
+    "A-133",
+    "A-134",
+    "A-135",
+    "A-136",
+    "A-137",
+    "A-138",
+    "A-139",
+    "A-140",
+    "A-141",
+    "A-142",
+    "A-143",
+    "A-144",
+    "A-145",
+    "A-146",
+    "A-147",
+    "A-148",
+    "A-149",
+    "A-150",
+    "A-151",
+    "A-152",
+    "A-153",
+    "A-154",
+    "A-155",
+    "A-156",
+    "A-157",
+    "A-158",
+    "A-159",
+    "A-160",
+    "A-161",
+    "A-162",
+    "A-163",
+    "A-164",
+    "A-165",
+    "A-166",
+    "A-167",
+    "A-168",
+    "A-169",
+    "A-170",
+    "A-171",
+    "A-172",
+    "A-173",
+    "A-174",
+    "A-175",
+    "A-176",
+    "A-177",
+    "A-178",
+    "A-179",
+    "A-180",
+    "A-181",
+    "A-182",
+    "A-183",
+    "A-184",
+    "A-185",
+    "A-186",
+    "A-187",
+    "A-188",
+    "A-189",
+    "A-190",
+    "A-191",
+    "A-192",
+    "A-193",
+    "A-194",
+    "A-195",
+    "A-196",
+    "A-197",
+    "A-198",
+    "A-199",
+    "A-200"
+  ],
+  "corrida_id": "suscripcion-planlang-a-002-200-v1.5-base",
+  "demo_id": "demo-a",
+  "fecha": "2026-10-04",
+  "ficha": {
+    "descripcion": {
+      "en": "Run over the synthetic batch planlang-a-002-200 with provider suscripcion (model sonnet). Human decisions were simulated in batch: the auditor follows the case's known truth.",
+      "es": "Corrida sobre el lote sintético planlang-a-002-200 con el proveedor suscripcion (modelo sonnet). Las decisiones humanas se simularon en lote: el auditor sigue la verdad conocida del caso."
+    },
+    "etiqueta": {
+      "en": "Simulation · not operational",
+      "es": "Simulación · no operativo"
+    },
+    "nombre": {
+      "en": "Demo A · medical prior authorisation · single-agent baseline",
+      "es": "Demo A · autorizaciones médicas · línea base de agente único"
+    }
+  },
+  "formato": "planlang-trace/v1",
+  "huella": "1ab219ded7ae9d1ce14f4d7ff0e699b517926564afda1ac73c74301ea6cff5f7",
+  "modelo": "sonnet",
+  "plan": {
+    "archivo": "plans/demo-a/v1.5.json",
+    "huella": "e1dc89c72a37bf780bd3ddd5225dff84284da6bedabe6aae9f8b3bc670c57ee1",
+    "id": "plan-demo-a",
+    "version": "1.5.0"
+  },
+  "plan_beneficios": {
+    "archivo": "data/plan-beneficios/demo-a-v2.json",
+    "huella": "aea5fe3ad425157460439e908f7eaa39d314816262d9ed70e7addc9dcdf9c338",
+    "id": "pb-demo-a",
+    "version": "2.0.0"
+  },
+  "proveedor": "suscripcion",
+  "ramas_esperadas": {
+    "archivo": "ramas-esperadas.json",
+    "huella": "4bf55bfb81545a390cc3299fce323b49b79fe3965ddb8ab9ad70e4e973ed3774"
+  },
+  "revisor_simulado": {
+    "en": "In batches, the simulated reviewer follows the case's known truth (DA-04); the showcase discloses it.",
+    "es": "En lotes, el revisor simulado sigue la verdad conocida del caso (DA-04); la vitrina lo divulga."
+  },
+  "sesiones": [
+    {
+      "casos_ejecutados": [
+        "A-001",
+        "A-002",
+        "A-003",
+        "A-004",
+        "A-005",
+        "A-006",
+        "A-007",
+        "A-008",
+        "A-009",
+        "A-010",
+        "A-011",
+        "A-012",
+        "A-013",
+        "A-014",
+        "A-015",
+        "A-016",
+        "A-017",
+        "A-018",
+        "A-019",
+        "A-020"
+      ],
+      "detenida_por": null,
+      "fecha": "2026-10-04",
+      "limites_alcanzados": 0,
+      "numero": 1
+    },
+    {
+      "casos_ejecutados": [
+        "A-021",
+        "A-022",
+        "A-023",
+        "A-024",
+        "A-025",
+        "A-026",
+        "A-027",
+        "A-028",
+        "A-029",
+        "A-030",
+        "A-031",
+        "A-032",
+        "A-033",
+        "A-034",
+        "A-035",
+        "A-036",
+        "A-037",
+        "A-038",
+        "A-039",
+        "A-040"
+      ],
+      "detenida_por": null,
+      "fecha": "2026-10-04",
+      "limites_alcanzados": 0,
+      "numero": 2
+    },
+    {
+      "casos_ejecutados": [
+        "A-041",
+        "A-042",
+        "A-043",
+        "A-044",
+        "A-045",
+        "A-046",
+        "A-047",
+        "A-048",
+        "A-049",
+        "A-050",
+        "A-051",
+        "A-052",
+        "A-053",
+        "A-054",
+        "A-055",
+        "A-056",
+        "A-057",
+        "A-058",
+        "A-059",
+        "A-060"
+      ],
+      "detenida_por": null,
+      "fecha": "2026-10-04",
+      "limites_alcanzados": 0,
+      "numero": 3
+    },
+    {
+      "casos_ejecutados": [
+        "A-061",
+        "A-062",
+        "A-063",
+        "A-064",
+        "A-065",
+        "A-066",
+        "A-067",
+        "A-068",
+        "A-069",
+        "A-070",
+        "A-071",
+        "A-072",
+        "A-073",
+        "A-074",
+        "A-075",
+        "A-076",
+        "A-077",
+        "A-078",
+        "A-079",
+        "A-080"
+      ],
+      "detenida_por": null,
+      "fecha": "2026-10-04",
+      "limites_alcanzados": 0,
+      "numero": 4
+    },
+    {
+      "casos_ejecutados": [
+        "A-081",
+        "A-082",
+        "A-083",
+        "A-084",
+        "A-085",
+        "A-086",
+        "A-087",
+        "A-088",
+        "A-089",
+        "A-090",
+        "A-091",
+        "A-092",
+        "A-093",
+        "A-094",
+        "A-095",
+        "A-096",
+        "A-097",
+        "A-098",
+        "A-099",
+        "A-100"
+      ],
+      "detenida_por": null,
+      "fecha": "2026-10-04",
+      "limites_alcanzados": 0,
+      "numero": 5
+    },
+    {
+      "casos_ejecutados": [
+        "A-101",
+        "A-102",
+        "A-103",
+        "A-104",
+        "A-105",
+        "A-106",
+        "A-107",
+        "A-108",
+        "A-109",
+        "A-110",
+        "A-111",
+        "A-112",
+        "A-113",
+        "A-114",
+        "A-115",
+        "A-116",
+        "A-117",
+        "A-118",
+        "A-119",
+        "A-120"
+      ],
+      "detenida_por": null,
+      "fecha": "2026-10-05",
+      "limites_alcanzados": 0,
+      "numero": 6
+    },
+    {
+      "casos_ejecutados": [
+        "A-121",
+        "A-122",
+        "A-123",
+        "A-124",
+        "A-125",
+        "A-126",
+        "A-127",
+        "A-128",
+        "A-129",
+        "A-130",
+        "A-131",
+        "A-132",
+        "A-133",
+        "A-134",
+        "A-135",
+        "A-136",
+        "A-137",
+        "A-138",
+        "A-139",
+        "A-140"
+      ],
+      "detenida_por": null,
+      "fecha": "2026-10-05",
+      "limites_alcanzados": 0,
+      "numero": 7
+    },
+    {
+      "casos_ejecutados": [
+        "A-141",
+        "A-142",
+        "A-143",
+        "A-144",
+        "A-145",
+        "A-146",
+        "A-147",
+        "A-148",
+        "A-149",
+        "A-150",
+        "A-151",
+        "A-152",
+        "A-153",
+        "A-154",
+        "A-155",
+        "A-156",
+        "A-157",
+        "A-158",
+        "A-159",
+        "A-160"
+      ],
+      "detenida_por": null,
+      "fecha": "2026-10-05",
+      "limites_alcanzados": 0,
+      "numero": 8
+    },
+    {
+      "casos_ejecutados": [
+        "A-161",
+        "A-162",
+        "A-163",
+        "A-164",
+        "A-165",
+        "A-166",
+        "A-167",
+        "A-168",
+        "A-169",
+        "A-170",
+        "A-171",
+        "A-172",
+        "A-173",
+        "A-174",
+        "A-175",
+        "A-176",
+        "A-177",
+        "A-178",
+        "A-179",
+        "A-180"
+      ],
+      "detenida_por": null,
+      "fecha": "2026-10-05",
+      "limites_alcanzados": 0,
+      "numero": 9
+    },
+    {
+      "casos_ejecutados": [
+        "A-181",
+        "A-182",
+        "A-183",
+        "A-184",
+        "A-185",
+        "A-186",
+        "A-187",
+        "A-188",
+        "A-189",
+        "A-190",
+        "A-191",
+        "A-192",
+        "A-193",
+        "A-194",
+        "A-195",
+        "A-196",
+        "A-197",
+        "A-198",
+        "A-199",
+        "A-200"
+      ],
+      "detenida_por": null,
+      "fecha": "2026-10-05",
+      "limites_alcanzados": 0,
+      "numero": 10
+    }
+  ],
+  "tipo": "corrida",
+  "trazas": [
+    {
+      "archivo": "trazas/A-001.json",
+      "caso_id": "A-001",
+      "huella": "0ad770ac8d14dcbdd0db272ba3a40b76be2170ebbd413880da37314ca2627366",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-002.json",
+      "caso_id": "A-002",
+      "huella": "84ffd018b27efe24b7d38be688584c3636e03e6fe4e607608d6a3956b26464cf",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-003.json",
+      "caso_id": "A-003",
+      "huella": "7d7043369054edc956e7deb54c392099f20898a2c2b7e3a32000420f482afbaf",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-004.json",
+      "caso_id": "A-004",
+      "huella": "2e858be81122100d3d1a80ca1e76a44794d4164115eb5686c249ade967f9a887",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-005.json",
+      "caso_id": "A-005",
+      "huella": "1f1c1d1a4298c9ba9ad66a571a41d6f0a5ae3af78999e665520b510354885978",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-006.json",
+      "caso_id": "A-006",
+      "huella": "f8532fc3f6acad3071375174d26178458653eb4dce71790ffee6732ea5e00abc",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-007.json",
+      "caso_id": "A-007",
+      "huella": "b94801e7330f9d09ce4b97f32c18481e37f772ca93f32aab0d64f154de83d30c",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-008.json",
+      "caso_id": "A-008",
+      "huella": "165aaa22390c7f0f1a7f5220dd1926159ebfbb2a2e3e3259cd58e1f08d7c3a19",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-009.json",
+      "caso_id": "A-009",
+      "huella": "afe347f5cbfb5871ce10e77cb9a0445044687a07bcece5f626ad7015fe3f20aa",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-010.json",
+      "caso_id": "A-010",
+      "huella": "1a061fe69d2959b332fff1e8c1d676c7eff71e7e65636be910425ef4eef0d99a",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-011.json",
+      "caso_id": "A-011",
+      "huella": "d294c1eb6f15847aac156753b5d9a815d8434c043ed25e9e1bb01043e28ae876",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-012.json",
+      "caso_id": "A-012",
+      "huella": "ebb52e85812b6986761368d5b4bd039c9729d0494a24e2cfe3cc42a098cfdc89",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-013.json",
+      "caso_id": "A-013",
+      "huella": "cd797ac178ff02480cf824535143a272bb022bb814efb63734e30d1decbdfa78",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-014.json",
+      "caso_id": "A-014",
+      "huella": "8db2c77f2da7a90828a85087ce7b60f6f4626d08c9c997d2e2b8bcfacf0ece7e",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-015.json",
+      "caso_id": "A-015",
+      "huella": "a5a2a5d11256c281903322198b27ba994528e509c7f0168d469e3cd319252c73",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-016.json",
+      "caso_id": "A-016",
+      "huella": "92fbf1deb5623ca107df93f5ceab312a9ca8b3c64cb07a0052ac8494b07a4fea",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-017.json",
+      "caso_id": "A-017",
+      "huella": "b30efde3e43b34806eda1a612fc7d8380cbcd91391bfaa295de5ef565606dba4",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-018.json",
+      "caso_id": "A-018",
+      "huella": "1c8c77a1409f43191ef55949f14cfe8bb0ce8d02a4c995f427602a942dc16f0f",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-019.json",
+      "caso_id": "A-019",
+      "huella": "679e131e0a7f0256486a9e5891441702d182731b79d5b54523681237361721d6",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-020.json",
+      "caso_id": "A-020",
+      "huella": "6004060ff2dbf9500593af2b46de211db6a208023e7b00a8a9d8c3654ff385cc",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-021.json",
+      "caso_id": "A-021",
+      "huella": "48ae9be01be770b51e93d03216493e4c146f04adcfc4ee243b45e552da65e286",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-022.json",
+      "caso_id": "A-022",
+      "huella": "0de0c72cc4b73d34ff382196a453dc428d72618bb39dcd1f18e8b94b907d9c88",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-023.json",
+      "caso_id": "A-023",
+      "huella": "00b1e4ac6230c0dffb32b8dfcab9dd350afbc823d22bbe4efb3a66ecdf3d4918",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-024.json",
+      "caso_id": "A-024",
+      "huella": "10bf5db3f743049df87d1801c0c73150f379437255ef00e699e2b096dcdb2b1b",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-025.json",
+      "caso_id": "A-025",
+      "huella": "4a7912ab2cdae091f72bb23e71c2e6014ababbabc9c26a2b3ec7c0caca0374df",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-026.json",
+      "caso_id": "A-026",
+      "huella": "e94b90b82f4bfa94f6480d4491595d125b99eaaae437d245d378f584b8b97863",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-027.json",
+      "caso_id": "A-027",
+      "huella": "44e19896a6d9d44d2e60836fcd4426e8335e10c2e7d109b9b0e37f18c2a28aa9",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-028.json",
+      "caso_id": "A-028",
+      "huella": "da1626dd635e72a7855a48b92969b4ca15284c88a290b337027c66e09b4ff222",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-029.json",
+      "caso_id": "A-029",
+      "huella": "edff74a74b57607b35f69af518658cf871b04f55626bddf420c57ae1d59c0f8a",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-030.json",
+      "caso_id": "A-030",
+      "huella": "93cf6d51493f661ee85281da3c19b329173516e0efa58f728079f6c49c643976",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-031.json",
+      "caso_id": "A-031",
+      "huella": "96222cb5e7c81055d973b1e4b1dba664e520f2e63c9f4080252e69145ed98cc8",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-032.json",
+      "caso_id": "A-032",
+      "huella": "859a82b95447599ed89092f2165c1b5bf762901a41a76f245ab0e7e53e9cf685",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-033.json",
+      "caso_id": "A-033",
+      "huella": "5a8613861f4f02b03c095365b9dae898444ee9c1fbea0f880396ca85aeda7e45",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-034.json",
+      "caso_id": "A-034",
+      "huella": "6bffc5ca41125e14ce956157433f71bcb91bb11d6ba964c563e5256f170e1551",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-035.json",
+      "caso_id": "A-035",
+      "huella": "8e0ed87923be33ac05e4f1c965f05c4aadb1a40562e3bcf62cf1aa02631b6a3f",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-036.json",
+      "caso_id": "A-036",
+      "huella": "04e13e71d39091c7a23ae2a5d7df1e7de707871e4d8ee6a1fdcdbf116fb56fa7",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-037.json",
+      "caso_id": "A-037",
+      "huella": "afb807fdda4d32b0ef2adfe2386910177c8c5290de2e131027d6143e0b5025f7",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-038.json",
+      "caso_id": "A-038",
+      "huella": "c3a1c640c9bc079a392e81e2413484058e72159c769f1fa131dcec6c08c2a316",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-039.json",
+      "caso_id": "A-039",
+      "huella": "8fd1d658a81137e2293e4aef49b3971106fc503dfdf3f09a42283cc5addbaeab",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-040.json",
+      "caso_id": "A-040",
+      "huella": "41930e45e5c3a6738f183029d947defcfa151fa30beb3de8fe868fea956244c5",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-041.json",
+      "caso_id": "A-041",
+      "huella": "d13823174247a2c8af74e90c246fb0b0d9df7e018eb99b8a09fdd89760e8bdbb",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-042.json",
+      "caso_id": "A-042",
+      "huella": "3bbbf7b383afdd9e252a0c3933fedbda4b516807ffd59d9ebca2cc90f7bc6a1f",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-043.json",
+      "caso_id": "A-043",
+      "huella": "5931cf333c50be22df43e69db199fcbbd9f319ea51dbdf60aba222e7195e75bf",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-044.json",
+      "caso_id": "A-044",
+      "huella": "b4c0889578c76561c1509e8b702b5ea441d957f4745a57585bcb22855af88588",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-045.json",
+      "caso_id": "A-045",
+      "huella": "290b44a7c898937850fb05d9948d3993a93c2771733e7e9f8d1e5a52902f2da7",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-046.json",
+      "caso_id": "A-046",
+      "huella": "ad3cf000d6e861e7dd9026f4ea08a529eb47caaebf4c8e222ed4c351c64b232c",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-047.json",
+      "caso_id": "A-047",
+      "huella": "3e346c392bd50d025fc5fefc00f252ff99e867d1540260811d3f5e94f201cf72",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-048.json",
+      "caso_id": "A-048",
+      "huella": "76f478926a9486021bcd901a9ada9c2b6c1d6d1cc15ea720d043989ec680aad3",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-049.json",
+      "caso_id": "A-049",
+      "huella": "9ed7ca5ec143875b1b9c1d757266aa8fe0a89cafa3998b031ba5e1f72ceae0ec",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-050.json",
+      "caso_id": "A-050",
+      "huella": "ebd101d8a3fddfd0dc0c50712f92123e11e2a42ceb7c7c294f304b370ad799f8",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-051.json",
+      "caso_id": "A-051",
+      "huella": "32e15ccac7a34e09ae853d7dd4e030e22ffc24f57cbd625239a76658cd8dd421",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-052.json",
+      "caso_id": "A-052",
+      "huella": "4fde69419f68df839cac7cdcf5edd4288aecdbe5976b63de2b146947b5af5ebe",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-053.json",
+      "caso_id": "A-053",
+      "huella": "47e05a9d763fe4f0cef54565a8351ab5eb86b45f85fdd5fa4bd1b4458161ef68",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-054.json",
+      "caso_id": "A-054",
+      "huella": "5ad2e5efec2af2c087ef3891b0bea84523ff3100e76e7d076423de8deb67485e",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-055.json",
+      "caso_id": "A-055",
+      "huella": "1a637b30195f85cfcfce5a59ee5708e77aae53c651ebd050ab9f5a0446085294",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-056.json",
+      "caso_id": "A-056",
+      "huella": "a26e9fd9eef356ea247e4b41490c1e4c059f10a72ecbc7c197241d3a28ec822f",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-057.json",
+      "caso_id": "A-057",
+      "huella": "9911fdd90670556ed151653c1ab5eee10bb5444ae728001bd1ef3dd6a61fb4ac",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-058.json",
+      "caso_id": "A-058",
+      "huella": "11d60ff0ef3a732bcc300a1d981d3e009fc81e6f4665d819ecb2de154cb5b32f",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-059.json",
+      "caso_id": "A-059",
+      "huella": "9e5d2ed06040c90df320a87f6aa09298990d4c80de557b29ce22d34ba2734c42",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-060.json",
+      "caso_id": "A-060",
+      "huella": "b569c9068d5e6cc2ad3714f034b1b9e7cd737fece581998397a550b313a07ad6",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-061.json",
+      "caso_id": "A-061",
+      "huella": "10f7e095c497f4a48eaf8dbf879870add32d0dffef2ce5b75fbbb94796c5d1a8",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-062.json",
+      "caso_id": "A-062",
+      "huella": "131e24bcabe987525a13bbba4379b5ee54a88c1786dceefe2afa9f69ae3f9a9c",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-063.json",
+      "caso_id": "A-063",
+      "huella": "604d39ee2a6fd8e4cce9208f979defbe9705f6cdbbca47651f8177087180d940",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-064.json",
+      "caso_id": "A-064",
+      "huella": "195e5d601c24543a44aae3e39f9a3f55cc8863e97ad7ace04f1adc0badb6452f",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-065.json",
+      "caso_id": "A-065",
+      "huella": "4c495de4dec5360efb4da0bb0130bc900b36e02f64fa31b8cd406fc6e01733eb",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-066.json",
+      "caso_id": "A-066",
+      "huella": "b3569a8c99da9e40f7e158357f8be4ced8e4b390f7a64a4366f850c74cb31c2e",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-067.json",
+      "caso_id": "A-067",
+      "huella": "f3502a967aa61c4b38697bc31827188f5195f9ae872df6fd974e61edba77dea9",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-068.json",
+      "caso_id": "A-068",
+      "huella": "4e209906d74dace7363b04c135d0d837da88c982cbb819fe5ae0334cdde50bdb",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-069.json",
+      "caso_id": "A-069",
+      "huella": "8a4bbe4c25b76c2ebb5ba1c30e36d6313cb46d8dfa812be8e54f3290bf94e1f6",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-070.json",
+      "caso_id": "A-070",
+      "huella": "232c33c55ee557c1d65fcfda53bda0118dca42e98c52c9623f1789ae728f63a6",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-071.json",
+      "caso_id": "A-071",
+      "huella": "1f0fdca47cfbf5a94d1ce61ef2f588611914f97d4a119f2ae93de35868897be3",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-072.json",
+      "caso_id": "A-072",
+      "huella": "330de85942b35353abb4a6ea175d3119f4fdb8ca0d935f1a587a820a8aaabd50",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-073.json",
+      "caso_id": "A-073",
+      "huella": "7f83737d47ad3b3d40c45d4e8671090c7cb11acea60faf570cee2201ac3c6ae9",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-074.json",
+      "caso_id": "A-074",
+      "huella": "40343bae6ff7d94ae17de876217ac34a58e597a9982630bee4396b40304548f5",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-075.json",
+      "caso_id": "A-075",
+      "huella": "c78ea38d07c9e202b2a8cc8089a546d81047bdce4923f78a6866f9187a181615",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-076.json",
+      "caso_id": "A-076",
+      "huella": "69d2d6c6dad7ad59d1874d849c454bb8e91b240f8aa2c3e687395784e31b9cbb",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-077.json",
+      "caso_id": "A-077",
+      "huella": "6a0f4608b139104cee455cda98b5930485fe294fa10b9e6eb8dbcc23e2e4ccc8",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-078.json",
+      "caso_id": "A-078",
+      "huella": "70e19e3234f07051e3e103f2b69270c6dbb312411609d839c603eea128d0b36e",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-079.json",
+      "caso_id": "A-079",
+      "huella": "3d739dd8a599dc96ad701e96f8948476843e77f6df2125c27bbfb32e7f591bec",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-080.json",
+      "caso_id": "A-080",
+      "huella": "3ddc3223bf0ff8403486c8a8995718693ebc5a973228b460898bbc6188724652",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-081.json",
+      "caso_id": "A-081",
+      "huella": "f1d7e5a92ca06e167d4de77320ff08873860469f23a11fbf56e9513e60b00fe0",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-082.json",
+      "caso_id": "A-082",
+      "huella": "65556f9fae93bf5466c681fe444029ac64b6b3368e6c55966836ac67d4a32eb6",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-083.json",
+      "caso_id": "A-083",
+      "huella": "6318881e4a10761adef9c8419b179f7755e16d7caadfcca8056515e97e787c9d",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-084.json",
+      "caso_id": "A-084",
+      "huella": "6ad062b9ba1364cd6676309137bb22b4e2ad5bb52af6b490c7e694001199505b",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-085.json",
+      "caso_id": "A-085",
+      "huella": "dfbe7bcd977e15d3c9243468c75431d9c834059f2840223c94e9795efae1b3c2",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-086.json",
+      "caso_id": "A-086",
+      "huella": "8f3155930803227e89495c8ec69a51f8d391cee039bffef12e829fb925dbb499",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-087.json",
+      "caso_id": "A-087",
+      "huella": "3bc01663502a2c93798451e36db7eb6f128f5038ba57bb2c532ebf70adff42b1",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-088.json",
+      "caso_id": "A-088",
+      "huella": "ca794b2f748d9f25cd9da84d4507805c42243c12d93b1ab562865b334216cfec",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-089.json",
+      "caso_id": "A-089",
+      "huella": "f0ff30cb88f2340e40966b84b31d169760577aeb5e74a4cb963498f7d67689bf",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-090.json",
+      "caso_id": "A-090",
+      "huella": "964996bc4bfa0331717a2e95364c616c2bed8a1ce1a6898ef2e4d0ed95ef015a",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-091.json",
+      "caso_id": "A-091",
+      "huella": "6f73555473b8d776aaa2fbdb3ca6a24b8d08bc658a266e001e32630e30df6e58",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-092.json",
+      "caso_id": "A-092",
+      "huella": "522e365f4baaccf40970c324e73cb7d481962c939fe0ac9a734669233fa585ca",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-093.json",
+      "caso_id": "A-093",
+      "huella": "7c2a08807a47eaffbb823a0a4f381f0e7b2d736df307072ce5222cd0031132db",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-094.json",
+      "caso_id": "A-094",
+      "huella": "a282758ca42fe90053444e8f3d9c44e554eabb6f6251829a005d83d0a0f0326b",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-095.json",
+      "caso_id": "A-095",
+      "huella": "215a92b3cb35ad590f91c228b181d0e2b086d0f07ff3343e2d26aba92e66abeb",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-096.json",
+      "caso_id": "A-096",
+      "huella": "2e3e0415446fb99da437e69c49aa89e87a1faa0ca9999756464c2020335db31c",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-097.json",
+      "caso_id": "A-097",
+      "huella": "6a3b09ddc65b094996b747fd27faf2e7ca91ab14d418816f0a427a4cbcadbc15",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-098.json",
+      "caso_id": "A-098",
+      "huella": "161e118210d82a7e3b9f22e8875d5f1504073f87433a710d982e91ae9ca43a05",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-099.json",
+      "caso_id": "A-099",
+      "huella": "e328faca75abc375a1d7a649daf1d493e9726e0dbe4d3811974447c683ff8760",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-100.json",
+      "caso_id": "A-100",
+      "huella": "c95670f4d2d0a162ca926af900a787ff69533edb935a4d51ae82dde051bcd80a",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-101.json",
+      "caso_id": "A-101",
+      "huella": "366761e31b28abb196968c299362e26bf5888316f854b8a2e1e20a759f4813a2",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-102.json",
+      "caso_id": "A-102",
+      "huella": "f82a2dd960435e33f3d4f547744e04bd97ada7672359df4f7d8cdc6d479032f4",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-103.json",
+      "caso_id": "A-103",
+      "huella": "bc91cd95a63240d14fa18db7322a44f58c35d649ebdf5a9fd38397be0e15fbae",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-104.json",
+      "caso_id": "A-104",
+      "huella": "95bebe9b6f0b6304cbb196887bae58c84a023b75ecc2cac149299a23fc9ab81d",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-105.json",
+      "caso_id": "A-105",
+      "huella": "df9615ab7da48dd8137141363f7e6c988aab3990ac8a038b35dc3d3f94706d99",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-106.json",
+      "caso_id": "A-106",
+      "huella": "a606a7946e2abc1d1c92b5a224d7fe97accd5ced1b3e6659055744ba28109c7e",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-107.json",
+      "caso_id": "A-107",
+      "huella": "364e7f5366d7e10d0b726b72a499083d6dea75a36eba150a36dfee8c77f8e364",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-108.json",
+      "caso_id": "A-108",
+      "huella": "760ec6dd280ecf7487dc6d628a0303296c3ed64ea16d7d0390194bd90d4ebb94",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-109.json",
+      "caso_id": "A-109",
+      "huella": "bc568820b3ce75ae21e490abef2c50169b096014dc9571405ca9ee89bfd0f1b5",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-110.json",
+      "caso_id": "A-110",
+      "huella": "53e0f8c2789d19ae941fcdbb7ddeb73cc2ea74559d7135a3f5a79f5f5375f5af",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-111.json",
+      "caso_id": "A-111",
+      "huella": "83db1e9871ab238f166405e27d75b8f5d7ac6ec664da9cbd6d660813215df91f",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-112.json",
+      "caso_id": "A-112",
+      "huella": "9d1ed6584c01307a27292072b09878a3fcd0935f919443f7d32c186ce9e1e38d",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-113.json",
+      "caso_id": "A-113",
+      "huella": "a0e9be35c0d02eb0c0a054da0524f33a35215332e8fb65c085356a3d7b6374a5",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-114.json",
+      "caso_id": "A-114",
+      "huella": "51a9977c44507655aff22fd08828cdecec8c4595faa81b979a3b0931e016d24b",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-115.json",
+      "caso_id": "A-115",
+      "huella": "72e82e7670d60441ef8edb193d46821e15a7796a08496589cff1caa930fbf43a",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-116.json",
+      "caso_id": "A-116",
+      "huella": "856860cf5ebae6b39df57197943a27155504d47c9bbc1e30cf545a1ccc36aaea",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-117.json",
+      "caso_id": "A-117",
+      "huella": "a8093c6b464a5920440417e3a17e0f028cdd220204bcb6614dce734401545d5d",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-118.json",
+      "caso_id": "A-118",
+      "huella": "35f2cfb09b0525323da31e30bdbad3b4df4ae00c150370a99f3eda32479ad4ca",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-119.json",
+      "caso_id": "A-119",
+      "huella": "d3dcb0946c65b0e6d57a95115ccf8843ede36bf9aba4ef0b66d642b9ba7b8f3a",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-120.json",
+      "caso_id": "A-120",
+      "huella": "9e546d3ab3327212e4f85039f38b3dba2eb60e8d563f3898dff5c415a1b0d457",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-121.json",
+      "caso_id": "A-121",
+      "huella": "790ddb45a56cf0375a49f86108a61cf60af78916174317a60aa801f48080ac17",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-122.json",
+      "caso_id": "A-122",
+      "huella": "3e237a725cf315dea8a6b0a5b5da62e7e15f3c52df7d1c1d042cb76bd85281be",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-123.json",
+      "caso_id": "A-123",
+      "huella": "24c22551b9e8f516c812b9ed8144d4ec8a1fd4b866c115e335d7822107a9234a",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-124.json",
+      "caso_id": "A-124",
+      "huella": "35ffb7fec2f36e7e856bc11ba79db2e2a39937d33a30bc0446727f88edc3e8cb",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-125.json",
+      "caso_id": "A-125",
+      "huella": "830e402a267b98682044c1c40628f9fe35066f933af078a5c8c8630cd48cc430",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-126.json",
+      "caso_id": "A-126",
+      "huella": "0ff62beb744f350355e91d9c70fd59ce8d289880132d76ee2a56702faafddca1",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-127.json",
+      "caso_id": "A-127",
+      "huella": "a42368bc7499c5bad9942f79e9b5e822f6927a2e5ac637e2543babe343f4b20f",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-128.json",
+      "caso_id": "A-128",
+      "huella": "61849a6e23b70a8caf176503e51406c6124d1a4a648eeffb8356e3ca5774f1c4",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-129.json",
+      "caso_id": "A-129",
+      "huella": "4cc37e232c4e1c5a766053715c7dbe33e7707faec76c7cfced51fbc5b3806f4f",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-130.json",
+      "caso_id": "A-130",
+      "huella": "3324baed687254bf4843ff4c8bc71927f5ff8b3b25f4acabacfe82bafd4ebbe8",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-131.json",
+      "caso_id": "A-131",
+      "huella": "3da554f4f60b18a117cb3791323d7cbdf26deae7a11358d7bfb790cf2f867868",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-132.json",
+      "caso_id": "A-132",
+      "huella": "cdf894d7634dd65d2d196f8924afecca18eb8479091665312186a8cf6875e6fc",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-133.json",
+      "caso_id": "A-133",
+      "huella": "3a8921beb9cc233141b254fdc2c025c9bbd9f608ce399961e0f60d1902aba7fc",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-134.json",
+      "caso_id": "A-134",
+      "huella": "a72c1b646eb4084c2c19de6c615f68cf54ae5a166daee00383a5e325c0c5242a",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-135.json",
+      "caso_id": "A-135",
+      "huella": "e11a2c3e52ce204fbf95266d5e9def190a76aeae142b8c9de1f29b838598f1e2",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-136.json",
+      "caso_id": "A-136",
+      "huella": "b22747a8e9f121f6eb26484d313de01881245f116f5763ab23073b8a881fa8b0",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-137.json",
+      "caso_id": "A-137",
+      "huella": "6b699eee100b5971681e344fc2a0ba0228c768801b1ca12d663274b3291710a3",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-138.json",
+      "caso_id": "A-138",
+      "huella": "abf9c0cfffacd265149aa106daa125326578844fdc13d25ffe31ee2ffd1617fe",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-139.json",
+      "caso_id": "A-139",
+      "huella": "405efbf54597341b0b1b871458926facb2dc6c565d7eca2df4df9b6070f86881",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-140.json",
+      "caso_id": "A-140",
+      "huella": "7c5af23c44b72d9ca328bbbfb4daf28f78192ec6b664deee46863b87a9928241",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-141.json",
+      "caso_id": "A-141",
+      "huella": "dd37a4ab8c3941facdf075a97dbe44f48ea619122203c436477b8c2eb9a261d8",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-142.json",
+      "caso_id": "A-142",
+      "huella": "b9223e8fdb6173a78d972eeb3c4d522ecc57a6a83618c291b1682aa39ec178ee",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-143.json",
+      "caso_id": "A-143",
+      "huella": "b87c193d4a24780b802bf480ee725d2514bb14c6a3667624214f41e70986b119",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-144.json",
+      "caso_id": "A-144",
+      "huella": "fa1b24fdc2425e11b6a88abb5cb8eb163517611270d07a00356f977450bbf1ca",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-145.json",
+      "caso_id": "A-145",
+      "huella": "730cccc70261e0fef8d617e3e39fad80c83c4b0d49ea7064c36095f8d34ac37e",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-146.json",
+      "caso_id": "A-146",
+      "huella": "a0391207b6af577e25aa3105ce3082420bf9838ce8361e838c08b111b4a3e8e5",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-147.json",
+      "caso_id": "A-147",
+      "huella": "219f755e6d587b81a2b481c3336cbcdaa4d9c1e1f92fb76c5ffae708db3e0e15",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-148.json",
+      "caso_id": "A-148",
+      "huella": "11bfeffd3bdcd4c7a721a115eacb1646b18d0c4f37b98a94b8ca3859b52f8a57",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-149.json",
+      "caso_id": "A-149",
+      "huella": "770df52cc2456c98b9a6a694a0f049f1aa1f1b02f5ef0ab0a82b9f599420cc61",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-150.json",
+      "caso_id": "A-150",
+      "huella": "f02b296839cfe515cf035bddc670aeab6c0f58a4962ca288afd66a0e039a7d6e",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-151.json",
+      "caso_id": "A-151",
+      "huella": "5978aeffc6c62e6452a77cbe5fd3d1446e66a339fcffe63c58afa4f906780378",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-152.json",
+      "caso_id": "A-152",
+      "huella": "4e6734299713bf048ac3cf050ee4f509bc176f3d2307179a2ed7192128fc7178",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-153.json",
+      "caso_id": "A-153",
+      "huella": "6de3ccb3569d8353b1c94e6a69c28c0ceb7d14ae619b395c320818c3dc0a1afc",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-154.json",
+      "caso_id": "A-154",
+      "huella": "f995ef5e3e62a04e80798d8981a437110cd5bf49ac1de06fa5719cc393be3f03",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-155.json",
+      "caso_id": "A-155",
+      "huella": "3af0688836c1e120b6035581b8cf62fd6b928a59fe59547c34c1f8ae44a03224",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-156.json",
+      "caso_id": "A-156",
+      "huella": "53da88cf45d12c61c2a79e4d39020b4daaa040c5981a12378d89b5c819b575b0",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-157.json",
+      "caso_id": "A-157",
+      "huella": "eccb70e4edb90793e0165ebedd7ac2e40daa51b53816dfeb03a83b01eb5e4a16",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-158.json",
+      "caso_id": "A-158",
+      "huella": "d523bfb36e47cb0c1a30cd40cdca22e4151fecffee8484cb8e75e9d14f7d94ed",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-159.json",
+      "caso_id": "A-159",
+      "huella": "d023f3c42860566a240db5a17c9918651fcc39613b79d945a70a38d38f6def8f",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-160.json",
+      "caso_id": "A-160",
+      "huella": "d0d7b69b38f81ad86c06fa52aae2ca694b149cd0551aba08f3941bfe35fe0bab",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-161.json",
+      "caso_id": "A-161",
+      "huella": "7fd5d6b6fe880fbce5a405f0aa2b13fa91b7aa82f6b3c40b242707b67bdbace1",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-162.json",
+      "caso_id": "A-162",
+      "huella": "1295ca9f7c1e41517939baa0f31816ceb3a868249b37d940ffdaa2fef82a342b",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-163.json",
+      "caso_id": "A-163",
+      "huella": "4b56a1593948b2b9530cda9ec9be29759d0a085bc62f3cd52b48320fd38d826e",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-164.json",
+      "caso_id": "A-164",
+      "huella": "0f4feee642ac0032bc77a3e7f317ebdeeb9fb47d72835a47d4c89afb5c772642",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-165.json",
+      "caso_id": "A-165",
+      "huella": "ff4139d0d9ab231ce92f17622f8c36556818db3fd14125b0dc92a2847685e948",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-166.json",
+      "caso_id": "A-166",
+      "huella": "7dbf525c649501d353cc43e46d4f330f6fb2318d39b123c6ffd1df10c22e5d66",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-167.json",
+      "caso_id": "A-167",
+      "huella": "da9d2d247666b1ea3015a613a80b464968066e462673eb2bd5eeb2ec1070c468",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-168.json",
+      "caso_id": "A-168",
+      "huella": "377a1e06b21c0a18c7761cf23ebdd6572009a11b67fcec82f2c7cd6954594198",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-169.json",
+      "caso_id": "A-169",
+      "huella": "9db8e532ea1350dd2b7705f93a589e77162e11a5c2e08bc90802b25eb3d1a9e2",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-170.json",
+      "caso_id": "A-170",
+      "huella": "9a50f3829e191f7de9462078bfee7df3b896b3ebb71146a9fa351c561a6a5644",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-171.json",
+      "caso_id": "A-171",
+      "huella": "e63153cd71be71ea71b4b7ebd1413dc64c810b4e5fca721ee6dc60e187b5387e",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-172.json",
+      "caso_id": "A-172",
+      "huella": "a508a4f8fc04c9b6a9d5df4f0906aa9e4eef149f3037c62d16bc9597ad6a50c0",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-173.json",
+      "caso_id": "A-173",
+      "huella": "c9a6d91f340663cc533b55223261bd7a71dd7dcabf9a2b4ed999aa439b8ec7a3",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-174.json",
+      "caso_id": "A-174",
+      "huella": "38b33567d4eba3041a2c13ae3f3fb48aca31f1724b9ffb2059b8a27b3bf0044a",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-175.json",
+      "caso_id": "A-175",
+      "huella": "f968884eda33d97083368ac6af5c01d791961dd3b3e81faacf922f1b4bcb9b52",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-176.json",
+      "caso_id": "A-176",
+      "huella": "c385790f91c2b2678eec1d0e4acef90bdd71e55735fc53acd039587538249727",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-177.json",
+      "caso_id": "A-177",
+      "huella": "c1a113d64933e04d50d02e80ac94201bde9d0f90bd3d375c296410d3482cfc5e",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-178.json",
+      "caso_id": "A-178",
+      "huella": "f2b4edc0ec932a296d881b5b069d0ef52052212dbaeeaf8401f2a265e83eac52",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-179.json",
+      "caso_id": "A-179",
+      "huella": "a5f22d533ec9e2984138433510d6bd512fe3616f3628a0d9e20dd2ec25657dbb",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-180.json",
+      "caso_id": "A-180",
+      "huella": "bb0ba1d8b81ad09d9e1352e78cc5815a900a0b4f6b9ceab51eb3ec42b19b7364",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-181.json",
+      "caso_id": "A-181",
+      "huella": "3b9c91c09529c1ed231ed5cabcce15761b71ffdb24c5f1f564b9766585b4c3e5",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-182.json",
+      "caso_id": "A-182",
+      "huella": "4311692a4bdbf86e7bbf2f9652bb64346b27945c17eb2ca2b02b68685c1e5d4f",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-183.json",
+      "caso_id": "A-183",
+      "huella": "101ef83484bcfa7764cca115fc5ae40c9036148e815783c7a4e9062187e3e8f4",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-184.json",
+      "caso_id": "A-184",
+      "huella": "e073d3d05a9c00d9fc41bda76b4693bed15eb6c663188c807295a42ec58bec00",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-185.json",
+      "caso_id": "A-185",
+      "huella": "9248316b7dd109fbc3caaa881c96b6adb201b4e60a58e3a5c77e6753c028b0c4",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-186.json",
+      "caso_id": "A-186",
+      "huella": "4b343494d9a750e4f8dee1e32c7be2b436f29eca807589e33fd9abb630075a0e",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-187.json",
+      "caso_id": "A-187",
+      "huella": "87f88c8c221a8ba143e7f81a7aebdd1e20341645284df6c079a0cc640ffd3f3f",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-188.json",
+      "caso_id": "A-188",
+      "huella": "205a755e3db14316c92496fe3ae2bad63d1f0f9b5136446a6637ddeee252ef71",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-189.json",
+      "caso_id": "A-189",
+      "huella": "b62c8792b1e722dd0ef49f72c5eabbd83660c41f03634bba1ea348c9ae5ebe60",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-190.json",
+      "caso_id": "A-190",
+      "huella": "b0a0e42c092b3ced752ae93752cbbade1caf497283250a1d9f29ae018697d271",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-191.json",
+      "caso_id": "A-191",
+      "huella": "926536f3f410e74691c946bd9cd5aed7cd56dca4cd352891b1a4b5d044eb7225",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-192.json",
+      "caso_id": "A-192",
+      "huella": "16a379abb95a652a4d6ee77aa30f75da12b1200565a388d5fc736b3b0dcec725",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-193.json",
+      "caso_id": "A-193",
+      "huella": "7fb408c60351a57d3e1d19c61a4671ea775617bb50dc0d849f48621bce080100",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-194.json",
+      "caso_id": "A-194",
+      "huella": "a5d81b836f91c8d04a421f543828d4a7d535e141b458030318b8f1afb703e7e3",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-195.json",
+      "caso_id": "A-195",
+      "huella": "b6661c733b0c067900bb2a27254cc95540dd174d0cc356bb8d491626d27977bf",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-196.json",
+      "caso_id": "A-196",
+      "huella": "dda0c0a2e8164e33862ece216d250d9c9f521b6eaa3f44aa39fac0c5c1aab757",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-197.json",
+      "caso_id": "A-197",
+      "huella": "07267d09df2126a546ec10d151c32b2c22b97500441f4bbec5fc0bd4651c70b1",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-198.json",
+      "caso_id": "A-198",
+      "huella": "cff22020531ff18fe212473363448c5cbbf5e63526df574a02af0fdef79eae15",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-199.json",
+      "caso_id": "A-199",
+      "huella": "bab5eb52d336e609792bd0b95d46d844b883a6743feed9fa761d92bc358b59e7",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/A-200.json",
+      "caso_id": "A-200",
+      "huella": "0deecad41b7372142bf1db14249644141397f32ef31912a07edf12239082e7d0",
+      "resultado": "completo"
+    }
+  ],
+  "umbrales_aplicados": {
+    "U1": 0.75,
+    "U2": 1000,
+    "U3": 2,
+    "U4": false
+  },
+  "variante": "agente_unico",
+  "version_grafo": "3066e73cef3823be98b4d6f454546fad48b580e7c5ad0da5f6201cb4c706e6c5"
+}

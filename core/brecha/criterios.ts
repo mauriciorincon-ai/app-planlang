@@ -45,7 +45,16 @@ export interface ResultadoCriterio {
   estado: EstadoCriterio;
   casos_que_incumplen: string[];
   no_evaluables: NoEvaluable[];
-  k: { requerido: number; observado: number; aplica_a: string | null } | null;
+  /**
+   * `pass^k`: las corridas que pide la regla y las que hubo. `aplica` es falso cuando la regla limita k a otro tamaño de
+   * lote (`k_aplica_a: "lote_demo_20"`) y este lote no lo tiene: el criterio se mide en una corrida (S3, AU-S3 C5).
+   */
+  k: {
+    requerido: number;
+    observado: number;
+    aplica_a: string | null;
+    aplica: boolean;
+  } | null;
   nota: TextoBilingue | null;
 }
 
@@ -125,11 +134,27 @@ function porMetrica(
   return salida;
 }
 
-/** Evalúa todos los criterios del plan. `repeticiones`: vistas de las otras corridas del mismo lote (pass^k). */
+/**
+ * El tamaño de lote al que la regla limita su k (`k_aplica_a`): `lote_demo_<n>` → n; sin campo, `null` (k rige en
+ * todo lote); un valor que el verificador no sabe leer, `undefined` (el criterio queda mal formado, con su nombre).
+ */
+export function loteDeK(
+  aplicaA: string | undefined,
+): number | null | undefined {
+  if (aplicaA === undefined) return null;
+  const m = /^lote_demo_(\d+)$/.exec(aplicaA);
+  return m ? Number(m[1]) : undefined;
+}
+
+/**
+ * Evalúa todos los criterios del plan. `repeticiones`: vistas de las otras corridas del mismo lote (pass^k).
+ * `nLote`: los casos del lote de esta corrida, para la regla que limita su k a un tamaño de lote.
+ */
 export function evaluarCriterios(
   plan: Plan,
   vistas: readonly VistaDeCaso[],
   repeticiones: readonly (readonly VistaDeCaso[])[] = [],
+  nLote: number | null = null,
 ): ResultadoCriterio[] {
   return plan.criterios_aceptacion.map((c) => {
     const r = c.regla_de_medicion;
@@ -146,6 +171,19 @@ export function evaluarCriterios(
     if (n === 0) return salida;
 
     if (r.agregacion === "pass^k") {
+      const lote = loteDeK(r.k_aplica_a);
+      if (lote === undefined) {
+        const s = base(c, null);
+        s.estado = "mal_formado";
+        s.nota = {
+          es: `k_aplica_a «${r.k_aplica_a}» no es un tamaño de lote que el verificador sepa leer (lote_demo_<n>).`,
+          en: `k_aplica_a «${r.k_aplica_a}» is not a batch size the verifier can read (lote_demo_<n>).`,
+        };
+        return s;
+      }
+      // k rige si la regla no la limita, si este lote tiene el tamaño al que la limita, o si no se sabe el tamaño del
+      // lote: sin esa prueba no se declara cumplido con menos corridas (regla dura 9).
+      const aplica = lote === null || nLote === null || nLote === lote;
       const evs = repeticiones.map((vs) =>
         evaluarRegla(r.poblacion, r.condicion, vs),
       );
@@ -166,18 +204,32 @@ export function evaluarCriterios(
       const valor = pasan.length / n;
       const k = r.k ?? 1;
       const observado = 1 + repeticiones.length;
-      salida.k = { requerido: k, observado, aplica_a: r.k_aplica_a ?? null };
+      salida.k = {
+        requerido: k,
+        observado,
+        aplica_a: r.k_aplica_a ?? null,
+        aplica,
+      };
       salida.valor_medido = redondear(valor);
       salida.casos_que_incumplen = ev.poblacion.filter(
         (id) => !pasan.includes(id),
       );
       const objetivo = Number(c.valor_objetivo);
       salida.estado =
-        valor < objetivo ? "incumple" : observado < k ? "incompleto" : "cumple";
+        valor < objetivo
+          ? "incumple"
+          : aplica && observado < k
+            ? "incompleto"
+            : "cumple";
       if (salida.estado === "incompleto")
         salida.nota = {
           es: `Medido con ${observado} de ${k} corridas exigidas: todavía no puede declararse cumplido.`,
           en: `Measured with ${observado} of the ${k} required runs: it cannot be declared met yet.`,
+        };
+      else if (!aplica && k > 1)
+        salida.nota = {
+          es: `El plan exige ${k} corridas solo en lotes de ${lote} casos (k_aplica_a: ${r.k_aplica_a}); este lote tiene ${nLote} casos y se mide en ${observado === 1 ? "una corrida" : `${observado} corridas`}.`,
+          en: `The plan requires ${k} runs only in batches of ${lote} cases (k_aplica_a: ${r.k_aplica_a}); this batch has ${nLote} cases and is measured in ${observado === 1 ? "one run" : `${observado} runs`}.`,
         };
       return salida;
     }

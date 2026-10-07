@@ -11,7 +11,9 @@ import pytest
 from app_agents import lotes
 from app_agents.adaptador import ErrorProveedor
 from app_agents.canonico import escribir_con_huella, leer_verificando
+from app_agents.demo_a import simulacion as simulacion_a
 from app_agents.demo_a.simulacion import RespondedorSimulado
+from app_agents.demos import demo
 from app_agents.exportador import leer_corrida, verificar_corrida
 
 LOTE20 = "data/casos/demo-a/planlang-a-001-20.json"
@@ -83,20 +85,20 @@ class _Falla(RespondedorSimulado):
 
 def test_limite_de_uso_detiene_la_sesion_y_no_exporta_el_caso(tmp_path: Path, monkeypatch) -> None:
     falla = type("F", (_Falla,), {"llamadas": 0, "tipo": "limite_de_uso", "en": 4, "veces": 1})
-    monkeypatch.setattr(lotes, "RespondedorSimulado", falla)
+    monkeypatch.setattr(simulacion_a, "RespondedorSimulado", falla)
     r = _lote(tmp_path, n=5)
     assert r.detenida_por == "limite_de_uso" and r.limites_alcanzados == 1
     assert r.ejecutados == ["A-001"]  # A-002 cae en su segunda llamada y se reintenta en otra sesión
     m, _, _ = leer_corrida(tmp_path / "c")
     assert m["sesiones"][0]["detenida_por"] == "limite_de_uso"
-    monkeypatch.setattr(lotes, "RespondedorSimulado", RespondedorSimulado)
+    monkeypatch.setattr(simulacion_a, "RespondedorSimulado", RespondedorSimulado)
     r2 = _lote(tmp_path, n=1)
     assert r2.ejecutados == ["A-002"]
 
 
 def test_esquema_invalido_tras_los_reintentos_deja_traza_parcial(tmp_path: Path, monkeypatch) -> None:
     falla = type("F", (_Falla,), {"llamadas": 0, "tipo": "esquema_invalido", "en": 1, "veces": 3})
-    monkeypatch.setattr(lotes, "RespondedorSimulado", falla)
+    monkeypatch.setattr(simulacion_a, "RespondedorSimulado", falla)
     r = _lote(tmp_path, n=1)
     assert r.con_error == ["A-001"]
     t = leer_verificando(tmp_path / "c" / "trazas" / "A-001.json")
@@ -113,7 +115,7 @@ def test_esquema_invalido_tras_los_reintentos_deja_traza_parcial(tmp_path: Path,
 
 def test_un_esquema_invalido_aislado_se_reintenta_y_queda_registrado(tmp_path: Path, monkeypatch) -> None:
     falla = type("F", (_Falla,), {"llamadas": 0, "tipo": "esquema_invalido", "en": 1, "veces": 1})
-    monkeypatch.setattr(lotes, "RespondedorSimulado", falla)
+    monkeypatch.setattr(simulacion_a, "RespondedorSimulado", falla)
     r = _lote(tmp_path, n=1)
     assert r.con_error == []
     t = leer_verificando(tmp_path / "c" / "trazas" / "A-001.json")
@@ -136,7 +138,7 @@ class _Excepcion(RespondedorSimulado):
 
 def test_una_excepcion_no_clasificada_no_se_lleva_las_trazas(tmp_path: Path, monkeypatch) -> None:
     """M-9: el caso terminado queda escrito, la sesión «detenida por excepción», el en curso pendiente."""
-    monkeypatch.setattr(lotes, "RespondedorSimulado", type("E", (_Excepcion,), {"llamadas": 0}))
+    monkeypatch.setattr(simulacion_a, "RespondedorSimulado", type("E", (_Excepcion,), {"llamadas": 0}))
     with pytest.raises(ConnectionError):
         _lote(tmp_path, n=5)
     m, _, trazas = leer_corrida(tmp_path / "c")
@@ -145,14 +147,14 @@ def test_una_excepcion_no_clasificada_no_se_lleva_las_trazas(tmp_path: Path, mon
     assert list(trazas) == ["A-001"]
     assert verificar_corrida(tmp_path / "c") == []
     # La sesión siguiente retoma desde A-002 sin duplicar.
-    monkeypatch.setattr(lotes, "RespondedorSimulado", RespondedorSimulado)
+    monkeypatch.setattr(simulacion_a, "RespondedorSimulado", RespondedorSimulado)
     r = _lote(tmp_path, n=1)
     assert r.ejecutados == ["A-002"]
 
 
 def test_otro_error_no_se_reintenta_y_deja_traza_parcial(tmp_path: Path, monkeypatch) -> None:
     falla = type("F", (_Falla,), {"llamadas": 0, "tipo": "otro", "en": 1, "veces": 1})
-    monkeypatch.setattr(lotes, "RespondedorSimulado", falla)
+    monkeypatch.setattr(simulacion_a, "RespondedorSimulado", falla)
     r = _lote(tmp_path, n=2)
     assert r.con_error == ["A-001"] and r.ejecutados == ["A-001", "A-002"]
     t = leer_verificando(tmp_path / "c" / "trazas" / "A-001.json")
@@ -285,6 +287,14 @@ def test_el_limite_de_uso_no_pasa_a_una_persona(tmp_path: Path) -> None:
     r, corrida = _respaldo(tmp_path, {"A-001": ("Extraccion", "limite_de_uso")}, 2)
     assert r.detenida_por == "limite_de_uso" and r.ejecutados == []
     assert not (corrida / "trazas" / "A-001.json").exists()
+
+
+def test_los_alias_del_a_son_los_de_su_entrada_en_demos():
+    """AU-S3-25: los alias de `lotes.py` no se apartan del registro de demos, que es la fuente."""
+    a = demo("a")
+    assert (lotes.PLAN_POR_DEFECTO, lotes.CASOS_POR_DEFECTO) == (a.plan_por_defecto, a.casos_por_defecto)
+    assert lotes.BENEFICIOS_POR_DEFECTO.startswith(f"{a.directorio_mundo}/")
+    assert (lotes.RAIZ_REPO / lotes.BENEFICIOS_POR_DEFECTO).is_file()
 
 
 def test_el_manual_dice_con_que_plan_y_lote_corre_lote_demo_por_defecto():

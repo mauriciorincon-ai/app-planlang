@@ -1,22 +1,22 @@
 {
   "schema_version": "1.3.1",
-  "actualizado": "2026-09-28",
+  "actualizado": "2026-10-05",
   "pieza": {
     "slug": "planlang-demo-a",
     "nombre": "Agent A · medical prior authorizations",
     "frente": "agentes",
     "estado": "inicial",
     "ciclo": "H1",
-    "version": "1.3.0",
+    "version": "1.5.2",
     "sellado_en": null,
-    "sprints_cerrados": 2
+    "sprints_cerrados": 3
   },
   "promesa": {
-    "tagline": "Approves, denies with a stated cause or escalates; never denies alone.",
-    "intro": "The agent reads the request, asks for what is missing, applies the benefit plan's rules and approves only what the plan allows; the rest goes to an auditor with the evidence and the counter-evidence, and it answers the member with an AI notice.",
+    "tagline": "Approves in full or in part, denies or escalates; never fully denies alone.",
+    "intro": "The agent reads the request, asks for what is missing, applies the benefit plan's rules and approves what the plan allows, up to each service's cap; every full denial and every doubtful case goes to an auditor with the evidence and the counter-evidence, and it answers the member with an AI notice.",
     "para_quien": "For an insurer —a synthetic one— that receives prior-authorization requests with the physician's free text and today reviews them by hand, one by one, without knowing which could be decided alone and which needed an auditor."
   },
-  "titular": "A medical prior-authorization agent built to a verifiable plan: every path it takes is written in the plan, and a person reviews every denial with the full case in front of them.",
+  "titular": "A medical prior-authorization agent built to a verifiable plan: every path it takes is written in the plan, and a person reviews every full denial with the full case in front of them.",
   "stack": [
     {
       "nombre": "LangGraph 1.2",
@@ -46,41 +46,41 @@
   "cifras": [
     {
       "clave": "exactitud_extraccion",
-      "valor": 100,
+      "valor": 96.2,
       "unidad": "%",
-      "etiqueta": "extraction accuracy, 3 of 3 runs",
+      "etiqueta": "extraction accuracy, in one run",
       "fuente": "medido",
-      "detalle": "The plan's criterion C5, measured by the verifier as pass^3: the extracted fields are the known truth's in the 15 cases that have one, in 3 runs in a row."
+      "detalle": "The plan's criterion C5: the extracted fields are the known truth's in this share of the 159 cases that have one, in one run. The plan asks for 3 runs in a row only in batches of 20 cases; this one is larger."
     },
     {
       "clave": "latencia_mediana",
-      "valor": 11.8,
+      "valor": 8.1,
       "unidad": "seconds",
       "etiqueta": "median per case, end to end",
       "fuente": "medido",
-      "detalle": "The plan's criterion C7 over 20 cases: the median of the total latency recorded in each trace."
+      "detalle": "The plan's criterion C7 over 200 cases: the median of the total latency recorded in each trace."
     },
     {
       "clave": "casos_con_persona",
-      "valor": 8,
-      "etiqueta": "of 20 cases went through a person",
+      "valor": 70,
+      "etiqueta": "of 200 cases went through a person",
       "fuente": "medido",
       "detalle": "Human pauses recorded in the traces: the auditor saw the full case before deciding."
     },
     {
       "clave": "negaciones_sin_persona",
       "valor": 0,
-      "etiqueta": "denials without a person",
+      "etiqueta": "full denials without a person",
       "fuente": "medido",
-      "detalle": "The plan's criterion C1 over 20 cases: every denial went through the human pause."
+      "detalle": "The plan's criterion C1 over 200 cases: every full denial went through the human pause."
     },
     {
       "clave": "costo_por_caso",
-      "valor": 0.034,
+      "valor": 0.025,
       "unidad": "US$",
       "etiqueta": "nominal cost per case",
       "fuente": "calculada",
-      "detalle": "US$ 0.6704 for the run over 20 cases: the nominal cost the CLI declares per call, summed over the traces. Through the subscription it was not paid separately."
+      "detalle": "US$ 4.9206 for the run over 200 cases: the nominal cost the CLI declares per call, summed over the traces. Through the subscription it was not paid separately."
     }
   ],
   "bloques": [
@@ -117,7 +117,7 @@
     {
       "orden": 6,
       "nombre": "Human pause",
-      "linea": "An auditor sees the full case before denying.",
+      "linea": "An auditor sees the full case before denying it outright.",
       "cuenta": 0
     },
     {
@@ -324,7 +324,7 @@
     "anotaciones": [
       {
         "paso": "revisa",
-        "texto": "No denial goes out without the auditor; in this demo, the auditor was simulated in batch."
+        "texto": "No full denial goes out without the auditor; in this demo, the auditor was simulated in batch."
       },
       {
         "paso": "pregunta",
@@ -343,26 +343,26 @@
     "It runs in batches of 20 cases, outside CI and with breaks between batches."
   ],
   "nunca": [
-    "Denies without a person reviewing it.",
+    "Fully denies without a person reviewing it.",
     "Obeys instructions hidden in a case's text.",
     "Lets a member's data out in the reply.",
     "Asks for authorization for an emergency."
   ],
   "hitos": [
     {
-      "valor": "v1.3",
+      "valor": "v1.5",
       "etiqueta": "plan version"
     },
     {
-      "valor": "2026-09-27",
-      "etiqueta": "first real run"
+      "valor": "2026-10-04",
+      "etiqueta": "published run"
     },
     {
       "valor": "8 of 8",
       "etiqueta": "contract pieces"
     },
     {
-      "valor": "233",
+      "valor": "1124",
       "etiqueta": "verified decisions"
     }
   ]

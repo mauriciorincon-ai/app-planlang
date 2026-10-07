@@ -1,0 +1,106 @@
+{
+  "casos": {
+    "archivo": "data/casos/demo-b/planlang-b-humo-4.json",
+    "huella": "4f45169b2b46a06ab28f209ad763ff2473de47cbc3c010c18d28a59342a7e0a8",
+    "id": "planlang-b-humo-4",
+    "n_lote": 4,
+    "semilla": "planlang-b-humo"
+  },
+  "casos_con_error": [],
+  "casos_ejecutados": [
+    "BH-001",
+    "BH-002",
+    "BH-003",
+    "BH-004"
+  ],
+  "corrida_id": "simulado-humo-2",
+  "demo_id": "demo-b",
+  "fecha": "2026-10-04",
+  "ficha": {
+    "descripcion": {
+      "en": "Run over the synthetic batch planlang-b-humo-4 with provider simulado (model simulado). Human decisions were simulated in batch: the compliance officer follows the case's known truth.",
+      "es": "Corrida sobre el lote sintético planlang-b-humo-4 con el proveedor simulado (modelo simulado). Las decisiones humanas se simularon en lote: el oficial de cumplimiento sigue la verdad conocida del caso."
+    },
+    "etiqueta": {
+      "en": "Simulation · not operational",
+      "es": "Simulación · no operativo"
+    },
+    "nombre": {
+      "en": "Demo B · customer due-diligence onboarding",
+      "es": "Demo B · vinculación con debida diligencia"
+    }
+  },
+  "formato": "planlang-trace/v1",
+  "huella": "fff403e5f3e12c3a5cb5ef8202569c5360163498ea1f13d313849175d3867635",
+  "listas": {
+    "archivo": "data/listas/demo-b.json",
+    "huella": "08445155c778d3b098b60e94a54618958e9f453725d76a6a9955e71393766753",
+    "id": "listas-demo-b",
+    "version": "1.0.0"
+  },
+  "modelo": "simulado",
+  "plan": {
+    "archivo": "plans/demo-b/v1.json",
+    "huella": "0cd6590ccbbb611091bf7acbd369874aa33fc7df95474c8c16f0f0beb9bb86dd",
+    "id": "plan-demo-b",
+    "version": "1.0.0"
+  },
+  "proveedor": "simulado",
+  "ramas_esperadas": {
+    "archivo": "ramas-esperadas.json",
+    "huella": "535217d6e6dbe3ed8449b949927f9c1f2c20f6cf21a056bcdf737e10baf123ce"
+  },
+  "revisor_simulado": {
+    "en": "In batches, the simulated officer follows the case’s known truth (DA-04); the showcase discloses it.",
+    "es": "En lotes, el oficial simulado sigue la verdad conocida del caso (DA-04); la vitrina lo divulga."
+  },
+  "sesiones": [
+    {
+      "casos_ejecutados": [
+        "BH-001",
+        "BH-002",
+        "BH-003",
+        "BH-004"
+      ],
+      "detenida_por": null,
+      "fecha": "2026-10-04",
+      "limites_alcanzados": 0,
+      "numero": 1
+    }
+  ],
+  "tipo": "corrida",
+  "trazas": [
+    {
+      "archivo": "trazas/BH-001.json",
+      "caso_id": "BH-001",
+      "huella": "9dee068025db9f44342a44478b77ca8ca37129f3ef71bef47df0624446010ffc",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/BH-002.json",
+      "caso_id": "BH-002",
+      "huella": "bbffd92353e4d828bc85d96f0c2be094b3cbef0c08b3c1d080a28df433b37841",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/BH-003.json",
+      "caso_id": "BH-003",
+      "huella": "810593416e3724ffdc16dc181f4e0ca71fa0f3f57034f1394944855496cc3d2f",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/BH-004.json",
+      "caso_id": "BH-004",
+      "huella": "e847400bf9aae3b0a33157bb4b4837d201453084a33ccddd665ba7fc271d83fa",
+      "resultado": "completo"
+    }
+  ],
+  "umbrales_aplicados": {
+    "U1": 0.85,
+    "U2": 60,
+    "U3": 0,
+    "U4": 0.7
+  },
+  "variante": "multiagente",
+  "version_grafo": "7b986ef8f5016f4cc87c9c592cb4994b2b4b984dd79e8e2872651a1885783214"
+}
