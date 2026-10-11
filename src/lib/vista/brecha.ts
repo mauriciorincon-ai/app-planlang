@@ -20,6 +20,7 @@ import type { DatosDemo } from "@/lib/datos/vitrina";
 import type { IdDemo } from "@/lib/demos";
 import { DEMO_TEXTO } from "@/textos/demo";
 import { ruta } from "@/lib/ruta";
+import { ENLACE as ENLACE_COMPARAR } from "@/textos/comparar";
 import { loteDeK } from "@core/brecha/criterios";
 import { umbralDeCategoria, type CategoriaRegla } from "./motivo-pausa";
 import { delVocabulario } from "./vocabulario";
@@ -1826,7 +1827,13 @@ function filaSupuesto(
     lider: [planeo, paso, X(l.significa, i)],
     experto: [regla, medido, evidencia],
     casos: casosEnlazados(casos, d, i),
-    enlaces: [{ href: "#b6", texto: `§ 6 ${X(SECCIONES.b6, i)}` }],
+    enlaces: [
+      { href: "#b6", texto: `§ 6 ${X(SECCIONES.b6, i)}` },
+      // S4: la fila de la línea base enlaza a la comparación de las dos corridas, solo si el demo la publica (el A).
+      ...(s.comparacion && d.comparacion
+        ? [{ href: ruta(i, "comparar", undefined, demo), texto: ENLACE_COMPARAR.brecha[i] }]
+        : []),
+    ],
   };
 }
 

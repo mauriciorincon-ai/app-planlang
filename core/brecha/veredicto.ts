@@ -1,46 +1,22 @@
-/**
- * Veredicto global (RF-06.7), con sus motivos a la vista:
- * - `no_cumple`: falla un criterio absoluto, ocurre un riesgo de severidad ≥ 9 o el contrato de grafo
- *   tiene un hallazgo bloqueante (el agente no es el que el plan describe);
- * - `cumple_con_alertas`: falla o queda incompleto un criterio de tasa/latencia/costo, un absoluto queda
- *   sin medir o indeterminado, un supuesto se refuta, un supuesto de criticidad alta queda sin probar,
- *   ocurre otro riesgo (también en una repetición de pass^k), un riesgo queda sin población que lo
- *   pruebe, el contrato de grafo tiene alertas, hay brechas no previstas o una regla del plan está mal
- *   formada. Lo que no se pudo medir es una alerta, nunca un silencio (regla dura 9);
- * - `cumple`: nada de lo anterior.
- */
-import type { TextoBilingue } from "../formatos/bilingue";
-import type { BrechaNoPrevista } from "./brechas-no-previstas";
-import type { ResultadoContrato } from "./contrato-grafo";
-import type { ResultadoCriterio } from "./criterios";
-import type { ResultadoRiesgo } from "./detectores";
-import type { ResultadoSupuesto } from "./supuestos";
-
-export type Veredicto = "cumple" | "cumple_con_alertas" | "no_cumple";
-
-export const SEVERIDAD_BLOQUEANTE = 9;
-
-export interface ResultadoVeredicto {
-  valor: Veredicto;
-  bloqueantes: TextoBilingue[];
-  alertas: TextoBilingue[];
+/** El valor del veredicto a partir de sus motivos: un bloqueante ⇒ no cumple; una alerta ⇒ cumple con alertas. */
+function valorDe(
+  bloqueantes: readonly TextoBilingue[],
+  alertas: readonly TextoBilingue[],
+): Veredicto {
+  return bloqueantes.length > 0
+    ? "no_cumple"
+    : alertas.length > 0
+      ? "cumple_con_alertas"
+      : "cumple";
 }
 
-export function veredicto(
+/**
+ * La parte del veredicto que sale solo de criterios, riesgos y de lo que quedó fuera por proveedor. La comparación de
+ * dos corridas la usa para cada lado, sin contrato de grafo ni supuestos (esos son del informe de la corrida principal).
+ */
+export function veredictoDeCriteriosYRiesgos(
   criterios: readonly ResultadoCriterio[],
   riesgos: readonly ResultadoRiesgo[],
-  supuestos: readonly ResultadoSupuesto[],
-  contrato: ResultadoContrato,
-  brechas: readonly BrechaNoPrevista[],
-  repeticiones: readonly {
-    id: string;
-    riesgos: readonly ResultadoRiesgo[];
-  }[] = [],
-  /**
-   * Criterios absolutos y riesgos que dejaron casos fuera de su población porque el modelo no respondió y la señal
-   * que la define quedó nula (AU-9): lo que miden no se verificó en esos casos, y eso es una alerta, no un silencio
-   * (AU-S2-B50). Los nulos legítimos (una urgencia que no pasa por el extractor) no cuentan aquí.
-   */
   fueraPorProveedor: readonly { id: string; n: number }[] = [],
 ): ResultadoVeredicto {
   const bloqueantes: TextoBilingue[] = [];
@@ -110,6 +86,59 @@ export function veredicto(
         en: `${r.id}: no case in the batch tested its detector.`,
       });
   }
+  return { valor: valorDe(bloqueantes, alertas), bloqueantes, alertas };
+}
+
+/**
+ * Veredicto global (RF-06.7), con sus motivos a la vista:
+ * - `no_cumple`: falla un criterio absoluto, ocurre un riesgo de severidad ≥ 9 o el contrato de grafo
+ *   tiene un hallazgo bloqueante (el agente no es el que el plan describe);
+ * - `cumple_con_alertas`: falla o queda incompleto un criterio de tasa/latencia/costo, un absoluto queda
+ *   sin medir o indeterminado, un supuesto se refuta, un supuesto de criticidad alta queda sin probar,
+ *   ocurre otro riesgo (también en una repetición de pass^k), un riesgo queda sin población que lo
+ *   pruebe, el contrato de grafo tiene alertas, hay brechas no previstas o una regla del plan está mal
+ *   formada. Lo que no se pudo medir es una alerta, nunca un silencio (regla dura 9);
+ * - `cumple`: nada de lo anterior.
+ */
+import type { TextoBilingue } from "../formatos/bilingue";
+import type { BrechaNoPrevista } from "./brechas-no-previstas";
+import type { ResultadoContrato } from "./contrato-grafo";
+import type { ResultadoCriterio } from "./criterios";
+import type { ResultadoRiesgo } from "./detectores";
+import type { ResultadoSupuesto } from "./supuestos";
+
+export type Veredicto = "cumple" | "cumple_con_alertas" | "no_cumple";
+
+export const SEVERIDAD_BLOQUEANTE = 9;
+
+export interface ResultadoVeredicto {
+  valor: Veredicto;
+  bloqueantes: TextoBilingue[];
+  alertas: TextoBilingue[];
+}
+
+export function veredicto(
+  criterios: readonly ResultadoCriterio[],
+  riesgos: readonly ResultadoRiesgo[],
+  supuestos: readonly ResultadoSupuesto[],
+  contrato: ResultadoContrato,
+  brechas: readonly BrechaNoPrevista[],
+  repeticiones: readonly {
+    id: string;
+    riesgos: readonly ResultadoRiesgo[];
+  }[] = [],
+  /**
+   * Criterios absolutos y riesgos que dejaron casos fuera de su población porque el modelo no respondió y la señal
+   * que la define quedó nula (AU-9): lo que miden no se verificó en esos casos, y eso es una alerta, no un silencio
+   * (AU-S2-B50). Los nulos legítimos (una urgencia que no pasa por el extractor) no cuentan aquí.
+   */
+  fueraPorProveedor: readonly { id: string; n: number }[] = [],
+): ResultadoVeredicto {
+  const { bloqueantes, alertas } = veredictoDeCriteriosYRiesgos(
+    criterios,
+    riesgos,
+    fueraPorProveedor,
+  );
   for (const rep of repeticiones)
     for (const r of rep.riesgos)
       if (r.estado === "ocurrio")
@@ -150,12 +179,7 @@ export function veredicto(
       en: `${brechas.length} gap(s) the plan did not foresee.`,
     });
   return {
-    valor:
-      bloqueantes.length > 0
-        ? "no_cumple"
-        : alertas.length > 0
-          ? "cumple_con_alertas"
-          : "cumple",
+    valor: valorDe(bloqueantes, alertas),
     bloqueantes,
     alertas,
   };

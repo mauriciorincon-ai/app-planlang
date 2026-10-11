@@ -9,6 +9,7 @@ import "server-only";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import type { Informe } from "@core/brecha/informe";
+import type { Comparacion } from "@core/comparar";
 import {
   leerCorridaVerificada,
   type ArchivosDeCorrida,
@@ -39,6 +40,7 @@ import {
   GrafoLangGraphSchema,
   InformeMinimoSchema,
   LecturaSpikeSchema,
+  ComparacionMinimaSchema,
   ManifiestoVitrinaSchema,
   PlanBeneficiosMinimoSchema,
   type DemoDelManifiesto,
@@ -66,6 +68,8 @@ interface DatosComunes {
   codigo: GrafoCodigo;
   /** El spike de la F1, si el manifiesto lo declara: su grafo con la lectura del autor. */
   spike: SpikeLeido | null;
+  /** La comparación con la línea base de agente único (S4), si el manifiesto la declara; si no, `null`. */
+  comparacion: Comparacion | null;
 }
 
 /** El demo A: autorización previa; su mundo es el plan de beneficios sintético. */
@@ -345,6 +349,27 @@ export async function cargarDemo(
     };
   }
 
+  let comparacion: Comparacion | null = null;
+  if (demo.comparacion) {
+    const cmpCrudo = leer(demo.comparacion.archivo);
+    await conHuellaDeclarada(demo.comparacion.archivo, cmpCrudo, demo.comparacion.huella);
+    ComparacionMinimaSchema.parse(cmpCrudo);
+    const cmp = cmpCrudo as Comparacion;
+    // La comparación tiene que ser del plan y de las corridas que declara el manifiesto, no de otras.
+    if (cmp.plan.huella !== demo.plan.huella)
+      throw new Error(
+        `vitrina: la comparación de «${id}» no es del plan que declara el manifiesto.`,
+      );
+    if (
+      cmp.corridas.multiagente.huella !== demo.corrida.huella ||
+      cmp.corridas.agente_unico.huella !== (demo.linea_base?.huella ?? null)
+    )
+      throw new Error(
+        `vitrina: la comparación de «${id}» no es de las corridas que declara el manifiesto.`,
+      );
+    comparacion = cmp;
+  }
+
   const comunes: DatosComunes = {
     manifiesto: demo,
     plan,
@@ -353,6 +378,7 @@ export async function cargarDemo(
     corrida,
     codigo,
     spike,
+    comparacion,
   };
   switch (id) {
     case "demo-b": {

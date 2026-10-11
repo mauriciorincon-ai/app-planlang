@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import type { Idioma, TextoBilingue } from "@core/formatos/bilingue";
 import { CONMUTADOR_EN, DEMOS, type IdDemo } from "@/lib/demos";
-import { PANTALLAS, ruta, rutaEntrada, type Pantalla } from "@/lib/ruta";
+import { PANTALLAS, ruta, rutaEntrada, type Pagina, type Pantalla } from "@/lib/ruta";
 import { BARRA, MARCA, PESTANAS } from "@/textos/comun";
 import { CONT, cx } from "../cx";
 import { Icono } from "../icono";
@@ -50,7 +50,7 @@ export function Barra({
   demo,
 }: {
   idioma: Idioma;
-  pagina: Pantalla;
+  pagina: Pagina;
   id?: string;
   demo: IdDemo;
 }) {

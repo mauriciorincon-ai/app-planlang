@@ -42,7 +42,7 @@ const casan = (u: string, p: Presupuesto) =>
   patron(p.path).test(`http://localhost:3000${u}`);
 
 describe("lighthouse-urls.json (AU-S2-B14)", () => {
-  it("cubre las siete pantallas en español", () => {
+  it("cubre las siete pantallas en español y la comparación del A (S4)", () => {
     for (const p of [
       "/es",
       "/es/plan",
@@ -50,6 +50,7 @@ describe("lighthouse-urls.json (AU-S2-B14)", () => {
       "/es/brecha",
       "/es/playground",
       "/es/fichas",
+      "/es/comparar",
     ])
       expect(urls, p).toContain(p);
     expect(urls.some((u) => u.startsWith("/es/caso/"))).toBe(true);

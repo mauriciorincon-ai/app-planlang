@@ -41,6 +41,7 @@ function copia(demo: "demo-a" | "demo-b" = "demo-a"): string {
     ...propios,
     `plans/${demo}`,
     d.informe.archivo,
+    ...(d.comparacion ? [d.comparacion.archivo] : []),
     d.corrida.ruta,
     c.casos.archivo,
     ...[...(d.repeticiones ?? []), d.linea_base].map((x: { ruta: string }) =>

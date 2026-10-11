@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import type { Idioma } from "@core/formatos/bilingue";
 import { DEMO_PUBLICADO, type IdDemo } from "@/lib/demos";
-import type { Pantalla } from "@/lib/ruta";
+import type { Pagina } from "@/lib/ruta";
 import { SALTO } from "@/textos/comun";
 import { Barra } from "./barra";
 import { Pie } from "./pie";
@@ -17,7 +17,7 @@ export function Marco({
   children,
 }: {
   idioma: Idioma;
-  pagina: Pantalla;
+  pagina: Pagina;
   id?: string;
   /**
    * El demo de la pantalla: las pestañas y el idioma enlazan dentro de él (ADR-014) y el pie dice lo suyo. Sin demo

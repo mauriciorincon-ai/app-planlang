@@ -21,6 +21,8 @@ export const ManifiestoVitrinaSchema = z.object({
       repeticiones: z.array(RefCorrida),
       linea_base: RefCorrida.nullable(),
       informe: z.object({ archivo: z.string().min(1), huella: Huella }),
+      /** La comparación con la línea base (S4): solo el demo cuya base tiene la misma corrida de 200 la declara. */
+      comparacion: z.object({ archivo: z.string().min(1), huella: Huella }).optional(),
       /**
        * Lo que el playground necesita del demo y no dicen ni el plan ni la traza (`OpcionesDeDemo` de
        * `core/playground/compacto.ts`): la señal de la propuesta, su valor favorable y las claves que se conocen
@@ -62,6 +64,36 @@ export const ManifiestoVitrinaSchema = z.object({
     }),
   ),
 });
+/**
+ * La comparación de dos corridas (S4, `core/comparar`): la forma mínima que la vitrina lee antes de confiar en ella. El
+ * resto del contenido lo sella la huella y lo tipa el núcleo.
+ */
+export const ComparacionMinimaSchema = z
+  .object({
+    formato: z.literal("planlang-comparacion/v1"),
+    plan: z
+      .object({
+        id: z.string().min(1),
+        version: z.string().min(1),
+        huella: Huella,
+        de_ejecucion: z.object({ version: z.string().min(1), huella: Huella }),
+      })
+      .passthrough(),
+    lote: z
+      .object({ id: z.string().min(1), huella: Huella, n: z.number().int().positive() })
+      .passthrough(),
+    corridas: z.object({
+      multiagente: z.object({ corrida_id: z.string().min(1), huella: Huella }).passthrough(),
+      agente_unico: z.object({ corrida_id: z.string().min(1), huella: Huella }).passthrough(),
+    }),
+    lados: z.object({ multiagente: z.object({}).passthrough(), agente_unico: z.object({}).passthrough() }),
+    criterios: z.array(z.object({ id: z.string().min(1) }).passthrough()),
+    riesgos: z.array(z.object({ id: z.string().min(1) }).passthrough()),
+    casos_que_difieren: z.array(z.object({ id: z.string().min(1) }).passthrough()),
+    huella: Huella,
+  })
+  .passthrough();
+
 export type ManifiestoVitrina = z.infer<typeof ManifiestoVitrinaSchema>;
 export type DemoDelManifiesto = ManifiestoVitrina["demos"][string];
 

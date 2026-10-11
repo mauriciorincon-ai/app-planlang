@@ -37,43 +37,43 @@
   },
   "U1=0.9": {
     "cifras": "11cases change pathof 200 | 0errors introducedavoided: 0 | 972auditor minplan: 840 · +132 | 7of 10 criteria metbefore: 10 · 3 cannot be measured",
-    "huella": "9309a922de0ca0bde71e9a59b9f6afb36794c4f947ceba691037237cd78cd89e"
+    "huella": "bdec5d5b5c3a43bdf873bfbd8fffe130a10aa8f48e8a7e4b31aa0c2a68406b79"
   },
   "U1=0.95": {
     "cifras": "14cases change pathof 200 | 0errors introducedavoided: 0 | 1008auditor minplan: 840 · +168 | 7of 10 criteria metbefore: 10 · 3 cannot be measured",
-    "huella": "1ff4163759fd0c133eccd1c3c722221f44a403e7756c3a25c2a511e6a5f08ba8"
+    "huella": "fa6583fc9ae3afeb77e5764bf9e59ccb7746e3fe0d3a38b31feaa9a0e037cfbc"
   },
   "U2=200": {
     "cifras": "77cases change pathof 200 | 0errors introducedavoided: 0 | 1764auditor minplan: 840 · +924 | 6of 10 criteria metbefore: 10 · 4 cannot be measured",
-    "huella": "76171284480262e73b2f099ea5689da3331416c247df4e000d67b5bd1d644bef"
+    "huella": "9893e4727677efdaa5fe99e1358280a0b614d29a43395aa674a9c456bb98367f"
   },
   "U2=300": {
     "cifras": "53cases change pathof 200 | 0errors introducedavoided: 0 | 1476auditor minplan: 840 · +636 | 6of 10 criteria metbefore: 10 · 4 cannot be measured",
-    "huella": "c0740548a62f8a4d9b6ddd5d3bd59af8f696a9e33542939a5a3b07f6e330bce1"
+    "huella": "07f5754fa495c00318e1ffe42998a2cd22cb721f50e563421672c8bbb6765e00"
   },
   "U2=400": {
     "cifras": "45cases change pathof 200 | 0errors introducedavoided: 0 | 1380auditor minplan: 840 · +540 | 6of 10 criteria metbefore: 10 · 4 cannot be measured",
-    "huella": "f00d7233ea32f9e41b13937f7371f1588d89a6424ec95494b86b9c6736427195"
+    "huella": "cca7aa7dd84450527e18943762216640b43cb55c9a342bfc26482ebf6088d9d1"
   },
   "U2=500": {
     "cifras": "40cases change pathof 200 | 0errors introducedavoided: 0 | 1320auditor minplan: 840 · +480 | 6of 10 criteria metbefore: 10 · 4 cannot be measured",
-    "huella": "34a47516cf8bea879381de716755dfb9792048c699cc84d9678b04692c7f4265"
+    "huella": "359fd9f8958535f1ac1361ba19a789d5a1fa2ed0ba454ef9f3f2f10531da1eae"
   },
   "U2=600": {
     "cifras": "37cases change pathof 200 | 0errors introducedavoided: 0 | 1284auditor minplan: 840 · +444 | 6of 10 criteria metbefore: 10 · 4 cannot be measured",
-    "huella": "7c8c5902620c9bb895c678f07f9af697f9275d88746ec0d59c697a115e82b1b8"
+    "huella": "3eace7db89e3ca54a45b565ba9f66b35ff3abfbf808655664ab6b95afbf25c02"
   },
   "U2=700": {
     "cifras": "33cases change pathof 200 | 0errors introducedavoided: 0 | 1236auditor minplan: 840 · +396 | 7of 10 criteria metbefore: 10 · 3 cannot be measured",
-    "huella": "18d6b6c16baf2705fa4ecc0fd5ddcb339bce32a8458703dc9beeb557b128e1a9"
+    "huella": "d1cd98f67183ae5b0261be23d3483bbd359d7223575b75b270ea9bc88be79496"
   },
   "U2=800": {
     "cifras": "29cases change pathof 200 | 0errors introducedavoided: 0 | 1188auditor minplan: 840 · +348 | 7of 10 criteria metbefore: 10 · 3 cannot be measured",
-    "huella": "8dc685c98db740193342e1c32aa77ba80d9305bdb7e00169adfbd52fd8392a09"
+    "huella": "231dbe04066fcec60a53fa3ebe18a22f895ad456e7034906da8d6534e4d4c5cb"
   },
   "U2=900": {
     "cifras": "21cases change pathof 200 | 0errors introducedavoided: 0 | 1092auditor minplan: 840 · +252 | 7of 10 criteria metbefore: 10 · 3 cannot be measured",
-    "huella": "fbe69e77035d6e57574d7439464ad0602b492b0cf3f28065138fd406f86fdb24"
+    "huella": "ac6987a68299766ca29a1685d85c086ac80e176ab7c1a6ae1bc7626fc3d83e14"
   },
   "U2=1000": {
     "cifras": "0cases change pathof 200 | 0errors introducedavoided: 0 | 840auditor minplan: 840 · ±0 | 10of 10 criteria metunchanged",
@@ -241,7 +241,7 @@
   },
   "U3=0": {
     "cifras": "30cases change pathof 200 | 0errors introducedavoided: 0 | 1044auditor minplan: 840 · +204 | 4of 10 criteria metbefore: 10 · 6 cannot be measured",
-    "huella": "32268b20b363b2996de9014f281eb53690e8a8da7bd9d062316be0d309a9bba6"
+    "huella": "8efce1d55847a4a8ffd9bb49349b58b3baa1d8521260096b45ddba25ba13d5f9"
   },
   "U3=1": {
     "cifras": "17cases change pathof 200 | 0errors introducedavoided: 0 | 900auditor minplan: 840 · +60 | 4of 10 criteria metbefore: 10 · 6 cannot be measured",

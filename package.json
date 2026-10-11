@@ -32,7 +32,8 @@
     "test:e2e:paquete": "playwright test -c playwright.paquete.config.ts",
     "tokens": "node scripts/paleta/generar-tokens.mjs",
     "visor:metricas": "tsx scripts/visor/metricas.ts",
-    "maqueta": "serve docs -l 3101"
+    "maqueta": "serve docs -l 3101",
+    "comparacion": "tsx scripts/comparacion.ts"
   },
   "dependencies": {
     "@sentry/nextjs": "^11.1.0",

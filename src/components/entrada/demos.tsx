@@ -11,6 +11,7 @@ import { ruta } from "@/lib/ruta";
 import type { FilaDemo } from "@/lib/vista/entrada";
 import { PESTANAS, VEREDICTOS } from "@/textos/comun";
 import { DEMOS, EN_CONSTRUCCION, LIDER } from "@/textos/entrada";
+import { ENLACE as ENLACE_COMPARAR } from "@/textos/comparar";
 import { Baldosa } from "../baldosa";
 import { BotonEnlace } from "../boton";
 import { Chip } from "../chip";
@@ -173,6 +174,14 @@ export function Demos({
                   >
                     {DEMOS.unCaso[idioma]}
                   </a>
+                  {f.comparar ? (
+                    <a
+                      className="text-tinta-2 hover:text-tinta-1"
+                      href={f.comparar}
+                    >
+                      {ENLACE_COMPARAR.entrada[idioma]}
+                    </a>
+                  ) : null}
                 </span>
               </Celda>
             </div>

@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Comparar dos corridas · mirada de forma (S4)</title>
+<style>
+:root{--fondo:#0f1115;--sup:#171a21;--t1:#eceef2;--t2:#a9afbb;--linea:#2a2f3a}
+@media (prefers-color-scheme: light){:root{--fondo:#f7f7f5;--sup:#fff;--t1:#16181d;--t2:#4a505c;--linea:#d9dbe0}}
+body{margin:0;background:var(--fondo);color:var(--t1);font:15px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1200px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:24px;margin:0 0 8px}h2{font-size:19px;margin:40px 0 8px}h3{font-size:16px;margin:0}
+p{color:var(--t2);max-width:80ch;margin:4px 0}code{font:12px ui-monospace,monospace}
+.pregunta{color:var(--t1);font-size:17px;font-weight:600}
+table{border-collapse:collapse;width:100%;font-size:13px;margin-top:8px}th,td{border-top:1px solid var(--linea);padding:8px;text-align:left;vertical-align:top}th{color:var(--t2);font-weight:500}
+.forma{margin-top:28px}.forma img{max-width:100%;height:auto;border:1px solid var(--linea);border-radius:6px;display:block;margin-top:8px}
+.minis{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:12px}
+.minis figure{margin:0}.minis img{width:100%;height:auto;border:1px solid var(--linea);border-radius:4px;display:block}.minis figcaption{font-size:11px;color:var(--t2);margin-top:4px;line-height:1.4}
+</style>
+</head>
+<body><main>
+<p class="pregunta">¿«Comparar dos corridas» se lee como esperas? Mira cada fila de la tabla con su recorte.</p>
+<h1>Comparar dos corridas · mirada de forma «no vista» (S4)</h1>
+<p>Vitrina construida con el commit en curso, servida desde <code>out/</code>. Clase de mirada: FORMA, registrada «no vista»; su veredicto viaja al gate del hito (⭐⭐ de la guía). Las capturas enteras no se versionan: cada una se identifica por su huella SHA-256.</p>
+<h2>La matriz</h2>
+<table><thead><tr><th>#</th><th>Archivo / pantalla</th><th>Botón o estado</th><th>Qué mirar</th><th>Respuesta esperada</th><th>Tu respuesta</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Comparar (/es/comparar), veredictos y criterios</td><td>tal como abre</td><td>Los dos veredictos, la tabla de medidas y la de criterios.</td><td>«Cumple» en la multiagente y «Cumple con alertas» en la de agente único; el criterio C5 no se cumple en la única.</td><td>sin respuesta</td></tr>
+<tr><td>2</td><td>Comparar, riesgos y pausas (teléfono)</td><td>tal como abre, 380 px</td><td>Que cada fila de riesgo y de pausa se lea en tarjeta, sin desplazamiento lateral.</td><td>R5 ocurre en la de agente único (su tasa cruza el umbral) y no en la multiagente. Pausas innecesarias: 4 y 20.</td><td>sin respuesta</td></tr>
+<tr><td>3</td><td>Comparar, perfil experto (pasada de interacción)</td><td>tras pulsar «Experto»</td><td>Que el texto del líder se vaya y aparezca la regla de la sección.</td><td>Con «Experto» se leen la regla del veredicto y las medidas exactas; el perfil del líder deja de verse.</td><td>sin respuesta</td></tr>
+<tr><td>4</td><td>Comparar, casos que difieren</td><td>tal como abre</td><td>Cada caso con su verdad, su decisión y su pausa en los dos lados; el caso enlaza a su página.</td><td>18 casos. La decisión coincide en los dos lados; lo que cambia es la pausa. Cada caso es un enlace, no un recuadro punteado.</td><td>sin respuesta</td></tr>
+</tbody></table>
+<h2>Los recortes</h2>
+<section class="forma" id="veredicto-y-criterios"><h3>1. Comparar (/es/comparar), veredictos y criterios</h3><p>tal como abre · 1280 px · oscuro</p><img loading="lazy" src="forma-veredicto-y-criterios.jpg" alt="Los dos veredictos, la tabla de medidas y la de criterios."></section>
+<section class="forma" id="riesgos-y-pausas-movil"><h3>2. Comparar, riesgos y pausas (teléfono)</h3><p>tal como abre, 380 px · 380 px · claro</p><img loading="lazy" src="forma-riesgos-y-pausas-movil.jpg" alt="Que cada fila de riesgo y de pausa se lea en tarjeta, sin desplazamiento lateral."></section>
+<section class="forma" id="perfil-experto"><h3>3. Comparar, perfil experto (pasada de interacción)</h3><p>tras pulsar «Experto» · 1280 px · oscuro · la interacción cambió la página</p><img loading="lazy" src="forma-perfil-experto.jpg" alt="Que el texto del líder se vaya y aparezca la regla de la sección."></section>
+<section class="forma" id="casos-que-difieren"><h3>4. Comparar, casos que difieren</h3><p>tal como abre · 1280 px · oscuro</p><img loading="lazy" src="forma-casos-que-difieren.jpg" alt="Cada caso con su verdad, su decisión y su pausa en los dos lados; el caso enlaza a su página."></section>
+<h2>La pasada completa (4 capturas)</h2>
+<p>La pantalla, a 380 y 1280 px, en español en los dos temas.. La miniatura es la parte de arriba; la huella identifica la captura entera que se leyó.</p>
+<div class="minis">
+<figure><img loading="lazy" src="mini-comparar-380-oscuro-es.jpg" alt="comparar 380 px oscuro es"><figcaption>comparar · 380 · oscuro · es<br><code title="SHA-256 de la captura entera">19e3e29899a3…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-comparar-1280-oscuro-es.jpg" alt="comparar 1280 px oscuro es"><figcaption>comparar · 1280 · oscuro · es<br><code title="SHA-256 de la captura entera">d51e75e716dd…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-comparar-380-claro-es.jpg" alt="comparar 380 px claro es"><figcaption>comparar · 380 · claro · es<br><code title="SHA-256 de la captura entera">1a58d9220fa6…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-comparar-1280-claro-es.jpg" alt="comparar 1280 px claro es"><figcaption>comparar · 1280 · claro · es<br><code title="SHA-256 de la captura entera">80f56ee62894…</code></figcaption></figure>
+</div>
+</main></body>
+</html>

@@ -6,6 +6,7 @@
 import type { Idioma } from "@core/formatos/bilingue";
 import type { DatosDemo } from "@/lib/datos/vitrina";
 import type { IdDemo } from "@/lib/demos";
+import { ruta } from "@/lib/ruta";
 import {
   ARMADO,
   CATEGORIA_DE_BRECHA,
@@ -69,6 +70,8 @@ export interface FilaDemo {
   id: IdDemo;
   veredicto: { valor: ValorVeredicto; detalle: string };
   corrida: { texto: string; chip: string };
+  /** La página de comparación con la línea base, si el demo la tiene (S4): solo el A. */
+  comparar: string | null;
 }
 
 /**
@@ -128,6 +131,9 @@ export function filaDeDemo(datos: DatosDemo, idioma: Idioma): FilaDemo {
 
   return {
     id: datos.id,
+    comparar: datos.comparacion
+      ? ruta(idioma, "comparar", undefined, datos.id)
+      : null,
     veredicto: {
       valor: informe.veredicto.valor,
       detalle: detallePartes.join(" · "),

@@ -21,6 +21,10 @@
         "archivo": "data/vitrina/demo-a/suscripcion-planlang-a-002-200-v1.5/informe.json",
         "huella": "20c0b4ae85a8b635a979996db42fb58b21e1a1d7c390343ce975ca5ba30451e6"
       },
+      "comparacion": {
+        "archivo": "data/vitrina/demo-a/suscripcion-planlang-a-002-200-v1.5/comparacion.json",
+        "huella": "2b9dab6c63ff34a0985be542780e5ccd04bd353b662bad1a60d72130fb6c1627"
+      },
       "playground": {
         "senal_propuesta": "propuesta",
         "valor_favorable": "aprobar",

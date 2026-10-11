@@ -314,17 +314,17 @@ describe("AU-S2-6 (S3): los dos demos tienen su fila real; lo que sigue del road
       `/${idioma}/demo-b/playground`,
       `/${idioma}/demo-b/caso`,
     ]);
-    // El entrevistador ya corrió (propuso el plan B): sale del roadmap. Quedan tres, en construcción.
+    // El entrevistador ya corrió (propuso el plan B) y «Comparar dos corridas» ya tiene página (S4): salen del roadmap.
+    // Quedan dos, en construcción.
     const ids = [...container.querySelectorAll("[data-roadmap]")].map(
       (x) => (x as HTMLElement).dataset.roadmap,
     );
     expect(ids).toEqual([
-      "comparar-dos-corridas",
       "calibracion-conformal",
       "recorrido-animado-de-un-caso",
     ]);
     for (const li of container.querySelectorAll("[data-roadmap]"))
       expect(li.querySelector('[data-v="beta"]')).not.toBeNull();
-    expect(container.querySelectorAll('[data-v="beta"]')).toHaveLength(3);
+    expect(container.querySelectorAll('[data-v="beta"]')).toHaveLength(2);
   });
 });
