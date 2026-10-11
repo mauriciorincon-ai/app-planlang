@@ -168,7 +168,7 @@ describe("cada ficha, como la pinta hoja-de-vida", () => {
       limites: "03",
       donde: "04",
     });
-    expect(es.app.tieneSub).toBe("6 grupos · 19 funcionalidades.");
+    expect(es.app.tieneSub).toBe("6 grupos · 20 funcionalidades.");
     expect(es.app.hitos.map((h) => h.etiqueta)).toEqual([
       "ciclo",
       "sprints cerrados",

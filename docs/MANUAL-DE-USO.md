@@ -324,6 +324,24 @@ data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar l
   sprint con pantallas. El proyecto remoto nunca se edita allá.
 - **Limitaciones:** solo lo dispara el autor; si decide no publicarlo, el resumen del sprint lo registra.
 
+### Comparar dos corridas · desde el sprint 4
+
+- **Qué hace:** pone la corrida multiagente del demo A frente a su línea base de agente único, sobre los mismos 200
+  casos y con el mismo plan. Muestra el veredicto de cada lado, las medidas (exactitud según la regla S3, latencia,
+  costo nominal, llamadas al modelo), los criterios y los riesgos criterio por criterio, las pausas frente a la verdad y
+  los casos en que las dos corridas hacen cosas distintas, cada uno con su página.
+- **Cómo se abre:** desde la fila del demo A en la entrada (`/es`, enlace «Comparar»), o desde la fila de la línea base en
+  la Brecha del A (`/es/brecha`, enlace «Comparar las dos corridas»). También directo en `/es/comparar`.
+- **Cómo se lee:**
+  1. El veredicto de cada lado sale solo de sus criterios y riesgos. El contrato de grafo y los supuestos son del
+     informe de la corrida principal.
+  2. El costo es nominal: lo que costarían las llamadas a precio de API. Aquí se paga con la suscripción.
+  3. El revisor simulado sigue la verdad conocida del lote, por eso las decisiones finales coinciden casi siempre. Lo que
+     separa a las dos corridas es la pausa.
+  4. «Ver como experto» muestra la regla de cada sección y las medidas exactas.
+- **Limitaciones conocidas:** solo compara el demo A, sobre su corrida de 200 y su línea base. No compara modelos ni
+  proveedores distintos. Un caso sin dato en una corrida aparece como «No observado», nunca como un valor inventado.
+
 ### Preguntas frecuentes
 
 - **¿Por qué el informe dice «cumple con alertas»?** Porque el veredicto no mira solo los criterios: también los
@@ -656,6 +674,24 @@ There are two ways to use it:
   up to date in every sprint with screens. The remote project is never edited over there.
 - **Limitations:** only the author triggers it; if they decide not to publish, the sprint summary records it.
 
+### Compare two runs · since sprint 4
+
+- **What it does:** puts the multi-agent run of demo A against its single-agent baseline, on the same 200 cases and
+  the same plan. It shows each side's verdict, the measures (accuracy under rule S3, latency, nominal cost, model
+  calls), the criteria and risks one by one, the pauses against the truth, and the cases where the two runs act
+  differently, each with its own page.
+- **How to open it:** from the demo A row on the home page (`/en`, link «Compare»), or from the baseline row of demo
+  A's gap report. Also directly at `/en/compare`.
+- **How to read it:**
+  1. Each side's verdict comes only from its own criteria and risks. The graph contract and the assumptions belong to
+     the main run's report.
+  2. The cost is nominal: what the calls would cost at API prices. Here it is paid through the subscription.
+  3. The simulated reviewer follows the batch's known truth, which is why final decisions almost always match. What
+     separates the two runs is the pause.
+  4. «View as expert» shows each section's rule and the exact measures.
+- **Known limits:** it compares only demo A, on its 200-case run and its baseline. It does not compare different
+  models or providers. A case with no data in a run shows as «Not observed», never as an invented value.
+
 ### Frequently asked questions
 
 - **Why does the report say “met with alerts”?** Because the verdict looks beyond the criteria: at the assumptions,
@@ -679,3 +715,4 @@ There are two ways to use it:
 | S1 · 2026-09-27 | Validar un plan · generar casos sintéticos · correr un lote de 20 · leer el informe de brecha · verificar corridas e instrumento                                                                       |
 | S2 · 2026-10-02 | Abrir la vitrina (7 pantallas) · mover umbrales en el playground · las fichas · entregar el paquete a hoja-de-vida · lote de 200 y respaldo sin modelo (mejorado) · plan v1.3 y v1.4                   |
 | S3 · 2026-10-05 | Entrevistar un plan · correr el demo B · leer un expediente · publicar el design system · la vitrina con dos demos y la corrida de 200 del A (mejorado) · `--caso` en los lotes (mejorado) · plan v1.5 |
+| S4 · 2026-10-11 | Comparar dos corridas (la pantalla del A frente a su línea base, con sus casos enlazados) |

@@ -29,7 +29,7 @@
     "diferencial": "Observing traces and evaluating answers is done by many tools. What nobody does is demand the plan first and measure against it afterwards: the plan → result gap report, with the prior risk analysis, and the plan's thresholds playable over the real traces."
   },
   "funcionalidades": {
-    "total": 19,
+    "total": 20,
     "fuente_del_conteo": "docs/MANUAL-DE-USO.md",
     "descartadas": [],
     "grupos": [
@@ -126,6 +126,12 @@
             "nombre": "Assumptions with a cheap test",
             "que_hace": "“The model extracts with calibrated confidence” is measured for real —calibration and risk-coverage curve— and ends up confirmed, refuted or untested.",
             "seccion_manual": "Read the gap report"
+          },
+          {
+            "id": "comparar",
+            "nombre": "Compare two runs",
+            "que_hace": "Puts the multi-agent run against its single-agent baseline, on the same cases: criterion by criterion, risk by risk and case by case, with the pauses against the truth.",
+            "seccion_manual": "Compare two runs"
           },
           {
             "id": "instrumento",
@@ -241,7 +247,7 @@
     {
       "clave": "funcionalidades",
       "etiqueta": "built features",
-      "valor": 19,
+      "valor": 20,
       "unidad": "features",
       "fuente": "medido",
       "detalle": "The product vision's features that work today: the two-week cut's and the roadmap ones built in S3 (the interviewer, demo B and its case file), counted against docs/MANUAL-DE-USO.md; what remains on the roadmap does not count."
