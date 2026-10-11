@@ -1,6 +1,6 @@
 # planlang — constitución de la app (núcleo, kit v2.0.0)
 
-> Auto-cargado en cada sesión de este repo. Núcleo regenerado por la planeadora el 2026-10-10 (método v2.0.0, modo regenerar) para el S4, primer sprint de planlang en el hito H-2; sustituye a la constitución v1.37.0 de 762 líneas. Las reglas en detalle viven en `docs/REGLAS-ANEXO.md` (anexo del kit + § P1–P16 de planlang, texto íntegro de la constitución anterior) y se leen solo cuando una regla se cita, nunca al abrir la sesión. Estampada 2026-09-26 con kit v1.30.1 `--estatico --python`.
+> Auto-cargado en cada sesión de este repo. Núcleo regenerado por la planeadora el 2026-10-10 (método v2.0.0, modo regenerar) para el S4 — **regla 18 actualizada el 2026-10-11 al kit v2.1.0 (un PR vivo por app; la app la adopta con el job `un-pr-vivo` en su próximo sprint)**, primer sprint de planlang en el hito H-2; sustituye a la constitución v1.37.0 de 762 líneas. Las reglas en detalle viven en `docs/REGLAS-ANEXO.md` (anexo del kit + § P1–P16 de planlang, texto íntegro de la constitución anterior) y se leen solo cuando una regla se cita, nunca al abrir la sesión. Estampada 2026-09-26 con kit v1.30.1 `--estatico --python`.
 
 ## Identidad y las dos casas (regla dura)
 
@@ -64,7 +64,7 @@ Frecuencia: `[sprint]` cuesta en cada sprint · `[hito]` al abrir o cerrar un hi
 16. `[hito]` **`design-sync/` es artefacto del repo** y se actualiza al cierre del hito; `/design-sync` lo invoca el usuario, tú lo ejecutas.
 17. `[siempre]` 🔒 **Cero enlaces:** ningún archivo versionado ni campo de GitHub publica producción o previews; barrido en `quality` (`scripts/cero-enlaces.mjs`, hosts en `cero-enlaces.json`); homepage del repo = el propio repo.
 17-bis. `[siempre]` **Lo que la app escribe también es superficie:** derivados con permisos 700/600 (hilos SQLite del entrevistador, trazas).
-18. `[siempre]` **PRs de dependencias:** máximo dos abiertos, agrupados; `scripts/verificar-dependencias.mjs` con `degradaciones-permitidas.json`; excepción de auditoría solo por id, sin parche y con ADR (`braces`, ADR-015, revisar antes del 2026-11-02); `lucide-react` fijo en la versión del design system.
+18. `[siempre]` **UN SOLO PR VIVO POR APP** (regla dura del usuario 2026-10-11, kit v2.1.0; Dependabot cuenta): `gh pr list --state open` antes de abrir cualquier PR; un segundo solo complementario, con «complementa #N: <por qué no cabe en #N>» como primera línea del cuerpo; job `un-pr-vivo` en la CI. Dependencias: `scripts/verificar-dependencias.mjs` con `degradaciones-permitidas.json`; excepción de auditoría solo por id, sin parche y con ADR (`braces`, ADR-015, revisar antes del 2026-11-02); `lucide-react` fijo en la versión del design system.
 19. `[cambio]` **Todo puente entre dos lenguajes exige su gate de contrato** (`tests/contrato/`: huellas, JCS, reglas de arista, Jaro-Winkler) en el sprint que lo cruza.
 20. `[siempre]` **Bilingüe ES/EN en el dato** (`{ es, en }`, redactado, test de paridad de claves); e2e y capturas en UN idioma por sprint, el otro al cierre del hito; conversación y cierres en español; código y commits en inglés; ADR en español con «Summary (EN)».
 21. `[cambio]` **IA de construcción por suscripción (7-S):** ver P6.
