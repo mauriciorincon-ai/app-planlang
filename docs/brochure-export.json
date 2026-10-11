@@ -42,7 +42,7 @@
           {
             "id": "plantillas",
             "nombre": "Plantillas de dominio como datos",
-            "que_hace": "Actores, decisiones, riesgos y criterios típicos de salud y de vinculación financiera, con las restricciones legales en lenguaje llano y con su fuente.",
+            "que_hace": "Actores, decisiones, riesgos y criterios típicos de salud, de vinculación financiera y de seguridad de IA, con las restricciones legales en lenguaje llano y con su fuente.",
             "seccion_manual": "Validar un plan"
           },
           {

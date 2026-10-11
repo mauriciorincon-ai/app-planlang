@@ -640,7 +640,7 @@ const DECISIONES_PLANES = [
     mirar:
       "Cada decisión en tarjeta: id, pregunta, la opción elegida, la razón y la reversibilidad; sin desplazamiento lateral (como líder, sin chip de origen).",
     esperada:
-      "Cuatro decisiones (D1–D4), todas decididas. La razón cabe en la tarjeta y nada se corta a 380 px.",
+      "Cuatro decisiones (D1–D4), todas decididas; la reversibilidad en palabras («Dos vías», «Costosa»), no en código. La razón cabe en la tarjeta y nada se corta a 380 px.",
   },
   {
     clave: "umbrales-origen-experto",
@@ -660,7 +660,7 @@ const DECISIONES_PLANES = [
     mirar:
       "Que al pulsar «Experto» aparezca, en cada umbral, el chip de quién lo propuso; los tres umbrales con su señal, operador y valor del plan.",
     esperada:
-      "U1 similitud_cita menor_que 1 · U2 fuentes_verificadas menor_que 2 · U3 antiguedad_marco_dias mayor_que 180 días; los tres con el chip «usuario», que como líder no se veía. El conmutador marca «Experto».",
+      "U1 similitud_cita < 1 (menor que) · U2 fuentes_verificadas < 2 · U3 antiguedad_marco_dias > 180 días (mayor que); los tres con el chip «usuario», que como líder no se veía. El conmutador marca «Experto».",
   },
 ];
 

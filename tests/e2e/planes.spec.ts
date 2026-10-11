@@ -60,7 +60,7 @@ test.describe("Plan sin corrida (es)", () => {
     await expect(decisiones.first()).toContainText("usuario");
     await expect(
       page.locator('section[aria-labelledby="ps-umbrales-t"]'),
-    ).toContainText("antiguedad_marco_dias mayor_que 180 días");
+    ).toContainText("antiguedad_marco_dias > 180 días (mayor que)");
   });
 
   for (const tema of ["oscuro", "claro"])

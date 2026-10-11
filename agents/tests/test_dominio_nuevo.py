@@ -61,6 +61,8 @@ def test_un_plan_real_no_choca_con_los_demos() -> None:
         (DOMINIO, "con espacio"),
         (DOMINIO, ""),
         ("dom-que-no-existe", "p"),
+        (DOMINIO, "demo-b"),  # el nombre de un demo (AU-S5 M-4)
+        (DOMINIO, "plan-demo-x"),
     ],
 )
 def test_un_id_que_no_es_estable_o_una_plantilla_que_no_existe_se_rechazan(dominio: str, plan: str) -> None:

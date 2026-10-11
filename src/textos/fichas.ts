@@ -1028,8 +1028,8 @@ export const APP = {
             "Domain templates as data",
           ),
           que_hace: tb(
-            "Actores, decisiones, riesgos y criterios típicos de salud y de vinculación financiera, con las restricciones legales en lenguaje llano y con su fuente.",
-            "Typical actors, decisions, risks and criteria for health and financial onboarding, with the legal constraints in plain language and with their source.",
+            "Actores, decisiones, riesgos y criterios típicos de salud, de vinculación financiera y de seguridad de IA, con las restricciones legales en lenguaje llano y con su fuente.",
+            "Typical actors, decisions, risks and criteria for health, financial onboarding and AI security, with the legal constraints in plain language and with their source.",
           ),
           seccion_manual: tb("Validar un plan", "Validate a plan"),
         },

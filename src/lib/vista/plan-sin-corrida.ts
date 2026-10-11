@@ -15,7 +15,15 @@ import {
   FICHA_SIN_CORRIDA,
   ORIGEN,
   SECCIONES,
+  TIPO_ACTOR,
 } from "@/textos/plan-sin-corrida";
+import {
+  CRITICIDAD,
+  ESTADO_SUPUESTO,
+  REVERSIBILIDAD,
+} from "@/textos/plan-comun";
+import { OPERADOR, SIMBOLO } from "@/textos/playground";
+import { delVocabulario } from "./vocabulario";
 
 export type Origen = keyof Omit<typeof ORIGEN, "sinOrigen">;
 
@@ -47,6 +55,14 @@ export interface VistaSinCorrida {
 
 const T = (x: TextoBilingue, i: Idioma): string => x[i];
 const L = (x: TextoLibre, i: Idioma): string => comoBilingue(x)[i];
+
+/** Un valor del plan en palabras: el vocabulario de la vitrina, no el enum crudo (AU-S5 M-1). */
+const palabra = (
+  voc: Readonly<Record<string, TextoBilingue>>,
+  valor: string,
+  donde: string,
+  i: Idioma,
+): string => delVocabulario(voc, valor, donde)[i];
 
 /** El origen en el idioma de la página; un elemento sin origen lo dice, no lo inventa. */
 function origenDe(x: { origen?: Origen }, i: Idioma): string {
@@ -84,7 +100,14 @@ export function vistaSinCorrida(p: Plan, i: Idioma): VistaSinCorrida {
         elementos: p.actores.map((a) => ({
           id: a.id,
           titulo: T({ es: a.es, en: a.en }, i),
-          detalle: [a.tipo],
+          detalle: [
+            palabra(
+              TIPO_ACTOR,
+              a.tipo,
+              "TIPO_ACTOR (src/textos/plan-sin-corrida.ts)",
+              i,
+            ),
+          ],
           origen: origenDe(a, i),
         })),
       },
@@ -101,7 +124,7 @@ export function vistaSinCorrida(p: Plan, i: Idioma): VistaSinCorrida {
             ...(d.justificacion
               ? [`${T(ETIQUETA.razon, i)}: ${T(d.justificacion, i)}`]
               : []),
-            `${T(ETIQUETA.reversibilidad, i)}: ${d.reversibilidad}`,
+            `${T(ETIQUETA.reversibilidad, i)}: ${palabra(REVERSIBILIDAD, d.reversibilidad, "REVERSIBILIDAD (src/textos/plan-comun.ts)", i)}`,
           ],
           origen: origenDe(d, i),
         })),
@@ -124,7 +147,9 @@ export function vistaSinCorrida(p: Plan, i: Idioma): VistaSinCorrida {
         elementos: p.supuestos.map((s) => ({
           id: s.id,
           titulo: T(s.enunciado, i),
-          detalle: [`${s.criticidad} · ${s.estado}`],
+          detalle: [
+            `${palabra(CRITICIDAD, s.criticidad, "CRITICIDAD (src/textos/plan-comun.ts)", i)} · ${palabra(ESTADO_SUPUESTO, s.estado, "ESTADO_SUPUESTO (src/textos/plan-comun.ts)", i)}`,
+          ],
           origen: origenDe(s, i),
         })),
       },
@@ -135,7 +160,8 @@ export function vistaSinCorrida(p: Plan, i: Idioma): VistaSinCorrida {
           id: k.id,
           titulo: T(k.enunciado, i),
           detalle: [
-            `${T(ETIQUETA.objetivo, i)}: ${String(k.valor_objetivo)} · ${T(ETIQUETA.criterio, i)}: ${k.regla_de_medicion.agregacion}`,
+            `${T(ETIQUETA.objetivo, i)}: ${String(k.valor_objetivo)} · ${k.regla_de_medicion.agregacion}`,
+            `${T(ETIQUETA.criterio, i)}: ${k.regla_de_medicion.condicion ?? k.regla_de_medicion.metrica ?? ""} · ${k.regla_de_medicion.poblacion}`,
           ],
           origen: origenDe(k, i),
         })),
@@ -147,7 +173,7 @@ export function vistaSinCorrida(p: Plan, i: Idioma): VistaSinCorrida {
           id: u.id,
           titulo: T(u.nombre, i),
           detalle: [
-            `${u.senal} ${u.operador} ${String(u.valor_en_plan)}${u.unidad ? ` ${L(u.unidad, i)}` : ""}`,
+            `${u.senal} ${SIMBOLO[u.operador]} ${String(u.valor_en_plan)}${u.unidad ? ` ${L(u.unidad, i)}` : ""} (${palabra(OPERADOR, u.operador, "OPERADOR (src/textos/playground.ts)", i)})`,
           ],
           origen: origenDe(u, i),
         })),

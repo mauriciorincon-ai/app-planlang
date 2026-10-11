@@ -64,7 +64,7 @@ export function PlanesSinCorrida({
             </div>
             <div role="cell" className="grid justify-items-start gap-1.5">
               <span className="text-chico text-tinta-2">{f.aprobacion}</span>
-              <Chip procedencia="real">{ENTRADA.chip[idioma]}</Chip>
+              <Chip procedencia="declarado">{ENTRADA.chip[idioma]}</Chip>
             </div>
             <div role="cell" className="grid justify-items-start gap-1.5">
               <BotonEnlace href={ruta(idioma, "planes", f.id, "demo-a")} chico>

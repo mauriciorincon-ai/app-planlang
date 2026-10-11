@@ -69,6 +69,26 @@ describe("vistaSinCorrida", () => {
     expect(decisionesUsuario).toBe(p.decisiones.length);
   });
 
+  it("ningún enum del plan sale crudo: reversibilidad, criticidad, estado, tipo de actor y operador van en palabras (AU-S5 M-1)", async () => {
+    const p = await aprobado();
+    for (const i of ["es", "en"] as const) {
+      const v = vistaSinCorrida(p, i);
+      const detalles = v.secciones.flatMap((s) =>
+        s.elementos.flatMap((e) => e.detalle),
+      );
+      for (const d of detalles)
+        expect(d).not.toMatch(
+          /\b(una_via|dos_vias|costosa|sin_probar|menor_que|mayor_que|menor_o_igual_que|mayor_o_igual_que|igual_a|distinto_de)\b/,
+        );
+    }
+    const dec = vistaSinCorrida(p, "es").secciones.find(
+      (s) => s.id === "decisiones",
+    )!.elementos[0]!;
+    expect(dec.detalle.at(-1)).toMatch(
+      /^Reversibilidad: (Una vía|Dos vías|Costosa)$/,
+    );
+  });
+
   it("los umbrales dicen su señal, su operador y su valor del plan, sin unidad inventada", async () => {
     const p = await aprobado();
     const umbral = vistaSinCorrida(p, "en").secciones.find(

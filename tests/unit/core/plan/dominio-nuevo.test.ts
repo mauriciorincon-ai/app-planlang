@@ -1,7 +1,9 @@
 /**
- * «Un dominio nuevo no toca `core/`» (S5, promesa D6): el CLI acepta cualquier plantilla de `data/dominios/` y cualquier
+ * «Un dominio nuevo es solo datos» (S5, promesa D6): el CLI acepta cualquier plantilla de `data/dominios/` y cualquier
  * id de plan; los demos siguen funcionando igual; y la plantilla `dom-seguridad-ia` es solo un archivo de datos que
- * pasa el esquema de dominio (el recorrido de la entrevista lo prueba el gate de contrato).
+ * pasa el esquema de dominio (el recorrido de la entrevista lo prueba el gate de contrato). Hallazgo del sprint: la
+ * revisión del borrador (`core/plan/revision.ts`) suponía que todo plan era `plan-demo-<x>`; se generalizó con
+ * `objetivoDelPlan`. Ningún módulo de `core/` nombra un dominio, y eso sí se vigila aquí.
  */
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
@@ -45,6 +47,9 @@ describe("el CLI entrevista un demo o un plan real", () => {
       { dominio: "dom-financiero", plan: "a/../b" },
       { dominio: "dom-financiero", plan: "a b" },
       { dominio: "dom-financiero", plan: true },
+      // El nombre de un demo (AU-S5 M-4): compartiría carpeta, hilo y revisión con él.
+      { dominio: "dom-financiero", plan: "demo-b" },
+      { dominio: "dom-financiero", plan: "plan-demo-x" },
     ];
     for (const a of rechazados)
       expect(objetivoDeEntrevista(a), JSON.stringify(a)).toBeNull();

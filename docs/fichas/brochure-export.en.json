@@ -42,7 +42,7 @@
           {
             "id": "plantillas",
             "nombre": "Domain templates as data",
-            "que_hace": "Typical actors, decisions, risks and criteria for health and financial onboarding, with the legal constraints in plain language and with their source.",
+            "que_hace": "Typical actors, decisions, risks and criteria for health, financial onboarding and AI security, with the legal constraints in plain language and with their source.",
             "seccion_manual": "Validate a plan"
           },
           {

@@ -91,7 +91,8 @@ Se usa de dos maneras:
 - **Los idiomas:** tu respuesta queda tal cual, en el idioma en que la escribiste. El otro idioma lo redacta el
   modelo y queda marcado como suyo, para que lo revises antes de aprobar. Sin modelo (`--sin-modelo`), el otro
   idioma queda pendiente.
-- **Limitaciones:** solo existen las plantillas de los dos dominios de los demos. La entrevista del plan B de este
+- **Limitaciones:** existen tres plantillas (salud, financiero y seguridad de IA); agregar otra es agregar su archivo
+  en `data/dominios/` (ver «Planear un proyecto real»). La entrevista del plan B de este
   repositorio se corrió por delegación: las respuestas las escribió el constructor y el autor aprobó el plan con
   su frase, registrada en la bitácora del sprint 3.
 
@@ -358,7 +359,9 @@ data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar l
   problema, el contrato en cifras y cada sección del plan. «Ver como experto» muestra quién propuso cada elemento:
   la plantilla, el entrevistador o la persona que respondió.
 - **Limitaciones conocidas:** el plan no tiene agente construido en planlang, así que no hay nada que medir: la página
-  es el contrato, no un resultado. Las restricciones de la plantilla citan su fuente y la fecha en que se verificó; la
+  es el contrato, no un resultado. La entrevista del plan de HackGuard se corrió por delegación: las respuestas las
+  escribió el constructor desde el brief y la visión de HackGuard, y el autor aprobó el plan con su frase; por eso el
+  sprint 5 no cuenta como «uso real». Las restricciones de la plantilla citan su fuente y la fecha en que se verificó; la
   norma ISO/IEC 42001 no se pudo verificar por `curl` (la página de ISO responde 403) y la plantilla lo dice.
 
 ### Preguntas frecuentes
@@ -457,7 +460,8 @@ There are two ways to use it:
 - **Languages:** your answer stays as you wrote it, in your language. The model drafts the other language and it is
   marked as the model's, so you review it before approving. Without a model (`--sin-modelo`), the other language
   stays pending.
-- **Limitations:** only the templates of the two demo domains exist. The interview for this repository's plan B was
+- **Limitations:** three templates exist (health, financial and AI security); adding another is adding its file in
+  `data/dominios/` (see «Plan a real project»). The interview for this repository's plan B was
   run by delegation: the builder wrote the answers and the author approved the plan with their own sentence, recorded
   in the sprint 3 log.
 
@@ -729,7 +733,9 @@ There are two ways to use it:
   problem, the contract in numbers and every section of the plan. «Read as expert» shows who proposed each element:
   the template, the interviewer or the person who answered.
 - **Known limitations:** the plan has no agent built in planlang, so there is nothing to measure: the page is the
-  contract, not a result. The template's constraints cite their source and the date they were checked; ISO/IEC 42001
+  contract, not a result. HackGuard's plan interview was run by delegation: the builder wrote the answers from
+  HackGuard's brief and vision, and the author approved the plan with their own sentence; that is why sprint 5 does
+  not count as «real use». The template's constraints cite their source and the date they were checked; ISO/IEC 42001
   could not be checked with `curl` (ISO's page answers 403) and the template says so.
 
 ### Frequently asked questions

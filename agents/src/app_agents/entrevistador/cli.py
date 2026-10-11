@@ -59,6 +59,9 @@ DEMOS = {"b": Demo(id="b", plan_id="plan-demo-b", dominio="dom-financiero", dire
 # Un id estable (el mismo patrón que el plan en TypeScript): letras, dígitos, `_` y `-`. Va al nombre de una
 # carpeta y de un archivo, así que nada de barras ni `..`.
 _ID_ESTABLE = re.compile(r"^[A-Za-z][A-Za-z0-9_-]*$")
+# Lo que nombra a un demo (`demo-b`, `plan-demo-b`): un plan real no comparte carpeta ni hilo con uno
+# (AU-S5 M-4).
+_DE_DEMO = re.compile(r"^(plan-)?demo-")
 
 
 class DominioOPlanInvalido(ValueError):
@@ -70,6 +73,8 @@ def demo_de_dominio(dominio: str, plan: str, raiz: Path = RAIZ_REPO) -> Demo:
     for nombre, valor in (("--dominio", dominio), ("--plan", plan)):
         if not _ID_ESTABLE.match(valor):
             raise DominioOPlanInvalido(f"{nombre} «{valor}»: un id estable (letras, dígitos, _ y -)")
+    if _DE_DEMO.match(plan):
+        raise DominioOPlanInvalido(f"--plan «{plan}»: ese nombre es de un demo; un plan real lleva otro id")
     if not (raiz / "data" / "dominios" / f"{dominio}.json").is_file():
         raise DominioOPlanInvalido(f"--dominio «{dominio}»: no existe data/dominios/{dominio}.json")
     return Demo(id=plan, plan_id=plan, dominio=dominio, directorio=f"plans/{plan}", identificador=plan)

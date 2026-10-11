@@ -32,7 +32,12 @@ export const SECCIONES = {
   criterios: tb("Criterios de aceptación", "Acceptance criteria"),
   umbrales: tb("Umbrales", "Thresholds"),
   contrato: tb("Contrato del grafo", "Graph contract"),
-  lotes: tb("Lotes", "Batches"),
+};
+
+/** El tipo de un actor (`core/plan/esquema.ts` TIPO_ACTOR), en palabras. */
+export const TIPO_ACTOR = {
+  humano: tb("persona", "person"),
+  sistema: tb("sistema", "system"),
 };
 
 export const ETIQUETA = {
@@ -49,11 +54,9 @@ export const ETIQUETA = {
   deteccion: tb("Detección", "Detection"),
   criterio: tb("Regla de medición", "Measurement rule"),
   objetivo: tb("Objetivo", "Target"),
-  valorEnPlan: tb("Valor en el plan", "Value in the plan"),
   nodos: tb("nodos", "nodes"),
   aristas: tb("aristas condicionales", "conditional edges"),
   pausas: tb("pausas humanas", "human pauses"),
-  sinValor: tb("sin valor todavía", "no value yet"),
 };
 
 export const TITULO_PAGINA = (id: string) => tb(`Plan ${id}`, `Plan ${id}`);
@@ -65,8 +68,8 @@ export const DESCRIPCION_PAGINA = tb(
 export const PORTADA = {
   antetitulo: tb("Plan sin corrida", "Plan without a run"),
   guia: tb(
-    "Este plan salió de una entrevista sobre una plantilla de dominio que es solo datos. Nadie lo ha construido en planlang: aquí no hay trazas que medir, solo el contrato.",
-    "This plan came from an interview over a domain template that is only data. No one has built it in planlang: there are no traces to measure here, only the contract.",
+    "Este plan salió de una entrevista sobre una plantilla de dominio que es solo datos. Nadie lo ha construido en planlang: aquí no hay trazas que medir, solo el contrato. «Usuario» es quien respondió la entrevista, o el constructor cuando el autor le delegó las respuestas.",
+    "This plan came from an interview over a domain template that is only data. No one has built it in planlang: there are no traces to measure here, only the contract. «User» is whoever answered the interview, or the builder when the author delegated the answers.",
   ),
   origenes: tb(
     "Quién propuso cada elemento: la plantilla del dominio, el entrevistador o la persona que respondió.",
@@ -82,7 +85,7 @@ export const ENTRADA = {
     "Planned with the interviewer over a new domain. No agent, no traces: only the contract.",
   ),
   abrir: tb("Leer el plan", "Read the plan"),
-  chip: tb("real · plan aprobado", "real · approved plan"),
+  chip: tb("plan aprobado · sin corrida", "approved plan · no run"),
   columnas: {
     plan: tb("Plan", "Plan"),
     dominio: tb("Dominio", "Domain"),

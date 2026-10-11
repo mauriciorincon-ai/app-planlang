@@ -36,6 +36,8 @@ const USO_OBJETIVO = `(--demo ${DEMOS_ENTREVISTABLES.join("|")} | --dominio <id>
 const SALIDA_GUARDADA = 3;
 /** El mismo patrón de id estable que el plan: va al nombre de una carpeta, así que nada de barras ni `..`. */
 const ID_ESTABLE = /^[A-Za-z][A-Za-z0-9_-]*$/;
+/** Lo que nombra a un demo (`demo-b`, `plan-demo-b`): un plan real no puede compartir carpeta, hilo ni revisión con uno (AU-S5 M-4). */
+const DE_DEMO = /^(plan-)?demo-/;
 
 /** Qué se entrevista y dónde queda: un demo (`--demo b`) o un plan real (`--dominio <id> --plan <id>`). */
 export interface ObjetivoDeEntrevista {
@@ -59,7 +61,8 @@ export function objetivoDeEntrevista(
     typeof dominio === "string" &&
     typeof plan === "string" &&
     ID_ESTABLE.test(dominio) &&
-    ID_ESTABLE.test(plan)
+    ID_ESTABLE.test(plan) &&
+    !DE_DEMO.test(plan)
   )
     return {
       pasar: ["--dominio", dominio, "--plan", plan],
