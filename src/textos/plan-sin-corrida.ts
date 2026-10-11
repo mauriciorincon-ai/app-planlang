@@ -55,3 +55,38 @@ export const ETIQUETA = {
   pausas: tb("pausas humanas", "human pauses"),
   sinValor: tb("sin valor todavía", "no value yet"),
 };
+
+export const TITULO_PAGINA = (id: string) => tb(`Plan ${id}`, `Plan ${id}`);
+export const DESCRIPCION_PAGINA = tb(
+  "Un plan aprobado con el entrevistador de planlang, sin agente construido: el contrato tal como se aprobó, con quién propuso cada elemento.",
+  "A plan approved with planlang's interviewer, with no agent built: the contract as approved, with who proposed each element.",
+);
+
+export const PORTADA = {
+  antetitulo: tb("Plan sin corrida", "Plan without a run"),
+  guia: tb(
+    "Este plan salió de una entrevista sobre una plantilla de dominio que es solo datos. Nadie lo ha construido en planlang: aquí no hay trazas que medir, solo el contrato.",
+    "This plan came from an interview over a domain template that is only data. No one has built it in planlang: there are no traces to measure here, only the contract.",
+  ),
+  origenes: tb(
+    "Quién propuso cada elemento: la plantilla del dominio, el entrevistador o la persona que respondió.",
+    "Who proposed each element: the domain template, the interviewer or the person who answered.",
+  ),
+};
+
+/** La sección «Planes sin corrida» de la Entrada (S5). */
+export const ENTRADA = {
+  titulo: tb("Planes sin corrida", "Plans without a run"),
+  nota: tb(
+    "Planeados con el entrevistador sobre un dominio nuevo. Sin agente, sin trazas: solo el contrato.",
+    "Planned with the interviewer over a new domain. No agent, no traces: only the contract.",
+  ),
+  abrir: tb("Leer el plan", "Read the plan"),
+  chip: tb("real · plan aprobado", "real · approved plan"),
+  columnas: {
+    plan: tb("Plan", "Plan"),
+    dominio: tb("Dominio", "Domain"),
+    aprobado: tb("Aprobado", "Approved"),
+    abrir: tb("Abrir", "Open"),
+  },
+};

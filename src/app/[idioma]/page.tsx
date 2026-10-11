@@ -2,14 +2,17 @@ import type { Metadata } from "next";
 import { ComoFunciona } from "@/components/entrada/como-funciona";
 import { Demos } from "@/components/entrada/demos";
 import { LoQueNinguna } from "@/components/entrada/lo-que-ninguna";
+import { PlanesSinCorrida } from "@/components/entrada/planes";
 import { Portada } from "@/components/entrada/portada";
 import { Pregunta } from "@/components/entrada/pregunta";
 import { CONT } from "@/components/cx";
 import { Marco } from "@/components/marco/marco";
+import { planesSinCorrida } from "@/lib/datos/planes";
 import { datosDeLosDemos } from "@/lib/datos/vitrina";
 import { DEMOS } from "@/lib/demos";
 import { idiomaDeRuta } from "@/lib/idioma";
 import { filaDeDemo, vistaEntrada } from "@/lib/vista/entrada";
+import { filaDePlanSinCorrida } from "@/lib/vista/plan-sin-corrida";
 import { DESCRIPCION_PAGINA, TITULO_PAGINA } from "@/textos/entrada";
 
 type Props = { params: Promise<{ idioma: string }> };
@@ -32,6 +35,10 @@ export default async function Entrada({ params }: Props) {
   // La portada, «Cómo funciona» y «Lo que ninguna herramienta muestra» dibujan el A; «Los demos», una fila por demo.
   const vista = vistaEntrada(ds["demo-a"], idioma);
   const filas = DEMOS.map((id) => filaDeDemo(ds[id], idioma));
+  // Los planes aprobados sin corrida (S5): una fila por plan; sin planes, la sección no se pinta.
+  const planes = (await planesSinCorrida()).map((p) =>
+    filaDePlanSinCorrida(p.plan, idioma),
+  );
   return (
     <Marco idioma={idioma} pagina="entrada">
       <div className={CONT}>
@@ -39,6 +46,7 @@ export default async function Entrada({ params }: Props) {
         <ComoFunciona vista={vista} idioma={idioma} />
         <LoQueNinguna vista={vista} idioma={idioma} />
         <Demos filas={filas} idioma={idioma} />
+        <PlanesSinCorrida filas={planes} idioma={idioma} />
         <Pregunta idioma={idioma} />
       </div>
     </Marco>

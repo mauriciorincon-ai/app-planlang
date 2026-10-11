@@ -161,3 +161,23 @@ export const ORIGENES_VISIBLES: readonly Origen[] = [
   "entrevistador",
   "usuario",
 ];
+
+/** Una fila de la sección «Planes sin corrida» de la Entrada (S5). */
+export interface FilaPlanSinCorrida {
+  id: string;
+  nombre: string;
+  version: string;
+  dominio: string;
+  aprobacion: string;
+}
+
+export function filaDePlanSinCorrida(p: Plan, i: Idioma): FilaPlanSinCorrida {
+  const v = vistaSinCorrida(p, i);
+  return {
+    id: v.id,
+    nombre: v.nombre,
+    version: v.version,
+    dominio: v.dominio,
+    aprobacion: v.aprobacion ?? "",
+  };
+}

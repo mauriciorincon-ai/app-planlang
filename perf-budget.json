@@ -2,49 +2,118 @@
   {
     "path": "/*",
     "timings": [
-      { "metric": "first-contentful-paint", "budget": 1500 },
-      { "metric": "total-blocking-time", "budget": 300 },
-      { "metric": "cumulative-layout-shift", "budget": 0.1 }
+      {
+        "metric": "first-contentful-paint",
+        "budget": 1500
+      },
+      {
+        "metric": "total-blocking-time",
+        "budget": 300
+      },
+      {
+        "metric": "cumulative-layout-shift",
+        "budget": 0.1
+      }
     ],
     "resourceSizes": [
-      { "resourceType": "script", "budget": 350 },
-      { "resourceType": "total", "budget": 1000 }
+      {
+        "resourceType": "script",
+        "budget": 350
+      },
+      {
+        "resourceType": "total",
+        "budget": 1000
+      }
     ]
   },
   {
     "path": "/es$",
-    "timings": [{ "metric": "largest-contentful-paint", "budget": 2500 }]
+    "timings": [
+      {
+        "metric": "largest-contentful-paint",
+        "budget": 2500
+      }
+    ]
   },
   {
     "path": "/en$",
-    "timings": [{ "metric": "largest-contentful-paint", "budget": 2500 }]
+    "timings": [
+      {
+        "metric": "largest-contentful-paint",
+        "budget": 2500
+      }
+    ]
   },
   {
-    "path": "/*/plan",
-    "timings": [{ "metric": "largest-contentful-paint", "budget": 2500 }]
+    "path": "/*/plan$",
+    "timings": [
+      {
+        "metric": "largest-contentful-paint",
+        "budget": 2500
+      }
+    ]
   },
   {
     "path": "/*/agente",
-    "timings": [{ "metric": "largest-contentful-paint", "budget": 2500 }]
+    "timings": [
+      {
+        "metric": "largest-contentful-paint",
+        "budget": 2500
+      }
+    ]
   },
   {
     "path": "/*/caso/",
-    "timings": [{ "metric": "largest-contentful-paint", "budget": 2500 }]
+    "timings": [
+      {
+        "metric": "largest-contentful-paint",
+        "budget": 2500
+      }
+    ]
   },
   {
     "path": "/*/brecha",
-    "timings": [{ "metric": "largest-contentful-paint", "budget": 2500 }]
+    "timings": [
+      {
+        "metric": "largest-contentful-paint",
+        "budget": 2500
+      }
+    ]
   },
   {
     "path": "/*/comparar",
-    "timings": [{ "metric": "largest-contentful-paint", "budget": 2500 }]
+    "timings": [
+      {
+        "metric": "largest-contentful-paint",
+        "budget": 2500
+      }
+    ]
+  },
+  {
+    "path": "/*/planes/",
+    "timings": [
+      {
+        "metric": "largest-contentful-paint",
+        "budget": 2500
+      }
+    ]
   },
   {
     "path": "/*/fichas",
-    "timings": [{ "metric": "largest-contentful-paint", "budget": 2500 }]
+    "timings": [
+      {
+        "metric": "largest-contentful-paint",
+        "budget": 2500
+      }
+    ]
   },
   {
     "path": "/*/playground",
-    "timings": [{ "metric": "largest-contentful-paint", "budget": 2800 }]
+    "timings": [
+      {
+        "metric": "largest-contentful-paint",
+        "budget": 2800
+      }
+    ]
   }
 ]

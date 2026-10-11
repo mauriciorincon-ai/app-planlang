@@ -20,9 +20,10 @@ export const PANTALLAS = [
 export type Pantalla = (typeof PANTALLAS)[number];
 /**
  * Las páginas de la vitrina: las pestañas (`PANTALLAS`) y las que no son pestaña. `comparar` (S4) se entra desde la
- * Entrada y desde la Brecha del A; no tiene pestaña y no existe en el demo B.
+ * Entrada y desde la Brecha del A; no tiene pestaña y no existe en el demo B. `planes` (S5) es un plan aprobado sin
+ * corrida (`/es/planes/<id>`): no es de ningún demo y no lleva segmento.
  */
-export type Pagina = Pantalla | "comparar";
+export type Pagina = Pantalla | "comparar" | "planes";
 
 const PAQUETE = process.env.PLANLANG_PAQUETE === "1";
 
@@ -41,7 +42,14 @@ export function ruta(
   demo: IdDemo,
 ): string {
   if (pantalla === "comparar" && demo !== "demo-a")
-    throw new Error(`ruta: «comparar» solo existe en el demo A, no en «${demo}».`);
+    throw new Error(
+      `ruta: «comparar» solo existe en el demo A, no en «${demo}».`,
+    );
+  if (pantalla === "planes") {
+    if (id === undefined)
+      throw new Error("ruta: «planes» es la página de UN plan: falta su id.");
+    return `${BASE_RUTA}/${idioma}/planes/${id}${SUFIJO_RUTA}`;
+  }
   const segmento = SEGMENTO_DEMO[demo];
   const base = segmento ? `/${idioma}/${segmento}` : `/${idioma}`;
   const camino =
