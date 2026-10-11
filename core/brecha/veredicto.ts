@@ -26,21 +26,25 @@ export interface ResultadoVeredicto {
   alertas: TextoBilingue[];
 }
 
-export function veredicto(
+/** El valor del veredicto a partir de sus motivos: un bloqueante ⇒ no cumple; una alerta ⇒ cumple con alertas. */
+function valorDe(
+  bloqueantes: readonly TextoBilingue[],
+  alertas: readonly TextoBilingue[],
+): Veredicto {
+  return bloqueantes.length > 0
+    ? "no_cumple"
+    : alertas.length > 0
+      ? "cumple_con_alertas"
+      : "cumple";
+}
+
+/**
+ * La parte del veredicto que sale solo de criterios, riesgos y de lo que quedó fuera por proveedor. La comparación de
+ * dos corridas la usa para cada lado, sin contrato de grafo ni supuestos (esos son del informe de la corrida principal).
+ */
+export function veredictoDeCriteriosYRiesgos(
   criterios: readonly ResultadoCriterio[],
   riesgos: readonly ResultadoRiesgo[],
-  supuestos: readonly ResultadoSupuesto[],
-  contrato: ResultadoContrato,
-  brechas: readonly BrechaNoPrevista[],
-  repeticiones: readonly {
-    id: string;
-    riesgos: readonly ResultadoRiesgo[];
-  }[] = [],
-  /**
-   * Criterios absolutos y riesgos que dejaron casos fuera de su población porque el modelo no respondió y la señal
-   * que la define quedó nula (AU-9): lo que miden no se verificó en esos casos, y eso es una alerta, no un silencio
-   * (AU-S2-B50). Los nulos legítimos (una urgencia que no pasa por el extractor) no cuentan aquí.
-   */
   fueraPorProveedor: readonly { id: string; n: number }[] = [],
 ): ResultadoVeredicto {
   const bloqueantes: TextoBilingue[] = [];
@@ -110,6 +114,31 @@ export function veredicto(
         en: `${r.id}: no case in the batch tested its detector.`,
       });
   }
+  return { valor: valorDe(bloqueantes, alertas), bloqueantes, alertas };
+}
+
+export function veredicto(
+  criterios: readonly ResultadoCriterio[],
+  riesgos: readonly ResultadoRiesgo[],
+  supuestos: readonly ResultadoSupuesto[],
+  contrato: ResultadoContrato,
+  brechas: readonly BrechaNoPrevista[],
+  repeticiones: readonly {
+    id: string;
+    riesgos: readonly ResultadoRiesgo[];
+  }[] = [],
+  /**
+   * Criterios absolutos y riesgos que dejaron casos fuera de su población porque el modelo no respondió y la señal
+   * que la define quedó nula (AU-9): lo que miden no se verificó en esos casos, y eso es una alerta, no un silencio
+   * (AU-S2-B50). Los nulos legítimos (una urgencia que no pasa por el extractor) no cuentan aquí.
+   */
+  fueraPorProveedor: readonly { id: string; n: number }[] = [],
+): ResultadoVeredicto {
+  const { bloqueantes, alertas } = veredictoDeCriteriosYRiesgos(
+    criterios,
+    riesgos,
+    fueraPorProveedor,
+  );
   for (const rep of repeticiones)
     for (const r of rep.riesgos)
       if (r.estado === "ocurrio")
@@ -150,12 +179,7 @@ export function veredicto(
       en: `${brechas.length} gap(s) the plan did not foresee.`,
     });
   return {
-    valor:
-      bloqueantes.length > 0
-        ? "no_cumple"
-        : alertas.length > 0
-          ? "cumple_con_alertas"
-          : "cumple",
+    valor: valorDe(bloqueantes, alertas),
     bloqueantes,
     alertas,
   };

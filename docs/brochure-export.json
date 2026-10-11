@@ -12,14 +12,14 @@
     "enlaces.produccion": "null cuando la app no tiene URL pública. `razon` explica por qué, y es lo que la vitrina muestra en lugar del enlace. Nunca se rellena con un enlace de repositorio ni con una promesa."
   },
   "schema_version": "1.0.0",
-  "actualizado": "2026-10-05",
+  "actualizado": "2026-10-11",
   "app": {
     "slug": "planlang",
     "nombre": "planlang",
     "ciclo": "H1",
     "estado": "inicial",
     "sellado_en": null,
-    "sprints_cerrados": 3,
+    "sprints_cerrados": 4,
     "version_repo": "0.1.0"
   },
   "promesa": {
@@ -29,7 +29,7 @@
     "diferencial": "Observar trazas y evaluar respuestas ya lo hacen muchas herramientas. Lo que no hace nadie es exigir el plan antes y medir contra él después: el informe de brecha plan → resultado, con el análisis de riesgos previo, y los umbrales del plan jugables sobre las trazas reales."
   },
   "funcionalidades": {
-    "total": 19,
+    "total": 20,
     "fuente_del_conteo": "docs/MANUAL-DE-USO.md",
     "descartadas": [],
     "grupos": [
@@ -126,6 +126,12 @@
             "nombre": "Supuestos con prueba barata",
             "que_hace": "«El modelo extrae con confianza calibrada» se mide de verdad —calibración y curva riesgo-cobertura— y queda confirmado, refutado o sin probar.",
             "seccion_manual": "Leer el informe de brecha"
+          },
+          {
+            "id": "comparar",
+            "nombre": "Comparar dos corridas",
+            "que_hace": "Pone la corrida multiagente frente a su línea base de agente único, sobre los mismos casos: criterio por criterio, riesgo por riesgo y caso por caso, con las pausas frente a la verdad.",
+            "seccion_manual": "Comparar dos corridas"
           },
           {
             "id": "instrumento",
@@ -241,7 +247,7 @@
     {
       "clave": "funcionalidades",
       "etiqueta": "funcionalidades construidas",
-      "valor": 19,
+      "valor": 20,
       "unidad": "funcionalidades",
       "fuente": "medido",
       "detalle": "Las de la visión del producto que ya funcionan: las del corte de dos semanas y las del roadmap que se construyeron en el S3 (el entrevistador, el demo B y su expediente), contadas contra docs/MANUAL-DE-USO.md; lo que sigue en el roadmap no cuenta."

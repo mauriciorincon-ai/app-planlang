@@ -12,7 +12,7 @@
 // `out/` o si `--pasada` cae dentro del repo. Solo hay datos sintéticos precompilados.
 //
 // Uso: pnpm build && node scripts/capturas-demo-b.mjs --pasada <carpeta fuera del repo>
-//        [--conjunto forma-b|mirada-3] [--destino docs/fidelidad/<conjunto>] [--techo 2097152]
+//        [--conjunto forma-b|mirada-3|comparar] [--destino docs/fidelidad/<conjunto>] [--techo 2097152]
 // Conjuntos: `forma-b` (S3 fase 3, la mirada 2: las pantallas del B) y `mirada-3` (S3 fase 4: el BLUEPRINT, el
 // expediente y el informe del B y los cambios de forma del A sobre la corrida de 200). El BLUEPRINT es el único
 // archivo que se sirve fuera de `out/` (`docs/BLUEPRINT.html`, autocontenido).
@@ -47,7 +47,7 @@ const arg = (n, def) => {
 };
 const pasada = arg("pasada", null) ? resolve(arg("pasada", null)) : null;
 const CONJUNTO = arg("conjunto", "forma-b");
-if (!["forma-b", "mirada-3"].includes(CONJUNTO)) {
+if (!["forma-b", "mirada-3", "comparar"].includes(CONJUNTO)) {
   console.error(`capturas-demo-b: conjunto desconocido «${CONJUNTO}». Aborto.`);
   process.exit(1);
 }
@@ -57,7 +57,9 @@ const destino = resolve(
     "destino",
     CONJUNTO === "forma-b"
       ? "docs/fidelidad/s3-demo-b"
-      : "docs/fidelidad/s3-mirada-3",
+      : CONJUNTO === "comparar"
+        ? "docs/fidelidad/s4-comparar"
+        : "docs/fidelidad/s3-mirada-3",
   ),
 );
 const BLUEPRINT = join(raiz, "docs", "BLUEPRINT.html");
@@ -67,7 +69,7 @@ const TECHO = Number(arg("techo", String(2 * 1024 * 1024)));
 // en 70 y 55, como se registró.
 const CALIDAD = Number(arg("calidad", CONJUNTO_CALIDAD()));
 function CONJUNTO_CALIDAD() {
-  return arg("conjunto", "forma-b") === "forma-b" ? "70" : "52";
+  return ["forma-b", "comparar"].includes(arg("conjunto", "forma-b")) ? "70" : "52";
 }
 if (!pasada) {
   console.error(
@@ -175,11 +177,17 @@ const PANTALLAS_FORMA_B = [
   { clave: "caso-B-019", ruta: "/demo-b/caso/B-019" },
   { clave: "fichas", ruta: "/demo-b/fichas" },
 ];
-const COMBINACIONES = [
-  { idioma: "es", tema: "oscuro" },
-  { idioma: "es", tema: "claro" },
-  { idioma: "en", tema: "oscuro" },
-];
+const COMBINACIONES =
+  CONJUNTO === "comparar"
+    ? [
+        { idioma: "es", tema: "oscuro" },
+        { idioma: "es", tema: "claro" },
+      ]
+    : [
+        { idioma: "es", tema: "oscuro" },
+        { idioma: "es", tema: "claro" },
+        { idioma: "en", tema: "oscuro" },
+      ];
 const ANCHOS = [380, 1280];
 
 // ── 2. las decisiones de forma, con su fila de la matriz ───────────────────────────────────────────────
@@ -508,10 +516,84 @@ const DECISIONES_MIRADA_3 = [
   },
 ];
 
+// ── el conjunto «comparar» (S4): la pantalla «Comparar dos corridas», en español, con su pasada de interacción ──────
+const PANTALLAS_COMPARAR = [{ clave: "comparar", ruta: "/comparar" }];
+const DECISIONES_COMPARAR = [
+  {
+    clave: "veredicto-y-criterios",
+    archivo: "Comparar (/es/comparar), veredictos y criterios",
+    estado: "tal como abre",
+    ruta: "/es/comparar",
+    ancho: 1280,
+    tema: "oscuro",
+    recorte: (page) =>
+      marco(page.locator('section[aria-labelledby="s-veredicto-t"]')),
+    mirar: "Los dos veredictos, la tabla de medidas y la de criterios.",
+    esperada:
+      "«Cumple» en la multiagente y «Cumple con alertas» en la de agente único; el criterio C5 no se cumple en la única.",
+  },
+  {
+    clave: "riesgos-y-pausas-movil",
+    archivo: "Comparar, riesgos y pausas (teléfono)",
+    estado: "tal como abre, 380 px",
+    ruta: "/es/comparar",
+    ancho: 380,
+    tema: "claro",
+    recorte: (page) =>
+      marco(page.locator('section[aria-labelledby="s-riesgos-t"]')),
+    mirar:
+      "Que cada fila de riesgo y de pausa se lea en tarjeta, sin desplazamiento lateral.",
+    esperada:
+      "R5 ocurre en la de agente único (su tasa cruza el umbral) y no en la multiagente. Pausas innecesarias: 4 y 20.",
+  },
+  {
+    clave: "perfil-experto",
+    archivo: "Comparar, perfil experto (pasada de interacción)",
+    estado: "tras pulsar «Experto»",
+    ruta: "/es/comparar",
+    ancho: 1280,
+    tema: "oscuro",
+    accion: async (page) =>
+      page
+        .getByRole("group", { name: "Leer como" })
+        .getByRole("button", { name: "Experto" })
+        .click(),
+    antes: (page) => page.locator("html").getAttribute("data-perfil"),
+    recorte: (page) =>
+      marco(page.locator('section[aria-labelledby="s-veredicto-t"]')),
+    mirar:
+      "Que el texto del líder se vaya y aparezca la regla de la sección.",
+    esperada:
+      "Con «Experto» se leen la regla del veredicto y las medidas exactas; el perfil del líder deja de verse.",
+  },
+  {
+    clave: "casos-que-difieren",
+    archivo: "Comparar, casos que difieren",
+    estado: "tal como abre",
+    ruta: "/es/comparar",
+    ancho: 1280,
+    tema: "oscuro",
+    recorte: (page) =>
+      marco(page.locator('section[aria-labelledby="s-casos-t"]')),
+    mirar:
+      "Cada caso con su verdad, su decisión y su pausa en los dos lados; el caso enlaza a su página.",
+    esperada:
+      "18 casos. La decisión coincide en los dos lados; lo que cambia es la pausa. Cada caso es un enlace, no un recuadro punteado.",
+  },
+];
+
 const PANTALLAS =
-  CONJUNTO === "forma-b" ? PANTALLAS_FORMA_B : PANTALLAS_MIRADA_3;
+  CONJUNTO === "forma-b"
+    ? PANTALLAS_FORMA_B
+    : CONJUNTO === "comparar"
+      ? PANTALLAS_COMPARAR
+      : PANTALLAS_MIRADA_3;
 const DECISIONES =
-  CONJUNTO === "forma-b" ? DECISIONES_FORMA_B : DECISIONES_MIRADA_3;
+  CONJUNTO === "forma-b"
+    ? DECISIONES_FORMA_B
+    : CONJUNTO === "comparar"
+      ? DECISIONES_COMPARAR
+      : DECISIONES_MIRADA_3;
 
 rmSync(destino, { recursive: true, force: true });
 mkdirSync(destino, { recursive: true });
@@ -564,7 +646,7 @@ for (const c of capturas) {
     path: join(destino, c.miniatura),
     clip: { x: 0, y: 0, width: 240, height: 400 },
     type: "jpeg",
-    quality: CONJUNTO === "forma-b" ? 55 : 45,
+    quality: ["forma-b", "comparar"].includes(CONJUNTO) ? 55 : 45,
   });
 }
 await mini.close();
@@ -661,7 +743,7 @@ const html = `<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${CONJUNTO === "forma-b" ? "Demo B · mirada de forma (S3)" : "Mirada 3 · cierre (S3)"}</title>
+<title>${CONJUNTO === "comparar" ? "Comparar dos corridas · mirada de forma (S4)" : CONJUNTO === "forma-b" ? "Demo B · mirada de forma (S3)" : "Mirada 3 · cierre (S3)"}</title>
 <style>
 :root{--fondo:#0f1115;--sup:#171a21;--t1:#eceef2;--t2:#a9afbb;--linea:#2a2f3a}
 @media (prefers-color-scheme: light){:root{--fondo:#f7f7f5;--sup:#fff;--t1:#16181d;--t2:#4a505c;--linea:#d9dbe0}}
@@ -678,7 +760,11 @@ table{border-collapse:collapse;width:100%;font-size:13px;margin-top:8px}th,td{bo
 </head>
 <body><main>
 ${
-  CONJUNTO === "forma-b"
+  CONJUNTO === "comparar"
+    ? `<p class="pregunta">¿«Comparar dos corridas» se lee como esperas? Mira cada fila de la tabla con su recorte.</p>
+<h1>Comparar dos corridas · mirada de forma «no vista» (S4)</h1>
+<p>Vitrina construida con el commit en curso, servida desde <code>out/</code>. Clase de mirada: FORMA, registrada «no vista»; su veredicto viaja al gate del hito (⭐⭐ de la guía). Las capturas enteras no se versionan: cada una se identifica por su huella SHA-256.</p>`
+    : CONJUNTO === "forma-b"
     ? `<p class="pregunta">¿Las pantallas del demo B tienen la forma que esperas? Mira cada fila de la tabla con su recorte.</p>
 <h1>Demo B · mirada de forma «no vista» (S3, fase 3)</h1>
 <p>Vitrina construida con el commit en curso, servida desde <code>out/</code>. Clase de mirada: FORMA, registrada «no vista»; su veredicto viaja al gate ⭐⭐ (parada 2). Las capturas enteras no se versionan: cada una se identifica por su huella SHA-256.</p>`
@@ -694,7 +780,7 @@ ${filas}
 <h2>Los recortes</h2>
 ${figuras}
 <h2>La pasada completa (${capturas.length} capturas)</h2>
-<p>${CONJUNTO === "forma-b" ? "Cada pantalla del B y la entrada" : "Las pantallas que cambió el cierre"}, a 380 y 1280 px: en español en los dos temas, en inglés en oscuro. La miniatura es la parte de arriba; la huella identifica la captura entera que se leyó.</p>
+<p>${CONJUNTO === "comparar" ? "La pantalla, a 380 y 1280 px, en español en los dos temas." : CONJUNTO === "forma-b" ? "Cada pantalla del B y la entrada" : "Las pantallas que cambió el cierre"}${CONJUNTO === "comparar" ? "" : ", a 380 y 1280 px: en español en los dos temas, en inglés en oscuro"}. La miniatura es la parte de arriba; la huella identifica la captura entera que se leyó.</p>
 <div class="minis">
 ${minis}
 </div>

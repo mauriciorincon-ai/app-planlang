@@ -1182,6 +1182,15 @@ export const APP = {
           ),
         },
         {
+          id: "comparar",
+          nombre: tb("Comparar dos corridas", "Compare two runs"),
+          que_hace: tb(
+            "Pone la corrida multiagente frente a su línea base de agente único, sobre los mismos casos: criterio por criterio, riesgo por riesgo y caso por caso, con las pausas frente a la verdad.",
+            "Puts the multi-agent run against its single-agent baseline, on the same cases: criterion by criterion, risk by risk and case by case, with the pauses against the truth.",
+          ),
+          seccion_manual: tb("Comparar dos corridas", "Compare two runs"),
+        },
+        {
           id: "instrumento",
           nombre: tb("Validación del instrumento", "Instrument validation"),
           que_hace: tb(

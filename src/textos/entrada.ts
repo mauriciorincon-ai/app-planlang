@@ -159,13 +159,6 @@ export const EN_CONSTRUCCION = {
   ),
   items: [
     {
-      id: "comparar-dos-corridas",
-      titulo: tb(
-        "Comparar dos corridas lado a lado",
-        "Compare two runs side by side",
-      ),
-    },
-    {
       id: "calibracion-conformal",
       titulo: tb(
         "Calibración conformal y cobertura conjunta",

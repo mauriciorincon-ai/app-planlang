@@ -356,7 +356,7 @@ export function presupuestoDe(trazas: readonly Traza[]): Presupuesto {
   };
 }
 
-function exactitudYLatencia(vistas: readonly VistaDeCaso[]): {
+export function exactitudYLatencia(vistas: readonly VistaDeCaso[]): {
   exactitud: number;
   latencia: number | null;
   correctos: Set<string>;

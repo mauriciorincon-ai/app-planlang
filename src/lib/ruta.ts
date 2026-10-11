@@ -18,6 +18,11 @@ export const PANTALLAS = [
   "fichas",
 ] as const;
 export type Pantalla = (typeof PANTALLAS)[number];
+/**
+ * Las páginas de la vitrina: las pestañas (`PANTALLAS`) y las que no son pestaña. `comparar` (S4) se entra desde la
+ * Entrada y desde la Brecha del A; no tiene pestaña y no existe en el demo B.
+ */
+export type Pagina = Pantalla | "comparar";
 
 const PAQUETE = process.env.PLANLANG_PAQUETE === "1";
 
@@ -31,10 +36,12 @@ export const SUFIJO_RUTA = PAQUETE ? ".html" : "";
  */
 export function ruta(
   idioma: Idioma,
-  pantalla: Pantalla,
+  pantalla: Pagina,
   id: string | undefined,
   demo: IdDemo,
 ): string {
+  if (pantalla === "comparar" && demo !== "demo-a")
+    throw new Error(`ruta: «comparar» solo existe en el demo A, no en «${demo}».`);
   const segmento = SEGMENTO_DEMO[demo];
   const base = segmento ? `/${idioma}/${segmento}` : `/${idioma}`;
   const camino =

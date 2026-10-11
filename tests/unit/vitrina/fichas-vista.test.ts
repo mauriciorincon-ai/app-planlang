@@ -158,7 +158,7 @@ describe("cada ficha, como la pinta hoja-de-vida", () => {
       "H1",
       `${repo.sprintsCerrados} sprint${repo.sprintsCerrados === 1 ? "" : "s"}`,
       `v${repo.version}`,
-      "Datos del 2026-10-05",
+      `Datos del ${repo.ultimaFecha}`,
     ]);
     expect(es.app.proceso).toBeNull();
     expect(es.app.num).toEqual({
@@ -168,7 +168,7 @@ describe("cada ficha, como la pinta hoja-de-vida", () => {
       limites: "03",
       donde: "04",
     });
-    expect(es.app.tieneSub).toBe("6 grupos · 19 funcionalidades.");
+    expect(es.app.tieneSub).toBe("6 grupos · 20 funcionalidades.");
     expect(es.app.hitos.map((h) => h.etiqueta)).toEqual([
       "ciclo",
       "sprints cerrados",

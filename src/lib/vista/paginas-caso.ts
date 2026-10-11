@@ -3,7 +3,8 @@
  * corrida de 200 del A, una página por caso llevaría el paquete de hoja-de-vida de 32 MB a unos 110 MB. Llevan página
  * los primeros `PRIMEROS_CON_PAGINA` casos del lote y los que el informe señala uno por uno: los casos ejemplares, los
  * que incumplen un criterio, los de un riesgo ocurrido, los de una brecha no prevista y los que están justo en un
- * umbral. La lista de casos en que la línea base difiere (S3) no entra: puede ser casi toda la corrida. El Playground,
+ * umbral, y los casos en que la línea base de agente único difiere de la multiagente (S4), hasta
+ * `TOPE_CASOS_QUE_DIFIEREN_CON_PAGINA`; con más, el resto se lista sin página. El Playground,
  * la Brecha, el Agente y la portada de Casos miden y cuentan sobre la corrida entera; un caso sin página se lista sin
  * enlace. Una corrida de 20, como la del B, tiene página para todos.
  */
@@ -13,6 +14,9 @@ import { ruta } from "@/lib/ruta";
 
 /** Los primeros del lote que llevan página aunque el informe no los señale: un bloque de lote completo. */
 export const PRIMEROS_CON_PAGINA = 20;
+
+/** Hasta cuántos casos en que las dos corridas difieren llevan página (S4). Más de eso, el paquete crece sin razón. */
+export const TOPE_CASOS_QUE_DIFIEREN_CON_PAGINA = 40;
 
 const cache = new WeakMap<DatosDemo, ReadonlySet<string>>();
 
@@ -35,16 +39,27 @@ function senaladosPorElInforme(d: DatosDemo): Set<string> {
   return ids;
 }
 
+/** Los casos en que la línea base difiere de la multiagente, hasta el tope (S4). */
+function casosQueDifieren(d: DatosDemo): ReadonlySet<string> {
+  const comparados = d.comparacion?.casos_que_difieren ?? [];
+  return new Set(
+    comparados.slice(0, TOPE_CASOS_QUE_DIFIEREN_CON_PAGINA).map((c) => c.id),
+  );
+}
+
 /** Los casos con página, en el orden de la corrida. */
 export function casosConPagina(d: DatosDemo): ReadonlySet<string> {
   const hecho = cache.get(d);
   if (hecho) return hecho;
   const primeros = primerosDelLote(d);
   const senalados = senaladosPorElInforme(d);
+  const difieren = casosQueDifieren(d);
   const con = new Set(
     d.corrida.trazas
       .map((t) => t.caso_id)
-      .filter((id) => primeros.has(id) || senalados.has(id)),
+      .filter(
+        (id) => primeros.has(id) || senalados.has(id) || difieren.has(id),
+      ),
   );
   cache.set(d, con);
   return con;

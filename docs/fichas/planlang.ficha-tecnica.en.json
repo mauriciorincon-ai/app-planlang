@@ -1,6 +1,6 @@
 {
   "schema_version": "1.3.1",
-  "actualizado": "2026-10-05",
+  "actualizado": "2026-10-11",
   "pieza": {
     "slug": "planlang",
     "nombre": "planlang",
@@ -9,7 +9,7 @@
     "ciclo": "H1",
     "version": "0.1.0",
     "sellado_en": null,
-    "sprints_cerrados": 3
+    "sprints_cerrados": 4
   },
   "promesa": {
     "tagline": "I planned, built and measured the gap.",
@@ -102,7 +102,7 @@
       "orden": 3,
       "nombre": "Measure",
       "linea": "The gap verifier and assumptions measured for real.",
-      "cuenta": 4
+      "cuenta": 5
     },
     {
       "orden": 4,
@@ -140,7 +140,7 @@
       "etiqueta": "ciclo"
     },
     {
-      "valor": "3",
+      "valor": "4",
       "etiqueta": "sprints"
     },
     {

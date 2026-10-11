@@ -124,7 +124,7 @@ describe("las reglas que el esquema no puede decir (el Zod de hoja-de-vida)", ()
   it("el export: el total cuadra con los grupos y producción va en null", () => {
     const exp = structuredClone(brochureExport(ds, repo, "es"));
     exp.funcionalidades.total += 1;
-    expect(problemasDeExport(exp).join(" ")).toMatch(/total declarado 20 ≠ 19/);
+    expect(problemasDeExport(exp).join(" ")).toMatch(/total declarado 21 ≠ 20/);
     const conEnlace = structuredClone(
       brochureExport(ds, repo, "es"),
     ) as unknown as {
@@ -269,13 +269,13 @@ describe("lo que dicen las fichas sale de los datos", () => {
     );
   });
 
-  it("el export cuenta lo construido: 19 funcionalidades en 6 grupos, una cifra por ADR", () => {
+  it("el export cuenta lo construido: 20 funcionalidades en 6 grupos, una cifra por ADR", () => {
     const exp = brochureExport(ds, repo, "es");
-    // S3: el entrevistador (Planear), el demo B y el expediente (Correr).
+    // S3: el entrevistador (Planear), el demo B y el expediente (Correr). S4: la comparación (Medir).
     expect(exp.funcionalidades.grupos.map((g) => g.features.length)).toEqual([
-      4, 6, 4, 1, 1, 3,
+      4, 6, 5, 1, 1, 3,
     ]);
-    expect(exp.funcionalidades.total).toBe(19);
+    expect(exp.funcionalidades.total).toBe(20);
     expect(
       exp.metricas.find((m) => m.clave === "decisiones_registradas")!.valor,
     ).toBe(repo.adrs);
