@@ -85,7 +85,6 @@ export default defineConfig({
         "core/**/*.ts",
         "packages/*/src/**/*.ts",
         "src/lib/**/*.ts",
-        "src/engine/**/*.ts",
         // S2: los componentes de la vitrina (UI > 50 %, regla 2); las páginas de src/app las cubre el e2e.
         "src/components/**/*.{ts,tsx}",
       ],

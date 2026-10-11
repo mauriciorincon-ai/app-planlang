@@ -37,10 +37,24 @@ export function bloqueSchemaDe(md: string): Record<string, string> {
   return ejemplo._schema;
 }
 
+/**
+ * Un cierre por sprint: su `SPRINT_NNN-summary.md` (hasta S3) o su `SPRINT_NNN-cierre.md` (desde S4, método v2).
+ * Un sprint que tenga los dos cuenta una vez.
+ */
+const CIERRE_DE_SPRINT = /^SPRINT_(\d{3})-(?:summary|cierre)\.md$/;
+
+export function cierresDeSprint(
+  nombres: readonly string[],
+): { sprint: string; archivo: string }[] {
+  return nombres.flatMap((archivo) => {
+    const sprint = CIERRE_DE_SPRINT.exec(archivo)?.[1];
+    return sprint === undefined ? [] : [{ sprint, archivo }];
+  });
+}
+
 export function hechosDelRepo(raiz: string = process.cwd()): HechosDelRepo {
-  const sprints = readdirSync(join(raiz, "sprints")).filter((f) =>
-    /^SPRINT_\d{3}-summary\.md$/.test(f),
-  ).length;
+  const cierres = cierresDeSprint(readdirSync(join(raiz, "sprints")));
+  const sprints = new Set(cierres.map((c) => c.sprint)).size;
   const archivosAdr = readdirSync(join(raiz, "decisions")).filter((f) =>
     /^\d{3}-.+\.md$/.test(f),
   );
@@ -52,14 +66,12 @@ export function hechosDelRepo(raiz: string = process.cwd()): HechosDelRepo {
           readFileSync(join(raiz, "decisions", f), "utf8"),
         )?.[1],
     ),
-    ...readdirSync(join(raiz, "sprints"))
-      .filter((f) => /^SPRINT_\d{3}-summary\.md$/.test(f))
-      .map(
-        (f) =>
-          /^closed:\s*(\d{4}-\d{2}-\d{2})/m.exec(
-            readFileSync(join(raiz, "sprints", f), "utf8"),
-          )?.[1],
-      ),
+    ...cierres.map(
+      (c) =>
+        /^closed:\s*(\d{4}-\d{2}-\d{2})/m.exec(
+          readFileSync(join(raiz, "sprints", c.archivo), "utf8"),
+        )?.[1],
+    ),
   ].filter((x): x is string => x !== undefined);
   const pkg = JSON.parse(readFileSync(join(raiz, "package.json"), "utf8")) as {
     version: string;

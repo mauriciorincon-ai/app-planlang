@@ -38,6 +38,12 @@ jobs:
       - name: Diagrama = grafo sobre lo publicado — el lienzo de out/ dibuja el grafo de la corrida (S2)
         run: pnpm diagrama:verificar
       - run: pnpm audit --audit-level high
+      - name: Cero enlaces — árbol y homepage del repo (regla 17, kit v2.0.0)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          HOMEPAGE="$(gh api "repos/${GITHUB_REPOSITORY}" --jq '.homepage // ""')"
+          node scripts/cero-enlaces.mjs --homepage "$HOMEPAGE"
 
   e2e:
     runs-on: ubuntu-latest

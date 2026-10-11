@@ -59,7 +59,7 @@ export function textosDeRelleno(
         por_que_importa: RELLENO,
         fuentes: [
           {
-            url: "https://langchain-ai.github.io/langgraph/",
+            url: "https://docs.langchain.com/",
             titulo: RELLENO,
             fecha: "2026-09-27",
             tipo: "oficial" as const,
