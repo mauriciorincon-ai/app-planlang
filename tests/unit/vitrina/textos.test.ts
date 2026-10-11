@@ -14,6 +14,7 @@ import * as comun from "@/textos/comun";
 import * as entrada from "@/textos/entrada";
 import * as fichas from "@/textos/fichas";
 import * as plan from "@/textos/plan";
+import * as planSinCorrida from "@/textos/plan-sin-corrida";
 import * as playground from "@/textos/playground";
 import * as agenteB from "@/textos/demo-b/agente";
 import * as brechaB from "@/textos/demo-b/brecha";
@@ -47,6 +48,7 @@ const todos = [
   ...bilingues(brecha, "brecha"),
   ...bilingues(playground, "playground"),
   ...bilingues(fichas, "fichas"),
+  ...bilingues(planSinCorrida, "plan-sin-corrida"),
   // Los textos propios del demo B (S3): los objetos; las plantillas se prueban por las vistas que las llaman.
   ...bilingues(agenteB, "demo-b/agente"),
   ...bilingues(brechaB, "demo-b/brecha"),

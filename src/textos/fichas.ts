@@ -1028,8 +1028,8 @@ export const APP = {
             "Domain templates as data",
           ),
           que_hace: tb(
-            "Actores, decisiones, riesgos y criterios típicos de salud y de vinculación financiera, con las restricciones legales en lenguaje llano y con su fuente.",
-            "Typical actors, decisions, risks and criteria for health and financial onboarding, with the legal constraints in plain language and with their source.",
+            "Actores, decisiones, riesgos y criterios típicos de salud, de vinculación financiera y de seguridad de IA, con las restricciones legales en lenguaje llano y con su fuente.",
+            "Typical actors, decisions, risks and criteria for health, financial onboarding and AI security, with the legal constraints in plain language and with their source.",
           ),
           seccion_manual: tb("Validar un plan", "Validate a plan"),
         },
@@ -1050,6 +1050,18 @@ export const APP = {
             "Asks in order what the domain template requires, drafts the plan in Spanish and English, flags its contradictions and never approves it: the author does.",
           ),
           seccion_manual: tb("Entrevistar un plan", "Interview a plan"),
+        },
+        {
+          id: "plan-sin-corrida",
+          nombre: tb(
+            "Un plan real en un dominio nuevo",
+            "A real plan in a new domain",
+          ),
+          que_hace: tb(
+            "Entrevista el plan de cualquier proyecto sobre una plantilla de dominio que es solo datos y, aprobado, lo publica en la vitrina como «plan sin corrida»: el contrato, con lo que no hay a la vista. El primero es el de los dos agentes de HackGuard.",
+            "Interviews any project's plan over a domain template that is only data and, once approved, publishes it in the showcase as a «plan without a run»: the contract, with what is missing in plain sight. The first one is the plan of HackGuard's two agents.",
+          ),
+          seccion_manual: tb("Planear un proyecto real", "Plan a real project"),
         },
         {
           id: "contrato",

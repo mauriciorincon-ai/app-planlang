@@ -93,3 +93,17 @@ describe("«comparar» es una página del demo A, no del B (S4)", () => {
     );
   });
 });
+
+describe("«planes» es la página de un plan sin corrida, de ningún demo (S5)", () => {
+  it("lleva el id del plan y ningún segmento de demo, sea cual sea el demo que la enlace", () => {
+    expect(ruta("es", "planes", "hackguard-agentes", "demo-a")).toBe(
+      "/es/planes/hackguard-agentes",
+    );
+    expect(ruta("en", "planes", "hackguard-agentes", "demo-b")).toBe(
+      "/en/planes/hackguard-agentes",
+    );
+    expect(() => ruta("es", "planes", undefined, "demo-a")).toThrow(
+      /falta su id/,
+    );
+  });
+});

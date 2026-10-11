@@ -27,9 +27,18 @@ describe("constitución: el núcleo de CLAUDE.md (kit v2.0.0)", () => {
     expect(nucleo.trimEnd().split("\n").length).toBeLessThanOrEqual(150);
   });
 
-  it("lleva sus dos centinelas", () => {
+  it("lleva sus centinelas", () => {
     expect(nucleo).toContain("núcleo, kit v2.0.0");
     expect(nucleo).toContain("P4. **Ninguna negación completa");
+    // Kit v2.1.0: un solo PR vivo por app, con su job en la CI.
+    expect(nucleo).toContain("UN SOLO PR VIVO POR APP");
+  });
+
+  it("la regla 18 (un PR vivo) tiene su job `un-pr-vivo` en la CI y su estado v2.1.0 en el anexo", () => {
+    expect(() =>
+      readFileSync(".github/workflows/un-pr-vivo.yml", "utf8"),
+    ).not.toThrow();
+    expect(anexo).toMatch(/^Estado v2\.1\.0 \(§ 18\):/m);
   });
 
   it("nombra las 16 reglas de planlang, una vez cada una y en orden", () => {

@@ -72,6 +72,13 @@ test("desde la raíz, todos los enlaces de la vitrina cargan dentro del paquete 
   expect(paginas.filter((v) => v.includes("/demo-b/")).length).toBe(
     2 * (6 + 20),
   );
+  // Y los planes sin corrida (S5, `planes`, de ningún demo): el de HackGuard, en los dos idiomas.
+  expect(paginas.filter((v) => /\/planes\/[^/]+\.html$/.test(v))).toEqual(
+    expect.arrayContaining([
+      `${BASE}/es/planes/hackguard-agentes.html`,
+      `${BASE}/en/planes/hackguard-agentes.html`,
+    ]),
+  );
   expect(fallas).toEqual([]);
 });
 

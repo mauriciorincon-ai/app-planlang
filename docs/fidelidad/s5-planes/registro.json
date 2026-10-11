@@ -1,0 +1,143 @@
+{
+  "formato": "planlang-capturas/v1",
+  "capturas": [
+    {
+      "pantalla": "entrada",
+      "url": "/es",
+      "ancho": 380,
+      "idioma": "es",
+      "tema": "oscuro",
+      "alto": 5858,
+      "sha256": "94daf82923a414acf3d3f26320d39758f395347458a7a1d9b586218c6c715333",
+      "entera": "entrada-380-oscuro-es.png",
+      "miniatura": "mini-entrada-380-oscuro-es.jpg"
+    },
+    {
+      "pantalla": "entrada",
+      "url": "/es",
+      "ancho": 1280,
+      "idioma": "es",
+      "tema": "oscuro",
+      "alto": 2960,
+      "sha256": "91b995d651c66ce45a02230ce723b48ee71d83be674791c8604682193ee67ca2",
+      "entera": "entrada-1280-oscuro-es.png",
+      "miniatura": "mini-entrada-1280-oscuro-es.jpg"
+    },
+    {
+      "pantalla": "entrada",
+      "url": "/es",
+      "ancho": 380,
+      "idioma": "es",
+      "tema": "claro",
+      "alto": 5858,
+      "sha256": "f4e5129a46f8e0f54aa35889f3b12a01a940721e9e54ec0c0d08366d686ff536",
+      "entera": "entrada-380-claro-es.png",
+      "miniatura": "mini-entrada-380-claro-es.jpg"
+    },
+    {
+      "pantalla": "entrada",
+      "url": "/es",
+      "ancho": 1280,
+      "idioma": "es",
+      "tema": "claro",
+      "alto": 2960,
+      "sha256": "625f4fe9fa515d53fb0b85a45fc5bbfa9fb35d84ea053316cc3298fa7f104156",
+      "entera": "entrada-1280-claro-es.png",
+      "miniatura": "mini-entrada-1280-claro-es.jpg"
+    },
+    {
+      "pantalla": "plan-sin-corrida",
+      "url": "/es/planes/hackguard-agentes",
+      "ancho": 380,
+      "idioma": "es",
+      "tema": "oscuro",
+      "alto": 6147,
+      "sha256": "a5cddbca5fa5f1969e431d82e02834f1b865f3371ec2a10708d7098c1fc28e69",
+      "entera": "plan-sin-corrida-380-oscuro-es.png",
+      "miniatura": "mini-plan-sin-corrida-380-oscuro-es.jpg"
+    },
+    {
+      "pantalla": "plan-sin-corrida",
+      "url": "/es/planes/hackguard-agentes",
+      "ancho": 1280,
+      "idioma": "es",
+      "tema": "oscuro",
+      "alto": 4187,
+      "sha256": "852d0bc47729a1009dfec158eac29b72e3af7043e783b2fedba0fe993d3c839c",
+      "entera": "plan-sin-corrida-1280-oscuro-es.png",
+      "miniatura": "mini-plan-sin-corrida-1280-oscuro-es.jpg"
+    },
+    {
+      "pantalla": "plan-sin-corrida",
+      "url": "/es/planes/hackguard-agentes",
+      "ancho": 380,
+      "idioma": "es",
+      "tema": "claro",
+      "alto": 6147,
+      "sha256": "9fdfc0d79bac3f4159d4428573dc20410a9dd8ba0abf7b3ecbb84874404939ae",
+      "entera": "plan-sin-corrida-380-claro-es.png",
+      "miniatura": "mini-plan-sin-corrida-380-claro-es.jpg"
+    },
+    {
+      "pantalla": "plan-sin-corrida",
+      "url": "/es/planes/hackguard-agentes",
+      "ancho": 1280,
+      "idioma": "es",
+      "tema": "claro",
+      "alto": 4187,
+      "sha256": "e672debce4e2e2b365ef41b8fdaa2648e2ddf287eebccc17739e0e6b6ab58695",
+      "entera": "plan-sin-corrida-1280-claro-es.png",
+      "miniatura": "mini-plan-sin-corrida-1280-claro-es.jpg"
+    }
+  ],
+  "recortes": [
+    {
+      "clave": "entrada-planes-sin-corrida",
+      "archivo": "Entrada (/es), sección «Planes sin corrida»",
+      "estado": "tal como abre",
+      "mirar": "Una fila por plan aprobado sin corrida, después de «Los demos»: nombre, id y versión, dominio, quién aprobó y cuándo, y el botón «Leer el plan».",
+      "esperada": "Una sola fila: el plan de HackGuard (hackguard-agentes · v1.0.0 · dom-seguridad-ia), aprobado el 2026-10-11, con su chip «real · plan aprobado». Nada dice que haya corrido.",
+      "ruta": "/es",
+      "ancho": 1280,
+      "tema": "oscuro",
+      "interaccion": null,
+      "imagen": "forma-entrada-planes-sin-corrida.jpg"
+    },
+    {
+      "clave": "ficha-sin-corrida",
+      "archivo": "Plan sin corrida (/es/planes/hackguard-agentes), portada y ficha",
+      "estado": "tal como abre",
+      "mirar": "Lo primero que se lee después del título: el rótulo «Sin corrida» con su símbolo, la nota de lo que NO hay y la ficha (versión, dominio, aprobado por, huella).",
+      "esperada": "El rótulo «Sin corrida» se lee antes que cualquier sección del plan; la nota nombra trazas, brecha, playground y visor como ausentes; la ficha dice «Mauricio Rincón · el 2026-10-11» y la huella entera.",
+      "ruta": "/es/planes/hackguard-agentes",
+      "ancho": 1280,
+      "tema": "oscuro",
+      "interaccion": null,
+      "imagen": "forma-ficha-sin-corrida.jpg"
+    },
+    {
+      "clave": "decisiones-movil",
+      "archivo": "Plan sin corrida, decisiones (teléfono)",
+      "estado": "tal como abre, 380 px",
+      "mirar": "Cada decisión en tarjeta: id, pregunta, la opción elegida, la razón y la reversibilidad; sin desplazamiento lateral (como líder, sin chip de origen).",
+      "esperada": "Cuatro decisiones (D1–D4), todas decididas; la reversibilidad en palabras («Dos vías», «Costosa»), no en código. La razón cabe en la tarjeta y nada se corta a 380 px.",
+      "ruta": "/es/planes/hackguard-agentes",
+      "ancho": 380,
+      "tema": "claro",
+      "interaccion": null,
+      "imagen": "forma-decisiones-movil.jpg"
+    },
+    {
+      "clave": "umbrales-origen-experto",
+      "archivo": "Plan sin corrida, umbrales y origen (pasada de interacción)",
+      "estado": "tras pulsar «Experto»",
+      "mirar": "Que al pulsar «Experto» aparezca, en cada umbral, el chip de quién lo propuso; los tres umbrales con su señal, operador y valor del plan.",
+      "esperada": "U1 similitud_cita < 1 (menor que) · U2 fuentes_verificadas < 2 · U3 antiguedad_marco_dias > 180 días (mayor que); los tres con el chip «usuario», que como líder no se veía. El conmutador marca «Experto».",
+      "ruta": "/es/planes/hackguard-agentes",
+      "ancho": 1280,
+      "tema": "oscuro",
+      "interaccion": "cambió",
+      "imagen": "forma-umbrales-origen-experto.jpg"
+    }
+  ]
+}

@@ -9,7 +9,7 @@
     "ciclo": "H1",
     "version": "0.1.0",
     "sellado_en": null,
-    "sprints_cerrados": 4
+    "sprints_cerrados": 5
   },
   "promesa": {
     "tagline": "Planeé, construí y medí la brecha.",
@@ -90,7 +90,7 @@
       "orden": 1,
       "nombre": "Planear",
       "linea": "El plan como contrato: la entrevista, las plantillas, el validador y el contrato para el constructor.",
-      "cuenta": 4
+      "cuenta": 5
     },
     {
       "orden": 2,
@@ -140,7 +140,7 @@
       "etiqueta": "ciclo"
     },
     {
-      "valor": "4",
+      "valor": "5",
       "etiqueta": "sprints"
     },
     {

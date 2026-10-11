@@ -1,11 +1,14 @@
 /**
- * `pnpm entrevistar --demo b [--retomar] [--nueva] [--pregunta P13] [--respuestas archivo] [--idioma es|en]
- *   [--sin-modelo]`
+ * `pnpm entrevistar (--demo b | --dominio <id> --plan <id>) [--retomar] [--nueva] [--pregunta P13]
+ *   [--respuestas archivo] [--idioma es|en] [--sin-modelo]`
  *
  * Corre el entrevistador M2 (Python, con la consola heredada: las preguntas y tus respuestas pasan directo) y, al
  * terminar, revisa el borrador del lado TypeScript: M1, contradicciones (RF-02.5), pendientes y textos que redactó
- * el entrevistador. Escribe `plans/demo-<x>/contradicciones.json` y `revision.{es,en}.md`. Nunca aprueba: eso es
- * `pnpm plan:aprobar`, y solo después de que el usuario dice «apruebo».
+ * el entrevistador. Escribe `plans/demo-<x>/contradicciones.json` y `revision.{es,en}.md` (o `plans/<plan>/…` en un plan
+ * real). Nunca aprueba: eso es `pnpm plan:aprobar`, y solo después de que el usuario dice «apruebo».
+ *
+ * Un plan real (S5) es cualquier plantilla de `data/dominios/` y cualquier id de plan: el dominio nuevo es solo datos y
+ * el código no cambia.
  */
 import { spawnSync } from "node:child_process";
 import { existsSync } from "node:fs";
@@ -29,8 +32,44 @@ const PYTHON = resolve("agents/.venv/bin/python");
  * verdad (ADR-005).
  */
 export const DEMOS_ENTREVISTABLES: readonly string[] = ["b"];
-const USO_DEMO = `--demo ${DEMOS_ENTREVISTABLES.join("|")}`;
+const USO_OBJETIVO = `(--demo ${DEMOS_ENTREVISTABLES.join("|")} | --dominio <id> --plan <id>)`;
 const SALIDA_GUARDADA = 3;
+/** El mismo patrón de id estable que el plan: va al nombre de una carpeta, así que nada de barras ni `..`. */
+const ID_ESTABLE = /^[A-Za-z][A-Za-z0-9_-]*$/;
+/** Lo que nombra a un demo (`demo-b`, `plan-demo-b`): un plan real no puede compartir carpeta, hilo ni revisión con uno (AU-S5 M-4). */
+const DE_DEMO = /^(plan-)?demo-/;
+
+/** Qué se entrevista y dónde queda: un demo (`--demo b`) o un plan real (`--dominio <id> --plan <id>`). */
+export interface ObjetivoDeEntrevista {
+  /** Los argumentos que identifican el objetivo para el entrevistador Python. */
+  pasar: string[];
+  /** La carpeta del borrador, la transcripción y, aprobado, el `v1.json`. */
+  directorio: string;
+}
+
+export function objetivoDeEntrevista(
+  args: Record<string, string | true>,
+): ObjetivoDeEntrevista | null {
+  const { demo, dominio, plan } = args;
+  if (demo !== undefined) {
+    if (dominio !== undefined || plan !== undefined) return null;
+    return typeof demo === "string" && DEMOS_ENTREVISTABLES.includes(demo)
+      ? { pasar: ["--demo", demo], directorio: `plans/demo-${demo}` }
+      : null;
+  }
+  if (
+    typeof dominio === "string" &&
+    typeof plan === "string" &&
+    ID_ESTABLE.test(dominio) &&
+    ID_ESTABLE.test(plan) &&
+    !DE_DEMO.test(plan)
+  )
+    return {
+      pasar: ["--dominio", dominio, "--plan", plan],
+      directorio: `plans/${plan}`,
+    };
+  return null;
+}
 
 export async function revisarDirectorio(directorio: string): Promise<Revision> {
   const borrador = leerJson(`${directorio}/v0-borrador.json`);
@@ -66,10 +105,10 @@ export async function revisarDirectorio(directorio: string): Promise<Revision> {
 
 async function main(): Promise<number> {
   const args = argumentos(process.argv.slice(2));
-  const demo = args.demo;
-  if (typeof demo !== "string" || !DEMOS_ENTREVISTABLES.includes(demo)) {
+  const objetivo = objetivoDeEntrevista(args);
+  if (!objetivo) {
     console.error(
-      `uso: entrevistar ${USO_DEMO} [--retomar] [--nueva] [--pregunta P13] [--respuestas archivo] [--idioma es|en] [--sin-modelo] [--salida carpeta]`,
+      `uso: entrevistar ${USO_OBJETIVO} [--retomar] [--nueva] [--pregunta P13] [--respuestas archivo] [--idioma es|en] [--sin-modelo] [--salida carpeta]`,
     );
     return 2;
   }
@@ -80,8 +119,7 @@ async function main(): Promise<number> {
     return 2;
   }
   const pasar = [
-    "--demo",
-    demo,
+    ...objetivo.pasar,
     "--vocabulario",
     Object.keys(VOCABULARIO).join(","),
   ];
@@ -99,9 +137,9 @@ async function main(): Promise<number> {
   }
   if (py.status === SALIDA_GUARDADA) return 0;
   if (py.status !== 0) return py.status ?? 1;
-  // Con el plan ya aprobado, la entrevista nueva va a `--salida`: la de `plans/demo-<x>/` es su registro (AU-S3-10).
+  // Con el plan ya aprobado, la entrevista nueva va a `--salida`: la de `plans/<plan>/` es su registro (AU-S3-10).
   const directorio =
-    typeof args.salida === "string" ? args.salida : `plans/demo-${demo}`;
+    typeof args.salida === "string" ? args.salida : objetivo.directorio;
   const r = await revisarDirectorio(directorio);
   const idioma = args.idioma === "en" ? "en" : "es";
   console.log(

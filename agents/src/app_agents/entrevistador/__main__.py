@@ -1,4 +1,5 @@
-"""`python -m app_agents.entrevistador --demo b [--retomar] [--nueva] [--respuestas archivo] [--idioma es|en]`
+"""`python -m app_agents.entrevistador (--demo b | --dominio <id> --plan <id>) [--retomar] [--nueva]
+[--respuestas archivo] [--idioma es|en]`
 
 La llama `pnpm entrevistar` (que después corre M1 y las contradicciones del lado TypeScript). El
 proveedor sale de PLANLANG_PROVEEDOR (por defecto, la suscripción de Claude Code); `--sin-modelo` corre
@@ -16,11 +17,13 @@ from pathlib import Path
 from app_agents.adaptador import MODELO_POR_DEFECTO, crear_modelo, proveedor_activo
 from app_agents.entrevistador.cli import (
     DEMOS,
+    DominioOPlanInvalido,
     EntrevistaEnCurso,
     Lector,
     PlanYaAprobado,
     SinEntrevista,
     checkpointer_sqlite,
+    demo_de_dominio,
     ejecutar,
     leer_respuestas,
 )
@@ -31,9 +34,11 @@ SALIDA_GUARDADA = 3
 
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(
-        prog="entrevistar", description="Entrevistador M2: propone el plan de un demo."
+        prog="entrevistar", description="Entrevistador M2: propone el plan de un demo o de un plan real."
     )
-    p.add_argument("--demo", choices=sorted(DEMOS), required=True)
+    p.add_argument("--demo", choices=sorted(DEMOS), help="un demo de planlang")
+    p.add_argument("--dominio", help="un plan real: la plantilla de data/dominios/<id>.json (con --plan)")
+    p.add_argument("--plan", help="un plan real: el id del plan, su carpeta es plans/<id>/ (con --dominio)")
     p.add_argument("--idioma", choices=("es", "en"), default="es")
     p.add_argument(
         "--retomar", action="store_true", help="sigue la entrevista guardada (o pregunta lo pendiente)"
@@ -55,7 +60,17 @@ def main(argv: list[str] | None = None) -> int:
         help="carpeta de la entrevista (obligatoria si el plan del demo ya está aprobado: v1.json existe)",
     )
     a = p.parse_args(argv)
-    demo = DEMOS[a.demo]
+    if a.demo and (a.dominio or a.plan):
+        p.error("--demo no se combina con --dominio ni con --plan")
+    if a.demo:
+        demo = DEMOS[a.demo]
+    elif a.dominio and a.plan:
+        try:
+            demo = demo_de_dominio(a.dominio, a.plan)
+        except DominioOPlanInvalido as e:
+            p.error(str(e))
+    else:
+        p.error("indica --demo <id> o, para un plan real, --dominio <id> --plan <id>")
     if a.sin_modelo:
         modelo, proveedor, nombre = None, "ninguno", "ninguno"
     else:

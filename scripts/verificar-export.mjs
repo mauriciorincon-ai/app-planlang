@@ -95,6 +95,8 @@ const comoPalabra = (p) =>
 
 /** El demo de una pantalla por su ruta (ADR-014): `<idioma>/demo-b/…` es del B; la entrada, de ninguno. */
 function demoDePantalla(r) {
+  // Un plan sin corrida (S5, `/es/planes/<id>`) no es de ningún demo: habla de su propio dominio.
+  if (/^(es|en)\/planes\//.test(r)) return null;
   if (/^(es|en)\/demo-b(\.html|\/)/.test(r)) return "demo-b";
   if (/^(es|en)\//.test(r)) return "demo-a";
   return null;

@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import sqlite3
 import sys
 from collections.abc import Callable
@@ -30,17 +31,55 @@ from app_agents.plan import RAIZ_REPO
 
 @dataclass(frozen=True)
 class Demo:
+    """Lo que se entrevista: un demo (`--demo b`) o un plan real (`--dominio X --plan Y`, S5).
+
+    `identificador` solo lo llevan los planes reales: el de un demo se deduce (`demo-<id>`).
+    """
+
     id: str
     plan_id: str
     dominio: str
     directorio: str
+    identificador: str | None = None
 
     @property
     def demo_id(self) -> str:
-        return f"demo-{self.id}"
+        return self.identificador or f"demo-{self.id}"
+
+    @property
+    def bandera(self) -> str:
+        """Cómo se nombra al correr `pnpm entrevistar` (para decirle al usuario cómo retomar)."""
+        if self.identificador is None:
+            return f"--demo {self.id}"
+        return f"--dominio {self.dominio} --plan {self.id}"
 
 
 DEMOS = {"b": Demo(id="b", plan_id="plan-demo-b", dominio="dom-financiero", directorio="plans/demo-b")}
+
+# Un id estable (el mismo patrón que el plan en TypeScript): letras, dígitos, `_` y `-`. Va al nombre de una
+# carpeta y de un archivo, así que nada de barras ni `..`.
+_ID_ESTABLE = re.compile(r"^[A-Za-z][A-Za-z0-9_-]*$")
+# Lo que nombra a un demo (`demo-b`, `plan-demo-b`): un plan real no comparte carpeta ni hilo con uno
+# (AU-S5 M-4).
+_DE_DEMO = re.compile(r"^(plan-)?demo-")
+
+
+class DominioOPlanInvalido(ValueError):
+    pass
+
+
+def demo_de_dominio(dominio: str, plan: str, raiz: Path = RAIZ_REPO) -> Demo:
+    """Un plan real (S5): cualquier plantilla de `data/dominios/` y cualquier id de plan, sin tocar código."""
+    for nombre, valor in (("--dominio", dominio), ("--plan", plan)):
+        if not _ID_ESTABLE.match(valor):
+            raise DominioOPlanInvalido(f"{nombre} «{valor}»: un id estable (letras, dígitos, _ y -)")
+    if _DE_DEMO.match(plan):
+        raise DominioOPlanInvalido(f"--plan «{plan}»: ese nombre es de un demo; un plan real lleva otro id")
+    if not (raiz / "data" / "dominios" / f"{dominio}.json").is_file():
+        raise DominioOPlanInvalido(f"--dominio «{dominio}»: no existe data/dominios/{dominio}.json")
+    return Demo(id=plan, plan_id=plan, dominio=dominio, directorio=f"plans/{plan}", identificador=plan)
+
+
 ARCHIVO_BORRADOR = "v0-borrador.json"
 ARCHIVO_TRANSCRIPCION = "transcripcion.json"
 
@@ -169,7 +208,7 @@ def ejecutar(
         texto = lector.leer(payload["id"])
         clase = clasificar(texto)
         if clase == "salir":
-            salida(t["salida"].format(demo=demo.id))
+            salida(t["salida"].format(comando=demo.bandera))
             return Resultado(terminada=False)
         if clase == "libre" and modelo is not None:
             salida(f"  … {t['redactando']}")

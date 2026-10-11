@@ -17,7 +17,7 @@ import {
   type Plan,
 } from "../../../../core/plan";
 
-const DOMINIOS = ["dom-salud", "dom-financiero"] as const;
+const DOMINIOS = ["dom-salud", "dom-financiero", "dom-seguridad-ia"] as const;
 const cargar = (id: string) =>
   PlantillaDominioSchema.parse(
     JSON.parse(readFileSync(`data/dominios/${id}.json`, "utf8")),

@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plan sin corrida · mirada de forma (S5)</title>
+<style>
+:root{--fondo:#0f1115;--sup:#171a21;--t1:#eceef2;--t2:#a9afbb;--linea:#2a2f3a}
+@media (prefers-color-scheme: light){:root{--fondo:#f7f7f5;--sup:#fff;--t1:#16181d;--t2:#4a505c;--linea:#d9dbe0}}
+body{margin:0;background:var(--fondo);color:var(--t1);font:15px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1200px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:24px;margin:0 0 8px}h2{font-size:19px;margin:40px 0 8px}h3{font-size:16px;margin:0}
+p{color:var(--t2);max-width:80ch;margin:4px 0}code{font:12px ui-monospace,monospace}
+.pregunta{color:var(--t1);font-size:17px;font-weight:600}
+table{border-collapse:collapse;width:100%;font-size:13px;margin-top:8px}th,td{border-top:1px solid var(--linea);padding:8px;text-align:left;vertical-align:top}th{color:var(--t2);font-weight:500}
+.forma{margin-top:28px}.forma img{max-width:100%;height:auto;border:1px solid var(--linea);border-radius:6px;display:block;margin-top:8px}
+.minis{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:12px}
+.minis figure{margin:0}.minis img{width:100%;height:auto;border:1px solid var(--linea);border-radius:4px;display:block}.minis figcaption{font-size:11px;color:var(--t2);margin-top:4px;line-height:1.4}
+</style>
+</head>
+<body><main>
+<p class="pregunta">¿El plan de HackGuard, sin corrida, se lee como esperas? Mira cada fila de la tabla con su recorte.</p>
+<h1>Plan sin corrida · mirada de forma «no vista» (S5)</h1>
+<p>Vitrina construida con el commit en curso, servida desde <code>out/</code>. Clase de mirada: FORMA, registrada «no vista»; su veredicto viaja al gate del hito (⭐⭐ de la guía). Las capturas enteras no se versionan: cada una se identifica por su huella SHA-256.</p>
+<h2>La matriz</h2>
+<table><thead><tr><th>#</th><th>Archivo / pantalla</th><th>Botón o estado</th><th>Qué mirar</th><th>Respuesta esperada</th><th>Tu respuesta</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Entrada (/es), sección «Planes sin corrida»</td><td>tal como abre</td><td>Una fila por plan aprobado sin corrida, después de «Los demos»: nombre, id y versión, dominio, quién aprobó y cuándo, y el botón «Leer el plan».</td><td>Una sola fila: el plan de HackGuard (hackguard-agentes · v1.0.0 · dom-seguridad-ia), aprobado el 2026-10-11, con su chip «real · plan aprobado». Nada dice que haya corrido.</td><td>sin respuesta</td></tr>
+<tr><td>2</td><td>Plan sin corrida (/es/planes/hackguard-agentes), portada y ficha</td><td>tal como abre</td><td>Lo primero que se lee después del título: el rótulo «Sin corrida» con su símbolo, la nota de lo que NO hay y la ficha (versión, dominio, aprobado por, huella).</td><td>El rótulo «Sin corrida» se lee antes que cualquier sección del plan; la nota nombra trazas, brecha, playground y visor como ausentes; la ficha dice «Mauricio Rincón · el 2026-10-11» y la huella entera.</td><td>sin respuesta</td></tr>
+<tr><td>3</td><td>Plan sin corrida, decisiones (teléfono)</td><td>tal como abre, 380 px</td><td>Cada decisión en tarjeta: id, pregunta, la opción elegida, la razón y la reversibilidad; sin desplazamiento lateral (como líder, sin chip de origen).</td><td>Cuatro decisiones (D1–D4), todas decididas; la reversibilidad en palabras («Dos vías», «Costosa»), no en código. La razón cabe en la tarjeta y nada se corta a 380 px.</td><td>sin respuesta</td></tr>
+<tr><td>4</td><td>Plan sin corrida, umbrales y origen (pasada de interacción)</td><td>tras pulsar «Experto»</td><td>Que al pulsar «Experto» aparezca, en cada umbral, el chip de quién lo propuso; los tres umbrales con su señal, operador y valor del plan.</td><td>U1 similitud_cita &lt; 1 (menor que) · U2 fuentes_verificadas &lt; 2 · U3 antiguedad_marco_dias &gt; 180 días (mayor que); los tres con el chip «usuario», que como líder no se veía. El conmutador marca «Experto».</td><td>sin respuesta</td></tr>
+</tbody></table>
+<h2>Los recortes</h2>
+<section class="forma" id="entrada-planes-sin-corrida"><h3>1. Entrada (/es), sección «Planes sin corrida»</h3><p>tal como abre · 1280 px · oscuro</p><img loading="lazy" src="forma-entrada-planes-sin-corrida.jpg" alt="Una fila por plan aprobado sin corrida, después de «Los demos»: nombre, id y versión, dominio, quién aprobó y cuándo, y el botón «Leer el plan»."></section>
+<section class="forma" id="ficha-sin-corrida"><h3>2. Plan sin corrida (/es/planes/hackguard-agentes), portada y ficha</h3><p>tal como abre · 1280 px · oscuro</p><img loading="lazy" src="forma-ficha-sin-corrida.jpg" alt="Lo primero que se lee después del título: el rótulo «Sin corrida» con su símbolo, la nota de lo que NO hay y la ficha (versión, dominio, aprobado por, huella)."></section>
+<section class="forma" id="decisiones-movil"><h3>3. Plan sin corrida, decisiones (teléfono)</h3><p>tal como abre, 380 px · 380 px · claro</p><img loading="lazy" src="forma-decisiones-movil.jpg" alt="Cada decisión en tarjeta: id, pregunta, la opción elegida, la razón y la reversibilidad; sin desplazamiento lateral (como líder, sin chip de origen)."></section>
+<section class="forma" id="umbrales-origen-experto"><h3>4. Plan sin corrida, umbrales y origen (pasada de interacción)</h3><p>tras pulsar «Experto» · 1280 px · oscuro · la interacción cambió la página</p><img loading="lazy" src="forma-umbrales-origen-experto.jpg" alt="Que al pulsar «Experto» aparezca, en cada umbral, el chip de quién lo propuso; los tres umbrales con su señal, operador y valor del plan."></section>
+<h2>La pasada completa (8 capturas)</h2>
+<p>La Entrada y el plan sin corrida, a 380 y 1280 px, en español en los dos temas.. La miniatura es la parte de arriba; la huella identifica la captura entera que se leyó.</p>
+<div class="minis">
+<figure><img loading="lazy" src="mini-entrada-380-oscuro-es.jpg" alt="entrada 380 px oscuro es"><figcaption>entrada · 380 · oscuro · es<br><code title="SHA-256 de la captura entera">94daf82923a4…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-entrada-1280-oscuro-es.jpg" alt="entrada 1280 px oscuro es"><figcaption>entrada · 1280 · oscuro · es<br><code title="SHA-256 de la captura entera">91b995d651c6…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-entrada-380-claro-es.jpg" alt="entrada 380 px claro es"><figcaption>entrada · 380 · claro · es<br><code title="SHA-256 de la captura entera">f4e5129a46f8…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-entrada-1280-claro-es.jpg" alt="entrada 1280 px claro es"><figcaption>entrada · 1280 · claro · es<br><code title="SHA-256 de la captura entera">625f4fe9fa51…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-plan-sin-corrida-380-oscuro-es.jpg" alt="plan-sin-corrida 380 px oscuro es"><figcaption>plan-sin-corrida · 380 · oscuro · es<br><code title="SHA-256 de la captura entera">a5cddbca5fa5…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-plan-sin-corrida-1280-oscuro-es.jpg" alt="plan-sin-corrida 1280 px oscuro es"><figcaption>plan-sin-corrida · 1280 · oscuro · es<br><code title="SHA-256 de la captura entera">852d0bc47729…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-plan-sin-corrida-380-claro-es.jpg" alt="plan-sin-corrida 380 px claro es"><figcaption>plan-sin-corrida · 380 · claro · es<br><code title="SHA-256 de la captura entera">9fdfc0d79bac…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-plan-sin-corrida-1280-claro-es.jpg" alt="plan-sin-corrida 1280 px claro es"><figcaption>plan-sin-corrida · 1280 · claro · es<br><code title="SHA-256 de la captura entera">e672debce4e2…</code></figcaption></figure>
+</div>
+</main></body>
+</html>
