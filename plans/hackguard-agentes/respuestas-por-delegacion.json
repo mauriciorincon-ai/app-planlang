@@ -1,0 +1,17 @@
+{
+  "_nota": "Respuestas de la entrevista del plan hackguard-agentes (S5, 2026-10-11). El usuario delegó las respuestas al constructor (lo dijo en la sesión: «si tiene que crear los datos que lo haga»); el contenido sale del brief v1.0.0 y la VISION de HackGuard en la planeadora (portafolio/hackguard/{brief.md,VISION.md}, científica § 6–7). Registrado en el cierre del sprint: el plan vale, el sprint no cuenta como uso real.",
+  "P01": "HackGuard planea y valida pruebas de seguridad para software y sistemas de IA. Sus dos agentes son skills de Claude Code: el investigador propone pruebas nuevas, versiones nuevas de marcos y retiros; el extractor asocia un resultado pegado a una prueba del plan con citas literales. Sirven al operador que valida la seguridad de sus apps y al auditor de gobierno de IA que pide evidencia por control. Jamás ejecutan pruebas, jamás generan ni guardan cargas de explotación, jamás cierran un hallazgo ni fijan una severidad por su cuenta: la IA propone y una persona aprueba.",
+  "P02": "acepto",
+  "P03": "Llega la tarea: investigar una prueba o extraer un resultado. Si es investigar, el investigador busca solo en fuentes de la lista blanca y el código verifica que cada fuente existe y dice lo que se cita; la propuesta entra al catálogo como borrador. Si es extraer, el texto pegado pasa primero por el filtro de instrucciones, que marca y nunca rechaza; el extractor propone la prueba candidata y los campos con cita literal; el código verifica que cada cita es subcadena de la fuente y calcula el veredicto con la regla del catálogo. En los dos casos, una persona confirma o corrige antes de que nada quede como evidencia.",
+  "P04": "Solo fuentes de una lista blanca, cada una comprobada por código: que exista y que diga lo que se cita. Búsqueda y redacción van en etapas separadas. Una propuesta con menos fuentes verificadas que el mínimo del plan llega a la persona marcada como no verificada; no se descarta sola.",
+  "P05": "El veredicto lo calcula la regla del catálogo sobre los campos cuyas citas verificó el código; el modelo no emite el veredicto. Una cita vale solo si es subcadena literal exacta del texto pegado tras normalizar espacios: por debajo de eso la cita no cuenta y decide una persona.",
+  "P06": "La severidad la fija siempre una persona, con la calculadora de referencia de CVSS 4.0 para software y la tabla de prioridad para IA. Los agentes nunca sugieren ni precargan un valor.",
+  "P07": "Toda prueba nueva entra al catálogo como borrador y se activa solo cuando una persona la aprueba. Toda prueba lleva la versión de su marco con fecha; si la versión supera la antigüedad tolerada del plan, una persona la mira antes de usarla.",
+  "P08": "acepto",
+  "P09": "acepto",
+  "P10": "Doy por cierto que comprobar que una cita es subcadena literal de su fuente basta para detectar una cita inventada; lo pruebo sembrando 20 citas, 10 inventadas, y el verificador debe marcar las 10. Y doy por cierto que una skill sin herramientas ni red solo puede sesgar su propia salida; lo pruebo pegando texto con instrucciones sembradas y comprobando que el veredicto de la regla no cambia.",
+  "P11": "acepto",
+  "P12": "Similitud mínima de cita 1,0: la cita es literal o no vale. Al menos 2 fuentes verificadas por propuesta. Un marco con más de 180 días desde su versión pasa a una persona, el mismo plazo que HackGuard usa para evidencia antigua.",
+  "P13": "acepto",
+  "P14": "acepto"
+}
