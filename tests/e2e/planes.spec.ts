@@ -4,7 +4,7 @@ import { consolaLimpia, desbordeLateral, sinViolacionesAxe } from "./_comun";
 /**
  * Un plan sin corrida (S5) en el export servido, en español: se llega desde la sección «Planes sin corrida» de la
  * Entrada; la ficha dice lo que NO hay (trazas, brecha, playground, visor); cada sección del plan trae sus elementos
- * con quién los propuso; se lee en los dos temas y los dos perfiles sin desplazar la página de lado y sin violaciones
+ * y, como experto, quién los propuso; se lee en los dos temas y los dos perfiles sin desplazar la página de lado y sin violaciones
  * de axe; el idioma lleva a la misma página en inglés. Sobre el plan de HackGuard (`plans/hackguard-agentes/v1.json`).
  */
 
@@ -30,10 +30,19 @@ test.describe("Plan sin corrida (es)", () => {
     await expect(ficha).toContainText("Mauricio Rincón · el 2026-10-11");
   });
 
-  test("cada sección trae sus elementos con quién los propuso", async ({
+  test("cada sección trae sus elementos y, como experto, quién los propuso", async ({
     page,
   }) => {
-    await page.goto(`/es/planes/${ID}`);
+    await page.goto(`/es/planes/${ID}?perfil=lider`);
+    const chips = page.locator(
+      'section[aria-labelledby="ps-decisiones-t"] [data-procedencia]',
+    );
+    await expect(chips.first()).toBeHidden();
+    await page
+      .getByRole("group", { name: "Leer como" })
+      .getByRole("button", { name: "Experto" })
+      .click();
+    await expect(chips.first()).toBeVisible();
     for (const s of [
       "actores",
       "decisiones",

@@ -2,6 +2,7 @@ import type { Idioma } from "@core/formatos/bilingue";
 import { CONT } from "@/components/cx";
 import { Marco } from "@/components/marco/marco";
 import { Chip } from "@/components/chip";
+import { LeerComo } from "@/components/perfil/leer-como";
 import { Seccion } from "@/components/seccion";
 import { Veredicto } from "@/components/veredicto";
 import { planSinCorrida } from "@/lib/datos/planes";
@@ -9,12 +10,14 @@ import {
   vistaSinCorrida,
   type SeccionSinCorrida,
 } from "@/lib/vista/plan-sin-corrida";
+import { PERFIL } from "@/textos/comun";
 import { ETIQUETA, PORTADA, SECCIONES } from "@/textos/plan-sin-corrida";
 
 /**
  * Un plan sin corrida (S5, maqueta de FORMA «no vista»): el contrato tal como se aprobó, sin trazas, brecha, playground
  * ni visor. Lo primero que se lee es la ficha de lo que NO hay (P15); después el problema, el contrato en cifras y cada
- * sección del plan con quién propuso cada elemento (RF-02.4). No es de ningún demo: el marco no lleva demo ni corrida.
+ * sección del plan. Quién propuso cada elemento (RF-02.4: plantilla · entrevistador · usuario) se lee como experto. No
+ * es de ningún demo: el marco no lleva demo ni corrida.
  */
 export async function PaginaPlanSinCorrida({
   idioma,
@@ -39,6 +42,13 @@ export async function PaginaPlanSinCorrida({
             <p className="mt-4 max-w-guia text-guia text-tinta-2">
               {PORTADA.guia[idioma]}
             </p>
+            <div className="mt-4">
+              <LeerComo
+                rotulo={PERFIL.leerComo[idioma]}
+                lider={PERFIL.lider[idioma]}
+                experto={PERFIL.experto[idioma]}
+              />
+            </div>
           </div>
         </section>
 
@@ -90,7 +100,7 @@ export async function PaginaPlanSinCorrida({
           titulo={SECCIONES.contrato[idioma]}
           nota={v.contrato.join(" · ")}
         >
-          <p className="max-w-[72ch] text-chico text-tinta-2">
+          <p className="solo-experto max-w-[72ch] text-chico text-tinta-2">
             {PORTADA.origenes[idioma]}
           </p>
         </Seccion>
@@ -136,7 +146,7 @@ function SeccionDeElementos({
                 </span>
               ))}
             </div>
-            <div className="justify-self-start">
+            <div className="solo-experto justify-self-start">
               <Chip procedencia="declarado">
                 <span lang={idioma}>{e.origen}</span>
               </Chip>
