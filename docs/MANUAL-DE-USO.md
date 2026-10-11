@@ -342,6 +342,25 @@ data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar l
 - **Limitaciones conocidas:** solo compara el demo A, sobre su corrida de 200 y su línea base. No compara modelos ni
   proveedores distintos. Un caso sin dato en una corrida aparece como «No observado», nunca como un valor inventado.
 
+### Planear un proyecto real · desde el sprint 5
+
+- **Qué hace:** entrevista el plan de un proyecto que no es un demo de planlang, sobre una plantilla de dominio que es
+  solo datos (`data/dominios/<id>.json`), lo valida con M1 y, cuando el usuario lo aprueba, lo publica en la vitrina
+  como «plan sin corrida». El primero es el de los dos agentes de HackGuard (`plans/hackguard-agentes/v1.json`, dominio
+  `dom-seguridad-ia`). Un dominio nuevo no toca el código: se agrega su archivo y el entrevistador lo recorre.
+- **Cómo se usa:**
+  1. `pnpm entrevistar --dominio dom-seguridad-ia --plan hackguard-agentes` (o `--respuestas archivo.json` para
+     responder desde un archivo). Son 14 preguntas; «acepto» deja lo que propone la plantilla.
+  2. Lee `plans/<plan>/revision.es.md`. Cuando estés de acuerdo, di «apruebo el plan».
+  3. `pnpm plan:aprobar --dominio <id> --plan <id> --por "<tu nombre>" --el <fecha>` escribe `v1.json` con huella.
+  4. `pnpm build`: la vitrina gana la sección «Planes sin corrida» en la entrada y la página `/es/planes/<id>`.
+- **Cómo se lee la página:** lo primero es la ficha de lo que NO hay (trazas, brecha, playground, visor); después el
+  problema, el contrato en cifras y cada sección del plan. «Ver como experto» muestra quién propuso cada elemento:
+  la plantilla, el entrevistador o la persona que respondió.
+- **Limitaciones conocidas:** el plan no tiene agente construido en planlang, así que no hay nada que medir: la página
+  es el contrato, no un resultado. Las restricciones de la plantilla citan su fuente y la fecha en que se verificó; la
+  norma ISO/IEC 42001 no se pudo verificar por `curl` (la página de ISO responde 403) y la plantilla lo dice.
+
 ### Preguntas frecuentes
 
 - **¿Por qué el informe dice «cumple con alertas»?** Porque el veredicto no mira solo los criterios: también los
@@ -692,6 +711,27 @@ There are two ways to use it:
 - **Known limits:** it compares only demo A, on its 200-case run and its baseline. It does not compare different
   models or providers. A case with no data in a run shows as «Not observed», never as an invented value.
 
+### Plan a real project · since sprint 5
+
+- **What it does:** interviews the plan of a project that is not a planlang demo, over a domain template that is only
+  data (`data/dominios/<id>.json`), validates it with M1 and, once the user approves it, publishes it in the showcase
+  as a «plan without a run». The first one is the plan of HackGuard's two agents (`plans/hackguard-agentes/v1.json`,
+  domain `dom-seguridad-ia`). A new domain touches no code: its file is added and the interviewer walks it.
+- **How to use it:**
+  1. `pnpm entrevistar --dominio dom-seguridad-ia --plan hackguard-agentes` (or `--respuestas file.json` to answer
+     from a file). 14 questions; «acepto» keeps what the template proposes.
+  2. Read `plans/<plan>/revision.en.md`. When you agree, say «apruebo el plan».
+  3. `pnpm plan:aprobar --dominio <id> --plan <id> --por "<your name>" --el <date>` writes `v1.json` with its
+     fingerprint.
+  4. `pnpm build`: the showcase gains the «Plans without a run» section on the home page and the page
+     `/en/planes/<id>`.
+- **How to read the page:** first comes the record of what is NOT there (traces, gap, playground, viewer); then the
+  problem, the contract in numbers and every section of the plan. «Read as expert» shows who proposed each element:
+  the template, the interviewer or the person who answered.
+- **Known limitations:** the plan has no agent built in planlang, so there is nothing to measure: the page is the
+  contract, not a result. The template's constraints cite their source and the date they were checked; ISO/IEC 42001
+  could not be checked with `curl` (ISO's page answers 403) and the template says so.
+
 ### Frequently asked questions
 
 - **Why does the report say “met with alerts”?** Because the verdict looks beyond the criteria: at the assumptions,
@@ -715,4 +755,5 @@ There are two ways to use it:
 | S1 · 2026-09-27 | Validar un plan · generar casos sintéticos · correr un lote de 20 · leer el informe de brecha · verificar corridas e instrumento                                                                       |
 | S2 · 2026-10-02 | Abrir la vitrina (7 pantallas) · mover umbrales en el playground · las fichas · entregar el paquete a hoja-de-vida · lote de 200 y respaldo sin modelo (mejorado) · plan v1.3 y v1.4                   |
 | S3 · 2026-10-05 | Entrevistar un plan · correr el demo B · leer un expediente · publicar el design system · la vitrina con dos demos y la corrida de 200 del A (mejorado) · `--caso` en los lotes (mejorado) · plan v1.5 |
-| S4 · 2026-10-11 | Comparar dos corridas (la pantalla del A frente a su línea base, con sus casos enlazados) |
+| S4 · 2026-10-11 | Comparar dos corridas (la pantalla del A frente a su línea base, con sus casos enlazados)                                                                                                              |
+| S5 · 2026-10-11 | Planear un proyecto real (un dominio nuevo como datos · la entrevista de cualquier plan · la página del plan sin corrida)                                                                              |

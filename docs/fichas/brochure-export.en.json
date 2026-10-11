@@ -29,7 +29,7 @@
     "diferencial": "Observing traces and evaluating answers is done by many tools. What nobody does is demand the plan first and measure against it afterwards: the plan → result gap report, with the prior risk analysis, and the plan's thresholds playable over the real traces."
   },
   "funcionalidades": {
-    "total": 20,
+    "total": 21,
     "fuente_del_conteo": "docs/MANUAL-DE-USO.md",
     "descartadas": [],
     "grupos": [
@@ -56,6 +56,12 @@
             "nombre": "Plan interviewer",
             "que_hace": "Asks in order what the domain template requires, drafts the plan in Spanish and English, flags its contradictions and never approves it: the author does.",
             "seccion_manual": "Interview a plan"
+          },
+          {
+            "id": "plan-sin-corrida",
+            "nombre": "A real plan in a new domain",
+            "que_hace": "Interviews any project's plan over a domain template that is only data and, once approved, publishes it in the showcase as a «plan without a run»: the contract, with what is missing in plain sight. The first one is the plan of HackGuard's two agents.",
+            "seccion_manual": "Plan a real project"
           },
           {
             "id": "contrato",
@@ -247,7 +253,7 @@
     {
       "clave": "funcionalidades",
       "etiqueta": "built features",
-      "valor": 20,
+      "valor": 21,
       "unidad": "features",
       "fuente": "medido",
       "detalle": "The product vision's features that work today: the two-week cut's and the roadmap ones built in S3 (the interviewer, demo B and its case file), counted against docs/MANUAL-DE-USO.md; what remains on the roadmap does not count."

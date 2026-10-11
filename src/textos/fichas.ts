@@ -1052,6 +1052,18 @@ export const APP = {
           seccion_manual: tb("Entrevistar un plan", "Interview a plan"),
         },
         {
+          id: "plan-sin-corrida",
+          nombre: tb(
+            "Un plan real en un dominio nuevo",
+            "A real plan in a new domain",
+          ),
+          que_hace: tb(
+            "Entrevista el plan de cualquier proyecto sobre una plantilla de dominio que es solo datos y, aprobado, lo publica en la vitrina como «plan sin corrida»: el contrato, con lo que no hay a la vista. El primero es el de los dos agentes de HackGuard.",
+            "Interviews any project's plan over a domain template that is only data and, once approved, publishes it in the showcase as a «plan without a run»: the contract, with what is missing in plain sight. The first one is the plan of HackGuard's two agents.",
+          ),
+          seccion_manual: tb("Planear un proyecto real", "Plan a real project"),
+        },
+        {
           id: "contrato",
           nombre: tb("Contrato para el constructor", "The builder's contract"),
           que_hace: tb(

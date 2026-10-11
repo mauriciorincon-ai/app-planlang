@@ -29,7 +29,7 @@
     "diferencial": "Observar trazas y evaluar respuestas ya lo hacen muchas herramientas. Lo que no hace nadie es exigir el plan antes y medir contra él después: el informe de brecha plan → resultado, con el análisis de riesgos previo, y los umbrales del plan jugables sobre las trazas reales."
   },
   "funcionalidades": {
-    "total": 20,
+    "total": 21,
     "fuente_del_conteo": "docs/MANUAL-DE-USO.md",
     "descartadas": [],
     "grupos": [
@@ -56,6 +56,12 @@
             "nombre": "Entrevistador del plan",
             "que_hace": "Pregunta en orden lo que la plantilla del dominio exige, redacta el borrador en español e inglés, señala sus contradicciones y nunca lo aprueba: eso lo hace el autor.",
             "seccion_manual": "Entrevistar un plan"
+          },
+          {
+            "id": "plan-sin-corrida",
+            "nombre": "Un plan real en un dominio nuevo",
+            "que_hace": "Entrevista el plan de cualquier proyecto sobre una plantilla de dominio que es solo datos y, aprobado, lo publica en la vitrina como «plan sin corrida»: el contrato, con lo que no hay a la vista. El primero es el de los dos agentes de HackGuard.",
+            "seccion_manual": "Planear un proyecto real"
           },
           {
             "id": "contrato",
@@ -247,7 +253,7 @@
     {
       "clave": "funcionalidades",
       "etiqueta": "funcionalidades construidas",
-      "valor": 20,
+      "valor": 21,
       "unidad": "funcionalidades",
       "fuente": "medido",
       "detalle": "Las de la visión del producto que ya funcionan: las del corte de dos semanas y las del roadmap que se construyeron en el S3 (el entrevistador, el demo B y su expediente), contadas contra docs/MANUAL-DE-USO.md; lo que sigue en el roadmap no cuenta."
