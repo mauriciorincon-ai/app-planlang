@@ -1,0 +1,533 @@
+{
+  "borrador": {
+    "archivo": "v0-borrador.json",
+    "huella_del_contenido": "be4a24c91c6982aa2a8bd6a2f49f95271a1bce11f3173a3208aed2f4a81beb72"
+  },
+  "cabecera": {
+    "fecha": "2026-10-11",
+    "modelo": "sonnet",
+    "pasadas": 1,
+    "plantilla": {
+      "id": "dom-seguridad-ia",
+      "version": "1.1.0"
+    },
+    "proveedor": "suscripcion",
+    "tokens_entrada": 74001,
+    "tokens_salida": 20614
+  },
+  "contradicciones": [],
+  "costo_nominal_usd": 0.459363,
+  "entrevista": [
+    {
+      "elementos": [],
+      "estado": "respondida",
+      "explicaciones": [],
+      "id": "P01",
+      "motivo": null,
+      "pregunta": {
+        "en": "What problem do the agents solve, for whom, and what must they never do?",
+        "es": "¿Qué problema resuelven los agentes, para quién, y qué no deben hacer jamás?"
+      },
+      "respuesta": {
+        "idioma": "es",
+        "texto": "HackGuard planea y valida pruebas de seguridad para software y sistemas de IA. Sus dos agentes son skills de Claude Code: el investigador propone pruebas nuevas, versiones nuevas de marcos y retiros; el extractor asocia un resultado pegado a una prueba del plan con citas literales. Sirven al operador que valida la seguridad de sus apps y al auditor de gobierno de IA que pide evidencia por control. Jamás ejecutan pruebas, jamás generan ni guardan cargas de explotación, jamás cierran un hallazgo ni fijan una severidad por su cuenta: la IA propone y una persona aprueba."
+      },
+      "resultado": "redactada",
+      "seccion": "problema"
+    },
+    {
+      "elementos": [
+        {
+          "id": "analista",
+          "origen": "plantilla"
+        },
+        {
+          "id": "propietario",
+          "origen": "plantilla"
+        },
+        {
+          "id": "auditor",
+          "origen": "plantilla"
+        },
+        {
+          "id": "revisor",
+          "origen": "plantilla"
+        },
+        {
+          "id": "catalogo",
+          "origen": "plantilla"
+        },
+        {
+          "id": "investigador_pruebas",
+          "origen": "plantilla"
+        },
+        {
+          "id": "extractor_resultados",
+          "origen": "plantilla"
+        }
+      ],
+      "estado": "aceptada",
+      "explicaciones": [],
+      "id": "P02",
+      "motivo": null,
+      "pregunta": {
+        "en": "Who takes part, people and systems? Check the template’s list: is anyone missing or extra?",
+        "es": "¿Quiénes participan, personas y sistemas? Revisa los de la plantilla: ¿falta o sobra alguno?"
+      },
+      "respuesta": {
+        "idioma": "es",
+        "texto": "acepto"
+      },
+      "resultado": "aceptada",
+      "seccion": "actores"
+    },
+    {
+      "elementos": [],
+      "estado": "respondida",
+      "explicaciones": [],
+      "id": "P03",
+      "motivo": null,
+      "pregunta": {
+        "en": "What path does each task follow, step by step, from arrival to a person’s decision? Cover both agents.",
+        "es": "¿Qué recorrido sigue cada tarea, paso a paso, desde que llega hasta la decisión de una persona? Cubre los dos agentes."
+      },
+      "respuesta": {
+        "idioma": "es",
+        "texto": "Llega la tarea: investigar una prueba o extraer un resultado. Si es investigar, el investigador busca solo en fuentes de la lista blanca y el código verifica que cada fuente existe y dice lo que se cita; la propuesta entra al catálogo como borrador. Si es extraer, el texto pegado pasa primero por el filtro de instrucciones, que marca y nunca rechaza; el extractor propone la prueba candidata, o las tres mejores cuando hay duda, y los campos con cita literal; el código verifica que cada cita es subcadena de la fuente y calcula el veredicto con la regla del catálogo. En los dos casos, una persona confirma o corrige antes de que nada quede como evidencia."
+      },
+      "resultado": "redactada",
+      "seccion": "flujo"
+    },
+    {
+      "elementos": [
+        {
+          "id": "D1",
+          "origen": "usuario"
+        },
+        {
+          "id": "D2",
+          "origen": "plantilla"
+        },
+        {
+          "id": "D3",
+          "origen": "plantilla"
+        },
+        {
+          "id": "D4",
+          "origen": "plantilla"
+        }
+      ],
+      "estado": "respondida",
+      "explicaciones": [],
+      "id": "P04",
+      "motivo": null,
+      "pregunta": {
+        "en": "Which sources may the test researcher consult, and what happens to a proposal with too few verified ones?",
+        "es": "¿Qué fuentes puede consultar el investigador de pruebas, y qué pasa con una propuesta que tiene pocas fuentes verificadas?"
+      },
+      "respuesta": {
+        "idioma": "es",
+        "texto": "Solo fuentes de una lista blanca, cada una comprobada por código: que exista y que diga lo que se cita. Búsqueda y redacción van en etapas separadas. Una propuesta con menos fuentes verificadas que el mínimo del plan llega a la persona marcada como no verificada; no se descarta sola."
+      },
+      "resultado": "redactada",
+      "seccion": "decisiones"
+    },
+    {
+      "elementos": [
+        {
+          "id": "D1",
+          "origen": "usuario"
+        },
+        {
+          "id": "D2",
+          "origen": "usuario"
+        },
+        {
+          "id": "D3",
+          "origen": "plantilla"
+        },
+        {
+          "id": "D4",
+          "origen": "plantilla"
+        }
+      ],
+      "estado": "respondida",
+      "explicaciones": [],
+      "id": "P05",
+      "motivo": null,
+      "pregunta": {
+        "en": "Who computes the suggested verdict, and how closely must a quote match its source?",
+        "es": "¿Quién calcula el veredicto sugerido, y qué tan de cerca debe coincidir una cita con su fuente?"
+      },
+      "respuesta": {
+        "idioma": "es",
+        "texto": "El veredicto lo calcula la regla del catálogo sobre los campos cuyas citas verificó el código; el modelo no emite el veredicto. Una cita vale solo si es subcadena literal exacta del texto pegado tras normalizar espacios: por debajo de eso la cita no cuenta y decide una persona."
+      },
+      "resultado": "redactada",
+      "seccion": "decisiones"
+    },
+    {
+      "elementos": [
+        {
+          "id": "D1",
+          "origen": "usuario"
+        },
+        {
+          "id": "D2",
+          "origen": "usuario"
+        },
+        {
+          "id": "D3",
+          "origen": "usuario"
+        },
+        {
+          "id": "D4",
+          "origen": "plantilla"
+        }
+      ],
+      "estado": "respondida",
+      "explicaciones": [],
+      "id": "P06",
+      "motivo": null,
+      "pregunta": {
+        "en": "Who sets the severity of a finding?",
+        "es": "¿Quién fija la severidad de un hallazgo?"
+      },
+      "respuesta": {
+        "idioma": "es",
+        "texto": "La severidad la fija siempre una persona, con la calculadora de referencia de CVSS 4.0 para software y la tabla de prioridad para IA. Los agentes nunca sugieren ni precargan un valor."
+      },
+      "resultado": "redactada",
+      "seccion": "decisiones"
+    },
+    {
+      "elementos": [
+        {
+          "id": "D1",
+          "origen": "usuario"
+        },
+        {
+          "id": "D2",
+          "origen": "usuario"
+        },
+        {
+          "id": "D3",
+          "origen": "usuario"
+        },
+        {
+          "id": "D4",
+          "origen": "usuario"
+        }
+      ],
+      "estado": "respondida",
+      "explicaciones": [],
+      "id": "P07",
+      "motivo": null,
+      "pregunta": {
+        "en": "What happens to a proposed test, and how old may its framework version be before a person must look at it?",
+        "es": "¿Qué pasa con una prueba propuesta, y qué tan vieja puede ser la versión de su marco antes de que una persona deba mirarla?"
+      },
+      "respuesta": {
+        "idioma": "es",
+        "texto": "Toda prueba nueva entra al catálogo como borrador y se activa solo cuando una persona la aprueba. Toda prueba lleva la versión de su marco con fecha; si la versión supera la antigüedad tolerada del plan, una persona la mira antes de usarla."
+      },
+      "resultado": "redactada",
+      "seccion": "decisiones"
+    },
+    {
+      "elementos": [
+        {
+          "id": "R1",
+          "origen": "plantilla"
+        },
+        {
+          "id": "R2",
+          "origen": "plantilla"
+        },
+        {
+          "id": "R3",
+          "origen": "plantilla"
+        },
+        {
+          "id": "R4",
+          "origen": "plantilla"
+        },
+        {
+          "id": "R5",
+          "origen": "usuario"
+        }
+      ],
+      "estado": "respondida",
+      "explicaciones": [],
+      "id": "P08",
+      "motivo": null,
+      "pregunta": {
+        "en": "What can go wrong, how severe would it be (1 to 10) and how likely? Check the template’s.",
+        "es": "¿Qué puede salir mal, qué tan grave sería (1 a 10) y qué tan probable? Revisa los de la plantilla."
+      },
+      "respuesta": {
+        "idioma": "es",
+        "texto": "Acepto los cuatro riesgos de la plantilla y agrego un quinto: una cita real pegada al campo equivocado. La cita existe literalmente en el texto, pero el extractor la asigna a un campo que no le corresponde, y la regla calcula un veredicto errado sin que la verificación literal lo detecte. Gravedad 8; la ocurrencia y la detección las propone el entrevistador. Se detecta cuando la persona corrige el veredicto que calculó la regla."
+      },
+      "resultado": "redactada",
+      "seccion": "riesgos"
+    },
+    {
+      "elementos": [
+        {
+          "id": "R1",
+          "origen": "plantilla"
+        },
+        {
+          "id": "R2",
+          "origen": "plantilla"
+        },
+        {
+          "id": "R3",
+          "origen": "plantilla"
+        },
+        {
+          "id": "R4",
+          "origen": "plantilla"
+        },
+        {
+          "id": "R5",
+          "origen": "usuario"
+        }
+      ],
+      "estado": "respondida",
+      "explicaciones": [
+        {
+          "elemento": "R5",
+          "en": "The agent must record the new signal veredicto_corregido_por_persona in the trace (true when the person corrects the verdict the rule computed), so those cases can be counted.",
+          "es": "El agente debe registrar en la traza la señal nueva veredicto_corregido_por_persona (true cuando la persona corrige el veredicto que calculó la regla), para contar esos casos."
+        }
+      ],
+      "id": "P09",
+      "motivo": null,
+      "pregunta": {
+        "en": "How do the traces show that a risk occurred?",
+        "es": "¿Cómo se sabe en las trazas que un riesgo ocurrió?"
+      },
+      "respuesta": {
+        "idioma": "es",
+        "texto": "Acepto los detectores de la plantilla; el del quinto riesgo cuenta los casos en que la persona corrige el veredicto calculado por la regla."
+      },
+      "resultado": "redactada",
+      "seccion": "riesgos"
+    },
+    {
+      "elementos": [
+        {
+          "id": "S1",
+          "origen": "plantilla"
+        },
+        {
+          "id": "S2",
+          "origen": "usuario"
+        },
+        {
+          "id": "S3",
+          "origen": "plantilla"
+        }
+      ],
+      "estado": "respondida",
+      "explicaciones": [],
+      "id": "P10",
+      "motivo": null,
+      "pregunta": {
+        "en": "What do you take for granted that, if it turned out false, would change the design? How would you test it cheaply?",
+        "es": "¿Qué das por cierto que, si resultara falso, cambiaría el diseño? ¿Cómo lo probarías barato?"
+      },
+      "respuesta": {
+        "idioma": "es",
+        "texto": "Doy por cierto que comprobar que una cita es subcadena literal de su fuente basta para detectar una cita inventada; lo pruebo sembrando 20 citas, 10 inventadas, y el verificador debe marcar las 10. Y doy por cierto que una skill sin herramientas ni red solo puede sesgar su propia salida; lo pruebo pegando texto con instrucciones sembradas y comprobando que el veredicto de la regla no cambia."
+      },
+      "resultado": "redactada",
+      "seccion": "supuestos"
+    },
+    {
+      "elementos": [
+        {
+          "id": "C1",
+          "origen": "plantilla"
+        },
+        {
+          "id": "C2",
+          "origen": "plantilla"
+        },
+        {
+          "id": "C3",
+          "origen": "plantilla"
+        },
+        {
+          "id": "C4",
+          "origen": "plantilla"
+        },
+        {
+          "id": "C5",
+          "origen": "plantilla"
+        }
+      ],
+      "estado": "aceptada",
+      "explicaciones": [],
+      "id": "P11",
+      "motivo": null,
+      "pregunta": {
+        "en": "What must always hold, and what minimum rate do you accept? The interviewer proposes how to measure each one.",
+        "es": "¿Qué tiene que cumplirse siempre, y qué tasa mínima aceptas? El entrevistador propone cómo medir cada uno."
+      },
+      "respuesta": {
+        "idioma": "es",
+        "texto": "acepto"
+      },
+      "resultado": "aceptada",
+      "seccion": "criterios"
+    },
+    {
+      "elementos": [
+        {
+          "id": "U1",
+          "origen": "usuario"
+        },
+        {
+          "id": "U2",
+          "origen": "usuario"
+        },
+        {
+          "id": "U3",
+          "origen": "usuario"
+        }
+      ],
+      "estado": "respondida",
+      "explicaciones": [
+        {
+          "elemento": "U1",
+          "en": "The agent records in the trace the similitud_cita signal of each literal quote (0 to 1) and whether it went to pausa_humana when below 1.",
+          "es": "El agente registra en la traza la señal similitud_cita de cada cita literal (de 0 a 1) y si pasó a pausa_humana cuando es menor que 1."
+        },
+        {
+          "elemento": "U2",
+          "en": "The agent records in the trace fuentes_verificadas per proposal and whether it went to pausa_humana, marked as unverified, when there are fewer than 2.",
+          "es": "El agente registra en la traza fuentes_verificadas por propuesta y si pasó a pausa_humana, marcada como no verificada, cuando hay menos de 2."
+        },
+        {
+          "elemento": "U3",
+          "en": "The agent records in the trace antiguedad_marco_dias for each test and whether it went to pausa_humana when it is over 180 days.",
+          "es": "El agente registra en la traza antiguedad_marco_dias de cada prueba y si pasó a pausa_humana cuando supera 180 días."
+        }
+      ],
+      "id": "P12",
+      "motivo": null,
+      "pregunta": {
+        "en": "At what value does the agent stop at each proposed threshold? If there is a grey zone, where does it start and end?",
+        "es": "¿Con qué valor se detiene el agente en cada umbral propuesto? Si hay zona gris, ¿dónde empieza y dónde termina?"
+      },
+      "respuesta": {
+        "idioma": "es",
+        "texto": "Similitud mínima de cita 1,0: la cita es literal o no vale. Al menos 2 fuentes verificadas por propuesta. Un marco con más de 180 días desde su versión pasa a una persona, el mismo plazo que HackGuard usa para evidencia antigua."
+      },
+      "resultado": "redactada",
+      "seccion": "umbrales"
+    },
+    {
+      "elementos": [],
+      "estado": "aceptada",
+      "explicaciones": [],
+      "id": "P13",
+      "motivo": null,
+      "pregunta": {
+        "en": "Which steps do the agents follow and at which do they stop for a person? Check the proposal: nodes, branches and pause.",
+        "es": "¿Qué pasos siguen los agentes y en cuáles se detienen para una persona? Revisa la propuesta: nodos, ramas y pausa."
+      },
+      "respuesta": {
+        "idioma": "es",
+        "texto": "acepto"
+      },
+      "resultado": "aceptada",
+      "seccion": "contrato"
+    },
+    {
+      "elementos": [],
+      "estado": "aceptada",
+      "explicaciones": [],
+      "id": "P14",
+      "motivo": null,
+      "pregunta": {
+        "en": "How many cases would a test batch and a full one have, how many per session, and with which model?",
+        "es": "¿Cuántos casos tendría un lote de prueba y uno completo, de a cuántos se correrían y con qué modelo?"
+      },
+      "respuesta": {
+        "idioma": "es",
+        "texto": "acepto"
+      },
+      "resultado": "aceptada",
+      "seccion": "lotes"
+    }
+  ],
+  "formato": "planlang-contradicciones/v1",
+  "huella": "e7cebf46b3a3b5c8f1cf20c9b262e766c2ad267d5e16f43b4ab195392be46f2f",
+  "llamadas_al_modelo": 10,
+  "m1": {
+    "advertencias": [],
+    "motivos": [],
+    "ok": true
+  },
+  "pendientes": [],
+  "plan_id": "hackguard-agentes",
+  "redactado_por_entrevistador": [
+    {
+      "idioma": "en",
+      "pregunta": "P01"
+    },
+    {
+      "idioma": "en",
+      "pregunta": "P03"
+    },
+    {
+      "idioma": "en",
+      "pregunta": "P04"
+    },
+    {
+      "idioma": "en",
+      "pregunta": "P05"
+    },
+    {
+      "idioma": "en",
+      "pregunta": "P06"
+    },
+    {
+      "idioma": "en",
+      "pregunta": "P07"
+    },
+    {
+      "idioma": "en",
+      "pregunta": "P08"
+    },
+    {
+      "idioma": "en",
+      "pregunta": "P09"
+    },
+    {
+      "idioma": "en",
+      "pregunta": "P10"
+    },
+    {
+      "idioma": "en",
+      "pregunta": "P12"
+    }
+  ],
+  "restaurados_por_el_codigo": [],
+  "senales_derivadas": [
+    {
+      "leida_por": [
+        "R5"
+      ],
+      "senal": "veredicto_corregido_por_persona"
+    }
+  ],
+  "transcripcion": {
+    "archivo": "transcripcion.json",
+    "huella": "2767c34976c36fd4b9f75ceefccac7410e46fe3308ae6e18405dbc1e5fb13adc"
+  }
+}
