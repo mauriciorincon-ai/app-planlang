@@ -57,6 +57,48 @@ export const ETIQUETA = {
   nodos: tb("nodos", "nodes"),
   aristas: tb("aristas condicionales", "conditional edges"),
   pausas: tb("pausas humanas", "human pauses"),
+  prioridad: tb("Prioridad de acción", "Action priority"),
+  respuestas: tb("Respuestas", "Answers"),
+  entrevista: tb("Entrevista", "Interview"),
+  anteriores: tb("Versiones anteriores", "Earlier versions"),
+};
+
+/**
+ * De quién son las respuestas de la entrevista (S6). La clase sale del archivo que la entrevista usó, no de este texto:
+ * si el plan dice «revisadas», es porque el repo guarda las que el usuario revisó y confirmó, con su fecha.
+ */
+export const RESPUESTAS = {
+  revisadas: (fecha: string) =>
+    tb(
+      `Revisadas y confirmadas por el usuario el ${fecha}`,
+      `Reviewed and confirmed by the user on ${fecha}`,
+    ),
+  delegadas: tb(
+    "Delegadas al constructor: el usuario no las escribió",
+    "Delegated to the builder: the user did not write them",
+  ),
+  sinRegistro: tb(
+    "El repo no guarda quién respondió",
+    "The repo does not record who answered",
+  ),
+  cambiadas: (preguntas: string) =>
+    tb(
+      `preguntas que cambió al revisar: ${preguntas}`,
+      `questions it changed on review: ${preguntas}`,
+    ),
+  /** La misma idea en pocas palabras, para la línea de cada versión anterior. */
+  corta: {
+    revisadas: tb("respuestas del usuario", "the user’s answers"),
+    delegadas: tb(
+      "respuestas delegadas al constructor",
+      "answers delegated to the builder",
+    ),
+    sinRegistro: tb("sin registro de respuestas", "no record of the answers"),
+  },
+  sinCambios: tb(
+    "no cambió ninguna pregunta al revisar",
+    "it changed no question on review",
+  ),
 };
 
 export const TITULO_PAGINA = (id: string) => tb(`Plan ${id}`, `Plan ${id}`);
@@ -68,8 +110,8 @@ export const DESCRIPCION_PAGINA = tb(
 export const PORTADA = {
   antetitulo: tb("Plan sin corrida", "Plan without a run"),
   guia: tb(
-    "Este plan salió de una entrevista sobre una plantilla de dominio que es solo datos. Nadie lo ha construido en planlang: aquí no hay trazas que medir, solo el contrato. «Usuario» es quien respondió la entrevista, o el constructor cuando el autor le delegó las respuestas.",
-    "This plan came from an interview over a domain template that is only data. No one has built it in planlang: there are no traces to measure here, only the contract. «User» is whoever answered the interview, or the builder when the author delegated the answers.",
+    "Este plan salió de una entrevista sobre una plantilla de dominio que es solo datos. Nadie lo ha construido en planlang: aquí no hay trazas que medir, solo el contrato. «Usuario» es quien respondió la entrevista, o el constructor cuando el autor le delegó las respuestas; la ficha dice cuál fue el caso.",
+    "This plan came from an interview over a domain template that is only data. No one has built it in planlang: there are no traces to measure here, only the contract. «User» is whoever answered the interview, or the builder when the author delegated the answers; the sheet says which one it was.",
   ),
   origenes: tb(
     "Quién propuso cada elemento: la plantilla del dominio, el entrevistador o la persona que respondió.",
