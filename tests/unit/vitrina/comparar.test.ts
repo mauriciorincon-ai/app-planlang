@@ -43,4 +43,12 @@ describe("vistaComparar: la comparación del A en la pantalla", () => {
     expect(vistaComparar(d, "en")!.veredictos.multiagente.texto).toBe("Meets");
     expect(vistaComparar(d, "es")!.veredictos.multiagente.texto).toBe("Cumple");
   });
+
+  it("la frase de líder nombra lo que separa a las corridas (C5 y R5) y usa los conteos de pausa", async () => {
+    const v = vistaComparar(await datosDemo("demo-a"), "es");
+    expect(v!.textos.lider.veredicto).toBe("Lo que las separa: C5, R5.");
+    expect(v!.textos.lider.riesgos).toBe(
+      "El agente único pausa 20 casos que no lo pedían; la multiagente, 4.",
+    );
+  });
 });

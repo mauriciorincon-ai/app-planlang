@@ -150,8 +150,8 @@ function Contenido({ v, idioma }: { v: VistaComparar; idioma: Idioma }) {
         <p className="solo-lider mt-4 max-w-[72ch] text-texto leading-[1.6]">
           {v.textos.lider.veredicto}
         </p>
-        <p className="solo-experto mt-4 max-w-[72ch] text-texto leading-[1.6]">
-          {EXPERTO.veredicto[idioma]}
+        <p className="mt-3 max-w-[72ch] text-chico text-tinta-2">
+          {v.textos.alcance}
         </p>
         <p className="mt-3 max-w-[72ch] text-chico text-tinta-2">
           {v.textos.costo}

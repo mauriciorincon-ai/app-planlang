@@ -84,3 +84,12 @@ describe("rutas del paquete para hoja-de-vida (PLANLANG_PAQUETE=1)", () => {
     expect(r.BASE_RUTA + r.SUFIJO_RUTA).toBe("");
   });
 });
+
+describe("«comparar» es una página del demo A, no del B (S4)", () => {
+  it("el A la tiene en su camino; el B no puede construirla", () => {
+    expect(ruta("es", "comparar", undefined, "demo-a")).toBe("/es/comparar");
+    expect(() => ruta("es", "comparar", undefined, "demo-b")).toThrow(
+      /solo existe en el demo A/,
+    );
+  });
+});

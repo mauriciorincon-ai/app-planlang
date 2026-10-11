@@ -6,6 +6,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { compararCorridas } from "@core/comparar";
+import { ErrorDeLectura } from "@core/brecha/lector";
 import { jsonBonito } from "@core/formatos/huella";
 import { entradaDesdeDisco } from "../../scripts/_corridas";
 
@@ -32,7 +33,14 @@ describe("comparación de dos corridas", () => {
           base: `${A}-base`,
         }),
       ),
-    ).rejects.toThrow();
+    ).rejects.toBeInstanceOf(ErrorDeLectura);
+  });
+
+  it("el manifiesto declara la huella de la comparación que se publica", () => {
+    const m = leer("data/vitrina/manifiesto.json");
+    expect(m.demos["demo-a"].comparacion.huella).toBe(
+      leer(`${PUBLICADA}/comparacion.json`).huella,
+    );
   });
 
   it("la comparación publicada del A se regenera byte a byte desde sus corridas", async () => {

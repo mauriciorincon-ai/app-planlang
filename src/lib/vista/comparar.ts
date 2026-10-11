@@ -61,8 +61,6 @@ export interface VistaComparar {
     celdas: Record<Lado, { decision: string; pausa: boolean }>;
     href: string | null;
   }[];
-  casosTotal: number;
-  tope: number;
   textos: {
     lider: Record<"veredicto" | "riesgos" | "casos", string>;
     revisor: string;
@@ -155,8 +153,28 @@ export function vistaComparar(d: DatosDemo, i: Idioma): VistaComparar | null {
     ) as Record<Lado, number>,
   }));
   const umbralDe = (ocurre: string | null) => ocurre ?? "—";
+  // Lo que separa a los lados sale de sus estados, no de un texto fijo (AU-S4, A-1).
+  const separan = [
+    ...c.criterios
+      .filter((k) => k.por_lado.multiagente.estado !== k.por_lado.agente_unico.estado)
+      .map((k) => k.id),
+    ...c.riesgos
+      .filter((r) => r.por_lado.multiagente.estado !== r.por_lado.agente_unico.estado)
+      .map((r) => r.id),
+  ];
+  const pausasBase = lados.agente_unico.pausas.innecesaria;
+  const pausasMulti = lados.multiagente.pausas.innecesaria;
+  const liderVeredicto =
+    separan.length === 0
+      ? t(LIDER.veredictoIguales, i)
+      : t(LIDER.veredictoSeparan(separan.join(", ")), i);
+  const liderRiesgos = t(
+    pausasBase > pausasMulti
+      ? LIDER.pausasMasEnBase(pausasBase, pausasMulti)
+      : LIDER.pausasMasEnMulti(pausasBase, pausasMulti),
+    i,
+  );
 
-  const tope = 40;
   const casos = c.casos_que_difieren.map((x) => ({
     id: x.id,
     verdad: decision(x.verdad.decision, i),
@@ -165,7 +183,10 @@ export function vistaComparar(d: DatosDemo, i: Idioma): VistaComparar | null {
       LADOS.map((l) => [
         l,
         {
-          decision: decision(x.por_lado[l].decision_final ?? "", i),
+          decision:
+            x.por_lado[l].decision_final === null
+              ? t(ETIQUETA.noObservado, i)
+              : decision(x.por_lado[l].decision_final, i),
           pausa: x.por_lado[l].pausa,
         },
       ]),
@@ -223,12 +244,10 @@ export function vistaComparar(d: DatosDemo, i: Idioma): VistaComparar | null {
       ) as Record<Lado, CeldaRiesgo>,
     })),
     casos,
-    casosTotal: c.casos_que_difieren.length,
-    tope,
     textos: {
       lider: {
-        veredicto: t(LIDER.veredicto, i),
-        riesgos: t(LIDER.riesgos, i),
+        veredicto: liderVeredicto,
+        riesgos: liderRiesgos,
         casos: t(LIDER.casos, i),
       },
       revisor: t(AVISO.revisor, i),

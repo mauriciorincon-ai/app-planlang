@@ -681,7 +681,7 @@ There are two ways to use it:
   calls), the criteria and risks one by one, the pauses against the truth, and the cases where the two runs act
   differently, each with its own page.
 - **How to open it:** from the demo A row on the home page (`/en`, link «Compare»), or from the baseline row of demo
-  A's gap report. Also directly at `/en/compare`.
+  A's gap report. Also directly at `/en/comparar`.
 - **How to read it:**
   1. Each side's verdict comes only from its own criteria and risks. The graph contract and the assumptions belong to
      the main run's report.

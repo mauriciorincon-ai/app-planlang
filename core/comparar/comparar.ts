@@ -53,6 +53,8 @@ function medir(
     casos,
     corrida.manifiesto.umbrales_aplicados as Umbrales,
   );
+  // Sin repeticiones (pass^k): el A no tiene criterio con k que aplique a su lote de 200. Si lo tuviera, habría que
+  // pasarlas aquí y el veredicto del lado tomaría los `fueraPorProveedor` como lo hace el informe (AU-S4, M-1).
   const criterios = evaluarCriterios(plan, vistas, [], nLote);
   const riesgos = evaluarRiesgos(
     plan,

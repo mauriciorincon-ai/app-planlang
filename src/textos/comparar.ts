@@ -36,16 +36,30 @@ export const SECCIONES = {
   ),
 };
 
-/** El líder: una frase por sección, con su presupuesto (≤ 50 palabras, ≤ 1 término definido). */
+/**
+ * El líder: una frase por sección, con su presupuesto (≤ 50 palabras, ≤ 1 término definido). Las que dependen de los
+ * datos son funciones: lo que dicen sale de la comparación, nunca de un texto fijo (regla 9).
+ */
 export const LIDER = {
-  veredicto: tb(
-    "Las dos corridas cumplen los mismos criterios de decisión. Lo que las separa es el costo y el tiempo.",
-    "Both runs meet the same decision criteria. What separates them is cost and time.",
+  veredictoIguales: tb(
+    "Las dos corridas cumplen los mismos criterios y riesgos.",
+    "Both runs meet the same criteria and risks.",
   ),
-  riesgos: tb(
-    "El agente único pausa a más personas de las que hace falta. Así se gasta más tiempo humano en casos que no lo pedían.",
-    "The single agent pauses more people than needed. That spends more human time on cases that did not ask for it.",
-  ),
+  veredictoSeparan: (ids: string) =>
+    tb(
+      `Lo que las separa: ${ids}.`,
+      `What separates them: ${ids}.`,
+    ),
+  pausasMasEnBase: (base: number, multi: number) =>
+    tb(
+      `El agente único pausa ${base} casos que no lo pedían; la multiagente, ${multi}.`,
+      `The single agent pauses ${base} cases that did not need it; the multi-agent run, ${multi}.`,
+    ),
+  pausasMasEnMulti: (base: number, multi: number) =>
+    tb(
+      `La multiagente pausa ${multi} casos que no lo pedían; el agente único, ${base}.`,
+      `The multi-agent run pauses ${multi} cases that did not need it; the single agent, ${base}.`,
+    ),
   casos: tb(
     "Estos son los casos donde las dos corridas hacen cosas distintas. Cada uno tiene su página propia cuando la tiene.",
     "These are the cases where the two runs act differently. Each one has its own page when it has one.",
@@ -54,10 +68,6 @@ export const LIDER = {
 
 /** El experto: la regla de cada sección, en una frase. */
 export const EXPERTO = {
-  veredicto: tb(
-    "El veredicto de cada lado mira solo sus criterios y riesgos. El contrato de grafo y los supuestos son del informe de la corrida principal.",
-    "Each side's verdict looks only at its criteria and risks. The graph contract and assumptions belong to the main run's report.",
-  ),
   riesgos: tb(
     "Un riesgo ocurre cuando su tasa cruza el umbral del plan. Los casos marcados no bastan: deciden la tasa y el umbral.",
     "A risk occurs when its rate crosses the plan's threshold. Flagged cases are not enough: the rate and the threshold decide.",

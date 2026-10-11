@@ -1,3 +1,31 @@
+/**
+ * Veredicto global (RF-06.7), con sus motivos a la vista:
+ * - `no_cumple`: falla un criterio absoluto, ocurre un riesgo de severidad ≥ 9 o el contrato de grafo
+ *   tiene un hallazgo bloqueante (el agente no es el que el plan describe);
+ * - `cumple_con_alertas`: falla o queda incompleto un criterio de tasa/latencia/costo, un absoluto queda
+ *   sin medir o indeterminado, un supuesto se refuta, un supuesto de criticidad alta queda sin probar,
+ *   ocurre otro riesgo (también en una repetición de pass^k), un riesgo queda sin población que lo
+ *   pruebe, el contrato de grafo tiene alertas, hay brechas no previstas o una regla del plan está mal
+ *   formada. Lo que no se pudo medir es una alerta, nunca un silencio (regla dura 9);
+ * - `cumple`: nada de lo anterior.
+ */
+import type { TextoBilingue } from "../formatos/bilingue";
+import type { BrechaNoPrevista } from "./brechas-no-previstas";
+import type { ResultadoContrato } from "./contrato-grafo";
+import type { ResultadoCriterio } from "./criterios";
+import type { ResultadoRiesgo } from "./detectores";
+import type { ResultadoSupuesto } from "./supuestos";
+
+export type Veredicto = "cumple" | "cumple_con_alertas" | "no_cumple";
+
+export const SEVERIDAD_BLOQUEANTE = 9;
+
+export interface ResultadoVeredicto {
+  valor: Veredicto;
+  bloqueantes: TextoBilingue[];
+  alertas: TextoBilingue[];
+}
+
 /** El valor del veredicto a partir de sus motivos: un bloqueante ⇒ no cumple; una alerta ⇒ cumple con alertas. */
 function valorDe(
   bloqueantes: readonly TextoBilingue[],
@@ -87,34 +115,6 @@ export function veredictoDeCriteriosYRiesgos(
       });
   }
   return { valor: valorDe(bloqueantes, alertas), bloqueantes, alertas };
-}
-
-/**
- * Veredicto global (RF-06.7), con sus motivos a la vista:
- * - `no_cumple`: falla un criterio absoluto, ocurre un riesgo de severidad ≥ 9 o el contrato de grafo
- *   tiene un hallazgo bloqueante (el agente no es el que el plan describe);
- * - `cumple_con_alertas`: falla o queda incompleto un criterio de tasa/latencia/costo, un absoluto queda
- *   sin medir o indeterminado, un supuesto se refuta, un supuesto de criticidad alta queda sin probar,
- *   ocurre otro riesgo (también en una repetición de pass^k), un riesgo queda sin población que lo
- *   pruebe, el contrato de grafo tiene alertas, hay brechas no previstas o una regla del plan está mal
- *   formada. Lo que no se pudo medir es una alerta, nunca un silencio (regla dura 9);
- * - `cumple`: nada de lo anterior.
- */
-import type { TextoBilingue } from "../formatos/bilingue";
-import type { BrechaNoPrevista } from "./brechas-no-previstas";
-import type { ResultadoContrato } from "./contrato-grafo";
-import type { ResultadoCriterio } from "./criterios";
-import type { ResultadoRiesgo } from "./detectores";
-import type { ResultadoSupuesto } from "./supuestos";
-
-export type Veredicto = "cumple" | "cumple_con_alertas" | "no_cumple";
-
-export const SEVERIDAD_BLOQUEANTE = 9;
-
-export interface ResultadoVeredicto {
-  valor: Veredicto;
-  bloqueantes: TextoBilingue[];
-  alertas: TextoBilingue[];
 }
 
 export function veredicto(
