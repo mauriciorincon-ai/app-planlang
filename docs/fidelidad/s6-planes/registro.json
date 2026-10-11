@@ -1,0 +1,63 @@
+{
+  "formato": "planlang-capturas/v1",
+  "capturas": [
+    {
+      "pantalla": "plan-sin-corrida",
+      "url": "/es/planes/hackguard-agentes",
+      "ancho": 380,
+      "idioma": "es",
+      "tema": "oscuro",
+      "alto": 6668,
+      "sha256": "6c6a5bdd57402f0c0e731ea287aadbc614050b9fa919ce1900521c4712e4c8fd",
+      "entera": "plan-sin-corrida-380-oscuro-es.png",
+      "miniatura": "mini-plan-sin-corrida-380-oscuro-es.jpg"
+    },
+    {
+      "pantalla": "plan-sin-corrida",
+      "url": "/es/planes/hackguard-agentes",
+      "ancho": 1280,
+      "idioma": "es",
+      "tema": "oscuro",
+      "alto": 4472,
+      "sha256": "b0e6941bef107cf18b8b2df3817b97403c78fea945fca79e8ad81fc604b644be",
+      "entera": "plan-sin-corrida-1280-oscuro-es.png",
+      "miniatura": "mini-plan-sin-corrida-1280-oscuro-es.jpg"
+    },
+    {
+      "pantalla": "plan-sin-corrida",
+      "url": "/es/planes/hackguard-agentes",
+      "ancho": 380,
+      "idioma": "es",
+      "tema": "claro",
+      "alto": 6668,
+      "sha256": "f1ca33fa3f63273924bdc61171c630e383d6388b199ddc7fd599b53481ea3945",
+      "entera": "plan-sin-corrida-380-claro-es.png",
+      "miniatura": "mini-plan-sin-corrida-380-claro-es.jpg"
+    },
+    {
+      "pantalla": "plan-sin-corrida",
+      "url": "/es/planes/hackguard-agentes",
+      "ancho": 1280,
+      "idioma": "es",
+      "tema": "claro",
+      "alto": 4472,
+      "sha256": "3c85e49b0207c8f652b2be69275c90c77b0b788e90132f60c15eebccc91e0929",
+      "entera": "plan-sin-corrida-1280-claro-es.png",
+      "miniatura": "mini-plan-sin-corrida-1280-claro-es.jpg"
+    }
+  ],
+  "recortes": [
+    {
+      "clave": "ficha-origen-respuestas",
+      "archivo": "Plan sin corrida (/es/planes/hackguard-agentes), ficha de la v2",
+      "estado": "tal como abre",
+      "mirar": "Las filas nuevas de la ficha: «Respuestas» (de quién son), «Entrevista» (la fecha) y «Versiones anteriores» (la v1 que queda como historia, con el inicio de su huella).",
+      "esperada": "Versión 2.0.0; «Revisadas y confirmadas por el usuario el 2026-10-11 · preguntas que cambió al revisar: P03, P08»; Entrevista 2026-10-11; aprobado por Mauricio Rincón el 2026-10-11; y una línea de la v1 que dice «respuestas delegadas al constructor» con su huella (bf05e61d…).",
+      "ruta": "/es/planes/hackguard-agentes",
+      "ancho": 1280,
+      "tema": "oscuro",
+      "interaccion": null,
+      "imagen": "forma-ficha-origen-respuestas.jpg"
+    }
+  ]
+}
