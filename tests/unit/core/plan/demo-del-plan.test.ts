@@ -9,6 +9,7 @@ import {
   comandoRetomar,
   contradicciones,
   demoDelPlan,
+  objetivoDelPlan,
   revisarBorrador,
   textoDeRevision,
   TranscripcionSchema,
@@ -27,10 +28,27 @@ const transcripcion = (): Transcripcion =>
 describe("el demo de la revisión sale del plan_id", () => {
   it("plan-demo-<x> da <x>; otro id se detiene nombrándolo", () => {
     expect(demoDelPlan("plan-demo-b")).toBe("b");
-    expect(comandoRetomar("plan-demo-c")).toBe(
+    expect(comandoRetomar("plan-demo-c", "dom-financiero")).toBe(
       "pnpm entrevistar --demo c --retomar",
     );
     expect(() => demoDelPlan("plan-x")).toThrow("plan-x");
+  });
+
+  it("un plan real (S5) se nombra con su dominio y su id, y vive en plans/<id>", () => {
+    expect(objetivoDelPlan("hackguard-agentes", "dom-seguridad-ia")).toEqual({
+      bandera: "--dominio dom-seguridad-ia --plan hackguard-agentes",
+      carpeta: "plans/hackguard-agentes",
+      nombre: "hackguard-agentes",
+    });
+    expect(comandoRetomar("hackguard-agentes", "dom-seguridad-ia")).toBe(
+      "pnpm entrevistar --dominio dom-seguridad-ia --plan hackguard-agentes --retomar",
+    );
+    // Un demo sigue siendo el de siempre.
+    expect(objetivoDelPlan("plan-demo-b", "dom-financiero")).toEqual({
+      bandera: "--demo b",
+      carpeta: "plans/demo-b",
+      nombre: "B",
+    });
   });
 
   it("la pendiente cita el comando del demo de su plan; sin comando, dice solo «en la entrevista»", () => {

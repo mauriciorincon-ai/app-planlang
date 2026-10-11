@@ -20,7 +20,7 @@ TEXTOS: dict[str, dict[str, str]] = {
         ),
         "redactando": "redactando tu respuesta…",
         "pendiente": "pendiente",
-        "salida": "Entrevista guardada. Para seguir: pnpm entrevistar --demo {demo} --retomar",
+        "salida": "Entrevista guardada. Para seguir: pnpm entrevistar {comando} --retomar",
         "fin": (
             "Entrevista terminada: {r} respondidas · {a} aceptadas · {p} pendientes · {m} llamadas al modelo."
         ),
@@ -45,7 +45,7 @@ TEXTOS: dict[str, dict[str, str]] = {
         ),
         "redactando": "drafting your answer…",
         "pendiente": "pending",
-        "salida": "Interview saved. To continue: pnpm entrevistar --demo {demo} --retomar",
+        "salida": "Interview saved. To continue: pnpm entrevistar {comando} --retomar",
         "fin": "Interview finished: {r} answered · {a} accepted · {p} pending · {m} model calls.",
         "archivos": "Draft: {b}\nTranscript: {t}",
         "secciones": (

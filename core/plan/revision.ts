@@ -151,9 +151,41 @@ export function demoDelPlan(planId: string): string {
   return m[1]!;
 }
 
+/**
+ * Qué se entrevistó y dónde queda (S5): un demo (`plan-demo-b`) o un plan real, de cualquier plantilla de dominio y con
+ * cualquier id. El dominio nuevo es solo datos: la revisión no puede suponer que todo plan es de un demo.
+ */
+export interface ObjetivoDelPlan {
+  /** Cómo se nombra al correr `pnpm entrevistar` y `pnpm plan:aprobar`. */
+  bandera: string;
+  /** La carpeta del borrador y, aprobado, del `v1.json`. */
+  carpeta: string;
+  /** Cómo lo llama el usuario al aprobar: «apruebo el plan <nombre>». */
+  nombre: string;
+}
+
+export function objetivoDelPlan(
+  planId: string,
+  dominioId: string,
+): ObjetivoDelPlan {
+  if (/^plan-demo-[a-z0-9]+$/.test(planId)) {
+    const d = demoDelPlan(planId);
+    return {
+      bandera: `--demo ${d}`,
+      carpeta: `plans/demo-${d}`,
+      nombre: d.toUpperCase(),
+    };
+  }
+  return {
+    bandera: `--dominio ${dominioId} --plan ${planId}`,
+    carpeta: `plans/${planId}`,
+    nombre: planId,
+  };
+}
+
 /** El comando que retoma la entrevista del plan: las pendientes lo citan. */
-export const comandoRetomar = (planId: string) =>
-  `pnpm entrevistar --demo ${demoDelPlan(planId)} --retomar`;
+export const comandoRetomar = (planId: string, dominioId: string) =>
+  `pnpm entrevistar ${objetivoDelPlan(planId, dominioId).bandera} --retomar`;
 
 export function revisarBorrador(borrador: unknown, t: Transcripcion): Revision {
   const v = validarPlan(borrador);
@@ -181,7 +213,7 @@ export function revisarBorrador(borrador: unknown, t: Transcripcion): Revision {
     contradicciones: contradicciones(
       borrador,
       pendientes,
-      comandoRetomar(t.plan_id),
+      comandoRetomar(t.plan_id, t.plantilla.id),
     ),
     pendientes,
     redactado_por_entrevistador: redactado,
@@ -248,8 +280,8 @@ const NOMBRE_IDIOMA: Readonly<
 const T = {
   es: {
     titulo: "Revisión del borrador",
-    intro: (d: string) =>
-      `Lo propuso el entrevistador con tus respuestas. Nada está aprobado: el plan pasa a v1 solo cuando dices «apruebo el plan ${d.toUpperCase()}».`,
+    intro: (o: ObjetivoDelPlan) =>
+      `Lo propuso el entrevistador con tus respuestas. Nada está aprobado: el plan pasa a v1 solo cuando dices «apruebo el plan ${o.nombre}».`,
     estado: "Estado",
     listo:
       "M1 lo acepta: se puede aprobar si estás de acuerdo con lo de abajo.",
@@ -280,8 +312,8 @@ const T = {
     costo: (n: number, c: number) =>
       `${n} llamadas al modelo · costo nominal US$ ${c.toFixed(4)} (la suscripción no cobra por llamada).`,
     aprobar: "Cómo se aprueba",
-    aprobarTexto: (d: string) =>
-      `Si estás de acuerdo, dile al constructor «apruebo el plan ${d.toUpperCase()}». Él corre \`pnpm plan:aprobar --demo ${d} --por "<tu nombre>" --el <fecha>\`, que vuelve a validar y escribe \`plans/demo-${d}/v1.json\` con su huella.`,
+    aprobarTexto: (o: ObjetivoDelPlan) =>
+      `Si estás de acuerdo, dile al constructor «apruebo el plan ${o.nombre}». Él corre \`pnpm plan:aprobar ${o.bandera} --por "<tu nombre>" --el <fecha>\`, que vuelve a validar y escribe \`${o.carpeta}/v1.json\` con su huella.`,
     secciones: {
       problema: "Problema",
       actores: "Actores",
@@ -315,8 +347,8 @@ const T = {
   },
   en: {
     titulo: "Draft review",
-    intro: (d: string) =>
-      `The interviewer proposed it from your answers. Nothing is approved: the plan becomes v1 only when you say “I approve plan ${d.toUpperCase()}”.`,
+    intro: (o: ObjetivoDelPlan) =>
+      `The interviewer proposed it from your answers. Nothing is approved: the plan becomes v1 only when you say “I approve plan ${o.nombre}”.`,
     estado: "Status",
     listo: "M1 accepts it: it can be approved if you agree with what follows.",
     noListo: "M1 does not accept it yet: fix what follows before approving.",
@@ -347,8 +379,8 @@ const T = {
     costo: (n: number, c: number) =>
       `${n} model calls · nominal cost US$ ${c.toFixed(4)} (the subscription does not charge per call).`,
     aprobar: "How to approve",
-    aprobarTexto: (d: string) =>
-      `If you agree, tell the builder “I approve plan ${d.toUpperCase()}”. They run \`pnpm plan:aprobar --demo ${d} --por "<your name>" --el <date>\`, which validates again and writes \`plans/demo-${d}/v1.json\` with its fingerprint.`,
+    aprobarTexto: (o: ObjetivoDelPlan) =>
+      `If you agree, tell the builder “I approve plan ${o.nombre}”. They run \`pnpm plan:aprobar ${o.bandera} --por "<your name>" --el <date>\`, which validates again and writes \`${o.carpeta}/v1.json\` with its fingerprint.`,
     secciones: {
       problema: "Problem",
       actores: "Actors",
@@ -573,7 +605,7 @@ export function textoDeRevision(
   idioma: Idioma,
 ): string {
   const t = T[idioma];
-  const d = demoDelPlan(r.plan_id);
+  const o = objetivoDelPlan(r.plan_id, r.cabecera.plantilla.id);
   const b = esObj(borrador) ? borrador : {};
   const linea = (m: {
     codigo: string;
@@ -583,7 +615,7 @@ export function textoDeRevision(
   return [
     `# ${t.titulo} — ${r.plan_id}`,
     "",
-    t.intro(d),
+    t.intro(o),
     "",
     `## ${t.estado}`,
     "",
@@ -657,7 +689,7 @@ export function textoDeRevision(
     ...seccionesDelPlan(b, idioma),
     `## ${t.aprobar}`,
     "",
-    t.aprobarTexto(d),
+    t.aprobarTexto(o),
     "",
   ].join("\n");
 }

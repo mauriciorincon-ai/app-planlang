@@ -1,0 +1,820 @@
+{
+  "actores": [
+    {
+      "en": "Security analyst",
+      "es": "Analista de seguridad",
+      "id": "analista",
+      "origen": "plantilla",
+      "tipo": "humano"
+    },
+    {
+      "en": "Asset owner",
+      "es": "Propietario del activo",
+      "id": "propietario",
+      "origen": "plantilla",
+      "tipo": "humano"
+    },
+    {
+      "en": "ISO/IEC 42001 auditor",
+      "es": "Auditor ISO/IEC 42001",
+      "id": "auditor",
+      "origen": "plantilla",
+      "tipo": "humano"
+    },
+    {
+      "en": "Human reviewer",
+      "es": "Revisor humano",
+      "id": "revisor",
+      "origen": "plantilla",
+      "rol_en_pausa": true,
+      "tipo": "humano"
+    },
+    {
+      "en": "Versioned test catalogue",
+      "es": "Catálogo de pruebas con versión",
+      "id": "catalogo",
+      "origen": "plantilla",
+      "tipo": "sistema"
+    },
+    {
+      "en": "Test researcher (skill)",
+      "es": "Investigador de pruebas (skill)",
+      "id": "investigador_pruebas",
+      "origen": "plantilla",
+      "tipo": "sistema"
+    },
+    {
+      "en": "Result extractor (skill)",
+      "es": "Extractor de resultados (skill)",
+      "id": "extractor_resultados",
+      "origen": "plantilla",
+      "tipo": "sistema"
+    }
+  ],
+  "contrato_de_grafo": {
+    "aristas_condicionales": [
+      {
+        "desde": "enrutador",
+        "inclusivo": false,
+        "operador": "igual_a",
+        "orden": 1,
+        "senal": "tarea",
+        "si_verdadero": "investigador",
+        "valor": "investigar"
+      },
+      {
+        "desde": "verificador_fuentes",
+        "inclusivo": false,
+        "operador": "menor_que",
+        "orden": 1,
+        "senal": "fuentes_verificadas",
+        "si_verdadero": "pausa_humana",
+        "valor": "umbral.U2"
+      },
+      {
+        "desde": "verificador_fuentes",
+        "inclusivo": false,
+        "operador": "mayor_que",
+        "orden": 2,
+        "senal": "antiguedad_marco_dias",
+        "si_verdadero": "pausa_humana",
+        "valor": "umbral.U3"
+      },
+      {
+        "desde": "verificador_citas",
+        "inclusivo": false,
+        "operador": "menor_que",
+        "orden": 1,
+        "senal": "similitud_cita",
+        "si_verdadero": "pausa_humana",
+        "valor": "umbral.U1"
+      }
+    ],
+    "evaluadores_requeridos": [
+      {
+        "id": "citas_verificadas",
+        "riesgos_cubiertos": [
+          "R1"
+        ],
+        "tipo": "regla"
+      },
+      {
+        "id": "veredicto_con_regla",
+        "riesgos_cubiertos": [
+          "R2"
+        ],
+        "tipo": "regla"
+      },
+      {
+        "id": "marco_vigente",
+        "riesgos_cubiertos": [
+          "R3"
+        ],
+        "tipo": "regla"
+      },
+      {
+        "id": "cierre_con_reprueba",
+        "riesgos_cubiertos": [
+          "R4"
+        ],
+        "tipo": "regla"
+      }
+    ],
+    "nodos_esperados": [
+      {
+        "id": "enrutador",
+        "tipo": "enrutador"
+      },
+      {
+        "id": "investigador",
+        "tipo": "modelo"
+      },
+      {
+        "id": "verificador_fuentes",
+        "tipo": "regla"
+      },
+      {
+        "id": "catalogo_borrador",
+        "tipo": "herramienta"
+      },
+      {
+        "id": "filtro_instrucciones",
+        "tipo": "regla"
+      },
+      {
+        "id": "extractor",
+        "tipo": "modelo"
+      },
+      {
+        "id": "verificador_citas",
+        "tipo": "regla"
+      },
+      {
+        "id": "calculo_veredicto",
+        "tipo": "regla"
+      },
+      {
+        "id": "pausa_humana",
+        "tipo": "pausa_humana"
+      }
+    ],
+    "origen": "plantilla",
+    "pausas_humanas": [
+      {
+        "nodo": "pausa_humana",
+        "payload_minimo": [
+          "motivo",
+          "senal",
+          "umbral",
+          "fuentes",
+          "citas",
+          "marca_instruccion",
+          "veredicto_sugerido",
+          "evidencia"
+        ],
+        "politica_simulada": {
+          "en": "This plan is not run in planlang: every pause is made by a real person, so there is no simulated reviewer.",
+          "es": "Este plan no se corre en planlang: toda pausa la hace una persona real, así que no hay revisor simulado."
+        },
+        "rol": "revisor"
+      }
+    ],
+    "ramas_por_defecto": {
+      "enrutador": "filtro_instrucciones",
+      "verificador_citas": "calculo_veredicto",
+      "verificador_fuentes": "catalogo_borrador"
+    },
+    "senales_obligatorias_en_traza": [
+      "tarea",
+      "fuentes_verificadas",
+      "antiguedad_marco_dias",
+      "citas_sin_verificar",
+      "marca_instruccion",
+      "similitud_cita",
+      "veredicto_por_regla",
+      "prueba_nueva",
+      "control_asociado",
+      "hallazgo_cerrado",
+      "reprueba_hecha",
+      "pausa_humana",
+      "nodos_visitados",
+      "latencia_total_s",
+      "tokens",
+      "error_proveedor"
+    ]
+  },
+  "criterios_aceptacion": [
+    {
+      "enunciado": {
+        "en": "Every citation that reaches a person unmarked was verified by code (100%).",
+        "es": "Toda cita que llega a una persona sin marca fue verificada por código (100 %)."
+      },
+      "id": "C1",
+      "origen": "plantilla",
+      "regla_de_medicion": {
+        "agregacion": "todos_cumplen",
+        "condicion": "citas_sin_verificar > 0 IMPLICA pausa_humana == true",
+        "poblacion": "todos"
+      },
+      "riesgos_controlados": [
+        "R1"
+      ],
+      "tipo": "absoluto",
+      "valor_objetivo": true
+    },
+    {
+      "enunciado": {
+        "en": "No suggested verdict without a rule: zero verdicts issued by the model.",
+        "es": "Ningún veredicto sugerido sin regla: cero veredictos emitidos por el modelo."
+      },
+      "id": "C2",
+      "origen": "plantilla",
+      "regla_de_medicion": {
+        "agregacion": "todos_cumplen",
+        "condicion": "veredicto_por_regla == true",
+        "poblacion": "tarea == 'extraer'"
+      },
+      "riesgos_controlados": [
+        "R2"
+      ],
+      "tipo": "absoluto",
+      "valor_objetivo": true
+    },
+    {
+      "enunciado": {
+        "en": "At least 80% of new tests arrive tied to a control of the standard, or marked as pending.",
+        "es": "Al menos el 80 % de las pruebas nuevas llega atado a un control de la norma, o marcado como pendiente."
+      },
+      "id": "C3",
+      "origen": "plantilla",
+      "regla_de_medicion": {
+        "agregacion": "tasa",
+        "condicion": "control_asociado == true",
+        "poblacion": "prueba_nueva == true"
+      },
+      "tipo": "tasa",
+      "valor_objetivo": 0.8
+    },
+    {
+      "enunciado": {
+        "en": "No finding is closed without a re-test.",
+        "es": "Ningún hallazgo se cierra sin re-prueba."
+      },
+      "id": "C4",
+      "origen": "plantilla",
+      "regla_de_medicion": {
+        "agregacion": "todos_cumplen",
+        "condicion": "reprueba_hecha == true",
+        "poblacion": "hallazgo_cerrado == true"
+      },
+      "riesgos_controlados": [
+        "R4"
+      ],
+      "tipo": "absoluto",
+      "valor_objetivo": true
+    },
+    {
+      "enunciado": {
+        "en": "Every test whose framework is older than the tolerated age goes through a person.",
+        "es": "Toda prueba cuyo marco supera la antigüedad tolerada pasa por una persona."
+      },
+      "id": "C5",
+      "origen": "plantilla",
+      "regla_de_medicion": {
+        "agregacion": "todos_cumplen",
+        "condicion": "pausa_humana == true",
+        "poblacion": "antiguedad_marco_dias > umbral.U3"
+      },
+      "riesgos_controlados": [
+        "R3"
+      ],
+      "tipo": "absoluto",
+      "valor_objetivo": true
+    }
+  ],
+  "decisiones": [
+    {
+      "estado": "decidida",
+      "id": "D1",
+      "justificacion": {
+        "en": "Invented citations are reduced.",
+        "es": "Se reducen las citas inventadas."
+      },
+      "opcion_elegida": {
+        "en": "only sources on a whitelist, each checked by code to exist and to say what is cited",
+        "es": "solo fuentes de una lista blanca, cada una comprobada por código: que exista y diga lo que se cita"
+      },
+      "opciones": [
+        {
+          "contras": {
+            "en": "any page the model finds can feed the catalogue, including invented or hostile ones",
+            "es": "cualquier página que el modelo encuentre puede alimentar el catálogo, incluso las inventadas u hostiles"
+          },
+          "nombre": {
+            "en": "any source the researcher finds",
+            "es": "cualquier fuente que halle el investigador"
+          }
+        },
+        {
+          "nombre": {
+            "en": "only sources on a whitelist, each checked by code to exist and to say what is cited",
+            "es": "solo fuentes de una lista blanca, cada una comprobada por código: que exista y diga lo que se cita"
+          },
+          "pros": {
+            "en": "cuts invented citations; the person sees what was consulted",
+            "es": "reduce las citas inventadas; la persona ve lo que se consultó"
+          }
+        }
+      ],
+      "origen": "usuario",
+      "pregunta": {
+        "en": "Which sources may the test researcher consult, and how many verified ones does a proposal need?",
+        "es": "¿Qué fuentes puede consultar el investigador de pruebas, y cuántas verificadas necesita una propuesta?"
+      },
+      "reversibilidad": "dos_vias",
+      "riesgos_asociados": [
+        "R1"
+      ],
+      "tipo": "explicita",
+      "umbrales_asociados": [
+        "U2"
+      ]
+    },
+    {
+      "estado": "decidida",
+      "id": "D2",
+      "justificacion": {
+        "en": "The verdict does not depend on the pasted text.",
+        "es": "El veredicto no depende del texto pegado."
+      },
+      "opcion_elegida": {
+        "en": "the catalogue's rule computes the verdict over fields whose quotes were verified",
+        "es": "la regla del catálogo calcula el veredicto sobre campos cuyas citas se verificaron"
+      },
+      "opciones": [
+        {
+          "contras": {
+            "en": "a model that reads hostile text can be talked into any verdict",
+            "es": "un modelo que lee texto hostil puede ser convencido de cualquier veredicto"
+          },
+          "nombre": {
+            "en": "the model issues the suggested verdict",
+            "es": "el modelo emite el veredicto sugerido"
+          }
+        },
+        {
+          "nombre": {
+            "en": "the catalogue's rule computes the verdict over fields whose quotes were verified",
+            "es": "la regla del catálogo calcula el veredicto sobre campos cuyas citas se verificaron"
+          },
+          "pros": {
+            "en": "the verdict is reproducible and does not depend on the pasted text",
+            "es": "el veredicto es reproducible y no depende del texto pegado"
+          }
+        }
+      ],
+      "origen": "usuario",
+      "pregunta": {
+        "en": "Who computes the suggested verdict of a pasted result, and how similar must a quote be to the source to count?",
+        "es": "¿Quién calcula el veredicto sugerido de un resultado pegado, y qué tan parecida a la fuente debe ser una cita para valer?"
+      },
+      "reversibilidad": "costosa",
+      "riesgos_asociados": [
+        "R2"
+      ],
+      "tipo": "explicita",
+      "umbrales_asociados": [
+        "U1"
+      ]
+    },
+    {
+      "estado": "decidida",
+      "id": "D3",
+      "justificacion": {
+        "en": "An auditor can reproduce it.",
+        "es": "Un auditor puede reproducirla."
+      },
+      "opcion_elegida": {
+        "en": "severity is always set by a person, with the framework's reference calculator",
+        "es": "la severidad la fija siempre una persona, con la calculadora de referencia del marco"
+      },
+      "opciones": [
+        {
+          "contras": {
+            "en": "a preloaded value anchors the reviewer and hides a hijacked suggestion",
+            "es": "un valor precargado ancla al revisor y esconde una sugerencia secuestrada"
+          },
+          "nombre": {
+            "en": "the extractor suggests a preloaded severity",
+            "es": "el extractor sugiere una severidad precargada"
+          }
+        },
+        {
+          "nombre": {
+            "en": "severity is always set by a person, with the framework's reference calculator",
+            "es": "la severidad la fija siempre una persona, con la calculadora de referencia del marco"
+          },
+          "pros": {
+            "en": "an auditor can reproduce the severity",
+            "es": "un auditor puede reproducir la severidad"
+          }
+        }
+      ],
+      "origen": "usuario",
+      "pregunta": {
+        "en": "Who sets the severity of a finding?",
+        "es": "¿Quién fija la severidad de un hallazgo?"
+      },
+      "reversibilidad": "dos_vias",
+      "riesgos_asociados": [
+        "R2"
+      ],
+      "tipo": "explicita"
+    },
+    {
+      "estado": "decidida",
+      "id": "D4",
+      "justificacion": {
+        "en": "The person sees the framework version before approving.",
+        "es": "La persona ve la versión del marco antes de aprobar."
+      },
+      "opcion_elegida": {
+        "en": "every new test enters as a draft and becomes active only when a person approves it",
+        "es": "toda prueba nueva entra como borrador y se activa solo cuando una persona la aprueba"
+      },
+      "opciones": [
+        {
+          "contras": {
+            "en": "a test tied to an outdated framework version enters unnoticed",
+            "es": "una prueba atada a una versión vieja del marco entra sin que nadie lo note"
+          },
+          "nombre": {
+            "en": "new tests enter the catalogue once the researcher verifies them",
+            "es": "las pruebas nuevas entran al catálogo cuando el investigador las verifica"
+          }
+        },
+        {
+          "nombre": {
+            "en": "every new test enters as a draft and becomes active only when a person approves it",
+            "es": "toda prueba nueva entra como borrador y se activa solo cuando una persona la aprueba"
+          },
+          "pros": {
+            "en": "the person sees the framework version and its age before approving",
+            "es": "la persona ve la versión del marco y su antigüedad antes de aprobar"
+          }
+        }
+      ],
+      "origen": "usuario",
+      "pregunta": {
+        "en": "What happens to a proposed test, and how old may its framework be before a person must look at it?",
+        "es": "¿Qué pasa con una prueba propuesta, y qué tan vieja puede ser la versión de su marco antes de que una persona deba mirarla?"
+      },
+      "reversibilidad": "costosa",
+      "riesgos_asociados": [
+        "R1",
+        "R3"
+      ],
+      "tipo": "explicita",
+      "umbrales_asociados": [
+        "U3"
+      ]
+    }
+  ],
+  "dominio_id": "dom-seguridad-ia",
+  "estado_aprobacion": "borrador",
+  "etiqueta_riesgo": {
+    "en": "Security tooling that reads hostile text by construction. Frameworks with version and date: OWASP LLM Top 10 (2025), NIST AI RMF 1.0 (under revision), ISO/IEC 42001:2023. Plan without a run.",
+    "es": "Herramienta de seguridad que lee texto hostil por construcción. Marcos con versión y fecha: OWASP LLM Top 10 (2025), NIST AI RMF 1.0 (en revisión), ISO/IEC 42001:2023. Plan sin corrida."
+  },
+  "flujo_objetivo": [
+    {
+      "en": "The task arrives: research a test or extract a result.",
+      "es": "Llega la tarea: investigar una prueba o extraer un resultado."
+    },
+    {
+      "en": "The researcher proposes and the code checks each source.",
+      "es": "El investigador propone y el código verifica cada fuente."
+    },
+    {
+      "en": "The pasted text is filtered for instructions.",
+      "es": "Se filtra el texto pegado por si trae instrucciones."
+    },
+    {
+      "en": "The extractor proposes fields with literal quotes.",
+      "es": "El extractor propone campos con cita literal."
+    },
+    {
+      "en": "The code checks the quotes and computes the verdict.",
+      "es": "El código verifica las citas y calcula el veredicto."
+    },
+    {
+      "en": "A person confirms or corrects.",
+      "es": "Una persona confirma o corrige."
+    }
+  ],
+  "huella": null,
+  "id": "fixture-dominio-nuevo",
+  "lotes": {
+    "completo": 200,
+    "corridas_espaciadas_de": 20,
+    "demo": 20,
+    "fuera_de_ci": true,
+    "modelo_alias": "sonnet",
+    "origen": "entrevistador",
+    "proveedor": "suscripcion-claude-code"
+  },
+  "nombre": {
+    "en": "AI security: test planning and result evidence",
+    "es": "Seguridad de IA: planeación de pruebas y evidencia de resultados"
+  },
+  "problema": {
+    "en": "Dependency alerts pile up unread. The agents propose tests and match results, and never close a finding on their own.",
+    "es": "Las alertas de dependencias se acumulan sin leer. Los agentes proponen pruebas y asocian resultados, y jamás cierran un hallazgo por su cuenta."
+  },
+  "riesgos": [
+    {
+      "causa": {
+        "en": "The model completes a reference from memory instead of from the source",
+        "es": "El modelo completa una referencia de memoria en vez de leerla en la fuente"
+      },
+      "deteccion": 3,
+      "detector_en_trazas": {
+        "condicion": "citas_sin_verificar > 0 AND pausa_humana == false",
+        "ocurre_si": "> 0",
+        "poblacion": "todos",
+        "tipo": "conteo"
+      },
+      "efecto": {
+        "en": "A test cites a source that does not exist; the auditor loses trust in the catalogue",
+        "es": "Una prueba cita una fuente que no existe; el auditor pierde confianza en el catálogo"
+      },
+      "id": "R1",
+      "mitigaciones": [
+        {
+          "accion": {
+            "en": "every source and quote is checked by code (it resolves; the quote is a literal substring); search and drafting are separate stages",
+            "es": "toda fuente y cita se comprueba por código (resuelve; la cita es subcadena literal); búsqueda y redacción van en etapas separadas"
+          },
+          "efecto_esperado": {
+            "en": "occurrence → 2",
+            "es": "ocurrencia → 2"
+          },
+          "momento": {
+            "en": "design",
+            "es": "diseño"
+          }
+        }
+      ],
+      "modo": {
+        "en": "Invented citation or source reaches a person unmarked",
+        "es": "Una cita o fuente inventada llega a una persona sin marca"
+      },
+      "ocurrencia": 5,
+      "origen": "plantilla",
+      "severidad": 9
+    },
+    {
+      "causa": {
+        "en": "The pasted text addresses the model and the model obeys it",
+        "es": "El texto pegado le habla al modelo y el modelo le obedece"
+      },
+      "deteccion": 4,
+      "detector_en_trazas": {
+        "condicion": "veredicto_por_regla == false",
+        "ocurre_si": "> 0",
+        "poblacion": "marca_instruccion == true",
+        "tipo": "conteo"
+      },
+      "efecto": {
+        "en": "A failing control is reported as passing, or the reverse",
+        "es": "Un control que falla se informa como superado, o al revés"
+      },
+      "id": "R2",
+      "mitigaciones": [
+        {
+          "accion": {
+            "en": "instruction filter that marks (never rejects); verdict computed by the catalogue’s rule; the skill has no tools and no network",
+            "es": "filtro de instrucciones que marca (nunca rechaza); veredicto calculado por la regla del catálogo; la skill no tiene herramientas ni red"
+          },
+          "efecto_esperado": {
+            "en": "occurrence → 2",
+            "es": "ocurrencia → 2"
+          },
+          "momento": {
+            "en": "design",
+            "es": "diseño"
+          }
+        }
+      ],
+      "modo": {
+        "en": "A skill hijacked by the text it analyses",
+        "es": "Una skill secuestrada por el texto que analiza"
+      },
+      "ocurrencia": 4,
+      "origen": "plantilla",
+      "severidad": 9
+    },
+    {
+      "causa": {
+        "en": "A framework changes numbering or content and the test keeps pointing at the old version",
+        "es": "Un marco cambia de numeración o de contenido y la prueba sigue apuntando a la versión vieja"
+      },
+      "deteccion": 4,
+      "detector_en_trazas": {
+        "condicion": "antiguedad_marco_dias > umbral.U3 AND pausa_humana == false",
+        "ocurre_si": "> 0",
+        "poblacion": "prueba_nueva == true",
+        "tipo": "conteo"
+      },
+      "efecto": {
+        "en": "Evidence is attached to a control that no longer says what the test checks",
+        "es": "La evidencia queda atada a un control que ya no dice lo que la prueba verifica"
+      },
+      "id": "R3",
+      "mitigaciones": [
+        {
+          "accion": {
+            "en": "every test carries the framework version and its age; past the tolerated age it goes to a person",
+            "es": "toda prueba lleva la versión del marco y su antigüedad; pasada la tolerada, va a una persona"
+          },
+          "efecto_esperado": {
+            "en": "detection → 2",
+            "es": "detección → 2"
+          },
+          "momento": {
+            "en": "design",
+            "es": "diseño"
+          }
+        }
+      ],
+      "modo": {
+        "en": "Test stale because the framework version changed",
+        "es": "Prueba obsoleta porque cambió la versión del marco"
+      },
+      "ocurrencia": 6,
+      "origen": "plantilla",
+      "severidad": 7
+    },
+    {
+      "causa": {
+        "en": "A finding stops appearing in a later result and the extractor reads that as fixed",
+        "es": "Un hallazgo deja de aparecer en un resultado posterior y el extractor lo lee como corregido"
+      },
+      "deteccion": 3,
+      "detector_en_trazas": {
+        "condicion": "reprueba_hecha == false",
+        "ocurre_si": "> 0",
+        "poblacion": "hallazgo_cerrado == true",
+        "tipo": "conteo"
+      },
+      "efecto": {
+        "en": "A control is shown as fixed while it still fails",
+        "es": "Un control se muestra como corregido mientras sigue fallando"
+      },
+      "id": "R4",
+      "mitigaciones": [
+        {
+          "accion": {
+            "en": "closure only by a re-test with the same configuration; absence never closes",
+            "es": "cierre solo por re-prueba con la misma configuración; la ausencia nunca cierra"
+          },
+          "efecto_esperado": {
+            "en": "occurrence → 1",
+            "es": "ocurrencia → 1"
+          },
+          "momento": {
+            "en": "design",
+            "es": "diseño"
+          }
+        }
+      ],
+      "modo": {
+        "en": "Finding closed without a re-test",
+        "es": "Hallazgo cerrado sin re-prueba"
+      },
+      "ocurrencia": 3,
+      "origen": "plantilla",
+      "severidad": 10
+    }
+  ],
+  "supuestos": [
+    {
+      "criticidad": "alta",
+      "enunciado": {
+        "en": "Checking that a quote is a literal substring of its source, after normalising spaces, is enough to catch an invented citation.",
+        "es": "Comprobar que una cita es subcadena literal de su fuente, tras normalizar espacios, basta para detectar una cita inventada."
+      },
+      "estado": "sin_probar",
+      "id": "S1",
+      "origen": "plantilla",
+      "prueba_barata": {
+        "en": "Seed 20 citations, 10 invented and 10 real; the verifier must mark all 10 invented ones.",
+        "es": "Sembrar 20 citas, 10 inventadas y 10 reales; el verificador debe marcar las 10 inventadas."
+      }
+    },
+    {
+      "criticidad": "alta",
+      "enunciado": {
+        "en": "A skill with no tools and no network can only skew its own output; it cannot act on the system.",
+        "es": "Una skill sin herramientas ni red solo puede sesgar su propia salida; no puede actuar sobre el sistema."
+      },
+      "estado": "sin_probar",
+      "id": "S2",
+      "origen": "plantilla",
+      "prueba_barata": {
+        "en": "Paste texts with planted instructions into each skill and check the output holds no action and the rule’s verdict does not change.",
+        "es": "Pegar en cada skill textos con instrucciones sembradas y comprobar que la salida no trae acciones y que el veredicto de la regla no cambia."
+      }
+    },
+    {
+      "criticidad": "media",
+      "enunciado": {
+        "en": "The verdict the rule computes matches a person’s in at least 90% of pasted results.",
+        "es": "El veredicto que calcula la regla coincide con el de una persona en al menos el 90 % de los resultados pegados."
+      },
+      "estado": "sin_probar",
+      "id": "S3",
+      "origen": "plantilla",
+      "prueba_barata": {
+        "en": "A person rates 20 pasted results and the rule’s verdict is compared with theirs.",
+        "es": "Una persona califica 20 resultados pegados y se compara el veredicto de la regla con el suyo."
+      }
+    }
+  ],
+  "umbrales": [
+    {
+      "consecuencia_si_verdadero": "pausa_humana",
+      "decision_id": "D2",
+      "descripcion_lider": {
+        "en": "Below this resemblance to the source, the quote does not count and a person decides.",
+        "es": "Por debajo de este parecido con la fuente, la cita no vale y decide una persona."
+      },
+      "id": "U1",
+      "inclusivo": false,
+      "nombre": {
+        "en": "Minimum similarity of a literal quote",
+        "es": "Similitud mínima de una cita literal"
+      },
+      "operador": "menor_que",
+      "origen": "usuario",
+      "rango_jugable": {
+        "max": 1,
+        "min": 0.8,
+        "paso": 0.01
+      },
+      "senal": "similitud_cita",
+      "valor_en_plan": 0.95
+    },
+    {
+      "consecuencia_si_verdadero": "pausa_humana",
+      "decision_id": "D1",
+      "descripcion_lider": {
+        "en": "With fewer verified sources than this, the proposal goes to a person marked as unverified.",
+        "es": "Con menos fuentes verificadas que estas, la propuesta va a una persona marcada como no verificada."
+      },
+      "id": "U2",
+      "inclusivo": false,
+      "nombre": {
+        "en": "Minimum number of verified sources",
+        "es": "Número mínimo de fuentes verificadas"
+      },
+      "operador": "menor_que",
+      "origen": "usuario",
+      "rango_jugable": {
+        "max": 5,
+        "min": 1,
+        "paso": 1
+      },
+      "senal": "fuentes_verificadas",
+      "valor_en_plan": 3
+    },
+    {
+      "consecuencia_si_verdadero": "pausa_humana",
+      "decision_id": "D4",
+      "descripcion_lider": {
+        "en": "If the framework version is older than this, a person looks at the test before it is used.",
+        "es": "Si la versión del marco es más vieja que esto, una persona mira la prueba antes de usarla."
+      },
+      "id": "U3",
+      "inclusivo": false,
+      "nombre": {
+        "en": "Tolerated age of the framework version",
+        "es": "Antigüedad tolerada de la versión del marco"
+      },
+      "operador": "mayor_que",
+      "origen": "usuario",
+      "rango_jugable": {
+        "max": 365,
+        "min": 30,
+        "paso": 5
+      },
+      "senal": "antiguedad_marco_dias",
+      "unidad": {
+        "en": "days",
+        "es": "días"
+      },
+      "valor_en_plan": 120
+    }
+  ],
+  "version": "1.0.0"
+}

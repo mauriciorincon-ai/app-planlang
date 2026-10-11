@@ -1,30 +1,35 @@
 /**
- * `pnpm plan:aprobar --demo b --por "<nombre>" --el <YYYY-MM-DD> [--con-contradicciones]`
+ * `pnpm plan:aprobar (--demo b | --dominio <id> --plan <id>) --por "<nombre>" --el <YYYY-MM-DD>
+ *  [--con-contradicciones]`
  *
- * Lo corre el constructor SOLO después de que el usuario dice «apruebo el plan B». Revisa el borrador otra vez
+ * Lo corre el constructor SOLO después de que el usuario dice «apruebo el plan». Revisa el borrador otra vez
  * (M1, contradicciones, pendientes): lo pendiente nunca se aprueba, y una contradicción solo pasa si el usuario la
  * aceptó de forma explícita (`--con-contradicciones`, registrado en la bitácora). Escribe `plans/demo-<x>/v1.json`
- * con `aprobado_por`, `aprobado_el` y huella (`aprobarPlan` de M1).
+ * (o `plans/<plan>/v1.json` en un plan real) con `aprobado_por`, `aprobado_el` y huella (`aprobarPlan` de M1).
  */
 import { existsSync } from "node:fs";
 import { aprobarPlan, impideAprobar } from "../core/plan";
-import { DEMOS_ENTREVISTABLES, revisarDirectorio } from "./entrevistar";
+import {
+  DEMOS_ENTREVISTABLES,
+  objetivoDeEntrevista,
+  revisarDirectorio,
+} from "./entrevistar";
 import { argumentos, escribirJson, leerJson } from "./_io";
 
 async function main(): Promise<number> {
   const args = argumentos(process.argv.slice(2));
+  const objetivo = objetivoDeEntrevista(args);
   if (
-    typeof args.demo !== "string" ||
-    !DEMOS_ENTREVISTABLES.includes(args.demo) ||
+    !objetivo ||
     typeof args.por !== "string" ||
     typeof args.el !== "string"
   ) {
     console.error(
-      `uso: plan:aprobar --demo ${DEMOS_ENTREVISTABLES.join("|")} --por "<nombre>" --el <YYYY-MM-DD> [--con-contradicciones]`,
+      `uso: plan:aprobar (--demo ${DEMOS_ENTREVISTABLES.join("|")} | --dominio <id> --plan <id>) --por "<nombre>" --el <YYYY-MM-DD> [--con-contradicciones]`,
     );
     return 2;
   }
-  const directorio = `plans/demo-${args.demo}`;
+  const directorio = objetivo.directorio;
   const destino = `${directorio}/v1.json`;
   if (existsSync(destino)) {
     console.error(

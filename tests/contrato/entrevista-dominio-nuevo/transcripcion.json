@@ -1,0 +1,629 @@
+{
+  "costo_nominal_usd": 0,
+  "demo_id": "fixture-dominio-nuevo",
+  "fecha": "2026-10-04",
+  "formato": "planlang-transcripcion/v1",
+  "huella": "396655c1d1a422307f5cc16bbcf112a23aef634721616c31cd0af9f4e9bfc40d",
+  "idioma": "es",
+  "llamadas_al_modelo": 8,
+  "modelo": "simulado",
+  "pasadas": 1,
+  "plan_id": "fixture-dominio-nuevo",
+  "plantilla": {
+    "huella": "e441ceffaaf856e000a723811a33b13392673550b84af867c78bcd0fab63e43e",
+    "id": "dom-seguridad-ia",
+    "version": "1.1.0"
+  },
+  "preguntas": [
+    {
+      "ejemplo": {
+        "en": "“Dependency alerts pile up unread; the agent sorts each one into the list of known checks and never closes an alert on its own.”",
+        "es": "«Las alertas de dependencias se acumulan sin leer; el agente clasifica cada una en la lista de verificaciones conocidas y jamás cierra una alerta por su cuenta.»"
+      },
+      "estado": "respondida",
+      "id": "P01",
+      "obligatoria": true,
+      "pregunta": {
+        "en": "What problem do the agents solve, for whom, and what must they never do?",
+        "es": "¿Qué problema resuelven los agentes, para quién, y qué no deben hacer jamás?"
+      },
+      "seccion": "problema",
+      "turnos": [
+        {
+          "costo_nominal_usd": 0,
+          "elementos": [],
+          "explicaciones": [],
+          "pasada": 1,
+          "redaccion": {
+            "en": "entrevistador",
+            "es": "usuario"
+          },
+          "respuesta": {
+            "idioma": "es",
+            "texto": "Las alertas de dependencias se acumulan sin leer. Los agentes proponen pruebas y asocian resultados, y jamás cierran un hallazgo por su cuenta."
+          },
+          "resultado": "redactada",
+          "tokens_entrada": 2011,
+          "tokens_salida": 117
+        }
+      ]
+    },
+    {
+      "ejemplo": {
+        "en": "“I accept the template’s and add the team that owns the CI pipeline, which receives the final report.”",
+        "es": "«Acepto los de la plantilla y agrego al equipo dueño del flujo de integración, que recibe el informe final.»"
+      },
+      "estado": "aceptada",
+      "id": "P02",
+      "obligatoria": false,
+      "pregunta": {
+        "en": "Who takes part, people and systems? Check the template’s list: is anyone missing or extra?",
+        "es": "¿Quiénes participan, personas y sistemas? Revisa los de la plantilla: ¿falta o sobra alguno?"
+      },
+      "seccion": "actores",
+      "turnos": [
+        {
+          "elementos": [
+            {
+              "id": "analista",
+              "origen": "plantilla"
+            },
+            {
+              "id": "propietario",
+              "origen": "plantilla"
+            },
+            {
+              "id": "auditor",
+              "origen": "plantilla"
+            },
+            {
+              "id": "revisor",
+              "origen": "plantilla"
+            },
+            {
+              "id": "catalogo",
+              "origen": "plantilla"
+            },
+            {
+              "id": "investigador_pruebas",
+              "origen": "plantilla"
+            },
+            {
+              "id": "extractor_resultados",
+              "origen": "plantilla"
+            }
+          ],
+          "pasada": 1,
+          "respuesta": {
+            "idioma": "es",
+            "texto": "acepto"
+          },
+          "resultado": "aceptada"
+        }
+      ]
+    },
+    {
+      "ejemplo": {
+        "en": "“An alert arrives; the text is filtered for instructions; fields are extracted with quotes; the code checks the quotes; a person confirms.”",
+        "es": "«Llega una alerta; se filtra el texto por si trae instrucciones; se extraen campos con cita; el código verifica las citas; una persona confirma.»"
+      },
+      "estado": "respondida",
+      "id": "P03",
+      "obligatoria": true,
+      "pregunta": {
+        "en": "What path does each task follow, step by step, from arrival to a person’s decision? Cover both agents.",
+        "es": "¿Qué recorrido sigue cada tarea, paso a paso, desde que llega hasta la decisión de una persona? Cubre los dos agentes."
+      },
+      "seccion": "flujo",
+      "turnos": [
+        {
+          "costo_nominal_usd": 0,
+          "elementos": [],
+          "explicaciones": [],
+          "pasada": 1,
+          "redaccion": {
+            "en": "entrevistador",
+            "es": "usuario"
+          },
+          "respuesta": {
+            "idioma": "es",
+            "texto": "Llega la tarea; si es investigar, el investigador propone y el código verifica las fuentes; si es extraer, se filtra el texto, se extraen campos con cita, el código verifica las citas y calcula el veredicto; una persona confirma."
+          },
+          "resultado": "redactada",
+          "tokens_entrada": 1999,
+          "tokens_salida": 187
+        }
+      ]
+    },
+    {
+      "ejemplo": {
+        "en": "“Only the vendor’s own advisories and two public catalogues; a proposal with fewer than two verified sources goes to a person marked as unverified.”",
+        "es": "«Solo los avisos del propio proveedor y dos catálogos públicos; una propuesta con menos de dos fuentes verificadas va a una persona marcada como no verificada.»"
+      },
+      "estado": "respondida",
+      "id": "P04",
+      "obligatoria": true,
+      "pregunta": {
+        "en": "Which sources may the test researcher consult, and what happens to a proposal with too few verified ones?",
+        "es": "¿Qué fuentes puede consultar el investigador de pruebas, y qué pasa con una propuesta que tiene pocas fuentes verificadas?"
+      },
+      "seccion": "decisiones",
+      "turnos": [
+        {
+          "costo_nominal_usd": 0,
+          "elementos": [
+            {
+              "id": "D1",
+              "origen": "usuario"
+            },
+            {
+              "id": "D2",
+              "origen": "plantilla"
+            },
+            {
+              "id": "D3",
+              "origen": "plantilla"
+            },
+            {
+              "id": "D4",
+              "origen": "plantilla"
+            }
+          ],
+          "explicaciones": [],
+          "pasada": 1,
+          "redaccion": {
+            "en": "entrevistador",
+            "es": "usuario"
+          },
+          "respuesta": {
+            "idioma": "es",
+            "texto": "Solo fuentes de la lista blanca, comprobadas por código."
+          },
+          "resultado": "redactada",
+          "tokens_entrada": 3147,
+          "tokens_salida": 1134
+        }
+      ]
+    },
+    {
+      "ejemplo": {
+        "en": "“The verdict comes from the catalogue’s rule; a quote counts only if it matches the source text exactly after normalising spaces.”",
+        "es": "«El veredicto sale de la regla del catálogo; una cita vale solo si coincide exactamente con el texto de la fuente tras normalizar los espacios.»"
+      },
+      "estado": "respondida",
+      "id": "P05",
+      "obligatoria": true,
+      "pregunta": {
+        "en": "Who computes the suggested verdict, and how closely must a quote match its source?",
+        "es": "¿Quién calcula el veredicto sugerido, y qué tan de cerca debe coincidir una cita con su fuente?"
+      },
+      "seccion": "decisiones",
+      "turnos": [
+        {
+          "costo_nominal_usd": 0,
+          "elementos": [
+            {
+              "id": "D1",
+              "origen": "usuario"
+            },
+            {
+              "id": "D2",
+              "origen": "usuario"
+            },
+            {
+              "id": "D3",
+              "origen": "plantilla"
+            },
+            {
+              "id": "D4",
+              "origen": "plantilla"
+            }
+          ],
+          "explicaciones": [],
+          "pasada": 1,
+          "redaccion": {
+            "en": "entrevistador",
+            "es": "usuario"
+          },
+          "respuesta": {
+            "idioma": "es",
+            "texto": "El veredicto lo calcula la regla del catálogo sobre campos con cita verificada."
+          },
+          "resultado": "redactada",
+          "tokens_entrada": 3233,
+          "tokens_salida": 1216
+        }
+      ]
+    },
+    {
+      "ejemplo": {
+        "en": "“Severity is always entered by the analyst with the reference calculator; the agents never suggest a value.”",
+        "es": "«La severidad la escribe siempre el analista con la calculadora de referencia; los agentes nunca sugieren un valor.»"
+      },
+      "estado": "respondida",
+      "id": "P06",
+      "obligatoria": true,
+      "pregunta": {
+        "en": "Who sets the severity of a finding?",
+        "es": "¿Quién fija la severidad de un hallazgo?"
+      },
+      "seccion": "decisiones",
+      "turnos": [
+        {
+          "costo_nominal_usd": 0,
+          "elementos": [
+            {
+              "id": "D1",
+              "origen": "usuario"
+            },
+            {
+              "id": "D2",
+              "origen": "usuario"
+            },
+            {
+              "id": "D3",
+              "origen": "usuario"
+            },
+            {
+              "id": "D4",
+              "origen": "plantilla"
+            }
+          ],
+          "explicaciones": [],
+          "pasada": 1,
+          "redaccion": {
+            "en": "entrevistador",
+            "es": "usuario"
+          },
+          "respuesta": {
+            "idioma": "es",
+            "texto": "La severidad la fija siempre una persona."
+          },
+          "resultado": "redactada",
+          "tokens_entrada": 3298,
+          "tokens_salida": 1290
+        }
+      ]
+    },
+    {
+      "ejemplo": {
+        "en": "“A new test is a draft until the reviewer approves it; a framework older than 180 days goes to a person.”",
+        "es": "«Una prueba nueva es borrador hasta que el revisor la aprueba; un marco de más de 180 días pasa a una persona.»"
+      },
+      "estado": "respondida",
+      "id": "P07",
+      "obligatoria": true,
+      "pregunta": {
+        "en": "What happens to a proposed test, and how old may its framework version be before a person must look at it?",
+        "es": "¿Qué pasa con una prueba propuesta, y qué tan vieja puede ser la versión de su marco antes de que una persona deba mirarla?"
+      },
+      "seccion": "decisiones",
+      "turnos": [
+        {
+          "costo_nominal_usd": 0,
+          "elementos": [
+            {
+              "id": "D1",
+              "origen": "usuario"
+            },
+            {
+              "id": "D2",
+              "origen": "usuario"
+            },
+            {
+              "id": "D3",
+              "origen": "usuario"
+            },
+            {
+              "id": "D4",
+              "origen": "usuario"
+            }
+          ],
+          "explicaciones": [],
+          "pasada": 1,
+          "redaccion": {
+            "en": "entrevistador",
+            "es": "usuario"
+          },
+          "respuesta": {
+            "idioma": "es",
+            "texto": "Una prueba nueva es borrador hasta que una persona la aprueba."
+          },
+          "resultado": "redactada",
+          "tokens_entrada": 3404,
+          "tokens_salida": 1378
+        }
+      ]
+    },
+    {
+      "ejemplo": {
+        "en": "“I accept the template’s and add one: a pasted result that names the wrong test, severity 6, likelihood 4.”",
+        "es": "«Acepto los de la plantilla y agrego uno: un resultado pegado que se asocia a la prueba equivocada, severidad 6, probabilidad 4.»"
+      },
+      "estado": "aceptada",
+      "id": "P08",
+      "obligatoria": false,
+      "pregunta": {
+        "en": "What can go wrong, how severe would it be (1 to 10) and how likely? Check the template’s.",
+        "es": "¿Qué puede salir mal, qué tan grave sería (1 a 10) y qué tan probable? Revisa los de la plantilla."
+      },
+      "seccion": "riesgos",
+      "turnos": [
+        {
+          "elementos": [
+            {
+              "id": "R1",
+              "origen": "plantilla"
+            },
+            {
+              "id": "R2",
+              "origen": "plantilla"
+            },
+            {
+              "id": "R3",
+              "origen": "plantilla"
+            },
+            {
+              "id": "R4",
+              "origen": "plantilla"
+            }
+          ],
+          "pasada": 1,
+          "respuesta": {
+            "idioma": "es",
+            "texto": "acepto"
+          },
+          "resultado": "aceptada"
+        }
+      ]
+    },
+    {
+      "ejemplo": {
+        "en": "“An invented citation shows when a quote fails verification and no person paused on it.”",
+        "es": "«Una cita inventada se ve cuando una cita no pasa la verificación y ninguna persona pausó sobre ella.»"
+      },
+      "estado": "aceptada",
+      "id": "P09",
+      "obligatoria": false,
+      "pregunta": {
+        "en": "How do the traces show that a risk occurred?",
+        "es": "¿Cómo se sabe en las trazas que un riesgo ocurrió?"
+      },
+      "seccion": "riesgos",
+      "turnos": [
+        {
+          "elementos": [
+            {
+              "id": "R1",
+              "origen": "plantilla"
+            },
+            {
+              "id": "R2",
+              "origen": "plantilla"
+            },
+            {
+              "id": "R3",
+              "origen": "plantilla"
+            },
+            {
+              "id": "R4",
+              "origen": "plantilla"
+            }
+          ],
+          "pasada": 1,
+          "respuesta": {
+            "idioma": "es",
+            "texto": "Acepto."
+          },
+          "resultado": "aceptada"
+        }
+      ]
+    },
+    {
+      "ejemplo": {
+        "en": "“That a skill with no tools and no network can only skew its output; I test it by pasting text with planted instructions.”",
+        "es": "«Que una skill sin herramientas ni red solo puede sesgar su salida; lo pruebo pegando texto con instrucciones sembradas.»"
+      },
+      "estado": "respondida",
+      "id": "P10",
+      "obligatoria": true,
+      "pregunta": {
+        "en": "What do you take for granted that, if it turned out false, would change the design? How would you test it cheaply?",
+        "es": "¿Qué das por cierto que, si resultara falso, cambiaría el diseño? ¿Cómo lo probarías barato?"
+      },
+      "seccion": "supuestos",
+      "turnos": [
+        {
+          "costo_nominal_usd": 0,
+          "elementos": [
+            {
+              "id": "S1",
+              "origen": "plantilla"
+            },
+            {
+              "id": "S2",
+              "origen": "plantilla"
+            },
+            {
+              "id": "S3",
+              "origen": "plantilla"
+            }
+          ],
+          "explicaciones": [],
+          "pasada": 1,
+          "redaccion": {
+            "en": "entrevistador",
+            "es": "usuario"
+          },
+          "respuesta": {
+            "idioma": "es",
+            "texto": "Acepto los de la plantilla; los pruebo antes de construir."
+          },
+          "resultado": "redactada",
+          "tokens_entrada": 2411,
+          "tokens_salida": 441
+        }
+      ]
+    },
+    {
+      "ejemplo": {
+        "en": "“Always: every quote shown unmarked was verified. Rate: at least 80% of new tests tied to a control.”",
+        "es": "«Siempre: toda cita mostrada sin marca fue verificada. Tasa: al menos el 80 % de las pruebas nuevas atadas a un control.»"
+      },
+      "estado": "aceptada",
+      "id": "P11",
+      "obligatoria": false,
+      "pregunta": {
+        "en": "What must always hold, and what minimum rate do you accept? The interviewer proposes how to measure each one.",
+        "es": "¿Qué tiene que cumplirse siempre, y qué tasa mínima aceptas? El entrevistador propone cómo medir cada uno."
+      },
+      "seccion": "criterios",
+      "turnos": [
+        {
+          "elementos": [
+            {
+              "id": "C1",
+              "origen": "plantilla"
+            },
+            {
+              "id": "C2",
+              "origen": "plantilla"
+            },
+            {
+              "id": "C3",
+              "origen": "plantilla"
+            },
+            {
+              "id": "C4",
+              "origen": "plantilla"
+            },
+            {
+              "id": "C5",
+              "origen": "plantilla"
+            }
+          ],
+          "pasada": 1,
+          "respuesta": {
+            "idioma": "es",
+            "texto": "ok"
+          },
+          "resultado": "aceptada"
+        }
+      ]
+    },
+    {
+      "ejemplo": {
+        "en": "“Minimum quote similarity 1.0; at least 2 verified sources; a framework older than 180 days goes to a person.”",
+        "es": "«Similitud mínima de cita 1,0; al menos 2 fuentes verificadas; un marco de más de 180 días pasa a una persona.»"
+      },
+      "estado": "respondida",
+      "id": "P12",
+      "obligatoria": true,
+      "pregunta": {
+        "en": "At what value does the agent stop at each proposed threshold? If there is a grey zone, where does it start and end?",
+        "es": "¿Con qué valor se detiene el agente en cada umbral propuesto? Si hay zona gris, ¿dónde empieza y dónde termina?"
+      },
+      "seccion": "umbrales",
+      "turnos": [
+        {
+          "costo_nominal_usd": 0,
+          "elementos": [
+            {
+              "id": "U1",
+              "origen": "usuario"
+            },
+            {
+              "id": "U2",
+              "origen": "usuario"
+            },
+            {
+              "id": "U3",
+              "origen": "usuario"
+            }
+          ],
+          "explicaciones": [
+            {
+              "elemento": "U1",
+              "en": "Measured with the threshold's declared signal.",
+              "es": "Se mide con la señal declarada en el umbral."
+            },
+            {
+              "elemento": "U2",
+              "en": "Measured with the threshold's declared signal.",
+              "es": "Se mide con la señal declarada en el umbral."
+            },
+            {
+              "elemento": "U3",
+              "en": "Measured with the threshold's declared signal.",
+              "es": "Se mide con la señal declarada en el umbral."
+            }
+          ],
+          "pasada": 1,
+          "redaccion": {
+            "en": "entrevistador",
+            "es": "usuario"
+          },
+          "respuesta": {
+            "idioma": "es",
+            "texto": "Similitud mínima 0,95; al menos 3 fuentes verificadas; un marco de más de 120 días pasa a una persona."
+          },
+          "resultado": "redactada",
+          "tokens_entrada": 2459,
+          "tokens_salida": 548
+        }
+      ]
+    },
+    {
+      "ejemplo": {
+        "en": "“I accept the proposal, but the instruction filter goes before the extractor.”",
+        "es": "«Acepto la propuesta, pero el filtro de instrucciones va antes del extractor.»"
+      },
+      "estado": "aceptada",
+      "id": "P13",
+      "obligatoria": false,
+      "pregunta": {
+        "en": "Which steps do the agents follow and at which do they stop for a person? Check the proposal: nodes, branches and pause.",
+        "es": "¿Qué pasos siguen los agentes y en cuáles se detienen para una persona? Revisa la propuesta: nodos, ramas y pausa."
+      },
+      "seccion": "contrato",
+      "turnos": [
+        {
+          "elementos": [],
+          "pasada": 1,
+          "respuesta": {
+            "idioma": "es",
+            "texto": "acepto"
+          },
+          "resultado": "aceptada"
+        }
+      ]
+    },
+    {
+      "ejemplo": {
+        "en": "“There is no run of this plan in planlang; I keep the defaults and the real batch is up to the app that builds the agents.”",
+        "es": "«Este plan no se corre en planlang; dejo los valores por defecto y el lote real lo define la app que construye los agentes.»"
+      },
+      "estado": "aceptada",
+      "id": "P14",
+      "obligatoria": false,
+      "pregunta": {
+        "en": "How many cases would a test batch and a full one have, how many per session, and with which model?",
+        "es": "¿Cuántos casos tendría un lote de prueba y uno completo, de a cuántos se correrían y con qué modelo?"
+      },
+      "seccion": "lotes",
+      "turnos": [
+        {
+          "elementos": [],
+          "pasada": 1,
+          "respuesta": {
+            "idioma": "es",
+            "texto": "ok"
+          },
+          "resultado": "aceptada"
+        }
+      ]
+    }
+  ],
+  "proveedor": "simulado",
+  "senales_derivadas": []
+}

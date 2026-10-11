@@ -35,6 +35,8 @@ export {
 export {
   comandoRetomar,
   demoDelPlan,
+  objetivoDelPlan,
+  type ObjetivoDelPlan,
   revisarBorrador,
   textoDeRevision,
   impideAprobar,
