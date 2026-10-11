@@ -17,6 +17,12 @@ import {
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
+import {
+  revisarBorrador,
+  textoDeRevision,
+  TranscripcionSchema,
+} from "../../../../core/plan";
+import { versionDeLaCarpeta } from "../../../../scripts/entrevistar";
 import { destinoDeAprobacion } from "../../../../scripts/plan-aprobar";
 
 const BASE = "plans/hackguard-agentes";
@@ -46,6 +52,59 @@ describe("destinoDeAprobacion", () => {
     for (const malo of ["1", "0", "02", "2.1", "-3", "dos", "", "2/../x"])
       expect(destinoDeAprobacion(BASE, malo), malo).toBeNull();
     expect(destinoDeAprobacion(BASE, true)).toBeNull();
+  });
+});
+
+describe("la revisión dice cómo se aprueba la versión que propone", () => {
+  const dir = resolve("tests/contrato/entrevista-dominio-nuevo");
+  const borrador: unknown = JSON.parse(
+    readFileSync(join(dir, "v0-borrador.json"), "utf8"),
+  );
+  const revision = revisarBorrador(
+    borrador,
+    TranscripcionSchema.parse(
+      JSON.parse(readFileSync(join(dir, "transcripcion.json"), "utf8")),
+    ),
+  );
+
+  it("la versión sale de la carpeta: vN dentro de un plan, nunca un plan que se llama v2", () => {
+    expect(versionDeLaCarpeta("plans/hackguard-agentes/v2")).toBe(2);
+    expect(versionDeLaCarpeta("plans/hackguard-agentes/v10/")).toBe(10);
+    for (const primera of [
+      "plans/hackguard-agentes",
+      "plans/demo-b",
+      "plans/v2",
+      "v2",
+      "plans/hackguard-agentes/v1",
+      "plans/hackguard-agentes/v02",
+    ])
+      expect(versionDeLaCarpeta(primera), primera).toBe(1);
+  });
+
+  it("la v1 conserva su texto de siempre (frase, comando y archivo)", () => {
+    const es = textoDeRevision(borrador, revision, "es");
+    expect(es).toContain("el plan pasa a v1 solo cuando dices");
+    expect(es).toContain("«apruebo el plan fixture-dominio-nuevo»");
+    expect(es).toContain("`plans/fixture-dominio-nuevo/v1.json`");
+    expect(es).not.toContain("--version");
+    expect(textoDeRevision(borrador, revision, "es", 1)).toBe(es);
+  });
+
+  it("una versión nueva se aprueba con «apruebo el plan vN», --version N y su vN.json, en los dos idiomas", () => {
+    const es = textoDeRevision(borrador, revision, "es", 2);
+    expect(es).toContain("el plan pasa a v2 solo cuando dices");
+    expect(es).toContain("«apruebo el plan v2»");
+    expect(es).toContain(
+      "--dominio dom-seguridad-ia --plan fixture-dominio-nuevo --version 2 --por",
+    );
+    expect(es).toContain("`plans/fixture-dominio-nuevo/v2.json`");
+    expect(es).not.toContain("v1.json");
+    const en = textoDeRevision(borrador, revision, "en", 2);
+    expect(en).toContain("the plan becomes v2 only when you say");
+    expect(en).toContain("“I approve plan v2”");
+    expect(en).toContain("--plan fixture-dominio-nuevo --version 2 --por");
+    expect(en).toContain("`plans/fixture-dominio-nuevo/v2.json`");
+    expect(en).not.toContain("v1.json");
   });
 });
 

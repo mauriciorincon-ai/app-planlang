@@ -147,7 +147,10 @@ export function pendientesDe(t: Transcripcion): PreguntaPendiente[] {
  */
 export function demoDelPlan(planId: string): string {
   const m = /^plan-demo-([a-z0-9]+)$/.exec(planId);
-  if (!m) throw new Error(`revisión: el plan_id «${planId}» no dice de qué demo es (plan-demo-<x>)`);
+  if (!m)
+    throw new Error(
+      `revisión: el plan_id «${planId}» no dice de qué demo es (plan-demo-<x>)`,
+    );
   return m[1]!;
 }
 
@@ -182,6 +185,17 @@ export function objetivoDelPlan(
     nombre: planId,
   };
 }
+
+/**
+ * Cómo se aprueba (S6): la primera versión de un plan se aprueba con «apruebo el plan <nombre>» y sin flag; una
+ * versión nueva (N ≥ 2), con «apruebo el plan vN» y `--version N`. La v1 conserva su texto de siempre.
+ */
+const fraseEs = (o: ObjetivoDelPlan, version: number): string =>
+  version > 1 ? `apruebo el plan v${version}` : `apruebo el plan ${o.nombre}`;
+const fraseEn = (o: ObjetivoDelPlan, version: number): string =>
+  version > 1 ? `I approve plan v${version}` : `I approve plan ${o.nombre}`;
+const banderaDeVersion = (version: number): string =>
+  version > 1 ? ` --version ${version}` : "";
 
 /** El comando que retoma la entrevista del plan: las pendientes lo citan. */
 export const comandoRetomar = (planId: string, dominioId: string) =>
@@ -280,8 +294,8 @@ const NOMBRE_IDIOMA: Readonly<
 const T = {
   es: {
     titulo: "Revisión del borrador",
-    intro: (o: ObjetivoDelPlan) =>
-      `Lo propuso el entrevistador con tus respuestas. Nada está aprobado: el plan pasa a v1 solo cuando dices «apruebo el plan ${o.nombre}».`,
+    intro: (o: ObjetivoDelPlan, version: number) =>
+      `Lo propuso el entrevistador con tus respuestas. Nada está aprobado: el plan pasa a v${version} solo cuando dices «${fraseEs(o, version)}».`,
     estado: "Estado",
     listo:
       "M1 lo acepta: se puede aprobar si estás de acuerdo con lo de abajo.",
@@ -312,8 +326,8 @@ const T = {
     costo: (n: number, c: number) =>
       `${n} llamadas al modelo · costo nominal US$ ${c.toFixed(4)} (la suscripción no cobra por llamada).`,
     aprobar: "Cómo se aprueba",
-    aprobarTexto: (o: ObjetivoDelPlan) =>
-      `Si estás de acuerdo, dile al constructor «apruebo el plan ${o.nombre}». Él corre \`pnpm plan:aprobar ${o.bandera} --por "<tu nombre>" --el <fecha>\`, que vuelve a validar y escribe \`${o.carpeta}/v1.json\` con su huella.`,
+    aprobarTexto: (o: ObjetivoDelPlan, version: number) =>
+      `Si estás de acuerdo, dile al constructor «${fraseEs(o, version)}». Él corre \`pnpm plan:aprobar ${o.bandera}${banderaDeVersion(version)} --por "<tu nombre>" --el <fecha>\`, que vuelve a validar y escribe \`${o.carpeta}/v${version}.json\` con su huella.`,
     secciones: {
       problema: "Problema",
       actores: "Actores",
@@ -347,8 +361,8 @@ const T = {
   },
   en: {
     titulo: "Draft review",
-    intro: (o: ObjetivoDelPlan) =>
-      `The interviewer proposed it from your answers. Nothing is approved: the plan becomes v1 only when you say “I approve plan ${o.nombre}”.`,
+    intro: (o: ObjetivoDelPlan, version: number) =>
+      `The interviewer proposed it from your answers. Nothing is approved: the plan becomes v${version} only when you say “${fraseEn(o, version)}”.`,
     estado: "Status",
     listo: "M1 accepts it: it can be approved if you agree with what follows.",
     noListo: "M1 does not accept it yet: fix what follows before approving.",
@@ -379,8 +393,8 @@ const T = {
     costo: (n: number, c: number) =>
       `${n} model calls · nominal cost US$ ${c.toFixed(4)} (the subscription does not charge per call).`,
     aprobar: "How to approve",
-    aprobarTexto: (o: ObjetivoDelPlan) =>
-      `If you agree, tell the builder “I approve plan ${o.nombre}”. They run \`pnpm plan:aprobar ${o.bandera} --por "<your name>" --el <date>\`, which validates again and writes \`${o.carpeta}/v1.json\` with its fingerprint.`,
+    aprobarTexto: (o: ObjetivoDelPlan, version: number) =>
+      `If you agree, tell the builder “${fraseEn(o, version)}”. They run \`pnpm plan:aprobar ${o.bandera}${banderaDeVersion(version)} --por "<your name>" --el <date>\`, which validates again and writes \`${o.carpeta}/v${version}.json\` with its fingerprint.`,
     secciones: {
       problema: "Problem",
       actores: "Actors",
@@ -603,6 +617,8 @@ export function textoDeRevision(
   borrador: unknown,
   r: Revision,
   idioma: Idioma,
+  /** La versión del plan que esta revisión propone aprobar (S6): 1 salvo una entrevista de versión nueva. */
+  version = 1,
 ): string {
   const t = T[idioma];
   const o = objetivoDelPlan(r.plan_id, r.cabecera.plantilla.id);
@@ -615,7 +631,7 @@ export function textoDeRevision(
   return [
     `# ${t.titulo} — ${r.plan_id}`,
     "",
-    t.intro(o),
+    t.intro(o, version),
     "",
     `## ${t.estado}`,
     "",
@@ -689,7 +705,7 @@ export function textoDeRevision(
     ...seccionesDelPlan(b, idioma),
     `## ${t.aprobar}`,
     "",
-    t.aprobarTexto(o),
+    t.aprobarTexto(o, version),
     "",
   ].join("\n");
 }

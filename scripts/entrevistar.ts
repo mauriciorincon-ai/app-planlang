@@ -71,6 +71,17 @@ export function objetivoDeEntrevista(
   return null;
 }
 
+/**
+ * La versión que propone aprobar una carpeta de entrevista (S6): `plans/<plan>/vN` (N ≥ 2) es la entrevista de la
+ * versión N; cualquier otra carpeta es la primera. `plans/v2` (un plan que se llama «v2») no es una versión.
+ */
+export function versionDeLaCarpeta(directorio: string): number {
+  const partes = directorio.split("/").filter(Boolean);
+  const ultima = /^v([2-9]|[1-9]\d+)$/.exec(partes.at(-1) ?? "");
+  const padre = partes.at(-2);
+  return ultima && padre && padre !== "plans" ? Number(ultima[1]) : 1;
+}
+
 export async function revisarDirectorio(directorio: string): Promise<Revision> {
   const borrador = leerJson(`${directorio}/v0-borrador.json`);
   const transcripcion = TranscripcionSchema.parse(
@@ -98,7 +109,12 @@ export async function revisarDirectorio(directorio: string): Promise<Revision> {
   for (const idioma of ["es", "en"] as const)
     escribirTexto(
       `${directorio}/revision.${idioma}.md`,
-      textoDeRevision(borrador, revision, idioma),
+      textoDeRevision(
+        borrador,
+        revision,
+        idioma,
+        versionDeLaCarpeta(directorio),
+      ),
     );
   return revision;
 }
