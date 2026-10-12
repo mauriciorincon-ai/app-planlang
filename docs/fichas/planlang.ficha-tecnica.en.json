@@ -9,7 +9,7 @@
     "ciclo": "H1",
     "version": "0.1.0",
     "sellado_en": null,
-    "sprints_cerrados": 6
+    "sprints_cerrados": 7
   },
   "promesa": {
     "tagline": "I planned, built and measured the gap.",
@@ -140,7 +140,7 @@
       "etiqueta": "ciclo"
     },
     {
-      "valor": "6",
+      "valor": "7",
       "etiqueta": "sprints"
     },
     {
