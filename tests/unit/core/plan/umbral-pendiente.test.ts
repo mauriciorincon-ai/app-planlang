@@ -15,6 +15,12 @@ type Plan = Record<string, unknown> & {
     opcion_elegida?: string | { es: string; en: string };
   }[];
   umbrales: { id: string; valor_en_plan: number | boolean }[];
+  riesgos?: { id: string; modo: { es: string; en: string } }[];
+  supuestos?: { id: string; enunciado: { es: string; en: string } }[];
+  criterios_aceptacion?: {
+    id: string;
+    enunciado: { es: string; en: string };
+  }[];
 };
 const v2 = (): Plan =>
   JSON.parse(readFileSync("plans/hackguard-agentes/v2.json", "utf8"));
@@ -119,6 +125,67 @@ describe("M1 · un umbral con valor no puede llamarse pendiente en una decisión
     });
     expect(dichos(p)).toEqual([]);
     expect(validarPlan(p).ok).toBe(true);
+  });
+
+  it("«pendiente de una persona» habla de la revisión, no del umbral: no se rechaza, en los dos idiomas", () => {
+    const p = con((x) => {
+      x.decisiones.find((d) => d.id === "D1")!.justificacion = {
+        es: "Una propuesta con menos fuentes que el mínimo (umbral U2) queda pendiente de una persona. Cada umbral U3 sigue pendiente de revisión humana.",
+        en: "A proposal with fewer sources than the minimum (threshold U2) stays pending a person. Threshold U3 stays pending human review.",
+      };
+    });
+    expect(dichos(p)).toEqual([]);
+    expect(validarPlan(p).ok).toBe(true);
+  });
+
+  it("ROJO: «por definir», «por fijar» y «to be defined» también dicen que el umbral está abierto", () => {
+    for (const [es, en, esperado] of [
+      [
+        "El mínimo está por definir en U2.",
+        "The minimum is open.",
+        ["D1.justificacion.es"],
+      ],
+      [
+        "El mínimo es 2.",
+        "The minimum is to be defined in U2.",
+        ["D1.justificacion.en"],
+      ],
+      [
+        "El valor de U3 queda por fijar.",
+        "Threshold U3 is undecided.",
+        ["D1.justificacion.es", "D1.justificacion.en"],
+      ],
+    ] as const) {
+      const p = con((x) => {
+        x.decisiones.find((d) => d.id === "D1")!.justificacion = { es, en };
+      });
+      expect(dichos(p), es).toEqual(esperado);
+    }
+  });
+
+  it("ROJO: también se revisan los riesgos, los supuestos y los criterios, no solo las decisiones", () => {
+    const p = con((x) => {
+      const r = x.riesgos!.find((y) => y.id === "R1")!;
+      r.modo = {
+        es: "Cita inventada; el umbral U2 sigue pendiente.",
+        en: r.modo.en,
+      };
+      const sp = x.supuestos!.find((y) => y.id === "S1")!;
+      sp.enunciado = {
+        es: sp.enunciado.es,
+        en: "Threshold U1 is still to be decided.",
+      };
+      const c = x.criterios_aceptacion!.find((y) => y.id === "C5")!;
+      c.enunciado = {
+        es: "La antigüedad del marco (U3) aún no está fijada.",
+        en: c.enunciado.en,
+      };
+    });
+    expect(dichos(p)).toEqual([
+      "R1.modo.es",
+      "S1.enunciado.en",
+      "C5.enunciado.es",
+    ]);
   });
 
   it("el camino de la aprobación también lo detiene: aprobarPlan no sella un borrador con la frase", async () => {

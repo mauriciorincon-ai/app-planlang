@@ -83,7 +83,14 @@ function motivo(
  * porque es texto libre (así salió la primera v2 de HackGuard: «el mínimo sigue pendiente en el umbral U2», con U2 = 2).
  */
 const DICE_PENDIENTE =
-  /\b(pendiente|sin\s+(?:definir|fijar|decidir)|a[uú]n\s+no|todav[ií]a\s+no|pending|not\s+yet|still\s+(?:open|unset|undefined|undecided)|tbd)\b/i;
+  /\b(pendiente|(?:sin|por)\s+(?:definir|fijar|decidir|determinar)|a[uú]n\s+no|todav[ií]a\s+no|pending|not\s+yet|to\s+be\s+(?:defined|set|decided|determined)|still\s+(?:open|unset|undefined|undecided)|undecided|tbd)\b/i;
+
+/**
+ * «Pendiente» que habla de una persona o de una revisión, no del umbral: «queda pendiente de una persona», «pending
+ * human review». Se quita de la frase antes de buscar lo que dice abierto, para no rechazar una decisión correcta.
+ */
+const PENDIENTE_DE_UNA_PERSONA =
+  /\b(?:pendiente\s+(?:de|del)\s+(?:(?:una?|la|el)\s+)?(?:persona|revisi[oó]n|aprobaci[oó]n|revisor|humano|auditor)|pending\s+(?:(?:a|the)\s+)?(?:person|review|approval|human|reviewer|auditor))/gi;
 
 const escapar = (t: string): string => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
@@ -101,7 +108,7 @@ function umbralesDichosPendientes(
 ): string[] {
   const salida = new Set<string>();
   for (const f of frases(texto)) {
-    if (!DICE_PENDIENTE.test(f)) continue;
+    if (!DICE_PENDIENTE.test(f.replace(PENDIENTE_DE_UNA_PERSONA, ""))) continue;
     for (const id of idsUmbral)
       if (
         new RegExp(`(^|[^A-Za-z0-9_-])${escapar(id)}($|[^A-Za-z0-9_-])`).test(f)
@@ -421,40 +428,44 @@ export function validarPlan(entrada: unknown): ResultadoValidacion {
         );
   }
 
-  // S7: lo que una decisión dice de un umbral no puede contradecir al plan. Cada umbral del plan tiene su valor; si la
-  // justificación o la opción elegida de una decisión lo llama «pendiente», se rechaza nombrando la decisión y el umbral.
+  // S7: lo que un texto del plan dice de un umbral no puede contradecir al plan. Cada umbral del plan tiene su valor; si la
+  // justificación o la opción elegida de una decisión, un riesgo, un supuesto o un criterio lo llama «pendiente», se
+  // rechaza nombrando el texto y el umbral.
+  const textosDelPlan: [string, string][] = [];
+  const bilingue = (
+    ruta: string,
+    t: { es: string; en: string } | undefined,
+  ) => {
+    if (t) textosDelPlan.push([`${ruta}.es`, t.es], [`${ruta}.en`, t.en]);
+  };
   for (const d of plan.decisiones) {
-    const textos: [string, string][] = [];
-    if (d.justificacion)
-      textos.push(
-        [`${d.id}.justificacion.es`, d.justificacion.es],
-        [`${d.id}.justificacion.en`, d.justificacion.en],
-      );
-    if (d.opcion_elegida) {
-      const o = d.opcion_elegida;
-      if (typeof o === "string") textos.push([`${d.id}.opcion_elegida`, o]);
-      else
-        textos.push(
-          [`${d.id}.opcion_elegida.es`, o.es],
-          [`${d.id}.opcion_elegida.en`, o.en],
-        );
-    }
-    for (const [donde, texto] of textos)
-      for (const id of umbralesDichosPendientes(
-        texto,
-        plan.umbrales.map((u) => u.id),
-      )) {
-        const valor = plan.umbrales.find((u) => u.id === id)?.valor_en_plan;
-        motivos.push(
-          motivo(
-            "UMBRAL_DICHO_PENDIENTE",
-            donde,
-            `El texto dice que el umbral ${id} sigue pendiente, pero el plan le fijó el valor ${String(valor)}. Redáctalo con ese valor.`,
-            `The text says threshold ${id} is still pending, but the plan sets it to ${String(valor)}. Write it with that value.`,
-          ),
-        );
-      }
+    bilingue(`${d.id}.justificacion`, d.justificacion);
+    const o = d.opcion_elegida;
+    if (typeof o === "string")
+      textosDelPlan.push([`${d.id}.opcion_elegida`, o]);
+    else bilingue(`${d.id}.opcion_elegida`, o);
   }
+  for (const r of plan.riesgos) {
+    bilingue(`${r.id}.modo`, r.modo);
+    bilingue(`${r.id}.causa`, r.causa);
+    bilingue(`${r.id}.efecto`, r.efecto);
+  }
+  for (const x of plan.supuestos) bilingue(`${x.id}.enunciado`, x.enunciado);
+  for (const c of plan.criterios_aceptacion)
+    bilingue(`${c.id}.enunciado`, c.enunciado);
+  const idsDeUmbral = plan.umbrales.map((u) => u.id);
+  for (const [donde, texto] of textosDelPlan)
+    for (const id of umbralesDichosPendientes(texto, idsDeUmbral)) {
+      const valor = plan.umbrales.find((u) => u.id === id)?.valor_en_plan;
+      motivos.push(
+        motivo(
+          "UMBRAL_DICHO_PENDIENTE",
+          donde,
+          `El texto dice que el umbral ${id} sigue pendiente, pero el plan le fijó el valor ${String(valor)}. Redáctalo con ese valor.`,
+          `The text says threshold ${id} is still pending, but the plan sets it to ${String(valor)}. Write it with that value.`,
+        ),
+      );
+    }
 
   // Criterios: regla de medición completa e interpretable.
   for (const c of plan.criterios_aceptacion) {
