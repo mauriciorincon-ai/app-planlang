@@ -87,7 +87,9 @@ Se usa de dos maneras:
      `--con-contradicciones` y queda registrado.
   5. Si el plan ya está aprobado (`v1.json` existe), la entrevista no escribe en `plans/demo-b/`: esa carpeta es el
      registro de lo que aprobaste. Indícale otra con `--salida <carpeta>` y allí quedan el borrador, las
-     contradicciones y la revisión. `plan:aprobar` no la convierte en `v1.json`, que ya existe.
+     contradicciones y la revisión. `plan:aprobar` no la convierte en `v1.json`, que ya existe. La carpeta de
+     `--salida` solo vale si está fuera de `plans/` o cuelga de la del propio plan (`plans/<plan>/v2`): una que
+     apunte a otro plan, a `plans/` o al registro del propio plan se rechaza antes de empezar.
 - **Los idiomas:** tu respuesta queda tal cual, en el idioma en que la escribiste. El otro idioma lo redacta el
   modelo y queda marcado como suyo, para que lo revises antes de aprobar. Sin modelo (`--sin-modelo`), el otro
   idioma queda pendiente.
@@ -357,7 +359,10 @@ data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar l
   4. `pnpm build`: la vitrina gana la sección «Planes sin corrida» en la entrada y la página `/es/planes/<id>`.
 - **Cómo se lee la página:** lo primero es la ficha de lo que NO hay (trazas, brecha, playground, visor); después el
   problema, el contrato en cifras y cada sección del plan. «Ver como experto» muestra quién propuso cada elemento:
-  la plantilla, el entrevistador o la persona que respondió.
+  la plantilla, el entrevistador o la persona que respondió, y abre el contrato del grafo en detalle (desde el sprint
+  7): los nodos con su tipo, las aristas condicionales en su orden con el valor de cada umbral, las ramas por defecto,
+  la pausa humana con quién decide y qué ve, y las señales que hay que registrar. No hay diagrama: nadie ha construido
+  ese agente, y un dibujo diría que sí.
 - **Limitaciones conocidas:** el plan no tiene agente construido en planlang, así que no hay nada que medir: la página
   es el contrato, no un resultado. La entrevista de la v1 de HackGuard se corrió por delegación: las respuestas las
   escribió el constructor desde el brief y la visión de HackGuard; por eso el sprint 5 no cuenta como «uso real». La
@@ -387,7 +392,25 @@ data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar l
 - **Limitaciones conocidas:** la prioridad de acción sale de la tabla AIAG-VDA del paquete de instrumentos; el control
   legal sube la prioridad a alta, y hoy ningún riesgo de la plantilla de seguridad de IA lo tiene. En la v2, la ocurrencia y la detección del quinto riesgo las
   propuso el entrevistador: la prioridad alta sale de esas cifras, no de una cifra que diera la persona. La página sigue sin corrida: no hay
-  agente que medir.
+  agente que medir. Una versión nueva debe ser la siguiente a la vigente: `--version 3` sin `v2.json` se rechaza, y una
+  versión ya aprobada no se reescribe. M1 también rechaza una decisión que llama «pendiente» a un umbral que el plan ya
+  fijó (código `UMBRAL_DICHO_PENDIENTE`): la primera v2 de HackGuard salió así y se corrigió antes de publicarse. Las
+  respuestas revisadas deben ser las de la transcripción, y la lista de preguntas cambiadas sale de compararlas con las
+  de la versión anterior: si el archivo dice otra cosa, la vitrina no compila.
+
+### Cerrar un hito con un solo gate · desde el sprint 7
+
+- **Qué hace:** deja dos hitos (H-1 y H-2) a una sola sentada de cerrarse. El primer bloque de
+  `docs/GUIA-DE-PRUEBA.html` (G) trae ocho preguntas de sí o no, unos 30 minutos, que reemplazan al ⭐⭐ del sprint 3.
+- **Cómo se usa:** el gate no ocurre en un sprint: lo corres cuando decidas, en el chat de la planeadora, una pregunta
+  por mensaje y desde tu teléfono con la vitrina de producción abierta; el enlace te lo da la planeadora en el chat y
+  jamás se escribe en el repo. Cada pregunta dice dónde mirar con lo que se ve («en la entrada, fila de HackGuard →
+  Leer el plan») y se responde sí o no; si es no, dices qué viste. En la guía, el filtro «Gate de hitos» deja solo esas
+  ocho.
+- **Limitaciones conocidas:** nada se hace en la terminal ni en un archivo del repo, así que el BLUEPRINT, la revisión
+  del borrador del B, el lote de 20 del A y el espejo de LangSmith quedan fuera del gate, y la guía lo declara. Las 25
+  pruebas ⭐ de la guía siguen como pruebas, sin gate propio. La primera parada del gate viejo (correr un caso del demo B
+  con tu suscripción) la corrió el constructor en el sprint 7.
 
 ### Preguntas frecuentes
 
@@ -482,6 +505,8 @@ There are two ways to use it:
   5. If the plan is already approved (`v1.json` exists), the interview does not write to `plans/demo-b/`: that
      folder is the record of what you approved. Give it another one with `--salida <folder>` and the draft, the
      contradictions and the review land there. `plan:aprobar` does not turn it into `v1.json`, which already exists.
+     The `--salida` folder is only valid outside `plans/` or hanging from the plan's own folder (`plans/<plan>/v2`):
+     one that points at another plan, at `plans/` or at the plan's own record is refused before starting.
 - **Languages:** your answer stays as you wrote it, in your language. The model drafts the other language and it is
   marked as the model's, so you review it before approving. Without a model (`--sin-modelo`), the other language
   stays pending.
@@ -756,7 +781,10 @@ There are two ways to use it:
      `/en/planes/<id>`.
 - **How to read the page:** first comes the record of what is NOT there (traces, gap, playground, viewer); then the
   problem, the contract in numbers and every section of the plan. «Read as expert» shows who proposed each element:
-  the template, the interviewer or the person who answered.
+  the template, the interviewer or the person who answered, and opens the graph contract in detail (since sprint 7):
+  the nodes with their type, the conditional edges in order with each threshold's value, the default branches, the
+  human pause with who decides and what it sees, and the signals that must be logged. There is no diagram: nobody has
+  built that agent, and a drawing would say someone has.
 - **Known limitations:** the plan has no agent built in planlang, so there is nothing to measure: the page is the
   contract, not a result. HackGuard's v1 interview was run by delegation: the builder wrote the answers from
   HackGuard's brief and vision; that is why sprint 5 does not count as «real use». v2 uses the answers the user reviewed
@@ -786,7 +814,25 @@ There are two ways to use it:
 - **Known limitations:** the action priority comes from the AIAG-VDA table in the instruments package; legal control
   raises the priority to high, and today no risk of the AI-security template has it. In v2, the occurrence and detection of the fifth risk were proposed
   by the interviewer: its high priority comes from those figures, not from a figure the person gave. The page is still without a run: there is no
-  agent to measure.
+  agent to measure. A new version must be the one after the current: `--version 3` without `v2.json` is refused, and an
+  already approved version is not rewritten. M1 also rejects a decision that calls a threshold «pending» when the plan
+  already fixed it (code `UMBRAL_DICHO_PENDIENTE`): HackGuard's first v2 came out that way and was corrected before it
+  was published. The reviewed answers must be the ones in the transcript, and the list of changed questions comes from
+  comparing them with the previous version's: if the file says otherwise, the showcase does not build.
+
+### Close a milestone with a single gate · since sprint 7
+
+- **What it does:** leaves two milestones (H-1 and H-2) one sitting away from closing. The first block of
+  `docs/GUIA-DE-PRUEBA.html` (G) holds eight yes-or-no questions, about 30 minutes, that replace sprint 3's ⭐⭐.
+- **How to use it:** the gate does not happen in a sprint: you run it whenever you decide, in the planner chat, one
+  question per message and from your phone with the production showcase open; the planner gives you the link in the
+  chat and it is never written in the repository. Each question says where to look with what you will see («on the home
+  page, HackGuard's row → Read the plan») and you answer yes or no; if no, you say what you saw. In the guide, the
+  «Milestone gate» filter shows only those eight.
+- **Known limitations:** nothing is done in the terminal or in a repository file, so the BLUEPRINT, the review of B's
+  draft, A's batch of 20 and the LangSmith mirror stay outside the gate, and the guide says so. The guide's 25 ⭐ tests
+  remain as tests with no gate of their own. The old gate's first stop (running a demo B case with your subscription)
+  was run by the builder in sprint 7.
 
 ### Frequently asked questions
 
@@ -814,3 +860,4 @@ There are two ways to use it:
 | S4 · 2026-10-11 | Comparar dos corridas (la pantalla del A frente a su línea base, con sus casos enlazados)                                                                                                              |
 | S5 · 2026-10-11 | Planear un proyecto real (un dominio nuevo como datos · la entrevista de cualquier plan · la página del plan sin corrida)                                                                              |
 | S6 · 2026-10-11 | Planear una versión nueva del plan (la v2 de HackGuard con las respuestas que el usuario revisó · la página dice de quién son las respuestas y muestra la prioridad de acción de cada riesgo)          |
+| S7 · 2026-10-11 | Cerrar un hito con un solo gate (la guía abre con G1 a G8) · el contrato del grafo en detalle en la página del plan · `--salida` acotada · M1 contra «pendiente» en un umbral fijado (mejorado)        |
