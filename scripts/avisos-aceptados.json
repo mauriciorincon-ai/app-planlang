@@ -6,9 +6,9 @@
       "paquete": "braces",
       "vulnerable": "<=3.0.3",
       "ruta": "eslint-config-next > @next/eslint-plugin-next > fast-glob > micromatch > braces",
-      "razon": "Sin versión corregida publicada (el aviso pide >=3.0.4; la última en el registro es 3.0.3) y solo entra por el lint: no viaja al export ni al paquete. Apareció en el calendario el 2026-10-02 sin cambio de dependencias.",
+      "razon": "Sin versión corregida publicada (el aviso pide >=3.0.4; la última en el registro es 3.0.3) y solo entra por el lint: no viaja al export ni al paquete. Apareció en el calendario el 2026-10-02 sin cambio de dependencias. Renovada el 2026-10-12 (S7): la última versión sigue siendo la 3.0.3 y la ruta sigue siendo la del lint.",
       "aceptado": "2026-10-02",
-      "revisar_antes": "2026-11-02"
+      "revisar_antes": "2026-12-01"
     }
   ]
 }

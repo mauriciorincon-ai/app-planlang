@@ -25,7 +25,7 @@ del S3 (fase 0, «v1.34.0»). La excepción nació en el S2 (2026-10-02) con su 
 - Se ignora **solo ese aviso, por id**, en `pnpm-workspace.yaml` → `auditConfig.ignoreGhsas`. El nivel del job sigue
   en `--audit-level high`: cualquier otro aviso alto pone la CI en rojo.
 - El registro vive en `scripts/avisos-aceptados.json` (id · paquete · rango vulnerable · ruta · razón · aceptado ·
-  `revisar_antes: 2026-11-02`). `tests/unit/guardias/avisos-aceptados.test.ts`:
+  `revisar_antes: 2026-12-01`, renovada el 2026-10-12). `tests/unit/guardias/avisos-aceptados.test.ts`:
   - exige que el registro y `ignoreGhsas` coincidan;
   - falla cuando la fecha de revisión vence (regla 23, matriz de envejecimiento);
   - y, desde este ADR, exige que cada id ignorado esté citado en un ADR de `decisions/`.
@@ -33,5 +33,12 @@ del S3 (fase 0, «v1.34.0»). La excepción nació en el S2 (2026-10-02) con su 
 ## Condición de retiro
 
 El primer PR que traiga un `braces` corregido (o una ruta de `eslint-config-next` que ya no lo use) borra el id de
-`ignoreGhsas` y su entrada del registro, y marca este ADR como cerrado. Si el 2026-11-02 sigue sin parche, la entrada
+`ignoreGhsas` y su entrada del registro, y marca este ADR como cerrado. Si el 2026-12-01 sigue sin parche, la entrada
 se renueva con una razón nueva y una fecha nueva, o el lint se cambia de forma que no lo arrastre.
+
+## Renovación (2026-10-12, S7)
+
+Verificado de nuevo con `npm view braces`: la última versión publicada sigue siendo la 3.0.3 (2024-05-21), y `pnpm why
+braces` muestra la misma ruta (`eslint-config-next > @next/eslint-plugin-next > fast-glob > micromatch > braces`), solo
+del lint. No hay parche ni ruta alternativa, así que la excepción se renueva: nueva fecha de revisión **2026-12-01**,
+con la misma condición de retiro. _Renewed on 2026-10-12: still no patched `braces` (latest 3.0.3); next review 2026-12-01._
