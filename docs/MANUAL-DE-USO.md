@@ -347,8 +347,8 @@ data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar l
 
 - **Qué hace:** entrevista el plan de un proyecto que no es un demo de planlang, sobre una plantilla de dominio que es
   solo datos (`data/dominios/<id>.json`), lo valida con M1 y, cuando el usuario lo aprueba, lo publica en la vitrina
-  como «plan sin corrida». El primero es el de los dos agentes de HackGuard (`plans/hackguard-agentes/v1.json`, dominio
-  `dom-seguridad-ia`). Un dominio nuevo no toca el código: se agrega su archivo y el entrevistador lo recorre.
+  como «plan sin corrida». El primero es el de los dos agentes de HackGuard (`plans/hackguard-agentes/v2.json`, dominio
+  `dom-seguridad-ia`; la v1 queda como historia). Un dominio nuevo no toca el código: se agrega su archivo y el entrevistador lo recorre.
 - **Cómo se usa:**
   1. `pnpm entrevistar --dominio dom-seguridad-ia --plan hackguard-agentes` (o `--respuestas archivo.json` para
      responder desde un archivo). Son 14 preguntas; «acepto» deja lo que propone la plantilla.
@@ -359,9 +359,9 @@ data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar l
   problema, el contrato en cifras y cada sección del plan. «Ver como experto» muestra quién propuso cada elemento:
   la plantilla, el entrevistador o la persona que respondió.
 - **Limitaciones conocidas:** el plan no tiene agente construido en planlang, así que no hay nada que medir: la página
-  es el contrato, no un resultado. La entrevista del plan de HackGuard se corrió por delegación: las respuestas las
-  escribió el constructor desde el brief y la visión de HackGuard, y el autor aprobó el plan con su frase; por eso el
-  sprint 5 no cuenta como «uso real». Las restricciones de la plantilla citan su fuente y la fecha en que se verificó; la
+  es el contrato, no un resultado. La entrevista de la v1 de HackGuard se corrió por delegación: las respuestas las
+  escribió el constructor desde el brief y la visión de HackGuard; por eso el sprint 5 no cuenta como «uso real». La
+  v2 usa las respuestas que el usuario revisó y confirmó (ver «Planear una versión nueva del plan»). Las restricciones de la plantilla citan su fuente y la fecha en que se verificó; la
   norma ISO/IEC 42001 no se pudo verificar por `curl` (la página de ISO responde 403) y la plantilla lo dice.
 
 ### Planear una versión nueva del plan · desde el sprint 6
@@ -385,7 +385,8 @@ data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar l
   «Delegadas al constructor» cuando se delegaron. Las versiones anteriores aparecen con su huella, para que nadie tome
   la v1 por la vigente.
 - **Limitaciones conocidas:** la prioridad de acción sale de la tabla AIAG-VDA del paquete de instrumentos; el control
-  legal sube la prioridad a alta, y hoy ningún riesgo de la plantilla lo tiene. La página sigue sin corrida: no hay
+  legal sube la prioridad a alta, y hoy ningún riesgo de la plantilla de seguridad de IA lo tiene. En la v2, la ocurrencia y la detección del quinto riesgo las
+  propuso el entrevistador: la prioridad alta sale de esas cifras, no de una cifra que diera la persona. La página sigue sin corrida: no hay
   agente que medir.
 
 ### Preguntas frecuentes
@@ -743,8 +744,8 @@ There are two ways to use it:
 
 - **What it does:** interviews the plan of a project that is not a planlang demo, over a domain template that is only
   data (`data/dominios/<id>.json`), validates it with M1 and, once the user approves it, publishes it in the showcase
-  as a «plan without a run». The first one is the plan of HackGuard's two agents (`plans/hackguard-agentes/v1.json`,
-  domain `dom-seguridad-ia`). A new domain touches no code: its file is added and the interviewer walks it.
+  as a «plan without a run». The first one is the plan of HackGuard's two agents (`plans/hackguard-agentes/v2.json`,
+  domain `dom-seguridad-ia`; v1 stays as history). A new domain touches no code: its file is added and the interviewer walks it.
 - **How to use it:**
   1. `pnpm entrevistar --dominio dom-seguridad-ia --plan hackguard-agentes` (or `--respuestas file.json` to answer
      from a file). 14 questions; «acepto» keeps what the template proposes.
@@ -757,9 +758,9 @@ There are two ways to use it:
   problem, the contract in numbers and every section of the plan. «Read as expert» shows who proposed each element:
   the template, the interviewer or the person who answered.
 - **Known limitations:** the plan has no agent built in planlang, so there is nothing to measure: the page is the
-  contract, not a result. HackGuard's plan interview was run by delegation: the builder wrote the answers from
-  HackGuard's brief and vision, and the author approved the plan with their own sentence; that is why sprint 5 does
-  not count as «real use». The template's constraints cite their source and the date they were checked; ISO/IEC 42001
+  contract, not a result. HackGuard's v1 interview was run by delegation: the builder wrote the answers from
+  HackGuard's brief and vision; that is why sprint 5 does not count as «real use». v2 uses the answers the user reviewed
+  and confirmed (see «Plan a new version of a plan»). The template's constraints cite their source and the date they were checked; ISO/IEC 42001
   could not be checked with `curl` (ISO's page answers 403) and the template says so.
 
 ### Plan a new version of a plan · since sprint 6
@@ -783,7 +784,8 @@ There are two ways to use it:
   «Delegated to the builder» when they were delegated. Earlier versions appear with their fingerprint, so nobody takes
   v1 for the current one.
 - **Known limitations:** the action priority comes from the AIAG-VDA table in the instruments package; legal control
-  raises the priority to high, and today no risk of the template has it. The page is still without a run: there is no
+  raises the priority to high, and today no risk of the AI-security template has it. In v2, the occurrence and detection of the fifth risk were proposed
+  by the interviewer: its high priority comes from those figures, not from a figure the person gave. The page is still without a run: there is no
   agent to measure.
 
 ### Frequently asked questions
