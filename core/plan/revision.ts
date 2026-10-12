@@ -473,7 +473,8 @@ function seccionesDelPlan(b: Obj, idioma: Idioma): string[] {
     `### ${s.flujo}`,
     "",
     ...(Array.isArray(b.flujo_objetivo) ? b.flujo_objetivo : []).map(
-      (p, i) => `${i + 1}. ${txt(p, idioma)}`,
+      // El paso ya puede traer su número («1. Llega…»): se quita antes de numerarlo (auditoría S6 B2).
+      (p, i) => `${i + 1}. ${txt(p, idioma).replace(/^\d+\.\s+/, "")}`,
     ),
     "",
   );

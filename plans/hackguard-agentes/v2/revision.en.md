@@ -181,15 +181,15 @@ HackGuard plans and validates security tests for software and AI systems. Its tw
 
 ### Flow
 
-1. 1. A task arrives: research a test or extract a result.
-2. 2. If it is research, the researcher searches only the allow-listed sources.
-3. 3. Code checks that each source exists and says what is cited.
-4. 4. The proposal enters the catalog as a draft.
-5. 5. If it is extraction, the pasted text first goes through the instruction filter, which flags and never rejects.
-6. 6. The extractor proposes the candidate test, or the top three when in doubt, and the fields with a literal quote.
-7. 7. Code checks that each quote is a substring of the source.
-8. 8. Code computes the verdict using the catalog rule.
-9. 9. In both cases, a person confirms or corrects before anything becomes evidence.
+1. A task arrives: research a test or extract a result.
+2. If it is research, the researcher searches only the allow-listed sources.
+3. Code checks that each source exists and says what is cited.
+4. The proposal enters the catalog as a draft.
+5. If it is extraction, the pasted text first goes through the instruction filter, which flags and never rejects.
+6. The extractor proposes the candidate test, or the top three when in doubt, and the fields with a literal quote.
+7. Code checks that each quote is a substring of the source.
+8. Code computes the verdict using the catalog rule.
+9. In both cases, a person confirms or corrects before anything becomes evidence.
 
 ### Decisions
 

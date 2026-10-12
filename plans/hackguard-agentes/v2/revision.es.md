@@ -181,15 +181,15 @@ HackGuard planea y valida pruebas de seguridad para software y sistemas de IA. S
 
 ### Flujo
 
-1. 1. Llega la tarea: investigar una prueba o extraer un resultado.
-2. 2. Si es investigar, el investigador busca solo en fuentes de la lista blanca.
-3. 3. El código verifica que cada fuente existe y que dice lo que se cita.
-4. 4. La propuesta entra al catálogo como borrador.
-5. 5. Si es extraer, el texto pegado pasa primero por el filtro de instrucciones, que marca y nunca rechaza.
-6. 6. El extractor propone la prueba candidata, o las tres mejores cuando hay duda, y los campos con cita literal.
-7. 7. El código verifica que cada cita es subcadena de la fuente.
-8. 8. El código calcula el veredicto con la regla del catálogo.
-9. 9. En los dos casos, una persona confirma o corrige antes de que nada quede como evidencia.
+1. Llega la tarea: investigar una prueba o extraer un resultado.
+2. Si es investigar, el investigador busca solo en fuentes de la lista blanca.
+3. El código verifica que cada fuente existe y que dice lo que se cita.
+4. La propuesta entra al catálogo como borrador.
+5. Si es extraer, el texto pegado pasa primero por el filtro de instrucciones, que marca y nunca rechaza.
+6. El extractor propone la prueba candidata, o las tres mejores cuando hay duda, y los campos con cita literal.
+7. El código verifica que cada cita es subcadena de la fuente.
+8. El código calcula el veredicto con la regla del catálogo.
+9. En los dos casos, una persona confirma o corrige antes de que nada quede como evidencia.
 
 ### Decisiones
 
