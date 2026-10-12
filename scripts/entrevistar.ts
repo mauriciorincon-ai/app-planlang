@@ -11,8 +11,8 @@
  * el código no cambia.
  */
 import { spawnSync } from "node:child_process";
-import { existsSync } from "node:fs";
-import { resolve, sep } from "node:path";
+import { existsSync, lstatSync, realpathSync } from "node:fs";
+import { basename, dirname, join, resolve, sep } from "node:path";
 import { VOCABULARIO } from "../core/brecha/contexto";
 import { conHuella, huella } from "../core/formatos/huella";
 import type { JsonValor } from "../core/formatos/jcs";
@@ -72,10 +72,36 @@ export function objetivoDeEntrevista(
 }
 
 /**
- * La carpeta de una entrevista nueva (`--salida`, S7): una fuera de `plans/` o una que cuelgue de la del propio plan
- * (`plans/<plan>/v2`). Con `--salida` la entrevista se salta el guardia de «el plan ya está aprobado», así que no puede
- * apuntar a `plans/` en otro lado: pisaría el registro de un plan aprobado, el de otro plan o el del propio. Devuelve el
- * motivo del rechazo, o `null` si vale. El lado Python hace el mismo control (`validar_salida`).
+ * La ruta real de una carpeta que quizá no existe aún: los enlaces simbólicos del tramo que ya existe se siguen (como
+ * hace `Path.resolve()` en Python), y lo que falta se cuelga tal cual. Un enlace roto no se puede seguir: devuelve `null`.
+ */
+function rutaReal(ruta: string): string | null {
+  const faltan: string[] = [];
+  let actual = resolve(ruta);
+  for (;;) {
+    try {
+      lstatSync(actual);
+      break;
+    } catch {
+      const padre = dirname(actual);
+      if (padre === actual) return null;
+      faltan.unshift(basename(actual));
+      actual = padre;
+    }
+  }
+  try {
+    return join(realpathSync(actual), ...faltan);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * La carpeta de una entrevista nueva (`--salida`, S7). Con `--salida` la entrevista se salta el guardia de «el plan ya
+ * está aprobado», así que no puede caer sobre un registro: vale una carpeta que cuelgue de la del propio plan
+ * (`plans/<plan>/v2`), una bajo `.entrevistas/` o una fuera del repo; cualquier otra dentro del repo (otro plan, `runs/`,
+ * `docs/`, el código) se rechaza. Los enlaces simbólicos se siguen antes de decidir. Devuelve el motivo del rechazo, o
+ * `null` si vale. El lado Python hace el mismo control (`validar_salida`).
  */
 export function salidaInvalida(
   salida: string,
@@ -83,14 +109,21 @@ export function salidaInvalida(
   raiz: string = process.cwd(),
 ): string | null {
   if (salida.trim() === "") return "--salida: indica una carpeta";
-  const destino = resolve(raiz, salida);
-  const planes = resolve(raiz, "plans");
-  const delPlan = resolve(raiz, directorioDelPlan);
-  const cuelgaDe = (a: string, b: string) => a !== b && a.startsWith(b + sep);
-  const enPlanes = destino === planes || cuelgaDe(destino, planes);
-  if (enPlanes && !cuelgaDe(destino, delPlan))
-    return `--salida «${salida}»: dentro de plans/ solo vale una carpeta que cuelgue de ${directorioDelPlan}/ (por ejemplo ${directorioDelPlan}/v2); cualquier otra pisaría el registro de un plan aprobado`;
-  return null;
+  const base = rutaReal(raiz);
+  const destino = rutaReal(resolve(raiz, salida));
+  if (base === null || destino === null)
+    return `--salida «${salida}»: no se puede resolver la ruta (¿un enlace roto?)`;
+  const cuelgaDe = (a: string, b: string) => a.startsWith(b + sep);
+  // Fuera del repo (ni la raíz misma ni nada que cuelgue de ella): no hay registro que pisar.
+  if (destino !== base && !cuelgaDe(destino, base)) return null;
+  const delPlan = rutaReal(resolve(raiz, directorioDelPlan));
+  const entrevistas = rutaReal(resolve(raiz, ".entrevistas"));
+  if (
+    (delPlan !== null && cuelgaDe(destino, delPlan)) ||
+    (entrevistas !== null && cuelgaDe(destino, entrevistas))
+  )
+    return null;
+  return `--salida «${salida}»: dentro del repo solo vale una carpeta que cuelgue de ${directorioDelPlan}/ (por ejemplo ${directorioDelPlan}/v2) o de .entrevistas/; fuera del repo vale cualquiera. Otra pisaría el registro de un plan aprobado o un archivo del repo`;
 }
 
 /**

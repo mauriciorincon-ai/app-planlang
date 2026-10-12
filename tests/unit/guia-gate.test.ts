@@ -57,6 +57,18 @@ describe("el gate de los hitos H-1 y H-2 en la guía", () => {
     }
   });
 
+  it("cada pregunta es UNA pregunta: un solo signo de interrogación y ningún «y que» ni «and that» que esconda una segunda", () => {
+    for (const [k, p] of g.entries()) {
+      expect(p.es.match(/\?/g)?.length, `G${k + 1} es`).toBe(1);
+      expect(p.en.match(/\?/g)?.length, `G${k + 1} en`).toBe(1);
+      expect(p.es, `G${k + 1} es`).not.toMatch(/,\s*y que\b/);
+      expect(p.en, `G${k + 1} en`).not.toMatch(/,\s*and that\b/);
+      // La pregunta cierra el texto: lo que se aclara va antes, no entre paréntesis después.
+      expect(p.es.trimEnd().endsWith("?"), `G${k + 1} es`).toBe(true);
+      expect(p.en.trimEnd().endsWith("?"), `G${k + 1} en`).toBe(true);
+    }
+  });
+
   it("ninguna se hace en la terminal ni en un archivo del repo: no pide un comando, una ruta ni un archivo", () => {
     for (const [k, p] of g.entries()) {
       for (const t of [p.es, p.en])
@@ -65,6 +77,14 @@ describe("el gate de los hitos H-1 y H-2 en la guía", () => {
         );
       expect(p.li, `G${k + 1}`).not.toContain("<code>");
     }
+  });
+
+  it("los números del encabezado son los de las preguntas que hay", () => {
+    const n = g.length;
+    expect(html).toContain(`${n} preguntas de sí o no`);
+    expect(html).toContain(`${n} yes-or-no questions`);
+    expect(html).toContain(`(G1 a G${n})`);
+    expect(html).toContain(`(G1 to G${n})`);
   });
 
   it("el encabezado del bloque declara su duración y dónde empieza, sin enlazar a nada", () => {
@@ -97,6 +117,7 @@ describe("el gate de los hitos H-1 y H-2 en la guía", () => {
       .replace(/<!--[\s\S]*?-->/g, "")
       .replace(/<details class="chica">[\s\S]*?<\/details>/, "")
       .replace(/<script>[\s\S]*?<\/script>/, "");
+    expect(visible, "gate corto").not.toMatch(/gate corto|short gate/i);
     for (const frase of [
       "Acto 2",
       "sello MVP",

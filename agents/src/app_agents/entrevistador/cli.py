@@ -84,26 +84,39 @@ class SalidaInvalida(ValueError):
     pass
 
 
+def _ruta_real(ruta: Path) -> Path:
+    """La ruta con los enlaces simbólicos seguidos, exista o no la carpeta; un enlace roto no se sigue."""
+    actual = ruta.absolute()
+    while not os.path.lexists(actual):
+        actual = actual.parent
+    if not actual.exists():
+        raise SalidaInvalida(f"--salida «{ruta}»: no se puede resolver la ruta (¿un enlace roto?)")
+    return ruta.resolve()
+
+
 def validar_salida(salida: str, demo: Demo, raiz: Path = RAIZ_REPO) -> Path:
     """La carpeta de una entrevista nueva (`--salida`, S7).
 
-    Vale una carpeta fuera de plans/ o una que cuelgue de la del propio plan, como plans/<plan>/v2. Con
-    --salida la entrevista se salta el guardia de «el plan ya está aprobado», así que no puede apuntar a
-    plans/ en otro lado: pisaría el registro de un plan aprobado (el de otro plan o el del propio).
+    Con --salida la entrevista se salta el guardia de «el plan ya está aprobado», así que no puede caer
+    sobre un registro: vale una carpeta que cuelgue de la del propio plan (plans/<plan>/v2), una bajo
+    .entrevistas/ o una fuera del repo; cualquier otra dentro del repo se rechaza. Los enlaces simbólicos
+    se siguen antes de decidir (igual que `salidaInvalida` en scripts/entrevistar.ts).
     """
     if not salida.strip():
         raise SalidaInvalida("--salida: indica una carpeta")
-    destino = Path(salida).resolve()
-    planes = (raiz / "plans").resolve()
-    del_plan = (raiz / demo.directorio).resolve()
-    en_planes = destino == planes or planes in destino.parents
-    if en_planes and del_plan not in destino.parents:
-        raise SalidaInvalida(
-            f"--salida «{salida}»: dentro de plans/ solo vale una carpeta que cuelgue de "
-            f"{demo.directorio}/ (por ejemplo {demo.directorio}/v2); cualquier otra pisaría el "
-            "registro de un plan aprobado"
-        )
-    return destino
+    base = _ruta_real(raiz)
+    destino = _ruta_real(raiz / salida)
+    if destino != base and base not in destino.parents:
+        return destino
+    del_plan = _ruta_real(raiz / demo.directorio)
+    entrevistas = _ruta_real(raiz / ".entrevistas")
+    if del_plan in destino.parents or entrevistas in destino.parents:
+        return destino
+    raise SalidaInvalida(
+        f"--salida «{salida}»: dentro del repo solo vale una carpeta que cuelgue de {demo.directorio}/ "
+        f"(por ejemplo {demo.directorio}/v2) o de .entrevistas/; fuera del repo vale cualquiera. "
+        "Otra pisaría el registro de un plan aprobado o un archivo del repo"
+    )
 
 
 ARCHIVO_BORRADOR = "v0-borrador.json"

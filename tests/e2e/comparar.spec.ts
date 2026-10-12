@@ -98,9 +98,7 @@ test.describe("Compare two runs (en)", () => {
         await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
         for (const id of ["s-veredicto-t", "s-riesgos-t", "s-casos-t"])
           await expect(page.locator(`#${id}`)).toBeVisible();
-        await expect(
-          page.getByText(/Meets with (alerts|warnings)/).first(),
-        ).toBeVisible();
+        await expect(page.getByText("Meets with alerts").first()).toBeVisible();
         expect(await desbordeLateral(page)).toBeLessThanOrEqual(0);
         await sinViolacionesAxe(page);
         expect(errores).toEqual([]);

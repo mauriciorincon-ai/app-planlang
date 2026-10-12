@@ -9,7 +9,7 @@ import {
   type TextoBilingue,
   type TextoLibre,
 } from "@core/formatos/bilingue";
-import type { Plan } from "@core/plan/esquema";
+import type { Operador, Plan } from "@core/plan/esquema";
 import { prioridades, rpn } from "@core/plan";
 import type { OrigenDeRespuestas, VersionDelPlan } from "@/lib/datos/planes";
 import {
@@ -25,7 +25,6 @@ import {
 import {
   CRITICIDAD,
   ESTADO_SUPUESTO,
-  INCLUSIVO,
   REVERSIBILIDAD,
 } from "@/textos/plan-comun";
 import { OPERADOR, SIMBOLO } from "@/textos/playground";
@@ -162,23 +161,14 @@ function valorDeArista(p: Plan, valor: string | number | boolean): string {
 }
 
 /**
- * El operador de una arista en palabras, entre paréntesis y con «inclusivo» si lo es. La igualdad no lleva palabra: el
- * símbolo «=» ya la dice y «(es)» se leería como un error.
+ * El operador que la arista evalúa de verdad: «menor que» o «mayor que» con `inclusivo` es «≤» o «≥» (así lo lee el
+ * intérprete); en los demás la bandera no cambia nada. El símbolo ya dice todo: ni «inclusivo» ni una palabra al lado.
  */
-function palabraDeArista(
-  operador: string,
-  inclusivo: boolean,
-  i: Idioma,
-): string {
-  const palabras = [
-    ...(operador === "igual_a"
-      ? []
-      : [
-          palabra(OPERADOR, operador, "OPERADOR (src/textos/playground.ts)", i),
-        ]),
-    ...(inclusivo ? [T(INCLUSIVO, i)] : []),
-  ];
-  return palabras.length ? ` (${palabras.join(" · ")})` : "";
+function operadorEfectivo(operador: Operador, inclusivo: boolean): Operador {
+  if (!inclusivo) return operador;
+  if (operador === "menor_que") return "menor_o_igual_que";
+  if (operador === "mayor_que") return "mayor_o_igual_que";
+  return operador;
 }
 
 function contratoDetalle(p: Plan, i: Idioma): ContratoDetalle {
@@ -206,13 +196,13 @@ function contratoDetalle(p: Plan, i: Idioma): ContratoDetalle {
       condicion:
         "funcion" in a
           ? `${T(CONTRATO.funcion, i)} ${a.funcion.nombre}(${a.funcion.entradas.join(", ")})`
-          : `${a.senal} ${SIMBOLO[a.operador]} ${valorDeArista(p, a.valor)}${palabraDeArista(a.operador, a.inclusivo, i)}`,
+          : `${a.senal} ${SIMBOLO[operadorEfectivo(a.operador, a.inclusivo)]} ${valorDeArista(p, a.valor)}`,
       hacia: a.si_verdadero,
     })),
-    porDefecto: Object.entries(c.ramas_por_defecto).map(([desde, hacia]) => ({
-      desde,
-      hacia,
-    })),
+    // Igual que las aristas: en el orden del flujo, no en el de las claves del objeto.
+    porDefecto: Object.entries(c.ramas_por_defecto)
+      .sort(([a], [b]) => posicion(a) - posicion(b))
+      .map(([desde, hacia]) => ({ desde, hacia })),
     pausas: c.pausas_humanas.map((h) => {
       const rol = p.actores.find((a) => a.id === h.rol);
       return {

@@ -265,9 +265,9 @@ describe("vistaSinCorrida · el contrato del grafo en detalle", () => {
     ]);
     expect(a.map((x) => x.condicion)).toEqual([
       "tarea = investigar",
-      "fuentes_verificadas < umbral.U2 (= 2) (menor que)",
-      "antiguedad_marco_dias > umbral.U3 (= 180) (mayor que)",
-      "similitud_cita < umbral.U1 (= 1) (menor que)",
+      "fuentes_verificadas < umbral.U2 (= 2)",
+      "antiguedad_marco_dias > umbral.U3 (= 180)",
+      "similitud_cita < umbral.U1 (= 1)",
     ]);
     expect(a.map((x) => x.hacia)).toEqual([
       "investigador",
@@ -276,18 +276,16 @@ describe("vistaSinCorrida · el contrato del grafo en detalle", () => {
       "pausa_humana",
     ]);
     const en = vistaSinCorrida(p.plan, "en").contratoDetalle.aristas;
-    expect(en[1]!.condicion).toBe(
-      "fuentes_verificadas < umbral.U2 (= 2) (below)",
-    );
+    expect(en[1]!.condicion).toBe("fuentes_verificadas < umbral.U2 (= 2)");
   });
 
-  it("las ramas por defecto, la pausa humana con quién decide y qué ve, y las señales que hay que registrar", async () => {
+  it("las ramas por defecto en el orden del flujo, la pausa humana con quién decide y qué ve, y las señales que hay que registrar", async () => {
     const p = await planSinCorrida("hackguard-agentes");
     const d = vistaSinCorrida(p.plan, "es").contratoDetalle;
     expect(d.porDefecto).toEqual([
       { desde: "enrutador", hacia: "filtro_instrucciones" },
-      { desde: "verificador_citas", hacia: "calculo_veredicto" },
       { desde: "verificador_fuentes", hacia: "catalogo_borrador" },
+      { desde: "verificador_citas", hacia: "calculo_veredicto" },
     ]);
     expect(d.pausas).toHaveLength(1);
     expect(d.pausas[0]).toMatchObject({
@@ -302,7 +300,7 @@ describe("vistaSinCorrida · el contrato del grafo en detalle", () => {
     expect(d.senales).toContain("veredicto_corregido_por_persona");
   });
 
-  it("una arista que es una función nombrada se dice con su nombre y sus entradas; una condición inclusiva lo dice", async () => {
+  it("una arista que es una función nombrada se dice con su nombre y sus entradas", async () => {
     const p = await planSinCorrida("hackguard-agentes");
     const c = p.plan.contrato_de_grafo;
     const conFuncion = {
@@ -317,24 +315,68 @@ describe("vistaSinCorrida · el contrato del grafo en detalle", () => {
             funcion: { nombre: "calcula_algo", entradas: ["a", "b"] },
             si_verdadero: "pausa_humana",
           },
-          {
-            desde: "extractor",
-            orden: 2,
-            senal: "tokens",
-            operador: "mayor_o_igual_que" as const,
-            valor: 10,
-            inclusivo: true,
-            si_verdadero: "pausa_humana",
-          },
         ],
       },
     };
     const a = vistaSinCorrida(conFuncion, "es").contratoDetalle.aristas;
     const f = a.find((x) => x.desde === "extractor" && x.orden === 1)!;
     expect(f.condicion).toBe("función calcula_algo(a, b)");
-    const i = a.find((x) => x.desde === "extractor" && x.orden === 2)!;
-    expect(i.condicion).toContain("(igual o mayor que · inclusivo)");
-    expect(i.condicion).toContain("tokens ≥ 10");
+  });
+
+  it("la condición dice el operador que de verdad se evalúa: «<» o «>» con inclusivo son «≤» y «≥»; la bandera no suma palabras", async () => {
+    const p = await planSinCorrida("hackguard-agentes");
+    const c = p.plan.contrato_de_grafo;
+    const arista = (
+      orden: number,
+      operador:
+        | "menor_que"
+        | "mayor_que"
+        | "menor_o_igual_que"
+        | "mayor_o_igual_que"
+        | "igual_a"
+        | "distinto_de",
+      inclusivo: boolean,
+      valor: string | number,
+    ) => ({
+      desde: "extractor",
+      orden,
+      senal: "tokens",
+      operador,
+      valor,
+      inclusivo,
+      si_verdadero: "pausa_humana",
+    });
+    const plan = {
+      ...p.plan,
+      contrato_de_grafo: {
+        ...c,
+        aristas_condicionales: [
+          ...c.aristas_condicionales,
+          arista(1, "menor_que", true, 5),
+          arista(2, "mayor_que", true, 10),
+          arista(3, "menor_que", false, 5),
+          arista(4, "mayor_o_igual_que", true, 10),
+          arista(5, "menor_o_igual_que", false, 3),
+          arista(6, "igual_a", true, "x"),
+          arista(7, "distinto_de", true, "y"),
+        ],
+      },
+    };
+    for (const idioma of ["es", "en"] as const) {
+      const condiciones = vistaSinCorrida(plan, idioma)
+        .contratoDetalle.aristas.filter((x) => x.desde === "extractor")
+        .map((x) => x.condicion);
+      expect(condiciones).toEqual([
+        "tokens ≤ 5",
+        "tokens ≥ 10",
+        "tokens < 5",
+        "tokens ≥ 10",
+        "tokens ≤ 3",
+        "tokens = x",
+        "tokens ≠ y",
+      ]);
+      for (const c of condiciones) expect(c).not.toMatch(/inclusiv|\(/);
+    }
   });
 });
 

@@ -87,6 +87,12 @@ describe("vistaComparar: los casos que difieren por encima del tope se listan si
     const d = await conMas(5);
     const v = vistaComparar(d, "es")!;
     expect(v.casos).toHaveLength(TOPE_CASOS_QUE_DIFIEREN_CON_PAGINA + 5);
+    // El tope es de los primeros de la lista, en su orden: ahí no puede faltar un enlace.
+    expect(
+      v.casos
+        .slice(0, TOPE_CASOS_QUE_DIFIEREN_CON_PAGINA)
+        .every((c) => c.href !== null),
+    ).toBe(true);
     const sinPagina = v.casos.filter((c) => c.href === null);
     // Un caso que difiere pero ya tiene página por otra razón (los primeros del lote, uno señalado) sigue con enlace:
     // lo que se cuenta es lo que ninguna regla deja con página.

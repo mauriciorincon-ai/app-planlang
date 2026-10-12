@@ -88,8 +88,9 @@ Se usa de dos maneras:
   5. Si el plan ya está aprobado (`v1.json` existe), la entrevista no escribe en `plans/demo-b/`: esa carpeta es el
      registro de lo que aprobaste. Indícale otra con `--salida <carpeta>` y allí quedan el borrador, las
      contradicciones y la revisión. `plan:aprobar` no la convierte en `v1.json`, que ya existe. La carpeta de
-     `--salida` solo vale si está fuera de `plans/` o cuelga de la del propio plan (`plans/<plan>/v2`): una que
-     apunte a otro plan, a `plans/` o al registro del propio plan se rechaza antes de empezar.
+     `--salida` solo vale si cuelga de la del propio plan (`plans/<plan>/v2`), de `.entrevistas/` o queda fuera del
+     repo (los enlaces simbólicos se siguen antes de decidir): una que apunte a otro plan, a `plans/`, al registro
+     del propio plan o a cualquier otro archivo del repo se rechaza antes de empezar.
 - **Los idiomas:** tu respuesta queda tal cual, en el idioma en que la escribiste. El otro idioma lo redacta el
   modelo y queda marcado como suyo, para que lo revises antes de aprobar. Sin modelo (`--sin-modelo`), el otro
   idioma queda pendiente.
@@ -233,7 +234,7 @@ data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar l
 - **Cómo se abre:**
   1. `pnpm build` y después `pnpm start`. Abre en el navegador la dirección local que imprime.
   2. La portada elige el idioma de tu navegador. Puedes cambiarlo arriba a la derecha, igual que el tema.
-  3. «Ver como líder» y «Ver como experto» cambian el nivel de detalle sin cambiar la pantalla: el líder lee
+  3. El control «Leer como · Líder / Experto» cambia el nivel de detalle sin cambiar la pantalla: el líder lee
      frases cortas y el experto ve además las reglas, las señales y de dónde sale cada cifra.
 - **Las siete pantallas:**
   - **Entrada:** qué es planlang, una fila por demo con su veredicto y su corrida, y la capacidad medida con el demo A,
@@ -317,15 +318,15 @@ data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar l
 ### Publicar el design system · desde el sprint 3
 
 - **Qué hace:** publica en Claude Design el sistema de diseño consolidado de la app (colores, tipografía, espacio,
-  movimiento y los componentes canon que fijan su gramática visual), como activo estable entre ciclos. Las pantallas no
+  movimiento y los componentes canon que fijan su gramática visual), como activo estable entre hitos. Las pantallas no
   viajan: viven en la vitrina.
 - **Cómo se usa:**
-  1. Se hace **después** del gate corto ⭐⭐ del cierre: no se publica un sistema que el autor no ha juzgado.
+  1. Se hace **después** del gate de los hitos (el bloque G de la guía): no se publica un sistema que el autor no ha juzgado.
   2. En Claude Code, el autor escribe `/design-sync`; el constructor arma y publica.
   3. El destino está en `design-sync/project.json`. Antes de publicar se ve la lista exacta de archivos.
 - **De dónde sale:** `design-system.md` es la fuente; `design-sync/` es el paquete que se publica, al día en cada
   sprint con pantallas. El proyecto remoto nunca se edita allá.
-- **Limitaciones:** solo lo dispara el autor; si decide no publicarlo, el resumen del sprint lo registra.
+- **Limitaciones:** solo lo dispara el autor; si decide no publicarlo, el cierre ejecutivo del sprint lo registra.
 
 ### Comparar dos corridas · desde el sprint 4
 
@@ -341,7 +342,7 @@ data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar l
   2. El costo es nominal: lo que costarían las llamadas a precio de API. Aquí se paga con la suscripción.
   3. El revisor simulado sigue la verdad conocida del lote, por eso las decisiones finales coinciden casi siempre. Lo que
      separa a las dos corridas es la pausa.
-  4. «Ver como experto» muestra la regla de cada sección y las medidas exactas.
+  4. «Leer como · Experto» muestra la regla de cada sección y las medidas exactas.
 - **Limitaciones conocidas:** solo compara el demo A, sobre su corrida de 200 y su línea base. No compara modelos ni
   proveedores distintos. Un caso sin dato en una corrida aparece como «No observado», nunca como un valor inventado.
 
@@ -358,7 +359,7 @@ data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar l
   3. `pnpm plan:aprobar --dominio <id> --plan <id> --por "<tu nombre>" --el <fecha>` escribe `v1.json` con huella.
   4. `pnpm build`: la vitrina gana la sección «Planes sin corrida» en la entrada y la página `/es/planes/<id>`.
 - **Cómo se lee la página:** lo primero es la ficha de lo que NO hay (trazas, brecha, playground, visor); después el
-  problema, el contrato en cifras y cada sección del plan. «Ver como experto» muestra quién propuso cada elemento:
+  problema, el contrato en cifras y cada sección del plan. «Leer como · Experto» muestra quién propuso cada elemento:
   la plantilla, el entrevistador o la persona que respondió, y abre el contrato del grafo en detalle (desde el sprint
   7): los nodos con su tipo, las aristas condicionales en su orden con el valor de cada umbral, las ramas por defecto,
   la pausa humana con quién decide y qué ve, y las señales que hay que registrar. No hay diagrama: nadie ha construido
@@ -505,8 +506,9 @@ There are two ways to use it:
   5. If the plan is already approved (`v1.json` exists), the interview does not write to `plans/demo-b/`: that
      folder is the record of what you approved. Give it another one with `--salida <folder>` and the draft, the
      contradictions and the review land there. `plan:aprobar` does not turn it into `v1.json`, which already exists.
-     The `--salida` folder is only valid outside `plans/` or hanging from the plan's own folder (`plans/<plan>/v2`):
-     one that points at another plan, at `plans/` or at the plan's own record is refused before starting.
+     The `--salida` folder is only valid if it hangs from the plan's own folder (`plans/<plan>/v2`), from
+     `.entrevistas/` or sits outside the repo (symbolic links are followed before deciding): one that points at
+     another plan, at `plans/`, at the plan's own record or at any other file in the repo is refused before starting.
 - **Languages:** your answer stays as you wrote it, in your language. The model drafts the other language and it is
   marked as the model's, so you review it before approving. Without a model (`--sin-modelo`), the other language
   stays pending.
@@ -651,7 +653,7 @@ There are two ways to use it:
 - **How to open it:**
   1. `pnpm build`, then `pnpm start`. Open the local address it prints in your browser.
   2. The home page picks your browser's language. You can switch it at the top right, like the theme.
-  3. "View as lead" and "View as expert" change the level of detail without changing the screen: the lead
+  3. The "Read as · Leader / Expert" control changes the level of detail without changing the screen: the lead
      reads short sentences and the expert also sees the rules, the signals and where each figure comes from.
 - **The seven screens:**
   - **Home:** what planlang is, one row per demo with its verdict and its run, and the capability measured with demo A,
@@ -737,15 +739,15 @@ There are two ways to use it:
 ### Publish the design system · since sprint 3
 
 - **What it does:** publishes the app's consolidated design system to Claude Design (colors, type, spacing, motion
-  and the canon components that set its visual grammar), as an asset that stays stable between cycles. The screens do
+  and the canon components that set its visual grammar), as an asset that stays stable between milestones. The screens do
   not travel: they live in the showcase.
 - **How to use it:**
-  1. It happens **after** the short ⭐⭐ gate at closing: a system the author has not judged is never published.
+  1. It happens **after** the milestone gate (block G of the guide): a system the author has not judged is never published.
   2. In Claude Code, the author types `/design-sync`; the builder assembles and publishes it.
   3. The destination is in `design-sync/project.json`. The exact list of files is shown before publishing.
 - **Where it comes from:** `design-system.md` is the source; `design-sync/` is the bundle that gets published, kept
   up to date in every sprint with screens. The remote project is never edited over there.
-- **Limitations:** only the author triggers it; if they decide not to publish, the sprint summary records it.
+- **Limitations:** only the author triggers it; if they decide not to publish, the sprint's executive closing records it.
 
 ### Compare two runs · since sprint 4
 
@@ -761,7 +763,7 @@ There are two ways to use it:
   2. The cost is nominal: what the calls would cost at API prices. Here it is paid through the subscription.
   3. The simulated reviewer follows the batch's known truth, which is why final decisions almost always match. What
      separates the two runs is the pause.
-  4. «View as expert» shows each section's rule and the exact measures.
+  4. «Read as · Expert» shows each section's rule and the exact measures.
 - **Known limits:** it compares only demo A, on its 200-case run and its baseline. It does not compare different
   models or providers. A case with no data in a run shows as «Not observed», never as an invented value.
 
@@ -780,7 +782,7 @@ There are two ways to use it:
   4. `pnpm build`: the showcase gains the «Plans without a run» section on the home page and the page
      `/en/planes/<id>`.
 - **How to read the page:** first comes the record of what is NOT there (traces, gap, playground, viewer); then the
-  problem, the contract in numbers and every section of the plan. «Read as expert» shows who proposed each element:
+  problem, the contract in numbers and every section of the plan. «Read as · Expert» shows who proposed each element:
   the template, the interviewer or the person who answered, and opens the graph contract in detail (since sprint 7):
   the nodes with their type, the conditional edges in order with each threshold's value, the default branches, the
   human pause with who decides and what it sees, and the signals that must be logged. There is no diagram: nobody has

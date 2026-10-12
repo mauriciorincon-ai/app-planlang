@@ -79,22 +79,21 @@ def test_un_id_que_no_es_estable_o_una_plantilla_que_no_existe_se_rechazan(domin
 # ── --salida (S7): una entrevista nueva no puede pisar el registro de un plan aprobado ──────────────────
 
 
-def _plan(raiz: Path):
-    demo = demo_de_dominio(DOMINIO, PLAN)
+def _repo(tmp_path: Path) -> tuple[Path, Path]:
+    """Un repo falso con plans/<plan> y plans/demo-b, y una carpeta hermana fuera de él."""
+    raiz = tmp_path / "repo"
     (raiz / "plans" / PLAN).mkdir(parents=True)
-    return demo
+    (raiz / "plans" / "demo-b").mkdir(parents=True)
+    (tmp_path / "fuera").mkdir()
+    return raiz, tmp_path / "fuera"
 
 
-def test_salida_vale_si_cuelga_de_la_carpeta_del_propio_plan(tmp_path: Path) -> None:
-    demo = _plan(tmp_path)
-    destino = validar_salida(f"{tmp_path}/plans/{PLAN}/v2", demo, tmp_path)
-    assert destino == (tmp_path / "plans" / PLAN / "v2").resolve()
-
-
-def test_salida_vale_si_esta_fuera_de_plans(tmp_path: Path) -> None:
-    demo = _plan(tmp_path)
-    assert validar_salida(str(tmp_path / "otra"), demo, tmp_path) == (tmp_path / "otra").resolve()
-    assert validar_salida(str(tmp_path / ".entrevistas" / "x"), demo, tmp_path).name == "x"
+def test_salida_vale_si_cuelga_del_plan_de_entrevistas_o_esta_fuera_del_repo(tmp_path: Path) -> None:
+    raiz, fuera = _repo(tmp_path)
+    demo = demo_de_dominio(DOMINIO, PLAN)
+    assert validar_salida(f"{raiz}/plans/{PLAN}/v2", demo, raiz) == (raiz / "plans" / PLAN / "v2").resolve()
+    assert validar_salida(".entrevistas/x", demo, raiz).name == "x"
+    assert validar_salida(str(fuera / "otra"), demo, raiz) == (fuera / "otra").resolve()
 
 
 @pytest.mark.parametrize(
@@ -106,11 +105,41 @@ def test_salida_vale_si_esta_fuera_de_plans(tmp_path: Path) -> None:
         "{raiz}/plans/otro-plan/v2",
         "{raiz}/plans/{plan}/../demo-b",
         "{raiz}/otra/../plans/demo-b",
+        "{raiz}/otra",
+        "{raiz}/runs/demo-a",
+        "{raiz}/docs",
+        "{raiz}/.entrevistas",
+        "{raiz}",
         "",
         "   ",
     ],
 )
-def test_salida_que_pisaria_un_plan_aprobado_se_rechaza(tmp_path: Path, salida: str) -> None:
-    demo = _plan(tmp_path)
+def test_salida_que_pisaria_un_registro_o_un_archivo_del_repo_se_rechaza(tmp_path: Path, salida: str) -> None:
+    raiz, _ = _repo(tmp_path)
+    demo = demo_de_dominio(DOMINIO, PLAN)
     with pytest.raises(SalidaInvalida):
-        validar_salida(salida.format(raiz=tmp_path, plan=PLAN), demo, tmp_path)
+        validar_salida(salida.format(raiz=raiz, plan=PLAN), demo, raiz)
+
+
+def test_salida_sigue_los_enlaces_simbolicos(tmp_path: Path) -> None:
+    raiz, fuera = _repo(tmp_path)
+    demo = demo_de_dominio(DOMINIO, PLAN)
+    (fuera / "atajo").symlink_to(raiz / "plans" / "demo-b")
+    with pytest.raises(SalidaInvalida):
+        validar_salida(str(fuera / "atajo"), demo, raiz)
+    with pytest.raises(SalidaInvalida):
+        validar_salida(str(fuera / "atajo" / "v2"), demo, raiz)
+    # dentro del propio plan, un enlace que sale hacia otro plan se rechaza; uno hacia fuera del repo vale
+    (raiz / "plans" / PLAN / "v2").symlink_to(raiz / "plans" / "demo-b")
+    with pytest.raises(SalidaInvalida):
+        validar_salida(f"plans/{PLAN}/v2", demo, raiz)
+    (raiz / "plans" / PLAN / "v3").symlink_to(fuera)
+    assert validar_salida(f"plans/{PLAN}/v3", demo, raiz) == fuera.resolve()
+
+
+def test_salida_con_un_enlace_roto_no_se_puede_resolver(tmp_path: Path) -> None:
+    raiz, fuera = _repo(tmp_path)
+    demo = demo_de_dominio(DOMINIO, PLAN)
+    (fuera / "roto").symlink_to(tmp_path / "no-existe")
+    with pytest.raises(SalidaInvalida, match="no se puede resolver"):
+        validar_salida(str(fuera / "roto"), demo, raiz)
