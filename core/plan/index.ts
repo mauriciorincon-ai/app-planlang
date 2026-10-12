@@ -45,3 +45,6 @@ export {
   type Transcripcion,
   type Revision,
 } from "./revision";
+
+// La prioridad de acción por riesgo (instrumentos-de-plan) también la lee la vitrina (S6, auditoría B7).
+export { prioridades, rpn } from "../../packages/instrumentos-de-plan/src";

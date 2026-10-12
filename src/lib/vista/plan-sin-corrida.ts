@@ -10,7 +10,7 @@ import {
   type TextoLibre,
 } from "@core/formatos/bilingue";
 import type { Plan } from "@core/plan/esquema";
-import { prioridades, rpn } from "../../../packages/instrumentos-de-plan/src";
+import { prioridades, rpn } from "@core/plan";
 import type { OrigenDeRespuestas, VersionDelPlan } from "@/lib/datos/planes";
 import {
   ETIQUETA,

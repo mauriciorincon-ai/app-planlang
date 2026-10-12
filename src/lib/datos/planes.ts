@@ -73,6 +73,40 @@ function carpetaDeVersion(carpeta: string, version: string): string {
   return mayor >= 2 ? `${carpeta}/v${mayor}` : carpeta;
 }
 
+/** Un JSON del repo; si está roto, el error nombra el archivo (auditoría S6 B4). */
+function leerJsonDelRepo(raiz: string, archivo: string): unknown {
+  try {
+    return JSON.parse(readFileSync(join(raiz, archivo), "utf8"));
+  } catch (e) {
+    throw new Error(
+      `planes: ${archivo} no es JSON válido: ${(e as Error).message}`,
+    );
+  }
+}
+
+type Transcripcion = z.infer<typeof TranscripcionSchema>;
+
+/** La respuesta de una pregunta tal como quedó en la transcripción: su último turno. */
+function respuestaDeLaTranscripcion(
+  t: Transcripcion,
+  id: string,
+): string | undefined {
+  return t.preguntas
+    .find((q) => q.id === id)
+    ?.turnos.at(-1)
+    ?.respuesta?.texto.trim();
+}
+
+/** Las preguntas (P01…P14) cuya respuesta revisada difiere de la delegada: lo que de verdad cambió (S6 M2). */
+function preguntasCambiadas(revisadas: object, delegadas: object): string[] {
+  const r = revisadas as Record<string, unknown>;
+  const d = delegadas as Record<string, unknown>;
+  return Object.keys(r)
+    .filter((k) => /^P\d{2}$/.test(k))
+    .filter((k) => String(r[k]).trim() !== String(d[k] ?? "").trim())
+    .sort();
+}
+
 function origenDeRespuestas(
   raiz: string,
   carpeta: string,
@@ -95,29 +129,51 @@ function origenDeRespuestas(
     throw new Error(
       `planes: ${archivo}: no sé de quién son estas respuestas (los nombres que la vitrina entiende: ${Object.keys(CLASE_DE_ARCHIVO).join(", ")}).`,
     );
-  const rutaTranscripcion = join(raiz, dir, "transcripcion.json");
-  if (!existsSync(rutaTranscripcion))
+  if (!existsSync(join(raiz, dir, "transcripcion.json")))
     throw new Error(
       `planes: ${archivo} sin ${dir}/transcripcion.json: no se puede decir cuándo fue la entrevista.`,
     );
-  const entrevista = TranscripcionSchema.parse(
-    JSON.parse(readFileSync(rutaTranscripcion, "utf8")),
-  ).fecha;
+  let transcripcion: Transcripcion;
+  try {
+    transcripcion = TranscripcionSchema.parse(
+      leerJsonDelRepo(raiz, `${dir}/transcripcion.json`),
+    );
+  } catch (e) {
+    throw new Error(
+      `planes: ${dir}/transcripcion.json no carga: ${(e as Error).message}`,
+    );
+  }
+  const entrevista = transcripcion.fecha;
   if (clase === "delegadas")
     return { clase, archivo, entrevista, revision: null };
-  const revisada = RespuestasRevisadasSchema.safeParse(
-    JSON.parse(readFileSync(join(raiz, archivo), "utf8")),
-  );
+  const crudo = leerJsonDelRepo(raiz, archivo);
+  const revisada = RespuestasRevisadasSchema.safeParse(crudo);
   if (!revisada.success)
     throw new Error(
       `planes: ${archivo} no trae su _origen (fecha, frase_del_usuario, cambiadas): ${revisada.error.issues[0]?.message ?? ""}`,
     );
-  const o = revisada.data._origen;
+  // M1: la vitrina no publica respuestas que la entrevista no usó. Cada una debe ser la de la transcripción.
+  const r = crudo as Record<string, unknown>;
+  const dispares = Object.keys(r)
+    .filter((k) => /^P\d{2}$/.test(k))
+    .filter(
+      (k) =>
+        respuestaDeLaTranscripcion(transcripcion, k) !== String(r[k]).trim(),
+    );
+  if (dispares.length > 0)
+    throw new Error(
+      `planes: ${archivo} no coincide con ${dir}/transcripcion.json en ${dispares.join(", ")}: la vitrina no publica respuestas que la entrevista no usó.`,
+    );
+  // M2: lo que cambió al revisar se mide contra las respuestas delegadas de la carpeta del plan, no contra el texto del archivo.
+  const delegada = `${carpeta}/respuestas-por-delegacion.json`;
+  const cambiadas = existsSync(join(raiz, delegada))
+    ? preguntasCambiadas(r, leerJsonDelRepo(raiz, delegada) as object)
+    : revisada.data._origen.cambiadas;
   return {
     clase,
     archivo,
     entrevista,
-    revision: { fecha: o.fecha, cambiadas: o.cambiadas },
+    revision: { fecha: revisada.data._origen.fecha, cambiadas },
   };
 }
 

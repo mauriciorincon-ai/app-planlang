@@ -56,7 +56,7 @@ describe("planes sin corrida", () => {
       clase: "revisadas",
       archivo: "plans/hackguard-agentes/v2/respuestas-revisadas.json",
       entrevista: "2026-10-11",
-      revision: { fecha: "2026-10-11", cambiadas: ["P03", "P08"] },
+      revision: { fecha: "2026-10-11", cambiadas: ["P03", "P08", "P09"] },
     });
   });
 
@@ -157,6 +157,37 @@ describe("planes sin corrida", () => {
       rmSync(join(dir, V2, "transcripcion.json"));
       await expect(planesSinCorrida(dir)).rejects.toThrow(
         /sin plans\/hackguard-agentes\/v2\/transcripcion\.json/,
+      );
+    });
+  });
+
+  describe("S6 · auditoría: las respuestas se cruzan con la transcripción y los errores nombran el archivo", () => {
+    const V2 = "plans/hackguard-agentes/v2";
+
+    it("ROJO: una respuesta alterada en el archivo revisado no coincide con la transcripción y la vitrina no la publica", async () => {
+      const dir = copia();
+      const f = join(dir, V2, "respuestas-revisadas.json");
+      const r = JSON.parse(readFileSync(f, "utf8"));
+      r.P06 = `${r.P06} (alterada)`;
+      writeFileSync(f, JSON.stringify(r));
+      await expect(planesSinCorrida(dir)).rejects.toThrow(
+        /respuestas-revisadas\.json no coincide con plans\/hackguard-agentes\/v2\/transcripcion\.json en P06/,
+      );
+    });
+
+    it("ROJO: un transcripcion.json roto nombra su archivo", async () => {
+      const dir = copia();
+      writeFileSync(join(dir, V2, "transcripcion.json"), "{ roto");
+      await expect(planesSinCorrida(dir)).rejects.toThrow(
+        /plans\/hackguard-agentes\/v2\/transcripcion\.json no es JSON válido/,
+      );
+    });
+
+    it("ROJO: un archivo de respuestas roto nombra su archivo", async () => {
+      const dir = copia();
+      writeFileSync(join(dir, V2, "respuestas-revisadas.json"), "{ roto");
+      await expect(planesSinCorrida(dir)).rejects.toThrow(
+        /v2\/respuestas-revisadas\.json no es JSON válido/,
       );
     });
   });

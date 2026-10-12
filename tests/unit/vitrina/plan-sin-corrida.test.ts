@@ -123,7 +123,7 @@ describe("vistaSinCorrida · de quién es el plan y cada riesgo", () => {
     const es = vistaSinCorrida(p.plan, "es", contexto);
     expect(es.version).toBe("2.0.0");
     expect(es.respuestas).toBe(
-      "Revisadas y confirmadas por el usuario el 2026-10-11 · preguntas que cambió al revisar: P03, P08",
+      "Revisadas y confirmadas por el usuario el 2026-10-11 · preguntas que cambió al revisar: P03, P08, P09",
     );
     expect(es.entrevista).toBe("2026-10-11");
     expect(es.aprobacion).toBe("Mauricio Rincón · el 2026-10-11");
@@ -132,7 +132,7 @@ describe("vistaSinCorrida · de quién es el plan y cada riesgo", () => {
     ]);
     const en = vistaSinCorrida(p.plan, "en", contexto);
     expect(en.respuestas).toBe(
-      "Reviewed and confirmed by the user on 2026-10-11 · questions it changed on review: P03, P08",
+      "Reviewed and confirmed by the user on 2026-10-11 · questions it changed on review: P03, P08, P09",
     );
     expect(en.anteriores[0]).toContain("answers delegated to the builder");
   });

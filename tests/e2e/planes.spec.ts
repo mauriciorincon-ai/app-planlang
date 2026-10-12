@@ -41,7 +41,7 @@ test.describe("Plan sin corrida (es)", () => {
       "Revisadas y confirmadas por el usuario el 2026-10-11",
     );
     await expect(ficha).toContainText(
-      "preguntas que cambió al revisar: P03, P08",
+      "preguntas que cambió al revisar: P03, P08, P09",
     );
     await expect(ficha).toContainText("Entrevista");
     await expect(ficha).toContainText("Versiones anteriores");
