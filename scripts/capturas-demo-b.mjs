@@ -12,7 +12,7 @@
 // `out/` o si `--pasada` cae dentro del repo. Solo hay datos sintéticos precompilados.
 //
 // Uso: pnpm build && node scripts/capturas-demo-b.mjs --pasada <carpeta fuera del repo>
-//        [--conjunto forma-b|mirada-3|comparar|planes|origen] [--destino docs/fidelidad/<conjunto>] [--techo 2097152]
+//        [--conjunto forma-b|mirada-3|comparar|planes|origen|contrato] [--destino docs/fidelidad/<conjunto>] [--techo 2097152]
 // Conjuntos: `forma-b` (S3 fase 3, la mirada 2: las pantallas del B) y `mirada-3` (S3 fase 4: el BLUEPRINT, el
 // expediente y el informe del B y los cambios de forma del A sobre la corrida de 200). El BLUEPRINT es el único
 // archivo que se sirve fuera de `out/` (`docs/BLUEPRINT.html`, autocontenido).
@@ -48,7 +48,9 @@ const arg = (n, def) => {
 const pasada = arg("pasada", null) ? resolve(arg("pasada", null)) : null;
 const CONJUNTO = arg("conjunto", "forma-b");
 if (
-  !["forma-b", "mirada-3", "comparar", "planes", "origen"].includes(CONJUNTO)
+  !["forma-b", "mirada-3", "comparar", "planes", "origen", "contrato"].includes(
+    CONJUNTO,
+  )
 ) {
   console.error(`capturas-demo-b: conjunto desconocido «${CONJUNTO}». Aborto.`);
   process.exit(1);
@@ -65,7 +67,9 @@ const destino = resolve(
           ? "docs/fidelidad/s5-planes"
           : CONJUNTO === "origen"
             ? "docs/fidelidad/s6-planes"
-            : "docs/fidelidad/s3-mirada-3",
+            : CONJUNTO === "contrato"
+              ? "docs/fidelidad/s7-contrato"
+              : "docs/fidelidad/s3-mirada-3",
   ),
 );
 const BLUEPRINT = join(raiz, "docs", "BLUEPRINT.html");
@@ -75,7 +79,7 @@ const TECHO = Number(arg("techo", String(2 * 1024 * 1024)));
 // en 70 y 55, como se registró.
 const CALIDAD = Number(arg("calidad", CONJUNTO_CALIDAD()));
 function CONJUNTO_CALIDAD() {
-  return ["forma-b", "comparar", "planes", "origen"].includes(
+  return ["forma-b", "comparar", "planes", "origen", "contrato"].includes(
     arg("conjunto", "forma-b"),
   )
     ? "70"
@@ -187,17 +191,12 @@ const PANTALLAS_FORMA_B = [
   { clave: "caso-B-019", ruta: "/demo-b/caso/B-019" },
   { clave: "fichas", ruta: "/demo-b/fichas" },
 ];
-const COMBINACIONES =
-  CONJUNTO === "comparar" || CONJUNTO === "planes" || CONJUNTO === "origen"
-    ? [
-        { idioma: "es", tema: "oscuro" },
-        { idioma: "es", tema: "claro" },
-      ]
-    : [
-        { idioma: "es", tema: "oscuro" },
-        { idioma: "es", tema: "claro" },
-        { idioma: "en", tema: "oscuro" },
-      ];
+// En español en los dos temas y en inglés en oscuro (S7, cierre del hito: el segundo idioma al día en todos los conjuntos).
+const COMBINACIONES = [
+  { idioma: "es", tema: "oscuro" },
+  { idioma: "es", tema: "claro" },
+  { idioma: "en", tema: "oscuro" },
+];
 const ANCHOS = [380, 1280];
 
 // ── 2. las decisiones de forma, con su fila de la matriz ───────────────────────────────────────────────
@@ -530,6 +529,21 @@ const DECISIONES_MIRADA_3 = [
 const PANTALLAS_COMPARAR = [{ clave: "comparar", ruta: "/comparar" }];
 const DECISIONES_COMPARAR = [
   {
+    clave: "veredicto-y-criterios-en",
+    archivo:
+      "Compare two runs (/en/comparar), verdicts and criteria (en inglés)",
+    estado: "tal como abre, inglés",
+    ruta: "/en/comparar",
+    ancho: 1280,
+    tema: "oscuro",
+    recorte: (page) =>
+      marco(page.locator('section[aria-labelledby="s-veredicto-t"]')),
+    mirar:
+      "La misma sección en inglés: los dos veredictos, la tabla de medidas y la de criterios.",
+    esperada:
+      "«Meets» en la multiagente y «Meets with alerts» en la de agente único; el criterio C5 no se cumple en la única; ningún texto en español salvo los ids del plan.",
+  },
+  {
     clave: "veredicto-y-criterios",
     archivo: "Comparar (/es/comparar), veredictos y criterios",
     estado: "tal como abre",
@@ -598,6 +612,28 @@ const PANTALLAS_PLANES = [
   { clave: "plan-sin-corrida", ruta: `/planes/${PLAN_S5}` },
 ];
 const DECISIONES_PLANES = [
+  {
+    clave: "ficha-sin-corrida-en",
+    archivo: `Plan without a run (/en/planes/${PLAN_S5}), cover and record (en inglés)`,
+    estado: "tal como abre, inglés",
+    ruta: `/en/planes/${PLAN_S5}`,
+    ancho: 1280,
+    tema: "oscuro",
+    recorte: async (page) => {
+      const a = await marco(page.locator('section[aria-labelledby="ps-t"]'));
+      const b = await marco(page.locator('[data-ficha="sin-corrida"]'));
+      return {
+        x: Math.min(a.x, b.x),
+        y: a.y,
+        width: Math.max(a.width, b.width),
+        height: b.y + b.height - a.y,
+      };
+    },
+    mirar:
+      "La portada y la ficha en inglés: el rótulo «No run», la nota de lo que no hay y las filas de la ficha.",
+    esperada:
+      "«No run» se lee antes que cualquier sección; la nota nombra traces, gap, playground y viewer como ausentes; «Mauricio Rincón · on 2026-10-11».",
+  },
   {
     clave: "entrada-planes-sin-corrida",
     archivo: "Entrada (/es), sección «Planes sin corrida»",
@@ -670,11 +706,88 @@ const DECISIONES_PLANES = [
   },
 ];
 
+// ── el conjunto «contrato» (S7): el contrato del grafo en detalle, como experto, en los dos idiomas ──────────────────
+const PANTALLAS_CONTRATO = [
+  { clave: "plan-sin-corrida", ruta: `/planes/${PLAN_S5}` },
+];
+const EXPERTO = {
+  es: { grupo: "Leer como", boton: "Experto" },
+  en: { grupo: "Read as", boton: "Expert" },
+};
+const pulsarExperto = (idioma) => (page) =>
+  page
+    .getByRole("group", { name: EXPERTO[idioma].grupo })
+    .getByRole("button", { name: EXPERTO[idioma].boton })
+    .click();
+const DECISIONES_CONTRATO = [
+  {
+    clave: "contrato-escritorio",
+    archivo: `Plan sin corrida (/es/planes/${PLAN_S5}), contrato del grafo (pasada de interacción)`,
+    estado: "tras pulsar «Experto»",
+    ruta: `/es/planes/${PLAN_S5}`,
+    ancho: 1280,
+    tema: "oscuro",
+    accion: pulsarExperto("es"),
+    antes: (page) => page.locator("html").getAttribute("data-perfil"),
+    recorte: (page) =>
+      marco(page.locator('section[aria-labelledby="ps-contrato-t"]')),
+    mirar:
+      "Que, como experto, el contrato deje de ser tres cifras y se lea en detalle: los nodos con su tipo, las aristas condicionales en orden con el valor de cada umbral, las ramas por defecto, la pausa humana con quién decide y qué ve, y las señales que hay que registrar.",
+    esperada:
+      "Nueve nodos (enrutador, investigador «modelo», verificador_fuentes «regla»…, pausa_humana «pausa humana»); cuatro aristas, p. ej. fuentes_verificadas < umbral.U2 (= 2); tres ramas por defecto; una pausa de «Revisor humano». Como líder, nada de esto se ve.",
+  },
+  {
+    clave: "contrato-aristas-movil",
+    archivo: "Plan sin corrida, aristas condicionales del contrato (teléfono)",
+    estado: "tras pulsar «Experto», 380 px",
+    ruta: `/es/planes/${PLAN_S5}`,
+    ancho: 380,
+    tema: "claro",
+    accion: pulsarExperto("es"),
+    antes: (page) => page.locator("html").getAttribute("data-perfil"),
+    recorte: (page) =>
+      marco(page.locator('[data-contrato="detalle"] > div:nth-child(2)')),
+    mirar:
+      "Que las aristas condicionales se lean en tarjetas, sin desplazamiento lateral y sin cortar los ids ni las condiciones largas.",
+    esperada:
+      "Cuatro tarjetas, una por arista, con «Desde», «Orden», «Si se cumple» y «Va a»; la condición lleva el valor del umbral (p. ej. fuentes_verificadas < umbral.U2 (= 2)) y se parte en lugar de salirse de la pantalla.",
+  },
+  {
+    clave: "contrato-ingles",
+    archivo: `Plan without a run (/en/planes/${PLAN_S5}), graph contract (en inglés)`,
+    estado: "tras pulsar «Expert», inglés",
+    ruta: `/en/planes/${PLAN_S5}`,
+    ancho: 1280,
+    tema: "oscuro",
+    accion: pulsarExperto("en"),
+    antes: (page) => page.locator("html").getAttribute("data-perfil"),
+    recorte: (page) =>
+      marco(page.locator('section[aria-labelledby="ps-contrato-t"]')),
+    mirar:
+      "El mismo contrato en inglés: los tipos de nodo («router», «model», «rule», «tool», «human pause»), la condición de cada arista y la pausa «Human reviewer».",
+    esperada:
+      "Todo el texto del contrato en inglés salvo los ids y las señales del plan, que son nombres del plan y no se traducen.",
+  },
+];
+
 // ── el conjunto «origen» (S6): la ficha de la v2 de HackGuard dice de quién son las respuestas ─────────────────────
 const PANTALLAS_ORIGEN = [
   { clave: "plan-sin-corrida", ruta: `/planes/${PLAN_S5}` },
 ];
 const DECISIONES_ORIGEN = [
+  {
+    clave: "ficha-origen-respuestas-en",
+    archivo: `Plan without a run (/en/planes/${PLAN_S5}), v2 record (en inglés)`,
+    estado: "tal como abre, inglés",
+    ruta: `/en/planes/${PLAN_S5}`,
+    ancho: 1280,
+    tema: "oscuro",
+    recorte: (page) => marco(page.locator('[data-ficha="sin-corrida"]')),
+    mirar:
+      "Las filas nuevas de la ficha en inglés: «Answers», «Interview» y «Earlier versions».",
+    esperada:
+      "«Reviewed and confirmed by the user on 2026-10-11 · questions it changed on review: P03, P08, P09»; Interview 2026-10-11; y la v1 con «answers delegated to the builder» y su huella (bf05e61d…).",
+  },
   {
     clave: "ficha-origen-respuestas",
     archivo: `Plan sin corrida (/es/planes/${PLAN_S5}), ficha de la v2`,
@@ -699,7 +812,9 @@ const PANTALLAS =
         ? PANTALLAS_PLANES
         : CONJUNTO === "origen"
           ? PANTALLAS_ORIGEN
-          : PANTALLAS_MIRADA_3;
+          : CONJUNTO === "contrato"
+            ? PANTALLAS_CONTRATO
+            : PANTALLAS_MIRADA_3;
 const DECISIONES =
   CONJUNTO === "forma-b"
     ? DECISIONES_FORMA_B
@@ -709,7 +824,9 @@ const DECISIONES =
         ? DECISIONES_PLANES
         : CONJUNTO === "origen"
           ? DECISIONES_ORIGEN
-          : DECISIONES_MIRADA_3;
+          : CONJUNTO === "contrato"
+            ? DECISIONES_CONTRATO
+            : DECISIONES_MIRADA_3;
 
 rmSync(destino, { recursive: true, force: true });
 mkdirSync(destino, { recursive: true });
@@ -762,7 +879,9 @@ for (const c of capturas) {
     path: join(destino, c.miniatura),
     clip: { x: 0, y: 0, width: 240, height: 400 },
     type: "jpeg",
-    quality: ["forma-b", "comparar", "planes", "origen"].includes(CONJUNTO)
+    quality: ["forma-b", "comparar", "planes", "origen", "contrato"].includes(
+      CONJUNTO,
+    )
       ? 55
       : 45,
   });
@@ -861,7 +980,7 @@ const html = `<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${CONJUNTO === "origen" ? "Plan sin corrida v2 · mirada de forma (S6)" : CONJUNTO === "planes" ? "Plan sin corrida · mirada de forma (S5)" : CONJUNTO === "comparar" ? "Comparar dos corridas · mirada de forma (S4)" : CONJUNTO === "forma-b" ? "Demo B · mirada de forma (S3)" : "Mirada 3 · cierre (S3)"}</title>
+<title>${CONJUNTO === "contrato" ? "Plan sin corrida · contrato del grafo en detalle · mirada de forma (S7)" : CONJUNTO === "origen" ? "Plan sin corrida v2 · mirada de forma (S6)" : CONJUNTO === "planes" ? "Plan sin corrida · mirada de forma (S5)" : CONJUNTO === "comparar" ? "Comparar dos corridas · mirada de forma (S4)" : CONJUNTO === "forma-b" ? "Demo B · mirada de forma (S3)" : "Mirada 3 · cierre (S3)"}</title>
 <style>
 :root{--fondo:#0f1115;--sup:#171a21;--t1:#eceef2;--t2:#a9afbb;--linea:#2a2f3a}
 @media (prefers-color-scheme: light){:root{--fondo:#f7f7f5;--sup:#fff;--t1:#16181d;--t2:#4a505c;--linea:#d9dbe0}}
@@ -878,25 +997,29 @@ table{border-collapse:collapse;width:100%;font-size:13px;margin-top:8px}th,td{bo
 </head>
 <body><main>
 ${
-  CONJUNTO === "origen"
-    ? `<p class="pregunta">¿La ficha del plan de HackGuard dice de quién son las respuestas y qué versión quedó como historia? Mira la fila de la tabla con su recorte.</p>
+  CONJUNTO === "contrato"
+    ? `<p class="pregunta">¿El contrato del grafo del plan de HackGuard se lee en detalle, en español y en inglés, y en el teléfono sin cortarse? Mira cada fila de la tabla con su recorte.</p>
+<h1>Plan sin corrida · contrato del grafo en detalle · mirada de forma «no vista» (S7)</h1>
+<p>Vitrina construida con el commit en curso, servida desde <code>out/</code>. Clase de mirada: FORMA, registrada «no vista»; su veredicto viaja al gate de los hitos H-1 y H-2 (bloque G de la guía). Las capturas enteras no se versionan: cada una se identifica por su huella SHA-256.</p>`
+    : CONJUNTO === "origen"
+      ? `<p class="pregunta">¿La ficha del plan de HackGuard dice de quién son las respuestas y qué versión quedó como historia? Mira la fila de la tabla con su recorte.</p>
 <h1>Plan sin corrida v2 · mirada de forma «no vista» (S6)</h1>
-<p>Vitrina construida con el commit en curso, servida desde <code>out/</code>. Clase de mirada: FORMA, registrada «no vista»; su veredicto viaja al gate del hito (⭐⭐ de la guía). Las capturas enteras no se versionan: cada una se identifica por su huella SHA-256.</p>`
-    : CONJUNTO === "planes"
-      ? `<p class="pregunta">¿El plan de HackGuard, sin corrida, se lee como esperas? Mira cada fila de la tabla con su recorte.</p>
+<p>Vitrina construida con el commit en curso, servida desde <code>out/</code>. Clase de mirada: FORMA, registrada «no vista»; su veredicto viaja al gate de los hitos H-1 y H-2 (bloque G de la guía). Las capturas enteras no se versionan: cada una se identifica por su huella SHA-256.</p>`
+      : CONJUNTO === "planes"
+        ? `<p class="pregunta">¿El plan de HackGuard, sin corrida, se lee como esperas? Mira cada fila de la tabla con su recorte.</p>
 <h1>Plan sin corrida · mirada de forma «no vista» (S5)</h1>
-<p>Vitrina construida con el commit en curso, servida desde <code>out/</code>. Clase de mirada: FORMA, registrada «no vista»; su veredicto viaja al gate del hito (⭐⭐ de la guía). Las capturas enteras no se versionan: cada una se identifica por su huella SHA-256.</p>`
-      : CONJUNTO === "comparar"
-        ? `<p class="pregunta">¿«Comparar dos corridas» se lee como esperas? Mira cada fila de la tabla con su recorte.</p>
+<p>Vitrina construida con el commit en curso, servida desde <code>out/</code>. Clase de mirada: FORMA, registrada «no vista»; su veredicto viaja al gate de los hitos H-1 y H-2 (bloque G de la guía). Las capturas enteras no se versionan: cada una se identifica por su huella SHA-256.</p>`
+        : CONJUNTO === "comparar"
+          ? `<p class="pregunta">¿«Comparar dos corridas» se lee como esperas? Mira cada fila de la tabla con su recorte.</p>
 <h1>Comparar dos corridas · mirada de forma «no vista» (S4)</h1>
-<p>Vitrina construida con el commit en curso, servida desde <code>out/</code>. Clase de mirada: FORMA, registrada «no vista»; su veredicto viaja al gate del hito (⭐⭐ de la guía). Las capturas enteras no se versionan: cada una se identifica por su huella SHA-256.</p>`
-        : CONJUNTO === "forma-b"
-          ? `<p class="pregunta">¿Las pantallas del demo B tienen la forma que esperas? Mira cada fila de la tabla con su recorte.</p>
+<p>Vitrina construida con el commit en curso, servida desde <code>out/</code>. Clase de mirada: FORMA, registrada «no vista»; su veredicto viaja al gate de los hitos H-1 y H-2 (bloque G de la guía). Las capturas enteras no se versionan: cada una se identifica por su huella SHA-256.</p>`
+          : CONJUNTO === "forma-b"
+            ? `<p class="pregunta">¿Las pantallas del demo B tienen la forma que esperas? Mira cada fila de la tabla con su recorte.</p>
 <h1>Demo B · mirada de forma «no vista» (S3, fase 3)</h1>
-<p>Vitrina construida con el commit en curso, servida desde <code>out/</code>. Clase de mirada: FORMA, registrada «no vista»; su veredicto viaja al gate ⭐⭐ (parada 2). Las capturas enteras no se versionan: cada una se identifica por su huella SHA-256.</p>`
-          : `<p class="pregunta">¿El BLUEPRINT, el expediente y el informe del B, y los cambios del A sobre la corrida de 200, se leen como esperas? Mira cada fila de la tabla con su recorte.</p>
+<p>Vitrina construida con el commit en curso, servida desde <code>out/</code>. Clase de mirada: FORMA, registrada «no vista»; su veredicto viaja al gate de los hitos H-1 y H-2 (bloque G de la guía). Las capturas enteras no se versionan: cada una se identifica por su huella SHA-256.</p>`
+            : `<p class="pregunta">¿El BLUEPRINT, el expediente y el informe del B, y los cambios del A sobre la corrida de 200, se leen como esperas? Mira cada fila de la tabla con su recorte.</p>
 <h1>Mirada 3 · cierre del ciclo, «no vista» (S3, fase 4)</h1>
-<p>Vitrina construida con el commit en curso, servida desde <code>out/</code>; el BLUEPRINT, desde <code>docs/</code>. Clase de mirada: FORMA y TEXTO, registrada «no vista»; su veredicto viaja al gate ⭐ del ciclo (las paradas 2 a 4 del ⭐⭐ la recorren en parte). Las capturas enteras no se versionan: cada una se identifica por su huella SHA-256.</p>`
+<p>Vitrina construida con el commit en curso, servida desde <code>out/</code>; el BLUEPRINT, desde <code>docs/</code>. Clase de mirada: FORMA y TEXTO, registrada «no vista»; su veredicto viaja al gate de los hitos H-1 y H-2 (bloque G de la guía). Las capturas enteras no se versionan: cada una se identifica por su huella SHA-256.</p>`
 }
 <h2>La matriz</h2>
 <table><thead><tr><th>#</th><th>Archivo / pantalla</th><th>Botón o estado</th><th>Qué mirar</th><th>Respuesta esperada</th><th>Tu respuesta</th></tr></thead>
@@ -906,7 +1029,7 @@ ${filas}
 <h2>Los recortes</h2>
 ${figuras}
 <h2>La pasada completa (${capturas.length} capturas)</h2>
-<p>${CONJUNTO === "origen" ? "El plan sin corrida de HackGuard, a 380 y 1280 px, en español en los dos temas." : CONJUNTO === "planes" ? "La Entrada y el plan sin corrida, a 380 y 1280 px, en español en los dos temas." : CONJUNTO === "comparar" ? "La pantalla, a 380 y 1280 px, en español en los dos temas." : CONJUNTO === "forma-b" ? "Cada pantalla del B y la entrada" : "Las pantallas que cambió el cierre"}${CONJUNTO === "comparar" || CONJUNTO === "planes" || CONJUNTO === "origen" ? "" : ", a 380 y 1280 px: en español en los dos temas, en inglés en oscuro"}. La miniatura es la parte de arriba; la huella identifica la captura entera que se leyó.</p>
+<p>${CONJUNTO === "contrato" ? "El plan sin corrida de HackGuard (contrato en detalle)" : CONJUNTO === "origen" ? "El plan sin corrida de HackGuard" : CONJUNTO === "planes" ? "La Entrada y el plan sin corrida" : CONJUNTO === "comparar" ? "La pantalla" : CONJUNTO === "forma-b" ? "Cada pantalla del B y la entrada" : "Las pantallas que cambió el cierre"}, a 380 y 1280 px: en español en los dos temas, en inglés en oscuro. La miniatura es la parte de arriba; la huella identifica la captura entera que se leyó.</p>
 <div class="minis">
 ${minis}
 </div>

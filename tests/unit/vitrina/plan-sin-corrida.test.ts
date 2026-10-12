@@ -264,7 +264,7 @@ describe("vistaSinCorrida · el contrato del grafo en detalle", () => {
       "verificador_citas#1",
     ]);
     expect(a.map((x) => x.condicion)).toEqual([
-      "tarea = investigar (es)",
+      "tarea = investigar",
       "fuentes_verificadas < umbral.U2 (= 2) (menor que)",
       "antiguedad_marco_dias > umbral.U3 (= 180) (mayor que)",
       "similitud_cita < umbral.U1 (= 1) (menor que)",
@@ -333,7 +333,33 @@ describe("vistaSinCorrida · el contrato del grafo en detalle", () => {
     const f = a.find((x) => x.desde === "extractor" && x.orden === 1)!;
     expect(f.condicion).toBe("función calcula_algo(a, b)");
     const i = a.find((x) => x.desde === "extractor" && x.orden === 2)!;
-    expect(i.condicion).toContain("· inclusivo");
+    expect(i.condicion).toContain("(igual o mayor que · inclusivo)");
     expect(i.condicion).toContain("tokens ≥ 10");
+  });
+});
+
+describe("vistaSinCorrida · las cuentas del contrato concuerdan con su número", () => {
+  it("«1 pausa humana» en singular y «9 nodos» en plural, en los dos idiomas", async () => {
+    const p = await planSinCorrida("hackguard-agentes");
+    expect(vistaSinCorrida(p.plan, "es").contrato).toEqual([
+      "9 nodos",
+      "4 aristas condicionales",
+      "1 pausa humana",
+    ]);
+    expect(vistaSinCorrida(p.plan, "en").contrato).toEqual([
+      "9 nodes",
+      "4 conditional edges",
+      "1 human pause",
+    ]);
+    const c = p.plan.contrato_de_grafo;
+    const una = {
+      ...p.plan,
+      contrato_de_grafo: {
+        ...c,
+        aristas_condicionales: c.aristas_condicionales.slice(0, 1),
+      },
+    };
+    expect(vistaSinCorrida(una, "es").contrato[1]).toBe("1 arista condicional");
+    expect(vistaSinCorrida(una, "en").contrato[1]).toBe("1 conditional edge");
   });
 });

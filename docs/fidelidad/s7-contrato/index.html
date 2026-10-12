@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plan sin corrida · contrato del grafo en detalle · mirada de forma (S7)</title>
+<style>
+:root{--fondo:#0f1115;--sup:#171a21;--t1:#eceef2;--t2:#a9afbb;--linea:#2a2f3a}
+@media (prefers-color-scheme: light){:root{--fondo:#f7f7f5;--sup:#fff;--t1:#16181d;--t2:#4a505c;--linea:#d9dbe0}}
+body{margin:0;background:var(--fondo);color:var(--t1);font:15px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1200px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:24px;margin:0 0 8px}h2{font-size:19px;margin:40px 0 8px}h3{font-size:16px;margin:0}
+p{color:var(--t2);max-width:80ch;margin:4px 0}code{font:12px ui-monospace,monospace}
+.pregunta{color:var(--t1);font-size:17px;font-weight:600}
+table{border-collapse:collapse;width:100%;font-size:13px;margin-top:8px}th,td{border-top:1px solid var(--linea);padding:8px;text-align:left;vertical-align:top}th{color:var(--t2);font-weight:500}
+.forma{margin-top:28px}.forma img{max-width:100%;height:auto;border:1px solid var(--linea);border-radius:6px;display:block;margin-top:8px}
+.minis{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:12px}
+.minis figure{margin:0}.minis img{width:100%;height:auto;border:1px solid var(--linea);border-radius:4px;display:block}.minis figcaption{font-size:11px;color:var(--t2);margin-top:4px;line-height:1.4}
+</style>
+</head>
+<body><main>
+<p class="pregunta">¿El contrato del grafo del plan de HackGuard se lee en detalle, en español y en inglés, y en el teléfono sin cortarse? Mira cada fila de la tabla con su recorte.</p>
+<h1>Plan sin corrida · contrato del grafo en detalle · mirada de forma «no vista» (S7)</h1>
+<p>Vitrina construida con el commit en curso, servida desde <code>out/</code>. Clase de mirada: FORMA, registrada «no vista»; su veredicto viaja al gate de los hitos H-1 y H-2 (bloque G de la guía). Las capturas enteras no se versionan: cada una se identifica por su huella SHA-256.</p>
+<h2>La matriz</h2>
+<table><thead><tr><th>#</th><th>Archivo / pantalla</th><th>Botón o estado</th><th>Qué mirar</th><th>Respuesta esperada</th><th>Tu respuesta</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Plan sin corrida (/es/planes/hackguard-agentes), contrato del grafo (pasada de interacción)</td><td>tras pulsar «Experto»</td><td>Que, como experto, el contrato deje de ser tres cifras y se lea en detalle: los nodos con su tipo, las aristas condicionales en orden con el valor de cada umbral, las ramas por defecto, la pausa humana con quién decide y qué ve, y las señales que hay que registrar.</td><td>Nueve nodos (enrutador, investigador «modelo», verificador_fuentes «regla»…, pausa_humana «pausa humana»); cuatro aristas, p. ej. fuentes_verificadas &lt; umbral.U2 (= 2); tres ramas por defecto; una pausa de «Revisor humano». Como líder, nada de esto se ve.</td><td>sin respuesta</td></tr>
+<tr><td>2</td><td>Plan sin corrida, aristas condicionales del contrato (teléfono)</td><td>tras pulsar «Experto», 380 px</td><td>Que las aristas condicionales se lean en tarjetas, sin desplazamiento lateral y sin cortar los ids ni las condiciones largas.</td><td>Cuatro tarjetas, una por arista, con «Desde», «Orden», «Si se cumple» y «Va a»; la condición lleva el valor del umbral (p. ej. fuentes_verificadas &lt; umbral.U2 (= 2)) y se parte en lugar de salirse de la pantalla.</td><td>sin respuesta</td></tr>
+<tr><td>3</td><td>Plan without a run (/en/planes/hackguard-agentes), graph contract (en inglés)</td><td>tras pulsar «Expert», inglés</td><td>El mismo contrato en inglés: los tipos de nodo («router», «model», «rule», «tool», «human pause»), la condición de cada arista y la pausa «Human reviewer».</td><td>Todo el texto del contrato en inglés salvo los ids y las señales del plan, que son nombres del plan y no se traducen.</td><td>sin respuesta</td></tr>
+</tbody></table>
+<h2>Los recortes</h2>
+<section class="forma" id="contrato-escritorio"><h3>1. Plan sin corrida (/es/planes/hackguard-agentes), contrato del grafo (pasada de interacción)</h3><p>tras pulsar «Experto» · 1280 px · oscuro · la interacción cambió la página</p><img loading="lazy" src="forma-contrato-escritorio.jpg" alt="Que, como experto, el contrato deje de ser tres cifras y se lea en detalle: los nodos con su tipo, las aristas condicionales en orden con el valor de cada umbral, las ramas por defecto, la pausa humana con quién decide y qué ve, y las señales que hay que registrar."></section>
+<section class="forma" id="contrato-aristas-movil"><h3>2. Plan sin corrida, aristas condicionales del contrato (teléfono)</h3><p>tras pulsar «Experto», 380 px · 380 px · claro · la interacción cambió la página</p><img loading="lazy" src="forma-contrato-aristas-movil.jpg" alt="Que las aristas condicionales se lean en tarjetas, sin desplazamiento lateral y sin cortar los ids ni las condiciones largas."></section>
+<section class="forma" id="contrato-ingles"><h3>3. Plan without a run (/en/planes/hackguard-agentes), graph contract (en inglés)</h3><p>tras pulsar «Expert», inglés · 1280 px · oscuro · la interacción cambió la página</p><img loading="lazy" src="forma-contrato-ingles.jpg" alt="El mismo contrato en inglés: los tipos de nodo («router», «model», «rule», «tool», «human pause»), la condición de cada arista y la pausa «Human reviewer»."></section>
+<h2>La pasada completa (6 capturas)</h2>
+<p>El plan sin corrida de HackGuard (contrato en detalle), a 380 y 1280 px: en español en los dos temas, en inglés en oscuro. La miniatura es la parte de arriba; la huella identifica la captura entera que se leyó.</p>
+<div class="minis">
+<figure><img loading="lazy" src="mini-plan-sin-corrida-380-oscuro-es.jpg" alt="plan-sin-corrida 380 px oscuro es"><figcaption>plan-sin-corrida · 380 · oscuro · es<br><code title="SHA-256 de la captura entera">6d36cdf818a0…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-plan-sin-corrida-1280-oscuro-es.jpg" alt="plan-sin-corrida 1280 px oscuro es"><figcaption>plan-sin-corrida · 1280 · oscuro · es<br><code title="SHA-256 de la captura entera">70130ff4fdd2…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-plan-sin-corrida-380-claro-es.jpg" alt="plan-sin-corrida 380 px claro es"><figcaption>plan-sin-corrida · 380 · claro · es<br><code title="SHA-256 de la captura entera">ef83237c44d8…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-plan-sin-corrida-1280-claro-es.jpg" alt="plan-sin-corrida 1280 px claro es"><figcaption>plan-sin-corrida · 1280 · claro · es<br><code title="SHA-256 de la captura entera">686bc893ef27…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-plan-sin-corrida-380-oscuro-en.jpg" alt="plan-sin-corrida 380 px oscuro en"><figcaption>plan-sin-corrida · 380 · oscuro · en<br><code title="SHA-256 de la captura entera">a9dfc408f6f1…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-plan-sin-corrida-1280-oscuro-en.jpg" alt="plan-sin-corrida 1280 px oscuro en"><figcaption>plan-sin-corrida · 1280 · oscuro · en<br><code title="SHA-256 de la captura entera">f93e43df3b04…</code></figcaption></figure>
+</div>
+</main></body>
+</html>

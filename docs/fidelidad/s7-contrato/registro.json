@@ -1,0 +1,109 @@
+{
+  "formato": "planlang-capturas/v1",
+  "capturas": [
+    {
+      "pantalla": "plan-sin-corrida",
+      "url": "/es/planes/hackguard-agentes",
+      "ancho": 380,
+      "idioma": "es",
+      "tema": "oscuro",
+      "alto": 6668,
+      "sha256": "6d36cdf818a0ebf3f5bfe589ece703bbebe4ce70a62571284f36818011ffc90f",
+      "entera": "plan-sin-corrida-380-oscuro-es.png",
+      "miniatura": "mini-plan-sin-corrida-380-oscuro-es.jpg"
+    },
+    {
+      "pantalla": "plan-sin-corrida",
+      "url": "/es/planes/hackguard-agentes",
+      "ancho": 1280,
+      "idioma": "es",
+      "tema": "oscuro",
+      "alto": 4472,
+      "sha256": "70130ff4fdd284749d10db671e3d10a3eabab1553628ad1a358d6a83aab2451e",
+      "entera": "plan-sin-corrida-1280-oscuro-es.png",
+      "miniatura": "mini-plan-sin-corrida-1280-oscuro-es.jpg"
+    },
+    {
+      "pantalla": "plan-sin-corrida",
+      "url": "/es/planes/hackguard-agentes",
+      "ancho": 380,
+      "idioma": "es",
+      "tema": "claro",
+      "alto": 6668,
+      "sha256": "ef83237c44d8aeade0af04c9b5c9c8f77db372e59beeccba63fd2aea4e5b7e25",
+      "entera": "plan-sin-corrida-380-claro-es.png",
+      "miniatura": "mini-plan-sin-corrida-380-claro-es.jpg"
+    },
+    {
+      "pantalla": "plan-sin-corrida",
+      "url": "/es/planes/hackguard-agentes",
+      "ancho": 1280,
+      "idioma": "es",
+      "tema": "claro",
+      "alto": 4472,
+      "sha256": "686bc893ef27d884c03149f8d874cb1bf0fcf94473341fe0238fbefaba8a16e3",
+      "entera": "plan-sin-corrida-1280-claro-es.png",
+      "miniatura": "mini-plan-sin-corrida-1280-claro-es.jpg"
+    },
+    {
+      "pantalla": "plan-sin-corrida",
+      "url": "/en/planes/hackguard-agentes",
+      "ancho": 380,
+      "idioma": "en",
+      "tema": "oscuro",
+      "alto": 6450,
+      "sha256": "a9dfc408f6f1f9daeeab73e8b6b85799a62d3b5cb6f734e38c4beb61b0dd8801",
+      "entera": "plan-sin-corrida-380-oscuro-en.png",
+      "miniatura": "mini-plan-sin-corrida-380-oscuro-en.jpg"
+    },
+    {
+      "pantalla": "plan-sin-corrida",
+      "url": "/en/planes/hackguard-agentes",
+      "ancho": 1280,
+      "idioma": "en",
+      "tema": "oscuro",
+      "alto": 4451,
+      "sha256": "f93e43df3b04127faf8b6165e6c9fab7b8896f724a71acb7e56e6942306cda85",
+      "entera": "plan-sin-corrida-1280-oscuro-en.png",
+      "miniatura": "mini-plan-sin-corrida-1280-oscuro-en.jpg"
+    }
+  ],
+  "recortes": [
+    {
+      "clave": "contrato-escritorio",
+      "archivo": "Plan sin corrida (/es/planes/hackguard-agentes), contrato del grafo (pasada de interacción)",
+      "estado": "tras pulsar «Experto»",
+      "mirar": "Que, como experto, el contrato deje de ser tres cifras y se lea en detalle: los nodos con su tipo, las aristas condicionales en orden con el valor de cada umbral, las ramas por defecto, la pausa humana con quién decide y qué ve, y las señales que hay que registrar.",
+      "esperada": "Nueve nodos (enrutador, investigador «modelo», verificador_fuentes «regla»…, pausa_humana «pausa humana»); cuatro aristas, p. ej. fuentes_verificadas < umbral.U2 (= 2); tres ramas por defecto; una pausa de «Revisor humano». Como líder, nada de esto se ve.",
+      "ruta": "/es/planes/hackguard-agentes",
+      "ancho": 1280,
+      "tema": "oscuro",
+      "interaccion": "cambió",
+      "imagen": "forma-contrato-escritorio.jpg"
+    },
+    {
+      "clave": "contrato-aristas-movil",
+      "archivo": "Plan sin corrida, aristas condicionales del contrato (teléfono)",
+      "estado": "tras pulsar «Experto», 380 px",
+      "mirar": "Que las aristas condicionales se lean en tarjetas, sin desplazamiento lateral y sin cortar los ids ni las condiciones largas.",
+      "esperada": "Cuatro tarjetas, una por arista, con «Desde», «Orden», «Si se cumple» y «Va a»; la condición lleva el valor del umbral (p. ej. fuentes_verificadas < umbral.U2 (= 2)) y se parte en lugar de salirse de la pantalla.",
+      "ruta": "/es/planes/hackguard-agentes",
+      "ancho": 380,
+      "tema": "claro",
+      "interaccion": "cambió",
+      "imagen": "forma-contrato-aristas-movil.jpg"
+    },
+    {
+      "clave": "contrato-ingles",
+      "archivo": "Plan without a run (/en/planes/hackguard-agentes), graph contract (en inglés)",
+      "estado": "tras pulsar «Expert», inglés",
+      "mirar": "El mismo contrato en inglés: los tipos de nodo («router», «model», «rule», «tool», «human pause»), la condición de cada arista y la pausa «Human reviewer».",
+      "esperada": "Todo el texto del contrato en inglés salvo los ids y las señales del plan, que son nombres del plan y no se traducen.",
+      "ruta": "/en/planes/hackguard-agentes",
+      "ancho": 1280,
+      "tema": "oscuro",
+      "interaccion": "cambió",
+      "imagen": "forma-contrato-ingles.jpg"
+    }
+  ]
+}

@@ -8,7 +8,7 @@
       "idioma": "es",
       "tema": "oscuro",
       "alto": 6668,
-      "sha256": "00a6fec3265bdc203ad031bfb949092ee902a39871f0358e4d0b5db108f49ab5",
+      "sha256": "6d36cdf818a0ebf3f5bfe589ece703bbebe4ce70a62571284f36818011ffc90f",
       "entera": "plan-sin-corrida-380-oscuro-es.png",
       "miniatura": "mini-plan-sin-corrida-380-oscuro-es.jpg"
     },
@@ -19,7 +19,7 @@
       "idioma": "es",
       "tema": "oscuro",
       "alto": 4472,
-      "sha256": "6fd2d98b1a3c90886dadc313b68f38fcebaa96bfa308aac073723bfc42b6a1a9",
+      "sha256": "70130ff4fdd284749d10db671e3d10a3eabab1553628ad1a358d6a83aab2451e",
       "entera": "plan-sin-corrida-1280-oscuro-es.png",
       "miniatura": "mini-plan-sin-corrida-1280-oscuro-es.jpg"
     },
@@ -30,7 +30,7 @@
       "idioma": "es",
       "tema": "claro",
       "alto": 6668,
-      "sha256": "1893fbe982acaba95cbf6424b69c230dc43ccf0e5d37dc2999ebc9253285b3ab",
+      "sha256": "ef83237c44d8aeade0af04c9b5c9c8f77db372e59beeccba63fd2aea4e5b7e25",
       "entera": "plan-sin-corrida-380-claro-es.png",
       "miniatura": "mini-plan-sin-corrida-380-claro-es.jpg"
     },
@@ -41,12 +41,46 @@
       "idioma": "es",
       "tema": "claro",
       "alto": 4472,
-      "sha256": "37b86e92b2573c23b6ba16fe4b6e110c84fc06b4bdfd47ca90b2b7d2e60ca8e1",
+      "sha256": "686bc893ef27d884c03149f8d874cb1bf0fcf94473341fe0238fbefaba8a16e3",
       "entera": "plan-sin-corrida-1280-claro-es.png",
       "miniatura": "mini-plan-sin-corrida-1280-claro-es.jpg"
+    },
+    {
+      "pantalla": "plan-sin-corrida",
+      "url": "/en/planes/hackguard-agentes",
+      "ancho": 380,
+      "idioma": "en",
+      "tema": "oscuro",
+      "alto": 6450,
+      "sha256": "a9dfc408f6f1f9daeeab73e8b6b85799a62d3b5cb6f734e38c4beb61b0dd8801",
+      "entera": "plan-sin-corrida-380-oscuro-en.png",
+      "miniatura": "mini-plan-sin-corrida-380-oscuro-en.jpg"
+    },
+    {
+      "pantalla": "plan-sin-corrida",
+      "url": "/en/planes/hackguard-agentes",
+      "ancho": 1280,
+      "idioma": "en",
+      "tema": "oscuro",
+      "alto": 4451,
+      "sha256": "f93e43df3b04127faf8b6165e6c9fab7b8896f724a71acb7e56e6942306cda85",
+      "entera": "plan-sin-corrida-1280-oscuro-en.png",
+      "miniatura": "mini-plan-sin-corrida-1280-oscuro-en.jpg"
     }
   ],
   "recortes": [
+    {
+      "clave": "ficha-origen-respuestas-en",
+      "archivo": "Plan without a run (/en/planes/hackguard-agentes), v2 record (en inglés)",
+      "estado": "tal como abre, inglés",
+      "mirar": "Las filas nuevas de la ficha en inglés: «Answers», «Interview» y «Earlier versions».",
+      "esperada": "«Reviewed and confirmed by the user on 2026-10-11 · questions it changed on review: P03, P08, P09»; Interview 2026-10-11; y la v1 con «answers delegated to the builder» y su huella (bf05e61d…).",
+      "ruta": "/en/planes/hackguard-agentes",
+      "ancho": 1280,
+      "tema": "oscuro",
+      "interaccion": null,
+      "imagen": "forma-ficha-origen-respuestas-en.jpg"
+    },
     {
       "clave": "ficha-origen-respuestas",
       "archivo": "Plan sin corrida (/es/planes/hackguard-agentes), ficha de la v2",

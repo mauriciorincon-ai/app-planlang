@@ -161,6 +161,26 @@ function valorDeArista(p: Plan, valor: string | number | boolean): string {
   return u ? `${v} (= ${String(u.valor_en_plan)})` : v;
 }
 
+/**
+ * El operador de una arista en palabras, entre paréntesis y con «inclusivo» si lo es. La igualdad no lleva palabra: el
+ * símbolo «=» ya la dice y «(es)» se leería como un error.
+ */
+function palabraDeArista(
+  operador: string,
+  inclusivo: boolean,
+  i: Idioma,
+): string {
+  const palabras = [
+    ...(operador === "igual_a"
+      ? []
+      : [
+          palabra(OPERADOR, operador, "OPERADOR (src/textos/playground.ts)", i),
+        ]),
+    ...(inclusivo ? [T(INCLUSIVO, i)] : []),
+  ];
+  return palabras.length ? ` (${palabras.join(" · ")})` : "";
+}
+
 function contratoDetalle(p: Plan, i: Idioma): ContratoDetalle {
   const c = p.contrato_de_grafo;
   // En el orden del flujo: el de los nodos del plan, y dentro de cada nodo, el orden en que se evalúan sus aristas.
@@ -186,7 +206,7 @@ function contratoDetalle(p: Plan, i: Idioma): ContratoDetalle {
       condicion:
         "funcion" in a
           ? `${T(CONTRATO.funcion, i)} ${a.funcion.nombre}(${a.funcion.entradas.join(", ")})`
-          : `${a.senal} ${SIMBOLO[a.operador]} ${valorDeArista(p, a.valor)} (${palabra(OPERADOR, a.operador, "OPERADOR (src/textos/playground.ts)", i)}${a.inclusivo ? ` · ${T(INCLUSIVO, i)}` : ""})`,
+          : `${a.senal} ${SIMBOLO[a.operador]} ${valorDeArista(p, a.valor)}${palabraDeArista(a.operador, a.inclusivo, i)}`,
       hacia: a.si_verdadero,
     })),
     porDefecto: Object.entries(c.ramas_por_defecto).map(([desde, hacia]) => ({
@@ -212,10 +232,13 @@ export function vistaSinCorrida(
   contexto: ContextoDelPlan = { respuestas: null, anteriores: [] },
 ): VistaSinCorrida {
   const c = p.contrato_de_grafo;
+  // «1 pausa humana», no «1 pausas humanas»: la cuenta concuerda con su número.
+  const cuenta = (n: number, uno: TextoBilingue, varios: TextoBilingue) =>
+    `${n} ${T(n === 1 ? uno : varios, i)}`;
   const contrato = [
-    `${c.nodos_esperados.length} ${T(ETIQUETA.nodos, i)}`,
-    `${c.aristas_condicionales.length} ${T(ETIQUETA.aristas, i)}`,
-    `${c.pausas_humanas.length} ${T(ETIQUETA.pausas, i)}`,
+    cuenta(c.nodos_esperados.length, ETIQUETA.nodo, ETIQUETA.nodos),
+    cuenta(c.aristas_condicionales.length, ETIQUETA.arista, ETIQUETA.aristas),
+    cuenta(c.pausas_humanas.length, ETIQUETA.pausa, ETIQUETA.pausas),
   ];
   return {
     id: p.id,

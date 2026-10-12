@@ -57,6 +57,10 @@ export const ETIQUETA = {
   nodos: tb("nodos", "nodes"),
   aristas: tb("aristas condicionales", "conditional edges"),
   pausas: tb("pausas humanas", "human pauses"),
+  /** Las mismas, para la cuenta de uno («1 pausa humana», no «1 pausas humanas»). */
+  nodo: tb("nodo", "node"),
+  arista: tb("arista condicional", "conditional edge"),
+  pausa: tb("pausa humana", "human pause"),
   prioridad: tb("Prioridad de acción", "Action priority"),
   respuestas: tb("Respuestas", "Answers"),
   entrevista: tb("Entrevista", "Interview"),
