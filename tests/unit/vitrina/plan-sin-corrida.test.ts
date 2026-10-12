@@ -144,7 +144,6 @@ describe("vistaSinCorrida · de quién es el plan y cada riesgo", () => {
     const v = vistaSinCorrida(v1, "es", {
       respuestas: {
         clase: "delegadas",
-        archivo: "plans/hackguard-agentes/respuestas-por-delegacion.json",
         entrevista: "2026-10-11",
         revision: null,
       },
@@ -173,7 +172,6 @@ describe("vistaSinCorrida · de quién es el plan y cada riesgo", () => {
     const v = vistaSinCorrida(p.plan, "es", {
       respuestas: {
         clase: "revisadas",
-        archivo: "x",
         entrevista: "2026-10-12",
         revision: { fecha: "2026-10-13", cambiadas: [] },
       },

@@ -10,9 +10,9 @@ import { describe, expect, it } from "vitest";
 import { TranscripcionSchema } from "../../../../core/plan";
 
 const CARPETA = "plans/hackguard-agentes/v2";
-/** SHA-256 de la copia, tal como la dejó la planeadora el 2026-10-11. */
+/** SHA-256 de la copia, tal como la dejó la planeadora al corregir `cambiadas` (2026-10-12, S7). */
 const HUELLA_DE_LA_COPIA =
-  "79814efb8954fb0b94928da954590520deb151579c2270afdc72920505f0d4bd";
+  "060226af34088ef29c9594ccf9ff24bc3847e607912fd2e29701ccc991c966f8";
 
 const crudo = readFileSync(`${CARPETA}/respuestas-revisadas.json`);
 const respuestas = JSON.parse(crudo.toString("utf8")) as Record<
@@ -35,7 +35,7 @@ describe("las respuestas de la v2 son las que el usuario revisó", () => {
     };
     expect(origen.fecha).toBe("2026-10-11");
     expect(origen.frase_del_usuario).toBe("todo como sugieres");
-    expect(origen.cambiadas).toEqual(["P03", "P08"]);
+    expect(origen.cambiadas).toEqual(["P03", "P08", "P09"]);
   });
 
   it("la transcripción trae las 14 respuestas, palabra por palabra", () => {
