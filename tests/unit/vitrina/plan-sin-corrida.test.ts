@@ -223,3 +223,117 @@ describe("vistaSinCorrida · de quién es el plan y cada riesgo", () => {
     );
   });
 });
+
+/**
+ * S7: el contrato del grafo en detalle. La página dejó de decir solo «9 nodos · 4 aristas · 1 pausa»: lista los nodos
+ * con su tipo, las aristas en el orden del flujo con su condición en palabras (el umbral dice su valor), las ramas por
+ * defecto y la pausa humana con quién decide y qué ve.
+ */
+describe("vistaSinCorrida · el contrato del grafo en detalle", () => {
+  it("lista los nueve nodos con su tipo, en los dos idiomas", async () => {
+    const p = await planSinCorrida("hackguard-agentes");
+    const es = vistaSinCorrida(p.plan, "es").contratoDetalle;
+    const en = vistaSinCorrida(p.plan, "en").contratoDetalle;
+    expect(es.nodos).toHaveLength(
+      p.plan.contrato_de_grafo.nodos_esperados.length,
+    );
+    expect(es.nodos.slice(0, 4)).toEqual([
+      { id: "enrutador", tipo: "enrutador" },
+      { id: "investigador", tipo: "modelo" },
+      { id: "verificador_fuentes", tipo: "regla" },
+      { id: "catalogo_borrador", tipo: "herramienta" },
+    ]);
+    expect(es.nodos.at(-1)).toEqual({
+      id: "pausa_humana",
+      tipo: "pausa humana",
+    });
+    expect(en.nodos[0]).toEqual({ id: "enrutador", tipo: "router" });
+    expect(en.nodos.at(-1)).toEqual({
+      id: "pausa_humana",
+      tipo: "human pause",
+    });
+  });
+
+  it("las aristas van en el orden del flujo y su condición lleva el valor que el plan dio al umbral", async () => {
+    const p = await planSinCorrida("hackguard-agentes");
+    const a = vistaSinCorrida(p.plan, "es").contratoDetalle.aristas;
+    expect(a.map((x) => `${x.desde}#${x.orden}`)).toEqual([
+      "enrutador#1",
+      "verificador_fuentes#1",
+      "verificador_fuentes#2",
+      "verificador_citas#1",
+    ]);
+    expect(a.map((x) => x.condicion)).toEqual([
+      "tarea = investigar (es)",
+      "fuentes_verificadas < umbral.U2 (= 2) (menor que)",
+      "antiguedad_marco_dias > umbral.U3 (= 180) (mayor que)",
+      "similitud_cita < umbral.U1 (= 1) (menor que)",
+    ]);
+    expect(a.map((x) => x.hacia)).toEqual([
+      "investigador",
+      "pausa_humana",
+      "pausa_humana",
+      "pausa_humana",
+    ]);
+    const en = vistaSinCorrida(p.plan, "en").contratoDetalle.aristas;
+    expect(en[1]!.condicion).toBe(
+      "fuentes_verificadas < umbral.U2 (= 2) (below)",
+    );
+  });
+
+  it("las ramas por defecto, la pausa humana con quién decide y qué ve, y las señales que hay que registrar", async () => {
+    const p = await planSinCorrida("hackguard-agentes");
+    const d = vistaSinCorrida(p.plan, "es").contratoDetalle;
+    expect(d.porDefecto).toEqual([
+      { desde: "enrutador", hacia: "filtro_instrucciones" },
+      { desde: "verificador_citas", hacia: "calculo_veredicto" },
+      { desde: "verificador_fuentes", hacia: "catalogo_borrador" },
+    ]);
+    expect(d.pausas).toHaveLength(1);
+    expect(d.pausas[0]).toMatchObject({
+      nodo: "pausa_humana",
+      quien: "Revisor humano",
+    });
+    expect(d.pausas[0]!.ve).toContain("veredicto_sugerido");
+    expect(d.pausas[0]!.politica).toContain("no hay revisor simulado");
+    expect(d.senales).toHaveLength(
+      p.plan.contrato_de_grafo.senales_obligatorias_en_traza.length,
+    );
+    expect(d.senales).toContain("veredicto_corregido_por_persona");
+  });
+
+  it("una arista que es una función nombrada se dice con su nombre y sus entradas; una condición inclusiva lo dice", async () => {
+    const p = await planSinCorrida("hackguard-agentes");
+    const c = p.plan.contrato_de_grafo;
+    const conFuncion = {
+      ...p.plan,
+      contrato_de_grafo: {
+        ...c,
+        aristas_condicionales: [
+          ...c.aristas_condicionales,
+          {
+            desde: "extractor",
+            orden: 1,
+            funcion: { nombre: "calcula_algo", entradas: ["a", "b"] },
+            si_verdadero: "pausa_humana",
+          },
+          {
+            desde: "extractor",
+            orden: 2,
+            senal: "tokens",
+            operador: "mayor_o_igual_que" as const,
+            valor: 10,
+            inclusivo: true,
+            si_verdadero: "pausa_humana",
+          },
+        ],
+      },
+    };
+    const a = vistaSinCorrida(conFuncion, "es").contratoDetalle.aristas;
+    const f = a.find((x) => x.desde === "extractor" && x.orden === 1)!;
+    expect(f.condicion).toBe("función calcula_algo(a, b)");
+    const i = a.find((x) => x.desde === "extractor" && x.orden === 2)!;
+    expect(i.condicion).toContain("· inclusivo");
+    expect(i.condicion).toContain("tokens ≥ 10");
+  });
+});

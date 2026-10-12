@@ -50,6 +50,35 @@ test.describe("Plan sin corrida (es)", () => {
     );
   });
 
+  test("el contrato del grafo se lee en detalle como experto: nodos con su tipo, aristas con el valor del umbral, ramas por defecto y la pausa (S7)", async ({
+    page,
+  }) => {
+    await page.goto(`/es/planes/${ID}?perfil=lider`);
+    const detalle = page.locator('[data-contrato="detalle"]');
+    await expect(detalle).toBeHidden();
+    await page
+      .getByRole("group", { name: "Leer como" })
+      .getByRole("button", { name: "Experto" })
+      .click();
+    await expect(detalle).toBeVisible();
+    await expect(detalle.locator("[data-nodo]")).toHaveCount(9);
+    await expect(detalle.locator('[data-nodo="investigador"]')).toContainText(
+      "modelo",
+    );
+    await expect(detalle.locator('[data-nodo="pausa_humana"]')).toContainText(
+      "pausa humana",
+    );
+    await expect(detalle.locator("[data-arista]")).toHaveCount(4);
+    await expect(
+      detalle.locator('[data-arista="verificador_fuentes-1"]'),
+    ).toContainText("fuentes_verificadas < umbral.U2 (= 2)");
+    await expect(detalle.locator("[data-por-defecto]")).toHaveCount(3);
+    await expect(detalle.locator('[data-pausa="pausa_humana"]')).toContainText(
+      "Revisor humano",
+    );
+    await expect(detalle).toContainText("veredicto_corregido_por_persona");
+  });
+
   test("cada riesgo trae su prioridad de acción y el quinto riesgo es del usuario (S6)", async ({
     page,
   }) => {

@@ -4,14 +4,21 @@ import { Marco } from "@/components/marco/marco";
 import { Chip } from "@/components/chip";
 import { LeerComo } from "@/components/perfil/leer-como";
 import { Seccion } from "@/components/seccion";
+import { TablaF } from "@/components/tabla-f";
 import { Veredicto } from "@/components/veredicto";
 import { planSinCorrida } from "@/lib/datos/planes";
 import {
   vistaSinCorrida,
   type SeccionSinCorrida,
+  type VistaSinCorrida,
 } from "@/lib/vista/plan-sin-corrida";
 import { PERFIL } from "@/textos/comun";
-import { ETIQUETA, PORTADA, SECCIONES } from "@/textos/plan-sin-corrida";
+import {
+  CONTRATO,
+  ETIQUETA,
+  PORTADA,
+  SECCIONES,
+} from "@/textos/plan-sin-corrida";
 
 /**
  * Un plan sin corrida (S5, maqueta de FORMA «no vista»): el contrato tal como se aprobó, sin trazas, brecha, playground
@@ -124,6 +131,7 @@ export async function PaginaPlanSinCorrida({
           <p className="solo-experto max-w-[72ch] text-chico text-tinta-2">
             {PORTADA.origenes[idioma]}
           </p>
+          <ContratoEnDetalle v={v} idioma={idioma} />
         </Seccion>
 
         {v.secciones.map((s) => (
@@ -176,5 +184,110 @@ function SeccionDeElementos({
         ))}
       </ul>
     </Seccion>
+  );
+}
+
+const SUB = "text-sub font-semibold";
+const NOTA = "mt-1 max-w-[72ch] text-chico text-tinta-2";
+
+/**
+ * El contrato del grafo en detalle (S7), para quien lee como experto: los nodos con su tipo, las aristas condicionales
+ * en su orden, las ramas por defecto y las pausas humanas. Son las tablas de la maqueta (`TablaF`): en el teléfono,
+ * una tarjeta por renglón. No hay diagrama: nadie ha construido este agente, y un dibujo diría que sí.
+ */
+function ContratoEnDetalle({
+  v,
+  idioma,
+}: {
+  v: VistaSinCorrida;
+  idioma: Idioma;
+}) {
+  const d = v.contratoDetalle;
+  const c = CONTRATO.columnas;
+  return (
+    <div className="solo-experto mt-6 grid gap-8" data-contrato="detalle">
+      <div>
+        <h3 className={SUB}>{CONTRATO.nodos[idioma]}</h3>
+        <TablaF
+          etiqueta={CONTRATO.nodos[idioma]}
+          className="mt-3"
+          columnas={[
+            { titulo: c.nodo[idioma], ancho: "minmax(0,4fr)", mono: true },
+            { titulo: c.tipo[idioma], ancho: "minmax(0,3fr)" },
+          ]}
+          filas={d.nodos.map((n) => ({
+            clave: n.id,
+            atributos: { "data-nodo": n.id },
+            celdas: [n.id, n.tipo],
+          }))}
+        />
+      </div>
+      <div>
+        <h3 className={SUB}>{CONTRATO.aristas[idioma]}</h3>
+        <p className={NOTA}>{CONTRATO.aristasNota[idioma]}</p>
+        <TablaF
+          etiqueta={CONTRATO.aristas[idioma]}
+          className="mt-3"
+          columnas={[
+            { titulo: c.desde[idioma], ancho: "minmax(0,3fr)", mono: true },
+            { titulo: c.orden[idioma], ancho: "minmax(0,1fr)" },
+            { titulo: c.condicion[idioma], ancho: "minmax(0,6fr)", mono: true },
+            { titulo: c.hacia[idioma], ancho: "minmax(0,3fr)", mono: true },
+          ]}
+          filas={d.aristas.map((a) => ({
+            clave: a.clave,
+            atributos: { "data-arista": a.clave },
+            celdas: [a.desde, String(a.orden), a.condicion, a.hacia],
+          }))}
+        />
+      </div>
+      {d.porDefecto.length > 0 ? (
+        <div>
+          <h3 className={SUB}>{CONTRATO.porDefecto[idioma]}</h3>
+          <p className={NOTA}>{CONTRATO.porDefectoNota[idioma]}</p>
+          <TablaF
+            etiqueta={CONTRATO.porDefecto[idioma]}
+            className="mt-3"
+            columnas={[
+              { titulo: c.desde[idioma], ancho: "minmax(0,4fr)", mono: true },
+              { titulo: c.hacia[idioma], ancho: "minmax(0,4fr)", mono: true },
+            ]}
+            filas={d.porDefecto.map((r) => ({
+              clave: r.desde,
+              atributos: { "data-por-defecto": r.desde },
+              celdas: [r.desde, r.hacia],
+            }))}
+          />
+        </div>
+      ) : null}
+      {d.pausas.length > 0 ? (
+        <div>
+          <h3 className={SUB}>{CONTRATO.pausas[idioma]}</h3>
+          <TablaF
+            etiqueta={CONTRATO.pausas[idioma]}
+            className="mt-3"
+            columnas={[
+              { titulo: c.nodo[idioma], ancho: "minmax(0,2fr)", mono: true },
+              { titulo: c.quien[idioma], ancho: "minmax(0,2fr)" },
+              { titulo: c.ve[idioma], ancho: "minmax(0,4fr)", mono: true },
+              { titulo: c.politica[idioma], ancho: "minmax(0,5fr)" },
+            ]}
+            filas={d.pausas.map((h) => ({
+              clave: h.nodo,
+              atributos: { "data-pausa": h.nodo },
+              celdas: [h.nodo, h.quien, h.ve, h.politica],
+            }))}
+          />
+        </div>
+      ) : null}
+      <div>
+        <h3 className={SUB}>{CONTRATO.senales[idioma]}</h3>
+        <p className="mt-2 flex flex-wrap gap-x-3 gap-y-1 font-mono text-dato text-tinta-2">
+          {d.senales.map((s) => (
+            <span key={s}>{s}</span>
+          ))}
+        </p>
+      </div>
+    </div>
   );
 }
