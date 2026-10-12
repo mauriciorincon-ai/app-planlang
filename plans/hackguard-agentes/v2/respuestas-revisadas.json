@@ -1,5 +1,5 @@
 {
-  "_nota": "Respuestas de la entrevista del plan hackguard-agentes, REVISADAS Y CONFIRMADAS POR EL USUARIO en el chat de la planeadora el 2026-10-11 («todo como sugieres»), sobre la base de las respuestas que dio el constructor en el S5 (plans/hackguard-agentes/respuestas-por-delegacion.json). La planeadora le presentó las 14, con una sugerencia por pregunta: 12 sin cambio y 2 cambiadas (P03: top-k del extractor, del brief de HackGuard C15; P08: quinto riesgo «cita real pegada al campo equivocado», de la lección B-180 de planlang). El usuario aceptó las 14 tal como se sugirieron. Formato: el de `pnpm entrevistar --respuestas` ({pregunta: respuesta}).",
+  "_nota": "Respuestas de la entrevista del plan hackguard-agentes, REVISADAS Y CONFIRMADAS POR EL USUARIO en el chat de la planeadora el 2026-10-11 («todo como sugieres»), sobre la base de las respuestas que dio el constructor en el S5 (plans/hackguard-agentes/respuestas-por-delegacion.json). La planeadora le presentó las 14, con una sugerencia por pregunta: 11 sin cambio y 3 cambiadas (P03: top-k del extractor, del brief de HackGuard C15; P08: quinto riesgo «cita real pegada al campo equivocado», de la lección B-180 de planlang; P09: el detector de ese quinto riesgo, presentado al usuario dentro de la pregunta 9). El usuario aceptó las 14 tal como se sugirieron. Formato: el de `pnpm entrevistar --respuestas` ({pregunta: respuesta}). Corrección de la planeadora (2026-10-12, cierre del S6): `cambiadas` omitía P09; la auditoría del S6 lo detectó comparando con la delegación.",
   "_origen": {
     "revision": "chat de la planeadora",
     "fecha": "2026-10-11",
@@ -7,7 +7,8 @@
     "base": "plans/hackguard-agentes/respuestas-por-delegacion.json (app-planlang 2642110)",
     "cambiadas": [
       "P03",
-      "P08"
+      "P08",
+      "P09"
     ]
   },
   "P01": "HackGuard planea y valida pruebas de seguridad para software y sistemas de IA. Sus dos agentes son skills de Claude Code: el investigador propone pruebas nuevas, versiones nuevas de marcos y retiros; el extractor asocia un resultado pegado a una prueba del plan con citas literales. Sirven al operador que valida la seguridad de sus apps y al auditor de gobierno de IA que pide evidencia por control. Jamás ejecutan pruebas, jamás generan ni guardan cargas de explotación, jamás cierran un hallazgo ni fijan una severidad por su cuenta: la IA propone y una persona aprueba.",

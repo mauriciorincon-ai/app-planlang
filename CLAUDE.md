@@ -1,6 +1,6 @@
 # planlang — constitución de la app (núcleo, kit v2.0.0)
 
-> Auto-cargado en cada sesión de este repo. Núcleo regenerado por la planeadora el 2026-10-10 (método v2.0.0, modo regenerar) para el S4 — **regla 18 actualizada el 2026-10-11 al kit v2.1.0 (un PR vivo por app; la app la adopta con el job `un-pr-vivo` en su próximo sprint)**, primer sprint de planlang en el hito H-2; sustituye a la constitución v1.37.0 de 762 líneas. Las reglas en detalle viven en `docs/REGLAS-ANEXO.md` (anexo del kit + § P1–P16 de planlang, texto íntegro de la constitución anterior) y se leen solo cuando una regla se cita, nunca al abrir la sesión. Estampada 2026-09-26 con kit v1.30.1 `--estatico --python`.
+> Auto-cargado en cada sesión de este repo. Núcleo regenerado por la planeadora el 2026-10-10 (método v2.0.0, modo regenerar) para el S4 — **regla 18 actualizada el 2026-10-11 al kit v2.1.0 (un PR vivo por app; adoptada en el S5, 2026-10-11, con el job `un-pr-vivo`)**, primer sprint de planlang en el hito H-2; sustituye a la constitución v1.37.0 de 762 líneas. Las reglas en detalle viven en `docs/REGLAS-ANEXO.md` (anexo del kit + § P1–P16 de planlang, texto íntegro de la constitución anterior) y se leen solo cuando una regla se cita, nunca al abrir la sesión. Estampada 2026-09-26 con kit v1.30.1 `--estatico --python`.
 
 ## Identidad y las dos casas (regla dura)
 

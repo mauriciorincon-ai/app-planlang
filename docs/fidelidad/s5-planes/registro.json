@@ -8,7 +8,7 @@
       "idioma": "es",
       "tema": "oscuro",
       "alto": 5858,
-      "sha256": "94daf82923a414acf3d3f26320d39758f395347458a7a1d9b586218c6c715333",
+      "sha256": "d4bcbb3eb28c19cd9e2277dccf2ace7c1395ca8426b73b91305ad7d1956c6a23",
       "entera": "entrada-380-oscuro-es.png",
       "miniatura": "mini-entrada-380-oscuro-es.jpg"
     },
@@ -19,7 +19,7 @@
       "idioma": "es",
       "tema": "oscuro",
       "alto": 2960,
-      "sha256": "91b995d651c66ce45a02230ce723b48ee71d83be674791c8604682193ee67ca2",
+      "sha256": "aa1bdbb587ce3cd80066da38b59c6678a7881acd0ddad31b49b7fb2493b3f012",
       "entera": "entrada-1280-oscuro-es.png",
       "miniatura": "mini-entrada-1280-oscuro-es.jpg"
     },
@@ -30,7 +30,7 @@
       "idioma": "es",
       "tema": "claro",
       "alto": 5858,
-      "sha256": "f4e5129a46f8e0f54aa35889f3b12a01a940721e9e54ec0c0d08366d686ff536",
+      "sha256": "dd84e79273c6f1d3b283310b775ef5afeab3ee26188f033da1b2f6986d6bab1f",
       "entera": "entrada-380-claro-es.png",
       "miniatura": "mini-entrada-380-claro-es.jpg"
     },
@@ -41,9 +41,31 @@
       "idioma": "es",
       "tema": "claro",
       "alto": 2960,
-      "sha256": "625f4fe9fa515d53fb0b85a45fc5bbfa9fb35d84ea053316cc3298fa7f104156",
+      "sha256": "ec11ded10baecc7ebdceafaa3829ac3f495682bc874136a91637c9c82aa21997",
       "entera": "entrada-1280-claro-es.png",
       "miniatura": "mini-entrada-1280-claro-es.jpg"
+    },
+    {
+      "pantalla": "entrada",
+      "url": "/en",
+      "ancho": 380,
+      "idioma": "en",
+      "tema": "oscuro",
+      "alto": 5762,
+      "sha256": "742032ffcd6f411278439cf4184d707a56348e8c6cdf8b776c22fac21180234d",
+      "entera": "entrada-380-oscuro-en.png",
+      "miniatura": "mini-entrada-380-oscuro-en.jpg"
+    },
+    {
+      "pantalla": "entrada",
+      "url": "/en",
+      "ancho": 1280,
+      "idioma": "en",
+      "tema": "oscuro",
+      "alto": 2939,
+      "sha256": "e8ccc9db821d57ac70fb6fce1bb228262fcfffffa29cf240a63577d0549ef3e7",
+      "entera": "entrada-1280-oscuro-en.png",
+      "miniatura": "mini-entrada-1280-oscuro-en.jpg"
     },
     {
       "pantalla": "plan-sin-corrida",
@@ -51,8 +73,8 @@
       "ancho": 380,
       "idioma": "es",
       "tema": "oscuro",
-      "alto": 6147,
-      "sha256": "a5cddbca5fa5f1969e431d82e02834f1b865f3371ec2a10708d7098c1fc28e69",
+      "alto": 6668,
+      "sha256": "6d36cdf818a0ebf3f5bfe589ece703bbebe4ce70a62571284f36818011ffc90f",
       "entera": "plan-sin-corrida-380-oscuro-es.png",
       "miniatura": "mini-plan-sin-corrida-380-oscuro-es.jpg"
     },
@@ -62,8 +84,8 @@
       "ancho": 1280,
       "idioma": "es",
       "tema": "oscuro",
-      "alto": 4187,
-      "sha256": "852d0bc47729a1009dfec158eac29b72e3af7043e783b2fedba0fe993d3c839c",
+      "alto": 4472,
+      "sha256": "70130ff4fdd284749d10db671e3d10a3eabab1553628ad1a358d6a83aab2451e",
       "entera": "plan-sin-corrida-1280-oscuro-es.png",
       "miniatura": "mini-plan-sin-corrida-1280-oscuro-es.jpg"
     },
@@ -73,8 +95,8 @@
       "ancho": 380,
       "idioma": "es",
       "tema": "claro",
-      "alto": 6147,
-      "sha256": "9fdfc0d79bac3f4159d4428573dc20410a9dd8ba0abf7b3ecbb84874404939ae",
+      "alto": 6668,
+      "sha256": "ef83237c44d8aeade0af04c9b5c9c8f77db372e59beeccba63fd2aea4e5b7e25",
       "entera": "plan-sin-corrida-380-claro-es.png",
       "miniatura": "mini-plan-sin-corrida-380-claro-es.jpg"
     },
@@ -84,19 +106,53 @@
       "ancho": 1280,
       "idioma": "es",
       "tema": "claro",
-      "alto": 4187,
-      "sha256": "e672debce4e2e2b365ef41b8fdaa2648e2ddf287eebccc17739e0e6b6ab58695",
+      "alto": 4472,
+      "sha256": "686bc893ef27d884c03149f8d874cb1bf0fcf94473341fe0238fbefaba8a16e3",
       "entera": "plan-sin-corrida-1280-claro-es.png",
       "miniatura": "mini-plan-sin-corrida-1280-claro-es.jpg"
+    },
+    {
+      "pantalla": "plan-sin-corrida",
+      "url": "/en/planes/hackguard-agentes",
+      "ancho": 380,
+      "idioma": "en",
+      "tema": "oscuro",
+      "alto": 6450,
+      "sha256": "a9dfc408f6f1f9daeeab73e8b6b85799a62d3b5cb6f734e38c4beb61b0dd8801",
+      "entera": "plan-sin-corrida-380-oscuro-en.png",
+      "miniatura": "mini-plan-sin-corrida-380-oscuro-en.jpg"
+    },
+    {
+      "pantalla": "plan-sin-corrida",
+      "url": "/en/planes/hackguard-agentes",
+      "ancho": 1280,
+      "idioma": "en",
+      "tema": "oscuro",
+      "alto": 4451,
+      "sha256": "f93e43df3b04127faf8b6165e6c9fab7b8896f724a71acb7e56e6942306cda85",
+      "entera": "plan-sin-corrida-1280-oscuro-en.png",
+      "miniatura": "mini-plan-sin-corrida-1280-oscuro-en.jpg"
     }
   ],
   "recortes": [
+    {
+      "clave": "ficha-sin-corrida-en",
+      "archivo": "Plan without a run (/en/planes/hackguard-agentes), cover and record (en inglés)",
+      "estado": "tal como abre, inglés",
+      "mirar": "La portada y la ficha en inglés: el rótulo «No run», la nota de lo que no hay y las filas de la ficha.",
+      "esperada": "«No run» se lee antes que cualquier sección; la nota nombra traces, gap, playground y viewer como ausentes; «Mauricio Rincón · on 2026-10-11».",
+      "ruta": "/en/planes/hackguard-agentes",
+      "ancho": 1280,
+      "tema": "oscuro",
+      "interaccion": null,
+      "imagen": "forma-ficha-sin-corrida-en.jpg"
+    },
     {
       "clave": "entrada-planes-sin-corrida",
       "archivo": "Entrada (/es), sección «Planes sin corrida»",
       "estado": "tal como abre",
       "mirar": "Una fila por plan aprobado sin corrida, después de «Los demos»: nombre, id y versión, dominio, quién aprobó y cuándo, y el botón «Leer el plan».",
-      "esperada": "Una sola fila: el plan de HackGuard (hackguard-agentes · v1.0.0 · dom-seguridad-ia), aprobado el 2026-10-11, con su chip «real · plan aprobado». Nada dice que haya corrido.",
+      "esperada": "Una sola fila: el plan de HackGuard (hackguard-agentes · v2.0.0 · dom-seguridad-ia), aprobado el 2026-10-11, con su chip «real · plan aprobado». Nada dice que haya corrido.",
       "ruta": "/es",
       "ancho": 1280,
       "tema": "oscuro",

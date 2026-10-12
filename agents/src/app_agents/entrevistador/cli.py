@@ -80,6 +80,45 @@ def demo_de_dominio(dominio: str, plan: str, raiz: Path = RAIZ_REPO) -> Demo:
     return Demo(id=plan, plan_id=plan, dominio=dominio, directorio=f"plans/{plan}", identificador=plan)
 
 
+class SalidaInvalida(ValueError):
+    pass
+
+
+def _ruta_real(ruta: Path) -> Path:
+    """La ruta con los enlaces simbólicos seguidos, exista o no la carpeta; un enlace roto no se sigue."""
+    actual = ruta.absolute()
+    while not os.path.lexists(actual):
+        actual = actual.parent
+    if not actual.exists():
+        raise SalidaInvalida(f"--salida «{ruta}»: no se puede resolver la ruta (¿un enlace roto?)")
+    return ruta.resolve()
+
+
+def validar_salida(salida: str, demo: Demo, raiz: Path = RAIZ_REPO) -> Path:
+    """La carpeta de una entrevista nueva (`--salida`, S7).
+
+    Con --salida la entrevista se salta el guardia de «el plan ya está aprobado», así que no puede caer
+    sobre un registro: vale una carpeta que cuelgue de la del propio plan (plans/<plan>/v2), una bajo
+    .entrevistas/ o una fuera del repo; cualquier otra dentro del repo se rechaza. Los enlaces simbólicos
+    se siguen antes de decidir (igual que `salidaInvalida` en scripts/entrevistar.ts).
+    """
+    if not salida.strip():
+        raise SalidaInvalida("--salida: indica una carpeta")
+    base = _ruta_real(raiz)
+    destino = _ruta_real(raiz / salida)
+    if destino != base and base not in destino.parents:
+        return destino
+    del_plan = _ruta_real(raiz / demo.directorio)
+    entrevistas = _ruta_real(raiz / ".entrevistas")
+    if del_plan in destino.parents or entrevistas in destino.parents:
+        return destino
+    raise SalidaInvalida(
+        f"--salida «{salida}»: dentro del repo solo vale una carpeta que cuelgue de {demo.directorio}/ "
+        f"(por ejemplo {demo.directorio}/v2) o de .entrevistas/; fuera del repo vale cualquiera. "
+        "Otra pisaría el registro de un plan aprobado o un archivo del repo"
+    )
+
+
 ARCHIVO_BORRADOR = "v0-borrador.json"
 ARCHIVO_TRANSCRIPCION = "transcripcion.json"
 

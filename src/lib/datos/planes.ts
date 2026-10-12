@@ -23,18 +23,15 @@ export type ClaseDeRespuestas = "delegadas" | "revisadas";
 
 export interface OrigenDeRespuestas {
   clase: ClaseDeRespuestas;
-  /** `plans/<id>[/vN]/respuestas-*.json`, relativo a la raíz. */
-  archivo: string;
   /** Cuándo corrió la entrevista: la fecha de su transcripción. */
   entrevista: string;
-  /** Solo las revisadas: cuándo las confirmó el usuario y qué preguntas cambió. */
+  /** Solo las revisadas: cuándo las confirmó el usuario y qué preguntas cambió frente a la versión anterior. */
   revision: { fecha: string; cambiadas: string[] } | null;
 }
 
 /** Una versión aprobada de un plan (la más alta es la que se lee; las demás son su historia). */
 export interface VersionDelPlan {
   version: string;
-  archivo: string;
   huella: string;
   aprobado_por: string | null;
   aprobado_el: string | null;
@@ -42,12 +39,10 @@ export interface VersionDelPlan {
   respuestas: OrigenDeRespuestas | null;
 }
 
+/** El plan aprobado más reciente de una carpeta con lo que el repo guarda de su entrevista y de su historia. */
 export interface PlanSinCorrida {
   id: string;
-  /** `plans/<id>/vN.json`, relativo a la raíz. */
-  archivo: string;
   plan: Plan;
-  huella: string;
   /** De quién son las respuestas de la entrevista de ESTA versión; `null` si el repo no guarda su archivo. */
   respuestas: OrigenDeRespuestas | null;
   /** Las versiones aprobadas anteriores, de la más nueva a la más vieja. */
@@ -107,11 +102,18 @@ function preguntasCambiadas(revisadas: object, delegadas: object): string[] {
     .sort();
 }
 
-function origenDeRespuestas(
+interface RespuestasUbicadas {
+  dir: string;
+  archivo: string;
+  clase: ClaseDeRespuestas;
+}
+
+/** El archivo de respuestas que usó la entrevista de una versión, o `null` si el repo no lo guarda. */
+function ubicarRespuestas(
   raiz: string,
   carpeta: string,
   version: string,
-): OrigenDeRespuestas | null {
+): RespuestasUbicadas | null {
   const dir = carpetaDeVersion(carpeta, version);
   if (!existsSync(join(raiz, dir))) return null;
   const hallados = readdirSync(join(raiz, dir)).filter((f) =>
@@ -129,6 +131,17 @@ function origenDeRespuestas(
     throw new Error(
       `planes: ${archivo}: no sé de quién son estas respuestas (los nombres que la vitrina entiende: ${Object.keys(CLASE_DE_ARCHIVO).join(", ")}).`,
     );
+  return { dir, archivo, clase };
+}
+
+function origenDeRespuestas(
+  raiz: string,
+  carpeta: string,
+  version: string,
+): OrigenDeRespuestas | null {
+  const u = ubicarRespuestas(raiz, carpeta, version);
+  if (!u) return null;
+  const { dir, archivo, clase } = u;
   if (!existsSync(join(raiz, dir, "transcripcion.json")))
     throw new Error(
       `planes: ${archivo} sin ${dir}/transcripcion.json: no se puede decir cuándo fue la entrevista.`,
@@ -144,8 +157,7 @@ function origenDeRespuestas(
     );
   }
   const entrevista = transcripcion.fecha;
-  if (clase === "delegadas")
-    return { clase, archivo, entrevista, revision: null };
+  if (clase === "delegadas") return { clase, entrevista, revision: null };
   const crudo = leerJsonDelRepo(raiz, archivo);
   const revisada = RespuestasRevisadasSchema.safeParse(crudo);
   if (!revisada.success)
@@ -164,14 +176,26 @@ function origenDeRespuestas(
     throw new Error(
       `planes: ${archivo} no coincide con ${dir}/transcripcion.json en ${dispares.join(", ")}: la vitrina no publica respuestas que la entrevista no usó.`,
     );
-  // M2: lo que cambió al revisar se mide contra las respuestas delegadas de la carpeta del plan, no contra el texto del archivo.
-  const delegada = `${carpeta}/respuestas-por-delegacion.json`;
-  const cambiadas = existsSync(join(raiz, delegada))
-    ? preguntasCambiadas(r, leerJsonDelRepo(raiz, delegada) as object)
-    : revisada.data._origen.cambiadas;
+  // Lo que cambió al revisar sale SIEMPRE de comparar con las respuestas de la versión anterior (S6 M2, S7). Lo que el
+  // archivo declara en `_origen.cambiadas` debe coincidir: si no, la vitrina diría algo distinto de lo que se respondió.
+  const mayor = Number(version.split(".")[0]);
+  const base =
+    mayor >= 2 ? ubicarRespuestas(raiz, carpeta, `${mayor - 1}`) : null;
+  if (!base)
+    throw new Error(
+      `planes: ${archivo} son respuestas revisadas, pero el repo no guarda las de la versión anterior con qué compararlas: no se puede decir qué cambió.`,
+    );
+  const cambiadas = preguntasCambiadas(
+    r,
+    leerJsonDelRepo(raiz, base.archivo) as object,
+  );
+  const declaradas = [...revisada.data._origen.cambiadas].sort();
+  if (cambiadas.join(",") !== declaradas.join(","))
+    throw new Error(
+      `planes: ${archivo}: _origen.cambiadas dice «${declaradas.join(", ") || "ninguna"}», pero frente a ${base.archivo} cambió «${cambiadas.join(", ") || "ninguna"}».`,
+    );
   return {
     clase,
-    archivo,
     entrevista,
     revision: { fecha: revisada.data._origen.fecha, cambiadas },
   };
@@ -201,7 +225,7 @@ async function planDeCarpeta(
     .filter((f) => VERSIONADO.test(f))
     .sort();
   if (archivos.length === 0) return null;
-  const cargados: Omit<PlanSinCorrida, "respuestas" | "anteriores">[] = [];
+  const cargados: { archivo: string; plan: Plan; huella: string }[] = [];
   for (const f of archivos) {
     const archivo = `${carpeta}/${f}`;
     const crudo: unknown = JSON.parse(
@@ -216,7 +240,7 @@ async function planDeCarpeta(
       throw new Error(
         `planes: ${archivo} es el plan «${r.plan.id}», pero su carpeta dice «${carpeta}».`,
       );
-    cargados.push({ id: r.plan.id, archivo, plan: r.plan, huella: r.huella });
+    cargados.push({ archivo, plan: r.plan, huella: r.huella });
   }
   cargados.sort((a, b) =>
     mayorVersion(a.plan.version, b.plan.version)
@@ -230,11 +254,11 @@ async function planDeCarpeta(
     ...typeof cargados,
   ];
   return {
-    ...elegido,
+    id: elegido.plan.id,
+    plan: elegido.plan,
     respuestas: origenDeRespuestas(raiz, carpeta, elegido.plan.version),
     anteriores: resto.map((x) => ({
       version: x.plan.version,
-      archivo: x.archivo,
       huella: x.huella,
       aprobado_por: x.plan.aprobado_por ?? null,
       aprobado_el: x.plan.aprobado_el ?? null,

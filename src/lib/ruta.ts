@@ -6,7 +6,7 @@
  * El modo lo fija `next.config.ts` al compilar. El demo B cuelga de su segmento (`/es/demo-b/plan`, ADR-014).
  */
 import type { Idioma } from "@core/formatos/bilingue";
-import { SEGMENTO_DEMO, type IdDemo } from "./demos";
+import { DEMOS, SEGMENTO_DEMO, type IdDemo } from "./demos";
 
 export const PANTALLAS = [
   "entrada",
@@ -25,6 +25,17 @@ export type Pantalla = (typeof PANTALLAS)[number];
  */
 export type Pagina = Pantalla | "comparar" | "planes";
 
+/**
+ * En qué demos existe una página (S7, B-5): las pestañas, en todos; `comparar`, solo en el A; `planes` en ninguno, es de
+ * un plan. La ruta y el conmutador de demo de la barra salen de aquí: un conmutador nunca ofrece un demo donde la página
+ * no existe, y un demo nuevo no necesita tocar nada más.
+ */
+export function demosConPagina(pagina: Pagina): readonly IdDemo[] {
+  if (pagina === "planes") return [];
+  if (pagina === "comparar") return ["demo-a"];
+  return DEMOS;
+}
+
 const PAQUETE = process.env.PLANLANG_PAQUETE === "1";
 
 /** Lo que va delante y detrás de cada camino: nada en el build normal; base y `.html` en el paquete. */
@@ -41,9 +52,9 @@ export function ruta(
   id: string | undefined,
   demo: IdDemo,
 ): string {
-  if (pantalla === "comparar" && demo !== "demo-a")
+  if (pantalla !== "planes" && !demosConPagina(pantalla).includes(demo))
     throw new Error(
-      `ruta: «comparar» solo existe en el demo A, no en «${demo}».`,
+      `ruta: «${pantalla}» solo existe en ${demosConPagina(pantalla).join(", ")}, no en «${demo}».`,
     );
   if (pantalla === "planes") {
     if (id === undefined)

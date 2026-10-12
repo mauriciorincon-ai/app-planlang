@@ -57,6 +57,10 @@ export const ETIQUETA = {
   nodos: tb("nodos", "nodes"),
   aristas: tb("aristas condicionales", "conditional edges"),
   pausas: tb("pausas humanas", "human pauses"),
+  /** Las mismas, para la cuenta de uno («1 pausa humana», no «1 pausas humanas»). */
+  nodo: tb("nodo", "node"),
+  arista: tb("arista condicional", "conditional edge"),
+  pausa: tb("pausa humana", "human pause"),
   prioridad: tb("Prioridad de acción", "Action priority"),
   respuestas: tb("Respuestas", "Answers"),
   entrevista: tb("Entrevista", "Interview"),
@@ -133,5 +137,48 @@ export const ENTRADA = {
     dominio: tb("Dominio", "Domain"),
     aprobado: tb("Aprobado", "Approved"),
     abrir: tb("Abrir", "Open"),
+  },
+};
+
+/**
+ * El contrato del grafo en detalle (S7): nodos con su tipo, aristas condicionales, ramas por defecto y pausas humanas,
+ * tal como los aprobó el plan. Es lo que el agente que se construya tendrá que cumplir; aquí nadie lo ha construido.
+ */
+export const TIPO_NODO = {
+  enrutador: tb("enrutador", "router"),
+  modelo: tb("modelo", "model"),
+  regla: tb("regla", "rule"),
+  pausa_humana: tb("pausa humana", "human pause"),
+  herramienta: tb("herramienta", "tool"),
+};
+
+export const CONTRATO = {
+  nodos: tb("Nodos", "Nodes"),
+  aristas: tb("Aristas condicionales", "Conditional edges"),
+  aristasNota: tb(
+    "Cada arista se evalúa en su orden; la primera que se cumple decide el camino.",
+    "Each edge is checked in its order; the first one that holds decides the path.",
+  ),
+  porDefecto: tb("Ramas por defecto", "Default branches"),
+  porDefectoNota: tb(
+    "El camino cuando ninguna arista condicional del nodo se cumple.",
+    "The path when none of the node's conditional edges holds.",
+  ),
+  pausas: tb("Pausas humanas", "Human pauses"),
+  senales: tb(
+    "Señales que el agente debe registrar en cada traza",
+    "Signals the agent must log in every trace",
+  ),
+  funcion: tb("función", "function"),
+  columnas: {
+    nodo: tb("Nodo", "Node"),
+    tipo: tb("Tipo", "Type"),
+    desde: tb("Desde", "From"),
+    orden: tb("Orden", "Order"),
+    condicion: tb("Si se cumple", "If it holds"),
+    hacia: tb("Va a", "Goes to"),
+    quien: tb("Quién decide", "Who decides"),
+    ve: tb("Lo que ve", "What it sees"),
+    politica: tb("Política simulada", "Simulated policy"),
   },
 };

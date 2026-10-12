@@ -7,8 +7,8 @@
       "ancho": 380,
       "idioma": "es",
       "tema": "oscuro",
-      "alto": 7712,
-      "sha256": "19e3e29899a33293d941e416d34ca09ac6ec000df81cbb35655010483b23fbf9",
+      "alto": 7715,
+      "sha256": "973a41511f8fd018118c335d688ed2a4880452da46651ce17c8c079630f36639",
       "entera": "comparar-380-oscuro-es.png",
       "miniatura": "mini-comparar-380-oscuro-es.jpg"
     },
@@ -18,8 +18,8 @@
       "ancho": 1280,
       "idioma": "es",
       "tema": "oscuro",
-      "alto": 3406,
-      "sha256": "d51e75e716ddf52fd7e51cea50df45396412ce71b6c65ca791f519af98a4412f",
+      "alto": 3412,
+      "sha256": "6d1e2eae68f2bcac9467afd229b1682763bfad5e8269cde35b3891650c80fbcb",
       "entera": "comparar-1280-oscuro-es.png",
       "miniatura": "mini-comparar-1280-oscuro-es.jpg"
     },
@@ -29,8 +29,8 @@
       "ancho": 380,
       "idioma": "es",
       "tema": "claro",
-      "alto": 7712,
-      "sha256": "1a58d9220fa6e55e42ecf56d167bdd66e74023c9e7685dbeeff5d5ecea17e1c8",
+      "alto": 7715,
+      "sha256": "4e0a6ea427cf278dbb3481b09523f5dfd98e78f2e86131efdfdc763f29651ac0",
       "entera": "comparar-380-claro-es.png",
       "miniatura": "mini-comparar-380-claro-es.jpg"
     },
@@ -40,13 +40,47 @@
       "ancho": 1280,
       "idioma": "es",
       "tema": "claro",
-      "alto": 3406,
-      "sha256": "80f56ee62894899b8fa77edd5df38a7fe04a11bd77b0e18a09ccf44b2d50a1db",
+      "alto": 3412,
+      "sha256": "9c725c8477a338db4d99fb68b5b551b8d7c93070cdd6b10f9f2f1fee12cad461",
       "entera": "comparar-1280-claro-es.png",
       "miniatura": "mini-comparar-1280-claro-es.jpg"
+    },
+    {
+      "pantalla": "comparar",
+      "url": "/en/comparar",
+      "ancho": 380,
+      "idioma": "en",
+      "tema": "oscuro",
+      "alto": 8006,
+      "sha256": "13dcf66535338a9954fdc104a8c7d0c43715f0940c77d388483079813a78c155",
+      "entera": "comparar-380-oscuro-en.png",
+      "miniatura": "mini-comparar-380-oscuro-en.jpg"
+    },
+    {
+      "pantalla": "comparar",
+      "url": "/en/comparar",
+      "ancho": 1280,
+      "idioma": "en",
+      "tema": "oscuro",
+      "alto": 3373,
+      "sha256": "8004771165a5a2f8606558b92779660db6c775e07dbb272f5ae1fa667b9ba434",
+      "entera": "comparar-1280-oscuro-en.png",
+      "miniatura": "mini-comparar-1280-oscuro-en.jpg"
     }
   ],
   "recortes": [
+    {
+      "clave": "veredicto-y-criterios-en",
+      "archivo": "Compare two runs (/en/comparar), verdicts and criteria (en inglés)",
+      "estado": "tal como abre, inglés",
+      "mirar": "La misma sección en inglés: los dos veredictos, la tabla de medidas y la de criterios.",
+      "esperada": "«Meets» en la multiagente y «Meets with alerts» en la de agente único; el criterio C5 no se cumple en la única; ningún texto en español salvo los ids del plan.",
+      "ruta": "/en/comparar",
+      "ancho": 1280,
+      "tema": "oscuro",
+      "interaccion": null,
+      "imagen": "forma-veredicto-y-criterios-en.jpg"
+    },
     {
       "clave": "veredicto-y-criterios",
       "archivo": "Comparar (/es/comparar), veredictos y criterios",

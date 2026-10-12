@@ -84,11 +84,12 @@ describe("avisos de seguridad aceptados", () => {
       problemasDeAvisos(
         ["GHSA-xxxx-yyyy-zzzz", "GHSA-vfj7-8cjw-p6xm"],
         registro.avisos,
-        "2026-12-01",
+        // Un «hoy» lejano: la demo no depende de la fecha de revisión que el registro lleve en cada renovación.
+        "2099-01-01",
       ),
     ).toEqual([
       "GHSA-xxxx-yyyy-zzzz se ignora sin entrada en avisos-aceptados.json",
-      "GHSA-vfj7-8cjw-p6xm venció su revisión (2026-11-02): renuévala con razón o quita la excepción",
+      `GHSA-vfj7-8cjw-p6xm venció su revisión (${registro.avisos[0]!.revisar_antes}): renuévala con razón o quita la excepción`,
     ]);
   });
 });

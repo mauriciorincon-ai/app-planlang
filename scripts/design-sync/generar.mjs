@@ -326,8 +326,8 @@ Espejo publicable del design system de planlang para Claude Design (regla 16 de 
 fija: \`design-system.md\` (fuente de verdad) → \`design-sync/\` (este bundle, deriva) → el proyecto en Claude Design
 (vitrina, jamás se edita allá). El destino y el registro de publicación viven en \`project.json\`.
 
-**Estado:** sin publicar. Se publica en el cierre de pruebas del ciclo H1 (S3), después del gate ⭐⭐ corto, cuando el
-usuario invoque \`/design-sync\`.
+**Estado:** sin publicar. Se publica después del gate único de los hitos H-1 y H-2 (el bloque G de la guía de prueba),
+cuando el usuario invoque \`/design-sync\`; ese gate no ocurre en un sprint.
 
 ## Qué trae
 
@@ -338,6 +338,16 @@ usuario invoque \`/design-sync\`.
 | Grupo | Tarjeta | Archivo |
 | --- | --- | --- |
 ${TARJETAS.map((t) => `| ${t.grupo} | ${t.nombre} | \`components/${t.archivo}\` |`).join("\n")}
+
+## Dónde se usan, desde el sprint 4
+
+Las pantallas que llegaron en los hitos H-2 no trajeron componentes nuevos: se arman con estas mismas tarjetas.
+
+- **Comparar dos corridas** (S4, \`/es/comparar\`): Veredicto, Tabla de filas (medidas, criterios, riesgos y casos que
+  difieren) y Botones y chips.
+- **Plan sin corrida** (S5 a S7, \`/es/planes/<id>\`): Veredicto (el rótulo «Sin corrida», con su símbolo y su texto),
+  Tabla de filas (el contrato del grafo en detalle: nodos, aristas, ramas por defecto y pausas) y Botones y chips (quién
+  propuso cada elemento).
 
 ## Lo que no está aquí
 

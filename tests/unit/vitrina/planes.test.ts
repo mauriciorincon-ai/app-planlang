@@ -39,12 +39,13 @@ describe("planes sin corrida", () => {
     const planes = await planesSinCorrida();
     expect(planes.map((p) => p.id)).toEqual(["hackguard-agentes"]);
     const p = planes[0]!;
-    expect(p.archivo).toBe("plans/hackguard-agentes/v2.json");
     expect(p.plan.version).toBe("2.0.0");
     expect(p.plan.estado_aprobacion).toBe("aprobado");
     expect(p.plan.dominio_id).toBe("dom-seguridad-ia");
-    expect(p.huella).toMatch(/^[0-9a-f]{64}$/);
-    expect((await planSinCorrida("hackguard-agentes")).huella).toBe(p.huella);
+    expect(p.plan.huella).toMatch(/^[0-9a-f]{64}$/);
+    expect((await planSinCorrida("hackguard-agentes")).plan.huella).toBe(
+      p.plan.huella,
+    );
     await expect(planSinCorrida("plan-demo-b")).rejects.toThrow(
       /no hay un plan sin corrida «plan-demo-b»/,
     );
@@ -54,7 +55,6 @@ describe("planes sin corrida", () => {
     const p = await planSinCorrida("hackguard-agentes");
     expect(p.respuestas).toEqual({
       clase: "revisadas",
-      archivo: "plans/hackguard-agentes/v2/respuestas-revisadas.json",
       entrevista: "2026-10-11",
       revision: { fecha: "2026-10-11", cambiadas: ["P03", "P08", "P09"] },
     });
@@ -66,18 +66,16 @@ describe("planes sin corrida", () => {
     const v1 = p.anteriores[0]!;
     expect(v1).toMatchObject({
       version: "1.0.0",
-      archivo: "plans/hackguard-agentes/v1.json",
       huella:
         "bf05e61da1a27baca04d0dc07b6300cb8eb31531d44912ad3768f7598cc2ca60",
       aprobado_por: "Mauricio Rincón",
     });
     expect(v1.respuestas).toMatchObject({
       clase: "delegadas",
-      archivo: "plans/hackguard-agentes/respuestas-por-delegacion.json",
       entrevista: "2026-10-11",
       revision: null,
     });
-    expect(p.huella).not.toBe(v1.huella);
+    expect(p.plan.huella).not.toBe(v1.huella);
   });
 
   it("ROJO: un byte cambiado en el plan con la huella vieja detiene la carga nombrando el archivo", async () => {
@@ -190,5 +188,49 @@ describe("planes sin corrida", () => {
         /v2\/respuestas-revisadas\.json no es JSON válido/,
       );
     });
+  });
+});
+
+describe("S7 · lote del hito: un plan sin aprobar no se publica y lo que cambió sale de la comparación", () => {
+  const V2 = "plans/hackguard-agentes/v2";
+
+  it("ROJO: un vN.json sin aprobar (borrador, sin huella) detiene el build nombrando el archivo", async () => {
+    const dir = copia();
+    cpSync(
+      join(dir, V2, "v0-borrador.json"),
+      join(dir, "plans/hackguard-agentes/v2.json"),
+    );
+    await expect(planesSinCorrida(dir)).rejects.toThrow(
+      /plans\/hackguard-agentes\/v2\.json no carga — \[HUELLA_AUSENTE\] huella: El plan está en borrador/,
+    );
+  });
+
+  it("ROJO: si _origen.cambiadas no coincide con lo que cambió frente a la versión anterior, se detiene", async () => {
+    const dir = copia();
+    const f = join(dir, V2, "respuestas-revisadas.json");
+    const r = JSON.parse(readFileSync(f, "utf8"));
+    r._origen.cambiadas = ["P03", "P08"];
+    writeFileSync(f, JSON.stringify(r));
+    await expect(planesSinCorrida(dir)).rejects.toThrow(
+      /_origen\.cambiadas dice «P03, P08», pero frente a plans\/hackguard-agentes\/respuestas-por-delegacion\.json cambió «P03, P08, P09»/,
+    );
+  });
+
+  it("ROJO: unas respuestas revisadas sin las de la versión anterior no dicen qué cambió y se detienen", async () => {
+    const dir = copia();
+    rmSync(join(dir, "plans/hackguard-agentes/respuestas-por-delegacion.json"));
+    await expect(planesSinCorrida(dir)).rejects.toThrow(
+      /son respuestas revisadas, pero el repo no guarda las de la versión anterior/,
+    );
+  });
+
+  it("lo que cambió sale de la comparación aunque el archivo diga otra cosa en orden: el orden no importa", async () => {
+    const dir = copia();
+    const f = join(dir, V2, "respuestas-revisadas.json");
+    const r = JSON.parse(readFileSync(f, "utf8"));
+    r._origen.cambiadas = ["P09", "P03", "P08"];
+    writeFileSync(f, JSON.stringify(r));
+    const p = await planSinCorrida("hackguard-agentes", dir);
+    expect(p.respuestas?.revision?.cambiadas).toEqual(["P03", "P08", "P09"]);
   });
 });

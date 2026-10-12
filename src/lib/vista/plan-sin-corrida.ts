@@ -9,16 +9,18 @@ import {
   type TextoBilingue,
   type TextoLibre,
 } from "@core/formatos/bilingue";
-import type { Plan } from "@core/plan/esquema";
+import type { Operador, Plan } from "@core/plan/esquema";
 import { prioridades, rpn } from "@core/plan";
 import type { OrigenDeRespuestas, VersionDelPlan } from "@/lib/datos/planes";
 import {
+  CONTRATO,
   ETIQUETA,
   FICHA_SIN_CORRIDA,
   ORIGEN,
   RESPUESTAS,
   SECCIONES,
   TIPO_ACTOR,
+  TIPO_NODO,
 } from "@/textos/plan-sin-corrida";
 import {
   CRITICIDAD,
@@ -50,6 +52,21 @@ export interface ContextoDelPlan {
   anteriores: readonly VersionDelPlan[];
 }
 
+/** El contrato del grafo en detalle: lo que el agente por construir tendría que cumplir, ya en palabras. */
+export interface ContratoDetalle {
+  nodos: { id: string; tipo: string }[];
+  aristas: {
+    clave: string;
+    desde: string;
+    orden: number;
+    condicion: string;
+    hacia: string;
+  }[];
+  porDefecto: { desde: string; hacia: string }[];
+  pausas: { nodo: string; quien: string; ve: string; politica: string }[];
+  senales: string[];
+}
+
 export interface VistaSinCorrida {
   id: string;
   nombre: string;
@@ -67,6 +84,7 @@ export interface VistaSinCorrida {
   problema: string;
   secciones: SeccionSinCorrida[];
   contrato: string[];
+  contratoDetalle: ContratoDetalle;
 }
 
 const T = (x: TextoBilingue, i: Idioma): string => x[i];
@@ -134,16 +152,83 @@ function prioridadDelRiesgo(r: Plan["riesgos"][number], i: Idioma): string {
   return `${T(ETIQUETA.prioridad, i)}: ${prioridad(ri, i).texto}${legal ? ` · ${legal}` : ""}`;
 }
 
+/** El valor de una arista en palabras: `umbral.U2` dice también el valor que el plan le dio. */
+function valorDeArista(p: Plan, valor: string | number | boolean): string {
+  const v = String(valor);
+  const m = /^umbral\.(.+)$/.exec(v);
+  const u = m ? p.umbrales.find((x) => x.id === m[1]) : undefined;
+  return u ? `${v} (= ${String(u.valor_en_plan)})` : v;
+}
+
+/**
+ * El operador que la arista evalúa de verdad: «menor que» o «mayor que» con `inclusivo` es «≤» o «≥» (así lo lee el
+ * intérprete); en los demás la bandera no cambia nada. El símbolo ya dice todo: ni «inclusivo» ni una palabra al lado.
+ */
+function operadorEfectivo(operador: Operador, inclusivo: boolean): Operador {
+  if (!inclusivo) return operador;
+  if (operador === "menor_que") return "menor_o_igual_que";
+  if (operador === "mayor_que") return "mayor_o_igual_que";
+  return operador;
+}
+
+function contratoDetalle(p: Plan, i: Idioma): ContratoDetalle {
+  const c = p.contrato_de_grafo;
+  // En el orden del flujo: el de los nodos del plan, y dentro de cada nodo, el orden en que se evalúan sus aristas.
+  const posicion = (id: string) =>
+    c.nodos_esperados.findIndex((n) => n.id === id);
+  const aristas = [...c.aristas_condicionales].sort(
+    (a, b) => posicion(a.desde) - posicion(b.desde) || a.orden - b.orden,
+  );
+  return {
+    nodos: c.nodos_esperados.map((n) => ({
+      id: n.id,
+      tipo: palabra(
+        TIPO_NODO,
+        n.tipo,
+        "TIPO_NODO (src/textos/plan-sin-corrida.ts)",
+        i,
+      ),
+    })),
+    aristas: aristas.map((a) => ({
+      clave: `${a.desde}-${a.orden}`,
+      desde: a.desde,
+      orden: a.orden,
+      condicion:
+        "funcion" in a
+          ? `${T(CONTRATO.funcion, i)} ${a.funcion.nombre}(${a.funcion.entradas.join(", ")})`
+          : `${a.senal} ${SIMBOLO[operadorEfectivo(a.operador, a.inclusivo)]} ${valorDeArista(p, a.valor)}`,
+      hacia: a.si_verdadero,
+    })),
+    // Igual que las aristas: en el orden del flujo, no en el de las claves del objeto.
+    porDefecto: Object.entries(c.ramas_por_defecto)
+      .sort(([a], [b]) => posicion(a) - posicion(b))
+      .map(([desde, hacia]) => ({ desde, hacia })),
+    pausas: c.pausas_humanas.map((h) => {
+      const rol = p.actores.find((a) => a.id === h.rol);
+      return {
+        nodo: h.nodo,
+        quien: rol ? T({ es: rol.es, en: rol.en }, i) : h.rol,
+        ve: h.payload_minimo.join(", "),
+        politica: T(h.politica_simulada, i),
+      };
+    }),
+    senales: [...c.senales_obligatorias_en_traza],
+  };
+}
+
 export function vistaSinCorrida(
   p: Plan,
   i: Idioma,
   contexto: ContextoDelPlan = { respuestas: null, anteriores: [] },
 ): VistaSinCorrida {
   const c = p.contrato_de_grafo;
+  // «1 pausa humana», no «1 pausas humanas»: la cuenta concuerda con su número.
+  const cuenta = (n: number, uno: TextoBilingue, varios: TextoBilingue) =>
+    `${n} ${T(n === 1 ? uno : varios, i)}`;
   const contrato = [
-    `${c.nodos_esperados.length} ${T(ETIQUETA.nodos, i)}`,
-    `${c.aristas_condicionales.length} ${T(ETIQUETA.aristas, i)}`,
-    `${c.pausas_humanas.length} ${T(ETIQUETA.pausas, i)}`,
+    cuenta(c.nodos_esperados.length, ETIQUETA.nodo, ETIQUETA.nodos),
+    cuenta(c.aristas_condicionales.length, ETIQUETA.arista, ETIQUETA.aristas),
+    cuenta(c.pausas_humanas.length, ETIQUETA.pausa, ETIQUETA.pausas),
   ];
   return {
     id: p.id,
@@ -165,6 +250,7 @@ export function vistaSinCorrida(
     },
     problema: T(p.problema, i),
     contrato,
+    contratoDetalle: contratoDetalle(p, i),
     secciones: [
       {
         id: "actores",

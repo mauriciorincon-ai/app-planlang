@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 import { consolaLimpia, desbordeLateral, sinViolacionesAxe } from "./_comun";
 
 /**
- * Un plan sin corrida (S5) en el export servido, en español: se llega desde la sección «Planes sin corrida» de la
+ * Un plan sin corrida (S5) en el export servido, en español (y desde el S7 también en inglés): se llega desde la sección «Planes sin corrida» de la
  * Entrada; la ficha dice lo que NO hay (trazas, brecha, playground, visor); cada sección del plan trae sus elementos
  * y, como experto, quién los propuso; se lee en los dos temas y los dos perfiles sin desplazar la página de lado y sin violaciones
  * de axe; el idioma lleva a la misma página en inglés. Sobre el plan de HackGuard (`plans/hackguard-agentes/v1.json`).
@@ -48,6 +48,35 @@ test.describe("Plan sin corrida (es)", () => {
     await expect(ficha).toContainText(
       "v1.0.0 · Mauricio Rincón el 2026-10-11 · respuestas delegadas al constructor · bf05e61d",
     );
+  });
+
+  test("el contrato del grafo se lee en detalle como experto: nodos con su tipo, aristas con el valor del umbral, ramas por defecto y la pausa (S7)", async ({
+    page,
+  }) => {
+    await page.goto(`/es/planes/${ID}?perfil=lider`);
+    const detalle = page.locator('[data-contrato="detalle"]');
+    await expect(detalle).toBeHidden();
+    await page
+      .getByRole("group", { name: "Leer como" })
+      .getByRole("button", { name: "Experto" })
+      .click();
+    await expect(detalle).toBeVisible();
+    await expect(detalle.locator("[data-nodo]")).toHaveCount(9);
+    await expect(detalle.locator('[data-nodo="investigador"]')).toContainText(
+      "modelo",
+    );
+    await expect(detalle.locator('[data-nodo="pausa_humana"]')).toContainText(
+      "pausa humana",
+    );
+    await expect(detalle.locator("[data-arista]")).toHaveCount(4);
+    await expect(
+      detalle.locator('[data-arista="verificador_fuentes-1"]'),
+    ).toContainText("fuentes_verificadas < umbral.U2 (= 2)");
+    await expect(detalle.locator("[data-por-defecto]")).toHaveCount(3);
+    await expect(detalle.locator('[data-pausa="pausa_humana"]')).toContainText(
+      "Revisor humano",
+    );
+    await expect(detalle).toContainText("veredicto_corregido_por_persona");
   });
 
   test("cada riesgo trae su prioridad de acción y el quinto riesgo es del usuario (S6)", async ({
@@ -135,6 +164,97 @@ test.describe("Plan sin corrida (es)", () => {
       "What is missing: traces, gap, playground, viewer.",
     );
   });
+});
+
+/**
+ * S7, el segundo idioma: la página del plan en inglés. Entra desde la sección «Plans without a run», dice lo que no hay,
+ * de quién son las respuestas, cada riesgo con su prioridad y el contrato en detalle como experto; se lee en los dos
+ * temas y perfiles sin desplazamiento ni violaciones de axe.
+ */
+test.describe("Plan without a run (en)", () => {
+  test("it is reached from the home page and the record says what is missing", async ({
+    page,
+  }) => {
+    await page.goto("/en");
+    const fila = page.locator(`[data-plan="${ID}"]`);
+    await expect(fila).toBeVisible();
+    await expect(fila).toContainText("v2.0.0");
+    await fila.getByRole("link", { name: "Read the plan" }).click();
+    await expect(page).toHaveURL(new RegExp(`/en/planes/${ID}$`));
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+      "AI security · test planning and result evidence",
+    );
+    const ficha = page.locator('[data-ficha="sin-corrida"]');
+    await expect(ficha).toContainText("No run");
+    await expect(ficha).toContainText(
+      "What is missing: traces, gap, playground, viewer.",
+    );
+    await expect(ficha).toContainText("Mauricio Rincón · on 2026-10-11");
+  });
+
+  test("the record says whose answers they are, the interview date and the earlier version", async ({
+    page,
+  }) => {
+    await page.goto(`/en/planes/${ID}`);
+    const ficha = page.locator('[data-ficha="sin-corrida"]');
+    await expect(ficha).toContainText(
+      "Reviewed and confirmed by the user on 2026-10-11",
+    );
+    await expect(ficha).toContainText(
+      "questions it changed on review: P03, P08, P09",
+    );
+    await expect(ficha).toContainText("Interview");
+    await expect(ficha).toContainText("Earlier versions");
+    await expect(ficha).toContainText(
+      "v1.0.0 · Mauricio Rincón on 2026-10-11 · answers delegated to the builder · bf05e61d",
+    );
+  });
+
+  test("each risk carries its action priority, and the contract reads in detail as an expert", async ({
+    page,
+  }) => {
+    await page.goto(`/en/planes/${ID}?perfil=lider`);
+    const riesgo = (id: string) =>
+      page.locator(
+        `section[aria-labelledby="ps-riesgos-t"] [data-elemento="${id}"]`,
+      );
+    await expect(riesgo("R5")).toContainText("Action priority: AP high");
+    await expect(riesgo("R4")).toContainText("Action priority: AP low");
+    const detalle = page.locator('[data-contrato="detalle"]');
+    await expect(detalle).toBeHidden();
+    await page
+      .getByRole("group", { name: "Read as" })
+      .getByRole("button", { name: "Expert" })
+      .click();
+    await expect(detalle).toBeVisible();
+    await expect(detalle.locator("[data-nodo]")).toHaveCount(9);
+    await expect(detalle.locator('[data-nodo="investigador"]')).toContainText(
+      "model",
+    );
+    await expect(detalle.locator('[data-nodo="pausa_humana"]')).toContainText(
+      "human pause",
+    );
+    await expect(
+      detalle.locator('[data-arista="verificador_fuentes-1"]'),
+    ).toContainText("fuentes_verificadas < umbral.U2 (= 2)");
+    await expect(detalle.locator('[data-pausa="pausa_humana"]')).toContainText(
+      "Human reviewer",
+    );
+  });
+
+  for (const tema of ["oscuro", "claro"])
+    for (const perfil of ["lider", "experto"])
+      test(`it reads in the ${tema} theme as ${perfil}, with no sideways scroll or violations`, async ({
+        page,
+      }) => {
+        const errores = consolaLimpia(page);
+        await page.goto(`/en/planes/${ID}?tema=${tema}&perfil=${perfil}`);
+        await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+        await expect(page.locator("#ps-ficha-t")).toBeVisible();
+        expect(await desbordeLateral(page)).toBeLessThanOrEqual(0);
+        await sinViolacionesAxe(page);
+        expect(errores).toEqual([]);
+      });
 });
 
 test.describe("movimiento reducido", () => {
