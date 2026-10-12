@@ -10,10 +10,13 @@ import {
   type TextoLibre,
 } from "@core/formatos/bilingue";
 import type { Plan } from "@core/plan/esquema";
+import { prioridades, rpn } from "@core/plan";
+import type { OrigenDeRespuestas, VersionDelPlan } from "@/lib/datos/planes";
 import {
   ETIQUETA,
   FICHA_SIN_CORRIDA,
   ORIGEN,
+  RESPUESTAS,
   SECCIONES,
   TIPO_ACTOR,
 } from "@/textos/plan-sin-corrida";
@@ -23,6 +26,7 @@ import {
   REVERSIBILIDAD,
 } from "@/textos/plan-comun";
 import { OPERADOR, SIMBOLO } from "@/textos/playground";
+import { controlLegal, prioridad } from "./plan-comun";
 import { delVocabulario } from "./vocabulario";
 
 export type Origen = keyof Omit<typeof ORIGEN, "sinOrigen">;
@@ -40,6 +44,12 @@ export interface SeccionSinCorrida {
   elementos: ElementoVista[];
 }
 
+/** Lo que el repo guarda además del plan (S6): de quién son las respuestas y qué versiones lo precedieron. */
+export interface ContextoDelPlan {
+  respuestas: OrigenDeRespuestas | null;
+  anteriores: readonly VersionDelPlan[];
+}
+
 export interface VistaSinCorrida {
   id: string;
   nombre: string;
@@ -47,6 +57,12 @@ export interface VistaSinCorrida {
   dominio: string;
   aprobacion: string | null;
   huella: string | null;
+  /** De quién son las respuestas de la entrevista, dicho por el archivo que la entrevista usó. */
+  respuestas: string;
+  /** Cuándo corrió la entrevista (la fecha de su transcripción); `null` si el repo no la guarda. */
+  entrevista: string | null;
+  /** Las versiones anteriores que siguen en el repo, una línea cada una. */
+  anteriores: string[];
   ficha: { etiqueta: string; nota: string; falta: string };
   problema: string;
   secciones: SeccionSinCorrida[];
@@ -69,7 +85,60 @@ function origenDe(x: { origen?: Origen }, i: Idioma): string {
   return x.origen ? T(ORIGEN[x.origen], i) : T(ORIGEN.sinOrigen, i);
 }
 
-export function vistaSinCorrida(p: Plan, i: Idioma): VistaSinCorrida {
+/** Las respuestas en una frase: de quién son y, si las revisó, qué cambió. */
+function frasePorRespuestas(o: OrigenDeRespuestas | null, i: Idioma): string {
+  if (!o) return T(RESPUESTAS.sinRegistro, i);
+  if (o.clase === "delegadas") return T(RESPUESTAS.delegadas, i);
+  const r = o.revision;
+  const base = T(RESPUESTAS.revisadas(r?.fecha ?? o.entrevista), i);
+  const cambiadas = r?.cambiadas ?? [];
+  return `${base} · ${
+    cambiadas.length
+      ? T(RESPUESTAS.cambiadas(cambiadas.join(", ")), i)
+      : T(RESPUESTAS.sinCambios, i)
+  }`;
+}
+
+/** Una versión anterior en una línea: versión · quién la aprobó y cuándo · de quién eran las respuestas · su huella. */
+function lineaDeVersion(v: VersionDelPlan, i: Idioma): string {
+  const aprobada =
+    v.aprobado_por && v.aprobado_el
+      ? ` · ${v.aprobado_por} ${T(ETIQUETA.el, i)} ${v.aprobado_el}`
+      : "";
+  const corta = RESPUESTAS.corta;
+  const quien = T(
+    !v.respuestas
+      ? corta.sinRegistro
+      : v.respuestas.clase === "delegadas"
+        ? corta.delegadas
+        : corta.revisadas,
+    i,
+  );
+  return `v${v.version}${aprobada} · ${quien} · ${v.huella.slice(0, 8)}…`;
+}
+
+/**
+ * La prioridad de acción de un riesgo (tabla AIAG-VDA del reusable) y su control legal, en palabras. Se calcula del
+ * plan, no de una corrida: `prioridad` y `controlLegal` solo leen las prioridades y el control legal del riesgo.
+ */
+function prioridadDelRiesgo(r: Plan["riesgos"][number], i: Idioma): string {
+  const p = prioridades(r);
+  const ri = {
+    estado: "sin_corrida",
+    prioridad_de_accion: p.prioridad_de_accion,
+    prioridad_de_tabla: p.prioridad_de_tabla,
+    control_legal: p.control_legal,
+    rpn: rpn(r),
+  };
+  const legal = controlLegal(ri, i);
+  return `${T(ETIQUETA.prioridad, i)}: ${prioridad(ri, i).texto}${legal ? ` · ${legal}` : ""}`;
+}
+
+export function vistaSinCorrida(
+  p: Plan,
+  i: Idioma,
+  contexto: ContextoDelPlan = { respuestas: null, anteriores: [] },
+): VistaSinCorrida {
   const c = p.contrato_de_grafo;
   const contrato = [
     `${c.nodos_esperados.length} ${T(ETIQUETA.nodos, i)}`,
@@ -86,6 +155,9 @@ export function vistaSinCorrida(p: Plan, i: Idioma): VistaSinCorrida {
         ? `${p.aprobado_por} · ${T(ETIQUETA.el, i)} ${p.aprobado_el}`
         : null,
     huella: p.huella,
+    respuestas: frasePorRespuestas(contexto.respuestas, i),
+    entrevista: contexto.respuestas?.entrevista ?? null,
+    anteriores: contexto.anteriores.map((v) => lineaDeVersion(v, i)),
     ficha: {
       etiqueta: T(FICHA_SIN_CORRIDA.etiqueta, i),
       nota: T(FICHA_SIN_CORRIDA.nota, i),
@@ -137,6 +209,7 @@ export function vistaSinCorrida(p: Plan, i: Idioma): VistaSinCorrida {
           titulo: T(r.modo, i),
           detalle: [
             `${T(ETIQUETA.severidad, i)} ${r.severidad} · ${T(ETIQUETA.ocurrencia, i)} ${r.ocurrencia} · ${T(ETIQUETA.deteccion, i)} ${r.deteccion}`,
+            prioridadDelRiesgo(r, i),
           ],
           origen: origenDe(r, i),
         })),

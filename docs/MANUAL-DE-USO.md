@@ -347,8 +347,8 @@ data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar l
 
 - **Qué hace:** entrevista el plan de un proyecto que no es un demo de planlang, sobre una plantilla de dominio que es
   solo datos (`data/dominios/<id>.json`), lo valida con M1 y, cuando el usuario lo aprueba, lo publica en la vitrina
-  como «plan sin corrida». El primero es el de los dos agentes de HackGuard (`plans/hackguard-agentes/v1.json`, dominio
-  `dom-seguridad-ia`). Un dominio nuevo no toca el código: se agrega su archivo y el entrevistador lo recorre.
+  como «plan sin corrida». El primero es el de los dos agentes de HackGuard (`plans/hackguard-agentes/v2.json`, dominio
+  `dom-seguridad-ia`; la v1 queda como historia). Un dominio nuevo no toca el código: se agrega su archivo y el entrevistador lo recorre.
 - **Cómo se usa:**
   1. `pnpm entrevistar --dominio dom-seguridad-ia --plan hackguard-agentes` (o `--respuestas archivo.json` para
      responder desde un archivo). Son 14 preguntas; «acepto» deja lo que propone la plantilla.
@@ -359,10 +359,35 @@ data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar l
   problema, el contrato en cifras y cada sección del plan. «Ver como experto» muestra quién propuso cada elemento:
   la plantilla, el entrevistador o la persona que respondió.
 - **Limitaciones conocidas:** el plan no tiene agente construido en planlang, así que no hay nada que medir: la página
-  es el contrato, no un resultado. La entrevista del plan de HackGuard se corrió por delegación: las respuestas las
-  escribió el constructor desde el brief y la visión de HackGuard, y el autor aprobó el plan con su frase; por eso el
-  sprint 5 no cuenta como «uso real». Las restricciones de la plantilla citan su fuente y la fecha en que se verificó; la
+  es el contrato, no un resultado. La entrevista de la v1 de HackGuard se corrió por delegación: las respuestas las
+  escribió el constructor desde el brief y la visión de HackGuard; por eso el sprint 5 no cuenta como «uso real». La
+  v2 usa las respuestas que el usuario revisó y confirmó (ver «Planear una versión nueva del plan»). Las restricciones de la plantilla citan su fuente y la fecha en que se verificó; la
   norma ISO/IEC 42001 no se pudo verificar por `curl` (la página de ISO responde 403) y la plantilla lo dice.
+
+### Planear una versión nueva del plan · desde el sprint 6
+
+- **Qué hace:** aprueba una versión nueva de un plan que ya tiene la anterior. La versión anterior queda en el repo como
+  historia; la página muestra la versión aprobada más alta y dice de quién son las respuestas. El primer uso es el plan
+  v2 de HackGuard, con las respuestas que el usuario revisó y confirmó en el chat (2026-10-11).
+- **Cómo se usa:**
+  1. Guarda las respuestas revisadas en un archivo (por ejemplo `plans/<plan>/v2/respuestas-revisadas.json`). Lleva un
+     bloque `_origen` con la fecha de la revisión y las preguntas que cambió la persona.
+  2. `pnpm entrevistar --dominio dom-seguridad-ia --plan hackguard-agentes --nueva --respuestas <archivo> --salida plans/hackguard-agentes/v2`.
+     El borrador, la transcripción y la revisión quedan en `v2/`.
+  3. Lee `plans/hackguard-agentes/v2/revision.es.md`. Si M1 rechaza algo, se corrige el borrador, nunca las respuestas,
+     y la corrección queda escrita junto a él.
+  4. Cuando estés de acuerdo, di «apruebo el plan v2». El constructor corre
+     `pnpm plan:aprobar --dominio dom-seguridad-ia --plan hackguard-agentes --version 2 --por "<tu nombre>" --el <fecha>`,
+     que escribe `v2.json` con su huella.
+  5. `pnpm build`: la página muestra la v2 con su origen de respuestas, la fecha de la entrevista y la prioridad de
+     acción de cada riesgo.
+- **Cómo se lee la ficha:** «Revisadas y confirmadas por el usuario el <fecha>» cuando las respuestas son de la persona;
+  «Delegadas al constructor» cuando se delegaron. Las versiones anteriores aparecen con su huella, para que nadie tome
+  la v1 por la vigente.
+- **Limitaciones conocidas:** la prioridad de acción sale de la tabla AIAG-VDA del paquete de instrumentos; el control
+  legal sube la prioridad a alta, y hoy ningún riesgo de la plantilla de seguridad de IA lo tiene. En la v2, la ocurrencia y la detección del quinto riesgo las
+  propuso el entrevistador: la prioridad alta sale de esas cifras, no de una cifra que diera la persona. La página sigue sin corrida: no hay
+  agente que medir.
 
 ### Preguntas frecuentes
 
@@ -719,8 +744,8 @@ There are two ways to use it:
 
 - **What it does:** interviews the plan of a project that is not a planlang demo, over a domain template that is only
   data (`data/dominios/<id>.json`), validates it with M1 and, once the user approves it, publishes it in the showcase
-  as a «plan without a run». The first one is the plan of HackGuard's two agents (`plans/hackguard-agentes/v1.json`,
-  domain `dom-seguridad-ia`). A new domain touches no code: its file is added and the interviewer walks it.
+  as a «plan without a run». The first one is the plan of HackGuard's two agents (`plans/hackguard-agentes/v2.json`,
+  domain `dom-seguridad-ia`; v1 stays as history). A new domain touches no code: its file is added and the interviewer walks it.
 - **How to use it:**
   1. `pnpm entrevistar --dominio dom-seguridad-ia --plan hackguard-agentes` (or `--respuestas file.json` to answer
      from a file). 14 questions; «acepto» keeps what the template proposes.
@@ -733,10 +758,35 @@ There are two ways to use it:
   problem, the contract in numbers and every section of the plan. «Read as expert» shows who proposed each element:
   the template, the interviewer or the person who answered.
 - **Known limitations:** the plan has no agent built in planlang, so there is nothing to measure: the page is the
-  contract, not a result. HackGuard's plan interview was run by delegation: the builder wrote the answers from
-  HackGuard's brief and vision, and the author approved the plan with their own sentence; that is why sprint 5 does
-  not count as «real use». The template's constraints cite their source and the date they were checked; ISO/IEC 42001
+  contract, not a result. HackGuard's v1 interview was run by delegation: the builder wrote the answers from
+  HackGuard's brief and vision; that is why sprint 5 does not count as «real use». v2 uses the answers the user reviewed
+  and confirmed (see «Plan a new version of a plan»). The template's constraints cite their source and the date they were checked; ISO/IEC 42001
   could not be checked with `curl` (ISO's page answers 403) and the template says so.
+
+### Plan a new version of a plan · since sprint 6
+
+- **What it does:** approves a new version of a plan that already has the previous one. The previous version stays in
+  the repository as history; the page shows the highest approved version and says whose answers they are. The first
+  use is HackGuard's plan v2, with the answers the user reviewed and confirmed in the chat (2026-10-11).
+- **How to use it:**
+  1. Save the reviewed answers in a file (for example `plans/<plan>/v2/respuestas-revisadas.json`). It carries an
+     `_origen` block with the review date and the questions the person changed.
+  2. `pnpm entrevistar --dominio dom-seguridad-ia --plan hackguard-agentes --nueva --respuestas <file> --salida plans/hackguard-agentes/v2`.
+     The draft, the transcript and the review go into `v2/`.
+  3. Read `plans/hackguard-agentes/v2/revision.en.md`. If M1 rejects something, the draft is corrected, never the
+     answers, and the correction is written next to it.
+  4. When you agree, say «I approve plan v2». The builder runs
+     `pnpm plan:aprobar --dominio dom-seguridad-ia --plan hackguard-agentes --version 2 --por "<your name>" --el <date>`,
+     which writes `v2.json` with its fingerprint.
+  5. `pnpm build`: the page shows v2 with the origin of its answers, the interview date and the action priority of each
+     risk.
+- **How to read the record:** «Reviewed and confirmed by the user on <date>» when the answers are the person's;
+  «Delegated to the builder» when they were delegated. Earlier versions appear with their fingerprint, so nobody takes
+  v1 for the current one.
+- **Known limitations:** the action priority comes from the AIAG-VDA table in the instruments package; legal control
+  raises the priority to high, and today no risk of the AI-security template has it. In v2, the occurrence and detection of the fifth risk were proposed
+  by the interviewer: its high priority comes from those figures, not from a figure the person gave. The page is still without a run: there is no
+  agent to measure.
 
 ### Frequently asked questions
 
@@ -763,3 +813,4 @@ There are two ways to use it:
 | S3 · 2026-10-05 | Entrevistar un plan · correr el demo B · leer un expediente · publicar el design system · la vitrina con dos demos y la corrida de 200 del A (mejorado) · `--caso` en los lotes (mejorado) · plan v1.5 |
 | S4 · 2026-10-11 | Comparar dos corridas (la pantalla del A frente a su línea base, con sus casos enlazados)                                                                                                              |
 | S5 · 2026-10-11 | Planear un proyecto real (un dominio nuevo como datos · la entrevista de cualquier plan · la página del plan sin corrida)                                                                              |
+| S6 · 2026-10-11 | Planear una versión nueva del plan (la v2 de HackGuard con las respuestas que el usuario revisó · la página dice de quién son las respuestas y muestra la prioridad de acción de cada riesgo)          |

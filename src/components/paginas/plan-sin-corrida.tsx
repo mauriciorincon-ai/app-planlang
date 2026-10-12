@@ -27,7 +27,10 @@ export async function PaginaPlanSinCorrida({
   id: string;
 }) {
   const p = await planSinCorrida(id);
-  const v = vistaSinCorrida(p.plan, idioma);
+  const v = vistaSinCorrida(p.plan, idioma, {
+    respuestas: p.respuestas,
+    anteriores: p.anteriores,
+  });
   return (
     <Marco idioma={idioma} pagina="planes" id={id}>
       <div className={CONT}>
@@ -80,11 +83,29 @@ export async function PaginaPlanSinCorrida({
                 <dd>{v.aprobacion}</dd>
               </>
             ) : null}
+            <dt className="text-tinta-2">{ETIQUETA.respuestas[idioma]}</dt>
+            <dd>{v.respuestas}</dd>
+            {v.entrevista ? (
+              <>
+                <dt className="text-tinta-2">{ETIQUETA.entrevista[idioma]}</dt>
+                <dd>{v.entrevista}</dd>
+              </>
+            ) : null}
             {v.huella ? (
               <>
                 <dt className="text-tinta-2">{ETIQUETA.huella[idioma]}</dt>
                 <dd className="font-mono [overflow-wrap:anywhere]">
                   {v.huella}
+                </dd>
+              </>
+            ) : null}
+            {v.anteriores.length ? (
+              <>
+                <dt className="text-tinta-2">{ETIQUETA.anteriores[idioma]}</dt>
+                <dd className="grid gap-1 font-mono [overflow-wrap:anywhere]">
+                  {v.anteriores.map((a) => (
+                    <span key={a}>{a}</span>
+                  ))}
                 </dd>
               </>
             ) : null}

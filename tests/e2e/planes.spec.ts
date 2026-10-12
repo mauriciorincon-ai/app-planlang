@@ -17,6 +17,7 @@ test.describe("Plan sin corrida (es)", () => {
     await page.goto("/es");
     const fila = page.locator(`[data-plan="${ID}"]`);
     await expect(fila).toBeVisible();
+    await expect(fila).toContainText("v2.0.0");
     await fila.getByRole("link", { name: "Leer el plan" }).click();
     await expect(page).toHaveURL(new RegExp(`/es/planes/${ID}$`));
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(
@@ -28,6 +29,52 @@ test.describe("Plan sin corrida (es)", () => {
       "Lo que no hay: trazas, brecha, playground, visor.",
     );
     await expect(ficha).toContainText("Mauricio Rincón · el 2026-10-11");
+  });
+
+  test("la ficha dice de quién son las respuestas, cuándo fue la entrevista y qué versión quedó como historia (S6)", async ({
+    page,
+  }) => {
+    await page.goto(`/es/planes/${ID}`);
+    const ficha = page.locator('[data-ficha="sin-corrida"]');
+    await expect(ficha).toContainText("v2.0.0");
+    await expect(ficha).toContainText(
+      "Revisadas y confirmadas por el usuario el 2026-10-11",
+    );
+    await expect(ficha).toContainText(
+      "preguntas que cambió al revisar: P03, P08, P09",
+    );
+    await expect(ficha).toContainText("Entrevista");
+    await expect(ficha).toContainText("Versiones anteriores");
+    await expect(ficha).toContainText(
+      "v1.0.0 · Mauricio Rincón el 2026-10-11 · respuestas delegadas al constructor · bf05e61d",
+    );
+  });
+
+  test("cada riesgo trae su prioridad de acción y el quinto riesgo es del usuario (S6)", async ({
+    page,
+  }) => {
+    await page.goto(`/es/planes/${ID}?perfil=experto`);
+    const riesgos = page.locator(
+      'section[aria-labelledby="ps-riesgos-t"] [data-elemento]',
+    );
+    await expect(riesgos).toHaveCount(5);
+    for (const id of ["R1", "R2", "R3", "R4", "R5"])
+      await expect(
+        page.locator(
+          `section[aria-labelledby="ps-riesgos-t"] [data-elemento="${id}"]`,
+        ),
+      ).toContainText("Prioridad de acción: AP");
+    const r5 = page.locator(
+      'section[aria-labelledby="ps-riesgos-t"] [data-elemento="R5"]',
+    );
+    await expect(r5).toContainText("Una cita real pegada al campo equivocado");
+    await expect(r5).toContainText("Prioridad de acción: AP alta");
+    await expect(r5).toContainText("usuario");
+    await expect(
+      page.locator(
+        'section[aria-labelledby="ps-riesgos-t"] [data-elemento="R4"]',
+      ),
+    ).toContainText("Prioridad de acción: AP baja");
   });
 
   test("cada sección trae sus elementos y, como experto, quién los propuso", async ({
