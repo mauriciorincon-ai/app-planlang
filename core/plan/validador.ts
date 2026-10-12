@@ -47,6 +47,7 @@ export const CODIGOS = [
   "HUELLA_AUSENTE",
   "SENAL_NO_DECLARADA",
   "TEXTO_PENDIENTE",
+  "UMBRAL_DICHO_PENDIENTE",
 ] as const;
 export type Codigo = (typeof CODIGOS)[number];
 
@@ -74,6 +75,40 @@ function motivo(
   en: string,
 ): Motivo {
   return { codigo, elemento, mensaje: { es, en } };
+}
+
+/**
+ * Una frase que dice que algo sigue abierto, en español o en inglés (S7). Un plan aprobado le fija un valor a cada
+ * umbral: si una decisión dice que el umbral «sigue pendiente», el contrato se contradice a sí mismo y M1 no lo ve
+ * porque es texto libre (así salió la primera v2 de HackGuard: «el mínimo sigue pendiente en el umbral U2», con U2 = 2).
+ */
+const DICE_PENDIENTE =
+  /\b(pendiente|sin\s+(?:definir|fijar|decidir)|a[uú]n\s+no|todav[ií]a\s+no|pending|not\s+yet|still\s+(?:open|unset|undefined|undecided)|tbd)\b/i;
+
+const escapar = (t: string): string => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+/** Las frases de un texto: se parten en `.`, `;`, `!`, `?` y saltos de línea. */
+const frases = (t: string): string[] =>
+  t
+    .split(/[.;!?]+\s|\n/)
+    .map((f) => f.trim())
+    .filter((f) => f.length > 0);
+
+/** Los ids de umbral que una frase menciona como palabra entera y dice pendientes. */
+function umbralesDichosPendientes(
+  texto: string,
+  idsUmbral: readonly string[],
+): string[] {
+  const salida = new Set<string>();
+  for (const f of frases(texto)) {
+    if (!DICE_PENDIENTE.test(f)) continue;
+    for (const id of idsUmbral)
+      if (
+        new RegExp(`(^|[^A-Za-z0-9_-])${escapar(id)}($|[^A-Za-z0-9_-])`).test(f)
+      )
+        salida.add(id);
+  }
+  return [...salida];
 }
 
 /** Parsea una condición del plan; devuelve motivos si no es interpretable o referencia un umbral inexistente. */
@@ -384,6 +419,41 @@ export function validarPlan(entrada: unknown): ResultadoValidacion {
             `The decision references risk “${r}”, which does not exist.`,
           ),
         );
+  }
+
+  // S7: lo que una decisión dice de un umbral no puede contradecir al plan. Cada umbral del plan tiene su valor; si la
+  // justificación o la opción elegida de una decisión lo llama «pendiente», se rechaza nombrando la decisión y el umbral.
+  for (const d of plan.decisiones) {
+    const textos: [string, string][] = [];
+    if (d.justificacion)
+      textos.push(
+        [`${d.id}.justificacion.es`, d.justificacion.es],
+        [`${d.id}.justificacion.en`, d.justificacion.en],
+      );
+    if (d.opcion_elegida) {
+      const o = d.opcion_elegida;
+      if (typeof o === "string") textos.push([`${d.id}.opcion_elegida`, o]);
+      else
+        textos.push(
+          [`${d.id}.opcion_elegida.es`, o.es],
+          [`${d.id}.opcion_elegida.en`, o.en],
+        );
+    }
+    for (const [donde, texto] of textos)
+      for (const id of umbralesDichosPendientes(
+        texto,
+        plan.umbrales.map((u) => u.id),
+      )) {
+        const valor = plan.umbrales.find((u) => u.id === id)?.valor_en_plan;
+        motivos.push(
+          motivo(
+            "UMBRAL_DICHO_PENDIENTE",
+            donde,
+            `El texto dice que el umbral ${id} sigue pendiente, pero el plan le fijó el valor ${String(valor)}. Redáctalo con ese valor.`,
+            `The text says threshold ${id} is still pending, but the plan sets it to ${String(valor)}. Write it with that value.`,
+          ),
+        );
+      }
   }
 
   // Criterios: regla de medición completa e interpretable.
