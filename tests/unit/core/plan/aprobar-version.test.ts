@@ -77,6 +77,7 @@ describe("la revisión dice cómo se aprueba la versión que propone", () => {
       "v2",
       "plans/hackguard-agentes/v1",
       "plans/hackguard-agentes/v02",
+      "/tmp/x/v2",
     ])
       expect(versionDeLaCarpeta(primera), primera).toBe(1);
   });
@@ -152,12 +153,16 @@ describe("el script aprueba la versión que se le pide", () => {
 
   it("--version 2 escribe v2.json con la versión 2.0.0 y no reescribe una v2 que ya existe", () => {
     const t = raizConBorrador("v2");
+    cpSync(
+      join(FIXTURE, "v0-borrador.json"),
+      join(t, "plans/fixture-dominio-nuevo/v1.json"),
+    );
     const r = aprobar(t, ["--version", "2"]);
     expect(r.status, r.stderr).toBe(0);
     const destino = join(t, "plans/fixture-dominio-nuevo/v2.json");
     expect(existsSync(destino)).toBe(true);
     expect(existsSync(join(t, "plans/fixture-dominio-nuevo/v1.json"))).toBe(
-      false,
+      true,
     );
     const plan = JSON.parse(readFileSync(destino, "utf8")) as {
       version: string;
@@ -172,7 +177,7 @@ describe("el script aprueba la versión que se le pide", () => {
 
     const otra = aprobar(t, ["--version", "2"]);
     expect(otra.status).toBe(1);
-    expect(otra.stderr).toContain("ya existe");
+    expect(otra.stderr).toContain("las versiones aprobadas son v1, v2");
   });
 
   it("sin el flag escribe v1.json y deja la versión del borrador (1.0.0)", () => {
@@ -183,6 +188,23 @@ describe("el script aprueba la versión que se le pide", () => {
       readFileSync(join(t, "plans/fixture-dominio-nuevo/v1.json"), "utf8"),
     ) as { version: string };
     expect(plan.version).toBe("1.0.0");
+  });
+
+  it("una versión que se salta la anterior se rechaza sin escribir nada", () => {
+    const t = raizConBorrador("v3");
+    mkdirSync(join(t, "plans/fixture-dominio-nuevo"), { recursive: true });
+    cpSync(
+      join(FIXTURE, "v0-borrador.json"),
+      join(t, "plans/fixture-dominio-nuevo/v1.json"),
+    );
+    const r = aprobar(t, ["--version", "3"]);
+    expect(r.status).toBe(1);
+    expect(r.stderr).toContain(
+      "las versiones aprobadas son v1; la nueva debe ser v2",
+    );
+    expect(existsSync(join(t, "plans/fixture-dominio-nuevo/v3.json"))).toBe(
+      false,
+    );
   });
 
   it("una versión mal escrita es un error de uso, no una aprobación", () => {

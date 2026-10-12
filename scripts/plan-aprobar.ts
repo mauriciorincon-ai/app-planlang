@@ -11,7 +11,7 @@
  * `plans/<plan>/vN/` (la entrevista nueva va allí con `--salida`), escribe `plans/<plan>/vN.json` y sella la versión
  * `N.0.0`. La anterior no se toca: es la historia. Sin el flag, todo sigue como en el S5.
  */
-import { existsSync } from "node:fs";
+import { existsSync, readdirSync } from "node:fs";
 import type { JsonValor } from "../core/formatos/jcs";
 import { aprobarPlan, impideAprobar } from "../core/plan";
 import {
@@ -46,6 +46,16 @@ export function destinoDeAprobacion(
   };
 }
 
+/** Las versiones aprobadas de un plan (`vN.json` en su carpeta), en orden. */
+export function versionesAprobadas(directorio: string): number[] {
+  if (!existsSync(directorio)) return [];
+  return readdirSync(directorio)
+    .map((f) => /^v(\d+)\.json$/.exec(f))
+    .filter((m): m is RegExpExecArray => m !== null)
+    .map((m) => Number(m[1]))
+    .sort((a, b) => a - b);
+}
+
 async function main(): Promise<number> {
   const args = argumentos(process.argv.slice(2));
   const objetivo = objetivoDeEntrevista(args);
@@ -63,6 +73,18 @@ async function main(): Promise<number> {
     return 2;
   }
   const { directorio, destino } = donde;
+  if (donde.version) {
+    // Una versión nueva encadena con la anterior: no se salta ninguna y no se aprueba una igual o menor a la vigente.
+    const n = Number(args.version);
+    const carpetaDelPlan = objetivo.directorio;
+    const aprobadas = versionesAprobadas(carpetaDelPlan);
+    if (!aprobadas.includes(n - 1) || aprobadas.some((k) => k >= n)) {
+      console.error(
+        `${carpetaDelPlan}: las versiones aprobadas son ${aprobadas.map((k) => `v${k}`).join(", ") || "ninguna"}; la nueva debe ser v${(aprobadas.at(-1) ?? 0) + 1}.`,
+      );
+      return 1;
+    }
+  }
   if (existsSync(destino)) {
     console.error(
       `${destino} ya existe: un plan aprobado no se reescribe (sube la versión).`,

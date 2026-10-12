@@ -78,8 +78,8 @@ export function objetivoDeEntrevista(
 export function versionDeLaCarpeta(directorio: string): number {
   const partes = directorio.split("/").filter(Boolean);
   const ultima = /^v([2-9]|[1-9]\d+)$/.exec(partes.at(-1) ?? "");
-  const padre = partes.at(-2);
-  return ultima && padre && padre !== "plans" ? Number(ultima[1]) : 1;
+  // plans/<id>/vN: la carpeta de la versión cuelga de un plan, que cuelga de «plans» (auditoría S6 B6).
+  return ultima && partes.at(-3) === "plans" ? Number(ultima[1]) : 1;
 }
 
 export async function revisarDirectorio(directorio: string): Promise<Revision> {
