@@ -5,7 +5,13 @@
  */
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { esIdioma, idiomaDeRuta } from "@/lib/idioma";
-import { otroIdioma, PANTALLAS, ruta, rutaEntrada } from "@/lib/ruta";
+import {
+  demosConPagina,
+  otroIdioma,
+  PANTALLAS,
+  ruta,
+  rutaEntrada,
+} from "@/lib/ruta";
 
 describe("rutas de la vitrina", () => {
   it("la Entrada es la raíz del idioma; las demás cuelgan de ella", () => {
@@ -89,8 +95,17 @@ describe("«comparar» es una página del demo A, no del B (S4)", () => {
   it("el A la tiene en su camino; el B no puede construirla", () => {
     expect(ruta("es", "comparar", undefined, "demo-a")).toBe("/es/comparar");
     expect(() => ruta("es", "comparar", undefined, "demo-b")).toThrow(
-      /solo existe en el demo A/,
+      /«comparar» solo existe en demo-a, no en «demo-b»/,
     );
+  });
+});
+
+describe("en qué demos existe cada página (S7, B-5)", () => {
+  it("las pestañas, en todos los demos; comparar, solo en el A; planes, en ninguno", () => {
+    for (const p of PANTALLAS)
+      expect(demosConPagina(p), p).toEqual(["demo-a", "demo-b"]);
+    expect(demosConPagina("comparar")).toEqual(["demo-a"]);
+    expect(demosConPagina("planes")).toEqual([]);
   });
 });
 

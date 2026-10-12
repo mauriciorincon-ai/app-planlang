@@ -12,7 +12,6 @@ from __future__ import annotations
 import argparse
 import sys
 from datetime import date
-from pathlib import Path
 
 from app_agents.adaptador import MODELO_POR_DEFECTO, crear_modelo, proveedor_activo
 from app_agents.entrevistador.cli import (
@@ -21,11 +20,13 @@ from app_agents.entrevistador.cli import (
     EntrevistaEnCurso,
     Lector,
     PlanYaAprobado,
+    SalidaInvalida,
     SinEntrevista,
     checkpointer_sqlite,
     demo_de_dominio,
     ejecutar,
     leer_respuestas,
+    validar_salida,
 )
 from app_agents.plan import RAIZ_REPO
 
@@ -71,6 +72,12 @@ def main(argv: list[str] | None = None) -> int:
             p.error(str(e))
     else:
         p.error("indica --demo <id> o, para un plan real, --dominio <id> --plan <id>")
+    salida = None
+    if a.salida is not None:
+        try:
+            salida = validar_salida(a.salida, demo)
+        except SalidaInvalida as e:
+            p.error(str(e))
     if a.sin_modelo:
         modelo, proveedor, nombre = None, "ninguno", "ninguno"
     else:
@@ -92,7 +99,7 @@ def main(argv: list[str] | None = None) -> int:
             forzadas=a.pregunta,
             vocabulario=tuple(v for v in a.vocabulario.split(",") if v),
             fecha=a.fecha,
-            directorio_salida=Path(a.salida).resolve() if a.salida else None,
+            directorio_salida=salida,
         )
     except PlanYaAprobado:
         print(

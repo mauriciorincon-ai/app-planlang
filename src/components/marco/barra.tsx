@@ -10,8 +10,15 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import type { Idioma, TextoBilingue } from "@core/formatos/bilingue";
-import { CONMUTADOR_EN, DEMOS, type IdDemo } from "@/lib/demos";
-import { PANTALLAS, ruta, rutaEntrada, type Pagina, type Pantalla } from "@/lib/ruta";
+import { CONMUTADOR_EN, type IdDemo } from "@/lib/demos";
+import {
+  demosConPagina,
+  PANTALLAS,
+  ruta,
+  rutaEntrada,
+  type Pagina,
+  type Pantalla,
+} from "@/lib/ruta";
 import { BARRA, MARCA, PESTANAS } from "@/textos/comun";
 import { CONT, cx } from "../cx";
 import { Icono } from "../icono";
@@ -56,7 +63,9 @@ export function Barra({
 }) {
   // Con el conmutador de demo, las siete pestañas no caben en una fila a ningún ancho de escritorio (el contenedor
   // llega a 1.120 px): van en su propia fila, como en el teléfono. En el A la barra es la del S2.
-  const conConmutador = CONMUTADOR_EN[demo];
+  // El conmutador solo ofrece demos donde la página existe: en `comparar` (solo A) o `planes` (de ninguno) no hay a dónde ir.
+  const demosDeLaPagina = demosConPagina(pagina);
+  const conConmutador = CONMUTADOR_EN[demo] && demosDeLaPagina.length > 1;
   const pestanasEnSuFila = conConmutador;
   return (
     <header className="border-b border-linea">
@@ -103,7 +112,7 @@ export function Barra({
         <div className="ml-auto flex gap-2">
           {conConmutador && (
             <div className={SEG} role="group" aria-label={BARRA.demo[idioma]}>
-              {DEMOS.map((d) => (
+              {demosDeLaPagina.map((d) => (
                 <a
                   key={d}
                   href={ruta(idioma, pagina, undefined, d)}

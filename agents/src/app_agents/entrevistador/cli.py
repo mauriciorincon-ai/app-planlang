@@ -80,6 +80,32 @@ def demo_de_dominio(dominio: str, plan: str, raiz: Path = RAIZ_REPO) -> Demo:
     return Demo(id=plan, plan_id=plan, dominio=dominio, directorio=f"plans/{plan}", identificador=plan)
 
 
+class SalidaInvalida(ValueError):
+    pass
+
+
+def validar_salida(salida: str, demo: Demo, raiz: Path = RAIZ_REPO) -> Path:
+    """La carpeta de una entrevista nueva (`--salida`, S7).
+
+    Vale una carpeta fuera de plans/ o una que cuelgue de la del propio plan, como plans/<plan>/v2. Con
+    --salida la entrevista se salta el guardia de «el plan ya está aprobado», así que no puede apuntar a
+    plans/ en otro lado: pisaría el registro de un plan aprobado (el de otro plan o el del propio).
+    """
+    if not salida.strip():
+        raise SalidaInvalida("--salida: indica una carpeta")
+    destino = Path(salida).resolve()
+    planes = (raiz / "plans").resolve()
+    del_plan = (raiz / demo.directorio).resolve()
+    en_planes = destino == planes or planes in destino.parents
+    if en_planes and del_plan not in destino.parents:
+        raise SalidaInvalida(
+            f"--salida «{salida}»: dentro de plans/ solo vale una carpeta que cuelgue de "
+            f"{demo.directorio}/ (por ejemplo {demo.directorio}/v2); cualquier otra pisaría el "
+            "registro de un plan aprobado"
+        )
+    return destino
+
+
 ARCHIVO_BORRADOR = "v0-borrador.json"
 ARCHIVO_TRANSCRIPCION = "transcripcion.json"
 

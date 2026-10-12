@@ -12,7 +12,7 @@
  */
 import { spawnSync } from "node:child_process";
 import { existsSync } from "node:fs";
-import { resolve } from "node:path";
+import { resolve, sep } from "node:path";
 import { VOCABULARIO } from "../core/brecha/contexto";
 import { conHuella, huella } from "../core/formatos/huella";
 import type { JsonValor } from "../core/formatos/jcs";
@@ -72,6 +72,28 @@ export function objetivoDeEntrevista(
 }
 
 /**
+ * La carpeta de una entrevista nueva (`--salida`, S7): una fuera de `plans/` o una que cuelgue de la del propio plan
+ * (`plans/<plan>/v2`). Con `--salida` la entrevista se salta el guardia de «el plan ya está aprobado», así que no puede
+ * apuntar a `plans/` en otro lado: pisaría el registro de un plan aprobado, el de otro plan o el del propio. Devuelve el
+ * motivo del rechazo, o `null` si vale. El lado Python hace el mismo control (`validar_salida`).
+ */
+export function salidaInvalida(
+  salida: string,
+  directorioDelPlan: string,
+  raiz: string = process.cwd(),
+): string | null {
+  if (salida.trim() === "") return "--salida: indica una carpeta";
+  const destino = resolve(raiz, salida);
+  const planes = resolve(raiz, "plans");
+  const delPlan = resolve(raiz, directorioDelPlan);
+  const cuelgaDe = (a: string, b: string) => a !== b && a.startsWith(b + sep);
+  const enPlanes = destino === planes || cuelgaDe(destino, planes);
+  if (enPlanes && !cuelgaDe(destino, delPlan))
+    return `--salida «${salida}»: dentro de plans/ solo vale una carpeta que cuelgue de ${directorioDelPlan}/ (por ejemplo ${directorioDelPlan}/v2); cualquier otra pisaría el registro de un plan aprobado`;
+  return null;
+}
+
+/**
  * La versión que propone aprobar una carpeta de entrevista (S6): `plans/<plan>/vN` (N ≥ 2) es la entrevista de la
  * versión N; cualquier otra carpeta es la primera. `plans/v2` (un plan que se llama «v2») no es una versión.
  */
@@ -127,6 +149,16 @@ async function main(): Promise<number> {
       `uso: entrevistar ${USO_OBJETIVO} [--retomar] [--nueva] [--pregunta P13] [--respuestas archivo] [--idioma es|en] [--sin-modelo] [--salida carpeta]`,
     );
     return 2;
+  }
+  if (args.salida !== undefined) {
+    const motivo =
+      typeof args.salida === "string"
+        ? salidaInvalida(args.salida, objetivo.directorio)
+        : "--salida: indica una carpeta";
+    if (motivo) {
+      console.error(motivo);
+      return 2;
+    }
   }
   if (!existsSync(PYTHON)) {
     console.error(

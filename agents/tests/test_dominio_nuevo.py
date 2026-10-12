@@ -9,7 +9,13 @@ from pathlib import Path
 import pytest
 from entrevista_dominio_nuevo import DOMINIO, FIXTURE, PLAN, entrevistar, generar
 
-from app_agents.entrevistador.cli import DEMOS, DominioOPlanInvalido, demo_de_dominio
+from app_agents.entrevistador.cli import (
+    DEMOS,
+    DominioOPlanInvalido,
+    SalidaInvalida,
+    demo_de_dominio,
+    validar_salida,
+)
 
 
 def test_la_entrevista_del_dominio_nuevo_se_regenera_con_los_mismos_bytes(tmp_path: Path) -> None:
@@ -68,3 +74,43 @@ def test_un_plan_real_no_choca_con_los_demos() -> None:
 def test_un_id_que_no_es_estable_o_una_plantilla_que_no_existe_se_rechazan(dominio: str, plan: str) -> None:
     with pytest.raises(DominioOPlanInvalido):
         demo_de_dominio(dominio, plan)
+
+
+# ── --salida (S7): una entrevista nueva no puede pisar el registro de un plan aprobado ──────────────────
+
+
+def _plan(raiz: Path):
+    demo = demo_de_dominio(DOMINIO, PLAN)
+    (raiz / "plans" / PLAN).mkdir(parents=True)
+    return demo
+
+
+def test_salida_vale_si_cuelga_de_la_carpeta_del_propio_plan(tmp_path: Path) -> None:
+    demo = _plan(tmp_path)
+    destino = validar_salida(f"{tmp_path}/plans/{PLAN}/v2", demo, tmp_path)
+    assert destino == (tmp_path / "plans" / PLAN / "v2").resolve()
+
+
+def test_salida_vale_si_esta_fuera_de_plans(tmp_path: Path) -> None:
+    demo = _plan(tmp_path)
+    assert validar_salida(str(tmp_path / "otra"), demo, tmp_path) == (tmp_path / "otra").resolve()
+    assert validar_salida(str(tmp_path / ".entrevistas" / "x"), demo, tmp_path).name == "x"
+
+
+@pytest.mark.parametrize(
+    "salida",
+    [
+        "{raiz}/plans",
+        "{raiz}/plans/{plan}",
+        "{raiz}/plans/demo-b",
+        "{raiz}/plans/otro-plan/v2",
+        "{raiz}/plans/{plan}/../demo-b",
+        "{raiz}/otra/../plans/demo-b",
+        "",
+        "   ",
+    ],
+)
+def test_salida_que_pisaria_un_plan_aprobado_se_rechaza(tmp_path: Path, salida: str) -> None:
+    demo = _plan(tmp_path)
+    with pytest.raises(SalidaInvalida):
+        validar_salida(salida.format(raiz=tmp_path, plan=PLAN), demo, tmp_path)
