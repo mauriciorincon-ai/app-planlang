@@ -1,7 +1,7 @@
 {
   "borrador": {
     "archivo": "v0-borrador.json",
-    "huella_del_contenido": "be4a24c91c6982aa2a8bd6a2f49f95271a1bce11f3173a3208aed2f4a81beb72"
+    "huella_del_contenido": "a0083da05a456e11c7e191fccc0e2cdd04327e8ce4135f7afbda3c83090c086c"
   },
   "cabecera": {
     "fecha": "2026-10-11",
@@ -466,7 +466,7 @@
     }
   ],
   "formato": "planlang-contradicciones/v1",
-  "huella": "e7cebf46b3a3b5c8f1cf20c9b262e766c2ad267d5e16f43b4ab195392be46f2f",
+  "huella": "9a5cfe7c2f02ac38f664cfc1e8509ec7fda4b6ae05d3194ec2fff97a6f14ccf8",
   "llamadas_al_modelo": 10,
   "m1": {
     "advertencias": [],

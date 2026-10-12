@@ -301,8 +301,8 @@
       "estado": "decidida",
       "id": "D1",
       "justificacion": {
-        "en": "Only whitelisted sources are consulted, and code checks that each one exists and says what is cited. Search and writing run in separate stages. A proposal with fewer verified sources than the plan's minimum reaches the person marked as unverified; it is not dropped on its own. The exact minimum is still pending in threshold U2.",
-        "es": "Solo se consultan fuentes de la lista blanca, y el código comprueba que cada una exista y diga lo que se cita. Búsqueda y redacción van en etapas separadas. Una propuesta con menos fuentes verificadas que el mínimo del plan llega a la persona marcada como no verificada; no se descarta sola. El mínimo concreto sigue pendiente en el umbral U2."
+        "en": "Only whitelisted sources are consulted, and code checks that each one exists and says what is cited. Search and writing run in separate stages. A proposal with fewer verified sources than the plan's minimum reaches the person marked as unverified; it is not dropped on its own. The minimum is 2 verified sources (threshold U2).",
+        "es": "Solo se consultan fuentes de la lista blanca, y el código comprueba que cada una exista y diga lo que se cita. Búsqueda y redacción van en etapas separadas. Una propuesta con menos fuentes verificadas que el mínimo del plan llega a la persona marcada como no verificada; no se descarta sola. El mínimo es de 2 fuentes verificadas (umbral U2)."
       },
       "opcion_elegida": {
         "en": "only sources on a whitelist, each checked by code to exist and to say what is cited",
@@ -443,8 +443,8 @@
       "estado": "decidida",
       "id": "D4",
       "justificacion": {
-        "en": "Every new test enters the catalogue as a draft and becomes active only when a person approves it. Each test carries its framework version with a date. If that version is older than the plan's tolerated age (threshold U3, still pending), a person looks at it before it is used.",
-        "es": "Toda prueba nueva entra al catálogo como borrador y se activa solo cuando una persona la aprueba. Toda prueba lleva la versión de su marco con fecha. Si esa versión supera la antigüedad tolerada del plan (umbral U3, aún pendiente), una persona la mira antes de usarla."
+        "en": "Every new test enters the catalogue as a draft and becomes active only when a person approves it. Each test carries its framework version with a date. If that version is older than the plan's tolerated age (180 days, threshold U3), a person looks at it before it is used.",
+        "es": "Toda prueba nueva entra al catálogo como borrador y se activa solo cuando una persona la aprueba. Toda prueba lleva la versión de su marco con fecha. Si esa versión supera la antigüedad tolerada del plan (180 días, umbral U3), una persona la mira antes de usarla."
       },
       "opcion_elegida": {
         "en": "every new test enters as a draft and becomes active only when a person approves it",
@@ -532,7 +532,7 @@
       "es": "9. En los dos casos, una persona confirma o corrige antes de que nada quede como evidencia."
     }
   ],
-  "huella": "793a2f824f4be06c9df90a06ece258fbd2af6abef38aae47a719e00488e4f6e0",
+  "huella": "3021ab885f1379716e327f27e7c4521c2c243c601eaa56d965f38e8f72acfef8",
   "id": "hackguard-agentes",
   "lotes": {
     "completo": 200,
