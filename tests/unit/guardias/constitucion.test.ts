@@ -1,5 +1,5 @@
 /**
- * Constitución del kit v2.0.0 (S4, F1). El núcleo de `CLAUDE.md` cabe en 150 líneas, lleva sus centinelas y nombra las
+ * Constitución del kit v2.3.0 (S4, F1; núcleo al v2.3.0 en el S8). El núcleo de `CLAUDE.md` cabe en 150 líneas, lleva sus centinelas y nombra las
  * 16 reglas de planlang y las reglas del kit; el anexo `docs/REGLAS-ANEXO.md` guarda las 16 reglas de planlang una vez
  * cada una y en orden, con la corrección de P4, y una línea «Estado v2.x (§ N)» por cada regla del kit. Los rojos de
  * esta prueba (borrar P7 del anexo, quitar un centinela) se registran en el cierre con `scripts/demo-rojo.sh`.
@@ -15,23 +15,31 @@ const ESPERADAS_P = Array.from({ length: 16 }, (_, i) => `P${i + 1}`);
 const etiquetasP = (texto: string) =>
   [...texto.matchAll(/^(P\d+)\. \*\*/gm)].map((m) => m[1]!);
 
-/** Reglas del kit: 1–17, 17-bis, 18–28, en el orden del núcleo. */
+/** Reglas del kit: 1–17, 17-bis, 18–29, en el orden del núcleo (la 29, «relevo, nunca loop», entró con el kit v2.2.0). */
 const REGLAS_DEL_KIT = [
   ...Array.from({ length: 17 }, (_, i) => String(i + 1)),
   "17-bis",
-  ...Array.from({ length: 11 }, (_, i) => String(i + 18)),
+  ...Array.from({ length: 12 }, (_, i) => String(i + 18)),
 ];
 
-describe("constitución: el núcleo de CLAUDE.md (kit v2.0.0)", () => {
+describe("constitución: el núcleo de CLAUDE.md (kit v2.3.0)", () => {
   it("cabe en 150 líneas", () => {
     expect(nucleo.trimEnd().split("\n").length).toBeLessThanOrEqual(150);
   });
 
   it("lleva sus centinelas", () => {
-    expect(nucleo).toContain("núcleo, kit v2.0.0");
+    expect(nucleo).toContain("núcleo, kit v2.3.0");
     expect(nucleo).toContain("P4. **Ninguna negación completa");
     // Kit v2.1.0: un solo PR vivo por app, con su job en la CI.
     expect(nucleo).toContain("UN SOLO PR VIVO POR APP");
+    // Kit v2.2.0: relevo nunca loop y el gate de modelo al abrir cada fase.
+    expect(nucleo).toContain("Relevo, nunca loop");
+    expect(nucleo).toContain("Gate de modelo al abrir cada fase");
+  });
+
+  it("la regla 29 (relevo, nunca loop) tiene su estado v2.2.0 en el anexo", () => {
+    expect(anexo).toMatch(/^Estado v2\.2\.0 \(§ 29\):/m);
+    expect(anexo).toContain("**Relevo, nunca loop (kit v2.2.0).**");
   });
 
   it("la regla 18 (un PR vivo) tiene su job `un-pr-vivo` en la CI y su estado v2.1.0 en el anexo", () => {
@@ -57,7 +65,9 @@ describe("constitución: el núcleo de CLAUDE.md (kit v2.0.0)", () => {
 describe("constitución: el anexo docs/REGLAS-ANEXO.md", () => {
   it("guarda las 16 reglas de planlang íntegras, una vez cada una y en orden", () => {
     expect(reglasPlanlang, "sección § P1–P16").not.toBe("");
-    expect(etiquetasP(reglasPlanlang), "reglas P del anexo").toEqual(ESPERADAS_P);
+    expect(etiquetasP(reglasPlanlang), "reglas P del anexo").toEqual(
+      ESPERADAS_P,
+    );
   });
 
   it("lleva la corrección de P4 («negación completa»)", () => {
