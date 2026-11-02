@@ -93,7 +93,7 @@ jobs:
         # Tres corridas por URL y se asevera sobre la MEDIANA (median-run), nunca la optimista.
         run: |
           npm i -g @lhci/cli
-          URLS=$(node -e "console.log(require('./lighthouse-urls.json').map(u=>'--url=http://localhost:3000'+u).join(' '))")
+          URLS=$(node -e "console.log(require('./lighthouse-urls.json').map(u=>'--url=http://127.0.0.1:3200'+u).join(' '))")
           lhci collect --startServerCommand="pnpm start" --numberOfRuns=3 $URLS
           lhci assert --budgetsFile=./perf-budget.json --aggregationMethod=median-run
           lhci assert --config=./lighthouse-categorias.json --aggregationMethod=median-run

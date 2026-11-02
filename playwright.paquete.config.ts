@@ -10,7 +10,7 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: 0,
   reporter: process.env.CI ? [["github"], ["list"]] : "list",
-  use: { baseURL: "http://localhost:3100", trace: "retain-on-failure" },
+  use: { baseURL: "http://127.0.0.1:3201", trace: "retain-on-failure" },
   projects: [
     {
       name: "paquete",
@@ -22,8 +22,8 @@ export default defineConfig({
   ],
   webServer: {
     command:
-      "node_modules/.bin/serve -c tests/e2e-paquete/serve.json -l 3100 --no-request-logging",
-    url: "http://localhost:3100/piezas/planlang/index.html",
+      "node_modules/.bin/serve -c tests/e2e-paquete/serve.json -l tcp://127.0.0.1:3201 --no-request-logging",
+    url: "http://127.0.0.1:3201/piezas/planlang/index.html",
     reuseExistingServer: false,
     timeout: 60_000,
   },

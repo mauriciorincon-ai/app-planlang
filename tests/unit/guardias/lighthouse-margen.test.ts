@@ -44,7 +44,7 @@ function correr(urls: string[], corridas: Record<string, number[]>) {
       writeFileSync(
         join(dir, ".lighthouseci", `lhr-${n++}.json`),
         JSON.stringify({
-          requestedUrl: `http://localhost:3000${ruta}`,
+          requestedUrl: `http://127.0.0.1:3200${ruta}`,
           audits: {
             "largest-contentful-paint": { numericValue: lcp },
             "first-contentful-paint": { numericValue: 900 },

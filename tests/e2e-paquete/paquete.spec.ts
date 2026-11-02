@@ -23,7 +23,7 @@ function vigilar(page: Page) {
   page.on("request", (r) => {
     const u = new URL(r.url());
     if (u.protocol === "data:") return;
-    if (u.host !== "localhost:3100") fallas.push(`sale del origen: ${r.url()}`);
+    if (u.host !== "127.0.0.1:3201") fallas.push(`sale del origen: ${r.url()}`);
   });
   page.on("response", (r) => {
     if (r.status() >= 400) fallas.push(`${r.status()}: ${r.url()}`);
