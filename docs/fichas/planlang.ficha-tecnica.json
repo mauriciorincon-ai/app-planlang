@@ -6,17 +6,17 @@
     "nombre": "planlang",
     "frente": "apps",
     "estado": "inicial",
-    "ciclo": "H1",
+    "ciclo": "H-2",
     "version": "0.1.0",
     "sellado_en": null,
     "sprints_cerrados": 7
   },
   "promesa": {
-    "tagline": "Planeé, construí y medí la brecha.",
-    "intro": "Escribes el plan como un contrato —decisiones, riesgos, supuestos, criterios y umbrales, cada uno medible— y planlang lo usa para construir el agente, correrlo sobre casos con respuesta conocida y publicar la brecha. Luego mueves un umbral y ves qué habría costado.",
-    "para_quien": "Para quien planea, construye o aprueba un proyecto de agentes de IA y hoy mide lo que el agente hace sin haber escrito antes qué debía hacer: mira trazas, corre evaluaciones sueltas y decide a ojo cuándo un resultado basta."
+    "tagline": "Tu agente de IA, medido contra el plan que escribiste antes de construirlo.",
+    "intro": "planlang convierte el plan de un proyecto de agentes de IA en un contrato verificable: qué decide el agente, qué puede fallar, qué se da por cierto y cómo se mide el éxito. Con ese contrato se construye el agente, se corre sobre cientos de casos de respuesta conocida y se publica la brecha entre lo planeado y lo ocurrido, fallas incluidas, en una vitrina estática que no llama a ningún modelo.",
+    "para_quien": "Para quien planea, construye o aprueba agentes de IA y hoy los juzga mirando trazas y corriendo evaluaciones sueltas, sin haber escrito antes qué debían hacer. A quien decide le da un veredicto en palabras llanas; a quien construye, la regla, la señal y el caso detrás de cada cifra."
   },
-  "titular": "El plan de un agente se escribe como contrato, y un verificador sin IA publica, caso por caso, la brecha entre lo planeado y lo que el agente hizo, con sus fallas a la vista.",
+  "titular": "El plan de un agente de IA queda escrito como contrato antes de construirlo, y un verificador sin IA publica, caso por caso, la brecha entre lo planeado y lo ocurrido, con sus fallas a la vista y sus umbrales listos para mover.",
   "stack": [
     {
       "nombre": "Next.js exportado estático",
@@ -88,55 +88,293 @@
   "bloques": [
     {
       "orden": 1,
-      "nombre": "Planear",
-      "linea": "El plan como contrato: la entrevista, las plantillas, el validador y el contrato para el constructor.",
+      "nombre": "Planea antes de construir",
+      "linea": "Escribes qué decide el agente, qué puede fallar y cómo se mide; un plan incompleto no pasa.",
       "cuenta": 5
     },
     {
       "orden": 2,
-      "nombre": "Correr",
-      "linea": "Casos con verdad conocida, los dos demos y las corridas por lotes.",
+      "nombre": "Prueba con casos de respuesta conocida",
+      "linea": "Dos demos con agentes reales corren sobre cientos de casos inventados cuya respuesta correcta ya se sabe.",
       "cuenta": 6
     },
     {
       "orden": 3,
-      "nombre": "Medir",
-      "linea": "El verificador de brecha y los supuestos medidos de verdad.",
+      "nombre": "Mide la brecha, sin IA de por medio",
+      "linea": "Un verificador sin IA compara lo planeado con lo ocurrido y publica también lo que falló.",
       "cuenta": 5
     },
     {
       "orden": 4,
-      "nombre": "Jugar",
-      "linea": "Mover los umbrales sobre las trazas reales.",
+      "nombre": "Mueve un umbral, mira qué cambia",
+      "linea": "Pruebas otros valores del plan sobre las decisiones reales del agente, sin volver a llamar al modelo.",
       "cuenta": 1
     },
     {
       "orden": 5,
-      "nombre": "Entender",
-      "linea": "El grafo real, nodo por nodo, contra el plan.",
+      "nombre": "El agente por dentro",
+      "linea": "El diagrama sale del código que corrió y señala cualquier pieza que el plan exige y no está.",
       "cuenta": 1
     },
     {
       "orden": 6,
-      "nombre": "Mostrar",
-      "linea": "La vitrina bilingüe y sus fichas.",
+      "nombre": "Recórrelo en el navegador",
+      "linea": "La vitrina de planlang: un sitio bilingüe y sin servidor que se lee como líder o como experto.",
       "cuenta": 3
     }
   ],
+  "proceso": {
+    "titulo": "Del plan a la brecha, con tu agente de IA",
+    "carriles": [
+      {
+        "id": "tu",
+        "nombre": "Tú · quien planea"
+      },
+      {
+        "id": "planlang",
+        "nombre": "planlang"
+      },
+      {
+        "id": "agente",
+        "nombre": "El agente · en lotes"
+      },
+      {
+        "id": "persona",
+        "nombre": "Una persona revisa"
+      }
+    ],
+    "pasos": [
+      {
+        "id": "ini",
+        "tipo": "inicio",
+        "carril": "tu",
+        "texto": "Tienes un proyecto de agentes de IA"
+      },
+      {
+        "id": "entrevista",
+        "tipo": "tarea",
+        "carril": "tu",
+        "texto": "Respondes la entrevista del plan"
+      },
+      {
+        "id": "borrador",
+        "tipo": "tarea",
+        "carril": "planlang",
+        "texto": "Redacta el borrador y marca contradicciones"
+      },
+      {
+        "id": "valida",
+        "tipo": "tarea",
+        "carril": "planlang",
+        "texto": "Valida el plan, sin IA"
+      },
+      {
+        "id": "medible",
+        "tipo": "decision",
+        "carril": "planlang",
+        "texto": "¿El plan se puede medir?"
+      },
+      {
+        "id": "completa",
+        "tipo": "tarea",
+        "carril": "tu",
+        "texto": "Completas lo que falta"
+      },
+      {
+        "id": "aprueba",
+        "tipo": "tarea",
+        "carril": "tu",
+        "texto": "Apruebas el plan y queda sellado"
+      },
+      {
+        "id": "casos",
+        "tipo": "tarea",
+        "carril": "planlang",
+        "texto": "Genera casos con respuesta conocida"
+      },
+      {
+        "id": "decide",
+        "tipo": "tarea",
+        "carril": "agente",
+        "texto": "Decide cada caso según el plan"
+      },
+      {
+        "id": "pausa",
+        "tipo": "decision",
+        "carril": "agente",
+        "texto": "¿El plan exige una persona?"
+      },
+      {
+        "id": "revisa",
+        "tipo": "tarea",
+        "carril": "persona",
+        "texto": "Revisa el caso y decide"
+      },
+      {
+        "id": "traza",
+        "tipo": "tarea",
+        "carril": "agente",
+        "texto": "Deja la traza de cada decisión"
+      },
+      {
+        "id": "verifica",
+        "tipo": "tarea",
+        "carril": "planlang",
+        "texto": "Compara el plan con las trazas, sin IA"
+      },
+      {
+        "id": "publica",
+        "tipo": "tarea",
+        "carril": "planlang",
+        "texto": "Publica la brecha, fallas incluidas"
+      },
+      {
+        "id": "umbrales",
+        "tipo": "tarea",
+        "carril": "tu",
+        "texto": "Mueves umbrales y ves qué cambia"
+      },
+      {
+        "id": "ajustar",
+        "tipo": "decision",
+        "carril": "tu",
+        "texto": "¿Cambias el plan?"
+      },
+      {
+        "id": "fin",
+        "tipo": "fin",
+        "carril": "tu",
+        "texto": "Agente medido contra su plan"
+      }
+    ],
+    "flujos": [
+      {
+        "de": "ini",
+        "a": "entrevista"
+      },
+      {
+        "de": "entrevista",
+        "a": "borrador"
+      },
+      {
+        "de": "borrador",
+        "a": "valida"
+      },
+      {
+        "de": "valida",
+        "a": "medible"
+      },
+      {
+        "de": "medible",
+        "a": "completa",
+        "etiqueta": "no"
+      },
+      {
+        "de": "completa",
+        "a": "valida"
+      },
+      {
+        "de": "medible",
+        "a": "aprueba",
+        "etiqueta": "sí"
+      },
+      {
+        "de": "aprueba",
+        "a": "casos"
+      },
+      {
+        "de": "casos",
+        "a": "decide"
+      },
+      {
+        "de": "decide",
+        "a": "pausa"
+      },
+      {
+        "de": "pausa",
+        "a": "revisa",
+        "etiqueta": "sí"
+      },
+      {
+        "de": "pausa",
+        "a": "traza",
+        "etiqueta": "no"
+      },
+      {
+        "de": "revisa",
+        "a": "traza"
+      },
+      {
+        "de": "traza",
+        "a": "verifica"
+      },
+      {
+        "de": "verifica",
+        "a": "publica"
+      },
+      {
+        "de": "publica",
+        "a": "umbrales"
+      },
+      {
+        "de": "umbrales",
+        "a": "ajustar"
+      },
+      {
+        "de": "ajustar",
+        "a": "entrevista",
+        "etiqueta": "sí, versión nueva"
+      },
+      {
+        "de": "ajustar",
+        "a": "fin",
+        "etiqueta": "no"
+      }
+    ],
+    "anotaciones": [
+      {
+        "paso": "borrador",
+        "texto": "Pregunta en orden lo que exige la plantilla del sector, con un ejemplo en cada pregunta; jamás aprueba por ti."
+      },
+      {
+        "paso": "valida",
+        "texto": "Rechaza, con el motivo exacto, criterios sin regla, umbrales sin señal y riesgos graves sin mitigación."
+      },
+      {
+        "paso": "decide",
+        "texto": "Con la suscripción de Claude Code, de a 20 casos y con pausas; si la corrida se corta, retoma sin repetir."
+      },
+      {
+        "paso": "revisa",
+        "texto": "En los demos, esa persona se simula con la respuesta conocida del caso, y cada pantalla lo dice."
+      },
+      {
+        "paso": "verifica",
+        "texto": "Sin ningún modelo: el mismo plan y las mismas trazas dan siempre el mismo informe, en español e inglés."
+      },
+      {
+        "paso": "umbrales",
+        "texto": "Se recalcula en el navegador sobre las decisiones reales; nadie vuelve a llamar al modelo."
+      }
+    ]
+  },
+  "procedencia_proceso": "planeadora",
   "limites": [
-    "Es una simulación: no opera casos reales ni decide sobre personas.",
-    "El entrevistador corre en la consola, no en la vitrina: aquí se ve el plan que propuso para el demo B, revisado y aprobado por una persona.",
-    "Mide lo que el plan declaró; lo que no previó aparece como brecha, no como veredicto."
+    "Es una simulación: no opera casos reales ni decide sobre personas; las decisiones humanas de los demos se simularon con la respuesta conocida.",
+    "El entrevistador y las corridas viven en la terminal; el sitio muestra sus resultados, ya calculados y verificados.",
+    "Mide lo que el plan declaró: lo que el plan no previó aparece como brecha no prevista, no como veredicto.",
+    "El playground recalcula sobre lo que el agente ya hizo; fuera del rango observado, el resultado se marca «no observado»."
   ],
   "nunca": [
     "Usa datos reales: todo caso, afiliado, médico, solicitante y lista de control es sintético.",
     "Deja que un modelo decida si el agente acertó.",
-    "Niega o rechaza un caso sin que lo revise una persona.",
+    "Emite una negación completa o un rechazo sin que lo revise una persona.",
+    "Llama a un modelo para validar el plan, medir la brecha, recalcular umbrales o dibujar el agente.",
     "Esconde un resultado desfavorable."
   ],
   "hitos": [
     {
-      "valor": "H1",
+      "valor": "H-2",
       "etiqueta": "ciclo"
     },
     {

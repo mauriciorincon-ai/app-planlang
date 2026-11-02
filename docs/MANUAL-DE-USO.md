@@ -249,7 +249,7 @@ data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar l
     documento de decisión adversa cuando lo hay (en el B, el expediente). En el A, que publica 200 casos, tienen
     página los 20 primeros y los que el informe nombra. Los demás aparecen sin enlace, con borde punteado, en la
     Brecha y en el Playground.
-  - **Fichas:** la ficha para repetir la corrida y las dos fichas que viajan a hoja-de-vida.
+  - **Fichas:** la ficha para repetir la corrida, la de la app, que viaja a hoja-de-vida, y la del agente del demo, que ya no se entrega y se muestra solo aquí.
 - **Limitaciones:**
   - El demo A publica la corrida de 200 del plan v1.5, con su línea base de un solo agente. El Agente lista las
     trazas de los 20 primeros casos y cuenta los demás.
@@ -280,19 +280,29 @@ data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar l
 
 ### Las fichas · desde el sprint 2
 
-- **Qué hace:** produce una ficha de reproducibilidad por demo y tres fichas que viajan.
+- **Qué hace:** produce una ficha de reproducibilidad por demo y la ficha de la app, que es la que viaja.
   - La **de reproducibilidad** tiene versiones, huellas, semilla, modelo, fecha y los pasos para repetir la
     corrida.
-  - La **de la app** sale de `docs/brochure-export.json` y suma los dos demos; hoja-de-vida la arma con su propio
-    diseño.
-  - La **del agente A** y la **del agente B** están en `content/agentes/planlang-demo-a.ficha-tecnica.json` y
-    `content/agentes/planlang-demo-b.ficha-tecnica.json`.
+  - La **de la app** sale de `docs/brochure-export.json` y de su complemento (`docs/fichas/planlang.complemento-propuesto.json`),
+    suma los dos demos y trae el proceso «Del plan a la brecha»; hoja-de-vida la arma con su propio diseño. El
+    mismo complemento se escribe en YAML en `docs/cv-viva/complemento.yaml`, para CV Viva.
+  - Las **fichas del agente A y del agente B** ya no se producen ni se entregan (decisión del 2026-10-25): no hay
+    archivos `content/agentes/*.json` ni su versión en inglés. La pantalla Fichas sigue mostrando la del agente del
+    demo, como parte de la simulación, y lo dice.
 
-  Las que viajan se validan contra el contrato de hoja-de-vida antes de escribirse.
+  Lo que viaja se valida contra el contrato de hoja-de-vida antes de escribirse. El copy de la ficha de la app
+  vive en `src/textos/fichas.ts`, con su fecha de redacción (`redactado_el`), y el hito que muestra es «H-2».
 
 - **Cómo se usa:** `pnpm fichas` las regenera; `pnpm fichas --verificar` solo dice si alguna está desactualizada.
-- **Limitaciones:** las fichas que viajan van en español, porque así lo pide el contrato de hoja-de-vida. En
-  planlang también existen en inglés.
+  `pnpm capturas:cv-viva` toma las capturas del brochure.
+- **Las capturas del brochure:** con `out/` construido (`pnpm build`), `pnpm capturas:cv-viva` toma las 21 de CV Viva
+  (la portada y 20 funcionalidades; el entrevistador no tiene pantalla) en `dist/cv-viva/`, que no se versiona. Cada
+  una es 1024×640 a densidad 1,5 (archivo de 1536×960), en tema claro y español, en WebP de hasta 80 KB. Los estados
+  (ruta, perfil, encabezado al que se desplaza y los pies) están en `docs/cv-viva/capturas.yaml`. Antes de cada toma
+  tapa con puntos todo nombre de persona, también los inventados, y se detiene si el texto trae un correo, un enlace o
+  `localhost`. El servidor escucha solo en `127.0.0.1:3201` y se cierra al terminar.
+- **Limitaciones:** lo que viaja va en español, porque así lo pide el contrato de hoja-de-vida. En planlang
+  también existe en inglés.
 
 ### Entregar el paquete a hoja-de-vida · desde el sprint 2
 
@@ -669,7 +679,7 @@ There are two ways to use it:
     the adverse-decision document when there is one (in B, the case file). In A, which publishes 200 cases, the
     first 20 and the ones the report names have a page. The rest show up without a link, with a dotted border, in
     the Gap and the Playground.
-  - **Records:** the record to repeat the run and the two records that travel to hoja-de-vida.
+  - **Records:** the record to repeat the run, the app's, which travels to hoja-de-vida, and the demo agent's, which is no longer delivered and is shown only here.
 - **Limitations:**
   - Demo A publishes plan v1.5's 200-case run, with its single-agent baseline. The Agent screen lists the traces of
     the first 20 cases and counts the rest.
@@ -700,20 +710,30 @@ There are two ways to use it:
 
 ### The records · since sprint 2
 
-- **What it does:** produces one reproducibility record per demo and three records that travel.
+- **What it does:** produces one reproducibility record per demo and the app's record, which is the one that travels.
   - The **reproducibility** record has versions, fingerprints, seed, model, date and the steps to repeat
     the run.
-  - The **app** record comes from `docs/brochure-export.json` and adds up both demos; hoja-de-vida builds it with
-    its own design.
-  - The **agent A** and **agent B** records are in `content/agentes/planlang-demo-a.ficha-tecnica.json` and
-    `content/agentes/planlang-demo-b.ficha-tecnica.json`.
+  - The **app** record comes from `docs/brochure-export.json` and its complement
+    (`docs/fichas/planlang.complemento-propuesto.json`), adds up both demos and carries the process “From plan to
+    gap”; hoja-de-vida builds it with its own design. The same complement is written as YAML in
+    `docs/cv-viva/complemento.yaml`, for CV Viva.
+  - The **agent A and agent B** records are no longer produced or delivered (decision of 2026-10-25): there are no
+    `content/agentes/*.json` files nor their English version. The Records screen still shows the demo agent's
+    record, as part of the simulation, and says so.
 
-  The ones that travel are checked against hoja-de-vida's contract before they are written.
+  What travels is checked against hoja-de-vida's contract before it is written. The app record's copy lives in
+  `src/textos/fichas.ts`, with its writing date (`redactado_el`), and the milestone it shows is “H-2”.
 
 - **How to use it:** `pnpm fichas` regenerates them; `pnpm fichas --verificar` only says whether one is out
-  of date.
-- **Limitations:** the records that travel are in Spanish, because hoja-de-vida's contract asks for that.
-  In planlang they also exist in English.
+  of date. `pnpm capturas:cv-viva` takes the brochure's screenshots.
+- **The brochure screenshots:** with `out/` built (`pnpm build`), `pnpm capturas:cv-viva` takes CV Viva's 21 (the
+  cover and 20 features; the interviewer has no screen) into `dist/cv-viva/`, which is not versioned. Each one is
+  1024×640 at density 1.5 (a 1536×960 file), in the light theme and Spanish, as WebP of up to 80 KB. The states
+  (route, profile, the heading it scrolls to and the captions) are in `docs/cv-viva/capturas.yaml`. Before each shot
+  it covers every person's name with dots, invented ones too, and it stops if the text carries an email, a link or
+  `localhost`. The server listens only on `127.0.0.1:3201` and is closed when it finishes.
+- **Limitations:** what travels is in Spanish, because hoja-de-vida's contract asks for that. In planlang it also
+  exists in English.
 
 ### Hand the package to hoja-de-vida · since sprint 2
 

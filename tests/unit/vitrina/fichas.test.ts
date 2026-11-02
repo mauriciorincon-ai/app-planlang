@@ -4,7 +4,7 @@
  * BPMN, el total del export, los enlaces) se cumplen y fallan cuando deben; y las cifras salen de los datos: las de
  * cada agente, de su demo, y las de la app, de los dos demos sumados.
  */
-import { readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { beforeAll, describe, expect, it } from "vitest";
 import { hechosDelRepo, type HechosDelRepo } from "@/lib/datos/repo";
 import {
@@ -17,6 +17,7 @@ import {
   brochureExport,
   complementoPropuesto,
   fichaAgente,
+  HITO,
 } from "@/lib/fichas/armar";
 import { archivosDeFichas } from "@/lib/fichas/archivos";
 import {
@@ -27,7 +28,8 @@ import {
 } from "@/lib/fichas/contrato";
 import type { FichaTecnica } from "@/lib/fichas/tipos";
 import { AGENTE_B } from "@/textos/demo-b/fichas";
-import { AGENTE } from "@/textos/fichas";
+import { AGENTE, APP } from "@/textos/fichas";
+import { parse } from "yaml";
 
 let ds: DatosDeLosDemos;
 /** El demo A: las reglas del proceso se ejercitan sobre su ficha. */
@@ -42,13 +44,24 @@ beforeAll(async () => {
 describe("los archivos entregados son los que se generan", () => {
   it("cada archivo versionado es byte a byte el de `pnpm fichas`", () => {
     const archivos = archivosDeFichas(ds, repo);
-    // Por idioma: la ficha de cada agente, el export, el complemento y la ficha de la app.
-    expect(Object.keys(archivos)).toHaveLength(10);
-    expect(Object.keys(archivos)).toContain(
-      "content/agentes/planlang-demo-b.ficha-tecnica.json",
-    );
+    // Por idioma: el export, el complemento y la ficha de la app (6) y, en español, el complemento en YAML (1). Las
+    // fichas de los agentes A y B ya no se producen (decisión del 2026-10-25; devolución 026, punto 5).
+    expect(Object.keys(archivos)).toHaveLength(7);
+    expect(Object.keys(archivos)).toContain("docs/cv-viva/complemento.yaml");
+    for (const ruta of Object.keys(archivos))
+      expect(ruta, ruta).not.toMatch(/content\/agentes|planlang-demo-/);
     for (const [ruta, contenido] of Object.entries(archivos))
       expect(readFileSync(ruta, "utf8"), ruta).toBe(contenido);
+  });
+
+  it("los cuatro archivos de las fichas de los demos ya no existen en el repo", () => {
+    for (const ruta of [
+      "content/agentes/planlang-demo-a.ficha-tecnica.json",
+      "content/agentes/planlang-demo-b.ficha-tecnica.json",
+      "docs/fichas/planlang-demo-a.ficha-tecnica.en.json",
+      "docs/fichas/planlang-demo-b.ficha-tecnica.en.json",
+    ])
+      expect(existsSync(ruta), ruta).toBe(false);
   });
 });
 
@@ -138,6 +151,7 @@ describe("las reglas que el esquema no puede decir (el Zod de hoja-de-vida)", ()
 
   it("el complemento: una procedencia sin proceso sobra (hoja-de-vida lo rechaza)", () => {
     const comp = { ...complementoPropuesto(ds, "es"), procedencia: "app" };
+    delete (comp as { proceso?: unknown }).proceso;
     expect(problemasDelComplemento(comp)).toContain(
       "/procedencia: «procedencia» sin proceso: sobra",
     );
@@ -352,4 +366,65 @@ describe("«actualizado» es la fecha más reciente de lo que la ficha cuenta (A
       ).toBe(true);
     },
   );
+});
+
+describe("lo que el S8 adopta de la devolución 026", () => {
+  it("el hito de las fichas es «H-2», en el export, en la ficha de la app y en la del agente", () => {
+    expect(HITO).toBe("H-2");
+    for (const i of ["es", "en"] as const) {
+      const exp = brochureExport(ds, repo, i);
+      expect(exp.app.ciclo).toBe("H-2");
+      expect(armarFichaApp(exp, complementoPropuesto(ds, i)).pieza.ciclo).toBe(
+        "H-2",
+      );
+      expect(fichaAgente(d, repo, i).pieza.ciclo).toBe("H-2");
+    }
+  });
+
+  it("`actualizado` nunca es anterior a la fecha de redacción del copy, aunque todo lo demás sea más viejo", () => {
+    const viejo = { ...repo, ultimaFecha: "2020-01-01" };
+    const antiguo = structuredClone(ds);
+    for (const id of ["demo-a", "demo-b"] as const) {
+      antiguo[id].informe.ficha_reproducibilidad.corrida.fecha = "2020-01-01";
+      antiguo[id].plan.aprobado_el = "2020-01-01";
+    }
+    expect(brochureExport(antiguo, viejo, "es").actualizado).toBe(
+      APP.redactado_el,
+    );
+    // y con algo más nuevo, gana lo más nuevo
+    expect(
+      brochureExport(antiguo, { ...viejo, ultimaFecha: "2099-12-31" }, "es")
+        .actualizado,
+    ).toBe("2099-12-31");
+  });
+
+  it("el complemento trae el proceso «Del plan a la brecha» con su procedencia, el cuarto límite y el `nunca` corregido, en los dos idiomas", () => {
+    for (const i of ["es", "en"] as const) {
+      const c = complementoPropuesto(ds, i);
+      expect(c.procedencia).toBe("planeadora");
+      expect(c.declarado_en).toBe(APP.redactado_el);
+      expect(c.proceso?.carriles).toHaveLength(4);
+      expect(c.proceso?.pasos).toHaveLength(17);
+      expect(c.proceso?.flujos).toHaveLength(19);
+      expect(c.proceso?.anotaciones).toHaveLength(6);
+      expect(c.limites).toHaveLength(4);
+      expect(c.nunca).toHaveLength(5);
+      expect(problemasDelComplemento(c)).toEqual([]);
+    }
+    const es = complementoPropuesto(ds, "es");
+    expect(es.nunca).toContain(
+      "Emite una negación completa o un rechazo sin que lo revise una persona.",
+    );
+    expect(es.nunca.join(" ")).not.toContain("Niega o rechaza un caso");
+    // El inglés está redactado, no copiado: ningún texto del proceso en inglés es el del español.
+    const en = complementoPropuesto(ds, "en");
+    for (const [k, p] of es.proceso!.pasos.entries())
+      expect(en.proceso!.pasos[k]!.texto, p.id).not.toBe(p.texto);
+  });
+
+  it("`docs/cv-viva/complemento.yaml` es el complemento en español: mismo contenido que el JSON, sin `roadmap`", () => {
+    const yaml = parse(readFileSync("docs/cv-viva/complemento.yaml", "utf8"));
+    expect(yaml).toEqual(complementoPropuesto(ds, "es"));
+    expect(Object.keys(yaml)).not.toContain("roadmap");
+  });
 });

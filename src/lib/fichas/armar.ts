@@ -19,9 +19,20 @@ import { AGENTE_B } from "@/textos/demo-b/fichas";
 import { DEMO_TEXTO } from "@/textos/demo";
 import { AGENTE, APP, METRICAS_APP as M } from "@/textos/fichas";
 import { VERSION_EXPORT, VERSION_FICHA } from "./contrato";
-import type { BrochureExport, CifraFicha, FichaTecnica } from "./tipos";
+import type {
+  BrochureExport,
+  CifraFicha,
+  FichaTecnica,
+  ProcesoBpmn,
+} from "./tipos";
 
 const X = (t: TextoBilingue, i: Idioma) => t[i];
+
+/**
+ * El hito que muestran las fichas, en el vocabulario del método v2 («H-2», no el «H1» del v1). Lo fija el hito vigente:
+ * lo cambia el sprint de cierre del hito, con su prueba (devolución 026, punto 2).
+ */
+export const HITO = "H-2";
 
 /** Frases redactadas en cada idioma, una tras otra (el detalle de una cifra que suma los demos). */
 const unir = (frases: TextoBilingue[]): TextoBilingue => ({
@@ -271,7 +282,7 @@ export function fichaAgente(
       nombre: X(AG.nombre, i),
       frente: "agentes",
       estado: "inicial",
-      ciclo: "H1",
+      ciclo: HITO,
       // La versión del plan que gobierna al agente, en semver: hoja-de-vida la pinta como «v{version}».
       version: inf.plan_en_breve.version,
       sellado_en: null,
@@ -406,11 +417,13 @@ export function brochureExport(
         d.plan.aprobado_el,
       ]),
       repo.ultimaFecha,
+      // La fecha en que se redactó el copy: regenerar no puede devolver una fecha anterior a su redacción (026, punto 3).
+      APP.redactado_el,
     ),
     app: {
       slug: APP.slug,
       nombre: APP.nombre,
-      ciclo: "H1",
+      ciclo: HITO,
       estado: "inicial",
       sellado_en: null,
       sprints_cerrados: repo.sprintsCerrados,
@@ -564,13 +577,14 @@ export function brochureExport(
 export interface Complemento {
   schema_version: string;
   app: string;
-  /** Solo con un proceso: hoja-de-vida rechaza una procedencia sin proceso, y la ficha de la app no lo trae. */
+  /** Va con el proceso, y solo con él: hoja-de-vida rechaza una procedencia sin proceso y un proceso sin procedencia. */
   procedencia?: "app" | "cv-viva" | "planeadora";
   declarado_en: string;
   titular: string;
   cifras_destacadas: string[];
   limites: string[];
   nunca: string[];
+  proceso?: ProcesoBpmn;
 }
 
 /** Las cifras que planlang propone destacar (claves del export). */
@@ -583,23 +597,46 @@ export const CIFRAS_DESTACADAS = [
 ];
 
 /**
- * El complemento que planlang propone para su ficha (en hoja-de-vida vive en `data/fichas/<slug>.yaml`); se declara
- * en la fecha de la corrida más reciente de los demos.
+ * El complemento que planlang propone para su ficha (en hoja-de-vida vive en `data/fichas/<slug>.yaml`): el titular, las
+ * cifras destacadas, los límites, lo que nunca hace y el proceso «Del plan a la brecha». Se declara en la fecha en que
+ * se redactó el copy. `procedencia` dice quién escribió el proceso: la planeadora (pedido 026 de CV Viva).
  */
 export function complementoPropuesto(
-  ds: DatosDeLosDemos,
+  _ds: DatosDeLosDemos,
   i: Idioma,
 ): Complemento {
+  const P = APP.proceso;
   return {
     schema_version: "1.0.0",
     app: APP.slug,
-    declarado_en: masReciente(
-      ...DEMOS.map((id) => ds[id].informe.ficha_reproducibilidad.corrida.fecha),
-    ),
+    procedencia: "planeadora",
+    declarado_en: APP.redactado_el,
     titular: X(APP.titular, i),
     cifras_destacadas: CIFRAS_DESTACADAS,
     limites: APP.limites.map((t) => X(t, i)),
     nunca: APP.nunca.map((t) => X(t, i)),
+    proceso: {
+      titulo: X(P.titulo, i),
+      carriles: Object.entries(P.carriles).map(([id, nombre]) => ({
+        id,
+        nombre: X(nombre, i),
+      })),
+      pasos: P.pasos.map((p) => ({
+        id: p.id,
+        tipo: p.tipo,
+        carril: p.carril,
+        texto: X(p.texto, i),
+      })),
+      flujos: P.flujos.map((f) => ({
+        de: f.de,
+        a: f.a,
+        ...(f.etiqueta ? { etiqueta: X(f.etiqueta, i) } : {}),
+      })),
+      anotaciones: P.anotaciones.map((a) => ({
+        paso: a.paso,
+        texto: X(a.texto, i),
+      })),
+    },
   };
 }
 
@@ -660,6 +697,10 @@ export function armarFichaApp(
       linea: g.linea,
       cuenta: g.features.length,
     })),
+    // El proceso y su procedencia van juntos (el contrato lo exige): sin proceso en el complemento, ninguno de los dos.
+    ...(comp.proceso && comp.procedencia
+      ? { proceso: comp.proceso, procedencia_proceso: comp.procedencia }
+      : {}),
     limites: comp.limites,
     nunca: comp.nunca,
     hitos: [
