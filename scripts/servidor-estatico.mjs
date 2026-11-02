@@ -51,5 +51,5 @@ export function servidor(
     createReadStream(archivo).pipe(res);
   });
 }
-export const escuchar = (s) =>
-  new Promise((ok) => s.listen(0, "127.0.0.1", () => ok(s.address().port)));
+export const escuchar = (s, puerto = 0) =>
+  new Promise((ok) => s.listen(puerto, "127.0.0.1", () => ok(s.address().port)));
