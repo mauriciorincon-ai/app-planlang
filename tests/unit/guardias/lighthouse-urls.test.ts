@@ -27,12 +27,29 @@ const presupuestos = JSON.parse(
 
 const LCP = "largest-contentful-paint";
 const LCP_MAXIMO = 2500;
-/** Rutas con margen de LCP sobre los 2,5 s, cada una con su ADR (deuda declarada con sprint de pago). */
+/**
+ * Rutas con margen de LCP sobre los 2,5 s, cada una con su ADR (deuda declarada con sprint de pago). El playground,
+ * desde el S2 (ADR-011); las demás, desde el parche de next 16.4 (ADR-017): una ruta que vuelve a 2,5 s sale de aquí.
+ */
+const ADR_NEXT_16_4 = "decisions/017-margen-de-lcp-por-next-16-4.md";
 const MARGENES: Record<string, { lcp: number; adr: string }> = {
   "/*/playground": {
     lcp: 2800,
     adr: "decisions/011-margen-de-lcp-del-playground.md",
   },
+  ...Object.fromEntries(
+    [
+      "/es$",
+      "/en$",
+      "/*/plan$",
+      "/*/agente",
+      "/*/caso/",
+      "/*/brecha",
+      "/*/comparar",
+      "/*/planes/",
+      "/*/fichas",
+    ].map((path) => [path, { lcp: 2800, adr: ADR_NEXT_16_4 }]),
+  ),
 };
 
 const conLcp = presupuestos.filter((p) =>
