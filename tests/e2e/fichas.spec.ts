@@ -63,9 +63,14 @@ for (const idioma of ["es", "en"] as const) {
           await expect(
             page.getByRole("heading", { name: t.repetir }),
           ).toBeVisible({ visible: perfil === "experto" });
-          await expect(
-            page.locator('[data-campo="proceso.carriles[]"]'),
-          ).toBeVisible({ visible: perfil === "experto" });
+          // Las dos fichas de hoja-de-vida traen proceso (la de la app, desde el S8, con el de la planeadora): su tabla
+          // de campos tiene la fila de los carriles, la de la app primero y la del agente después, y solo el experto la ve.
+          const carriles = page.locator('[data-campo="proceso.carriles[]"]');
+          await expect(carriles).toHaveCount(2);
+          for (const k of [0, 1])
+            await expect(carriles.nth(k)).toBeVisible({
+              visible: perfil === "experto",
+            });
           expect(await desbordeLateral(page)).toBeLessThanOrEqual(0);
           await sinViolacionesAxe(page);
           expect(errores).toEqual([]);
