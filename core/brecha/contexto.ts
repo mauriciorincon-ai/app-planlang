@@ -65,6 +65,10 @@ export const VOCABULARIO: Readonly<Record<string, TextoBilingue>> = {
     es: "Los umbrales aplicados en la corrida (umbral.U1, umbral.U2…).",
     en: "The thresholds applied in the run (umbral.U1, umbral.U2…).",
   },
+  en_plazo: {
+    es: "Si el caso se decidió dentro del plazo de su clase en el reloj simulado del lote (null si el lote no trae llegadas o la clase no tiene plazo).",
+    en: "Whether the case was decided within its class deadline on the batch's simulated clock (null if the batch has no arrivals or the class has no deadline).",
+  },
 };
 
 /** La señal de confianza que miden la calibración y la curva riesgo-cobertura (supuesto S1). */

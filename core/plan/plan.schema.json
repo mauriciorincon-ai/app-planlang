@@ -1176,6 +1176,254 @@
       "minItems": 1,
       "type": "array"
     },
+    "simulacion_de_plazos": {
+      "additionalProperties": false,
+      "properties": {
+        "capacidad_del_auditor": {
+          "additionalProperties": false,
+          "properties": {
+            "rango_jugable": {
+              "additionalProperties": false,
+              "properties": {
+                "max": {
+                  "exclusiveMinimum": 0,
+                  "maximum": 9007199254740991,
+                  "type": "integer"
+                },
+                "min": {
+                  "exclusiveMinimum": 0,
+                  "maximum": 9007199254740991,
+                  "type": "integer"
+                },
+                "paso": {
+                  "exclusiveMinimum": 0,
+                  "maximum": 9007199254740991,
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "min",
+                "max",
+                "paso"
+              ],
+              "type": "object"
+            },
+            "unidad": {
+              "additionalProperties": false,
+              "properties": {
+                "en": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "es": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "es",
+                "en"
+              ],
+              "type": "object"
+            },
+            "valor": {
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "valor",
+            "unidad",
+            "rango_jugable"
+          ],
+          "type": "object"
+        },
+        "clases": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "equivale_a": {
+                "additionalProperties": false,
+                "properties": {
+                  "en": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "es": {
+                    "minLength": 1,
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "es",
+                  "en"
+                ],
+                "type": "object"
+              },
+              "nombre": {
+                "additionalProperties": false,
+                "properties": {
+                  "en": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "es": {
+                    "minLength": 1,
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "es",
+                  "en"
+                ],
+                "type": "object"
+              },
+              "plazo": {
+                "additionalProperties": false,
+                "properties": {
+                  "cantidad": {
+                    "exclusiveMinimum": 0,
+                    "maximum": 9007199254740991,
+                    "type": "integer"
+                  },
+                  "unidad": {
+                    "enum": [
+                      "horas",
+                      "dias_calendario"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "cantidad",
+                  "unidad"
+                ],
+                "type": "object"
+              },
+              "prioridad": {
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991,
+                "type": "integer"
+              },
+              "valor": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "valor",
+              "nombre",
+              "prioridad",
+              "plazo",
+              "equivale_a"
+            ],
+            "type": "object"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "dias_habiles": {
+          "maximum": 5,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "fuente": {
+          "additionalProperties": false,
+          "properties": {
+            "consultada": {
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "type": "string"
+            },
+            "norma": {
+              "additionalProperties": false,
+              "properties": {
+                "en": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "es": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "es",
+                "en"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "norma",
+            "consultada"
+          ],
+          "type": "object"
+        },
+        "jornada": {
+          "additionalProperties": false,
+          "properties": {
+            "fin": {
+              "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+              "type": "string"
+            },
+            "inicio": {
+              "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "inicio",
+            "fin"
+          ],
+          "type": "object"
+        },
+        "origen": {
+          "enum": [
+            "plantilla",
+            "entrevistador",
+            "usuario"
+          ],
+          "type": "string"
+        },
+        "senal_de_clase": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "supuestos": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "en": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "es": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "es",
+              "en"
+            ],
+            "type": "object"
+          },
+          "minItems": 1,
+          "type": "array"
+        }
+      },
+      "required": [
+        "senal_de_clase",
+        "dias_habiles",
+        "jornada",
+        "capacidad_del_auditor",
+        "clases",
+        "supuestos",
+        "fuente"
+      ],
+      "type": "object"
+    },
     "supuestos": {
       "items": {
         "additionalProperties": false,

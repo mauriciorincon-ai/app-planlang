@@ -48,6 +48,7 @@ export const CODIGOS = [
   "SENAL_NO_DECLARADA",
   "TEXTO_PENDIENTE",
   "UMBRAL_DICHO_PENDIENTE",
+  "SIMULACION_INCOHERENTE",
 ] as const;
 export type Codigo = (typeof CODIGOS)[number];
 
@@ -347,6 +348,70 @@ function validarContrato(
           `Target “${destino}” does not exist.`,
         ),
       );
+  }
+}
+
+/** Los minutos desde la medianoche de una hora `HH:MM` (el esquema ya garantiza el formato). */
+const minutosDeHora = (h: string): number =>
+  Number(h.slice(0, 2)) * 60 + Number(h.slice(3, 5));
+
+/**
+ * La simulación de plazos (S9) tiene que poder correr: una jornada con duración, una capacidad jugable que contenga su
+ * valor y caiga en su paso, y clases con valor y prioridad propios. La señal de clase es una señal de la traza: sin ella
+ * el verificador no sabe de qué clase es cada solicitud.
+ */
+function validarSimulacion(
+  plan: Plan,
+  senales: ReadonlySet<string>,
+  motivos: Motivo[],
+): void {
+  const sim = plan.simulacion_de_plazos;
+  if (!sim) return;
+  const falla = (elemento: string, es: string, en: string) =>
+    motivos.push(motivo("SIMULACION_INCOHERENTE", elemento, es, en));
+  if (!senales.has(sim.senal_de_clase))
+    falla(
+      "simulacion_de_plazos.senal_de_clase",
+      `La señal de clase «${sim.senal_de_clase}» no está en senales_obligatorias_en_traza.`,
+      `The class signal “${sim.senal_de_clase}” is not in senales_obligatorias_en_traza.`,
+    );
+  if (minutosDeHora(sim.jornada.inicio) >= minutosDeHora(sim.jornada.fin))
+    falla(
+      "simulacion_de_plazos.jornada",
+      "La jornada debe terminar después de empezar.",
+      "The working day must end after it starts.",
+    );
+  const cap = sim.capacidad_del_auditor;
+  const r = cap.rango_jugable;
+  if (r.min > r.max || cap.valor < r.min || cap.valor > r.max)
+    falla(
+      "simulacion_de_plazos.capacidad_del_auditor",
+      `La capacidad ${cap.valor} debe caer dentro de su rango jugable ${r.min}–${r.max}.`,
+      `Capacity ${cap.valor} must fall within its playable range ${r.min}–${r.max}.`,
+    );
+  else if ((cap.valor - r.min) % r.paso !== 0)
+    falla(
+      "simulacion_de_plazos.capacidad_del_auditor",
+      `La capacidad ${cap.valor} no cae en el paso ${r.paso} del rango jugable que parte de ${r.min}.`,
+      `Capacity ${cap.valor} is not on the ${r.paso} step of the playable range starting at ${r.min}.`,
+    );
+  const valores = new Set<string>();
+  const prioridades = new Set<number>();
+  for (const c of sim.clases) {
+    if (valores.has(c.valor))
+      falla(
+        `simulacion_de_plazos.clases.${c.valor}`,
+        `La clase «${c.valor}» está repetida.`,
+        `Class “${c.valor}” is repeated.`,
+      );
+    if (prioridades.has(c.prioridad))
+      falla(
+        `simulacion_de_plazos.clases.${c.valor}`,
+        `La prioridad ${c.prioridad} está repetida: la cola necesita un orden.`,
+        `Priority ${c.prioridad} is repeated: the queue needs an order.`,
+      );
+    valores.add(c.valor);
+    prioridades.add(c.prioridad);
   }
 }
 
@@ -655,6 +720,7 @@ export function validarPlan(entrada: unknown): ResultadoValidacion {
 
   // Contrato de grafo.
   validarContrato(plan.contrato_de_grafo, idsUmbral, motivos);
+  validarSimulacion(plan, senales, motivos);
   for (const e of plan.contrato_de_grafo.evaluadores_requeridos) {
     for (const r of e.riesgos_cubiertos)
       if (!idsRiesgo.has(r))
