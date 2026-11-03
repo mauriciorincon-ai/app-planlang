@@ -9,6 +9,11 @@ import { loteDeK, type ResultadoCriterio } from "./criterios";
 import type { ResultadoRiesgo } from "./detectores";
 import { partirDisparador } from "./detectores";
 import type { CasoEjemplar, Informe, UmbralJugable } from "./informe";
+import {
+  TOPE_DE_ESCALA,
+  type Faltan,
+  type GarantiaDeCalibracion,
+} from "./garantia";
 import { num, numCorto, pct } from "./numeros";
 import type { ResultadoSupuesto } from "./supuestos";
 import { TEXTOS_INFORME } from "./textos-informe";
@@ -404,6 +409,111 @@ function seccionBrechas(inf: Informe, i: Idioma): string {
   ].join("\n");
 }
 
+/** La garantía de la calibración (S8, ADR-018): una fila por α y, a la vista, lo que los datos no alcanzan (P9). */
+function seccionGarantia(g: GarantiaDeCalibracion, i: Idioma): string[] {
+  const t = TEXTOS_INFORME[i];
+  const u = (x: number) => num(x, i, 2);
+  const etapa = (nodo: string) => t.etapa[nodo] ?? nodo;
+  const aplicado = g.umbral_aplicado === null ? null : u(g.umbral_aplicado);
+  const filas = g.niveles.map((n) => {
+    const a = n.umbral_con_garantia;
+    const c = n.conjunta;
+    return [
+      num(n.alfa, i, 2),
+      a.umbral === null ? t.noHay : u(a.umbral),
+      a.cobertura === null
+        ? "—"
+        : `${pct(a.cobertura, i)} · ${a.riesgo === null ? "—" : pct(a.riesgo, i)}`,
+      n.conformal.umbral === null ? t.noHay : u(n.conformal.umbral),
+      n.zona
+        ? n.zona.desde === n.zona.hasta
+          ? u(n.zona.desde)
+          : `${u(n.zona.desde)}–${u(n.zona.hasta)}`
+        : t.noHay,
+      ...(aplicado === null
+        ? []
+        : [siNo(n.umbral_aplicado_en_zona === true, i)]),
+      c === null
+        ? "—"
+        : c.umbral === null
+          ? t.noAlcanza
+          : `${u(c.umbral)} (k = ${c.k})`,
+    ];
+  });
+  const lineas = [
+    t.garantia(num(g.delta, i, 2), num(g.alfa_del_informe, i, 2)),
+    "",
+    tabla(t.cabGarantia(aplicado), filas),
+  ];
+  const conjunta = g.niveles.find((n) => n.conjunta)?.conjunta;
+  if (conjunta)
+    lineas.push(
+      "",
+      t.conjunta(conjunta.nodos.map(etapa).join(", "), conjunta.k),
+    );
+  const noObservadas = g.etapas
+    .filter((e) => !e.observada)
+    .map((e) => etapa(e.nodo));
+  if (noObservadas.length > 0)
+    lineas.push(
+      "",
+      t.noObservadas(noObservadas.join(", "), noObservadas.length),
+    );
+  const falta = (f: Faltan): string =>
+    f.motivo === "pocos_casos"
+      ? t.faltan.pocos_casos(u(f.umbral), f.aceptados, f.casos as number)
+      : f.motivo === "tasa_cerca_de_alfa"
+        ? t.faltan.tasa_cerca_de_alfa(
+            u(f.umbral),
+            f.aceptados,
+            f.errores,
+            f.casos,
+            TOPE_DE_ESCALA,
+            f.nodo === null ? null : etapa(f.nodo),
+          )
+        : t.faltan.tasa_sobre_alfa(
+            u(f.umbral),
+            f.aceptados,
+            f.errores,
+            f.nodo === null ? null : etapa(f.nodo),
+          );
+  const noAlcanzan: string[] = [];
+  for (const n of g.niveles) {
+    const alfa = num(n.alfa, i, 2);
+    const a = n.umbral_con_garantia;
+    if (a.faltan)
+      noAlcanzan.push(
+        t.enNivel(alfa, `${t.queFalta.umbral}${falta(a.faltan)}`),
+      );
+    else if (n.sin_zona === "sin_cota_conformal")
+      noAlcanzan.push(
+        t.enNivel(
+          alfa,
+          `${t.queFalta.zona}${t.sinZona.sin_cota_conformal(n.conformal.n_aciertos, n.conformal.aciertos_minimos)}`,
+        ),
+      );
+    else if (n.sin_zona === "conformal_bajo_el_umbral")
+      noAlcanzan.push(
+        t.enNivel(
+          alfa,
+          `${t.queFalta.zona}${t.sinZona.conformal_bajo_el_umbral(u(n.conformal.umbral as number), u(a.umbral as number))}`,
+        ),
+      );
+    if (n.conjunta?.faltan)
+      noAlcanzan.push(
+        t.enNivel(alfa, `${t.queFalta.conjunta}${falta(n.conjunta.faltan)}`),
+      );
+  }
+  if (noAlcanzan.length > 0)
+    lineas.push(
+      "",
+      t.noAlcanzanLosDatos,
+      "",
+      ...noAlcanzan.map((l) => `- ${l}`),
+    );
+  return lineas;
+}
+
 function seccionSupuesto(s: ResultadoSupuesto, i: Idioma): string {
   const t = TEXTOS_INFORME[i];
   const lineas = [
@@ -435,6 +545,7 @@ function seccionSupuesto(s: ResultadoSupuesto, i: Idioma): string {
         ]),
       ),
     );
+  if (s.garantia) lineas.push("", ...seccionGarantia(s.garantia, i));
   if (s.comparacion) {
     const c = s.comparacion;
     const lat = (x: number | null) =>

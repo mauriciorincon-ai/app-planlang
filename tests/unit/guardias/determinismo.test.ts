@@ -135,11 +135,14 @@ function archivosTs(raiz: string): string[] {
 /**
  * Lo que corre en el navegador: los módulos del núcleo que importa la vitrina en el cliente (el playground y los
  * glifos del visor) y todo el visor, con lo que importan por valor (no por tipo), siguiendo los imports relativos.
+ * También la garantía (S8): la vitrina la lee precalculada, pero su prueba de paridad la corre en los tres motores
+ * (`tests/e2e/garantia.paridad.spec.ts`), y lo que promete tiene que dar los mismos bytes en todos.
  */
 export function enElNavegador(): string[] {
   const vistos = new Set<string>();
   const pendientes = [
     "core/playground/consecuencias.ts",
+    "core/brecha/garantia.ts",
     ...archivosTs("core/visor"),
   ];
   while (pendientes.length) {
@@ -224,11 +227,12 @@ describe("guardia G2 de lo que corre en el navegador", () => {
       ).toBe(true);
   });
 
-  it("el cierre del navegador incluye el playground, el visor y lo que importan", () => {
+  it("el cierre del navegador incluye el playground, el visor, la garantía y lo que importan", () => {
     const n = enElNavegador();
     expect(n).toContain("core/playground/aristas.ts");
     expect(n).toContain("core/brecha/numeros.ts");
     expect(n).toContain("core/visor/geometria.ts");
+    expect(n).toContain("core/brecha/garantia.ts");
   });
 
   it("nada de lo que corre en el navegador usa funciones inexactas, `**`, localeCompare ni medición del DOM", () => {
