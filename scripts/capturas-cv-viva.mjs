@@ -22,7 +22,7 @@ import {
   readFileSync,
   writeFileSync,
 } from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { dirname, isAbsolute, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium } from "@playwright/test";
 import { parse } from "yaml";
@@ -42,6 +42,16 @@ const arg = (n, def) => {
   return i < 0 ? def : process.argv[i + 1];
 };
 const destino = resolve(raiz, arg("destino", "dist/cv-viva"));
+// Regla 17-bis (b): solo escribe bajo `dist/` (no se versiona); un `--destino` que salga de ahí aborta.
+if (
+  relative(join(raiz, "dist"), destino).startsWith("..") ||
+  isAbsolute(relative(join(raiz, "dist"), destino))
+) {
+  console.error(
+    `capturas-cv-viva: --destino ${destino} sale de dist/; solo escribe ahí. Aborto.`,
+  );
+  process.exit(1);
+}
 const solo = arg("solo", "").split(",").filter(Boolean);
 
 if (!existsSync(join(OUT, "es.html"))) {

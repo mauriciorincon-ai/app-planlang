@@ -5,6 +5,7 @@
  * 3100 son de otras apps de la máquina. Estas pruebas leen los archivos que arrancan servidores; un `serve out -l 3000`
  * o un `localhost` vuelto a escribir las pone en rojo. Demo en rojo (cierre del S8): `start` vuelto a `serve out -l 3000`.
  */
+import { spawnSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
@@ -59,5 +60,29 @@ describe("puertos y servidores de planlang: 127.0.0.1, 3200 y 3201", () => {
     expect(leer("scripts/servidor-estatico.mjs")).toContain(
       's.listen(puerto, "127.0.0.1"',
     );
+  });
+
+  it("ningún script de package.json que sirva algo escucha en todas las interfaces: `serve` y `next` dicen 127.0.0.1 (auditoría S8, M5)", () => {
+    const sirven = Object.entries(pkg.scripts).filter(([, c]) =>
+      /\bserve\b|next (dev|start)/.test(c),
+    );
+    expect(sirven.map(([n]) => n)).toEqual(
+      expect.arrayContaining(["start", "dev", "maqueta"]),
+    );
+    for (const [nombre, c] of sirven)
+      expect(c, `pnpm ${nombre}`).toMatch(/127\.0\.0\.1/);
+    expect(pkg.scripts.maqueta).toBe("serve docs -l tcp://127.0.0.1:3101");
+  });
+
+  it("las capturas del brochure solo escriben bajo dist/: un `--destino` que salga de ahí aborta antes de abrir nada (auditoría S8, M6)", () => {
+    for (const destino of ["/tmp/capturas-fuera", "../fuera", "docs/cv-viva"]) {
+      const r = spawnSync(
+        "node",
+        ["scripts/capturas-cv-viva.mjs", "--destino", destino],
+        { encoding: "utf8" },
+      );
+      expect(r.status, destino).toBe(1);
+      expect(r.stderr, destino).toContain("sale de dist/");
+    }
   });
 });
