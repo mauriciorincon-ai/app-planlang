@@ -16,6 +16,7 @@
     "plan:aprobar": "tsx scripts/plan-aprobar.ts",
     "entrevistar": "tsx scripts/entrevistar.ts",
     "casos:generar": "tsx scripts/casos-generar.ts",
+    "llegadas:generar": "tsx scripts/llegadas-generar.ts",
     "brecha:informe": "tsx scripts/brecha-informe.ts",
     "trazas:verificar": "tsx scripts/trazas-verificar.ts",
     "m9:reporte": "tsx scripts/m9-reporte.ts",
