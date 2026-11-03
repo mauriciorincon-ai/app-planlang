@@ -145,6 +145,27 @@ Curva riesgo-cobertura (umbral de confianza → parte que el agente resuelve sol
 | 0,90 | 66,7 % | 0 % | 2 |
 | 0,95 | 66,7 % | 0 % | 2 |
 
+Garantía de la calibración (δ = 0,10; el informe declara α = 0,10). **Umbral con garantía** (Learn then Test, secuencia fija desde el umbral más alto): el más bajo cuyo error entre lo que el agente decide solo es ≤ α con probabilidad ≥ 1 − δ. **Umbral conformal**: el más alto que deja pasar sin persona al menos 1 − α de los aciertos (marginal, bajo intercambiabilidad). **Zona respaldada**: los umbrales de la rejilla con las dos a la vez.
+
+| α | Umbral con garantía | Cobertura · error en él | Umbral conformal | Zona respaldada | ¿Está el de la corrida (0,75)? | Cobertura conjunta |
+| --- | --- | --- | --- | --- | --- | --- |
+| 0,05 | no hay | — | no hay | no hay | no | no alcanza |
+| 0,10 | no hay | — | no hay | no hay | no | no alcanza |
+| 0,20 | no hay | — | no hay | no hay | no | no alcanza |
+
+Cobertura conjunta (Bonferroni): extractor, aclaración, cada una con α/2 y δ/2 sobre los mismos casos que el agente decide solo ⇒ P(alguna etapa falla) ≤ α con probabilidad ≥ 1 − δ; la columna dice el umbral más bajo con esa garantía.
+
+Etapa con modelo sin verdad en el caso (no se observa y la cobertura conjunta no la incluye): redactor.
+
+Lo que los datos no alcanzan:
+
+- A α = 0,05, no hay umbral con garantía: en 0,95 el agente decide solo 2 casos y, aun sin un solo error, harían falta 45.
+- A α = 0,05, la cobertura conjunta no alcanza: en 0,95 el agente decide solo 2 casos y, aun sin un solo error, harían falta 119.
+- A α = 0,10, no hay umbral con garantía: en 0,95 el agente decide solo 2 casos y, aun sin un solo error, harían falta 22.
+- A α = 0,10, la cobertura conjunta no alcanza: en 0,95 el agente decide solo 2 casos y, aun sin un solo error, harían falta 59.
+- A α = 0,20, no hay umbral con garantía: en 0,95 el agente decide solo 2 casos y, aun sin un solo error, harían falta 11.
+- A α = 0,20, la cobertura conjunta no alcanza: en 0,95 el agente decide solo 2 casos y, aun sin un solo error, harían falta 29.
+
 ### S2 — Dos ciclos de aclaración bastan en el 95 % de los casos incompletos.
 
 **◌ sin probar** (criticidad media). Ningún caso del lote cae en la población del supuesto.
@@ -190,4 +211,4 @@ Umbrales aplicados: U1 = 0,75 · U2 = 1000 · U3 = 2 · U4 = false · en el plan
 
 Revisión humana: En lotes, el revisor simulado sigue la verdad conocida del caso (DA-04); la vitrina lo divulga.
 
-Verificador 1.3.0 · planlang-informe/v1 · huella de este informe: `9f0c6e011c1f11f447074469e8d02de459ae36ae48e2837ffa705ec3e78e7890`
+Verificador 1.4.0 · planlang-informe/v1 · huella de este informe: `517bef65495135021d3a2e8fb4f9f76819f4fffc2037bb451369f9860f8d3aae`

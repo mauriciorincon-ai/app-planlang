@@ -223,7 +223,7 @@
     }
   ],
   "formato": "planlang-comparacion/v1",
-  "huella": "3998d491b286255b776cc0620c498cfecddc126b5fcaf5ad238f853d5c4f546e",
+  "huella": "dedc6a5599754fd32abfa215fbf5a90251fcea23c6c7007e1b2763477e8658c6",
   "lados": {
     "agente_unico": {
       "decisiones": {
@@ -481,5 +481,5 @@
     }
   ],
   "version_comparacion": "1.0.0",
-  "version_verificador": "1.3.0"
+  "version_verificador": "1.4.0"
 }

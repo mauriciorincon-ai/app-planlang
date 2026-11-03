@@ -50,7 +50,7 @@
       "unidad": "criteria",
       "etiqueta": "criteria met across the plans of 2 demos, of 16",
       "fuente": "medido",
-      "detalle": "Demo A: 10 of 10, in verifier 1.3.0's report on run suscripcion-planlang-a-002-200-v1.5. Demo B: 6 of 6, in verifier 1.3.0's report on run suscripcion-planlang-b-001-20."
+      "detalle": "Demo A: 10 of 10, in verifier 1.4.0's report on run suscripcion-planlang-a-002-200-v1.5. Demo B: 6 of 6, in verifier 1.4.0's report on run suscripcion-planlang-b-001-20."
     },
     {
       "clave": "decisiones_cruzadas",
@@ -390,7 +390,7 @@
       "etiqueta": "version"
     },
     {
-      "valor": "17",
+      "valor": "18",
       "etiqueta": "decisiones"
     }
   ]

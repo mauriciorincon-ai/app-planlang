@@ -169,4 +169,4 @@ Applied thresholds: U1 = 0.85 · U2 = 60 · U3 = 0 · U4 = 0.7 · in the plan: U
 
 Human review: In batches, the simulated officer follows the case’s known truth (DA-04); the showcase discloses it.
 
-Verifier 1.3.0 · planlang-informe/v1 · fingerprint of this report: `4705b3f3d49c8c4c53590a6845620ad25c76bcff26a595125bc1050c2fee1411`
+Verifier 1.4.0 · planlang-informe/v1 · fingerprint of this report: `a9f6c13c15dea32d6c663839dacdbdad0ab0b6a983e43eebc39939f698c4a468`

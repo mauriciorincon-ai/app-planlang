@@ -142,6 +142,22 @@ Risk-coverage curve (confidence threshold → share the agent resolves alone →
 | 0.90 | 85.6% | 1.5% | 131 |
 | 0.95 | 72.5% | 0.9% | 111 |
 
+Calibration guarantee (δ = 0.10; the report declares α = 0.10). **Guaranteed threshold** (Learn then Test, fixed sequence from the highest threshold): the lowest one whose error among what the agent decides alone is ≤ α with probability ≥ 1 − δ. **Conformal threshold**: the highest one that lets at least 1 − α of the correct cases through without a person (marginal, under exchangeability). **Backed zone**: the grid thresholds that have both at once.
+
+| α | Guaranteed threshold | Coverage · error there | Conformal threshold | Backed zone | Is the run's (0.75) in it? | Joint coverage |
+| --- | --- | --- | --- | --- | --- | --- |
+| 0.05 | 0.50 | 99.4% · 2% | 0.75 | 0.50–0.75 | yes | not reached |
+| 0.10 | 0.50 | 99.4% · 2% | 0.85 | 0.50–0.85 | yes | 0.85 (k = 2) |
+| 0.20 | 0.50 | 99.4% · 2% | 0.90 | 0.50–0.90 | yes | 0.50 (k = 2) |
+
+Joint coverage (Bonferroni): extractor, clarification, each at α/2 and δ/2 on the same cases the agent decides alone ⇒ P(some stage fails) ≤ α with probability ≥ 1 − δ; the column gives the lowest threshold with that guarantee.
+
+Model stage with no ground truth in the case (not observed, and left out of the joint coverage): writer.
+
+What the data does not reach:
+
+- At α = 0.05, the joint coverage is not reached: at 0.95 the agent decides 111 cases alone and the extractor stage fails in 1; at the same error rate it would take 333 cases.
+
 ### S2 — Two clarification cycles suffice in 95% of incomplete cases.
 
 **✗ refuted** (criticality medium). It misses the confirmation threshold: tasa 0.8636 against a minimum of 0.95.
@@ -189,4 +205,4 @@ Applied thresholds: U1 = 0.75 · U2 = 1000 · U3 = 2 · U4 = false · in the pla
 
 Human review: In batches, the simulated reviewer follows the case's known truth (DA-04); the showcase discloses it.
 
-Verifier 1.3.0 · planlang-informe/v1 · fingerprint of this report: `61c46b55ca0d61bb73da1e2b145482481a5027fc9cd2eece2915afc92fc09e0a`
+Verifier 1.4.0 · planlang-informe/v1 · fingerprint of this report: `bfbc72d85399532811f7b97a1f3bf27f508e699142f8a4803fa96a970bf6e0d6`

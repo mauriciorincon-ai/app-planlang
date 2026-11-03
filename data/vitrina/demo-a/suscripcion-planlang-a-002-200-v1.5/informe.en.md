@@ -150,6 +150,23 @@ Risk-coverage curve (confidence threshold → share the agent resolves alone →
 | 0.90 | 89.3% | 2.1% | 142 |
 | 0.95 | 84.3% | 2.2% | 134 |
 
+Calibration guarantee (δ = 0.10; the report declares α = 0.10). **Guaranteed threshold** (Learn then Test, fixed sequence from the highest threshold): the lowest one whose error among what the agent decides alone is ≤ α with probability ≥ 1 − δ. **Conformal threshold**: the highest one that lets at least 1 − α of the correct cases through without a person (marginal, under exchangeability). **Backed zone**: the grid thresholds that have both at once.
+
+| α | Guaranteed threshold | Coverage · error there | Conformal threshold | Backed zone | Is the run's (0.75) in it? | Joint coverage |
+| --- | --- | --- | --- | --- | --- | --- |
+| 0.05 | 0.75 | 96.2% · 2% | 0.85 | 0.75–0.85 | yes | not reached |
+| 0.10 | 0.50 | 99.4% · 3.2% | 0.90 | 0.50–0.90 | yes | not reached |
+| 0.20 | 0.50 | 99.4% · 3.2% | 0.95 | 0.50–0.95 | yes | 0.50 (k = 2) |
+
+Joint coverage (Bonferroni): extractor, clarification, each at α/2 and δ/2 on the same cases the agent decides alone ⇒ P(some stage fails) ≤ α with probability ≥ 1 − δ; the column gives the lowest threshold with that guarantee.
+
+Model stage with no ground truth in the case (not observed, and left out of the joint coverage): writer.
+
+What the data does not reach:
+
+- At α = 0.05, the joint coverage is not reached: at 0.95 the agent decides 134 cases alone and the extractor stage fails in 3; at the same error rate it would take more than 2680 cases.
+- At α = 0.10, the joint coverage is not reached: at 0.95 the agent decides 134 cases alone and the extractor stage fails in 3; at the same error rate it would take 268 cases.
+
 ### S2 — Two clarification cycles suffice in 95% of incomplete cases.
 
 **✗ refuted** (criticality medium). It misses the confirmation threshold: tasa 0.8333 against a minimum of 0.95.
@@ -210,4 +227,4 @@ Applied thresholds: U1 = 0.75 · U2 = 1000 · U3 = 2 · U4 = false · in the pla
 
 Human review: In batches, the simulated reviewer follows the case's known truth (DA-04); the showcase discloses it.
 
-Verifier 1.3.0 · planlang-informe/v1 · fingerprint of this report: `20c0b4ae85a8b635a979996db42fb58b21e1a1d7c390343ce975ca5ba30451e6`
+Verifier 1.4.0 · planlang-informe/v1 · fingerprint of this report: `bd4a99509f96feea091922741f8162b0fbbb466c90fedb69013f60494174e455`
