@@ -1252,12 +1252,10 @@ export function Juego({ datos }: { datos: DatosIsla }) {
                   </p>
                 ) : null}
               </div>
-              {nivel.noAlcanza.length > 0 || g.noObservadas ? (
-                <ul className="m-0 grid list-none gap-1.5 p-0">
-                  {[
-                    ...nivel.noAlcanza,
-                    ...(g.noObservadas ? [g.noObservadas] : []),
-                  ].map((t) => (
+              <ul className="m-0 grid list-none gap-1.5 p-0">
+                {[nivel.conjunta, g.secuencia, g.noObservadas]
+                  .filter((t): t is string => t !== null)
+                  .map((t) => (
                     <li
                       key={t}
                       className="grid grid-cols-[16px_minmax(0,1fr)] gap-2 text-dato text-tinta-2"
@@ -1266,10 +1264,12 @@ export function Juego({ datos }: { datos: DatosIsla }) {
                       {t}
                     </li>
                   ))}
-                </ul>
-              ) : null}
+              </ul>
               <BloqueExperto rotulo={PERFIL.experto[i]}>
                 <p className="mb-1.5 text-dato text-tinta-2">{g.metodo}</p>
+                <p className="mb-1.5 font-mono text-dato text-tinta-2">
+                  {g.etapas}
+                </p>
                 {nivel.experto.map((t) => (
                   <p
                     key={t}

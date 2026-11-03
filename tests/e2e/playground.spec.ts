@@ -215,7 +215,9 @@ test.describe("la zona respaldada (es)", () => {
           "Seguridad exigida: 90 % (δ 0,10)",
         );
         // Lo que los datos no alcanzan, a la vista del líder, sin abrir nada.
-        await expect(panel.getByText(/los datos no lo alcanzan/)).toBeVisible();
+        await expect(
+          panel.getByText(/no se respalda con la secuencia/),
+        ).toBeVisible();
         await expect(
           panel.getByText(/La etapa redactor no tiene verdad/),
         ).toBeVisible();

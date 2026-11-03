@@ -191,7 +191,10 @@ describe("S1 con su garantía (S8, ADR-018)", () => {
     expect(llano(g.textContent)).toContain(
       "El U1 de la corrida (0,75) cae dentro.",
     );
-    expect(llano(g.textContent)).toContain("los datos no lo alcanzan");
+    expect(llano(g.textContent)).toContain(
+      "no se respalda con la secuencia que parte del umbral más alto",
+    );
+    expect(llano(g.textContent)).toContain("secuencia fija");
     expect(llano(g.textContent)).toContain("harían falta 268 casos");
     expect(llano(g.textContent)).toContain(
       "La etapa redactor no tiene verdad conocida",

@@ -13,6 +13,7 @@ import {
 import { presupuestoLiderBilingue } from "@core/formatos/jerga";
 import { datosDemo, type DatosDemo } from "@/lib/datos/vitrina";
 import { vistaGarantia } from "@/lib/vista/garantia";
+import { ZONA } from "@/textos/garantia";
 import { dentroDeLaZona, lugarEnLaZona } from "@/lib/vista/zona";
 import { casosSinteticos } from "../../../scripts/garantia-contrato";
 
@@ -64,7 +65,7 @@ describe("la garantía de S1 del demo A, para pintar", () => {
           n.lider,
           n.aplicado ?? "",
           n.opcion,
-          ...n.noAlcanza,
+          n.conjunta ?? "",
           ...n.experto,
           ...n.fila,
         ]),
@@ -105,11 +106,26 @@ describe("la garantía de S1 del demo A, para pintar", () => {
     }
   });
 
-  it("dice lo que los datos no alcanzan: la cobertura conjunta a 5 % y a 10 %, no a 20 %; y el redactor sin verdad", () => {
+  it("dice la cobertura conjunta de cada nivel: no se respalda a 5 % y a 10 % (con el n que haría falta), sí a 20 %; y el redactor sin verdad", () => {
     const v = vistaGarantia(g, "U1", 2, "es");
-    expect(v.niveles.map((n) => n.noAlcanza.length)).toEqual([1, 1, 0]);
-    expect(v.niveles[1]!.noAlcanza[0]).toContain("la extracción falla en 3");
-    expect(v.niveles[1]!.noAlcanza[0]).toContain("harían falta 268 casos");
+    expect(v.niveles.map((n) => n.conjunta !== null)).toEqual([
+      true,
+      true,
+      true,
+    ]);
+    expect(v.niveles[1]!.conjunta).toContain("la extracción falla en 3");
+    expect(v.niveles[1]!.conjunta).toContain("harían falta 268 casos");
+    expect(v.niveles[1]!.conjunta).toContain(
+      "no se respalda con la secuencia que parte del umbral más alto",
+    );
+    expect(v.niveles[2]!.conjunta).toContain(
+      "los datos lo respaldan desde 0,50",
+    );
+    // El orden de la prueba se dice: la secuencia fija es conservadora (auditoría S8, M2).
+    expect(v.secuencia).toContain("secuencia fija");
+    expect(v.secuencia).toContain(
+      "puede decir «no se respalda» donde otro orden pasaría",
+    );
     expect(v.noObservadas).toContain("redactor");
     expect(v.niveles[1]!.aplicado).toBe(
       "El U1 de la corrida (0,75) cae dentro.",
@@ -151,7 +167,7 @@ describe("la garantía de S1 del demo A, para pintar", () => {
       2,
       "es",
     );
-    expect(v.niveles[1]!.noAlcanza[0]).toContain("la extracción y verificador");
+    expect(v.niveles[1]!.conjunta).toContain("la extracción y verificador");
   });
 });
 
@@ -205,7 +221,7 @@ describe("los niveles sin zona dicen por qué, con los números", () => {
 
   it("la cobertura conjunta con una tasa sobre α no promete que más casos la respalden", () => {
     const n = nivel("etapas-a-medias", 0.2);
-    expect(n.noAlcanza.length).toBeGreaterThan(0);
+    expect(n.conjunta).not.toBeNull();
     const t = vistaGarantia(
       {
         ...sintetica("etapas-a-medias"),
@@ -229,14 +245,14 @@ describe("los niveles sin zona dicen por qué, con los números", () => {
       2,
       "es",
     ).niveles[1]!;
-    expect(t.noAlcanza[0]).toContain("la aclaración falla en 9");
-    expect(t.noAlcanza[0]).toContain("más casos con esa tasa no lo respaldan");
+    expect(t.conjunta).toContain("la aclaración falla en 9");
+    expect(t.conjunta).toContain("más casos con esa tasa no lo respaldan");
   });
 
   it("una sola etapa medida no tiene cobertura conjunta que sumar en llano (el experto sí la ve)", () => {
     const v = vistaGarantia(sintetica("pocos-casos"), "U1", 2, "es");
     for (const n of v.niveles) {
-      expect(n.noAlcanza).toEqual([]);
+      expect(n.conjunta).toBeNull();
       expect(n.experto.join(" ")).toContain("Cobertura conjunta (Bonferroni)");
     }
   });
@@ -251,5 +267,50 @@ describe("dónde cae un valor frente a la zona", () => {
     expect(lugarEnLaZona(null, 0.8)).toBe("ninguna");
     expect(dentroDeLaZona(zona, 0.75)).toBe(true);
     expect(dentroDeLaZona(null, 0.75)).toBe(false);
+  });
+});
+
+describe("el registro de experto lee todo lo que el cálculo produce (auditoría S8, campos sin lector)", () => {
+  it("el índice del conformal, las etapas medidas y las pruebas de la conjunta salen en sus líneas", () => {
+    const v = vistaGarantia(g, "U1", 2, "es");
+    const diez = v.niveles[1]!;
+    expect(diez.experto[0]).toBe(
+      "Conformal: 153 aciertos, índice ⌊(n + 1)·α⌋ = 15 → 0,90.",
+    );
+    const pruebas = diez.experto.find((t) =>
+      t.startsWith("Pruebas de la conjunta"),
+    )!;
+    expect(pruebas).toContain("a α/2 = 0,050 y δ/2 = 0,050, sobre 159 casos");
+    expect(pruebas).toContain(
+      "0,95: extractor 134/3 p = 0,0931 ✗, aclaración 134/2 p = 0,0339 ✓",
+    );
+    expect(v.etapas).toBe(
+      "Etapas con modelo (fallos entre los casos medidos): extractor 6 de 159 · aclaración 4 de 159 · redactor sin verdad.",
+    );
+    // Sin cota: el índice 0 dice «sin cota», no un umbral inventado.
+    const pocos = vistaGarantia(sintetica("pocos-casos"), "U1", 2, "es");
+    expect(pocos.niveles[1]!.experto[0]).toBe(
+      "Conformal: 8 aciertos, índice ⌊(n + 1)·α⌋ = 0 → sin cota.",
+    );
+  });
+
+  it("un p que se redondea a cero dice «p < 0,0001» y no «p = 0,0000»", () => {
+    const veinte = vistaGarantia(g, "U1", 2, "es").niveles[2]!;
+    const pruebas = veinte.experto.find((t) => t.startsWith("Pruebas a α"))!;
+    expect(pruebas).toContain("p < 0,0001 ✓");
+    expect(pruebas).not.toContain("p = 0,0000");
+    const en = vistaGarantia(g, "U1", 2, "en").niveles[2]!;
+    expect(en.experto.find((t) => t.startsWith("Tests at α"))!).toContain(
+      "p < 0.0001 ✓",
+    );
+  });
+
+  it("por encima de la zona, el texto dice «por encima de» el límite superior, que está dentro de la zona (auditoría S8, B2)", () => {
+    expect(
+      ZONA.estado.encima({ umbral: "U1", valor: "0,95", hasta: "0,90" }).es,
+    ).toContain("por encima de 0,90 se escalan más aciertos");
+    expect(
+      ZONA.estado.encima({ umbral: "U1", valor: "0.95", hasta: "0.90" }).en,
+    ).toContain("above 0.90 more correct cases");
   });
 });

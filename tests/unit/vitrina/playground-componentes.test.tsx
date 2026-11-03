@@ -339,7 +339,12 @@ describe("la zona respaldada por los datos (S8, ADR-018)", () => {
     const panel = llano(
       container.querySelector("#zona-respaldada")!.textContent,
     );
-    expect(panel).toContain("los datos no lo alcanzan");
+    expect(panel).toContain(
+      "no se respalda con la secuencia que parte del umbral más alto",
+    );
+    expect(panel).toContain(
+      "La prueba parte del umbral más alto y baja hasta que uno no pasa",
+    );
     expect(panel).toContain("harían falta 268 casos");
     expect(panel).toContain("La etapa redactor no tiene verdad conocida");
   });

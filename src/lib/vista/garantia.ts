@@ -31,8 +31,11 @@ export interface NivelVista {
   lider: string;
   /** Dónde cae el umbral que usó la corrida frente a la zona (`null` si la corrida no declara uno). */
   aplicado: string | null;
-  /** Lo que los datos no alcanzan en este nivel, en llano (la cobertura conjunta). */
-  noAlcanza: string[];
+  /**
+   * La cobertura conjunta de este nivel en llano: si los datos la respaldan o lo que no alcanzan (y el n que haría
+   * falta). `null` con menos de dos etapas medidas: la conjunta sería la de la etapa sola.
+   */
+  conjunta: string | null;
   /** Registro de experto: las pruebas del nivel, la cobertura conjunta y el error conjunto observado. */
   experto: string[];
   /** Las celdas de la fila del nivel en la tabla del experto. */
@@ -52,12 +55,21 @@ export interface VistaGarantia {
   niveles: NivelVista[];
   /** Las etapas con modelo sin verdad en los casos, en llano; `null` si todas se observan. */
   noObservadas: string | null;
+  /** Por qué el orden de la prueba (secuencia fija desde el umbral más alto) importa para lo que dice «no se respalda». */
+  secuencia: string;
+  /** Registro de experto: lo que cada etapa con modelo falló entre los casos medidos. */
+  etapas: string;
   tablaExperto: { titulo: string; columnas: string[] };
   metodo: string;
   alcance: string;
 }
 
 const cerca = (a: number, b: number) => Math.abs(a - b) < 1e-9;
+
+/** «p = 0,0931»; con 4 decimales un p de 0,00004 no es cero: «p < 0,0001». */
+function pTexto(p: number, i: Idioma): string {
+  return p < 0.00005 ? `p ${EXPERTO.menorQue[i]}` : `p = ${decimal(p, 4, i)}`;
+}
 
 function nombres(nodos: readonly string[], i: Idioma): string {
   return enumerar(
@@ -183,12 +195,20 @@ export function vistaGarantia(
     const t = n.umbral_con_garantia;
     const c = n.conjunta;
     const experto = [
+      EXPERTO.conformalLinea({
+        n: n.conformal.n_aciertos,
+        indice: n.conformal.indice,
+        umbral:
+          n.conformal.umbral === null
+            ? EXPERTO.sinCota[i]
+            : u(n.conformal.umbral),
+      })[i],
       EXPERTO.pruebas({
         alfa: alfaTexto,
         lista: t.pruebas
           .map(
             (p) =>
-              `${u(p.umbral)}: ${p.aceptados}/${p.errores}, p = ${decimal(p.p, 4, i)} ${p.rechaza ? "✓" : "✗"}`,
+              `${u(p.umbral)}: ${p.aceptados}/${p.errores}, ${pTexto(p.p, i)} ${p.rechaza ? "✓" : "✗"}`,
           )
           .join(" · "),
       })[i],
@@ -197,6 +217,23 @@ export function vistaGarantia(
             EXPERTO.conjunta({
               etapas: c.nodos.map((x) => ETAPA_CORTA[x]?.[i] ?? x).join(", "),
               k: c.k,
+            })[i],
+            EXPERTO.conjuntaPruebas({
+              k: c.k,
+              alfa: decimal(c.alfa_por_etapa, 3, i),
+              delta: decimal(c.delta_por_etapa, 3, i),
+              casos: c.casos,
+              lista: c.pruebas
+                .map(
+                  (q) =>
+                    `${u(q.umbral)}: ${q.etapas
+                      .map(
+                        (e) =>
+                          `${ETAPA_CORTA[e.nodo]?.[i] ?? e.nodo} ${e.aceptados}/${e.errores} ${pTexto(e.p, i)} ${e.rechaza ? "✓" : "✗"}`,
+                      )
+                      .join(", ")}`,
+                )
+                .join(" · "),
             })[i],
             EXPERTO.observado({
               umbral: u(c.error_observado.umbral),
@@ -225,7 +262,7 @@ export function vistaGarantia(
         : ZONA.sinZona({ alfa: alfaPct })[i],
       lider,
       aplicado,
-      noAlcanza: conjunta && c && c.umbral === null ? [conjunta] : [],
+      conjunta,
       experto,
       fila: [
         `α ${alfaTexto}`,
@@ -278,6 +315,22 @@ export function vistaGarantia(
             n: noObservadas.length,
           })[i]
         : null,
+    secuencia: LIDER.secuencia[i],
+    etapas: EXPERTO.etapas({
+      lista: g.etapas
+        .map((e) =>
+          e.observada
+            ? EXPERTO.etapaMedida({
+                etapa: ETAPA_CORTA[e.nodo]?.[i] ?? e.nodo,
+                errores: e.errores,
+                casos: e.casos,
+              })[i]
+            : EXPERTO.etapaSinVerdad({
+                etapa: ETAPA_CORTA[e.nodo]?.[i] ?? e.nodo,
+              })[i],
+        )
+        .join(" · "),
+    })[i],
     tablaExperto: {
       titulo: EXPERTO.tabla.titulo[i],
       columnas: [

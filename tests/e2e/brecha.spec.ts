@@ -118,7 +118,9 @@ test.describe("S1 con su garantía (es)", () => {
         expect(await plano()).toContain(
           "El U1 de la corrida (0,75) cae dentro.",
         );
-        await expect(g.getByText(/los datos no lo alcanzan/)).toBeVisible();
+        await expect(
+          g.getByText(/no se respalda con la secuencia/),
+        ).toBeVisible();
         await expect(
           g.getByText(/La etapa redactor no tiene verdad/),
         ).toBeVisible();

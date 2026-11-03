@@ -694,10 +694,9 @@ function GarantiaDeS1({
   idioma: Idioma;
 }) {
   const nivel = g.niveles[g.porOmision]!;
-  const notas = [
-    ...nivel.noAlcanza,
-    ...(g.noObservadas ? [g.noObservadas] : []),
-  ];
+  const notas = [nivel.conjunta, g.secuencia, g.noObservadas].filter(
+    (t): t is string => t !== null,
+  );
   const columnas = g.tablaExperto.columnas.map((titulo, k) => ({
     titulo,
     ancho: k === 0 ? "88px" : "minmax(0,1fr)",
@@ -735,6 +734,7 @@ function GarantiaDeS1({
       ) : null}
       <BloqueExperto rotulo={PERFIL.experto[idioma]}>
         <p className="mb-2 text-dato text-tinta-2">{g.metodo}</p>
+        <p className="mb-2 font-mono text-dato text-tinta-2">{g.etapas}</p>
         <TablaF
           etiqueta={g.tablaExperto.titulo}
           columnas={columnas}

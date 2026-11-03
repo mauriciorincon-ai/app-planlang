@@ -16,16 +16,10 @@ export const ZONA = {
   /** El nombre de la zona, corto: lo que dicen la leyenda, la tabla y el título del gráfico. */
   nombre: tb("Zona respaldada", "Backed zone"),
   glifo: tb("respaldado por los datos", "backed by the data"),
-  fuera: tb("sin respaldo", "not backed"),
   titulo: tb(
     "Dónde el umbral tiene el respaldo de los datos",
     "Where the threshold has the data's backing",
   ),
-  chip: ((p: { n: number }) =>
-    tb(
-      `real · S1, n = ${n(p.n).es} · cálculo exacto`,
-      `real · S1, n = ${n(p.n).en} · exact calculation`,
-    )) as Plantilla<{ n: number }>,
   intro: tb(
     "La curva dice qué pasó con estos casos; no dice cuánto confiar para los que vienen. La zona marca los umbrales de confianza mínima que los datos respaldan, con el error que aceptes y la seguridad que se exige. Sale del informe, ya calculada.",
     "The curve says what happened with these cases; it does not say how far to trust it for the ones to come. The zone marks the minimum-confidence thresholds the data backs, for the error you accept and the confidence required. It comes from the report, already calculated.",
@@ -61,8 +55,8 @@ export const ZONA = {
       )) as Plantilla<{ umbral: string; valor: string; desde: string }>,
     encima: ((p: { umbral: string; valor: string; hasta: string }) =>
       tb(
-        `${p.umbral} ${p.valor}: por encima de la zona. El error sigue respaldado, pero desde ${p.hasta} se escalan más aciertos de los que aceptas.`,
-        `${p.umbral} ${p.valor}: above the zone. The error is still backed, but from ${p.hasta} up more correct cases are escalated than you accept.`,
+        `${p.umbral} ${p.valor}: por encima de la zona. El error sigue respaldado, pero por encima de ${p.hasta} se escalan más aciertos de los que aceptas.`,
+        `${p.umbral} ${p.valor}: above the zone. The error is still backed, but above ${p.hasta} more correct cases are escalated than you accept.`,
       )) as Plantilla<{ umbral: string; valor: string; hasta: string }>,
     ninguna: ((p: { umbral: string; valor: string }) =>
       tb(
@@ -221,8 +215,8 @@ export const LIDER = {
     tope: number;
   }) =>
     tb(
-      `Que ${p.etapas} acierten a la vez, con ${p.alfa} de error y ${p.seguridad} de seguridad, los datos no lo alcanzan: en ${p.umbral} el agente decide solo ${n(p.solos).es} casos y ${p.etapa} falla en ${n(p.errores).es}; con esa tasa harían falta ${p.casos === null ? `más de ${n(p.tope * p.solos).es}` : n(p.casos).es} casos.`,
-      `That ${p.etapas} are right together, at ${p.alfa} error and ${p.seguridad} confidence, is more than the data reaches: at ${p.umbral} the agent decides ${n(p.solos).en} cases alone and ${p.etapa} fails in ${n(p.errores).en}; at that rate it would take ${p.casos === null ? `more than ${n(p.tope * p.solos).en}` : n(p.casos).en} cases.`,
+      `Que ${p.etapas} acierten a la vez, con ${p.alfa} de error y ${p.seguridad} de seguridad, no se respalda con la secuencia que parte del umbral más alto: en ${p.umbral} el agente decide solo ${n(p.solos).es} casos y ${p.etapa} falla en ${n(p.errores).es}; con esa tasa harían falta ${p.casos === null ? `más de ${n(p.tope * p.solos).es}` : n(p.casos).es} casos.`,
+      `That ${p.etapas} are right together, at ${p.alfa} error and ${p.seguridad} confidence, is not backed by the sequence that starts at the highest threshold: at ${p.umbral} the agent decides ${n(p.solos).en} cases alone and ${p.etapa} fails in ${n(p.errores).en}; at that rate it would take ${p.casos === null ? `more than ${n(p.tope * p.solos).en}` : n(p.casos).en} cases.`,
     )) as Plantilla<{
     alfa: string;
     seguridad: string;
@@ -244,8 +238,8 @@ export const LIDER = {
     etapa: string;
   }) =>
     tb(
-      `Que ${p.etapas} acierten a la vez, con ${p.alfa} de error y ${p.seguridad} de seguridad, los datos no lo alcanzan: en ${p.umbral} el agente decide solo ${n(p.solos).es} casos y ${p.etapa} falla en ${n(p.errores).es}, una tasa que no baja de lo que aceptas; más casos con esa tasa no lo respaldan.`,
-      `That ${p.etapas} are right together, at ${p.alfa} error and ${p.seguridad} confidence, is more than the data reaches: at ${p.umbral} the agent decides ${n(p.solos).en} cases alone and ${p.etapa} fails in ${n(p.errores).en}, a rate that does not go below what you accept; more cases at that rate never back it.`,
+      `Que ${p.etapas} acierten a la vez, con ${p.alfa} de error y ${p.seguridad} de seguridad, no se respalda con la secuencia que parte del umbral más alto: en ${p.umbral} el agente decide solo ${n(p.solos).es} casos y ${p.etapa} falla en ${n(p.errores).es}, una tasa que no baja de lo que aceptas; más casos con esa tasa no lo respaldan.`,
+      `That ${p.etapas} are right together, at ${p.alfa} error and ${p.seguridad} confidence, is not backed by the sequence that starts at the highest threshold: at ${p.umbral} the agent decides ${n(p.solos).en} cases alone and ${p.etapa} fails in ${n(p.errores).en}, a rate that does not go below what you accept; more cases at that rate never back it.`,
     )) as Plantilla<{
     alfa: string;
     seguridad: string;
@@ -270,13 +264,17 @@ export const LIDER = {
     etapas: string;
     umbral: string;
   }>,
+  /** La honestidad del orden: la secuencia fija es conservadora y el orden no se elige mirando los datos. */
+  secuencia: tb(
+    "La prueba parte del umbral más alto y baja hasta que uno no pasa (secuencia fija). Es conservadora: puede decir «no se respalda» donde otro orden pasaría, y elegir el orden mirando los datos invalidaría la seguridad.",
+    "The test starts at the highest threshold and goes down until one fails (fixed sequence). It is conservative: it may say “not backed” where another order would pass, and choosing the order after looking at the data would void the confidence.",
+  ),
   /** Cuando no hay verdad conocida para una etapa con modelo: no se observa y no entra a la cuenta. */
   noObservada: ((p: { etapas: string; n: number }) =>
     tb(
       `${p.n === 1 ? "La etapa" : "Las etapas"} ${p.etapas} no ${p.n === 1 ? "tiene" : "tienen"} verdad conocida en los casos: no se ${p.n === 1 ? "observa" : "observan"} y ${p.n === 1 ? "queda" : "quedan"} fuera de la cuenta.`,
       `The ${p.etapas} ${p.n === 1 ? "stage has" : "stages have"} no ground truth in the cases: ${p.n === 1 ? "it is" : "they are"} not observed and left out of the count.`,
     )) as Plantilla<{ etapas: string; n: number }>,
-  pregunta: tb("¿Cuánto error aceptas?", "How much error do you accept?"),
 };
 
 /** Las etapas con modelo, por el id de su nodo en el plan (el nombre llano; el id si el plan trae otra). */
@@ -352,6 +350,44 @@ export const EXPERTO = {
       `Pruebas a α = ${p.alfa} (umbral: casos solos/errores, p; ✓ rechaza H₀ «error > α»): ${p.lista}.`,
       `Tests at α = ${p.alfa} (threshold: cases alone/errors, p; ✓ rejects H₀ “error > α”): ${p.lista}.`,
     )) as Plantilla<{ alfa: string; lista: string }>,
+  conformalLinea: ((p: { n: number; indice: number; umbral: string }) =>
+    tb(
+      `Conformal: ${n(p.n).es} aciertos, índice ⌊(n + 1)·α⌋ = ${n(p.indice).es} → ${p.umbral}.`,
+      `Conformal: ${n(p.n).en} correct cases, index ⌊(n + 1)·α⌋ = ${n(p.indice).en} → ${p.umbral}.`,
+    )) as Plantilla<{ n: number; indice: number; umbral: string }>,
+  sinCota: tb("sin cota", "no bound"),
+  etapas: ((p: { lista: string }) =>
+    tb(
+      `Etapas con modelo (fallos entre los casos medidos): ${p.lista}.`,
+      `Model stages (failures among the measured cases): ${p.lista}.`,
+    )) as Plantilla<{ lista: string }>,
+  etapaMedida: ((p: { etapa: string; errores: number; casos: number }) =>
+    tb(
+      `${p.etapa} ${n(p.errores).es} de ${n(p.casos).es}`,
+      `${p.etapa} ${n(p.errores).en} of ${n(p.casos).en}`,
+    )) as Plantilla<{ etapa: string; errores: number; casos: number }>,
+  etapaSinVerdad: ((p: { etapa: string }) =>
+    tb(`${p.etapa} sin verdad`, `${p.etapa} no ground truth`)) as Plantilla<{
+    etapa: string;
+  }>,
+  conjuntaPruebas: ((p: {
+    k: number;
+    alfa: string;
+    delta: string;
+    casos: number;
+    lista: string;
+  }) =>
+    tb(
+      `Pruebas de la conjunta a α/${p.k} = ${p.alfa} y δ/${p.k} = ${p.delta}, sobre ${n(p.casos).es} casos con todas las etapas medidas (umbral: etapa casos solos/errores, p; ✓ pasa, ✗ no): ${p.lista}.`,
+      `Joint-coverage tests at α/${p.k} = ${p.alfa} and δ/${p.k} = ${p.delta}, over ${n(p.casos).en} cases with every stage measured (threshold: stage cases alone/errors, p; ✓ passes, ✗ does not): ${p.lista}.`,
+    )) as Plantilla<{
+    k: number;
+    alfa: string;
+    delta: string;
+    casos: number;
+    lista: string;
+  }>,
+  menorQue: tb("< 0,0001", "< 0.0001"),
   alcance: tb(
     "Alcance: vale para casos intercambiables con los medidos. Son sintéticos y el revisor es simulado, así que no dice nada del tráfico real. Un lote nuevo pide recalcular.",
     "Scope: it holds for cases exchangeable with the measured ones. They are synthetic and the reviewer is simulated, so it says nothing about real traffic. A new batch needs a new calculation.",
