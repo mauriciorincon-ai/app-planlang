@@ -13,7 +13,9 @@ import {
   Braces,
   Database,
   History,
+  Info,
   ListChecks,
+  ShieldCheck,
 } from "lucide-react";
 import {
   useId,
@@ -42,7 +44,9 @@ import {
   porcentajeFijo,
 } from "@/lib/vista/formato";
 import type { DatosIsla, UmbralIsla } from "@/lib/vista/playground";
+import { dentroDeLaZona, lugarEnLaZona } from "@/lib/vista/zona";
 import { PERFIL } from "@/textos/comun";
+import { ZONA } from "@/textos/garantia";
 import {
   CAMBIOS,
   CIFRAS,
@@ -88,13 +92,25 @@ function datoCorto(x: JsonValor | undefined, i: Idioma): string {
 
 // --------------------------------------------------------------------------------------------- deslizadores
 
+/** La trama de la zona respaldada: diagonales del color de «cumple» sobre su tinte (el color nunca va solo). */
+const TRAMA_ZONA =
+  "bg-vt bg-[repeating-linear-gradient(135deg,color-mix(in_srgb,var(--v)_34%,transparent)_0_1px,transparent_1px_6px)]";
+
 function Deslizador({
   u,
   v,
   obs,
   i,
   alCambiar,
+  zona = null,
 }: {
+  /** La zona respaldada del nivel de α elegido sobre este deslizador, y dónde cae el valor (solo en el de la confianza). */
+  zona?: {
+    /** El tramo respaldado del deslizador; `null` si con ese error no hay zona (se dice, no se dibuja). */
+    halo: { desde: number; hasta: number } | null;
+    dentro: boolean;
+    estado: string;
+  } | null;
   u: UmbralIsla;
   v: number;
   obs: {
@@ -152,6 +168,21 @@ function Deslizador({
         · {(u.inclusivo ? JUEGO.inclusivo : JUEGO.noInclusivo)[i]}
       </span>
       <div className="relative pt-1 pb-5">
+        {zona?.halo ? (
+          <span
+            aria-hidden="true"
+            data-zona="deslizador"
+            data-v="cumple"
+            className={cx(
+              "absolute top-2.5 h-3 min-w-1.5 rounded-barra border border-v",
+              TRAMA_ZONA,
+            )}
+            style={{
+              left: `calc(${((zona.halo.desde - r.min) / (r.max - r.min)) * 100}% + ${9 - ((((zona.halo.desde - r.min) / (r.max - r.min)) * 100) / 100) * 18}px)`,
+              width: `calc(${((zona.halo.hasta - zona.halo.desde) / (r.max - r.min)) * 100}% - ${((((zona.halo.hasta - zona.halo.desde) / (r.max - r.min)) * 100) / 100) * 18}px)`,
+            }}
+          />
+        ) : null}
         <input
           id={id}
           type="range"
@@ -184,6 +215,21 @@ function Deslizador({
         <span>{fmt(r.min)}</span>
         <span>{fmt(r.max)}</span>
       </div>
+      {zona ? (
+        <p
+          data-zona-estado={zona.dentro ? "dentro" : "fuera"}
+          data-v={zona.dentro ? "cumple" : "alerta"}
+          aria-live="polite"
+          className="grid grid-cols-[16px_minmax(0,1fr)] items-start gap-2 text-dato"
+        >
+          <Marca
+            tipo={zona.dentro ? "cumple" : "alerta"}
+            tam={14}
+            className="mt-0.5 text-v"
+          />
+          <span>{zona.estado}</span>
+        </p>
+      ) : null}
       <p id={nota} className="text-chico text-tinta-2">
         {u.descripcion}
       </p>
@@ -789,6 +835,31 @@ export function Juego({ datos }: { datos: DatosIsla }) {
   const umbralCurva = curva
     ? datos.umbrales.find((x) => x.id === curva.umbral)
     : undefined;
+  // S8: la zona que los datos respaldan para el error que el visitante acepta. Los tres niveles vienen del informe,
+  // ya escritos; aquí solo se elige uno y se mira dónde cae el valor del deslizador (nada se calcula al pintar).
+  const g = datos.garantia;
+  const alfaId = useId();
+  const [nivelElegido, setNivelElegido] = useState(g?.porOmision ?? 0);
+  const nivel = g ? (g.niveles[nivelElegido] ?? null) : null;
+  const zona = nivel?.zona ?? null;
+  const lugar = u1 !== null && nivel ? lugarEnLaZona(zona, u1) : null;
+  const estadoZona =
+    g && umbralCurva && u1 !== null && lugar
+      ? (() => {
+          const p = {
+            umbral: g.umbral,
+            valor: decimal(u1, umbralCurva.decimales, i),
+          };
+          const f = (x: number) => decimal(x, umbralCurva.decimales, i);
+          return lugar === "dentro"
+            ? ZONA.estado.dentro(p)[i]
+            : lugar === "debajo"
+              ? ZONA.estado.debajo({ ...p, desde: f(zona!.desde) })[i]
+              : lugar === "encima"
+                ? ZONA.estado.encima({ ...p, hasta: f(zona!.hasta) })[i]
+                : ZONA.estado.ninguna(p)[i];
+        })()
+      : null;
 
   return (
     <>
@@ -811,6 +882,17 @@ export function Juego({ datos }: { datos: DatosIsla }) {
                   obs={o}
                   i={i}
                   alCambiar={(x) => poner(um.id, x)}
+                  zona={
+                    curva && um.id === curva.umbral && estadoZona && lugar
+                      ? {
+                          halo: zona
+                            ? { desde: zona.desde, hasta: zona.hasta }
+                            : null,
+                          dentro: lugar === "dentro",
+                          estado: estadoZona,
+                        }
+                      : null
+                  }
                 />
               ) : (
                 <Interruptor
@@ -1094,6 +1176,112 @@ export function Juego({ datos }: { datos: DatosIsla }) {
           <p className="mb-6 max-w-[72ch] text-texto leading-[1.6]">
             {curva.lectura}
           </p>
+          {g && nivel ? (
+            <div
+              id="zona-respaldada"
+              className="mb-6 grid gap-4 rounded-baldosa border border-linea bg-sup-1 p-4"
+            >
+              <h3 className="flex items-center gap-2 text-sub font-semibold">
+                <Icono de={ShieldCheck} className="text-tinta-2" />
+                {ZONA.titulo[i]}
+              </h3>
+              <p className="max-w-[72ch] text-chico text-tinta-2">
+                {ZONA.intro[i]}
+              </p>
+              <fieldset className="m-0 grid gap-2 border-0 p-0">
+                <legend className="mb-1 p-0 text-chico font-semibold">
+                  {ZONA.selector.leyenda[i]}
+                </legend>
+                <div className="flex flex-wrap gap-2">
+                  {g.niveles.map((n, k) => (
+                    <label
+                      key={n.alfa}
+                      className={cx(
+                        "inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-control border px-3 py-1.5 text-chico has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-tinta-1",
+                        k === nivelElegido
+                          ? "border-tinta-1 bg-sup-2 font-semibold"
+                          : "border-linea",
+                      )}
+                    >
+                      <input
+                        type="radio"
+                        name={`alfa-${alfaId}`}
+                        value={n.alfa}
+                        checked={k === nivelElegido}
+                        onChange={() => setNivelElegido(k)}
+                        className="size-4 accent-[var(--tinta-1)]"
+                      />
+                      {n.opcion}
+                    </label>
+                  ))}
+                </div>
+                <p className="text-dato text-tinta-2">
+                  {ZONA.selector.ayuda[i]}
+                </p>
+                <p className="text-dato text-tinta-2">
+                  {
+                    ZONA.selector.seguridad({
+                      seguridad: g.seguridad,
+                      delta: g.delta,
+                    })[i]
+                  }
+                </p>
+              </fieldset>
+              <div
+                aria-live="polite"
+                data-nivel={nivel.alfa}
+                className="grid gap-2"
+              >
+                <p
+                  data-v={zona ? "cumple" : "alerta"}
+                  className="flex items-start gap-2 text-chico font-semibold"
+                >
+                  <Marca
+                    tipo={zona ? "cumple" : "alerta"}
+                    tam={14}
+                    className="mt-0.5 shrink-0 text-v"
+                  />
+                  {nivel.leyenda}
+                </p>
+                <p className="max-w-[72ch] text-texto leading-[1.6]">
+                  {nivel.lider}
+                </p>
+                {nivel.aplicado ? (
+                  <p className="max-w-[72ch] text-chico text-tinta-2 leading-[1.6]">
+                    {nivel.aplicado}
+                  </p>
+                ) : null}
+              </div>
+              {nivel.noAlcanza.length > 0 || g.noObservadas ? (
+                <ul className="m-0 grid list-none gap-1.5 p-0">
+                  {[
+                    ...nivel.noAlcanza,
+                    ...(g.noObservadas ? [g.noObservadas] : []),
+                  ].map((t) => (
+                    <li
+                      key={t}
+                      className="grid grid-cols-[16px_minmax(0,1fr)] gap-2 text-dato text-tinta-2"
+                    >
+                      <Icono de={Info} tam={14} className="mt-0.5" />
+                      {t}
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+              <BloqueExperto rotulo={PERFIL.experto[i]}>
+                <p className="mb-1.5 text-dato text-tinta-2">{g.metodo}</p>
+                {nivel.experto.map((t) => (
+                  <p
+                    key={t}
+                    className="mb-1.5 font-mono text-dato text-tinta-2"
+                  >
+                    {t}
+                  </p>
+                ))}
+                <p className="text-dato text-tinta-2">{g.alcance}</p>
+              </BloqueExperto>
+            </div>
+          ) : null}
           <div className="grid grid-cols-1 items-start gap-6 amplio:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
             <figure className="m-0 rounded-baldosa border border-linea bg-sup-1 p-4">
               <Curva
@@ -1101,6 +1289,17 @@ export function Juego({ datos }: { datos: DatosIsla }) {
                 puntos={curva.puntos}
                 plan={curva.plan}
                 actual={u1}
+                zona={
+                  zona
+                    ? {
+                        umbrales: zona.umbrales,
+                        titulo: ZONA.tituloSvg({
+                          desde: decimal(zona.desde, umbralCurva.decimales, i),
+                          hasta: decimal(zona.hasta, umbralCurva.decimales, i),
+                        })[i],
+                      }
+                    : null
+                }
                 textos={{
                   titulo: CURVA.tituloSvg({ n: curva.n })[i],
                   ejeCobertura: CURVA.ejeCobertura[i],
@@ -1121,11 +1320,32 @@ export function Juego({ datos }: { datos: DatosIsla }) {
               <figcaption className="mt-2 text-dato text-tinta-2">
                 {CURVA.pie[i]}
               </figcaption>
+              {nivel ? (
+                <p
+                  data-v="cumple"
+                  className="mt-2 flex items-start gap-2 text-dato text-tinta-2"
+                >
+                  <span
+                    aria-hidden="true"
+                    className={cx(
+                      "mt-0.5 inline-block h-3 w-5 shrink-0 rounded-mini border border-dashed border-v",
+                      TRAMA_ZONA,
+                    )}
+                  />
+                  <span>
+                    <b className="font-semibold text-tinta-1">
+                      {ZONA.nombre[i]}
+                    </b>
+                    {" · "}
+                    {nivel.leyenda}
+                  </span>
+                </p>
+              ) : null}
             </figure>
             <div role="table" aria-label={CURVA.titulo[i]} className="grid">
               <div
                 role="row"
-                className="grid grid-cols-[60px_minmax(0,1fr)_minmax(0,1.3fr)_minmax(0,0.8fr)_minmax(0,0.8fr)] gap-2 pb-1.5 text-dato text-tinta-2"
+                className="grid grid-cols-[84px_minmax(0,1fr)_minmax(0,1.3fr)_minmax(0,0.8fr)_minmax(0,0.8fr)] gap-2 pb-1.5 text-dato text-tinta-2"
               >
                 <span role="columnheader">{curva.umbral}</span>
                 <span role="columnheader">{CURVA.columnas.cobertura[i]}</span>
@@ -1138,6 +1358,7 @@ export function Juego({ datos }: { datos: DatosIsla }) {
               {curva.puntos.map((p) => {
                 const esPlan = Math.abs(p.umbral - curva.plan) < 1e-9;
                 const esActual = Math.abs(p.umbral - u1) < 1e-9;
+                const enZona = dentroDeLaZona(zona, p.umbral);
                 return (
                   <div
                     key={p.umbral}
@@ -1145,9 +1366,12 @@ export function Juego({ datos }: { datos: DatosIsla }) {
                     data-u={p.umbral}
                     data-actual={esActual}
                     data-plan={esPlan}
+                    data-zona={enZona}
+                    data-v={enZona ? "cumple" : undefined}
                     className={cx(
-                      "grid grid-cols-[60px_minmax(0,1fr)_minmax(0,1.3fr)_minmax(0,0.8fr)_minmax(0,0.8fr)] items-center gap-2 border-t border-linea py-1.75 font-mono text-dato",
-                      esActual && "bg-sup-2",
+                      "grid grid-cols-[84px_minmax(0,1fr)_minmax(0,1.3fr)_minmax(0,0.8fr)_minmax(0,0.8fr)] items-center gap-2 border-t border-linea py-1.75 font-mono text-dato",
+                      enZona ? TRAMA_ZONA : esActual && "bg-sup-2",
+                      esActual && "font-semibold",
                     )}
                   >
                     <span
@@ -1166,6 +1390,12 @@ export function Juego({ datos }: { datos: DatosIsla }) {
                           aria-hidden="true"
                           className="inline-block size-2 rounded-full border border-tinta-1"
                         />
+                      ) : null}
+                      {enZona ? (
+                        <>
+                          <Marca tipo="cumple" tam={12} className="text-v" />
+                          <span className="sr-only"> ({ZONA.glifo[i]})</span>
+                        </>
                       ) : null}
                       {esActual ? (
                         <span className="sr-only"> ({CURVA.srActual[i]})</span>

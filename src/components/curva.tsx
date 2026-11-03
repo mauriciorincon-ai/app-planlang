@@ -52,6 +52,17 @@ export function agrupar(puntos: readonly PuntoCurva[]) {
   return grupos;
 }
 
+/**
+ * La zona respaldada (S8): los umbrales de la rejilla que los datos respaldan. Se dibuja como una banda con trama
+ * diagonal y tinte de «cumple» entre la menor y la mayor cobertura de esos umbrales; el color nunca va solo, la leyenda
+ * y la tabla la nombran. Sin lógica: el cálculo viene del informe.
+ */
+export interface ZonaDeLaCurva {
+  umbrales: readonly number[];
+  /** Lo que lee el lector de pantalla: «zona respaldada de 0,50 a 0,90». */
+  titulo: string;
+}
+
 export function Curva({
   puntos,
   plan,
@@ -59,6 +70,7 @@ export function Curva({
   textos,
   mini = false,
   id,
+  zona,
 }: {
   puntos: readonly PuntoCurva[];
   plan: number;
@@ -66,6 +78,7 @@ export function Curva({
   textos: TextosCurva;
   mini?: boolean;
   id: string;
+  zona?: ZonaDeLaCurva | null;
 }) {
   const t = tope(puntos);
   const fy = (r: number) => Y0 - (r / t) * ALTO;
@@ -86,17 +99,74 @@ export function Curva({
       ? null
       : grupos.find((g) => g.umbrales.some((u) => Math.abs(u - actual) < 1e-9));
   const enPlan = actual === undefined || Math.abs(actual - plan) < 1e-9;
+  const cobZona = zona
+    ? puntos
+        .filter((p) => zona.umbrales.some((u) => Math.abs(u - p.umbral) < 1e-9))
+        .map((p) => p.cobertura)
+    : [];
+  const banda =
+    cobZona.length > 0
+      ? {
+          x: fx(Math.min(...cobZona)) - 6,
+          ancho: fx(Math.max(...cobZona)) - fx(Math.min(...cobZona)) + 12,
+        }
+      : null;
   return (
     <svg
+      id={id}
       viewBox="0 0 480 250"
       role="img"
       aria-labelledby={`${id}-t`}
+      aria-describedby={banda ? `${id}-d` : undefined}
       className={cx(
         "block h-auto w-full overflow-visible [&_text]:fill-tinta-2 [&_text]:font-mono [&_text]:text-[11px]",
         mini ? "max-w-[480px]" : "",
       )}
     >
       <title id={`${id}-t`}>{textos.titulo}</title>
+      {banda && zona ? (
+        <>
+          <desc id={`${id}-d`}>{zona.titulo}</desc>
+          <defs>
+            <pattern
+              id={`${id}-trama`}
+              width={6}
+              height={6}
+              patternUnits="userSpaceOnUse"
+              patternTransform="rotate(45)"
+            >
+              <line
+                x1={0}
+                y1={0}
+                x2={0}
+                y2={6}
+                strokeWidth={1.5}
+                strokeOpacity={0.5}
+                style={{ stroke: "var(--cumple)" }}
+              />
+            </pattern>
+          </defs>
+          <g data-zona="respaldada">
+            <rect
+              x={banda.x}
+              y={12}
+              width={banda.ancho}
+              height={Y0 - 12}
+              style={{ fill: "var(--cumple-tinte)" }}
+            />
+            <rect
+              x={banda.x}
+              y={12}
+              width={banda.ancho}
+              height={Y0 - 12}
+              fill={`url(#${id}-trama)`}
+              strokeWidth={1.5}
+              strokeDasharray="4 3"
+              style={{ stroke: "var(--cumple)" }}
+            />
+          </g>
+        </>
+      ) : null}
       <g className="fill-none stroke-tinta-3" strokeWidth={1}>
         <path d={`M${X0},12 V${Y0} H${X1}`} />
         <line x1={X0} y1={108} x2={X1} y2={108} strokeDasharray="2 4" />
