@@ -9,7 +9,7 @@
     "ciclo": "H-2",
     "version": "0.1.0",
     "sellado_en": null,
-    "sprints_cerrados": 7
+    "sprints_cerrados": 8
   },
   "promesa": {
     "tagline": "Your AI agent, measured against the plan you wrote before building it.",
@@ -378,7 +378,7 @@
       "etiqueta": "ciclo"
     },
     {
-      "valor": "7",
+      "valor": "8",
       "etiqueta": "sprints"
     },
     {
