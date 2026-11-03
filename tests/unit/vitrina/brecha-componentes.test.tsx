@@ -175,3 +175,100 @@ describe("regla 5-a: la forma no depende del perfil", () => {
     expect(forma(container)).toBe(antes);
   });
 });
+
+/** La vitrina une la cifra y su signo con un espacio duro; aquí se lee con espacio normal. */
+const llano = (t: string | null | undefined) =>
+  (t ?? "").replaceAll("\u00a0", " ");
+
+describe("S1 con su garantía (S8, ADR-018)", () => {
+  it("en llano: el nivel que el informe declara, dónde cae el umbral de la corrida y lo que los datos no alcanzan", () => {
+    const { container } = render(<Pagina idioma="es" />);
+    const s1 = container.querySelector("#s-S1")!;
+    const g = s1.querySelector('[data-garantia="s1"]')!;
+    expect(llano(g.textContent)).toContain(
+      "Zona respaldada con 10 % de error: confianza mínima de 0,50 a 0,90.",
+    );
+    expect(llano(g.textContent)).toContain(
+      "El U1 de la corrida (0,75) cae dentro.",
+    );
+    expect(llano(g.textContent)).toContain("los datos no lo alcanzan");
+    expect(llano(g.textContent)).toContain("harían falta 268 casos");
+    expect(llano(g.textContent)).toContain(
+      "La etapa redactor no tiene verdad conocida",
+    );
+    // La zona respaldada también se ve en la curva de S1 (trama; el color nunca va solo).
+    expect(
+      s1.querySelector('#curva-S1 [data-zona="respaldada"]'),
+    ).not.toBeNull();
+    expect(s1.querySelector("#curva-S1 desc")!.textContent).toBe(
+      "zona respaldada de 0,50 a 0,90",
+    );
+    // Solo S1 trae garantía.
+    expect(container.querySelectorAll('[data-garantia="s1"]')).toHaveLength(1);
+  });
+
+  it("para el experto: la tabla de los tres niveles de α con el del informe marcado, el método, las pruebas y el alcance", () => {
+    const { container } = render(<Pagina idioma="es" />);
+    const g = container.querySelector('[data-garantia="s1"]')!;
+    const solo = g.querySelector(".solo-experto")!;
+    const filas = [...solo.querySelectorAll("[data-alfa]")];
+    expect(filas.map((f) => f.getAttribute("data-alfa"))).toEqual([
+      "0.05",
+      "0.1",
+      "0.2",
+    ]);
+    expect(llano(filas[1]!.textContent)).toContain("0,10 · el del informe");
+    expect(llano(filas[1]!.textContent)).toContain("0,50–0,90");
+    expect(llano(filas[1]!.textContent)).toContain("no alcanza");
+    expect(llano(filas[2]!.textContent)).toContain("0,50 (k = 2)");
+    const texto = llano(solo.textContent);
+    expect(texto).toContain("Learn then Test, secuencia fija");
+    expect(texto).toContain(
+      "Cobertura conjunta (Bonferroni): extractor, aclaración",
+    );
+    expect(texto).toContain("Pruebas a α = 0,10");
+    expect(texto).toContain("Alcance: vale para casos intercambiables");
+  });
+
+  it("en inglés, redactado y con los números en inglés", () => {
+    const { container } = render(<Pagina idioma="en" />);
+    const g = container.querySelector('[data-garantia="s1"]')!;
+    const texto = llano(g.textContent);
+    expect(texto).toContain(
+      "Backed zone at 10% error: minimum confidence from 0.50 to 0.90.",
+    );
+    expect(texto).toContain("The run's U1 (0.75) falls inside.");
+    expect(texto).toContain("it would take 268 cases");
+    expect(texto).toContain(
+      "Joint coverage (Bonferroni): extractor, clarification",
+    );
+    for (const residuo of [
+      "Zona",
+      "caso",
+      "Alcance",
+      "Pruebas",
+      "el del informe",
+    ])
+      expect(texto, residuo).not.toContain(residuo);
+  });
+
+  it("sin garantía en el informe, S1 es el de antes: sin bloque ni banda", () => {
+    const sin = { ...d, informe: structuredClone(d.informe) };
+    for (const s of sin.informe.supuestos) s.garantia = null;
+    const { container } = render(<Pagina idioma="es" datos={sin} />);
+    expect(container.querySelector('[data-garantia="s1"]')).toBeNull();
+    expect(
+      container.querySelector('#curva-S1 [data-zona="respaldada"]'),
+    ).toBeNull();
+    expect(container.querySelector("#curva-S1")).not.toBeNull();
+  });
+
+  it("la forma del árbol no depende del perfil", () => {
+    html.setAttribute("data-perfil", "lider");
+    const a = renderToStaticMarkup(<Pagina idioma="es" />);
+    html.setAttribute("data-perfil", "experto");
+    const b = renderToStaticMarkup(<Pagina idioma="es" />);
+    expect(a).toBe(b);
+    expect(a).toContain("Cobertura conjunta (Bonferroni)");
+  });
+});

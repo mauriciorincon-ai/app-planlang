@@ -69,6 +69,7 @@ import { enlaceACaso } from "./paginas-caso";
 import { filasDeReproducibilidad } from "./reproducibilidad";
 import {
   decimal,
+  decimalesDe,
   deCada,
   entero,
   enumerar,
@@ -76,6 +77,7 @@ import {
   porcentaje,
   versionCorta,
 } from "./formato";
+import { vistaGarantia, type VistaGarantia } from "./garantia";
 import {
   controlLegal,
   criticidadEnTexto,
@@ -210,6 +212,11 @@ export interface SupuestoVista {
   reglita: string;
   medidas: Fila[];
   notas: string[];
+  /**
+   * La calibración con garantía (S8, ADR-018): el umbral con garantía, el conformal y la cobertura conjunta, con lo que
+   * los datos no alcanzan. Solo el supuesto de calibración con curva la trae.
+   */
+  garantia: VistaGarantia | null;
   grafico:
     | {
         tipo: "curva";
@@ -1831,7 +1838,12 @@ function filaSupuesto(
       { href: "#b6", texto: `§ 6 ${X(SECCIONES.b6, i)}` },
       // S4: la fila de la línea base enlaza a la comparación de las dos corridas, solo si el demo la publica (el A).
       ...(s.comparacion && d.comparacion
-        ? [{ href: ruta(i, "comparar", undefined, demo), texto: ENLACE_COMPARAR.brecha[i] }]
+        ? [
+            {
+              href: ruta(i, "comparar", undefined, demo),
+              texto: ENLACE_COMPARAR.brecha[i],
+            },
+          ]
         : []),
     ],
   };
@@ -2318,6 +2330,7 @@ function vistaSupuesto(
   let texto: TextoBilingue;
   let medidas: Fila[] = [];
   let grafico: SupuestoVista["grafico"] = null;
+  let garantia: VistaGarantia | null = null;
   if (s.comparacion) {
     const c = s.comparacion;
     const latM = cifra(
@@ -2463,6 +2476,15 @@ function vistaSupuesto(
     });
     const conRiesgo = s.curva.some((x) => (x.riesgo ?? 0) > 0);
     const deLaCurva = umbralDeLaCurva(plan, s.id);
+    if (s.garantia)
+      garantia = vistaGarantia(
+        s.garantia,
+        deLaCurva.id,
+        "min" in deLaCurva.rango_jugable
+          ? decimalesDe(deLaCurva.rango_jugable.paso)
+          : 2,
+        i,
+      );
     grafico = {
       tipo: "curva",
       umbral: deLaCurva.id,
@@ -2531,6 +2553,7 @@ function vistaSupuesto(
     reglita: X(s.motivo, i),
     medidas,
     notas: s.limitaciones.map((l) => X(l, i)),
+    garantia,
     grafico,
   };
 }

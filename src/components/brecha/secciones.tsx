@@ -36,6 +36,7 @@ import {
   SUPUESTOS,
 } from "@/textos/brecha";
 import { PERFIL } from "@/textos/comun";
+import { EXPERTO as EXPERTO_GARANTIA, ZONA } from "@/textos/garantia";
 import {
   Definiciones,
   GrupoT,
@@ -50,6 +51,7 @@ import { Chip } from "../chip";
 import { Curva } from "../curva";
 import { cx } from "../cx";
 import { Icono } from "../icono";
+import { Marca } from "../marcas";
 import { BloqueExperto } from "../perfil/bloque-experto";
 import { Seccion } from "../seccion";
 import { TablaF } from "../tabla-f";
@@ -544,6 +546,20 @@ export function Brechas({ v, idioma }: { v: VistaBrecha; idioma: Idioma }) {
 
 // --------------------------------------------------------------------------------------------- § 6
 
+/** La zona respaldada del nivel que el informe declara, para dibujarla sobre la curva de S1. */
+function zonaDeLaCurva(s: SupuestoVista, idioma: Idioma) {
+  const g = s.garantia;
+  const zona = g?.niveles[g.porOmision]?.zona;
+  if (!g || !zona || s.grafico?.tipo !== "curva") return null;
+  return {
+    umbrales: zona.umbrales,
+    titulo: ZONA.tituloSvg({
+      desde: decimal(zona.desde, 2, idioma),
+      hasta: decimal(zona.hasta, 2, idioma),
+    })[idioma],
+  };
+}
+
 function GraficoSupuesto({ s, idioma }: { s: SupuestoVista; idioma: Idioma }) {
   const g = s.grafico;
   if (!g) return null;
@@ -556,6 +572,7 @@ function GraficoSupuesto({ s, idioma }: { s: SupuestoVista; idioma: Idioma }) {
           mini
           puntos={g.puntos}
           plan={g.plan}
+          zona={zonaDeLaCurva(s, idioma)}
           textos={{
             titulo: CURVA_SUPUESTO.titulo({ id: s.id, n: g.n })[idioma],
             ejeCobertura: CURVA_SUPUESTO.ejeCobertura[idioma],
@@ -664,6 +681,85 @@ function rango(us: readonly number[], idioma: Idioma): string {
   return us.length === 1 ? a : `${a}–${b}`;
 }
 
+/**
+ * La calibración con garantía de S1 (S8, ADR-018): en llano, el nivel que el informe declara y lo que los datos no
+ * alcanzan; en el bloque del experto, la tabla de los tres niveles, el método, las pruebas y el alcance. Todo viene
+ * del informe, ya escrito.
+ */
+function GarantiaDeS1({
+  g,
+  idioma,
+}: {
+  g: NonNullable<SupuestoVista["garantia"]>;
+  idioma: Idioma;
+}) {
+  const nivel = g.niveles[g.porOmision]!;
+  const notas = [
+    ...nivel.noAlcanza,
+    ...(g.noObservadas ? [g.noObservadas] : []),
+  ];
+  const columnas = g.tablaExperto.columnas.map((titulo, k) => ({
+    titulo,
+    ancho: k === 0 ? "88px" : "minmax(0,1fr)",
+    mono: k > 0,
+  }));
+  return (
+    <div id={`garantia-${g.umbral}`} className="grid gap-2" data-garantia="s1">
+      <p
+        data-v={nivel.zona ? "cumple" : "alerta"}
+        className="flex items-start gap-2 text-chico font-semibold"
+      >
+        <Marca
+          tipo={nivel.zona ? "cumple" : "alerta"}
+          tam={14}
+          className="mt-0.5 shrink-0 text-v"
+        />
+        {nivel.leyenda}
+      </p>
+      <p className="text-chico leading-normal">{nivel.lider}</p>
+      {nivel.aplicado ? (
+        <p className="text-dato text-tinta-2">{nivel.aplicado}</p>
+      ) : null}
+      {notas.length > 0 ? (
+        <ul className="m-0 grid list-none gap-1.5 p-0">
+          {notas.map((n) => (
+            <li
+              key={n}
+              className="grid grid-cols-[16px_minmax(0,1fr)] gap-2 text-dato text-tinta-2"
+            >
+              <Icono de={Info} tam={14} className="mt-0.5" />
+              {n}
+            </li>
+          ))}
+        </ul>
+      ) : null}
+      <BloqueExperto rotulo={PERFIL.experto[idioma]}>
+        <p className="mb-2 text-dato text-tinta-2">{g.metodo}</p>
+        <TablaF
+          etiqueta={g.tablaExperto.titulo}
+          columnas={columnas}
+          filas={g.niveles.map((n) => ({
+            clave: String(n.alfa),
+            marcada: n.esDelInforme,
+            atributos: { "data-alfa": String(n.alfa) },
+            celdas: n.fila.map((c, k) =>
+              k === 0 && n.esDelInforme
+                ? `${c} · ${EXPERTO_GARANTIA.tabla.delInforme[idioma]}`
+                : c,
+            ),
+          }))}
+        />
+        {nivel.experto.map((t) => (
+          <p key={t} className="mt-2 font-mono text-dato text-tinta-2">
+            {t}
+          </p>
+        ))}
+        <p className="mt-2 text-dato text-tinta-2">{g.alcance}</p>
+      </BloqueExperto>
+    </div>
+  );
+}
+
 export function Supuestos({ v, idioma }: { v: VistaBrecha; idioma: Idioma }) {
   return (
     <SeccionB n={6} idioma={idioma}>
@@ -703,6 +799,11 @@ export function Supuestos({ v, idioma }: { v: VistaBrecha; idioma: Idioma }) {
               </ul>
             </div>
             <GraficoSupuesto s={s} idioma={idioma} />
+            {s.garantia ? (
+              <div className="amplio:col-span-2">
+                <GarantiaDeS1 g={s.garantia} idioma={idioma} />
+              </div>
+            ) : null}
           </div>
         ))}
       </div>
