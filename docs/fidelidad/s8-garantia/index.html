@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La zona respaldada por los datos · mirada de forma (S8)</title>
+<style>
+:root{--fondo:#0f1115;--sup:#171a21;--t1:#eceef2;--t2:#a9afbb;--linea:#2a2f3a}
+@media (prefers-color-scheme: light){:root{--fondo:#f7f7f5;--sup:#fff;--t1:#16181d;--t2:#4a505c;--linea:#d9dbe0}}
+body{margin:0;background:var(--fondo);color:var(--t1);font:15px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1200px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:24px;margin:0 0 8px}h2{font-size:19px;margin:40px 0 8px}h3{font-size:16px;margin:0}
+p{color:var(--t2);max-width:80ch;margin:4px 0}code{font:12px ui-monospace,monospace}
+.pregunta{color:var(--t1);font-size:17px;font-weight:600}
+table{border-collapse:collapse;width:100%;font-size:13px;margin-top:8px}th,td{border-top:1px solid var(--linea);padding:8px;text-align:left;vertical-align:top}th{color:var(--t2);font-weight:500}
+.forma{margin-top:28px}.forma img{max-width:100%;height:auto;border:1px solid var(--linea);border-radius:6px;display:block;margin-top:8px}
+.minis{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:12px}
+.minis figure{margin:0}.minis img{width:100%;height:auto;border:1px solid var(--linea);border-radius:4px;display:block}.minis figcaption{font-size:11px;color:var(--t2);margin-top:4px;line-height:1.4}
+</style>
+</head>
+<body><main>
+<p class="pregunta">¿La zona que los datos respaldan, y lo que no alcanzan, se leen como esperas en el playground y en la Brecha? Mira cada fila de la tabla con su recorte.</p>
+<h1>La zona respaldada por los datos · mirada de forma «no vista» (S8)</h1>
+<p>Vitrina construida con el commit en curso, servida desde <code>out/</code>. Clase de mirada: FORMA, registrada «no vista»; su veredicto viaja al gate del hito H-2 (el ensayo general). Solo en español: el inglés llega al cierre del hito. Las capturas enteras no se versionan: cada una se identifica por su huella SHA-256.</p>
+<h2>La matriz</h2>
+<table><thead><tr><th>#</th><th>Archivo / pantalla</th><th>Botón o estado</th><th>Qué mirar</th><th>Respuesta esperada</th><th>Tu respuesta</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Playground (/es/playground), la zona respaldada con el error del informe</td><td>tal como abre</td><td>El panel «Dónde el umbral tiene el respaldo de los datos», el selector del error que aceptas, la curva con su banda de trama y la tabla con las filas de la zona marcadas.</td><td>10 % marcado; «Zona respaldada con 10 % de error: confianza mínima de 0,50 a 0,90»; la banda con trama y borde discontinuo sobre la curva; nueve filas con trama, palomita y la palabra «respaldado por los datos» para el lector de pantalla; la leyenda «Zona respaldada». Dos notas de lo que los datos no alcanzan.</td><td>sin respuesta</td></tr>
+<tr><td>2</td><td>Playground, error de 5 % y U1 por debajo de la zona (pasada de interacción)</td><td>tras elegir 5 %</td><td>Que la zona se estreche a 0,75–0,85, que el cuadro ■ de la curva quede fuera de la banda y que la tabla marque solo tres filas.</td><td>«Zona respaldada con 5 % de error: confianza mínima de 0,75 a 0,85»; tres filas con trama; el cuadro del U1 actual (0,60) a la derecha de la banda (un umbral más bajo da más cobertura); en la nota de lo que los datos no alcanzan, «más de 2.680 casos».</td><td>sin respuesta</td></tr>
+<tr><td>3</td><td>Playground, el deslizador de U1 con la zona y dónde cae su valor</td><td>tras mover U1 a 0,60 con 5 %</td><td>Que el tramo respaldado se dibuje sobre la pista con trama, que debajo diga dónde cae el valor y que a 380 px nada se salga de la tarjeta.</td><td>El tramo de trama entre 0,75 y 0,85; el glifo de alerta y «U1 0,60: por debajo de la zona. Desde 0,75 hacia arriba los datos respaldan el error aceptado; con este valor, no.»</td><td>sin respuesta</td></tr>
+<tr><td>4</td><td>Brecha (/es/brecha), S1 con su garantía, como líder</td><td>tal como abre</td><td>Bajo «El modelo extrae con confianza calibrada»: la zona respaldada en palabras llanas, dónde cae el umbral de la corrida y lo que los datos no alcanzan.</td><td>«Zona respaldada con 10 % de error: confianza mínima de 0,50 a 0,90»; «El U1 de la corrida (0,75) cae dentro.»; la nota de la cobertura conjunta con «268 casos» y la del redactor sin verdad; la curva de S1 con su banda.</td><td>sin respuesta</td></tr>
+<tr><td>5</td><td>Brecha, S1, perfil experto (pasada de interacción)</td><td>tras pulsar «Experto»</td><td>Que aparezca el bloque del experto: el método, la tabla de los tres niveles de α con el del informe marcado, las pruebas, el error conjunto observado y el alcance.</td><td>Tres filas (α 0,05 · α 0,10 «el del informe» · α 0,20); a 0,10: umbral con garantía 0,50, conformal 0,90, zona 0,50–0,90, «sí», «no alcanza»; a 0,20: «0,50 (k = 2)». Las pruebas con p y ✓/✗.</td><td>sin respuesta</td></tr>
+<tr><td>6</td><td>Brecha, S1 en el teléfono (como experto)</td><td>tras pulsar «Experto», 380 px</td><td>Que la tabla de los tres niveles se lea en tarjetas, sin desplazamiento lateral y sin cortar las cifras.</td><td>Una tarjeta por nivel con sus siete datos rotulados; el nivel del informe resaltado; nada se sale de la pantalla.</td><td>sin respuesta</td></tr>
+</tbody></table>
+<h2>Los recortes</h2>
+<section class="forma" id="playground-zona"><h3>1. Playground (/es/playground), la zona respaldada con el error del informe</h3><p>tal como abre · 1280 px · oscuro</p><img loading="lazy" src="forma-playground-zona.jpg" alt="El panel «Dónde el umbral tiene el respaldo de los datos», el selector del error que aceptas, la curva con su banda de trama y la tabla con las filas de la zona marcadas."></section>
+<section class="forma" id="playground-cinco-por-ciento"><h3>2. Playground, error de 5 % y U1 por debajo de la zona (pasada de interacción)</h3><p>tras elegir 5 % · 1280 px · claro · la interacción cambió la página</p><img loading="lazy" src="forma-playground-cinco-por-ciento.jpg" alt="Que la zona se estreche a 0,75–0,85, que el cuadro ■ de la curva quede fuera de la banda y que la tabla marque solo tres filas."></section>
+<section class="forma" id="playground-deslizador"><h3>3. Playground, el deslizador de U1 con la zona y dónde cae su valor</h3><p>tras mover U1 a 0,60 con 5 % · 380 px · oscuro · la interacción cambió la página</p><img loading="lazy" src="forma-playground-deslizador.jpg" alt="Que el tramo respaldado se dibuje sobre la pista con trama, que debajo diga dónde cae el valor y que a 380 px nada se salga de la tarjeta."></section>
+<section class="forma" id="brecha-s1-lider"><h3>4. Brecha (/es/brecha), S1 con su garantía, como líder</h3><p>tal como abre · 1280 px · claro</p><img loading="lazy" src="forma-brecha-s1-lider.jpg" alt="Bajo «El modelo extrae con confianza calibrada»: la zona respaldada en palabras llanas, dónde cae el umbral de la corrida y lo que los datos no alcanzan."></section>
+<section class="forma" id="brecha-s1-experto"><h3>5. Brecha, S1, perfil experto (pasada de interacción)</h3><p>tras pulsar «Experto» · 1280 px · oscuro · la interacción cambió la página</p><img loading="lazy" src="forma-brecha-s1-experto.jpg" alt="Que aparezca el bloque del experto: el método, la tabla de los tres niveles de α con el del informe marcado, las pruebas, el error conjunto observado y el alcance."></section>
+<section class="forma" id="brecha-s1-movil"><h3>6. Brecha, S1 en el teléfono (como experto)</h3><p>tras pulsar «Experto», 380 px · 380 px · claro · la interacción cambió la página</p><img loading="lazy" src="forma-brecha-s1-movil.jpg" alt="Que la tabla de los tres niveles se lea en tarjetas, sin desplazamiento lateral y sin cortar las cifras."></section>
+<h2>La pasada completa (8 capturas)</h2>
+<p>El playground y la Brecha, a 380 y 1280 px: en español en los dos temas. La miniatura es la parte de arriba; la huella identifica la captura entera que se leyó.</p>
+<div class="minis">
+<figure><img loading="lazy" src="mini-playground-380-oscuro-es.jpg" alt="playground 380 px oscuro es"><figcaption>playground · 380 · oscuro · es<br><code title="SHA-256 de la captura entera">4b1562be043d…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-playground-1280-oscuro-es.jpg" alt="playground 1280 px oscuro es"><figcaption>playground · 1280 · oscuro · es<br><code title="SHA-256 de la captura entera">1fc3127cba3e…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-playground-380-claro-es.jpg" alt="playground 380 px claro es"><figcaption>playground · 380 · claro · es<br><code title="SHA-256 de la captura entera">86c58edc0782…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-playground-1280-claro-es.jpg" alt="playground 1280 px claro es"><figcaption>playground · 1280 · claro · es<br><code title="SHA-256 de la captura entera">01ba12394119…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-brecha-380-oscuro-es.jpg" alt="brecha 380 px oscuro es"><figcaption>brecha · 380 · oscuro · es<br><code title="SHA-256 de la captura entera">36322f1e342c…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-brecha-1280-oscuro-es.jpg" alt="brecha 1280 px oscuro es"><figcaption>brecha · 1280 · oscuro · es<br><code title="SHA-256 de la captura entera">468134c7f180…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-brecha-380-claro-es.jpg" alt="brecha 380 px claro es"><figcaption>brecha · 380 · claro · es<br><code title="SHA-256 de la captura entera">7cb6b7eaf429…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-brecha-1280-claro-es.jpg" alt="brecha 1280 px claro es"><figcaption>brecha · 1280 · claro · es<br><code title="SHA-256 de la captura entera">a360f1bc470d…</code></figcaption></figure>
+</div>
+</main></body>
+</html>

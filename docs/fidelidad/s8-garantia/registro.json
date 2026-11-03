@@ -1,0 +1,167 @@
+{
+  "formato": "planlang-capturas/v1",
+  "capturas": [
+    {
+      "pantalla": "playground",
+      "url": "/es/playground",
+      "ancho": 380,
+      "idioma": "es",
+      "tema": "oscuro",
+      "alto": 6862,
+      "sha256": "4b1562be043d7a8a177f3c04237d29b51b757da2379e389e884dfd23fee90292",
+      "entera": "playground-380-oscuro-es.png",
+      "miniatura": "mini-playground-380-oscuro-es.jpg"
+    },
+    {
+      "pantalla": "playground",
+      "url": "/es/playground",
+      "ancho": 1280,
+      "idioma": "es",
+      "tema": "oscuro",
+      "alto": 3840,
+      "sha256": "1fc3127cba3e6e8c28db270a41e5e24210af4dbab659f80f2fdf222bc681561f",
+      "entera": "playground-1280-oscuro-es.png",
+      "miniatura": "mini-playground-1280-oscuro-es.jpg"
+    },
+    {
+      "pantalla": "playground",
+      "url": "/es/playground",
+      "ancho": 380,
+      "idioma": "es",
+      "tema": "claro",
+      "alto": 6862,
+      "sha256": "86c58edc07828143610968c65cc7b1cdf489f1ded97e10886d26e051c032dc61",
+      "entera": "playground-380-claro-es.png",
+      "miniatura": "mini-playground-380-claro-es.jpg"
+    },
+    {
+      "pantalla": "playground",
+      "url": "/es/playground",
+      "ancho": 1280,
+      "idioma": "es",
+      "tema": "claro",
+      "alto": 3840,
+      "sha256": "01ba12394119c5263510387c05b9dc96182b2b3d40984b047686769902077001",
+      "entera": "playground-1280-claro-es.png",
+      "miniatura": "mini-playground-1280-claro-es.jpg"
+    },
+    {
+      "pantalla": "brecha",
+      "url": "/es/brecha",
+      "ancho": 380,
+      "idioma": "es",
+      "tema": "oscuro",
+      "alto": 23296,
+      "sha256": "36322f1e342ccbf0bb48f5bbdd3a4daca7e2119fac90df9d69c4960e5166c2d1",
+      "entera": "brecha-380-oscuro-es.png",
+      "miniatura": "mini-brecha-380-oscuro-es.jpg"
+    },
+    {
+      "pantalla": "brecha",
+      "url": "/es/brecha",
+      "ancho": 1280,
+      "idioma": "es",
+      "tema": "oscuro",
+      "alto": 11942,
+      "sha256": "468134c7f1801486f8e9d8672820be984f8762400c889d1a481be0b9ede40daf",
+      "entera": "brecha-1280-oscuro-es.png",
+      "miniatura": "mini-brecha-1280-oscuro-es.jpg"
+    },
+    {
+      "pantalla": "brecha",
+      "url": "/es/brecha",
+      "ancho": 380,
+      "idioma": "es",
+      "tema": "claro",
+      "alto": 23296,
+      "sha256": "7cb6b7eaf4298d5eeddb30361ea633b334c3bbfedec5c5e1f1931405f750838f",
+      "entera": "brecha-380-claro-es.png",
+      "miniatura": "mini-brecha-380-claro-es.jpg"
+    },
+    {
+      "pantalla": "brecha",
+      "url": "/es/brecha",
+      "ancho": 1280,
+      "idioma": "es",
+      "tema": "claro",
+      "alto": 11942,
+      "sha256": "a360f1bc470da56476f28fdd1a896852d30075fdaf49bc6c74d98c97379710f5",
+      "entera": "brecha-1280-claro-es.png",
+      "miniatura": "mini-brecha-1280-claro-es.jpg"
+    }
+  ],
+  "recortes": [
+    {
+      "clave": "playground-zona",
+      "archivo": "Playground (/es/playground), la zona respaldada con el error del informe",
+      "estado": "tal como abre",
+      "mirar": "El panel «Dónde el umbral tiene el respaldo de los datos», el selector del error que aceptas, la curva con su banda de trama y la tabla con las filas de la zona marcadas.",
+      "esperada": "10 % marcado; «Zona respaldada con 10 % de error: confianza mínima de 0,50 a 0,90»; la banda con trama y borde discontinuo sobre la curva; nueve filas con trama, palomita y la palabra «respaldado por los datos» para el lector de pantalla; la leyenda «Zona respaldada». Dos notas de lo que los datos no alcanzan.",
+      "ruta": "/es/playground",
+      "ancho": 1280,
+      "tema": "oscuro",
+      "interaccion": null,
+      "imagen": "forma-playground-zona.jpg"
+    },
+    {
+      "clave": "playground-cinco-por-ciento",
+      "archivo": "Playground, error de 5 % y U1 por debajo de la zona (pasada de interacción)",
+      "estado": "tras elegir 5 %",
+      "mirar": "Que la zona se estreche a 0,75–0,85, que el cuadro ■ de la curva quede fuera de la banda y que la tabla marque solo tres filas.",
+      "esperada": "«Zona respaldada con 5 % de error: confianza mínima de 0,75 a 0,85»; tres filas con trama; el cuadro del U1 actual (0,60) a la derecha de la banda (un umbral más bajo da más cobertura); en la nota de lo que los datos no alcanzan, «más de 2.680 casos».",
+      "ruta": "/es/playground",
+      "ancho": 1280,
+      "tema": "claro",
+      "interaccion": "cambió",
+      "imagen": "forma-playground-cinco-por-ciento.jpg"
+    },
+    {
+      "clave": "playground-deslizador",
+      "archivo": "Playground, el deslizador de U1 con la zona y dónde cae su valor",
+      "estado": "tras mover U1 a 0,60 con 5 %",
+      "mirar": "Que el tramo respaldado se dibuje sobre la pista con trama, que debajo diga dónde cae el valor y que a 380 px nada se salga de la tarjeta.",
+      "esperada": "El tramo de trama entre 0,75 y 0,85; el glifo de alerta y «U1 0,60: por debajo de la zona. Desde 0,75 hacia arriba los datos respaldan el error aceptado; con este valor, no.»",
+      "ruta": "/es/playground",
+      "ancho": 380,
+      "tema": "oscuro",
+      "interaccion": "cambió",
+      "imagen": "forma-playground-deslizador.jpg"
+    },
+    {
+      "clave": "brecha-s1-lider",
+      "archivo": "Brecha (/es/brecha), S1 con su garantía, como líder",
+      "estado": "tal como abre",
+      "mirar": "Bajo «El modelo extrae con confianza calibrada»: la zona respaldada en palabras llanas, dónde cae el umbral de la corrida y lo que los datos no alcanzan.",
+      "esperada": "«Zona respaldada con 10 % de error: confianza mínima de 0,50 a 0,90»; «El U1 de la corrida (0,75) cae dentro.»; la nota de la cobertura conjunta con «268 casos» y la del redactor sin verdad; la curva de S1 con su banda.",
+      "ruta": "/es/brecha",
+      "ancho": 1280,
+      "tema": "claro",
+      "interaccion": null,
+      "imagen": "forma-brecha-s1-lider.jpg"
+    },
+    {
+      "clave": "brecha-s1-experto",
+      "archivo": "Brecha, S1, perfil experto (pasada de interacción)",
+      "estado": "tras pulsar «Experto»",
+      "mirar": "Que aparezca el bloque del experto: el método, la tabla de los tres niveles de α con el del informe marcado, las pruebas, el error conjunto observado y el alcance.",
+      "esperada": "Tres filas (α 0,05 · α 0,10 «el del informe» · α 0,20); a 0,10: umbral con garantía 0,50, conformal 0,90, zona 0,50–0,90, «sí», «no alcanza»; a 0,20: «0,50 (k = 2)». Las pruebas con p y ✓/✗.",
+      "ruta": "/es/brecha",
+      "ancho": 1280,
+      "tema": "oscuro",
+      "interaccion": "cambió",
+      "imagen": "forma-brecha-s1-experto.jpg"
+    },
+    {
+      "clave": "brecha-s1-movil",
+      "archivo": "Brecha, S1 en el teléfono (como experto)",
+      "estado": "tras pulsar «Experto», 380 px",
+      "mirar": "Que la tabla de los tres niveles se lea en tarjetas, sin desplazamiento lateral y sin cortar las cifras.",
+      "esperada": "Una tarjeta por nivel con sus siete datos rotulados; el nivel del informe resaltado; nada se sale de la pantalla.",
+      "ruta": "/es/brecha",
+      "ancho": 380,
+      "tema": "claro",
+      "interaccion": "cambió",
+      "imagen": "forma-brecha-s1-movil.jpg"
+    }
+  ]
+}
