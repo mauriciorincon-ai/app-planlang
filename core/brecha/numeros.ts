@@ -39,6 +39,15 @@ export function minimo(valores: readonly number[]): number | null {
   return valores.reduce((a, b) => (b < a ? b : a));
 }
 
+/** Entero con separador de miles: «2.680» (es) · «2,680» (en). Sin `Intl`: la regla de la cadena de dígitos es fija. */
+export function miles(x: number, idioma: Idioma): string {
+  const s = String(Math.round(Math.abs(x))).replace(
+    /\B(?=(\d{3})+(?!\d))/g,
+    idioma === "es" ? "." : ",",
+  );
+  return x < 0 ? `-${s}` : s;
+}
+
 /** Número con `decimales` fijos; coma decimal en español, punto en inglés. */
 export function num(x: number, idioma: Idioma, decimales = 2): string {
   const s = x.toFixed(decimales);

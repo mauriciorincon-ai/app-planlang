@@ -164,8 +164,10 @@ Model stage with no ground truth in the case (not observed, and left out of the 
 
 What the data does not reach:
 
-- At α = 0.05, the joint coverage is not reached: at 0.95 the agent decides 134 cases alone and the extractor stage fails in 3; at the same error rate it would take more than 2680 cases.
-- At α = 0.10, the joint coverage is not reached: at 0.95 the agent decides 134 cases alone and the extractor stage fails in 3; at the same error rate it would take 268 cases.
+- At α = 0.05, the joint coverage is not backed by the fixed sequence from the highest threshold: at 0.95 the agent decides 134 cases alone and the extractor stage fails in 3; at the same error rate it would take more than 2,680 cases.
+- At α = 0.10, the joint coverage is not backed by the fixed sequence from the highest threshold: at 0.95 the agent decides 134 cases alone and the extractor stage fails in 3; at the same error rate it would take 268 cases.
+
+> The test starts at the highest threshold and goes down until one fails (fixed sequence). It is conservative: it may say “not backed” where another order would pass, and choosing the order after looking at the data would void the confidence.
 
 ### S2 — Two clarification cycles suffice in 95% of incomplete cases.
 

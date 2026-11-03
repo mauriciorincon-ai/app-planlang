@@ -156,7 +156,9 @@ Etapa con modelo sin verdad en el caso (no se observa y la cobertura conjunta no
 
 Lo que los datos no alcanzan:
 
-- A α = 0,05, la cobertura conjunta no alcanza: en 0,95 el agente decide solo 111 casos y la etapa extractor falla en 1; con la misma tasa de error harían falta 333 casos.
+- A α = 0,05, la cobertura conjunta no se respalda con la secuencia fija desde el umbral más alto: en 0,95 el agente decide solo 111 casos y la etapa extractor falla en 1; con la misma tasa de error harían falta 333 casos.
+
+> La prueba parte del umbral más alto y baja hasta que uno no pasa (secuencia fija). Es conservadora: puede decir «no se respalda» donde otro orden pasaría, y elegir el orden mirando los datos invalidaría la seguridad.
 
 ### S2 — Dos ciclos de aclaración bastan en el 95 % de los casos incompletos.
 

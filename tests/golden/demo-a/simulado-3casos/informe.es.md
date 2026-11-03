@@ -160,11 +160,13 @@ Etapa con modelo sin verdad en el caso (no se observa y la cobertura conjunta no
 Lo que los datos no alcanzan:
 
 - A α = 0,05, no hay umbral con garantía: en 0,95 el agente decide solo 2 casos y, aun sin un solo error, harían falta 45.
-- A α = 0,05, la cobertura conjunta no alcanza: en 0,95 el agente decide solo 2 casos y, aun sin un solo error, harían falta 119.
+- A α = 0,05, la cobertura conjunta no se respalda con la secuencia fija desde el umbral más alto: en 0,95 el agente decide solo 2 casos y, aun sin un solo error, harían falta 119.
 - A α = 0,10, no hay umbral con garantía: en 0,95 el agente decide solo 2 casos y, aun sin un solo error, harían falta 22.
-- A α = 0,10, la cobertura conjunta no alcanza: en 0,95 el agente decide solo 2 casos y, aun sin un solo error, harían falta 59.
+- A α = 0,10, la cobertura conjunta no se respalda con la secuencia fija desde el umbral más alto: en 0,95 el agente decide solo 2 casos y, aun sin un solo error, harían falta 59.
 - A α = 0,20, no hay umbral con garantía: en 0,95 el agente decide solo 2 casos y, aun sin un solo error, harían falta 11.
-- A α = 0,20, la cobertura conjunta no alcanza: en 0,95 el agente decide solo 2 casos y, aun sin un solo error, harían falta 29.
+- A α = 0,20, la cobertura conjunta no se respalda con la secuencia fija desde el umbral más alto: en 0,95 el agente decide solo 2 casos y, aun sin un solo error, harían falta 29.
+
+> La prueba parte del umbral más alto y baja hasta que uno no pasa (secuencia fija). Es conservadora: puede decir «no se respalda» donde otro orden pasaría, y elegir el orden mirando los datos invalidaría la seguridad.
 
 ### S2 — Dos ciclos de aclaración bastan en el 95 % de los casos incompletos.
 

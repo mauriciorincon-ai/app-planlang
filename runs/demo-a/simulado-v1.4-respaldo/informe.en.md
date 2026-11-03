@@ -169,11 +169,13 @@ Model stage with no ground truth in the case (not observed, and left out of the 
 What the data does not reach:
 
 - At α = 0.05, there is no guaranteed threshold: at 0.95 the agent decides 0 cases alone and, even without a single error, it would take 45.
-- At α = 0.05, the joint coverage is not reached: at 0.95 the agent decides 0 cases alone and, even without a single error, it would take 119.
+- At α = 0.05, the joint coverage is not backed by the fixed sequence from the highest threshold: at 0.95 the agent decides 0 cases alone and, even without a single error, it would take 119.
 - At α = 0.10, there is no guaranteed threshold: at 0.95 the agent decides 0 cases alone and, even without a single error, it would take 22.
-- At α = 0.10, the joint coverage is not reached: at 0.95 the agent decides 0 cases alone and, even without a single error, it would take 59.
+- At α = 0.10, the joint coverage is not backed by the fixed sequence from the highest threshold: at 0.95 the agent decides 0 cases alone and, even without a single error, it would take 59.
 - At α = 0.20, there is no guaranteed threshold: at 0.95 the agent decides 0 cases alone and, even without a single error, it would take 11.
-- At α = 0.20, the joint coverage is not reached: at 0.95 the agent decides 0 cases alone and, even without a single error, it would take 29.
+- At α = 0.20, the joint coverage is not backed by the fixed sequence from the highest threshold: at 0.95 the agent decides 0 cases alone and, even without a single error, it would take 29.
+
+> The test starts at the highest threshold and goes down until one fails (fixed sequence). It is conservative: it may say “not backed” where another order would pass, and choosing the order after looking at the data would void the confidence.
 
 ### S2 — Two clarification cycles suffice in 95% of incomplete cases.
 

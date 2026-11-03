@@ -510,6 +510,8 @@ function seccionGarantia(g: GarantiaDeCalibracion, i: Idioma): string[] {
       t.noAlcanzanLosDatos,
       "",
       ...noAlcanzan.map((l) => `- ${l}`),
+      "",
+      `> ${t.secuencia}`,
     );
   return lineas;
 }

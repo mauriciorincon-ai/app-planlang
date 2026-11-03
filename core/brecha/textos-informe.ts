@@ -4,6 +4,7 @@
  * fragmento traducido junto a los datos. La guardia `tests/unit/guardias/bilingue-fuente.test.ts` vigila `core/`.
  */
 import type { Idioma } from "../formatos/bilingue";
+import { miles } from "./numeros";
 
 export interface TextosInforme {
   titulo: string;
@@ -81,6 +82,8 @@ export interface TextosInforme {
   /** El nombre de cada etapa con modelo por el id de su nodo; una que no esté aquí se escribe con su id. */
   etapa: Readonly<Record<string, string>>;
   noAlcanzanLosDatos: string;
+  /** Por qué el orden de la prueba importa para lo que dice «no se respalda» (ADR-018). */
+  secuencia: string;
   enNivel: (alfa: string, que: string) => string;
   queFalta: {
     umbral: string;
@@ -278,23 +281,26 @@ const ES: TextosInforme = {
     redactor: "redactor",
   },
   noAlcanzanLosDatos: "Lo que los datos no alcanzan:",
+  secuencia:
+    "La prueba parte del umbral más alto y baja hasta que uno no pasa (secuencia fija). Es conservadora: puede decir «no se respalda» donde otro orden pasaría, y elegir el orden mirando los datos invalidaría la seguridad.",
   enNivel: (alfa, que) => `A α = ${alfa}, ${que}`,
   queFalta: {
     umbral: "no hay umbral con garantía",
-    conjunta: "la cobertura conjunta no alcanza",
+    conjunta:
+      "la cobertura conjunta no se respalda con la secuencia fija desde el umbral más alto",
     zona: "no hay zona respaldada",
   },
   faltan: {
     pocos_casos: (u, n, casos) =>
-      `: en ${u} el agente decide solo ${n} ${n === 1 ? "caso" : "casos"} y, aun sin un solo error, harían falta ${casos}.`,
+      `: en ${u} el agente decide solo ${miles(n, "es")} ${n === 1 ? "caso" : "casos"} y, aun sin un solo error, harían falta ${miles(casos, "es")}.`,
     tasa_cerca_de_alfa: (u, n, e, casos, tope, etapa) =>
-      `: en ${u} el agente decide solo ${n} casos y ${etapa ? `la etapa ${etapa}` : "la extracción"} falla en ${e}; con la misma tasa de error harían falta ${casos === null ? `más de ${tope * n}` : casos} casos.`,
+      `: en ${u} el agente decide solo ${miles(n, "es")} casos y ${etapa ? `la etapa ${etapa}` : "la extracción"} falla en ${miles(e, "es")}; con la misma tasa de error harían falta ${casos === null ? `más de ${miles(tope * n, "es")}` : miles(casos, "es")} casos.`,
     tasa_sobre_alfa: (u, n, e, etapa) =>
-      `: en ${u} el agente decide solo ${n} casos y ${etapa ? `la etapa ${etapa}` : "la extracción"} falla en ${e}, una tasa que no baja de α: más casos con esa tasa no lo respaldan.`,
+      `: en ${u} el agente decide solo ${miles(n, "es")} casos y ${etapa ? `la etapa ${etapa}` : "la extracción"} falla en ${miles(e, "es")}, una tasa que no baja de α: más casos con esa tasa no lo respaldan.`,
   },
   sinZona: {
     sin_cota_conformal: (n, minimo) =>
-      `: con ${n} ${n === 1 ? "acierto" : "aciertos"} no hay umbral conformal; hacen falta al menos ${minimo}.`,
+      `: con ${miles(n, "es")} ${n === 1 ? "acierto" : "aciertos"} no hay umbral conformal; hacen falta al menos ${miles(minimo, "es")}.`,
     conformal_bajo_el_umbral: (tauC, tau) =>
       `: el umbral conformal (${tauC}) queda por debajo del umbral con garantía (${tau}), y ningún umbral da las dos garantías a la vez.`,
   },
@@ -460,23 +466,26 @@ const EN: TextosInforme = {
     redactor: "writer",
   },
   noAlcanzanLosDatos: "What the data does not reach:",
+  secuencia:
+    "The test starts at the highest threshold and goes down until one fails (fixed sequence). It is conservative: it may say “not backed” where another order would pass, and choosing the order after looking at the data would void the confidence.",
   enNivel: (alfa, que) => `At α = ${alfa}, ${que}`,
   queFalta: {
     umbral: "there is no guaranteed threshold",
-    conjunta: "the joint coverage is not reached",
+    conjunta:
+      "the joint coverage is not backed by the fixed sequence from the highest threshold",
     zona: "there is no backed zone",
   },
   faltan: {
     pocos_casos: (u, n, casos) =>
-      `: at ${u} the agent decides ${n} ${n === 1 ? "case" : "cases"} alone and, even without a single error, it would take ${casos}.`,
+      `: at ${u} the agent decides ${miles(n, "en")} ${n === 1 ? "case" : "cases"} alone and, even without a single error, it would take ${miles(casos, "en")}.`,
     tasa_cerca_de_alfa: (u, n, e, casos, tope, etapa) =>
-      `: at ${u} the agent decides ${n} cases alone and ${etapa ? `the ${etapa} stage` : "extraction"} fails in ${e}; at the same error rate it would take ${casos === null ? `more than ${tope * n}` : casos} cases.`,
+      `: at ${u} the agent decides ${miles(n, "en")} cases alone and ${etapa ? `the ${etapa} stage` : "extraction"} fails in ${miles(e, "en")}; at the same error rate it would take ${casos === null ? `more than ${miles(tope * n, "en")}` : miles(casos, "en")} cases.`,
     tasa_sobre_alfa: (u, n, e, etapa) =>
-      `: at ${u} the agent decides ${n} cases alone and ${etapa ? `the ${etapa} stage` : "extraction"} fails in ${e}, a rate that does not go below α: more cases at that rate never back it.`,
+      `: at ${u} the agent decides ${miles(n, "en")} cases alone and ${etapa ? `the ${etapa} stage` : "extraction"} fails in ${miles(e, "en")}, a rate that does not go below α: more cases at that rate never back it.`,
   },
   sinZona: {
     sin_cota_conformal: (n, minimo) =>
-      `: with ${n} correct ${n === 1 ? "case" : "cases"} there is no conformal threshold; it takes at least ${minimo}.`,
+      `: with ${miles(n, "en")} correct ${n === 1 ? "case" : "cases"} there is no conformal threshold; it takes at least ${miles(minimo, "en")}.`,
     conformal_bajo_el_umbral: (tauC, tau) =>
       `: the conformal threshold (${tauC}) falls below the guaranteed threshold (${tau}), and no threshold gives both guarantees at once.`,
   },
