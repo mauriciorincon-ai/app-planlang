@@ -846,7 +846,7 @@ const DECISIONES_GARANTIA = [
     mirar:
       "El panel «Dónde el umbral tiene el respaldo de los datos», el selector del error que aceptas, la curva con su banda de trama y la tabla con las filas de la zona marcadas.",
     esperada:
-      "10 % marcado; «Zona respaldada con 10 % de error: confianza mínima de 0,50 a 0,90»; la banda con trama y borde discontinuo sobre la curva; nueve filas con trama, palomita y la palabra «respaldado por los datos» para el lector de pantalla; la leyenda «Zona respaldada». Dos notas de lo que los datos no alcanzan.",
+      "10 % marcado; «Zona respaldada con 10 % de error: confianza mínima de 0,50 a 0,90»; la banda con trama y borde discontinuo sobre la curva; nueve filas con trama, palomita y la palabra «respaldado por los datos» para el lector de pantalla; la leyenda «Zona respaldada». Tres notas: la cobertura conjunta que no se respalda con la secuencia fija, el orden de la prueba y el redactor sin verdad.",
   },
   {
     clave: "playground-cinco-por-ciento",
@@ -867,7 +867,7 @@ const DECISIONES_GARANTIA = [
     mirar:
       "Que la zona se estreche a 0,75–0,85, que el cuadro ■ de la curva quede fuera de la banda y que la tabla marque solo tres filas.",
     esperada:
-      "«Zona respaldada con 5 % de error: confianza mínima de 0,75 a 0,85»; tres filas con trama; el cuadro del U1 actual (0,60) a la derecha de la banda (un umbral más bajo da más cobertura); en la nota de lo que los datos no alcanzan, «más de 2.680 casos».",
+      "«Zona respaldada con 5 % de error: confianza mínima de 0,75 a 0,85»; tres filas con trama; el cuadro del U1 actual (0,60) a la derecha de la banda (un umbral más bajo da más cobertura); en la nota de la cobertura conjunta, «más de 2.680 casos».",
   },
   {
     clave: "playground-deslizador",
@@ -899,7 +899,7 @@ const DECISIONES_GARANTIA = [
     mirar:
       "Bajo «El modelo extrae con confianza calibrada»: la zona respaldada en palabras llanas, dónde cae el umbral de la corrida y lo que los datos no alcanzan.",
     esperada:
-      "«Zona respaldada con 10 % de error: confianza mínima de 0,50 a 0,90»; «El U1 de la corrida (0,75) cae dentro.»; la nota de la cobertura conjunta con «268 casos» y la del redactor sin verdad; la curva de S1 con su banda.",
+      "«Zona respaldada con 10 % de error: confianza mínima de 0,50 a 0,90»; «El U1 de la corrida (0,75) cae dentro.»; las notas de la cobertura conjunta con «268 casos», del orden de la prueba y del redactor sin verdad; la curva de S1 con su banda.",
   },
   {
     clave: "brecha-s1-experto",

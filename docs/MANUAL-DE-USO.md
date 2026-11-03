@@ -453,10 +453,11 @@ data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar l
      tu valor cae debajo, adentro o encima de la zona.
   3. Con «Leer como · Experto» aparecen el método, las pruebas (con su p), el error conjunto observado y el alcance.
 - **Lo que los datos no alcanzan se dice, con el número que haría falta.** En el demo A, la cobertura conjunta no se
-  alcanza con 5 % ni con 10 %: en 0,95 la extracción falla en 3 de 134 casos y, con esa tasa, harían falta 268 casos a
-  10 % y más de 2.680 a 5 %. Las corridas de 20 casos no alcanzan ningún nivel. Si no hay zona, la pantalla dice por qué:
-  pocos casos, una tasa de error que no baja del error aceptado, o un umbral conformal por debajo del umbral con
-  garantía.
+  respalda con 5 % ni con 10 %: la prueba parte del umbral más alto, 0,95, donde la extracción falla en 3 de 134 casos
+  y, con esa tasa, harían falta 268 casos a 10 % y más de 2.680 a 5 %. Esa prueba es una secuencia fija y
+  conservadora: puede decir «no se respalda» donde otro orden pasaría, y la pantalla lo dice. Las corridas de 20 casos
+  no alcanzan ningún nivel con ese orden. Si no hay zona, la pantalla dice por qué: pocos casos, una tasa de error que
+  no baja del error aceptado, o un umbral conformal por debajo del umbral con garantía.
 - **Limitaciones conocidas:** la garantía vale para casos intercambiables con los medidos. Son sintéticos y el revisor
   es simulado, así que no dice nada del tráfico real; un lote nuevo pide recalcular (`pnpm brecha:informe`). El demo B
   queda «no observado»: su plan no mide confianza. Los tres niveles vienen del informe ya calculados: en el navegador
@@ -927,10 +928,12 @@ There are two ways to use it:
   2. Look at the hatched band over the curve, the rows marked with a check in the table, and U1's slider: it says
      whether your value falls below, inside or above the zone.
   3. With "Read as · Expert" the method, the tests (with their p), the observed joint error and the scope appear.
-- **What the data does not reach is said, with the number it would take.** In demo A, the joint coverage is not reached
-  at 5 % nor at 10 %: at 0.95 extraction fails in 3 of 134 cases and, at that rate, it would take 268 cases at 10 % and
-  more than 2,680 at 5 %. The 20-case runs reach no level. When there is no zone, the screen says why: too few cases, an
-  error rate that does not go below the accepted error, or a conformal threshold below the guaranteed one.
+- **What the data does not reach is said, with the number it would take.** In demo A, the joint coverage is not
+  backed at 5 % nor at 10 %: the test starts at the highest threshold, 0.95, where extraction fails in 3 of 134 cases
+  and, at that rate, it would take 268 cases at 10 % and more than 2,680 at 5 %. That test is a fixed, conservative
+  sequence: it may say "not backed" where another order would pass, and the screen says so. The 20-case runs reach no
+  level in that order. When there is no zone, the screen says why: too few cases, an error rate that does not go below
+  the accepted error, or a conformal threshold below the guaranteed one.
 - **Known limitations:** the guarantee holds for cases exchangeable with the measured ones. They are synthetic and the
   reviewer is simulated, so it says nothing about real traffic; a new batch needs a new calculation
   (`pnpm brecha:informe`). Demo B stays "not observed": its plan does not measure confidence. The three levels come

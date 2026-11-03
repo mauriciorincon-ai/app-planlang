@@ -1,8 +1,8 @@
 /**
  * Textos de P7 Fichas (maqueta `docs/diseno/07-fichas.html`, aprobada en la mirada 4 de la Etapa de Diseño) y el
- * contenido de lo que viaja a hoja-de-vida: la ficha del agente A (contrato ficha técnica v1.3.1, frente Agentes; la
- * del B vive en `src/textos/demo-b/fichas.ts`), el `brochure-export.json` (contrato 1.0.0) y el complemento que planlang
- * propone para la ficha de la app (la arma hoja-de-vida). Las cifras no viven aquí: las ponen `src/lib/fichas/` desde el informe, la corrida y el repositorio.
+ * contenido de lo que viaja a hoja-de-vida: el `brochure-export.json` (contrato 1.0.0) y el complemento que planlang
+ * propone para la ficha de la app (la arma hoja-de-vida). Las fichas de los agentes A y B ya no se producen ni se
+ * entregan (decisión del 2026-10-25; devolución 026): aquí quedan solo los textos de la pantalla que las muestra. Las cifras no viven aquí: las ponen `src/lib/fichas/` desde el informe, la corrida y el repositorio.
  */
 import { tb, type TextoBilingue } from "@core/formatos/bilingue";
 import type { IdDemo } from "@/lib/demos";

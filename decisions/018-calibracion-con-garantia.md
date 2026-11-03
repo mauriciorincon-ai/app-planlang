@@ -79,12 +79,23 @@ not versioned.
 ## Consecuencias
 
 - **La corrida publicada a α = 0,10:** τ* = 0,50 (cobertura 99,4 %, error observado 3,2 %), τ_c = 0,90 y zona respaldada
-  0,50–0,90. El umbral de la corrida (0,75) cae dentro. La cobertura conjunta **no alcanza**: en 0,95 el extractor falla
-  en 3 de 134 casos y p = 0,0931 > 0,05; con la misma tasa harían falta 268 casos.
+  0,50–0,90. El umbral de la corrida (0,75) cae dentro. La cobertura conjunta **no se respalda con la secuencia fija**:
+  en 0,95 el extractor falla en 3 de 134 casos y p = 0,0931 > 0,05; con la misma tasa harían falta 268 casos.
 - **Los otros niveles:**
   - a α = 0,05, la zona es 0,75–0,85 y la conjunta no alcanza (harían falta más de 20 veces los casos);
   - a α = 0,20, la zona es 0,50–0,95 y la conjunta respalda desde 0,50.
 - **Las corridas de 20 casos** no alcanzan ningún nivel, y el informe dice el n que haría falta en cada uno.
+- **El orden de la secuencia fija decide qué se respalda (auditoría del S8, M2).** La secuencia parte del umbral más
+  alto y para en el primero que no pasa. Es válida y conservadora, pero un «no se respalda» es una afirmación sobre ese
+  orden, no sobre todos los posibles. En la corrida publicada, a α = 0,10 y con α/2 = δ/2 = 0,05, la extracción (153
+  casos decididos solos y 3 errores en 0,80 y 0,75) pasa con p = 0,0494 y la aclaración (153 casos y 2 errores) con
+  p = 0,0161: la cobertura conjunta quedaría respaldada desde 0,75. La secuencia no llega ahí porque se detiene en 0,95,
+  donde el agente decide solo 134 casos y la extracción pasa con p = 0,0931. Igual en las corridas de 20 casos: con 15
+  casos decididos solos y ningún error, a α = 0,20 la cola vale 0,035 ≤ 0,10, pero la secuencia ya se detuvo arriba con
+  muy pocos casos. Elegir el orden después de ver los datos invalidaría la seguridad δ, así que el informe no lo hace:
+  declara el orden, lo dice en pantalla (la nota «secuencia fija» del panel, de S1 y del informe) y deja a una decisión
+  del plan otro orden fijado de antemano (por ejemplo, partir del umbral que el plan declara y recorrer hacia los
+  dos lados). Esa decisión no se toma en este sprint.
 - **El alcance de la garantía:** vale para casos intercambiables con los 159 medidos. Son casos sintéticos, con el revisor
   simulado que sigue la verdad conocida (P4 y P7), y no dicen nada del tráfico real. Un lote nuevo pide recalcular.
 - **Los informes se regeneran.** Los de `data/vitrina/` y los de `runs/*/` son derivados del verificador; las trazas no
