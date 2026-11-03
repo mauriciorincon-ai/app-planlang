@@ -33,6 +33,7 @@ import type { Fila } from "./agente";
 import type { PuntoCurva } from "./brecha";
 import { nombreDeSubtipo, pieDeCorrida } from "./caso";
 import { decimal, enumerar, versionCorta } from "./formato";
+import { vistaGarantia, type VistaGarantia } from "./garantia";
 import { enlaceACaso } from "./paginas-caso";
 
 const X = (t: TextoBilingue, i: Idioma) => t[i];
@@ -69,6 +70,11 @@ export interface DatosIsla {
     /** La lectura de la curva en llano (con riesgo 0 en todo el rango dice que aún no puede mostrar el equilibrio). */
     lectura: string;
   } | null;
+  /**
+   * La garantía de la calibración (S8, ADR-018), ya escrita para cada nivel de α: la zona respaldada sobre la curva y
+   * el selector. `null` si el informe no la trae (el B no mide confianza) o no hay curva.
+   */
+  garantia: VistaGarantia | null;
   version: string;
 }
 
@@ -381,6 +387,17 @@ export function vistaPlayground(d: DatosDemo, i: Idioma): VistaPlayground {
                 ? X(CURVA.lectura, i)
                 : X(CURVA.lecturaSinRiesgo(s1.n), i),
             }
+          : null,
+      garantia:
+        s1?.garantia && u1 && typeof u1.valor_en_plan === "number"
+          ? vistaGarantia(
+              s1.garantia,
+              u1.id,
+              "min" in u1.rango_jugable
+                ? decimalesDe(u1.rango_jugable.paso)
+                : 2,
+              i,
+            )
           : null,
       version: vPlan,
     },

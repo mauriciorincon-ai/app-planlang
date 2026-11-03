@@ -72,7 +72,7 @@ describe("las fichas en la piel de CV Viva", () => {
     ).toBeTruthy();
   });
 
-  it("cada cifra lleva su fuente en palabra y color, y la ficha de la app no dibuja proceso", () => {
+  it("cada cifra lleva su fuente en palabra y color, y la ficha de la app dibuja el proceso de la planeadora", () => {
     const { container } = render(<Pagina idioma="es" />);
     const app = container.querySelector('[data-ficha-cv="app"]')!;
     // Lo que se ve de cada píldora (el detalle va para el lector, no en un `title`: AU-S2-B26).
@@ -90,8 +90,13 @@ describe("las fichas en la piel de CV Viva", () => {
     ]);
     for (const [, , detalle] of fuentes)
       expect(detalle as number).toBeGreaterThan(2);
-    expect(app.querySelector("[data-carril]")).toBeNull();
-    expect(app.textContent).not.toContain("Cómo funciona");
+    expect(
+      [...app.querySelectorAll("[data-carril]")].map((c) =>
+        c.getAttribute("data-carril"),
+      ),
+    ).toEqual(["tu", "planlang", "agente", "persona"]);
+    expect(app.textContent).toContain("Cómo funciona");
+    expect(app.textContent).toContain("Proceso curado por la planeadora.");
   });
 
   it("el proceso del agente: cuatro carriles y la palabra del tipo para el lector de pantalla", () => {
@@ -113,7 +118,7 @@ describe("el experto", () => {
   it("la tabla de campos y los pasos para repetir están en el árbol, ocultos al líder por atributo", () => {
     const { container } = render(<Pagina idioma="es" />);
     const tablas = container.querySelectorAll(".solo-experto [data-campo]");
-    expect(tablas.length).toBe(10 + 12);
+    expect(tablas.length).toBe(12 + 12);
     expect(container.textContent).toContain("pnpm brecha:informe");
     expect(container.textContent).toContain("De dónde sale cada cifra");
     expect(container.textContent).toContain(

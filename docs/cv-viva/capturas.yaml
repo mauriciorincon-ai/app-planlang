@@ -1,0 +1,195 @@
+# Las capturas de planlang para el brochure de CV Viva (devolución 026, punto 6). `pnpm capturas:cv-viva` las toma de `out/`:
+# 1024×640 a DPR 1,5 (archivo de 1536×960), tema claro, español, WebP de hasta 80 KB; datos 100 % sintéticos.
+# Cada entrada es un ESTADO de la vitrina: `ruta` y `perfil` (líder o experto), `ancla` (el encabezado, como expresión
+# regular, al que se desplaza la página; vacío = arriba) y `accion` (u2-a-1600: U2 movido con el teclado, como el `u2a1600`
+# del arnés de la app). `pie` es el texto de la ficha en CV Viva. Los pies y los estados vienen de RESPUESTA-026.md.
+# «entrada» (la funcionalidad) usa un estado distinto al de la portada: «Cómo funciona», debajo del titular.
+portada:
+  archivo: "entrada.webp"
+  ruta: "/es"
+  perfil: "lider"
+  ancla: null
+  accion: null
+capturas:
+  - funcionalidad: "plantillas"
+    archivo: "plantillas.webp"
+    ruta: "/es/planes/hackguard-agentes"
+    perfil: "experto"
+    ancla: "^Riesgos$"
+    accion: null
+    pie:
+      es: "Riesgos y supuestos del plan, cada uno marcado si salió de la plantilla"
+      en: "The plan's risks and assumptions, each marked if it came from the template"
+  - funcionalidad: "validador"
+    archivo: "validador.webp"
+    ruta: "/es/plan"
+    perfil: "lider"
+    ancla: "^El plan en una mirada$"
+    accion: null
+    pie:
+      es: "El plan aprobado: seis exigencias cumplidas y sellado con su huella"
+      en: "The approved plan: six requirements met, sealed with its fingerprint"
+  - funcionalidad: "plan-sin-corrida"
+    archivo: "plan-sin-corrida.webp"
+    ruta: "/es/planes/hackguard-agentes"
+    perfil: "experto"
+    ancla: "^Problema$"
+    accion: null
+    pie:
+      es: "Un proyecto real sin agente construido: su problema y su contrato"
+      en: "A real project with no agent built yet: its problem and its contract"
+  - funcionalidad: "contrato"
+    archivo: "contrato.webp"
+    ruta: "/es/plan"
+    perfil: "experto"
+    ancla: "^Las 12 aristas condicionales"
+    accion: null
+    pie:
+      es: "Las 12 reglas del demo A: señal, operador, valor y adónde sigue el caso"
+      en: "Demo A's 12 rules: signal, operator, value and where the case goes next"
+  - funcionalidad: "casos"
+    archivo: "casos.webp"
+    ruta: "/es/caso/A-016"
+    perfil: "lider"
+    ancla: null
+    accion: null
+    pie:
+      es: "Casos normales, de borde, incompletos y trampa, con su respuesta conocida"
+      en: "Normal, edge, incomplete and trap cases, each with its known answer"
+  - funcionalidad: "demo-a"
+    archivo: "demo-a.webp"
+    ruta: "/es/agente"
+    perfil: "lider"
+    ancla: "^Hace$"
+    accion: null
+    pie:
+      es: "El agente de autorizaciones: qué recibe, sus siete pasos y qué entregó"
+      en: "The authorization agent: what it receives, its seven steps, what it delivered"
+  - funcionalidad: "demo-b"
+    archivo: "demo-b.webp"
+    ruta: "/es/demo-b/agente"
+    perfil: "lider"
+    ancla: "^Hace$"
+    accion: null
+    pie:
+      es: "El agente de vinculación: documentos, listas, zona gris y el oficial"
+      en: "The onboarding agent: documents, watchlists, gray zone and the officer"
+  - funcionalidad: "expediente"
+    archivo: "expediente.webp"
+    ruta: "/es/demo-b/caso/B-005"
+    perfil: "lider"
+    ancla: "^El expediente"
+    accion: null
+    pie:
+      es: "El expediente de B-005: cada conclusión cita su regla o su coincidencia"
+      en: "B-005's case file: every conclusion cites its rule or its list match"
+  - funcionalidad: "documento-adverso"
+    archivo: "documento-adverso.webp"
+    ruta: "/es/caso/A-017"
+    perfil: "lider"
+    ancla: "^El documento de decisión adversa$"
+    accion: null
+    pie:
+      es: "La negación de A-017: causal legal, regla, datos y cómo contradecirla"
+      en: "A-017's denial: legal ground, rule, data and how to appeal it"
+  - funcionalidad: "lotes"
+    archivo: "lotes.webp"
+    ruta: "/es/agente"
+    perfil: "experto"
+    ancla: "^Modelo y proveedor$"
+    accion: null
+    pie:
+      es: "La corrida por dentro: modelo por suscripción, lotes de 20 y sus versiones"
+      en: "Inside the run: subscription model, batches of 20 and its versions"
+  - funcionalidad: "verificador"
+    archivo: "verificador.webp"
+    ruta: "/es/brecha"
+    perfil: "lider"
+    ancla: "^El informe en una mirada$"
+    accion: null
+    pie:
+      es: "El veredicto del demo A: 10 de 10 criterios y sus tres fallas a la vista"
+      en: "Demo A's verdict: 10 of 10 criteria and its three failures in plain sight"
+  - funcionalidad: "supuestos"
+    archivo: "supuestos.webp"
+    ruta: "/es/brecha"
+    perfil: "lider"
+    ancla: "^\\d*\\s*Supuestos$"
+    accion: null
+    pie:
+      es: "Dos supuestos del plan, refutados con su medida frente a lo que pedía"
+      en: "Two plan assumptions refuted, measured against what the plan asked"
+  - funcionalidad: "comparar"
+    archivo: "comparar.webp"
+    ruta: "/es/comparar"
+    perfil: "lider"
+    ancla: "^Veredicto y criterios$"
+    accion: null
+    pie:
+      es: "Varios agentes frente a uno solo: veredicto, exactitud, tiempo y costo"
+      en: "Several agents versus one: verdict, accuracy, time and cost"
+  - funcionalidad: "instrumento"
+    archivo: "instrumento.webp"
+    ruta: "/es/brecha"
+    perfil: "lider"
+    ancla: "^¿Está construido lo que el plan exige\\?$"
+    accion: null
+    pie:
+      es: "Las piezas exigidas, en el grafo; 1.124 decisiones rehechas, cero diferencias"
+      en: "Required pieces, in the graph; 1,124 decisions redone, zero differences"
+  - funcionalidad: "adr"
+    archivo: "adr.webp"
+    ruta: "/es/agente"
+    perfil: "experto"
+    ancla: "^Detalle de la selección$"
+    accion: null
+    pie:
+      es: "El enrutador explica por qué no usa modelo: código primero"
+      en: "The router explains why it uses no model: code first"
+  - funcionalidad: "playground"
+    archivo: "playground.webp"
+    ruta: "/es/playground"
+    perfil: "lider"
+    ancla: "^Mueve los umbrales$"
+    accion: "u2-a-1600"
+    pie:
+      es: "Alto costo movido a 1600: 12 casos cambian de camino, con su costo"
+      en: "High cost moved to 1600: 12 cases change path, with what it costs"
+  - funcionalidad: "visor"
+    archivo: "visor.webp"
+    ruta: "/es/agente"
+    perfil: "lider"
+    ancla: "^El grafo$"
+    accion: null
+    pie:
+      es: "El grafo del agente, dibujado desde el código que corrió, por capas"
+      en: "The agent's graph, drawn from the code that ran, layer by layer"
+  - funcionalidad: "entrada"
+    archivo: "entrada-como-funciona.webp"
+    ruta: "/es"
+    perfil: "lider"
+    ancla: "^Cómo funciona$"
+    accion: null
+    pie:
+      es: "Cómo funciona: planear, construir y medir, con lo que midió el demo A"
+      en: "How it works: plan, build and measure, with what demo A measured"
+  - funcionalidad: "pestanas"
+    archivo: "pestanas.webp"
+    ruta: "/es/demo-b/brecha"
+    perfil: "lider"
+    ancla: null
+    accion: null
+    pie:
+      es: "El demo B: sus siete pestañas, A o B, idioma, tema y el aviso de simulación"
+      en: "Demo B: its seven tabs, A or B, language, theme and the simulation notice"
+  - funcionalidad: "fichas"
+    archivo: "fichas.webp"
+    ruta: "/es/fichas"
+    perfil: "lider"
+    ancla: "^\\d*\\s*Ficha de reproducibilidad$"
+    accion: null
+    pie:
+      es: "La ficha para repetir la corrida: versiones, huellas, semilla, modelo y fecha"
+      en: "The record to repeat the run: versions, fingerprints, seed, model and date"
+sin_pantalla:
+  - "entrevistador"

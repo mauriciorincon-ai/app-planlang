@@ -1,8 +1,10 @@
 import { defineConfig, devices } from "@playwright/test";
 
-// El puerto se puede mover (`PLANLANG_E2E_PUERTO`) cuando otra app de la máquina ocupa el 3000: sin reuso del
-// servidor, el suite no arranca sobre uno ajeno, pero tampoco tiene por qué esperar a que se libere.
-const PUERTO = process.env.PLANLANG_E2E_PUERTO ?? "3000";
+// Puertos de planlang (regla de la casa, 2026-11-02): 3200 para la app, el e2e y Lighthouse; 3201 para el paquete. El
+// 3000 y el 3100 son de otras apps. El servidor escucha solo en 127.0.0.1. El puerto se puede mover
+// (`PLANLANG_E2E_PUERTO`): sin reuso del servidor, el suite no arranca sobre uno ajeno, pero tampoco tiene por qué
+// esperar a que se libere.
+const PUERTO = process.env.PLANLANG_E2E_PUERTO ?? "3200";
 
 // Config que el ci.yml del kit ya asume (job e2e: "pnpm test:e2e").
 // Patrón validado en app-nutri-kids S1. Móvil primero: las apps del pipeline son mobile-first.
@@ -18,7 +20,7 @@ export default defineConfig({
   // de paso desmintió la razón original del cambio — ver CHANGELOG).
   reporter: process.env.CI ? [["github"], ["list"]] : "list",
   use: {
-    baseURL: `http://localhost:${PUERTO}`,
+    baseURL: `http://127.0.0.1:${PUERTO}`,
     trace: "on-first-retry",
   },
   // S2: el teléfono se mide a 380 px (design-system § 2.4 y la orden); el Pixel 7 de Playwright mide 412, así
@@ -55,9 +57,9 @@ export default defineConfig({
     // `eval()` de React dev. En una app con CSP estricta o gate de red eso produce rojos sobre
     // un árbol limpio — 5 en Velo S1 — y un suite que grita cuando no pasa nada acaba ignorado.
     // Cuesta el tiempo del build; compra que el e2e local afirme lo mismo que el de CI.
-    command: `pnpm build && pnpm exec serve out -l ${PUERTO}`,
-    url: `http://localhost:${PUERTO}`,
-    // Sin reuso: un `pnpm dev` olvidado en :3000 secuestraría el suite entero en silencio.
+    command: `pnpm build && pnpm exec serve out -l tcp://127.0.0.1:${PUERTO}`,
+    url: `http://127.0.0.1:${PUERTO}`,
+    // Sin reuso: un `pnpm dev` olvidado en :3200 secuestraría el suite entero en silencio.
     reuseExistingServer: false,
     timeout: 180_000,
   },

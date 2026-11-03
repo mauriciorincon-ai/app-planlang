@@ -1,0 +1,6326 @@
+{
+  "casos": [
+    {
+      "entrada": {
+        "etapas": [
+          {
+            "nodo": "extractor",
+            "observada": true
+          },
+          {
+            "nodo": "aclaracion",
+            "observada": true
+          },
+          {
+            "nodo": "redactor",
+            "observada": false
+          }
+        ],
+        "inclusivo": false,
+        "muestras": [
+          {
+            "caso_id": "A-003",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-005",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-006",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-007",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-008",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-009",
+            "confianza": 0.96,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-010",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-011",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-012",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-013",
+            "confianza": 0.88,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-014",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-015",
+            "confianza": 0.96,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-016",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-017",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-018",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-020",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-021",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-022",
+            "confianza": 0.6,
+            "correcto": false,
+            "etapas": {
+              "aclaracion": false,
+              "extractor": false
+            }
+          },
+          {
+            "caso_id": "A-023",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-025",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-026",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-028",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-029",
+            "confianza": 0.95,
+            "correcto": false,
+            "etapas": {
+              "aclaracion": false,
+              "extractor": false
+            }
+          },
+          {
+            "caso_id": "A-030",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-031",
+            "confianza": 0.85,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-032",
+            "confianza": 0.85,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-033",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-034",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-035",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-036",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-038",
+            "confianza": 0.96,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-039",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-040",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-041",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-044",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-045",
+            "confianza": 0.96,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-046",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-047",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-048",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-049",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-050",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-052",
+            "confianza": 0.88,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-053",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-054",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-055",
+            "confianza": 0.85,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-056",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-057",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-058",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-059",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-060",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-061",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-062",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-063",
+            "confianza": 0.96,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-064",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-066",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-067",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-068",
+            "confianza": 0.7,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-069",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-070",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-071",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-072",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-073",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-075",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-076",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-078",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-079",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-081",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-082",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-083",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-084",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-086",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-087",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-088",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-089",
+            "confianza": 0.8,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-091",
+            "confianza": 0.96,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-094",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-096",
+            "confianza": 0.96,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-098",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-099",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-101",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-102",
+            "confianza": 0.97,
+            "correcto": false,
+            "etapas": {
+              "aclaracion": false,
+              "extractor": false
+            }
+          },
+          {
+            "caso_id": "A-103",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-104",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-105",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-106",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-107",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-108",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-110",
+            "confianza": 0.96,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-111",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-112",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-113",
+            "confianza": 0.85,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-114",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-115",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-116",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-117",
+            "confianza": 0.96,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-118",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-120",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-121",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-122",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-123",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-126",
+            "confianza": 0.7,
+            "correcto": false,
+            "etapas": {
+              "aclaracion": false,
+              "extractor": false
+            }
+          },
+          {
+            "caso_id": "A-127",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-130",
+            "confianza": 0.85,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-131",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-132",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-134",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-135",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-137",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-138",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-139",
+            "confianza": 0.2,
+            "correcto": false,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": false
+            }
+          },
+          {
+            "caso_id": "A-140",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-141",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-142",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-143",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-144",
+            "confianza": 0.8,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-145",
+            "confianza": 0.93,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-146",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-147",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-148",
+            "confianza": 0.72,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-149",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-151",
+            "confianza": 0.93,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-152",
+            "confianza": 0.96,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-153",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-154",
+            "confianza": 0.95,
+            "correcto": false,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": false
+            }
+          },
+          {
+            "caso_id": "A-155",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-156",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-157",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-160",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-161",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-162",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-164",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-165",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-167",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-168",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-169",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-170",
+            "confianza": 0.85,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-171",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-173",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-174",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-175",
+            "confianza": 0.96,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-176",
+            "confianza": 0.96,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-177",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-179",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-180",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-182",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-183",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-186",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-187",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-188",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-189",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-190",
+            "confianza": 0.85,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-191",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-192",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-193",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-194",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-196",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-198",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-199",
+            "confianza": 0.97,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "A-200",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          }
+        ],
+        "operador": "menor_que",
+        "rejilla": [
+          0.5,
+          0.55,
+          0.6,
+          0.65,
+          0.7,
+          0.75,
+          0.8,
+          0.85,
+          0.9,
+          0.95
+        ],
+        "umbral_aplicado": 0.75
+      },
+      "nombre": "publicada-demo-a"
+    },
+    {
+      "entrada": {
+        "etapas": [
+          {
+            "nodo": "extractor",
+            "observada": true
+          }
+        ],
+        "inclusivo": false,
+        "muestras": [
+          {
+            "caso_id": "P-001",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "P-002",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "P-003",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "P-004",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "P-005",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "P-006",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "P-007",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "P-008",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          }
+        ],
+        "operador": "menor_que",
+        "rejilla": [
+          0.5,
+          0.6,
+          0.7,
+          0.8,
+          0.9
+        ],
+        "umbral_aplicado": 0.7
+      },
+      "nombre": "pocos-casos"
+    },
+    {
+      "entrada": {
+        "etapas": [
+          {
+            "nodo": "extractor",
+            "observada": true
+          }
+        ],
+        "inclusivo": false,
+        "muestras": [
+          {
+            "caso_id": "J-001",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "J-002",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "J-003",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "J-004",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "J-005",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "J-006",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "J-007",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "J-008",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "J-009",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "J-010",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "J-011",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "J-012",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "J-013",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "J-014",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "J-015",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "J-016",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "J-017",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "J-018",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "J-019",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "JF-001",
+            "confianza": 0.55,
+            "correcto": false,
+            "etapas": {
+              "extractor": false
+            }
+          }
+        ],
+        "operador": "menor_que",
+        "rejilla": [
+          0.5,
+          0.6,
+          0.7,
+          0.8,
+          0.9
+        ],
+        "umbral_aplicado": 0.7
+      },
+      "nombre": "conformal-justo"
+    },
+    {
+      "entrada": {
+        "etapas": [
+          {
+            "nodo": "extractor",
+            "observada": true
+          }
+        ],
+        "inclusivo": false,
+        "muestras": [
+          {
+            "caso_id": "S-001",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-002",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-003",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-004",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-005",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-006",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-007",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-008",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-009",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-010",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-011",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-012",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-013",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-014",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-015",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-016",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-017",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-018",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-019",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-020",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-021",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-022",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-023",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-024",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-025",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-026",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-027",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-028",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-029",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-030",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-031",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-032",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-033",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-034",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-035",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-036",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-037",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-038",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-039",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-040",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-041",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-042",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-043",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-044",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-045",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-046",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-047",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-048",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-049",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-050",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-051",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-052",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-053",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-054",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-055",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-056",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-057",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-058",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-059",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "S-060",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SF-001",
+            "confianza": 0.8,
+            "correcto": false,
+            "etapas": {
+              "extractor": false
+            }
+          },
+          {
+            "caso_id": "SF-002",
+            "confianza": 0.8,
+            "correcto": false,
+            "etapas": {
+              "extractor": false
+            }
+          },
+          {
+            "caso_id": "SF-003",
+            "confianza": 0.8,
+            "correcto": false,
+            "etapas": {
+              "extractor": false
+            }
+          },
+          {
+            "caso_id": "SF-004",
+            "confianza": 0.8,
+            "correcto": false,
+            "etapas": {
+              "extractor": false
+            }
+          },
+          {
+            "caso_id": "SF-005",
+            "confianza": 0.8,
+            "correcto": false,
+            "etapas": {
+              "extractor": false
+            }
+          },
+          {
+            "caso_id": "SF-006",
+            "confianza": 0.8,
+            "correcto": false,
+            "etapas": {
+              "extractor": false
+            }
+          },
+          {
+            "caso_id": "SF-007",
+            "confianza": 0.8,
+            "correcto": false,
+            "etapas": {
+              "extractor": false
+            }
+          },
+          {
+            "caso_id": "SF-008",
+            "confianza": 0.8,
+            "correcto": false,
+            "etapas": {
+              "extractor": false
+            }
+          },
+          {
+            "caso_id": "SF-009",
+            "confianza": 0.8,
+            "correcto": false,
+            "etapas": {
+              "extractor": false
+            }
+          },
+          {
+            "caso_id": "SF-010",
+            "confianza": 0.8,
+            "correcto": false,
+            "etapas": {
+              "extractor": false
+            }
+          },
+          {
+            "caso_id": "SB-001",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-002",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-003",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-004",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-005",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-006",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-007",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-008",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-009",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-010",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-011",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-012",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-013",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-014",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-015",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-016",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-017",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-018",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-019",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-020",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-021",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-022",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-023",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-024",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-025",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-026",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-027",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-028",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-029",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-030",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-031",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-032",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-033",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-034",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-035",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-036",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-037",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-038",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-039",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-040",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-041",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-042",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-043",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-044",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-045",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-046",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-047",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-048",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-049",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-050",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-051",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-052",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-053",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-054",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-055",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-056",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-057",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-058",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-059",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-060",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-061",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-062",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-063",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-064",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-065",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-066",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-067",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-068",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-069",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-070",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-071",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-072",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-073",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-074",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-075",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-076",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-077",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-078",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-079",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-080",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-081",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-082",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-083",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-084",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-085",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-086",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-087",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-088",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-089",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-090",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-091",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-092",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-093",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-094",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-095",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-096",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-097",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-098",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-099",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-100",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-101",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-102",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-103",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-104",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-105",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-106",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-107",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-108",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-109",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-110",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-111",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-112",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-113",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-114",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-115",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-116",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-117",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-118",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-119",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-120",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-121",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-122",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-123",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-124",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-125",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-126",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-127",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-128",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-129",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-130",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-131",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-132",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-133",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-134",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-135",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-136",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-137",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-138",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-139",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-140",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-141",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-142",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-143",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-144",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-145",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-146",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-147",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-148",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-149",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-150",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-151",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-152",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-153",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-154",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-155",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-156",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-157",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-158",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-159",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-160",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-161",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-162",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-163",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-164",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-165",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-166",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-167",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-168",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-169",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-170",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-171",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-172",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-173",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-174",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-175",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-176",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-177",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-178",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-179",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-180",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-181",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-182",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-183",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-184",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-185",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-186",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-187",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-188",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-189",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-190",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-191",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-192",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-193",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-194",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-195",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-196",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-197",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-198",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-199",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "SB-200",
+            "confianza": 0.6,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          }
+        ],
+        "operador": "menor_que",
+        "rejilla": [
+          0.5,
+          0.7,
+          0.9
+        ],
+        "umbral_aplicado": 0.7
+      },
+      "nombre": "secuencia-rota"
+    },
+    {
+      "entrada": {
+        "etapas": [
+          {
+            "nodo": "extractor",
+            "observada": true
+          }
+        ],
+        "inclusivo": false,
+        "muestras": [
+          {
+            "caso_id": "T-001",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "T-002",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "T-003",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "T-004",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "T-005",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "T-006",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "T-007",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "T-008",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "T-009",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "T-010",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "T-011",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "T-012",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "T-013",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "T-014",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "T-015",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "TF-001",
+            "confianza": 0.95,
+            "correcto": false,
+            "etapas": {
+              "extractor": false
+            }
+          },
+          {
+            "caso_id": "TF-002",
+            "confianza": 0.95,
+            "correcto": false,
+            "etapas": {
+              "extractor": false
+            }
+          },
+          {
+            "caso_id": "TF-003",
+            "confianza": 0.95,
+            "correcto": false,
+            "etapas": {
+              "extractor": false
+            }
+          },
+          {
+            "caso_id": "TF-004",
+            "confianza": 0.95,
+            "correcto": false,
+            "etapas": {
+              "extractor": false
+            }
+          },
+          {
+            "caso_id": "TF-005",
+            "confianza": 0.95,
+            "correcto": false,
+            "etapas": {
+              "extractor": false
+            }
+          }
+        ],
+        "operador": "menor_que",
+        "rejilla": [
+          0.5,
+          0.6,
+          0.7,
+          0.8,
+          0.9
+        ],
+        "umbral_aplicado": 0.7
+      },
+      "nombre": "tasa-sobre-alfa"
+    },
+    {
+      "entrada": {
+        "etapas": [
+          {
+            "nodo": "extractor",
+            "observada": true
+          }
+        ],
+        "inclusivo": false,
+        "muestras": [
+          {
+            "caso_id": "C-001",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-002",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-003",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-004",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-005",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-006",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-007",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-008",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-009",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-010",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-011",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-012",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-013",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-014",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-015",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-016",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-017",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-018",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-019",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-020",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-021",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-022",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-023",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-024",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-025",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-026",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-027",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-028",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-029",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-030",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-031",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-032",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-033",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-034",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-035",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-036",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-037",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-038",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-039",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-040",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-041",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-042",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-043",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-044",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-045",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-046",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-047",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-048",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-049",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-050",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-051",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-052",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-053",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-054",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-055",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-056",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-057",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-058",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-059",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-060",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-061",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-062",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-063",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-064",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-065",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-066",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-067",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-068",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-069",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-070",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-071",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-072",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-073",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-074",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-075",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-076",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-077",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-078",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-079",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-080",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-081",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-082",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-083",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-084",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-085",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-086",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-087",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-088",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-089",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-090",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-091",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-092",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-093",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-094",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-095",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-096",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-097",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-098",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-099",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "C-100",
+            "confianza": 0.95,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "CB-001",
+            "confianza": 0.55,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "CB-002",
+            "confianza": 0.55,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "CB-003",
+            "confianza": 0.55,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "CB-004",
+            "confianza": 0.55,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "CB-005",
+            "confianza": 0.55,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "CB-006",
+            "confianza": 0.55,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "CB-007",
+            "confianza": 0.55,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "CB-008",
+            "confianza": 0.55,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "CB-009",
+            "confianza": 0.55,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "CB-010",
+            "confianza": 0.55,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "CB-011",
+            "confianza": 0.55,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "CB-012",
+            "confianza": 0.55,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "CB-013",
+            "confianza": 0.55,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "CB-014",
+            "confianza": 0.55,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "CB-015",
+            "confianza": 0.55,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "CB-016",
+            "confianza": 0.55,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "CB-017",
+            "confianza": 0.55,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "CB-018",
+            "confianza": 0.55,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "CB-019",
+            "confianza": 0.55,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "CB-020",
+            "confianza": 0.55,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "CB-021",
+            "confianza": 0.55,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "CB-022",
+            "confianza": 0.55,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "CB-023",
+            "confianza": 0.55,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "CB-024",
+            "confianza": 0.55,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "CB-025",
+            "confianza": 0.55,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "CB-026",
+            "confianza": 0.55,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "CB-027",
+            "confianza": 0.55,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "CB-028",
+            "confianza": 0.55,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "CB-029",
+            "confianza": 0.55,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "CB-030",
+            "confianza": 0.55,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "CF-001",
+            "confianza": 0.65,
+            "correcto": false,
+            "etapas": {
+              "extractor": false
+            }
+          },
+          {
+            "caso_id": "CF-002",
+            "confianza": 0.65,
+            "correcto": false,
+            "etapas": {
+              "extractor": false
+            }
+          },
+          {
+            "caso_id": "CF-003",
+            "confianza": 0.65,
+            "correcto": false,
+            "etapas": {
+              "extractor": false
+            }
+          },
+          {
+            "caso_id": "CF-004",
+            "confianza": 0.65,
+            "correcto": false,
+            "etapas": {
+              "extractor": false
+            }
+          },
+          {
+            "caso_id": "CF-005",
+            "confianza": 0.65,
+            "correcto": false,
+            "etapas": {
+              "extractor": false
+            }
+          },
+          {
+            "caso_id": "CF-006",
+            "confianza": 0.65,
+            "correcto": false,
+            "etapas": {
+              "extractor": false
+            }
+          },
+          {
+            "caso_id": "CF-007",
+            "confianza": 0.65,
+            "correcto": false,
+            "etapas": {
+              "extractor": false
+            }
+          },
+          {
+            "caso_id": "CF-008",
+            "confianza": 0.65,
+            "correcto": false,
+            "etapas": {
+              "extractor": false
+            }
+          },
+          {
+            "caso_id": "CF-009",
+            "confianza": 0.65,
+            "correcto": false,
+            "etapas": {
+              "extractor": false
+            }
+          },
+          {
+            "caso_id": "CF-010",
+            "confianza": 0.65,
+            "correcto": false,
+            "etapas": {
+              "extractor": false
+            }
+          },
+          {
+            "caso_id": "CF-011",
+            "confianza": 0.65,
+            "correcto": false,
+            "etapas": {
+              "extractor": false
+            }
+          },
+          {
+            "caso_id": "CF-012",
+            "confianza": 0.65,
+            "correcto": false,
+            "etapas": {
+              "extractor": false
+            }
+          },
+          {
+            "caso_id": "CF-013",
+            "confianza": 0.65,
+            "correcto": false,
+            "etapas": {
+              "extractor": false
+            }
+          },
+          {
+            "caso_id": "CF-014",
+            "confianza": 0.65,
+            "correcto": false,
+            "etapas": {
+              "extractor": false
+            }
+          },
+          {
+            "caso_id": "CF-015",
+            "confianza": 0.65,
+            "correcto": false,
+            "etapas": {
+              "extractor": false
+            }
+          }
+        ],
+        "operador": "menor_que",
+        "rejilla": [
+          0.5,
+          0.6,
+          0.7,
+          0.8,
+          0.9
+        ],
+        "umbral_aplicado": 0.7
+      },
+      "nombre": "conformal-bajo-el-umbral"
+    },
+    {
+      "entrada": {
+        "etapas": [
+          {
+            "nodo": "extractor",
+            "observada": true
+          },
+          {
+            "nodo": "aclaracion",
+            "observada": true
+          },
+          {
+            "nodo": "vacia",
+            "observada": true
+          },
+          {
+            "nodo": "redactor",
+            "observada": false
+          }
+        ],
+        "inclusivo": false,
+        "muestras": [
+          {
+            "caso_id": "E-001",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": null,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-002",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": false,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-003",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-004",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-005",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-006",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-007",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-008",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-009",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-010",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-011",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-012",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-013",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-014",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-015",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-016",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-017",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-018",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-019",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-020",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-021",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-022",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-023",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-024",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-025",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-026",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-027",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-028",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-029",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-030",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-031",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-032",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-033",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-034",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-035",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-036",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-037",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-038",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-039",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-040",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-041",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-042",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-043",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-044",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-045",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-046",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-047",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-048",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-049",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-050",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-051",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-052",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-053",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-054",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-055",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-056",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-057",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-058",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-059",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-060",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-061",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-062",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-063",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-064",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-065",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-066",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-067",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-068",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-069",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-070",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-071",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-072",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-073",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-074",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-075",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-076",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-077",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-078",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-079",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "E-080",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "EF-001",
+            "confianza": 0.7,
+            "correcto": false,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": false
+            }
+          },
+          {
+            "caso_id": "EF-002",
+            "confianza": 0.7,
+            "correcto": false,
+            "etapas": {
+              "aclaracion": true,
+              "extractor": false
+            }
+          }
+        ],
+        "operador": "menor_o_igual_que",
+        "rejilla": [
+          0.5,
+          0.6,
+          0.7,
+          0.8,
+          0.9
+        ],
+        "umbral_aplicado": 0.7
+      },
+      "nombre": "etapas-a-medias"
+    },
+    {
+      "entrada": {
+        "etapas": [
+          {
+            "nodo": "extractor",
+            "observada": true
+          }
+        ],
+        "inclusivo": false,
+        "muestras": [
+          {
+            "caso_id": "M-001",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "M-002",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "M-003",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "M-004",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "M-005",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "M-006",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "M-007",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "M-008",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "M-009",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "M-010",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "M-011",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "M-012",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "M-013",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "M-014",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "M-015",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "M-016",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "M-017",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "M-018",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "M-019",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "M-020",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "M-021",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "M-022",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "M-023",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "M-024",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "M-025",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "M-026",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "M-027",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "M-028",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "M-029",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          },
+          {
+            "caso_id": "M-030",
+            "confianza": 0.9,
+            "correcto": true,
+            "etapas": {
+              "extractor": true
+            }
+          }
+        ],
+        "operador": "mayor_que",
+        "rejilla": [
+          0.5,
+          0.6,
+          0.7,
+          0.8,
+          0.9
+        ],
+        "umbral_aplicado": 0.7
+      },
+      "nombre": "operador-sin-garantia"
+    }
+  ],
+  "formato": "planlang-contrato-garantia-entradas/v1",
+  "nota": "Generado por scripts/garantia-contrato.ts; lo esperado lo calcula tests/contrato/garantia_fracciones.py."
+}

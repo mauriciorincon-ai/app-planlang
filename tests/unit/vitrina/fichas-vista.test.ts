@@ -122,22 +122,22 @@ describe("lo que entrega P7", () => {
     expect(esB.app).toEqual(es.app);
     expect(esB.agente.marco.nombre).not.toBe(es.agente.marco.nombre);
     expect(esB.textos).toEqual({
-      antetitulo: "Demo B · lo que viaja a la vitrina personal",
+      antetitulo: "Demo B · las fichas y lo que viaja a la vitrina personal",
       cuadro: "Ficha de reproducibilidad · demo B",
       seccionApp: "La ficha de la app",
       seccionAgente: "La ficha del agente B",
     });
     expect(esB.mirada.entrega[2]).toEqual({
       titulo: "planlang-demo-b.ficha-tecnica.json",
-      detalle: "la ficha del agente B, para el frente Agentes",
+      detalle: "la ficha del agente B: ya no se entrega, se muestra solo aquí",
     });
     expect(esB.agente.tabla.entrega).toBe(
-      "content/agentes/planlang-demo-b.ficha-tecnica.json",
+      "nada: la ficha del agente ya no se entrega",
     );
     expect(esB.agente.tabla.problemas).toEqual([]);
   });
 
-  it("el export y la ficha del agente viajan; la de reproducibilidad se queda", () => {
+  it("el export viaja; la ficha del agente ya no se entrega (S8) y la de reproducibilidad se queda", () => {
     expect(es.mirada.entrega.map((x) => x.titulo)).toEqual([
       "La ficha de reproducibilidad",
       "brochure-export.json",
@@ -146,28 +146,44 @@ describe("lo que entrega P7", () => {
     ]);
     expect(es.app.tabla.entrega).toBe("docs/brochure-export.json");
     expect(es.agente.tabla.entrega).toBe(
-      "content/agentes/planlang-demo-a.ficha-tecnica.json",
+      "nada: la ficha del agente ya no se entrega",
     );
+    // Ninguna ruta de entrega nombra los archivos retirados.
+    for (const v of [es, en, esB])
+      expect(JSON.stringify(v)).not.toContain("content/agentes");
   });
 });
 
 describe("cada ficha, como la pinta hoja-de-vida", () => {
-  it("la de la app: estado, ciclo, sprints, versión y fecha; sin proceso, las secciones se renumeran", () => {
+  it("la de la app: estado, ciclo, sprints, versión y fecha; con el proceso de la planeadora, las cinco secciones", () => {
     expect(es.app.chips).toEqual([
       "Sin sellar",
-      "H1",
+      "H-2",
       `${repo.sprintsCerrados} sprint${repo.sprintsCerrados === 1 ? "" : "s"}`,
       `v${repo.version}`,
       `Datos del ${repo.ultimaFecha}`,
     ]);
-    expect(es.app.proceso).toBeNull();
+    expect(es.app.proceso?.titulo).toBe(
+      "Del plan a la brecha, con tu agente de IA",
+    );
+    expect(es.app.proceso?.procedencia).toBe(
+      "Proceso curado por la planeadora.",
+    );
+    expect(es.app.proceso?.carriles.map((c) => c.id)).toEqual([
+      "tu",
+      "planlang",
+      "agente",
+      "persona",
+    ]);
     expect(es.app.num).toEqual({
       paraQuien: "01",
-      proceso: null,
-      tiene: "02",
-      limites: "03",
-      donde: "04",
+      proceso: "02",
+      tiene: "03",
+      limites: "04",
+      donde: "05",
     });
+    // Con proceso no hay la nota de «sin proceso».
+    expect(es.app.notas).toHaveLength(1);
     expect(es.app.tieneSub).toBe("6 grupos · 21 funcionalidades.");
     expect(es.app.hitos.map((h) => h.etiqueta)).toEqual([
       "ciclo",
@@ -255,7 +271,7 @@ describe("la comprobación de cada campo", () => {
       "proceso.carriles[]",
       "enlaces",
     ]);
-    expect(es.app.tabla.filas.map((x) => x.campo)).not.toContain(
+    expect(es.app.tabla.filas.map((x) => x.campo)).toContain(
       "proceso.carriles[]",
     );
     const lema = es.agente.tabla.filas[0]!;

@@ -1,8 +1,9 @@
 {
   "schema_version": "1.0.0",
   "app": "planlang",
-  "declarado_en": "2026-10-04",
-  "titular": "An agent's plan is written as a contract, and a verifier with no AI publishes, case by case, the gap between what was planned and what the agent did, with its failures in view.",
+  "procedencia": "planeadora",
+  "declarado_en": "2026-10-27",
+  "titular": "An AI agent's plan is written down as a contract before it is built, and a verifier with no AI publishes, case by case, the gap between what was planned and what happened, with its failures in plain sight and its thresholds ready to move.",
   "cifras_destacadas": [
     "criterios_cumplidos",
     "decisiones_cruzadas",
@@ -11,14 +12,251 @@
     "costo_de_una_corrida"
   ],
   "limites": [
-    "It is a simulation: it handles no real cases and decides on no one.",
-    "The interviewer runs in the console, not in the showcase: here you see the plan it drafted for demo B, reviewed and approved by a person.",
-    "It measures what the plan declared; what it did not foresee shows up as a gap, not as a verdict."
+    "It is a simulation: it handles no real cases and decides on no one; the demos' human decisions were simulated with the known answer.",
+    "The interviewer and the runs live in the terminal; the site shows their results, already computed and verified.",
+    "It measures what the plan declared: what the plan did not foresee appears as an unforeseen gap, not as a verdict.",
+    "The playground recomputes over what the agent already did; outside the observed range, the result is marked “not observed”."
   ],
   "nunca": [
     "Uses real data: every case, member, physician, applicant and watchlist is synthetic.",
     "Lets a model decide whether the agent got it right.",
-    "Denies or rejects a case without a person reviewing it.",
+    "Issues a full denial or a rejection without a person reviewing it.",
+    "Calls a model to validate the plan, measure the gap, recompute thresholds or draw the agent.",
     "Hides an unfavorable result."
-  ]
+  ],
+  "proceso": {
+    "titulo": "From plan to gap, with your AI agent",
+    "carriles": [
+      {
+        "id": "tu",
+        "nombre": "You · whoever plans"
+      },
+      {
+        "id": "planlang",
+        "nombre": "planlang"
+      },
+      {
+        "id": "agente",
+        "nombre": "The agent · in batches"
+      },
+      {
+        "id": "persona",
+        "nombre": "A person reviews"
+      }
+    ],
+    "pasos": [
+      {
+        "id": "ini",
+        "tipo": "inicio",
+        "carril": "tu",
+        "texto": "You have an AI-agent project"
+      },
+      {
+        "id": "entrevista",
+        "tipo": "tarea",
+        "carril": "tu",
+        "texto": "You answer the plan interview"
+      },
+      {
+        "id": "borrador",
+        "tipo": "tarea",
+        "carril": "planlang",
+        "texto": "Drafts the plan and flags contradictions"
+      },
+      {
+        "id": "valida",
+        "tipo": "tarea",
+        "carril": "planlang",
+        "texto": "Validates the plan, with no AI"
+      },
+      {
+        "id": "medible",
+        "tipo": "decision",
+        "carril": "planlang",
+        "texto": "Can the plan be measured?"
+      },
+      {
+        "id": "completa",
+        "tipo": "tarea",
+        "carril": "tu",
+        "texto": "You fill in what is missing"
+      },
+      {
+        "id": "aprueba",
+        "tipo": "tarea",
+        "carril": "tu",
+        "texto": "You approve the plan and it is sealed"
+      },
+      {
+        "id": "casos",
+        "tipo": "tarea",
+        "carril": "planlang",
+        "texto": "Generates cases with a known answer"
+      },
+      {
+        "id": "decide",
+        "tipo": "tarea",
+        "carril": "agente",
+        "texto": "Decides each case according to the plan"
+      },
+      {
+        "id": "pausa",
+        "tipo": "decision",
+        "carril": "agente",
+        "texto": "Does the plan require a person?"
+      },
+      {
+        "id": "revisa",
+        "tipo": "tarea",
+        "carril": "persona",
+        "texto": "Reviews the case and decides"
+      },
+      {
+        "id": "traza",
+        "tipo": "tarea",
+        "carril": "agente",
+        "texto": "Leaves the trace of each decision"
+      },
+      {
+        "id": "verifica",
+        "tipo": "tarea",
+        "carril": "planlang",
+        "texto": "Compares the plan with the traces, with no AI"
+      },
+      {
+        "id": "publica",
+        "tipo": "tarea",
+        "carril": "planlang",
+        "texto": "Publishes the gap, failures included"
+      },
+      {
+        "id": "umbrales",
+        "tipo": "tarea",
+        "carril": "tu",
+        "texto": "You move thresholds and see what changes"
+      },
+      {
+        "id": "ajustar",
+        "tipo": "decision",
+        "carril": "tu",
+        "texto": "Do you change the plan?"
+      },
+      {
+        "id": "fin",
+        "tipo": "fin",
+        "carril": "tu",
+        "texto": "Agent measured against its plan"
+      }
+    ],
+    "flujos": [
+      {
+        "de": "ini",
+        "a": "entrevista"
+      },
+      {
+        "de": "entrevista",
+        "a": "borrador"
+      },
+      {
+        "de": "borrador",
+        "a": "valida"
+      },
+      {
+        "de": "valida",
+        "a": "medible"
+      },
+      {
+        "de": "medible",
+        "a": "completa",
+        "etiqueta": "no"
+      },
+      {
+        "de": "completa",
+        "a": "valida"
+      },
+      {
+        "de": "medible",
+        "a": "aprueba",
+        "etiqueta": "yes"
+      },
+      {
+        "de": "aprueba",
+        "a": "casos"
+      },
+      {
+        "de": "casos",
+        "a": "decide"
+      },
+      {
+        "de": "decide",
+        "a": "pausa"
+      },
+      {
+        "de": "pausa",
+        "a": "revisa",
+        "etiqueta": "yes"
+      },
+      {
+        "de": "pausa",
+        "a": "traza",
+        "etiqueta": "no"
+      },
+      {
+        "de": "revisa",
+        "a": "traza"
+      },
+      {
+        "de": "traza",
+        "a": "verifica"
+      },
+      {
+        "de": "verifica",
+        "a": "publica"
+      },
+      {
+        "de": "publica",
+        "a": "umbrales"
+      },
+      {
+        "de": "umbrales",
+        "a": "ajustar"
+      },
+      {
+        "de": "ajustar",
+        "a": "entrevista",
+        "etiqueta": "yes, a new version"
+      },
+      {
+        "de": "ajustar",
+        "a": "fin",
+        "etiqueta": "no"
+      }
+    ],
+    "anotaciones": [
+      {
+        "paso": "borrador",
+        "texto": "Asks in order what the sector template requires, with an example in each question; it never approves for you."
+      },
+      {
+        "paso": "valida",
+        "texto": "Rejects, with the exact reason, criteria without a rule, thresholds without a signal and serious risks without mitigation."
+      },
+      {
+        "paso": "decide",
+        "texto": "With the Claude Code subscription, 20 cases at a time and with pauses; if the run is cut off, it resumes without repeating any."
+      },
+      {
+        "paso": "revisa",
+        "texto": "In the demos, that person is simulated with the case's known answer, and every screen says so."
+      },
+      {
+        "paso": "verifica",
+        "texto": "With no model at all: the same plan and the same traces always give the same report, in Spanish and English."
+      },
+      {
+        "paso": "umbrales",
+        "texto": "Recomputed in the browser over the real decisions; nobody calls the model again."
+      }
+    ]
+  }
 }

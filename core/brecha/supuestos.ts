@@ -28,6 +28,11 @@ import {
 } from "./calibracion";
 import { parsear } from "./condiciones";
 import {
+  garantiaDeCalibracion,
+  type EntradaDeGarantia,
+  type GarantiaDeCalibracion,
+} from "./garantia";
+import {
   SENAL_DE_CONFIANZA,
   type Umbrales,
   type VistaDeCaso,
@@ -37,6 +42,24 @@ import { evaluarRegla } from "./reglas";
 
 /** Qué cuenta como extracción correcta para la calibración (la misma regla que el criterio de exactitud). */
 export const ETIQUETA_CORRECTO = "extraccion.campos == verdad_conocida.campos";
+/**
+ * Cómo se mide cada etapa con modelo contra la verdad conocida del caso, por el id de su nodo en el plan
+ * (`contrato_de_grafo.nodos_esperados`, `tipo: "modelo"`): la cobertura conjunta de la garantía (S8, ADR-018). Una
+ * etapa con modelo que no esté aquí no tiene verdad en el caso, y la garantía la declara «no observada».
+ */
+export const VERDAD_DE_ETAPA: Readonly<
+  Record<string, { poblacion: string; condicion: string }>
+> = {
+  extractor: {
+    poblacion: "verdad_conocida.presente",
+    condicion: ETIQUETA_CORRECTO,
+  },
+  aclaracion: {
+    poblacion: "verdad_conocida.ciclos_aclaracion_necesarios != null",
+    condicion:
+      "ciclos_aclaracion == verdad_conocida.ciclos_aclaracion_necesarios",
+  },
+};
 /** Qué cuenta como caso resuelto correctamente al comparar con la línea base. */
 export const EXACTITUD_DE_CASO =
   "decision_final == verdad_conocida.decision AND pausa_humana == verdad_conocida.debe_escalar";
@@ -71,6 +94,8 @@ export interface ResultadoSupuesto {
   n: number;
   metricas: Record<string, number | null>;
   curva: PuntoRiesgoCobertura[] | null;
+  /** La garantía de la calibración (S8, ADR-018): solo en un supuesto de calibración con curva. */
+  garantia: GarantiaDeCalibracion | null;
   comparacion: ComparacionLineaBase | null;
   limitaciones: TextoBilingue[];
 }
@@ -213,22 +238,22 @@ function reglaRota(
     n: 0,
     metricas: {},
     curva: null,
+    garantia: null,
     comparacion: null,
     limitaciones: [],
   };
 }
 
-function calibracion(
-  s: Supuesto,
-  plan: Plan,
+/**
+ * Las muestras de S1: los casos de la población del supuesto con la extracción medida contra la verdad y una
+ * confianza numérica. Las lee la curva, la calibración y la garantía; `mal_formada` si la regla no pudo medir.
+ */
+export function muestrasDeCalibracion(
+  poblacion: string,
   vistas: readonly VistaDeCaso[],
-): Omit<
-  ResultadoSupuesto,
-  "id" | "enunciado" | "criticidad" | "estado_en_plan"
-> {
-  const medible = s.medible_en_trazas!;
-  const ev = evaluarRegla(medible.poblacion, ETIQUETA_CORRECTO, vistas);
-  if (ev.mal_formada) return reglaRota(ev.mal_formada);
+): { muestras: Muestra[]; mal_formada: TextoBilingue | null } {
+  const ev = evaluarRegla(poblacion, ETIQUETA_CORRECTO, vistas);
+  if (ev.mal_formada) return { muestras: [], mal_formada: ev.mal_formada };
   const porId = new Map(vistas.map((v) => [v.caso_id, v]));
   const muestras: Muestra[] = [];
   for (const id of [...ev.verdaderos, ...ev.falsos].sort()) {
@@ -240,6 +265,75 @@ function calibracion(
         correcto: ev.verdaderos.includes(id),
       });
   }
+  return { muestras, mal_formada: null };
+}
+
+/**
+ * Lo que la garantía (S8) lee de un supuesto de calibración: sus muestras con el acierto de cada etapa de
+ * `VERDAD_DE_ETAPA` (`null` donde no se midió), la rejilla y la arista del umbral de confianza, las etapas con modelo
+ * del plan y el umbral aplicado en la corrida. `null` si el plan no tiene umbral de confianza con rango. La usa
+ * también el gate de contrato con Python (`tests/contrato/garantia.test.ts`).
+ */
+export function entradaDeGarantia(
+  muestras: readonly Muestra[],
+  plan: Plan,
+  vistas: readonly VistaDeCaso[],
+  umbrales: Umbrales,
+): EntradaDeGarantia | null {
+  const umbral = plan.umbrales.find((u) => u.senal === SENAL_DE_CONFIANZA);
+  if (!umbral || !("min" in umbral.rango_jugable)) return null;
+  const modelo = plan.contrato_de_grafo.nodos_esperados.filter(
+    (n) => n.tipo === "modelo",
+  );
+  const medidas = modelo
+    .filter((n) => Object.hasOwn(VERDAD_DE_ETAPA, n.id))
+    .map((n) => {
+      const r = VERDAD_DE_ETAPA[n.id] as {
+        poblacion: string;
+        condicion: string;
+      };
+      const ev = evaluarRegla(r.poblacion, r.condicion, vistas);
+      const acierto = new Map<string, boolean>();
+      if (!ev.mal_formada) {
+        for (const id of ev.verdaderos) acierto.set(id, true);
+        for (const id of ev.falsos) acierto.set(id, false);
+      }
+      return [n.id, acierto] as const;
+    });
+  const aplicado = umbrales[umbral.id];
+  return {
+    muestras: muestras.map((m) => ({
+      ...m,
+      etapas: Object.fromEntries(
+        medidas.map(([nodo, a]) => [nodo, a.get(m.caso_id) ?? null]),
+      ),
+    })),
+    rejilla: rejilla(umbral.rango_jugable),
+    operador: umbral.operador,
+    inclusivo: umbral.inclusivo,
+    etapas: modelo.map((n) => ({
+      nodo: n.id,
+      observada: Object.hasOwn(VERDAD_DE_ETAPA, n.id),
+    })),
+    umbral_aplicado: typeof aplicado === "number" ? aplicado : null,
+  };
+}
+
+function calibracion(
+  s: Supuesto,
+  plan: Plan,
+  vistas: readonly VistaDeCaso[],
+  umbrales: Umbrales,
+): Omit<
+  ResultadoSupuesto,
+  "id" | "enunciado" | "criticidad" | "estado_en_plan"
+> {
+  const medible = s.medible_en_trazas!;
+  const { muestras, mal_formada } = muestrasDeCalibracion(
+    medible.poblacion,
+    vistas,
+  );
+  if (mal_formada) return reglaRota(mal_formada);
   const umbral = plan.umbrales.find((u) => u.senal === SENAL_DE_CONFIANZA);
   const rango =
     umbral && "min" in umbral.rango_jugable ? umbral.rango_jugable : null;
@@ -252,6 +346,10 @@ function calibracion(
           umbral.inclusivo,
         )
       : null;
+  const entrada = curva
+    ? entradaDeGarantia(muestras, plan, vistas, umbrales)
+    : null;
+  const garantia = entrada ? garantiaDeCalibracion(entrada) : null;
   const aciertos = muestras.filter((m) => m.correcto).length;
   const metricas: Record<string, number | null> = {
     ece: medible.metricas.includes("ece") ? ece(muestras) : null,
@@ -272,6 +370,7 @@ function calibracion(
     n: muestras.length,
     metricas,
     curva,
+    garantia,
     comparacion: null,
     limitaciones,
   };
@@ -308,6 +407,7 @@ function tasa(
       n,
       metricas,
       curva: null,
+      garantia: null,
       comparacion: null,
       limitaciones,
     };
@@ -322,6 +422,7 @@ function tasa(
       n,
       metricas,
       curva: null,
+      garantia: null,
       comparacion: null,
       limitaciones,
     };
@@ -330,6 +431,7 @@ function tasa(
     n,
     metricas,
     curva: null,
+    garantia: null,
     comparacion: null,
     limitaciones: [...limitaciones, ...muestraPequena(n)],
   };
@@ -433,6 +535,7 @@ function comparacion(
       n: vistas.length,
       metricas: {},
       curva: null,
+      garantia: null,
       comparacion: null,
       limitaciones: [],
     };
@@ -533,6 +636,7 @@ function comparacion(
       n: vistas.length,
       metricas,
       curva: null,
+      garantia: null,
       comparacion: comp,
       limitaciones,
     };
@@ -556,6 +660,7 @@ function comparacion(
     n: vistas.length,
     metricas,
     curva: null,
+    garantia: null,
     comparacion: comp,
     limitaciones,
   };
@@ -586,6 +691,7 @@ export function evaluarSupuestos(
         n: 0,
         metricas: {},
         curva: null,
+        garantia: null,
         comparacion: null,
         limitaciones: [],
       };
@@ -593,7 +699,7 @@ export function evaluarSupuestos(
     if (familia === "linea_base")
       return { ...cabecera, ...comparacion(s, vistas, base) };
     if (familia === "calibracion")
-      return { ...cabecera, ...calibracion(s, plan, vistas) };
+      return { ...cabecera, ...calibracion(s, plan, vistas, umbrales) };
     return { ...cabecera, ...tasa(s, plan, vistas, umbrales) };
   });
 }

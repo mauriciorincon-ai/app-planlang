@@ -619,11 +619,11 @@
     },
     "verificador": {
       "formato": "planlang-informe/v1",
-      "version": "1.3.0"
+      "version": "1.4.0"
     }
   },
   "formato": "planlang-informe/v1",
-  "huella": "20c0b4ae85a8b635a979996db42fb58b21e1a1d7c390343ce975ca5ba30451e6",
+  "huella": "bd4a99509f96feea091922741f8162b0fbbb466c90fedb69013f60494174e455",
   "plan_en_breve": {
     "decisiones_una_via": [
       {
@@ -1202,6 +1202,628 @@
       },
       "estado": "confirmado",
       "estado_en_plan": "sin_probar",
+      "garantia": {
+        "aciertos": 153,
+        "alfa_del_informe": 0.1,
+        "delta": 0.1,
+        "etapas": [
+          {
+            "casos": 159,
+            "errores": 6,
+            "nodo": "extractor",
+            "observada": true
+          },
+          {
+            "casos": 159,
+            "errores": 4,
+            "nodo": "aclaracion",
+            "observada": true
+          },
+          {
+            "casos": 0,
+            "errores": 0,
+            "nodo": "redactor",
+            "observada": false
+          }
+        ],
+        "n": 159,
+        "niveles": [
+          {
+            "alfa": 0.05,
+            "conformal": {
+              "aciertos_minimos": 19,
+              "indice": 7,
+              "n_aciertos": 153,
+              "umbral": 0.85
+            },
+            "conjunta": {
+              "alfa_por_etapa": 0.025,
+              "casos": 159,
+              "delta_por_etapa": 0.05,
+              "error_observado": {
+                "aceptados": 134,
+                "errores": 3,
+                "tasa": 0.0224,
+                "umbral": 0.95
+              },
+              "faltan": {
+                "aceptados": 134,
+                "casos": null,
+                "errores": 3,
+                "motivo": "tasa_cerca_de_alfa",
+                "nodo": "extractor",
+                "umbral": 0.95
+              },
+              "k": 2,
+              "nodos": [
+                "extractor",
+                "aclaracion"
+              ],
+              "pruebas": [
+                {
+                  "etapas": [
+                    {
+                      "aceptados": 134,
+                      "errores": 3,
+                      "nodo": "extractor",
+                      "p": 0.5683,
+                      "rechaza": false
+                    },
+                    {
+                      "aceptados": 134,
+                      "errores": 2,
+                      "nodo": "aclaracion",
+                      "p": 0.3461,
+                      "rechaza": false
+                    }
+                  ],
+                  "rechaza": false,
+                  "umbral": 0.95
+                }
+              ],
+              "umbral": null
+            },
+            "sin_zona": null,
+            "umbral_aplicado_en_zona": true,
+            "umbral_con_garantia": {
+              "cobertura": 0.9623,
+              "faltan": null,
+              "pruebas": [
+                {
+                  "aceptados": 134,
+                  "errores": 3,
+                  "p": 0.0931,
+                  "rechaza": true,
+                  "umbral": 0.95
+                },
+                {
+                  "aceptados": 142,
+                  "errores": 3,
+                  "p": 0.0716,
+                  "rechaza": true,
+                  "umbral": 0.9
+                },
+                {
+                  "aceptados": 151,
+                  "errores": 3,
+                  "p": 0.0529,
+                  "rechaza": true,
+                  "umbral": 0.85
+                },
+                {
+                  "aceptados": 153,
+                  "errores": 3,
+                  "p": 0.0494,
+                  "rechaza": true,
+                  "umbral": 0.8
+                },
+                {
+                  "aceptados": 153,
+                  "errores": 3,
+                  "p": 0.0494,
+                  "rechaza": true,
+                  "umbral": 0.75
+                },
+                {
+                  "aceptados": 156,
+                  "errores": 4,
+                  "p": 0.1056,
+                  "rechaza": false,
+                  "umbral": 0.7
+                }
+              ],
+              "riesgo": 0.0196,
+              "umbral": 0.75
+            },
+            "zona": {
+              "desde": 0.75,
+              "hasta": 0.85,
+              "umbrales": [
+                0.75,
+                0.8,
+                0.85
+              ]
+            }
+          },
+          {
+            "alfa": 0.1,
+            "conformal": {
+              "aciertos_minimos": 9,
+              "indice": 15,
+              "n_aciertos": 153,
+              "umbral": 0.9
+            },
+            "conjunta": {
+              "alfa_por_etapa": 0.05,
+              "casos": 159,
+              "delta_por_etapa": 0.05,
+              "error_observado": {
+                "aceptados": 134,
+                "errores": 3,
+                "tasa": 0.0224,
+                "umbral": 0.95
+              },
+              "faltan": {
+                "aceptados": 134,
+                "casos": 268,
+                "errores": 3,
+                "motivo": "tasa_cerca_de_alfa",
+                "nodo": "extractor",
+                "umbral": 0.95
+              },
+              "k": 2,
+              "nodos": [
+                "extractor",
+                "aclaracion"
+              ],
+              "pruebas": [
+                {
+                  "etapas": [
+                    {
+                      "aceptados": 134,
+                      "errores": 3,
+                      "nodo": "extractor",
+                      "p": 0.0931,
+                      "rechaza": false
+                    },
+                    {
+                      "aceptados": 134,
+                      "errores": 2,
+                      "nodo": "aclaracion",
+                      "p": 0.0339,
+                      "rechaza": true
+                    }
+                  ],
+                  "rechaza": false,
+                  "umbral": 0.95
+                }
+              ],
+              "umbral": null
+            },
+            "sin_zona": null,
+            "umbral_aplicado_en_zona": true,
+            "umbral_con_garantia": {
+              "cobertura": 0.9937,
+              "faltan": null,
+              "pruebas": [
+                {
+                  "aceptados": 134,
+                  "errores": 3,
+                  "p": 0.0005,
+                  "rechaza": true,
+                  "umbral": 0.95
+                },
+                {
+                  "aceptados": 142,
+                  "errores": 3,
+                  "p": 0.0002,
+                  "rechaza": true,
+                  "umbral": 0.9
+                },
+                {
+                  "aceptados": 151,
+                  "errores": 3,
+                  "p": 0.0001,
+                  "rechaza": true,
+                  "umbral": 0.85
+                },
+                {
+                  "aceptados": 153,
+                  "errores": 3,
+                  "p": 0.0001,
+                  "rechaza": true,
+                  "umbral": 0.8
+                },
+                {
+                  "aceptados": 153,
+                  "errores": 3,
+                  "p": 0.0001,
+                  "rechaza": true,
+                  "umbral": 0.75
+                },
+                {
+                  "aceptados": 156,
+                  "errores": 4,
+                  "p": 0.0003,
+                  "rechaza": true,
+                  "umbral": 0.7
+                },
+                {
+                  "aceptados": 156,
+                  "errores": 4,
+                  "p": 0.0003,
+                  "rechaza": true,
+                  "umbral": 0.65
+                },
+                {
+                  "aceptados": 158,
+                  "errores": 5,
+                  "p": 0.0011,
+                  "rechaza": true,
+                  "umbral": 0.6
+                },
+                {
+                  "aceptados": 158,
+                  "errores": 5,
+                  "p": 0.0011,
+                  "rechaza": true,
+                  "umbral": 0.55
+                },
+                {
+                  "aceptados": 158,
+                  "errores": 5,
+                  "p": 0.0011,
+                  "rechaza": true,
+                  "umbral": 0.5
+                }
+              ],
+              "riesgo": 0.0316,
+              "umbral": 0.5
+            },
+            "zona": {
+              "desde": 0.5,
+              "hasta": 0.9,
+              "umbrales": [
+                0.5,
+                0.55,
+                0.6,
+                0.65,
+                0.7,
+                0.75,
+                0.8,
+                0.85,
+                0.9
+              ]
+            }
+          },
+          {
+            "alfa": 0.2,
+            "conformal": {
+              "aciertos_minimos": 4,
+              "indice": 30,
+              "n_aciertos": 153,
+              "umbral": 0.95
+            },
+            "conjunta": {
+              "alfa_por_etapa": 0.1,
+              "casos": 159,
+              "delta_por_etapa": 0.05,
+              "error_observado": {
+                "aceptados": 158,
+                "errores": 5,
+                "tasa": 0.0316,
+                "umbral": 0.5
+              },
+              "faltan": null,
+              "k": 2,
+              "nodos": [
+                "extractor",
+                "aclaracion"
+              ],
+              "pruebas": [
+                {
+                  "etapas": [
+                    {
+                      "aceptados": 134,
+                      "errores": 3,
+                      "nodo": "extractor",
+                      "p": 0.0005,
+                      "rechaza": true
+                    },
+                    {
+                      "aceptados": 134,
+                      "errores": 2,
+                      "nodo": "aclaracion",
+                      "p": 0.0001,
+                      "rechaza": true
+                    }
+                  ],
+                  "rechaza": true,
+                  "umbral": 0.95
+                },
+                {
+                  "etapas": [
+                    {
+                      "aceptados": 142,
+                      "errores": 3,
+                      "nodo": "extractor",
+                      "p": 0.0002,
+                      "rechaza": true
+                    },
+                    {
+                      "aceptados": 142,
+                      "errores": 2,
+                      "nodo": "aclaracion",
+                      "p": 0,
+                      "rechaza": true
+                    }
+                  ],
+                  "rechaza": true,
+                  "umbral": 0.9
+                },
+                {
+                  "etapas": [
+                    {
+                      "aceptados": 151,
+                      "errores": 3,
+                      "nodo": "extractor",
+                      "p": 0.0001,
+                      "rechaza": true
+                    },
+                    {
+                      "aceptados": 151,
+                      "errores": 2,
+                      "nodo": "aclaracion",
+                      "p": 0,
+                      "rechaza": true
+                    }
+                  ],
+                  "rechaza": true,
+                  "umbral": 0.85
+                },
+                {
+                  "etapas": [
+                    {
+                      "aceptados": 153,
+                      "errores": 3,
+                      "nodo": "extractor",
+                      "p": 0.0001,
+                      "rechaza": true
+                    },
+                    {
+                      "aceptados": 153,
+                      "errores": 2,
+                      "nodo": "aclaracion",
+                      "p": 0,
+                      "rechaza": true
+                    }
+                  ],
+                  "rechaza": true,
+                  "umbral": 0.8
+                },
+                {
+                  "etapas": [
+                    {
+                      "aceptados": 153,
+                      "errores": 3,
+                      "nodo": "extractor",
+                      "p": 0.0001,
+                      "rechaza": true
+                    },
+                    {
+                      "aceptados": 153,
+                      "errores": 2,
+                      "nodo": "aclaracion",
+                      "p": 0,
+                      "rechaza": true
+                    }
+                  ],
+                  "rechaza": true,
+                  "umbral": 0.75
+                },
+                {
+                  "etapas": [
+                    {
+                      "aceptados": 156,
+                      "errores": 4,
+                      "nodo": "extractor",
+                      "p": 0.0003,
+                      "rechaza": true
+                    },
+                    {
+                      "aceptados": 156,
+                      "errores": 3,
+                      "nodo": "aclaracion",
+                      "p": 0.0001,
+                      "rechaza": true
+                    }
+                  ],
+                  "rechaza": true,
+                  "umbral": 0.7
+                },
+                {
+                  "etapas": [
+                    {
+                      "aceptados": 156,
+                      "errores": 4,
+                      "nodo": "extractor",
+                      "p": 0.0003,
+                      "rechaza": true
+                    },
+                    {
+                      "aceptados": 156,
+                      "errores": 3,
+                      "nodo": "aclaracion",
+                      "p": 0.0001,
+                      "rechaza": true
+                    }
+                  ],
+                  "rechaza": true,
+                  "umbral": 0.65
+                },
+                {
+                  "etapas": [
+                    {
+                      "aceptados": 158,
+                      "errores": 5,
+                      "nodo": "extractor",
+                      "p": 0.0011,
+                      "rechaza": true
+                    },
+                    {
+                      "aceptados": 158,
+                      "errores": 4,
+                      "nodo": "aclaracion",
+                      "p": 0.0003,
+                      "rechaza": true
+                    }
+                  ],
+                  "rechaza": true,
+                  "umbral": 0.6
+                },
+                {
+                  "etapas": [
+                    {
+                      "aceptados": 158,
+                      "errores": 5,
+                      "nodo": "extractor",
+                      "p": 0.0011,
+                      "rechaza": true
+                    },
+                    {
+                      "aceptados": 158,
+                      "errores": 4,
+                      "nodo": "aclaracion",
+                      "p": 0.0003,
+                      "rechaza": true
+                    }
+                  ],
+                  "rechaza": true,
+                  "umbral": 0.55
+                },
+                {
+                  "etapas": [
+                    {
+                      "aceptados": 158,
+                      "errores": 5,
+                      "nodo": "extractor",
+                      "p": 0.0011,
+                      "rechaza": true
+                    },
+                    {
+                      "aceptados": 158,
+                      "errores": 4,
+                      "nodo": "aclaracion",
+                      "p": 0.0003,
+                      "rechaza": true
+                    }
+                  ],
+                  "rechaza": true,
+                  "umbral": 0.5
+                }
+              ],
+              "umbral": 0.5
+            },
+            "sin_zona": null,
+            "umbral_aplicado_en_zona": true,
+            "umbral_con_garantia": {
+              "cobertura": 0.9937,
+              "faltan": null,
+              "pruebas": [
+                {
+                  "aceptados": 134,
+                  "errores": 3,
+                  "p": 0,
+                  "rechaza": true,
+                  "umbral": 0.95
+                },
+                {
+                  "aceptados": 142,
+                  "errores": 3,
+                  "p": 0,
+                  "rechaza": true,
+                  "umbral": 0.9
+                },
+                {
+                  "aceptados": 151,
+                  "errores": 3,
+                  "p": 0,
+                  "rechaza": true,
+                  "umbral": 0.85
+                },
+                {
+                  "aceptados": 153,
+                  "errores": 3,
+                  "p": 0,
+                  "rechaza": true,
+                  "umbral": 0.8
+                },
+                {
+                  "aceptados": 153,
+                  "errores": 3,
+                  "p": 0,
+                  "rechaza": true,
+                  "umbral": 0.75
+                },
+                {
+                  "aceptados": 156,
+                  "errores": 4,
+                  "p": 0,
+                  "rechaza": true,
+                  "umbral": 0.7
+                },
+                {
+                  "aceptados": 156,
+                  "errores": 4,
+                  "p": 0,
+                  "rechaza": true,
+                  "umbral": 0.65
+                },
+                {
+                  "aceptados": 158,
+                  "errores": 5,
+                  "p": 0,
+                  "rechaza": true,
+                  "umbral": 0.6
+                },
+                {
+                  "aceptados": 158,
+                  "errores": 5,
+                  "p": 0,
+                  "rechaza": true,
+                  "umbral": 0.55
+                },
+                {
+                  "aceptados": 158,
+                  "errores": 5,
+                  "p": 0,
+                  "rechaza": true,
+                  "umbral": 0.5
+                }
+              ],
+              "riesgo": 0.0316,
+              "umbral": 0.5
+            },
+            "zona": {
+              "desde": 0.5,
+              "hasta": 0.95,
+              "umbrales": [
+                0.5,
+                0.55,
+                0.6,
+                0.65,
+                0.7,
+                0.75,
+                0.8,
+                0.85,
+                0.9,
+                0.95
+              ]
+            }
+          }
+        ],
+        "umbral_aplicado": 0.75
+      },
       "id": "S1",
       "limitaciones": [],
       "metricas": {
@@ -1225,6 +1847,7 @@
       },
       "estado": "refutado",
       "estado_en_plan": "sin_probar",
+      "garantia": null,
       "id": "S2",
       "limitaciones": [
         {
@@ -1294,6 +1917,7 @@
       },
       "estado": "refutado",
       "estado_en_plan": "sin_probar",
+      "garantia": null,
       "id": "S3",
       "limitaciones": [],
       "metricas": {
@@ -1327,5 +1951,5 @@
     "bloqueantes": [],
     "valor": "cumple_con_alertas"
   },
-  "version_verificador": "1.3.0"
+  "version_verificador": "1.4.0"
 }

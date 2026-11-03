@@ -559,11 +559,11 @@
     },
     "verificador": {
       "formato": "planlang-informe/v1",
-      "version": "1.3.0"
+      "version": "1.4.0"
     }
   },
   "formato": "planlang-informe/v1",
-  "huella": "aa426d147e238473df54d5f5ea2dbda642644bca35d23601acde67473d2d710d",
+  "huella": "6ea8096da19f43de12edfd04e4687ae834359a15da3f559225d32e4c35908820",
   "plan_en_breve": {
     "decisiones_una_via": [
       {
@@ -1052,6 +1052,278 @@
       },
       "estado": "sin_probar",
       "estado_en_plan": "sin_probar",
+      "garantia": {
+        "aciertos": 15,
+        "alfa_del_informe": 0.1,
+        "delta": 0.1,
+        "etapas": [
+          {
+            "casos": 15,
+            "errores": 0,
+            "nodo": "extractor",
+            "observada": true
+          },
+          {
+            "casos": 15,
+            "errores": 0,
+            "nodo": "aclaracion",
+            "observada": true
+          },
+          {
+            "casos": 0,
+            "errores": 0,
+            "nodo": "redactor",
+            "observada": false
+          }
+        ],
+        "n": 15,
+        "niveles": [
+          {
+            "alfa": 0.05,
+            "conformal": {
+              "aciertos_minimos": 19,
+              "indice": 0,
+              "n_aciertos": 15,
+              "umbral": null
+            },
+            "conjunta": {
+              "alfa_por_etapa": 0.025,
+              "casos": 15,
+              "delta_por_etapa": 0.05,
+              "error_observado": {
+                "aceptados": 9,
+                "errores": 0,
+                "tasa": 0,
+                "umbral": 0.95
+              },
+              "faltan": {
+                "aceptados": 9,
+                "casos": 119,
+                "errores": 0,
+                "motivo": "pocos_casos",
+                "nodo": "extractor",
+                "umbral": 0.95
+              },
+              "k": 2,
+              "nodos": [
+                "extractor",
+                "aclaracion"
+              ],
+              "pruebas": [
+                {
+                  "etapas": [
+                    {
+                      "aceptados": 9,
+                      "errores": 0,
+                      "nodo": "extractor",
+                      "p": 0.7962,
+                      "rechaza": false
+                    },
+                    {
+                      "aceptados": 9,
+                      "errores": 0,
+                      "nodo": "aclaracion",
+                      "p": 0.7962,
+                      "rechaza": false
+                    }
+                  ],
+                  "rechaza": false,
+                  "umbral": 0.95
+                }
+              ],
+              "umbral": null
+            },
+            "sin_zona": "sin_umbral_con_garantia",
+            "umbral_aplicado_en_zona": false,
+            "umbral_con_garantia": {
+              "cobertura": null,
+              "faltan": {
+                "aceptados": 9,
+                "casos": 45,
+                "errores": 0,
+                "motivo": "pocos_casos",
+                "nodo": null,
+                "umbral": 0.95
+              },
+              "pruebas": [
+                {
+                  "aceptados": 9,
+                  "errores": 0,
+                  "p": 0.6302,
+                  "rechaza": false,
+                  "umbral": 0.95
+                }
+              ],
+              "riesgo": null,
+              "umbral": null
+            },
+            "zona": null
+          },
+          {
+            "alfa": 0.1,
+            "conformal": {
+              "aciertos_minimos": 9,
+              "indice": 1,
+              "n_aciertos": 15,
+              "umbral": 0.6
+            },
+            "conjunta": {
+              "alfa_por_etapa": 0.05,
+              "casos": 15,
+              "delta_por_etapa": 0.05,
+              "error_observado": {
+                "aceptados": 9,
+                "errores": 0,
+                "tasa": 0,
+                "umbral": 0.95
+              },
+              "faltan": {
+                "aceptados": 9,
+                "casos": 59,
+                "errores": 0,
+                "motivo": "pocos_casos",
+                "nodo": "extractor",
+                "umbral": 0.95
+              },
+              "k": 2,
+              "nodos": [
+                "extractor",
+                "aclaracion"
+              ],
+              "pruebas": [
+                {
+                  "etapas": [
+                    {
+                      "aceptados": 9,
+                      "errores": 0,
+                      "nodo": "extractor",
+                      "p": 0.6302,
+                      "rechaza": false
+                    },
+                    {
+                      "aceptados": 9,
+                      "errores": 0,
+                      "nodo": "aclaracion",
+                      "p": 0.6302,
+                      "rechaza": false
+                    }
+                  ],
+                  "rechaza": false,
+                  "umbral": 0.95
+                }
+              ],
+              "umbral": null
+            },
+            "sin_zona": "sin_umbral_con_garantia",
+            "umbral_aplicado_en_zona": false,
+            "umbral_con_garantia": {
+              "cobertura": null,
+              "faltan": {
+                "aceptados": 9,
+                "casos": 22,
+                "errores": 0,
+                "motivo": "pocos_casos",
+                "nodo": null,
+                "umbral": 0.95
+              },
+              "pruebas": [
+                {
+                  "aceptados": 9,
+                  "errores": 0,
+                  "p": 0.3874,
+                  "rechaza": false,
+                  "umbral": 0.95
+                }
+              ],
+              "riesgo": null,
+              "umbral": null
+            },
+            "zona": null
+          },
+          {
+            "alfa": 0.2,
+            "conformal": {
+              "aciertos_minimos": 4,
+              "indice": 3,
+              "n_aciertos": 15,
+              "umbral": 0.9
+            },
+            "conjunta": {
+              "alfa_por_etapa": 0.1,
+              "casos": 15,
+              "delta_por_etapa": 0.05,
+              "error_observado": {
+                "aceptados": 9,
+                "errores": 0,
+                "tasa": 0,
+                "umbral": 0.95
+              },
+              "faltan": {
+                "aceptados": 9,
+                "casos": 29,
+                "errores": 0,
+                "motivo": "pocos_casos",
+                "nodo": "extractor",
+                "umbral": 0.95
+              },
+              "k": 2,
+              "nodos": [
+                "extractor",
+                "aclaracion"
+              ],
+              "pruebas": [
+                {
+                  "etapas": [
+                    {
+                      "aceptados": 9,
+                      "errores": 0,
+                      "nodo": "extractor",
+                      "p": 0.3874,
+                      "rechaza": false
+                    },
+                    {
+                      "aceptados": 9,
+                      "errores": 0,
+                      "nodo": "aclaracion",
+                      "p": 0.3874,
+                      "rechaza": false
+                    }
+                  ],
+                  "rechaza": false,
+                  "umbral": 0.95
+                }
+              ],
+              "umbral": null
+            },
+            "sin_zona": "sin_umbral_con_garantia",
+            "umbral_aplicado_en_zona": false,
+            "umbral_con_garantia": {
+              "cobertura": null,
+              "faltan": {
+                "aceptados": 9,
+                "casos": 11,
+                "errores": 0,
+                "motivo": "pocos_casos",
+                "nodo": null,
+                "umbral": 0.95
+              },
+              "pruebas": [
+                {
+                  "aceptados": 9,
+                  "errores": 0,
+                  "p": 0.1342,
+                  "rechaza": false,
+                  "umbral": 0.95
+                }
+              ],
+              "riesgo": null,
+              "umbral": null
+            },
+            "zona": null
+          }
+        ],
+        "umbral_aplicado": 0.75
+      },
       "id": "S1",
       "limitaciones": [
         {
@@ -1084,6 +1356,7 @@
       },
       "estado": "sin_probar",
       "estado_en_plan": "sin_probar",
+      "garantia": null,
       "id": "S2",
       "limitaciones": [],
       "metricas": {
@@ -1132,6 +1405,7 @@
       },
       "estado": "confirmado",
       "estado_en_plan": "sin_probar",
+      "garantia": null,
       "id": "S3",
       "limitaciones": [
         {
@@ -1178,5 +1452,5 @@
     "bloqueantes": [],
     "valor": "cumple_con_alertas"
   },
-  "version_verificador": "1.3.0"
+  "version_verificador": "1.4.0"
 }

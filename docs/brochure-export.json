@@ -16,17 +16,17 @@
   "app": {
     "slug": "planlang",
     "nombre": "planlang",
-    "ciclo": "H1",
+    "ciclo": "H-2",
     "estado": "inicial",
     "sellado_en": null,
-    "sprints_cerrados": 7,
+    "sprints_cerrados": 8,
     "version_repo": "0.1.0"
   },
   "promesa": {
-    "tagline": "Planeé, construí y medí la brecha.",
-    "intro": "Escribes el plan como un contrato —decisiones, riesgos, supuestos, criterios y umbrales, cada uno medible— y planlang lo usa para construir el agente, correrlo sobre casos con respuesta conocida y publicar la brecha. Luego mueves un umbral y ves qué habría costado.",
-    "para_quien": "Para quien planea, construye o aprueba un proyecto de agentes de IA y hoy mide lo que el agente hace sin haber escrito antes qué debía hacer: mira trazas, corre evaluaciones sueltas y decide a ojo cuándo un resultado basta.",
-    "diferencial": "Observar trazas y evaluar respuestas ya lo hacen muchas herramientas. Lo que no hace nadie es exigir el plan antes y medir contra él después: el informe de brecha plan → resultado, con el análisis de riesgos previo, y los umbrales del plan jugables sobre las trazas reales."
+    "tagline": "Tu agente de IA, medido contra el plan que escribiste antes de construirlo.",
+    "intro": "planlang convierte el plan de un proyecto de agentes de IA en un contrato verificable: qué decide el agente, qué puede fallar, qué se da por cierto y cómo se mide el éxito. Con ese contrato se construye el agente, se corre sobre cientos de casos de respuesta conocida y se publica la brecha entre lo planeado y lo ocurrido, fallas incluidas, en una vitrina estática que no llama a ningún modelo.",
+    "para_quien": "Para quien planea, construye o aprueba agentes de IA y hoy los juzga mirando trazas y corriendo evaluaciones sueltas, sin haber escrito antes qué debían hacer. A quien decide le da un veredicto en palabras llanas; a quien construye, la regla, la señal y el caso detrás de cada cifra.",
+    "diferencial": "De 15 plataformas de evaluación revisadas en septiembre de 2026, ninguna obliga a planear antes de construir ni compara el plan con lo ocurrido. planlang hace las dos cosas: exige un plan medible, publica la brecha entre plan y resultado con los riesgos que se previeron y te deja mover los umbrales del plan sobre las decisiones reales del agente."
   },
   "funcionalidades": {
     "total": 21,
@@ -36,37 +36,37 @@
       {
         "orden": 1,
         "estrella": false,
-        "nombre": "Planear",
-        "linea": "El plan como contrato: la entrevista, las plantillas, el validador y el contrato para el constructor.",
+        "nombre": "Planea antes de construir",
+        "linea": "Escribes qué decide el agente, qué puede fallar y cómo se mide; un plan incompleto no pasa.",
         "features": [
           {
             "id": "plantillas",
-            "nombre": "Plantillas de dominio como datos",
-            "que_hace": "Actores, decisiones, riesgos y criterios típicos de salud, de vinculación financiera y de seguridad de IA, con las restricciones legales en lenguaje llano y con su fuente.",
+            "nombre": "Arranca con lo que tu sector exige",
+            "que_hace": "Empiezas el plan con los actores, riesgos y criterios típicos de salud, finanzas o seguridad de IA, con las restricciones legales en lenguaje llano y su fuente. Sumar un sector nuevo es sumar un archivo de datos, sin tocar código.",
             "seccion_manual": "Validar un plan"
           },
           {
             "id": "validador",
-            "nombre": "Validador del plan",
-            "que_hace": "Ningún plan se aprueba con un criterio sin regla de medición, un umbral sin señal o un riesgo de prioridad alta sin mitigación; dice exactamente qué falta.",
+            "nombre": "Ningún plan a medias pasa",
+            "que_hace": "Sabes antes de construir si tu plan se puede medir. Un validador sin IA rechaza, con el motivo exacto, criterios sin regla, umbrales sin señal y riesgos graves sin mitigación. El plan aprobado queda sellado con una huella que delata cualquier cambio posterior.",
             "seccion_manual": "Validar un plan"
           },
           {
             "id": "entrevistador",
-            "nombre": "Entrevistador del plan",
-            "que_hace": "Pregunta en orden lo que la plantilla del dominio exige, redacta el borrador en español e inglés, señala sus contradicciones y nunca lo aprueba: eso lo hace el autor.",
+            "nombre": "Un entrevistador que redacta tu plan",
+            "que_hace": "Respondes preguntas en orden, cada una con un ejemplo, y obtienes el borrador de tu plan en español e inglés. Antes de entregarlo, señala lo que falta y las contradicciones. Nunca aprueba por ti: esa firma es tuya.",
             "seccion_manual": "Entrevistar un plan"
           },
           {
             "id": "plan-sin-corrida",
-            "nombre": "Un plan real en un dominio nuevo",
-            "que_hace": "Entrevista el plan de cualquier proyecto sobre una plantilla de dominio que es solo datos y, aprobado, lo publica en la vitrina como «plan sin corrida»: el contrato, con lo que no hay a la vista. El primero es el de los dos agentes de HackGuard.",
+            "nombre": "Planea un proyecto real, no solo los demos",
+            "que_hace": "El entrevistador recorre la plantilla del sector de cualquier proyecto y, cuando lo apruebas, el plan se publica en la vitrina como un contrato que dice lo que aún no tiene: trazas, brecha y playground. El primero fue el de los dos agentes de HackGuard.",
             "seccion_manual": "Planear un proyecto real"
           },
           {
             "id": "contrato",
-            "nombre": "Contrato para el constructor",
-            "que_hace": "El plan entrega los nodos, las aristas con señal · operador · valor, las pausas humanas y las señales que la traza debe registrar; lo que decide el agente es literalmente lo que dice el plan.",
+            "nombre": "El plan es el código que decide",
+            "que_hace": "Lo que el agente decide es literalmente lo que dice el plan. El plan fija sus piezas, cada regla de paso como señal, operador y valor (por ejemplo, «confianza menor que 0,75»), dónde decide una persona y qué debe registrar cada caso.",
             "seccion_manual": "Validar un plan"
           }
         ]
@@ -74,43 +74,43 @@
       {
         "orden": 2,
         "estrella": false,
-        "nombre": "Correr",
-        "linea": "Casos con verdad conocida, los dos demos y las corridas por lotes.",
+        "nombre": "Prueba con casos de respuesta conocida",
+        "linea": "Dos demos con agentes reales corren sobre cientos de casos inventados cuya respuesta correcta ya se sabe.",
         "features": [
           {
             "id": "casos",
-            "nombre": "Casos sintéticos con verdad conocida",
-            "que_hace": "Lotes reproducibles con semilla: normales, de borde, incompletos y adversarios; un validador garantiza que ningún identificador podría ser real.",
+            "nombre": "Casos con la respuesta ya conocida",
+            "que_hace": "Pruebas el agente sobre lotes inventados cuya respuesta correcta ya se sabe: casos normales, de borde, incompletos y trampas como instrucciones escondidas o nombres parecidos. Generarlos otra vez da los mismos casos, y un validador impide cualquier dato con forma de uno real.",
             "seccion_manual": "Generar casos sintéticos"
           },
           {
             "id": "demo-a",
             "nombre": "Demo A: autorizaciones médicas",
-            "que_hace": "Un enrutador, un extractor, un verificador de cobertura por reglas y un redactor aprueban, aprueban en parte, niegan con causal o escalan a un auditor; ninguna negación completa sale sin una persona.",
+            "que_hace": "Ves a un equipo de agentes decidir 200 solicitudes de autorización médica: aprueba, aprueba hasta el tope cubierto, niega con causal legal o pasa el caso a un auditor. Las urgencias se autorizan sin revisar cobertura, y ninguna negación completa sale sin una persona.",
             "seccion_manual": "Correr un lote"
           },
           {
             "id": "demo-b",
             "nombre": "Demo B: vinculación con debida diligencia",
-            "que_hace": "Un extractor, un verificador de listas, un investigador que actúa desde el inicio de la zona gris y un puntaje de riesgo por reglas aprueban, revisan o rechazan; ningún rechazo sale sin el oficial de cumplimiento.",
+            "que_hace": "Ves a los agentes decidir si un cliente se vincula: leen sus documentos, lo buscan en listas de control, investigan los nombres parecidos y puntúan su riesgo por reglas, sin atributos protegidos. Todo rechazo y todo riesgo alto pasan por el oficial de cumplimiento.",
             "seccion_manual": "Correr el demo B"
           },
           {
             "id": "expediente",
-            "nombre": "Expediente por código",
-            "que_hace": "Cada caso del demo B termina en un expediente en español e inglés que escribe el código: cada conclusión cita la regla del plan o la coincidencia en una lista, con su versión.",
+            "nombre": "Un expediente que cita sus fuentes",
+            "que_hace": "Cada solicitud del demo B termina en un expediente en español e inglés que escribe el código, no la IA. Cada conclusión cita la regla del plan o la coincidencia en una lista, con su versión y su fecha.",
             "seccion_manual": "Leer un expediente"
           },
           {
             "id": "documento-adverso",
-            "nombre": "Documento de decisión adversa",
-            "que_hace": "Toda negación, también la parcial, produce por código un documento en español e inglés con la causal, la regla, los datos usados y la vía de contradicción.",
+            "nombre": "Toda negación, explicada y apelable",
+            "que_hace": "Si el agente niega un servicio, aunque sea en parte, sale un documento en español e inglés que arma el código: la causal legal, la regla aplicada, los datos usados, quién decidió y cómo contradecir la decisión.",
             "seccion_manual": "Correr un lote"
           },
           {
             "id": "lotes",
-            "nombre": "Corridas por lotes y exportación",
-            "que_hace": "Lotes acumulables sin duplicar casos, con el modelo servido por la suscripción de Claude Code; las trazas se exportan a un formato propio y versionado.",
+            "nombre": "Corridas por lotes, sin perder un caso",
+            "que_hace": "Corres cientos de casos con la suscripción de Claude Code, de a 20 y con pausas. Si la corrida se corta, retoma donde quedó sin repetir ninguno, y cada caso deja su traza, cada decisión con su señal, en un formato propio y con huella.",
             "seccion_manual": "Correr un lote"
           }
         ]
@@ -118,37 +118,37 @@
       {
         "orden": 3,
         "estrella": true,
-        "nombre": "Medir",
-        "linea": "El verificador de brecha y los supuestos medidos de verdad.",
+        "nombre": "Mide la brecha, sin IA de por medio",
+        "linea": "Un verificador sin IA compara lo planeado con lo ocurrido y publica también lo que falló.",
         "features": [
           {
             "id": "verificador",
-            "nombre": "Verificador de brecha",
-            "que_hace": "Lee plan, trazas y evaluaciones y dice, criterio por criterio y riesgo por riesgo, qué se cumplió y en qué casos no; emite el informe en español e inglés, idéntico byte a byte.",
+            "nombre": "El informe de brecha: plan contra realidad",
+            "que_hace": "Sabes, criterio por criterio y riesgo por riesgo, qué se cumplió y en qué casos no. Un verificador que no usa IA lee el plan y lo que hizo el agente, y escribe el informe en español e inglés, idéntico cada vez que se repite.",
             "seccion_manual": "Leer el informe de brecha"
           },
           {
             "id": "supuestos",
-            "nombre": "Supuestos con prueba barata",
-            "que_hace": "«El modelo extrae con confianza calibrada» se mide de verdad —calibración y curva riesgo-cobertura— y queda confirmado, refutado o sin probar.",
+            "nombre": "Supuestos puestos a prueba",
+            "que_hace": "Lo que el plan dio por cierto sin probarlo se mide y queda confirmado, refutado o sin probar. En el demo A cayeron dos: dos aclaraciones no bastaron, y varios agentes resultaron más lentos que uno solo.",
             "seccion_manual": "Leer el informe de brecha"
           },
           {
             "id": "comparar",
-            "nombre": "Comparar dos corridas",
-            "que_hace": "Pone la corrida multiagente frente a su línea base de agente único, sobre los mismos casos: criterio por criterio, riesgo por riesgo y caso por caso, con las pausas frente a la verdad.",
+            "nombre": "Varios agentes frente a uno solo",
+            "que_hace": "Pones el equipo de agentes frente a un agente único, con el mismo plan y los mismos 200 casos, y comparas exactitud, tiempo, costo y casos distintos. En el demo A, el equipo acertó más (98 % frente a 90 %) pero tardó más.",
             "seccion_manual": "Comparar dos corridas"
           },
           {
             "id": "instrumento",
-            "nombre": "Validación del instrumento",
-            "que_hace": "Brechas sembradas que el verificador debe detectar, planes con errores que debe rechazar y la prueba cruzada de que el playground reproduce las ramas del agente.",
+            "nombre": "Un medidor que también se mide",
+            "que_hace": "planlang pone a prueba su propia vara. Sembró 10 fallas a propósito y el verificador las encontró todas, sin falsas alarmas. Además rehízo las 1.204 decisiones de los agentes en otro lenguaje de programación, con cero diferencias.",
             "seccion_manual": "Verificar las corridas y el instrumento"
           },
           {
             "id": "adr",
-            "nombre": "Dos ADR de arranque",
-            "que_hace": "«Código primero» para los demos, y proveedor y cumplimiento para el uso de la suscripción, releído antes de cada entrega.",
+            "nombre": "Las reglas de fondo, por escrito",
+            "que_hace": "Todo lo que se puede resolver con código se resuelve sin IA, y cada pieza del agente que no usa modelo dice por qué. El uso de la suscripción de Claude Code quedó decidido por escrito, con sus términos releídos antes de cada entrega.",
             "seccion_manual": "Verificar las corridas y el instrumento"
           }
         ]
@@ -156,13 +156,13 @@
       {
         "orden": 4,
         "estrella": false,
-        "nombre": "Jugar",
-        "linea": "Mover los umbrales sobre las trazas reales.",
+        "nombre": "Mueve un umbral, mira qué cambia",
+        "linea": "Pruebas otros valores del plan sobre las decisiones reales del agente, sin volver a llamar al modelo.",
         "features": [
           {
             "id": "playground",
-            "nombre": "Mover los umbrales del plan",
-            "que_hace": "Deslizas los umbrales de cada demo (en el A, la confianza mínima, el alto costo, el máximo de aclaraciones o el modo Texas; en el B, la similitud, la zona gris, el riesgo y las inconsistencias) y ves qué casos cambian de camino, qué errores aparecen, cuánto trabajo humano cuesta y la curva riesgo-cobertura.",
+            "nombre": "Mueve los umbrales del plan",
+            "que_hace": "Cambias un umbral, como la confianza mínima o el modo Texas, que manda a una persona toda negación, incluso parcial, y ves qué casos cambian de camino, qué errores aparecen y cuánto trabajo humano cuesta. Todo se recalcula en tu navegador, sin ningún modelo.",
             "seccion_manual": "Mover umbrales en el playground"
           }
         ]
@@ -170,13 +170,13 @@
       {
         "orden": 5,
         "estrella": false,
-        "nombre": "Entender",
-        "linea": "El grafo real, nodo por nodo, contra el plan.",
+        "nombre": "El agente por dentro",
+        "linea": "El diagrama sale del código que corrió y señala cualquier pieza que el plan exige y no está.",
         "features": [
           {
             "id": "visor",
-            "nombre": "El grafo real desde el código",
-            "que_hace": "El diagrama se genera desde el grafo compilado; cada nodo muestra su explicación para líderes y expertos, su código y sus trazas reales, y el diagrama señala cualquier ausencia frente al plan.",
+            "nombre": "El agente, tal como corrió",
+            "que_hace": "Ves el diagrama del agente generado desde el código que corrió, no dibujado a mano. Tocas una pieza y aparece qué hace, su código y los casos reales que pasaron por ahí; si falta algo que el plan exige, el diagrama lo señala.",
             "seccion_manual": "Abrir la vitrina"
           }
         ]
@@ -184,25 +184,25 @@
       {
         "orden": 6,
         "estrella": false,
-        "nombre": "Mostrar",
-        "linea": "La vitrina bilingüe y sus fichas.",
+        "nombre": "Recórrelo en el navegador",
+        "linea": "La vitrina de planlang: un sitio bilingüe y sin servidor que se lee como líder o como experto.",
         "features": [
           {
             "id": "entrada",
-            "nombre": "Página de entrada",
-            "que_hace": "La tesis en una pantalla para un visitante no técnico: todos observan, la mitad evalúa, casi nadie planeó qué evaluar.",
+            "nombre": "La idea en una pantalla",
+            "que_hace": "Entiendes de entrada por qué planear importa: según una encuesta de LangChain, el 89 % de los equipos observa sus agentes y el 52 % los evalúa, pero la encuesta ni pregunta si planearon qué evaluar. Debajo, el método en tres pasos y lo medido.",
             "seccion_manual": "Abrir la vitrina"
           },
           {
             "id": "pestanas",
-            "nombre": "Plan, Agente, Brecha y Casos",
-            "que_hace": "Por cada demo, en lenguaje llano con detalle para expertos, en español e inglés, en un teléfono de 380 px, con el rótulo «Simulación · no operativo» y la divulgación del revisor simulado.",
+            "nombre": "Cada demo, de punta a punta",
+            "que_hace": "Recorres cada demo en seis pantallas: plan, agente, brecha, playground, casos y fichas, en español o inglés, en tema claro u oscuro y desde el teléfono. Lees como líder, en palabras llanas, o como experto, con la regla detrás de cada cifra.",
             "seccion_manual": "Abrir la vitrina"
           },
           {
             "id": "fichas",
-            "nombre": "Fichas y paquete para la vitrina personal",
-            "que_hace": "La ficha de reproducibilidad de cada demo, la de cada agente y estos hechos de la app, con el paquete estático que hoja-de-vida publica sin un solo enlace.",
+            "nombre": "Repetible y listo para el Portafolio",
+            "que_hace": "Cada corrida trae su ficha para obtener otra vez el mismo informe: versiones, huellas, semilla, modelo y fecha. La app arma además su propia ficha y el paquete estático que el Portafolio publica, sin un solo enlace y con la huella de cada archivo.",
             "seccion_manual": "Entregar el paquete a hoja-de-vida"
           }
         ]
@@ -216,7 +216,7 @@
       "valor": 16,
       "unidad": "criterios",
       "fuente": "medido",
-      "detalle": "Demo A: 10 de 10, en el informe del verificador 1.3.0 sobre la corrida suscripcion-planlang-a-002-200-v1.5. Demo B: 6 de 6, en el informe del verificador 1.3.0 sobre la corrida suscripcion-planlang-b-001-20."
+      "detalle": "Demo A: 10 de 10, en el informe del verificador 1.4.0 sobre la corrida suscripcion-planlang-a-002-200-v1.5. Demo B: 6 de 6, en el informe del verificador 1.4.0 sobre la corrida suscripcion-planlang-b-001-20."
     },
     {
       "clave": "decisiones_cruzadas",
@@ -261,7 +261,7 @@
     {
       "clave": "decisiones_registradas",
       "etiqueta": "decisiones de arquitectura registradas",
-      "valor": 17,
+      "valor": 18,
       "unidad": "ADR",
       "fuente": "medido",
       "detalle": "Archivos de decisions/."
@@ -294,16 +294,16 @@
     }
   ],
   "privacidad": {
-    "detalle": "Todo caso, afiliado, médico, plan de beneficios, solicitante y lista de control es sintético, con semilla, y un validador de identificadores en CI rechaza cualquiera con forma real. La vitrina es estática: ningún visitante lanza llamadas a modelos ni a servicios.",
+    "detalle": "Todo es sintético y sale de un generador con semilla: casos, afiliados, médicos, planes de beneficios, solicitantes y listas de control. En cada cambio, un validador automático rechaza cualquier identificador con forma real. La vitrina es estática: quien la visita no lanza ninguna llamada a modelos ni a servicios externos.",
     "datos_sinteticos": true,
     "llamadas_a_modelos_en_la_vitrina": false,
     "red_saliente_en_la_vitrina": false
   },
   "enlaces": {
     "produccion": null,
-    "razon": "La app privada no se publica. La vitrina viaja a hoja-de-vida como paquete estático, rotulado «Simulación · no operativo», y se muestra allí.",
+    "razon": "planlang no tiene dirección pública propia: su vitrina viaja al Portafolio como paquete estático, con el rótulo «Simulación · no operativo», y se recorre allí mismo.",
     "repositorio": null,
-    "razon_repositorio": "El repositorio no se enlaza desde la vitrina (regla de cero enlaces del portafolio).",
+    "razon_repositorio": "El repositorio no se enlaza: el Portafolio no publica enlaces de acceso, por regla de la casa.",
     "brochure_archivo": "sin archivo propio: la vitrina y sus fichas hacen de brochure (decisión del sprint 3)",
     "brochure_ruta_local": "sin ruta /conoce: la vitrina es la presentación de la app (decisión del sprint 3)"
   }

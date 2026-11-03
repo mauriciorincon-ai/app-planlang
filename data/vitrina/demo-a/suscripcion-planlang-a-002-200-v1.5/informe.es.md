@@ -150,6 +150,25 @@ Curva riesgo-cobertura (umbral de confianza → parte que el agente resuelve sol
 | 0,90 | 89,3 % | 2,1 % | 142 |
 | 0,95 | 84,3 % | 2,2 % | 134 |
 
+Garantía de la calibración (δ = 0,10; el informe declara α = 0,10). **Umbral con garantía** (Learn then Test, secuencia fija desde el umbral más alto): el más bajo cuyo error entre lo que el agente decide solo es ≤ α con probabilidad ≥ 1 − δ. **Umbral conformal**: el más alto que deja pasar sin persona al menos 1 − α de los aciertos (marginal, bajo intercambiabilidad). **Zona respaldada**: los umbrales de la rejilla con las dos a la vez.
+
+| α | Umbral con garantía | Cobertura · error en él | Umbral conformal | Zona respaldada | ¿Está el de la corrida (0,75)? | Cobertura conjunta |
+| --- | --- | --- | --- | --- | --- | --- |
+| 0,05 | 0,75 | 96,2 % · 2 % | 0,85 | 0,75–0,85 | sí | no alcanza |
+| 0,10 | 0,50 | 99,4 % · 3,2 % | 0,90 | 0,50–0,90 | sí | no alcanza |
+| 0,20 | 0,50 | 99,4 % · 3,2 % | 0,95 | 0,50–0,95 | sí | 0,50 (k = 2) |
+
+Cobertura conjunta (Bonferroni): extractor, aclaración, cada una con α/2 y δ/2 sobre los mismos casos que el agente decide solo ⇒ P(alguna etapa falla) ≤ α con probabilidad ≥ 1 − δ; la columna dice el umbral más bajo con esa garantía.
+
+Etapa con modelo sin verdad en el caso (no se observa y la cobertura conjunta no la incluye): redactor.
+
+Lo que los datos no alcanzan:
+
+- A α = 0,05, la cobertura conjunta no se respalda con la secuencia fija desde el umbral más alto: en 0,95 el agente decide solo 134 casos y la etapa extractor falla en 3; con la misma tasa de error harían falta más de 2.680 casos.
+- A α = 0,10, la cobertura conjunta no se respalda con la secuencia fija desde el umbral más alto: en 0,95 el agente decide solo 134 casos y la etapa extractor falla en 3; con la misma tasa de error harían falta 268 casos.
+
+> La prueba parte del umbral más alto y baja hasta que uno no pasa (secuencia fija). Es conservadora: puede decir «no se respalda» donde otro orden pasaría, y elegir el orden mirando los datos invalidaría la seguridad.
+
 ### S2 — Dos ciclos de aclaración bastan en el 95 % de los casos incompletos.
 
 **✗ refutado** (criticidad media). No cumple el umbral de confirmación: tasa 0,8333 frente a un mínimo de 0,95.
@@ -210,4 +229,4 @@ Umbrales aplicados: U1 = 0,75 · U2 = 1000 · U3 = 2 · U4 = false · en el plan
 
 Revisión humana: En lotes, el revisor simulado sigue la verdad conocida del caso (DA-04); la vitrina lo divulga.
 
-Verificador 1.3.0 · planlang-informe/v1 · huella de este informe: `20c0b4ae85a8b635a979996db42fb58b21e1a1d7c390343ce975ca5ba30451e6`
+Verificador 1.4.0 · planlang-informe/v1 · huella de este informe: `bd4a99509f96feea091922741f8162b0fbbb466c90fedb69013f60494174e455`

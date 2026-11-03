@@ -13,6 +13,7 @@ import * as brecha from "@/textos/brecha";
 import * as comun from "@/textos/comun";
 import * as entrada from "@/textos/entrada";
 import * as fichas from "@/textos/fichas";
+import * as garantia from "@/textos/garantia";
 import * as plan from "@/textos/plan";
 import * as planSinCorrida from "@/textos/plan-sin-corrida";
 import * as playground from "@/textos/playground";
@@ -47,6 +48,7 @@ const todos = [
   ...bilingues(plan, "plan"),
   ...bilingues(brecha, "brecha"),
   ...bilingues(playground, "playground"),
+  ...bilingues(garantia, "garantia"),
   ...bilingues(fichas, "fichas"),
   ...bilingues(planSinCorrida, "plan-sin-corrida"),
   // Los textos propios del demo B (S3): los objetos; las plantillas se prueban por las vistas que las llaman.
@@ -83,6 +85,7 @@ const IGUALES = new Set([
   "Stack",
   "Extractor",
   "extractor",
+  "α",
   "Auditor",
   "Claude Code · sonnet",
   "Python 3.12 · LangGraph 1.2",

@@ -1,8 +1,9 @@
 /**
- * Vista de P7 Fichas (maqueta `07-fichas.html`): la ficha de reproducibilidad del demo y las dos fichas que viajan a
- * hoja-de-vida —la de la app, que cuenta todos los demos y es la misma en las dos páginas, y la del agente del demo—,
- * pintadas como las pinta su componente (piel de CV Viva) y comprobadas campo por campo contra el contrato fijado. Las fichas son las mismas que escribe `pnpm fichas` (`src/lib/fichas/`), en el idioma de la ruta:
- * la vista no redacta ninguna, solo las ordena para leerlas. Server-only: corre al compilar.
+ * Vista de P7 Fichas (maqueta `07-fichas.html`): la ficha de reproducibilidad del demo, la de la app —que cuenta todos
+ * los demos, es la misma en las dos páginas y viaja a hoja-de-vida— y la del agente del demo, que ya no se entrega y se
+ * muestra aquí. Pintadas como las pinta su componente (piel de CV Viva) y comprobadas campo por campo contra el
+ * contrato fijado. Las fichas son las mismas que arma `src/lib/fichas/`, en el idioma de la ruta: la vista no redacta
+ * ninguna, solo las ordena para leerlas. Server-only: corre al compilar.
  */
 import type { Idioma } from "@core/formatos/bilingue";
 import type { HechosDelRepo } from "@/lib/datos/repo";
@@ -14,7 +15,7 @@ import {
   complementoPropuesto,
   fichaAgente,
 } from "@/lib/fichas/armar";
-import { RUTA_EXPORT, RUTA_FICHA_AGENTE } from "@/lib/fichas/archivos";
+import { RUTA_EXPORT } from "@/lib/fichas/rutas";
 import {
   limiteDe,
   problemasDeFicha,
@@ -435,7 +436,8 @@ export function vistaFichas(
   const app = appDe(i);
   const agente = fichaAgente(d, repo, i);
   const E = MIRADA.entregaItems;
-  const rutaAgente = RUTA_FICHA_AGENTE[demo];
+  // La ficha del agente ya no se entrega (decisión del 2026-10-25): su nombre es el de una pieza de la simulación.
+  const archivoAgente = `${agente.pieza.slug}.ficha-tecnica.json`;
   const vCorrida = versionCorta(
     d.informe.ficha_reproducibilidad.corrida.plan_de_ejecucion.version,
   );
@@ -455,7 +457,7 @@ export function vistaFichas(
       entrega: [
         { titulo: E.repro.titulo[i], detalle: E.repro.detalle[i] },
         { titulo: base(RUTA_EXPORT), detalle: E.export[i] },
-        { titulo: base(rutaAgente), detalle: E.agente[demo][i] },
+        { titulo: archivoAgente, detalle: E.agente[demo][i] },
         { titulo: E.nunca.titulo[i], detalle: E.nunca.detalle[i] },
       ],
     },
@@ -479,8 +481,8 @@ export function vistaFichas(
     }),
     agente: fichaCv("agente", agente, fichaAgente(d, repo, otro), i, {
       ids: d.plan.contrato_de_grafo.nodos_esperados.map((n) => n.id),
-      archivo: base(rutaAgente),
-      entrega: rutaAgente,
+      archivo: archivoAgente,
+      entrega: TABLA.agenteSinEntrega[i],
       comprobado: TABLA.comprobado({ version: VERSION_FICHA })[i],
       notas: [],
     }),

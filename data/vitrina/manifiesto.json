@@ -19,11 +19,11 @@
       },
       "informe": {
         "archivo": "data/vitrina/demo-a/suscripcion-planlang-a-002-200-v1.5/informe.json",
-        "huella": "20c0b4ae85a8b635a979996db42fb58b21e1a1d7c390343ce975ca5ba30451e6"
+        "huella": "bd4a99509f96feea091922741f8162b0fbbb466c90fedb69013f60494174e455"
       },
       "comparacion": {
         "archivo": "data/vitrina/demo-a/suscripcion-planlang-a-002-200-v1.5/comparacion.json",
-        "huella": "2b9dab6c63ff34a0985be542780e5ccd04bd353b662bad1a60d72130fb6c1627"
+        "huella": "cd3ab27a82d3adaf9e1cc2f77c11eb6883741abb570995a2051135dcd0831374"
       },
       "playground": {
         "senal_propuesta": "propuesta",
@@ -66,7 +66,7 @@
       },
       "informe": {
         "archivo": "data/vitrina/demo-b/suscripcion-planlang-b-001-20/informe.json",
-        "huella": "4705b3f3d49c8c4c53590a6845620ad25c76bcff26a595125bc1050c2fee1411"
+        "huella": "a9f6c13c15dea32d6c663839dacdbdad0ab0b6a983e43eebc39939f698c4a468"
       },
       "playground": {
         "senal_propuesta": "propuesta",

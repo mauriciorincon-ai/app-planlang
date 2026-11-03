@@ -1,266 +1,266 @@
 {
   "plan": {
     "cifras": "0casos cambian de caminode 200 | 0errores introducidosevitados: 0 | 840min de auditorplan: 840 · ±0 | 10de 10 criterios cumplensin cambio",
-    "huella": "8d4890140dab5d239698e8836ee18c40af8d5b4aa0914a742d7f722bcd370550"
+    "huella": "25662130847e89b9288e2d8e3f669d51f64b28809fb820d175126083a976b433"
   },
   "U1=0.5": {
     "cifras": "3casos cambian de caminode 200 | 0errores introducidosevitados: 0 | 804min de auditorplan: 840 · −36 | 8de 10 criterios cumplenantes: 10 · 2 sin poder medirse",
-    "huella": "0fc401e157c69d2719e25a9680ad3a235a39a70b14404e6574e57ca6dbf6007f"
+    "huella": "dea8efaf4322e3043a27147b7509e98d8518d45b349c0175afbf99f5b7750425"
   },
   "U1=0.55": {
     "cifras": "3casos cambian de caminode 200 | 0errores introducidosevitados: 0 | 804min de auditorplan: 840 · −36 | 8de 10 criterios cumplenantes: 10 · 2 sin poder medirse",
-    "huella": "93a917dc799f31a64844f54ac11531f90fe0f9516b4901bd7731a210a31b124b"
+    "huella": "7c2f676e2592c219196d9262b9049b1a68baa936b1ee9402de53a9c308659cf8"
   },
   "U1=0.6": {
     "cifras": "3casos cambian de caminode 200 | 0errores introducidosevitados: 0 | 804min de auditorplan: 840 · −36 | 8de 10 criterios cumplenantes: 10 · 2 sin poder medirse",
-    "huella": "c1aacf3c1983a815b133279f91309510b44e1f3abee093f5619824b4ddaa5dc0"
+    "huella": "9dab03e7367207a5b4c9bd7e3837d3bbe513db69095285f91c04b2ac1dee5af9"
   },
   "U1=0.65": {
     "cifras": "2casos cambian de caminode 200 | 0errores introducidosevitados: 0 | 816min de auditorplan: 840 · −24 | 8de 10 criterios cumplenantes: 10 · 2 sin poder medirse",
-    "huella": "45e2fe8f029685cde12de31517fc5f4f19f42f415220f1b45de2a8e96d618085"
+    "huella": "70655edbbb5e23d36974607106de07490a58075310d040c17b5277617d89b3cc"
   },
   "U1=0.7": {
     "cifras": "2casos cambian de caminode 200 | 0errores introducidosevitados: 0 | 816min de auditorplan: 840 · −24 | 8de 10 criterios cumplenantes: 10 · 2 sin poder medirse",
-    "huella": "8ce0767e6f2ba3efd6a6eb06bd4835936a62455f50f1e55132de1a5c11cc2770"
+    "huella": "93121616f508be460e8179f29cd670d6b6fcbf4fd61a193d0b1cc64348ffc41d"
   },
   "U1=0.75": {
     "cifras": "0casos cambian de caminode 200 | 0errores introducidosevitados: 0 | 840min de auditorplan: 840 · ±0 | 10de 10 criterios cumplensin cambio",
-    "huella": "8d4890140dab5d239698e8836ee18c40af8d5b4aa0914a742d7f722bcd370550"
+    "huella": "25662130847e89b9288e2d8e3f669d51f64b28809fb820d175126083a976b433"
   },
   "U1=0.8": {
     "cifras": "0casos cambian de caminode 200 | 0errores introducidosevitados: 0 | 840min de auditorplan: 840 · ±0 | 10de 10 criterios cumplensin cambio",
-    "huella": "0289cce663e9141a9249e2d8b954855b86a5f87581c0ca496af5f857217a68a7"
+    "huella": "5397fbb43837f76e84388e4b2b287bfcaec738471eb76479b094e4671f29c632"
   },
   "U1=0.85": {
     "cifras": "2casos cambian de caminode 200 | 0errores introducidosevitados: 0 | 864min de auditorplan: 840 · +24 | 7de 10 criterios cumplenantes: 10 · 3 sin poder medirse",
-    "huella": "67f2fb7f0ecd539ec1eeb2b77d3d9e27ab31f65dbbd1445eabaf9e25ae0a7639"
+    "huella": "fe5ee09be5d419fa5d11d72be4aca07eaadbb7259dd731820855e0121c8a62ce"
   },
   "U1=0.9": {
     "cifras": "11casos cambian de caminode 200 | 0errores introducidosevitados: 0 | 972min de auditorplan: 840 · +132 | 7de 10 criterios cumplenantes: 10 · 3 sin poder medirse",
-    "huella": "7e05dcc305e857949b9412070d09a16039fde98c24ad1ca05f3e90991c0424e4"
+    "huella": "5a0b57dc592c7c3509c9b93e30f9a6f93e19664f9318840499ba3dbf4e453401"
   },
   "U1=0.95": {
     "cifras": "14casos cambian de caminode 200 | 0errores introducidosevitados: 0 | 1008min de auditorplan: 840 · +168 | 7de 10 criterios cumplenantes: 10 · 3 sin poder medirse",
-    "huella": "55570eab6270e17cba93b8b3451b17f347c07a872d460720a606b1a7fd56cb64"
+    "huella": "d006d0fc40c265ff7ecf55f7610e0060b55c5a088730d959de1eec7ff87b7ed1"
   },
   "U2=200": {
     "cifras": "77casos cambian de caminode 200 | 0errores introducidosevitados: 0 | 1764min de auditorplan: 840 · +924 | 6de 10 criterios cumplenantes: 10 · 4 sin poder medirse",
-    "huella": "ce64e12ad8bb1f24d0426679b5509a9d1d218567fd40ecbbc0f863ec6c9c754c"
+    "huella": "3b44e214dea084758a6d576ac89522a0eda97fca41ff6918a35b785c6977df6c"
   },
   "U2=300": {
     "cifras": "53casos cambian de caminode 200 | 0errores introducidosevitados: 0 | 1476min de auditorplan: 840 · +636 | 6de 10 criterios cumplenantes: 10 · 4 sin poder medirse",
-    "huella": "3e4e12bbc71842634d2a1f929633d82f70514a673c5df805017b2e2974212749"
+    "huella": "b316807a79a5e19b39aced7e4a17fe7444fb47d7c23843831e9f0a598f187f05"
   },
   "U2=400": {
     "cifras": "45casos cambian de caminode 200 | 0errores introducidosevitados: 0 | 1380min de auditorplan: 840 · +540 | 6de 10 criterios cumplenantes: 10 · 4 sin poder medirse",
-    "huella": "0026f0a618e7ca24ba8f74d42858b181cb26501a04e5b7964e7ac962e5016daf"
+    "huella": "ecb7860ea017b83de50686c1ccfc8969b289ddae03389c9f2a0445ac4ec7dcca"
   },
   "U2=500": {
     "cifras": "40casos cambian de caminode 200 | 0errores introducidosevitados: 0 | 1320min de auditorplan: 840 · +480 | 6de 10 criterios cumplenantes: 10 · 4 sin poder medirse",
-    "huella": "46ccb901178ffebea4ac99dcc8a7c313ba63a57a482e262df1e9ea0e5441d903"
+    "huella": "a973ef3bf7426a65b38600e84ae2a9b08967eb5e90276c80ce0fd550b1941570"
   },
   "U2=600": {
     "cifras": "37casos cambian de caminode 200 | 0errores introducidosevitados: 0 | 1284min de auditorplan: 840 · +444 | 6de 10 criterios cumplenantes: 10 · 4 sin poder medirse",
-    "huella": "13e385239ce1932c342186f650157d022ea0873f9cf0cf0cb7e3f0bcc6479694"
+    "huella": "0ada6e982a02743d752136e721d8109d30968fd6c7f494a03cb6510785ef980d"
   },
   "U2=700": {
     "cifras": "33casos cambian de caminode 200 | 0errores introducidosevitados: 0 | 1236min de auditorplan: 840 · +396 | 7de 10 criterios cumplenantes: 10 · 3 sin poder medirse",
-    "huella": "6431c66fb55319fe0cdd51d59bb48ebe508e9915753a8564f4365974ecedca39"
+    "huella": "d26bd592810b6eedf90d62e107aca3c3bb08843b99dca390ad21b09c41ce87d2"
   },
   "U2=800": {
     "cifras": "29casos cambian de caminode 200 | 0errores introducidosevitados: 0 | 1188min de auditorplan: 840 · +348 | 7de 10 criterios cumplenantes: 10 · 3 sin poder medirse",
-    "huella": "72146e26b1c1008e53da8ba8c5e13d757ce563549f97abbee1b29906a4c5488f"
+    "huella": "56e7da922d7369d74f53877d3137ba72efc0f007e247d551a624d8abfbb961a9"
   },
   "U2=900": {
     "cifras": "21casos cambian de caminode 200 | 0errores introducidosevitados: 0 | 1092min de auditorplan: 840 · +252 | 7de 10 criterios cumplenantes: 10 · 3 sin poder medirse",
-    "huella": "aeb30d6c19b9785af9ef83dffd2af3c7ac4fd7252d30f6186272eb34ab3e164b"
+    "huella": "28772051739c4e6c82af1a37fff5145bd4ee6b9da7c6dea441cfc5ab75bebd6b"
   },
   "U2=1000": {
     "cifras": "0casos cambian de caminode 200 | 0errores introducidosevitados: 0 | 840min de auditorplan: 840 · ±0 | 10de 10 criterios cumplensin cambio",
-    "huella": "8d4890140dab5d239698e8836ee18c40af8d5b4aa0914a742d7f722bcd370550"
+    "huella": "25662130847e89b9288e2d8e3f669d51f64b28809fb820d175126083a976b433"
   },
   "U2=1100": {
     "cifras": "0casos cambian de caminode 200 | 0errores introducidosevitados: 0 | 840min de auditorplan: 840 · ±0 | 10de 10 criterios cumplensin cambio",
-    "huella": "76e887d4313523148ab5770eb1d19804cc0dc2c546794787860c006340f8927f"
+    "huella": "6e91315f20ffcf919b6998e50eafd5626f848c26ccbecaccb70dcb8e3f73cc3f"
   },
   "U2=1200": {
     "cifras": "4casos cambian de caminode 200 | 4errores introducidosevitados: 0 | 792min de auditorplan: 840 · −48 | 7de 10 criterios cumplenantes: 10 · 2 sin poder medirse",
-    "huella": "734d919225d33995e62c4b645975f2720a692d981efadf8968e194c7a2c03dcf"
+    "huella": "55f582711430950091c082de49ad9ac72a9843dbe93efad243f45756995e9d1c"
   },
   "U2=1300": {
     "cifras": "6casos cambian de caminode 200 | 6errores introducidosevitados: 0 | 768min de auditorplan: 840 · −72 | 7de 10 criterios cumplenantes: 10 · 2 sin poder medirse",
-    "huella": "09c23742c3fe9afa853f2d624a42201cdb04ddaa905e648b69731b94ff172622"
+    "huella": "88c1996482e0c3d19aaf4cdfd6b92d633015b9b73960108ed1a29c318ec19dce"
   },
   "U2=1400": {
     "cifras": "6casos cambian de caminode 200 | 6errores introducidosevitados: 0 | 768min de auditorplan: 840 · −72 | 7de 10 criterios cumplenantes: 10 · 2 sin poder medirse",
-    "huella": "5cb30033c165e0e034e395a93b64807144705d63c1fb8142460ebef785c8451f"
+    "huella": "8edaeafa413bd0bccacd390539ef1110e74d5f44799da48ef5f4df57ff9db638"
   },
   "U2=1500": {
     "cifras": "12casos cambian de caminode 200 | 12errores introducidosevitados: 0 | 696min de auditorplan: 840 · −144 | 6de 10 criterios cumplenantes: 10 · 3 sin poder medirse",
-    "huella": "3485172169b40d45d6e50735bce393211134435346059d37cb190d877f41e77f"
+    "huella": "8a32c13a969f4a8ada10c5ea944509188116c76e685db3b20fd6cf5b25e47d54"
   },
   "U2=1600": {
     "cifras": "12casos cambian de caminode 200 | 12errores introducidosevitados: 0 | 696min de auditorplan: 840 · −144 | 6de 10 criterios cumplenantes: 10 · 3 sin poder medirse",
-    "huella": "b1f031a74ff0213cff6e860b968af3448cfafcd74391ffe656b29870aa0f52ba"
+    "huella": "4f2bfc185d323941286288b0ec2e7435de931568542a70503a25010278968558"
   },
   "U2=1700": {
     "cifras": "12casos cambian de caminode 200 | 12errores introducidosevitados: 0 | 696min de auditorplan: 840 · −144 | 6de 10 criterios cumplenantes: 10 · 3 sin poder medirse",
-    "huella": "fefb54c36ddd89b32397ca3062cf303d24d09661fafba0bdc24cb56156798bdd"
+    "huella": "180129e77304b463031a0fbd441b007b228ad49ff37bdcd86d6c70c16ddf08f1"
   },
   "U2=1800": {
     "cifras": "12casos cambian de caminode 200 | 12errores introducidosevitados: 0 | 696min de auditorplan: 840 · −144 | 6de 10 criterios cumplenantes: 10 · 3 sin poder medirse",
-    "huella": "6d5194106567dd7ed6d0939bfa0bb5deb93774c88b8fc63af1f8dd961993530e"
+    "huella": "740127339b1b0c6d02c0c011617fbfdb1aeb1a730c7cf8520c246d8e720cbcb7"
   },
   "U2=1900": {
     "cifras": "16casos cambian de caminode 200 | 16errores introducidosevitados: 0 | 648min de auditorplan: 840 · −192 | 6de 10 criterios cumplenantes: 10 · 3 sin poder medirse",
-    "huella": "4b4eea3c0e660a783aaea7ac8393a2c5ec3ee1c3b1011dbd397b2a2263a3cae4"
+    "huella": "212a213d73ad781595014099c1affc62552d6e47c35249ce69cf537274c48e61"
   },
   "U2=2000": {
     "cifras": "16casos cambian de caminode 200 | 16errores introducidosevitados: 0 | 648min de auditorplan: 840 · −192 | 6de 10 criterios cumplenantes: 10 · 3 sin poder medirse",
-    "huella": "f2bf9680c9eb48737e039f06793cec319db99e546b1a676d02a4d4a690206c10"
+    "huella": "e634c3b9d334ebce47e6d0f2924a6b61e0d0c9c629ad4e6069438f9d8fae496b"
   },
   "U2=2100": {
     "cifras": "17casos cambian de caminode 200 | 17errores introducidosevitados: 0 | 636min de auditorplan: 840 · −204 | 6de 10 criterios cumplenantes: 10 · 3 sin poder medirse",
-    "huella": "81101fe0d1ce1dc0e0f47e89db9b154ad4b0770663427f9143c1c4ed312baa74"
+    "huella": "b1875387705443e7571171435ec86deedc2f89f1dd6fbe2e32b8ecca3638f671"
   },
   "U2=2200": {
     "cifras": "17casos cambian de caminode 200 | 17errores introducidosevitados: 0 | 636min de auditorplan: 840 · −204 | 6de 10 criterios cumplenantes: 10 · 3 sin poder medirse",
-    "huella": "aa31bf2cbce507c5aa07cc2c536cd0a5c134dd235d1727e22655f8e02e9b9df1"
+    "huella": "8987071f83a7928088d04622dbd0a944e8e8839903edd59b03c93c570c6081b0"
   },
   "U2=2300": {
     "cifras": "17casos cambian de caminode 200 | 17errores introducidosevitados: 0 | 636min de auditorplan: 840 · −204 | 6de 10 criterios cumplenantes: 10 · 3 sin poder medirse",
-    "huella": "3136e2bafd19ed0b7570f5099671dae2f1d1a8b3dd195e7a89f642f2fca4c5cb"
+    "huella": "b19851c4299269ba1a38be0977239855a5f968cf767841afdd6c0a84ee29a57f"
   },
   "U2=2400": {
     "cifras": "20casos cambian de caminode 200 | 20errores introducidosevitados: 0 | 600min de auditorplan: 840 · −240 | 6de 10 criterios cumplenantes: 10 · 3 sin poder medirse",
-    "huella": "55c330e2881f6bf2ffc9606be25158b7afcba4e8e325ce5a8e2acf7b28cda499"
+    "huella": "6e94e0df90688ff54b4d5c9e21c211fe95d5d1d54d583915a31daeeb7d360407"
   },
   "U2=2500": {
     "cifras": "20casos cambian de caminode 200 | 20errores introducidosevitados: 0 | 600min de auditorplan: 840 · −240 | 6de 10 criterios cumplenantes: 10 · 3 sin poder medirse",
-    "huella": "e2c863ea8c601bf642c213becc587b0c1efa0ac6454e7f811e806f4a5f9dd348"
+    "huella": "1aeb88806c449453c556232fc888dfe9dfa96705d78bb8787395eb12b3303dc1"
   },
   "U2=2600": {
     "cifras": "23casos cambian de caminode 200 | 23errores introducidosevitados: 0 | 564min de auditorplan: 840 · −276 | 6de 10 criterios cumplenantes: 10 · 3 sin poder medirse",
-    "huella": "846fd5c36c66f473797c02ab2d86f3f07aca0fad321102a38db2895bfe63abf9"
+    "huella": "006d14386492fdf1a5de62bbd17290799d56b3d7cf90fad7cc61e4ad093b8ff1"
   },
   "U2=2700": {
     "cifras": "23casos cambian de caminode 200 | 23errores introducidosevitados: 0 | 564min de auditorplan: 840 · −276 | 6de 10 criterios cumplenantes: 10 · 3 sin poder medirse",
-    "huella": "08efa2c776ab8c014787d3be7dc7933a2d3d699392c3329c8bf212ed2e8056f5"
+    "huella": "284b8681639f96caa2009ae3d723f1d7f184b26c22aaee5c6af79361fe6eafd8"
   },
   "U2=2800": {
     "cifras": "23casos cambian de caminode 200 | 23errores introducidosevitados: 0 | 564min de auditorplan: 840 · −276 | 6de 10 criterios cumplenantes: 10 · 3 sin poder medirse",
-    "huella": "7109ea64f146418558d565635719aafa871490bd3056928b25ee76eb050865b5"
+    "huella": "eed55cb92ae5c0f0457381548ac784e5450c921e6e1f2cbc50bc45ae34cabda6"
   },
   "U2=2900": {
     "cifras": "23casos cambian de caminode 200 | 23errores introducidosevitados: 0 | 564min de auditorplan: 840 · −276 | 6de 10 criterios cumplenantes: 10 · 3 sin poder medirse",
-    "huella": "3480a4c29be5c1370c6a7346cb4f540827abdb23990aba4d491eb0b6a80aa4b5"
+    "huella": "04ed5b81961000f4712c754d86055ef02e6d55f32fc91f22f0f5b5924a852f8e"
   },
   "U2=3000": {
     "cifras": "23casos cambian de caminode 200 | 23errores introducidosevitados: 0 | 564min de auditorplan: 840 · −276 | 6de 10 criterios cumplenantes: 10 · 3 sin poder medirse",
-    "huella": "5e52f2d06045e04d3b6bc975f5050a8f542af2eba7e3977eab724b54c35e03b3"
+    "huella": "787258bb2b5d2e1d5fe9d352f450eeb04f154430d6ccfa1f7af602f261f892c4"
   },
   "U2=3100": {
     "cifras": "23casos cambian de caminode 200 | 23errores introducidosevitados: 0 | 564min de auditorplan: 840 · −276 | 6de 10 criterios cumplenantes: 10 · 3 sin poder medirse",
-    "huella": "33819edb4376b57e0f09345b074bd9b15bf742038ad7a807e4c6acfeec1a3060"
+    "huella": "0529816cfbae1f3fa66041aed9344f8e9afb3515fafbb465376ff52f1d3843a5"
   },
   "U2=3200": {
     "cifras": "23casos cambian de caminode 200 | 23errores introducidosevitados: 0 | 564min de auditorplan: 840 · −276 | 6de 10 criterios cumplenantes: 10 · 3 sin poder medirse",
-    "huella": "710a3d191289d73d2454b282108169727d6ac4cb4e9b83967deaa62ae138eefb"
+    "huella": "756184611ee6ba08e1083e6811913f9997c4c384a508bea0659f6727b7f7d74c"
   },
   "U2=3300": {
     "cifras": "23casos cambian de caminode 200 | 23errores introducidosevitados: 0 | 564min de auditorplan: 840 · −276 | 6de 10 criterios cumplenantes: 10 · 3 sin poder medirse",
-    "huella": "87178a55ef9cbfcad8d772edbe7bcbe9a54142e7408584b85542a6358c7ec238"
+    "huella": "b49f855d0c9b969bf2d1b12da9d9ff2853b7a5313481346129a7fb68e62a28c5"
   },
   "U2=3400": {
     "cifras": "23casos cambian de caminode 200 | 23errores introducidosevitados: 0 | 564min de auditorplan: 840 · −276 | 6de 10 criterios cumplenantes: 10 · 3 sin poder medirse",
-    "huella": "62b1d65d3f7bb1863c95ee5eb6fb663c80dae360cd6804489002cbf932ad7a6f"
+    "huella": "9e4a7560bf306be64165fd7f09a1eee57c29cfd0ba9179a7e6753679303ab5d3"
   },
   "U2=3500": {
     "cifras": "23casos cambian de caminode 200 | 23errores introducidosevitados: 0 | 564min de auditorplan: 840 · −276 | 6de 10 criterios cumplenantes: 10 · 3 sin poder medirse",
-    "huella": "84be67f90f548323d0366210e05f5060f7245f19ede7e69397b1f21f01855309"
+    "huella": "1ffee41c4828bb873e881e5d4b53c0c8092fadce4cab3e34537191b8b8e18177"
   },
   "U2=3600": {
     "cifras": "23casos cambian de caminode 200 | 23errores introducidosevitados: 0 | 564min de auditorplan: 840 · −276 | 6de 10 criterios cumplenantes: 10 · 3 sin poder medirse",
-    "huella": "1b136e5585482f9c1ccb2124ef2b3e751eb917f02cdd623c20e0424087a53206"
+    "huella": "605a0825d3aa99ead59c96f7ce7397be10bd5def01781b54192181390ff5b46c"
   },
   "U2=3700": {
     "cifras": "23casos cambian de caminode 200 | 23errores introducidosevitados: 0 | 564min de auditorplan: 840 · −276 | 6de 10 criterios cumplenantes: 10 · 3 sin poder medirse",
-    "huella": "78a7d7959035ae0e95927ee64de3d84fb01b08872729904658e6b432dd248b4f"
+    "huella": "8f7432d495f3b94257556d930b95d9a5789b41e6e12e1777c99630a0202faa7d"
   },
   "U2=3800": {
     "cifras": "23casos cambian de caminode 200 | 23errores introducidosevitados: 0 | 564min de auditorplan: 840 · −276 | 6de 10 criterios cumplenantes: 10 · 3 sin poder medirse",
-    "huella": "4d62d09bb270126d049ccd03fd4c41ddc3481522e1dccf22b15b86512e46a79e"
+    "huella": "3965b6a25dde6217d627e94aa3f82c2e662b8e979ec16839d7f9ac3d131655d6"
   },
   "U2=3900": {
     "cifras": "23casos cambian de caminode 200 | 23errores introducidosevitados: 0 | 564min de auditorplan: 840 · −276 | 6de 10 criterios cumplenantes: 10 · 3 sin poder medirse",
-    "huella": "e2427a1643cee4257d769440bb2f222e234182cdb40be00c51da1467560797e7"
+    "huella": "c32f711a5ebd3b4b0c39405b798ec7d4e9229fbe3d1c0662bc52fd855bafa622"
   },
   "U2=4000": {
     "cifras": "24casos cambian de caminode 200 | 24errores introducidosevitados: 0 | 552min de auditorplan: 840 · −288 | 6de 10 criterios cumplenantes: 10 · 3 sin poder medirse",
-    "huella": "1718a8a804711d270b5dc05018f8884b987e3ebb7ee74338fb5a200de54b217d"
+    "huella": "83503f7475db1865e1f89ce4b4b28e7bbdd8c9faa486f01dd9ca1bf6044c7971"
   },
   "U2=4100": {
     "cifras": "24casos cambian de caminode 200 | 24errores introducidosevitados: 0 | 552min de auditorplan: 840 · −288 | 6de 10 criterios cumplenantes: 10 · 3 sin poder medirse",
-    "huella": "fedb74b5384f98258844183e57be5dd7d9d4e509cc0604439b43f6e338919695"
+    "huella": "b839004251e622160d499f97eb26f209b45583461ec1658a567e8968fccf18c3"
   },
   "U2=4200": {
     "cifras": "25casos cambian de caminode 200 | 25errores introducidosevitados: 0 | 540min de auditorplan: 840 · −300 | 6de 10 criterios cumplenantes: 10 · 3 sin poder medirse",
-    "huella": "b9d97159725f41e9402104aa585fa937ead288583b2dd8318fd9bd15ad7a05e4"
+    "huella": "644c66b70410e74e945771044befe051700f1c594707ca8b5102a30cd463e59e"
   },
   "U2=4300": {
     "cifras": "25casos cambian de caminode 200 | 25errores introducidosevitados: 0 | 540min de auditorplan: 840 · −300 | 6de 10 criterios cumplenantes: 10 · 3 sin poder medirse",
-    "huella": "91e0c6ce603b0a9071982e9be5d2a1536bb48e0812f6df88a0753865c33e808c"
+    "huella": "573d4fca26b7708b3c9cb61fa1279859f8a237340184b64ff1eb41284474bde3"
   },
   "U2=4400": {
     "cifras": "25casos cambian de caminode 200 | 25errores introducidosevitados: 0 | 540min de auditorplan: 840 · −300 | 6de 10 criterios cumplenantes: 10 · 3 sin poder medirse",
-    "huella": "4e0180d678d8664d03df54f2a94f0835d0b1b35cc5de779f637443aa6756ea7f"
+    "huella": "1649ab76b95f855f2d0d74b1e15b81a4d3c729f544b5ada67df57286e2e2ab1f"
   },
   "U2=4500": {
     "cifras": "25casos cambian de caminode 200 | 25errores introducidosevitados: 0 | 540min de auditorplan: 840 · −300 | 6de 10 criterios cumplenantes: 10 · 3 sin poder medirse",
-    "huella": "24f8d3ee292af26614d4ba997bb11a773243144bab0762a0e24fec219a397b3f"
+    "huella": "32b16890abae3604aca6ca7abb98e1364c46d31fd0cbdea5a0b33d2b80507686"
   },
   "U2=4600": {
     "cifras": "25casos cambian de caminode 200 | 25errores introducidosevitados: 0 | 540min de auditorplan: 840 · −300 | 6de 10 criterios cumplenantes: 10 · 3 sin poder medirse",
-    "huella": "e651fdef501726b84a260cb0341eabb9749ce0ece69788dbbd230fa574b88e09"
+    "huella": "a3b02217e504ee47c5aaa61d70b7a4103fee16bc7fe5b5afe8eac242259edecd"
   },
   "U2=4700": {
     "cifras": "25casos cambian de caminode 200 | 25errores introducidosevitados: 0 | 540min de auditorplan: 840 · −300 | 6de 10 criterios cumplenantes: 10 · 3 sin poder medirse",
-    "huella": "5b80a4f50ec927fd5bf4439e50c469f2f679c297c79461d6a62ee1d07f910c6e"
+    "huella": "9fa2f7e0e1c51a458352619697aeb526e337216ce02e56b00ec48c64f82b5b7b"
   },
   "U2=4800": {
     "cifras": "25casos cambian de caminode 200 | 25errores introducidosevitados: 0 | 540min de auditorplan: 840 · −300 | 6de 10 criterios cumplenantes: 10 · 3 sin poder medirse",
-    "huella": "b33055d5d2bdd4f1e11090fe0e04d05247a22f421ea7809481b150a1d7f2fe57"
+    "huella": "cd60668ea3c53e0d71d0cd7c2014017cf4107a931409a3c31d42c8c91c4cc687"
   },
   "U2=4900": {
     "cifras": "25casos cambian de caminode 200 | 25errores introducidosevitados: 0 | 540min de auditorplan: 840 · −300 | 6de 10 criterios cumplenantes: 10 · 3 sin poder medirse",
-    "huella": "cfb85d2183f272f196b5d7459a6bd06d1cf7955bb4d7b89b47c2330e26fd7427"
+    "huella": "2bb7b88a9cbcdf2f41ae4c89078bc3b8679a03d783dc5562a1b7dd11f67421f8"
   },
   "U2=5000": {
     "cifras": "25casos cambian de caminode 200 | 25errores introducidosevitados: 0 | 540min de auditorplan: 840 · −300 | 6de 10 criterios cumplenantes: 10 · 3 sin poder medirse",
-    "huella": "bcd73c9cf994892ede7b7e936491f0b34424b775a40730132666e3cad69dbb0f"
+    "huella": "8c4c7fd1c359240e075d00fc2e9f871e31622cebcb213a80ce5d443aff7d8689"
   },
   "U3=0": {
     "cifras": "30casos cambian de caminode 200 | 0errores introducidosevitados: 0 | 1044min de auditorplan: 840 · +204 | 4de 10 criterios cumplenantes: 10 · 6 sin poder medirse",
-    "huella": "567347dce53568a2b71261594ba880797fa6a524b7c8dcb200664ef0f5916b36"
+    "huella": "a595947ed03c9449f2b0a759170dc24dc862dff92029297e2b1eb07b6442ae8e"
   },
   "U3=1": {
     "cifras": "17casos cambian de caminode 200 | 0errores introducidosevitados: 0 | 900min de auditorplan: 840 · +60 | 4de 10 criterios cumplenantes: 10 · 6 sin poder medirse",
-    "huella": "31d13178887e633f29e4be9f9bd2d5778086b74286083efa7cd597673978f082"
+    "huella": "5d12480faf1d0bbf1551c665ef31b5bfd6be3af3807a52e09bd78a198c1997cb"
   },
   "U3=2": {
     "cifras": "0casos cambian de caminode 200 | 0errores introducidosevitados: 0 | 840min de auditorplan: 840 · ±0 | 10de 10 criterios cumplensin cambio",
-    "huella": "8d4890140dab5d239698e8836ee18c40af8d5b4aa0914a742d7f722bcd370550"
+    "huella": "25662130847e89b9288e2d8e3f669d51f64b28809fb820d175126083a976b433"
   },
   "U3=3": {
     "cifras": "10casos cambian de caminode 200 · 10 no observados | 0errores introducidosevitados: 0 | 720min de auditorplan: 720 · ±0 | 5de 10 criterios cumplenantes: 10 · 5 sin poder medirse",
-    "huella": "9ac529547a03cae3a9dd361c9bf3ac7b735230231eb5aceed90d796369137c91"
+    "huella": "7732a984e68f1f38988507dd4774daeff657c7e4d1c46b706a6486e093e44618"
   },
   "U3=4": {
     "cifras": "10casos cambian de caminode 200 · 10 no observados | 0errores introducidosevitados: 0 | 720min de auditorplan: 720 · ±0 | 5de 10 criterios cumplenantes: 10 · 5 sin poder medirse",
-    "huella": "0b8c3c58ea53301116bbb024e02598134e1ddd53cdfbbcf0284e0becb946fc27"
+    "huella": "62b22ffea4a4c8ae9369c50e820cfe8938edaf8170fdb1ec055588d294f374bf"
   },
   "U4=alternado": {
     "cifras": "9casos cambian de caminode 200 | 0errores introducidosevitados: 0 | 948min de auditorplan: 840 · +108 | 6de 10 criterios cumplenantes: 10 · 4 sin poder medirse",
-    "huella": "5689e9562e58ed3efb8c5fc01ebec46689af67225823cbb140a96ee4f2265889"
+    "huella": "128f230db347bb34334f7d00d6297ca77d8703c77571f5150329b39c588bf4c0"
   }
 }

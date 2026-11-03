@@ -12,7 +12,7 @@
 // `out/` o si `--pasada` cae dentro del repo. Solo hay datos sintéticos precompilados.
 //
 // Uso: pnpm build && node scripts/capturas-demo-b.mjs --pasada <carpeta fuera del repo>
-//        [--conjunto forma-b|mirada-3|comparar|planes|origen|contrato] [--destino docs/fidelidad/<conjunto>] [--techo 2097152]
+//        [--conjunto forma-b|mirada-3|comparar|planes|origen|contrato|garantia] [--destino docs/fidelidad/<conjunto>] [--techo 2097152]
 // Conjuntos: `forma-b` (S3 fase 3, la mirada 2: las pantallas del B) y `mirada-3` (S3 fase 4: el BLUEPRINT, el
 // expediente y el informe del B y los cambios de forma del A sobre la corrida de 200). El BLUEPRINT es el único
 // archivo que se sirve fuera de `out/` (`docs/BLUEPRINT.html`, autocontenido).
@@ -48,9 +48,15 @@ const arg = (n, def) => {
 const pasada = arg("pasada", null) ? resolve(arg("pasada", null)) : null;
 const CONJUNTO = arg("conjunto", "forma-b");
 if (
-  !["forma-b", "mirada-3", "comparar", "planes", "origen", "contrato"].includes(
-    CONJUNTO,
-  )
+  ![
+    "forma-b",
+    "mirada-3",
+    "comparar",
+    "planes",
+    "origen",
+    "contrato",
+    "garantia",
+  ].includes(CONJUNTO)
 ) {
   console.error(`capturas-demo-b: conjunto desconocido «${CONJUNTO}». Aborto.`);
   process.exit(1);
@@ -69,7 +75,9 @@ const destino = resolve(
             ? "docs/fidelidad/s6-planes"
             : CONJUNTO === "contrato"
               ? "docs/fidelidad/s7-contrato"
-              : "docs/fidelidad/s3-mirada-3",
+              : CONJUNTO === "garantia"
+                ? "docs/fidelidad/s8-garantia"
+                : "docs/fidelidad/s3-mirada-3",
   ),
 );
 const BLUEPRINT = join(raiz, "docs", "BLUEPRINT.html");
@@ -79,9 +87,14 @@ const TECHO = Number(arg("techo", String(2 * 1024 * 1024)));
 // en 70 y 55, como se registró.
 const CALIDAD = Number(arg("calidad", CONJUNTO_CALIDAD()));
 function CONJUNTO_CALIDAD() {
-  return ["forma-b", "comparar", "planes", "origen", "contrato"].includes(
-    arg("conjunto", "forma-b"),
-  )
+  return [
+    "forma-b",
+    "comparar",
+    "planes",
+    "origen",
+    "contrato",
+    "garantia",
+  ].includes(arg("conjunto", "forma-b"))
     ? "70"
     : "52";
 }
@@ -198,6 +211,11 @@ const COMBINACIONES = [
   { idioma: "en", tema: "oscuro" },
 ];
 const ANCHOS = [380, 1280];
+// S8: la regla 20 pide UN idioma por sprint; el segundo llega al cierre del hito. El conjunto «garantia» va en español.
+const COMBOS =
+  arg("conjunto", "forma-b") === "garantia"
+    ? COMBINACIONES.filter((c) => c.idioma === "es")
+    : COMBINACIONES;
 
 // ── 2. las decisiones de forma, con su fila de la matriz ───────────────────────────────────────────────
 const DECISIONES_FORMA_B = [
@@ -803,6 +821,126 @@ const DECISIONES_ORIGEN = [
   },
 ];
 
+// ── el conjunto «garantia» (S8): la zona respaldada en el playground y S1 en la Brecha, en español, con su pasada de
+//    interacción (elegir otro error, mover el deslizador, cambiar de perfil) ─────────────────────────────────────────
+const PANTALLAS_GARANTIA = [
+  { clave: "playground", ruta: "/playground" },
+  { clave: "brecha", ruta: "/brecha" },
+];
+const elegirError = (pct) => (page) =>
+  page
+    .locator("#zona-respaldada")
+    .getByRole("radio", { name: new RegExp(`^${pct}\\s%`) })
+    .check();
+const DECISIONES_GARANTIA = [
+  {
+    clave: "playground-zona",
+    archivo:
+      "Playground (/es/playground), la zona respaldada con el error del informe",
+    estado: "tal como abre",
+    ruta: "/es/playground",
+    ancho: 1280,
+    tema: "oscuro",
+    recorte: (page) =>
+      marco(page.locator('section[aria-labelledby="s-curva-t"]')),
+    mirar:
+      "El panel «Dónde el umbral tiene el respaldo de los datos», el selector del error que aceptas, la curva con su banda de trama y la tabla con las filas de la zona marcadas.",
+    esperada:
+      "10 % marcado; «Zona respaldada con 10 % de error: confianza mínima de 0,50 a 0,90»; la banda con trama y borde discontinuo sobre la curva; nueve filas con trama, palomita y la palabra «respaldado por los datos» para el lector de pantalla; la leyenda «Zona respaldada». Tres notas: la cobertura conjunta que no se respalda con la secuencia fija, el orden de la prueba y el redactor sin verdad.",
+  },
+  {
+    clave: "playground-cinco-por-ciento",
+    archivo:
+      "Playground, error de 5 % y U1 por debajo de la zona (pasada de interacción)",
+    estado: "tras elegir 5 %",
+    ruta: "/es/playground",
+    ancho: 1280,
+    tema: "claro",
+    accion: async (page) => {
+      await elegirError("5")(page);
+      await page.getByRole("slider", { name: /Confianza mínima/ }).fill("0.6");
+    },
+    antes: (page) =>
+      page.locator("#zona-respaldada [data-nivel]").getAttribute("data-nivel"),
+    recorte: (page) =>
+      marco(page.locator('section[aria-labelledby="s-curva-t"]')),
+    mirar:
+      "Que la zona se estreche a 0,75–0,85, que el cuadro ■ de la curva quede fuera de la banda y que la tabla marque solo tres filas.",
+    esperada:
+      "«Zona respaldada con 5 % de error: confianza mínima de 0,75 a 0,85»; tres filas con trama; el cuadro del U1 actual (0,60) a la derecha de la banda (un umbral más bajo da más cobertura); en la nota de la cobertura conjunta, «más de 2.680 casos».",
+  },
+  {
+    clave: "playground-deslizador",
+    archivo: "Playground, el deslizador de U1 con la zona y dónde cae su valor",
+    estado: "tras mover U1 a 0,60 con 5 %",
+    ruta: "/es/playground",
+    ancho: 380,
+    tema: "oscuro",
+    accion: async (page) => {
+      await elegirError("5")(page);
+      await page.getByRole("slider", { name: /Confianza mínima/ }).fill("0.6");
+    },
+    antes: (page) =>
+      page.locator("#w-U1 [data-zona-estado]").getAttribute("data-zona-estado"),
+    recorte: (page) => marco(page.locator("#w-U1")),
+    mirar:
+      "Que el tramo respaldado se dibuje sobre la pista con trama, que debajo diga dónde cae el valor y que a 380 px nada se salga de la tarjeta.",
+    esperada:
+      "El tramo de trama entre 0,75 y 0,85; el glifo de alerta y «U1 0,60: por debajo de la zona. Desde 0,75 hacia arriba los datos respaldan el error aceptado; con este valor, no.»",
+  },
+  {
+    clave: "brecha-s1-lider",
+    archivo: "Brecha (/es/brecha), S1 con su garantía, como líder",
+    estado: "tal como abre",
+    ruta: "/es/brecha",
+    ancho: 1280,
+    tema: "claro",
+    recorte: (page) => marco(page.locator("#s-S1")),
+    mirar:
+      "Bajo «El modelo extrae con confianza calibrada»: la zona respaldada en palabras llanas, dónde cae el umbral de la corrida y lo que los datos no alcanzan.",
+    esperada:
+      "«Zona respaldada con 10 % de error: confianza mínima de 0,50 a 0,90»; «El U1 de la corrida (0,75) cae dentro.»; las notas de la cobertura conjunta con «268 casos», del orden de la prueba y del redactor sin verdad; la curva de S1 con su banda.",
+  },
+  {
+    clave: "brecha-s1-experto",
+    archivo: "Brecha, S1, perfil experto (pasada de interacción)",
+    estado: "tras pulsar «Experto»",
+    ruta: "/es/brecha",
+    ancho: 1280,
+    tema: "oscuro",
+    accion: async (page) =>
+      page
+        .getByRole("group", { name: "Leer como" })
+        .getByRole("button", { name: "Experto" })
+        .click(),
+    antes: (page) => page.locator("html").getAttribute("data-perfil"),
+    recorte: (page) => marco(page.locator("#s-S1")),
+    mirar:
+      "Que aparezca el bloque del experto: el método, la tabla de los tres niveles de α con el del informe marcado, las pruebas, el error conjunto observado y el alcance.",
+    esperada:
+      "Tres filas (α 0,05 · α 0,10 «el del informe» · α 0,20); a 0,10: umbral con garantía 0,50, conformal 0,90, zona 0,50–0,90, «sí», «no alcanza»; a 0,20: «0,50 (k = 2)». Las pruebas con p y ✓/✗.",
+  },
+  {
+    clave: "brecha-s1-movil",
+    archivo: "Brecha, S1 en el teléfono (como experto)",
+    estado: "tras pulsar «Experto», 380 px",
+    ruta: "/es/brecha",
+    ancho: 380,
+    tema: "claro",
+    accion: async (page) =>
+      page
+        .getByRole("group", { name: "Leer como" })
+        .getByRole("button", { name: "Experto" })
+        .click(),
+    antes: (page) => page.locator("html").getAttribute("data-perfil"),
+    recorte: (page) => marco(page.locator('[data-garantia="s1"]')),
+    mirar:
+      "Que la tabla de los tres niveles se lea en tarjetas, sin desplazamiento lateral y sin cortar las cifras.",
+    esperada:
+      "Una tarjeta por nivel con sus siete datos rotulados; el nivel del informe resaltado; nada se sale de la pantalla.",
+  },
+];
+
 const PANTALLAS =
   CONJUNTO === "forma-b"
     ? PANTALLAS_FORMA_B
@@ -814,7 +952,9 @@ const PANTALLAS =
           ? PANTALLAS_ORIGEN
           : CONJUNTO === "contrato"
             ? PANTALLAS_CONTRATO
-            : PANTALLAS_MIRADA_3;
+            : CONJUNTO === "garantia"
+              ? PANTALLAS_GARANTIA
+              : PANTALLAS_MIRADA_3;
 const DECISIONES =
   CONJUNTO === "forma-b"
     ? DECISIONES_FORMA_B
@@ -826,7 +966,9 @@ const DECISIONES =
           ? DECISIONES_ORIGEN
           : CONJUNTO === "contrato"
             ? DECISIONES_CONTRATO
-            : DECISIONES_MIRADA_3;
+            : CONJUNTO === "garantia"
+              ? DECISIONES_GARANTIA
+              : DECISIONES_MIRADA_3;
 
 rmSync(destino, { recursive: true, force: true });
 mkdirSync(destino, { recursive: true });
@@ -836,7 +978,7 @@ const navegador = await chromium.launch();
 
 const capturas = [];
 for (const p of PANTALLAS)
-  for (const c of COMBINACIONES)
+  for (const c of COMBOS)
     for (const ancho of ANCHOS) {
       const ctx = await navegador.newContext({
         viewport: { width: ancho, height: 900 },
@@ -879,9 +1021,14 @@ for (const c of capturas) {
     path: join(destino, c.miniatura),
     clip: { x: 0, y: 0, width: 240, height: 400 },
     type: "jpeg",
-    quality: ["forma-b", "comparar", "planes", "origen", "contrato"].includes(
-      CONJUNTO,
-    )
+    quality: [
+      "forma-b",
+      "comparar",
+      "planes",
+      "origen",
+      "contrato",
+      "garantia",
+    ].includes(CONJUNTO)
       ? 55
       : 45,
   });
@@ -980,7 +1127,7 @@ const html = `<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${CONJUNTO === "contrato" ? "Plan sin corrida · contrato del grafo en detalle · mirada de forma (S7)" : CONJUNTO === "origen" ? "Plan sin corrida v2 · mirada de forma (S6)" : CONJUNTO === "planes" ? "Plan sin corrida · mirada de forma (S5)" : CONJUNTO === "comparar" ? "Comparar dos corridas · mirada de forma (S4)" : CONJUNTO === "forma-b" ? "Demo B · mirada de forma (S3)" : "Mirada 3 · cierre (S3)"}</title>
+<title>${CONJUNTO === "garantia" ? "La zona respaldada por los datos · mirada de forma (S8)" : CONJUNTO === "contrato" ? "Plan sin corrida · contrato del grafo en detalle · mirada de forma (S7)" : CONJUNTO === "origen" ? "Plan sin corrida v2 · mirada de forma (S6)" : CONJUNTO === "planes" ? "Plan sin corrida · mirada de forma (S5)" : CONJUNTO === "comparar" ? "Comparar dos corridas · mirada de forma (S4)" : CONJUNTO === "forma-b" ? "Demo B · mirada de forma (S3)" : "Mirada 3 · cierre (S3)"}</title>
 <style>
 :root{--fondo:#0f1115;--sup:#171a21;--t1:#eceef2;--t2:#a9afbb;--linea:#2a2f3a}
 @media (prefers-color-scheme: light){:root{--fondo:#f7f7f5;--sup:#fff;--t1:#16181d;--t2:#4a505c;--linea:#d9dbe0}}
@@ -997,27 +1144,31 @@ table{border-collapse:collapse;width:100%;font-size:13px;margin-top:8px}th,td{bo
 </head>
 <body><main>
 ${
-  CONJUNTO === "contrato"
-    ? `<p class="pregunta">¿El contrato del grafo del plan de HackGuard se lee en detalle, en español y en inglés, y en el teléfono sin cortarse? Mira cada fila de la tabla con su recorte.</p>
+  CONJUNTO === "garantia"
+    ? `<p class="pregunta">¿La zona que los datos respaldan, y lo que no alcanzan, se leen como esperas en el playground y en la Brecha? Mira cada fila de la tabla con su recorte.</p>
+<h1>La zona respaldada por los datos · mirada de forma «no vista» (S8)</h1>
+<p>Vitrina construida con el commit en curso, servida desde <code>out/</code>. Clase de mirada: FORMA, registrada «no vista»; su veredicto viaja al gate del hito H-2 (el ensayo general). Solo en español: el inglés llega al cierre del hito. Las capturas enteras no se versionan: cada una se identifica por su huella SHA-256.</p>`
+    : CONJUNTO === "contrato"
+      ? `<p class="pregunta">¿El contrato del grafo del plan de HackGuard se lee en detalle, en español y en inglés, y en el teléfono sin cortarse? Mira cada fila de la tabla con su recorte.</p>
 <h1>Plan sin corrida · contrato del grafo en detalle · mirada de forma «no vista» (S7)</h1>
 <p>Vitrina construida con el commit en curso, servida desde <code>out/</code>. Clase de mirada: FORMA, registrada «no vista»; su veredicto viaja al gate de los hitos H-1 y H-2 (bloque G de la guía). Las capturas enteras no se versionan: cada una se identifica por su huella SHA-256.</p>`
-    : CONJUNTO === "origen"
-      ? `<p class="pregunta">¿La ficha del plan de HackGuard dice de quién son las respuestas y qué versión quedó como historia? Mira la fila de la tabla con su recorte.</p>
+      : CONJUNTO === "origen"
+        ? `<p class="pregunta">¿La ficha del plan de HackGuard dice de quién son las respuestas y qué versión quedó como historia? Mira la fila de la tabla con su recorte.</p>
 <h1>Plan sin corrida v2 · mirada de forma «no vista» (S6)</h1>
 <p>Vitrina construida con el commit en curso, servida desde <code>out/</code>. Clase de mirada: FORMA, registrada «no vista»; su veredicto viaja al gate de los hitos H-1 y H-2 (bloque G de la guía). Las capturas enteras no se versionan: cada una se identifica por su huella SHA-256.</p>`
-      : CONJUNTO === "planes"
-        ? `<p class="pregunta">¿El plan de HackGuard, sin corrida, se lee como esperas? Mira cada fila de la tabla con su recorte.</p>
+        : CONJUNTO === "planes"
+          ? `<p class="pregunta">¿El plan de HackGuard, sin corrida, se lee como esperas? Mira cada fila de la tabla con su recorte.</p>
 <h1>Plan sin corrida · mirada de forma «no vista» (S5)</h1>
 <p>Vitrina construida con el commit en curso, servida desde <code>out/</code>. Clase de mirada: FORMA, registrada «no vista»; su veredicto viaja al gate de los hitos H-1 y H-2 (bloque G de la guía). Las capturas enteras no se versionan: cada una se identifica por su huella SHA-256.</p>`
-        : CONJUNTO === "comparar"
-          ? `<p class="pregunta">¿«Comparar dos corridas» se lee como esperas? Mira cada fila de la tabla con su recorte.</p>
+          : CONJUNTO === "comparar"
+            ? `<p class="pregunta">¿«Comparar dos corridas» se lee como esperas? Mira cada fila de la tabla con su recorte.</p>
 <h1>Comparar dos corridas · mirada de forma «no vista» (S4)</h1>
 <p>Vitrina construida con el commit en curso, servida desde <code>out/</code>. Clase de mirada: FORMA, registrada «no vista»; su veredicto viaja al gate de los hitos H-1 y H-2 (bloque G de la guía). Las capturas enteras no se versionan: cada una se identifica por su huella SHA-256.</p>`
-          : CONJUNTO === "forma-b"
-            ? `<p class="pregunta">¿Las pantallas del demo B tienen la forma que esperas? Mira cada fila de la tabla con su recorte.</p>
+            : CONJUNTO === "forma-b"
+              ? `<p class="pregunta">¿Las pantallas del demo B tienen la forma que esperas? Mira cada fila de la tabla con su recorte.</p>
 <h1>Demo B · mirada de forma «no vista» (S3, fase 3)</h1>
 <p>Vitrina construida con el commit en curso, servida desde <code>out/</code>. Clase de mirada: FORMA, registrada «no vista»; su veredicto viaja al gate de los hitos H-1 y H-2 (bloque G de la guía). Las capturas enteras no se versionan: cada una se identifica por su huella SHA-256.</p>`
-            : `<p class="pregunta">¿El BLUEPRINT, el expediente y el informe del B, y los cambios del A sobre la corrida de 200, se leen como esperas? Mira cada fila de la tabla con su recorte.</p>
+              : `<p class="pregunta">¿El BLUEPRINT, el expediente y el informe del B, y los cambios del A sobre la corrida de 200, se leen como esperas? Mira cada fila de la tabla con su recorte.</p>
 <h1>Mirada 3 · cierre del hito H-1, «no vista» (S3, fase 4)</h1>
 <p>Vitrina construida con el commit en curso, servida desde <code>out/</code>; el BLUEPRINT, desde <code>docs/</code>. Clase de mirada: FORMA y TEXTO, registrada «no vista»; su veredicto viaja al gate de los hitos H-1 y H-2 (bloque G de la guía), salvo las filas del BLUEPRINT y de la revisión del borrador del B, que son archivos del repo y quedan fuera del gate. Las capturas enteras no se versionan: cada una se identifica por su huella SHA-256.</p>`
 }
@@ -1029,7 +1180,7 @@ ${filas}
 <h2>Los recortes</h2>
 ${figuras}
 <h2>La pasada completa (${capturas.length} capturas)</h2>
-<p>${CONJUNTO === "contrato" ? "El plan sin corrida de HackGuard (contrato en detalle)" : CONJUNTO === "origen" ? "El plan sin corrida de HackGuard" : CONJUNTO === "planes" ? "La Entrada y el plan sin corrida" : CONJUNTO === "comparar" ? "La pantalla" : CONJUNTO === "forma-b" ? "Cada pantalla del B y la entrada" : "Las pantallas que cambió el cierre"}, a 380 y 1280 px: en español en los dos temas, en inglés en oscuro. La miniatura es la parte de arriba; la huella identifica la captura entera que se leyó.</p>
+<p>${CONJUNTO === "garantia" ? "El playground y la Brecha" : CONJUNTO === "contrato" ? "El plan sin corrida de HackGuard (contrato en detalle)" : CONJUNTO === "origen" ? "El plan sin corrida de HackGuard" : CONJUNTO === "planes" ? "La Entrada y el plan sin corrida" : CONJUNTO === "comparar" ? "La pantalla" : CONJUNTO === "forma-b" ? "Cada pantalla del B y la entrada" : "Las pantallas que cambió el cierre"}, a 380 y 1280 px: en español en los dos temas${CONJUNTO === "garantia" ? "" : ", en inglés en oscuro"}. La miniatura es la parte de arriba; la huella identifica la captura entera que se leyó.</p>
 <div class="minis">
 ${minis}
 </div>

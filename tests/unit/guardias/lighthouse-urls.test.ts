@@ -56,7 +56,7 @@ const conLcp = presupuestos.filter((p) =>
   p.timings?.some((t) => t.metric === LCP),
 );
 const casan = (u: string, p: Presupuesto) =>
-  patron(p.path).test(`http://localhost:3000${u}`);
+  patron(p.path).test(`http://127.0.0.1:3200${u}`);
 
 describe("lighthouse-urls.json (AU-S2-B14)", () => {
   it("cubre las siete pantallas en español, la comparación del A (S4) y el plan sin corrida (S5)", () => {

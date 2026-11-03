@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -H 127.0.0.1 -p 3200",
     "build": "next build",
-    "start": "serve out -l 3000",
+    "start": "serve out -l tcp://127.0.0.1:3200",
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run --coverage",
@@ -24,6 +24,7 @@
     "lote:demo-b": "agents/.venv/bin/python -m app_agents.lotes --demo b --pausa-s 2",
     "capturas:maqueta": "node scripts/capturar-maqueta.mjs",
     "capturas:vitrina": "node scripts/capturar-vitrina.mjs",
+    "capturas:cv-viva": "node scripts/capturas-cv-viva.mjs",
     "export:verificar": "node scripts/verificar-export.mjs",
     "diagrama:verificar": "tsx scripts/diagrama-igual-grafo.ts",
     "fichas": "tsx --conditions=react-server scripts/fichas.ts",
@@ -32,7 +33,7 @@
     "test:e2e:paquete": "playwright test -c playwright.paquete.config.ts",
     "tokens": "node scripts/paleta/generar-tokens.mjs",
     "visor:metricas": "tsx scripts/visor/metricas.ts",
-    "maqueta": "serve docs -l 3101",
+    "maqueta": "serve docs -l tcp://127.0.0.1:3101",
     "comparacion": "tsx scripts/comparacion.ts"
   },
   "dependencies": {

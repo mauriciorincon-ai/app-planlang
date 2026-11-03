@@ -152,6 +152,29 @@ Risk-coverage curve (confidence threshold → share the agent resolves alone →
 | 0.90 | 73.3% | 0% | 11 |
 | 0.95 | 60% | 0% | 9 |
 
+Calibration guarantee (δ = 0.10; the report declares α = 0.10). **Guaranteed threshold** (Learn then Test, fixed sequence from the highest threshold): the lowest one whose error among what the agent decides alone is ≤ α with probability ≥ 1 − δ. **Conformal threshold**: the highest one that lets at least 1 − α of the correct cases through without a person (marginal, under exchangeability). **Backed zone**: the grid thresholds that have both at once.
+
+| α | Guaranteed threshold | Coverage · error there | Conformal threshold | Backed zone | Is the run's (0.75) in it? | Joint coverage |
+| --- | --- | --- | --- | --- | --- | --- |
+| 0.05 | none | — | none | none | no | not reached |
+| 0.10 | none | — | 0.70 | none | no | not reached |
+| 0.20 | none | — | 0.85 | none | no | not reached |
+
+Joint coverage (Bonferroni): extractor, clarification, each at α/2 and δ/2 on the same cases the agent decides alone ⇒ P(some stage fails) ≤ α with probability ≥ 1 − δ; the column gives the lowest threshold with that guarantee.
+
+Model stage with no ground truth in the case (not observed, and left out of the joint coverage): writer.
+
+What the data does not reach:
+
+- At α = 0.05, there is no guaranteed threshold: at 0.95 the agent decides 9 cases alone and, even without a single error, it would take 45.
+- At α = 0.05, the joint coverage is not backed by the fixed sequence from the highest threshold: at 0.95 the agent decides 9 cases alone and, even without a single error, it would take 119.
+- At α = 0.10, there is no guaranteed threshold: at 0.95 the agent decides 9 cases alone and, even without a single error, it would take 22.
+- At α = 0.10, the joint coverage is not backed by the fixed sequence from the highest threshold: at 0.95 the agent decides 9 cases alone and, even without a single error, it would take 59.
+- At α = 0.20, there is no guaranteed threshold: at 0.95 the agent decides 9 cases alone and, even without a single error, it would take 11.
+- At α = 0.20, the joint coverage is not backed by the fixed sequence from the highest threshold: at 0.95 the agent decides 9 cases alone and, even without a single error, it would take 29.
+
+> The test starts at the highest threshold and goes down until one fails (fixed sequence). It is conservative: it may say “not backed” where another order would pass, and choosing the order after looking at the data would void the confidence.
+
 ### S2 — Two clarification cycles suffice in 95% of incomplete cases.
 
 **✓ confirmed** (criticality medium). Every measure meets the plan's confirmation threshold.
@@ -220,4 +243,4 @@ Applied thresholds: U1 = 0.75 · U2 = 1000 · U3 = 2 · U4 = false · in the pla
 
 Human review: In batches, the simulated reviewer follows the case's known truth (DA-04); the showcase discloses it.
 
-Verifier 1.3.0 · planlang-informe/v1 · fingerprint of this report: `5e7004477a40966839320d5c65f23e21e7b4d52e167a82cbb500c265cad4f1c8`
+Verifier 1.4.0 · planlang-informe/v1 · fingerprint of this report: `bf9efe35443ed5418a150869bc2d1273ea4a7a696bb1812786068c2d6bb800ba`

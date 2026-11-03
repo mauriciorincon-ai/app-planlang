@@ -2,7 +2,9 @@
 import { describe, expect, it } from "vitest";
 import { generarInforme } from "../../../../core/brecha/informe";
 import { SIEMBRAS } from "../../../../core/brecha/m9";
+import { garantiaDeCalibracion } from "../../../../core/brecha/garantia";
 import { renderizarInforme } from "../../../../core/brecha/render-md";
+import { casosSinteticos } from "../../../../scripts/garantia-contrato";
 import { entradaDesdeDisco, hermanas } from "../../../../scripts/_corridas";
 import {
   entradaReal,
@@ -111,5 +113,69 @@ describe("las decisiones de una vía dicen qué se eligió (AU-S2-P-6)", () => {
     const d1 = inf.plan_en_breve.decisiones_una_via.find((d) => d.id === "D1")!;
     expect(d1.opcion_elegida).toBeNull();
     expect(renderizarInforme(inf, "en")).not.toMatch(/→ solo edad/);
+  });
+
+  it("la garantía de S1 dice en cada idioma lo que los datos no alcanzan, con su porqué (S8, P9)", async () => {
+    const inf = await generarInforme(entradaSimulada());
+    const conGarantia = (nombre: string) => {
+      const entrada = casosSinteticos().find(
+        (c) => c.nombre === nombre,
+      )!.entrada;
+      return {
+        ...inf,
+        supuestos: inf.supuestos.map((s) =>
+          s.id === "S1"
+            ? { ...s, garantia: garantiaDeCalibracion(entrada) }
+            : s,
+        ),
+      };
+    };
+    const bajo = conGarantia("conformal-bajo-el-umbral");
+    expect(renderizarInforme(bajo, "es")).toContain(
+      "A α = 0,10, no hay zona respaldada: el umbral conformal (0,55) queda por debajo del umbral con garantía (0,70)",
+    );
+    expect(renderizarInforme(bajo, "en")).toContain(
+      "At α = 0.10, there is no backed zone: the conformal threshold (0.55) falls below the guaranteed threshold (0.70)",
+    );
+    const sobre = conGarantia("tasa-sobre-alfa");
+    expect(renderizarInforme(sobre, "es")).toContain(
+      "A α = 0,20, no hay umbral con garantía: en 0,90 el agente decide solo 20 casos y la extracción falla en 5, una tasa que no baja de α",
+    );
+    const pocos = conGarantia("pocos-casos");
+    expect(renderizarInforme(pocos, "es")).toContain("harían falta 22");
+    // Con umbral con garantía pero sin conformal (α = 0,05 sobre 19 aciertos sí lo hay; sobre 8, no).
+    const sinCota = {
+      ...pocos,
+      supuestos: pocos.supuestos.map((s) =>
+        s.id === "S1" && s.garantia
+          ? {
+              ...s,
+              garantia: {
+                ...s.garantia,
+                niveles: s.garantia.niveles.map((n) => ({
+                  ...n,
+                  umbral_con_garantia: {
+                    ...n.umbral_con_garantia,
+                    umbral: 0.9,
+                    faltan: null,
+                  },
+                  sin_zona: "sin_cota_conformal" as const,
+                })),
+              },
+            }
+          : s,
+      ),
+    };
+    expect(renderizarInforme(sinCota, "es")).toContain(
+      "A α = 0,10, no hay zona respaldada: con 8 aciertos no hay umbral conformal; hacen falta al menos 9.",
+    );
+    expect(renderizarInforme(sinCota, "en")).toContain(
+      "At α = 0.10, there is no backed zone: with 8 correct cases there is no conformal threshold; it takes at least 9.",
+    );
+    for (const md of [
+      renderizarInforme(bajo, "es"),
+      renderizarInforme(sobre, "en"),
+    ])
+      expect(md).not.toMatch(/undefined|NaN|\[object Object\]/);
   });
 });

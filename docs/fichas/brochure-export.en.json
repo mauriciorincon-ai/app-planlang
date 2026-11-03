@@ -16,17 +16,17 @@
   "app": {
     "slug": "planlang",
     "nombre": "planlang",
-    "ciclo": "H1",
+    "ciclo": "H-2",
     "estado": "inicial",
     "sellado_en": null,
-    "sprints_cerrados": 7,
+    "sprints_cerrados": 8,
     "version_repo": "0.1.0"
   },
   "promesa": {
-    "tagline": "I planned, built and measured the gap.",
-    "intro": "You write the plan as a contract —decisions, risks, assumptions, criteria and thresholds, each one measurable— and planlang uses it to build the agent, run it on cases with a known answer and publish the gap. Then you move a threshold and see what it would have cost.",
-    "para_quien": "For whoever plans, builds or approves an AI-agent project and today measures what the agent does without having written down first what it was supposed to do: they look at traces, run loose evaluations and decide by eye when a result is enough.",
-    "diferencial": "Observing traces and evaluating answers is done by many tools. What nobody does is demand the plan first and measure against it afterwards: the plan → result gap report, with the prior risk analysis, and the plan's thresholds playable over the real traces."
+    "tagline": "Your AI agent, measured against the plan you wrote before building it.",
+    "intro": "planlang turns the plan of an AI-agent project into a verifiable contract: what the agent decides, what can go wrong, what is taken for granted and how success is measured. With that contract the agent is built, run on hundreds of cases whose answer is known, and the gap between what was planned and what happened is published, failures included, in a static showcase that calls no model.",
+    "para_quien": "For whoever plans, builds or approves AI agents and today judges them by reading traces and running loose evaluations, without having written down first what they were meant to do. Whoever decides gets a verdict in plain words; whoever builds gets the rule, the signal and the case behind every figure.",
+    "diferencial": "Of 15 evaluation platforms reviewed in September 2026, none requires planning before building or compares the plan with what happened. planlang does both: it demands a measurable plan, publishes the gap between plan and result with the risks that were foreseen, and lets you move the plan's thresholds over the agent's real decisions."
   },
   "funcionalidades": {
     "total": 21,
@@ -36,37 +36,37 @@
       {
         "orden": 1,
         "estrella": false,
-        "nombre": "Plan",
-        "linea": "The plan as a contract: the interview, the templates, the validator and the builder's contract.",
+        "nombre": "Plan before you build",
+        "linea": "You write what the agent decides, what can fail and how it is measured; an incomplete plan does not pass.",
         "features": [
           {
             "id": "plantillas",
-            "nombre": "Domain templates as data",
-            "que_hace": "Typical actors, decisions, risks and criteria for health, financial onboarding and AI security, with the legal constraints in plain language and with their source.",
+            "nombre": "Start with what your sector requires",
+            "que_hace": "You start the plan with the actors, risks and criteria typical of health, finance or AI security, with the legal constraints in plain language and their source. Adding a new sector means adding a data file, without touching code.",
             "seccion_manual": "Validate a plan"
           },
           {
             "id": "validador",
-            "nombre": "Plan validator",
-            "que_hace": "No plan is approved with a criterion without a measurement rule, a threshold without a signal or a high-priority risk without mitigation; it says exactly what is missing.",
+            "nombre": "No half-finished plan gets through",
+            "que_hace": "You know before building whether your plan can be measured. A validator with no AI rejects, with the exact reason, criteria without a rule, thresholds without a signal and serious risks without mitigation. The approved plan is sealed with a fingerprint that exposes any later change.",
             "seccion_manual": "Validate a plan"
           },
           {
             "id": "entrevistador",
-            "nombre": "Plan interviewer",
-            "que_hace": "Asks in order what the domain template requires, drafts the plan in Spanish and English, flags its contradictions and never approves it: the author does.",
+            "nombre": "An interviewer that drafts your plan",
+            "que_hace": "You answer questions in order, each with an example, and get the draft of your plan in Spanish and English. Before handing it over, it points out what is missing and the contradictions. It never approves for you: that signature is yours.",
             "seccion_manual": "Interview a plan"
           },
           {
             "id": "plan-sin-corrida",
-            "nombre": "A real plan in a new domain",
-            "que_hace": "Interviews any project's plan over a domain template that is only data and, once approved, publishes it in the showcase as a «plan without a run»: the contract, with what is missing in plain sight. The first one is the plan of HackGuard's two agents.",
+            "nombre": "Plan a real project, not only the demos",
+            "que_hace": "The interviewer walks through the sector template for any project and, when you approve it, the plan is published in the showcase as a contract that states what it does not have yet: traces, gap and playground. The first one was HackGuard's two agents.",
             "seccion_manual": "Plan a real project"
           },
           {
             "id": "contrato",
-            "nombre": "The builder's contract",
-            "que_hace": "The plan hands over the nodes, the edges as signal · operator · value, the human pauses and the signals the trace must record; what the agent decides is literally what the plan says.",
+            "nombre": "The plan is the code that decides",
+            "que_hace": "What the agent decides is literally what the plan says. The plan fixes its pieces, every step rule as signal, operator and value (for example, “confidence below 0.75”), where a person decides and what every case must record.",
             "seccion_manual": "Validate a plan"
           }
         ]
@@ -74,43 +74,43 @@
       {
         "orden": 2,
         "estrella": false,
-        "nombre": "Run",
-        "linea": "Cases with a known truth, both demos and batch runs.",
+        "nombre": "Test with cases whose answer is known",
+        "linea": "Two demos with real agents run on hundreds of invented cases whose correct answer is already known.",
         "features": [
           {
             "id": "casos",
-            "nombre": "Synthetic cases with a known truth",
-            "que_hace": "Reproducible seeded batches: normal, edge, incomplete and adversarial; a validator guarantees that no identifier could be real.",
+            "nombre": "Cases whose answer is already known",
+            "que_hace": "You test the agent on invented batches whose correct answer is already known: normal cases, edge cases, incomplete ones and traps such as hidden instructions or similar names. Generating them again gives the same cases, and a validator blocks any data shaped like real data.",
             "seccion_manual": "Generate synthetic cases"
           },
           {
             "id": "demo-a",
-            "nombre": "Demo A: medical prior authorizations",
-            "que_hace": "A router, an extractor, a rule-based coverage checker and a drafter approve, approve in part, deny with a stated cause or escalate to an auditor; no full denial goes out without a person.",
+            "nombre": "Demo A: medical authorizations",
+            "que_hace": "You watch a team of agents decide 200 medical authorization requests: approve, approve up to the covered cap, deny with a legal ground or hand the case to an auditor. Emergencies are authorized without checking coverage, and no full denial goes out without a person.",
             "seccion_manual": "Run a batch"
           },
           {
             "id": "demo-b",
             "nombre": "Demo B: onboarding with due diligence",
-            "que_hace": "An extractor, a list checker, an investigator that acts from the start of the gray zone and a rule-based risk score approve, review or reject; no rejection goes out without the compliance officer.",
+            "que_hace": "You watch the agents decide whether a client is onboarded: they read the documents, search watchlists, investigate similar names and score risk by rules, without protected attributes. Every rejection and every high risk goes through the compliance officer.",
             "seccion_manual": "Run demo B"
           },
           {
             "id": "expediente",
-            "nombre": "Case file by code",
-            "que_hace": "Every demo B case ends in a case file in Spanish and English written by code: each conclusion cites the plan rule or the list match, with its version.",
+            "nombre": "A case file that cites its sources",
+            "que_hace": "Every demo B request ends in a case file in Spanish and English written by code, not by the AI. Each conclusion cites the plan's rule or the watchlist match, with its version and date.",
             "seccion_manual": "Read a case file"
           },
           {
             "id": "documento-adverso",
-            "nombre": "Adverse-decision document",
-            "que_hace": "Every denial, partial ones included, produces by code a document in Spanish and English with the cause, the rule, the data used and the way to contest it.",
+            "nombre": "Every denial, explained and appealable",
+            "que_hace": "If the agent denies a service, even in part, a document in Spanish and English is produced by code: the legal ground, the rule applied, the data used, who decided and how to contest the decision.",
             "seccion_manual": "Run a batch"
           },
           {
             "id": "lotes",
-            "nombre": "Batch runs and export",
-            "que_hace": "Accumulable batches without duplicate cases, with the model served by the Claude Code subscription; traces are exported to an own, versioned format.",
+            "nombre": "Batch runs, without losing a case",
+            "que_hace": "You run hundreds of cases with the Claude Code subscription, 20 at a time and with pauses. If the run is cut off, it resumes where it stopped without repeating any, and every case leaves its trace, every decision with its signal, in a format of its own and with a fingerprint.",
             "seccion_manual": "Run a batch"
           }
         ]
@@ -118,37 +118,37 @@
       {
         "orden": 3,
         "estrella": true,
-        "nombre": "Measure",
-        "linea": "The gap verifier and assumptions measured for real.",
+        "nombre": "Measure the gap, with no AI in between",
+        "linea": "A verifier with no AI compares what was planned with what happened and also publishes what failed.",
         "features": [
           {
             "id": "verificador",
-            "nombre": "Gap verifier",
-            "que_hace": "Reads plan, traces and evaluations and says, criterion by criterion and risk by risk, what was met and in which cases it was not; it emits the report in Spanish and English, identical byte for byte.",
+            "nombre": "The gap report: plan against reality",
+            "que_hace": "You know, criterion by criterion and risk by risk, what was met and in which cases it was not. A verifier that uses no AI reads the plan and what the agent did, and writes the report in Spanish and English, identical every time it is repeated.",
             "seccion_manual": "Read the gap report"
           },
           {
             "id": "supuestos",
-            "nombre": "Assumptions with a cheap test",
-            "que_hace": "“The model extracts with calibrated confidence” is measured for real —calibration and risk-coverage curve— and ends up confirmed, refuted or untested.",
+            "nombre": "Assumptions put to the test",
+            "que_hace": "What the plan took for granted without testing is measured and ends up confirmed, refuted or untested. In demo A two fell: two clarifications were not enough, and several agents turned out slower than a single one.",
             "seccion_manual": "Read the gap report"
           },
           {
             "id": "comparar",
-            "nombre": "Compare two runs",
-            "que_hace": "Puts the multi-agent run against its single-agent baseline, on the same cases: criterion by criterion, risk by risk and case by case, with the pauses against the truth.",
+            "nombre": "Several agents against a single one",
+            "que_hace": "You put the team of agents against a single agent, with the same plan and the same 200 cases, and compare accuracy, time, cost and differing cases. In demo A the team was more accurate (98% against 90%) but slower.",
             "seccion_manual": "Compare two runs"
           },
           {
             "id": "instrumento",
-            "nombre": "Instrument validation",
-            "que_hace": "Seeded gaps the verifier must detect, flawed plans it must reject and the cross-check that the playground reproduces the agent's branches.",
+            "nombre": "A gauge that is also gauged",
+            "que_hace": "planlang tests its own yardstick. It planted 10 failures on purpose and the verifier found every one, with no false alarms. It also redid the agents' 1,204 decisions in another programming language, with zero differences.",
             "seccion_manual": "Check the runs and the instrument"
           },
           {
             "id": "adr",
-            "nombre": "Two starting ADRs",
-            "que_hace": "“Code first” for the demos, and provider and compliance for using the subscription, reread before every delivery.",
+            "nombre": "The underlying rules, in writing",
+            "que_hace": "Everything that can be solved with code is solved without AI, and every piece of the agent that uses no model says why. Using the Claude Code subscription was decided in writing, with its terms reread before each delivery.",
             "seccion_manual": "Check the runs and the instrument"
           }
         ]
@@ -156,13 +156,13 @@
       {
         "orden": 4,
         "estrella": false,
-        "nombre": "Play",
-        "linea": "Move the thresholds over the real traces.",
+        "nombre": "Move a threshold, see what changes",
+        "linea": "You try other plan values over the agent's real decisions, without calling the model again.",
         "features": [
           {
             "id": "playground",
             "nombre": "Move the plan's thresholds",
-            "que_hace": "You slide each demo's thresholds (in A, the minimum confidence, the high cost, the clarification maximum or Texas mode; in B, the similarity, the gray zone, the risk and the inconsistencies) and see which cases change path, which errors appear, how much human work it costs and the risk-coverage curve.",
+            "que_hace": "You change a threshold, such as minimum confidence or Texas mode, which sends every denial to a person, even a partial one, and you see which cases change path, which errors appear and how much human work it costs. Everything is recomputed in your browser, with no model.",
             "seccion_manual": "Move thresholds in the playground"
           }
         ]
@@ -170,13 +170,13 @@
       {
         "orden": 5,
         "estrella": false,
-        "nombre": "Understand",
-        "linea": "The real graph, node by node, against the plan.",
+        "nombre": "The agent from the inside",
+        "linea": "The diagram comes from the code that ran and flags any piece the plan requires that is missing.",
         "features": [
           {
             "id": "visor",
-            "nombre": "The real graph from the code",
-            "que_hace": "The diagram is generated from the compiled graph; each node shows its explanation for leaders and experts, its code and its real traces, and the diagram flags any absence against the plan.",
+            "nombre": "The agent, as it ran",
+            "que_hace": "You see the agent's diagram generated from the code that ran, not drawn by hand. You tap a piece and it shows what it does, its code and the real cases that went through it; if something the plan requires is missing, the diagram flags it.",
             "seccion_manual": "Open the showcase"
           }
         ]
@@ -184,25 +184,25 @@
       {
         "orden": 6,
         "estrella": false,
-        "nombre": "Show",
-        "linea": "The bilingual showcase and its records.",
+        "nombre": "Walk through it in the browser",
+        "linea": "planlang's showcase: a bilingual, serverless site read as a leader or as an expert.",
         "features": [
           {
             "id": "entrada",
-            "nombre": "Home page",
-            "que_hace": "The thesis on one screen for a non-technical visitor: everyone observes, half evaluate, almost nobody planned what to evaluate.",
+            "nombre": "The idea on one screen",
+            "que_hace": "You understand right away why planning matters: according to a LangChain survey, 89% of teams observe their agents and 52% evaluate them, but the survey does not even ask whether they planned what to evaluate. Below, the method in three steps and what was measured.",
             "seccion_manual": "Open the showcase"
           },
           {
             "id": "pestanas",
-            "nombre": "Plan, Agent, Gap and Cases",
-            "que_hace": "For each demo, in plain language with detail for experts, in Spanish and English, on a 380 px phone, with the “Simulation · not operational” label and the simulated-reviewer disclosure.",
+            "nombre": "Each demo, end to end",
+            "que_hace": "You walk through each demo in six screens: plan, agent, gap, playground, cases and records, in Spanish or English, in light or dark theme and from your phone. You read as a leader, in plain words, or as an expert, with the rule behind every figure.",
             "seccion_manual": "Open the showcase"
           },
           {
             "id": "fichas",
-            "nombre": "Records and package for the personal showcase",
-            "que_hace": "Each demo's reproducibility record, each agent's record and these app facts, with the static package hoja-de-vida publishes without a single link.",
+            "nombre": "Repeatable and ready for the Portfolio",
+            "que_hace": "Every run comes with its record so the same report can be obtained again: versions, fingerprints, seed, model and date. The app also builds its own record and the static package the Portfolio publishes, with no link at all and with the fingerprint of every file.",
             "seccion_manual": "Hand the package to hoja-de-vida"
           }
         ]
@@ -216,7 +216,7 @@
       "valor": 16,
       "unidad": "criteria",
       "fuente": "medido",
-      "detalle": "Demo A: 10 of 10, in verifier 1.3.0's report on run suscripcion-planlang-a-002-200-v1.5. Demo B: 6 of 6, in verifier 1.3.0's report on run suscripcion-planlang-b-001-20."
+      "detalle": "Demo A: 10 of 10, in verifier 1.4.0's report on run suscripcion-planlang-a-002-200-v1.5. Demo B: 6 of 6, in verifier 1.4.0's report on run suscripcion-planlang-b-001-20."
     },
     {
       "clave": "decisiones_cruzadas",
@@ -261,7 +261,7 @@
     {
       "clave": "decisiones_registradas",
       "etiqueta": "recorded architecture decisions",
-      "valor": 17,
+      "valor": 18,
       "unidad": "ADR",
       "fuente": "medido",
       "detalle": "Files in decisions/."
@@ -294,16 +294,16 @@
     }
   ],
   "privacidad": {
-    "detalle": "Every case, member, physician, benefit plan, applicant and watchlist is synthetic, from a seed, and an identifier validator in CI rejects any with a real-looking form. The showcase is static: no visitor triggers calls to models or services.",
+    "detalle": "Everything is synthetic and comes from a seeded generator: cases, members, physicians, benefit plans, applicants and watchlists. On every change, an automated validator rejects any identifier with a real-looking form. The showcase is static: whoever visits it triggers no call to a model or to any external service.",
     "datos_sinteticos": true,
     "llamadas_a_modelos_en_la_vitrina": false,
     "red_saliente_en_la_vitrina": false
   },
   "enlaces": {
     "produccion": null,
-    "razon": "The private app is not published. The showcase travels to hoja-de-vida as a static package, labeled “Simulation · not operational”, and is shown there.",
+    "razon": "planlang has no public address of its own: its showcase travels to the Portfolio as a static package, labeled “Simulation · not operational”, and is walked through there.",
     "repositorio": null,
-    "razon_repositorio": "The repository is not linked from the showcase (the portfolio's zero-links rule).",
+    "razon_repositorio": "The repository is not linked: the Portfolio publishes no access links, by house rule.",
     "brochure_archivo": "no file of its own: the showcase and its records serve as the brochure (sprint 3 decision)",
     "brochure_ruta_local": "no /conoce route: the showcase is the app's presentation (sprint 3 decision)"
   }

@@ -51,8 +51,10 @@ export const FORMATO_INFORME = "planlang-informe/v1";
  * criterio se mide en las corridas que hubo, con una nota que lo dice (decisión del usuario sobre la C5 del plan v1.5);
  * `k` gana `aplica`. Un supuesto refutado dice cada medida frente a su umbral, no el nombre de la clave (AU-S3-26); un
  * evaluador opcional que no corrió dice «el plan no lo exige» (F19).
+ * 1.4.0 (S8): cada supuesto trae `garantia`; el de calibración con curva, la garantía de `garantia.ts` (Learn then
+ * Test, conformal y cobertura conjunta, para α = 0,05 · 0,10 · 0,20 con δ = 0,10; ADR-018), y los demás `null`.
  */
-export const VERSION_VERIFICADOR = "1.3.0";
+export const VERSION_VERIFICADOR = "1.4.0";
 
 export interface CasoEjemplar {
   caso_id: string;

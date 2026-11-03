@@ -4,6 +4,7 @@
  * fragmento traducido junto a los datos. La guardia `tests/unit/guardias/bilingue-fuente.test.ts` vigila `core/`.
  */
 import type { Idioma } from "../formatos/bilingue";
+import { miles } from "./numeros";
 
 export interface TextosInforme {
   titulo: string;
@@ -71,6 +72,45 @@ export interface TextosInforme {
   curva: string;
   cabCurva: readonly string[];
   cabComparacion: (base: string) => readonly string[];
+  /** La garantía de la calibración (S8, ADR-018). Los números llegan ya escritos en el idioma. */
+  garantia: (delta: string, alfa: string) => string;
+  cabGarantia: (aplicado: string | null) => readonly string[];
+  noHay: string;
+  noAlcanza: string;
+  conjunta: (etapas: string, k: number) => string;
+  noObservadas: (etapas: string, n: number) => string;
+  /** El nombre de cada etapa con modelo por el id de su nodo; una que no esté aquí se escribe con su id. */
+  etapa: Readonly<Record<string, string>>;
+  noAlcanzanLosDatos: string;
+  /** Por qué el orden de la prueba importa para lo que dice «no se respalda» (ADR-018). */
+  secuencia: string;
+  enNivel: (alfa: string, que: string) => string;
+  queFalta: {
+    umbral: string;
+    conjunta: string;
+    zona: string;
+  };
+  faltan: {
+    pocos_casos: (u: string, n: number, casos: number) => string;
+    tasa_cerca_de_alfa: (
+      u: string,
+      n: number,
+      e: number,
+      casos: number | null,
+      tope: number,
+      etapa: string | null,
+    ) => string;
+    tasa_sobre_alfa: (
+      u: string,
+      n: number,
+      e: number,
+      etapa: string | null,
+    ) => string;
+  };
+  sinZona: {
+    sin_cota_conformal: (n: number, minimo: number) => string;
+    conformal_bajo_el_umbral: (tauC: string, tau: string) => string;
+  };
   filaExactitud: string;
   filaLatencia: string;
   filaLlamadas: string;
@@ -216,6 +256,54 @@ const ES: TextosInforme = {
     "Curva riesgo-cobertura (umbral de confianza → parte que el agente resuelve sola → errores entre esa parte):",
   cabCurva: ["Umbral", "Cobertura", "Riesgo", "Casos"],
   cabComparacion: (base) => ["", "Multiagente", `Agente único (${base})`],
+  garantia: (delta, alfa) =>
+    `Garantía de la calibración (δ = ${delta}; el informe declara α = ${alfa}). **Umbral con garantía** (Learn then Test, secuencia fija desde el umbral más alto): el más bajo cuyo error entre lo que el agente decide solo es ≤ α con probabilidad ≥ 1 − δ. **Umbral conformal**: el más alto que deja pasar sin persona al menos 1 − α de los aciertos (marginal, bajo intercambiabilidad). **Zona respaldada**: los umbrales de la rejilla con las dos a la vez.`,
+  cabGarantia: (aplicado) => [
+    "α",
+    "Umbral con garantía",
+    "Cobertura · error en él",
+    "Umbral conformal",
+    "Zona respaldada",
+    ...(aplicado === null ? [] : [`¿Está el de la corrida (${aplicado})?`]),
+    "Cobertura conjunta",
+  ],
+  noHay: "no hay",
+  noAlcanza: "no alcanza",
+  conjunta: (etapas, k) =>
+    `Cobertura conjunta (Bonferroni): ${etapas}, cada una con α/${k} y δ/${k} sobre los mismos casos que el agente decide solo ⇒ P(alguna etapa falla) ≤ α con probabilidad ≥ 1 − δ; la columna dice el umbral más bajo con esa garantía.`,
+  noObservadas: (etapas, n) =>
+    n === 1
+      ? `Etapa con modelo sin verdad en el caso (no se observa y la cobertura conjunta no la incluye): ${etapas}.`
+      : `Etapas con modelo sin verdad en el caso (no se observan y la cobertura conjunta no las incluye): ${etapas}.`,
+  etapa: {
+    extractor: "extractor",
+    aclaracion: "aclaración",
+    redactor: "redactor",
+  },
+  noAlcanzanLosDatos: "Lo que los datos no alcanzan:",
+  secuencia:
+    "La prueba parte del umbral más alto y baja hasta que uno no pasa (secuencia fija). Es conservadora: puede decir «no se respalda» donde otro orden pasaría, y elegir el orden mirando los datos invalidaría la seguridad.",
+  enNivel: (alfa, que) => `A α = ${alfa}, ${que}`,
+  queFalta: {
+    umbral: "no hay umbral con garantía",
+    conjunta:
+      "la cobertura conjunta no se respalda con la secuencia fija desde el umbral más alto",
+    zona: "no hay zona respaldada",
+  },
+  faltan: {
+    pocos_casos: (u, n, casos) =>
+      `: en ${u} el agente decide solo ${miles(n, "es")} ${n === 1 ? "caso" : "casos"} y, aun sin un solo error, harían falta ${miles(casos, "es")}.`,
+    tasa_cerca_de_alfa: (u, n, e, casos, tope, etapa) =>
+      `: en ${u} el agente decide solo ${miles(n, "es")} casos y ${etapa ? `la etapa ${etapa}` : "la extracción"} falla en ${miles(e, "es")}; con la misma tasa de error harían falta ${casos === null ? `más de ${miles(tope * n, "es")}` : miles(casos, "es")} casos.`,
+    tasa_sobre_alfa: (u, n, e, etapa) =>
+      `: en ${u} el agente decide solo ${miles(n, "es")} casos y ${etapa ? `la etapa ${etapa}` : "la extracción"} falla en ${miles(e, "es")}, una tasa que no baja de α: más casos con esa tasa no lo respaldan.`,
+  },
+  sinZona: {
+    sin_cota_conformal: (n, minimo) =>
+      `: con ${miles(n, "es")} ${n === 1 ? "acierto" : "aciertos"} no hay umbral conformal; hacen falta al menos ${miles(minimo, "es")}.`,
+    conformal_bajo_el_umbral: (tauC, tau) =>
+      `: el umbral conformal (${tauC}) queda por debajo del umbral con garantía (${tau}), y ningún umbral da las dos garantías a la vez.`,
+  },
   filaExactitud: "Casos resueltos bien (decisión y pausa)",
   filaLatencia: "Latencia mediana",
   filaLlamadas: "Llamadas al modelo (con reintentos)",
@@ -355,6 +443,52 @@ const EN: TextosInforme = {
     "Risk-coverage curve (confidence threshold → share the agent resolves alone → errors within that share):",
   cabCurva: ["Threshold", "Coverage", "Risk", "Cases"],
   cabComparacion: (base) => ["", "Multi-agent", `Single agent (${base})`],
+  garantia: (delta, alfa) =>
+    `Calibration guarantee (δ = ${delta}; the report declares α = ${alfa}). **Guaranteed threshold** (Learn then Test, fixed sequence from the highest threshold): the lowest one whose error among what the agent decides alone is ≤ α with probability ≥ 1 − δ. **Conformal threshold**: the highest one that lets at least 1 − α of the correct cases through without a person (marginal, under exchangeability). **Backed zone**: the grid thresholds that have both at once.`,
+  cabGarantia: (aplicado) => [
+    "α",
+    "Guaranteed threshold",
+    "Coverage · error there",
+    "Conformal threshold",
+    "Backed zone",
+    ...(aplicado === null ? [] : [`Is the run's (${aplicado}) in it?`]),
+    "Joint coverage",
+  ],
+  noHay: "none",
+  noAlcanza: "not reached",
+  conjunta: (etapas, k) =>
+    `Joint coverage (Bonferroni): ${etapas}, each at α/${k} and δ/${k} on the same cases the agent decides alone ⇒ P(some stage fails) ≤ α with probability ≥ 1 − δ; the column gives the lowest threshold with that guarantee.`,
+  noObservadas: (etapas, n) =>
+    `Model ${n === 1 ? "stage" : "stages"} with no ground truth in the case (not observed, and left out of the joint coverage): ${etapas}.`,
+  etapa: {
+    extractor: "extractor",
+    aclaracion: "clarification",
+    redactor: "writer",
+  },
+  noAlcanzanLosDatos: "What the data does not reach:",
+  secuencia:
+    "The test starts at the highest threshold and goes down until one fails (fixed sequence). It is conservative: it may say “not backed” where another order would pass, and choosing the order after looking at the data would void the confidence.",
+  enNivel: (alfa, que) => `At α = ${alfa}, ${que}`,
+  queFalta: {
+    umbral: "there is no guaranteed threshold",
+    conjunta:
+      "the joint coverage is not backed by the fixed sequence from the highest threshold",
+    zona: "there is no backed zone",
+  },
+  faltan: {
+    pocos_casos: (u, n, casos) =>
+      `: at ${u} the agent decides ${miles(n, "en")} ${n === 1 ? "case" : "cases"} alone and, even without a single error, it would take ${miles(casos, "en")}.`,
+    tasa_cerca_de_alfa: (u, n, e, casos, tope, etapa) =>
+      `: at ${u} the agent decides ${miles(n, "en")} cases alone and ${etapa ? `the ${etapa} stage` : "extraction"} fails in ${miles(e, "en")}; at the same error rate it would take ${casos === null ? `more than ${miles(tope * n, "en")}` : miles(casos, "en")} cases.`,
+    tasa_sobre_alfa: (u, n, e, etapa) =>
+      `: at ${u} the agent decides ${miles(n, "en")} cases alone and ${etapa ? `the ${etapa} stage` : "extraction"} fails in ${miles(e, "en")}, a rate that does not go below α: more cases at that rate never back it.`,
+  },
+  sinZona: {
+    sin_cota_conformal: (n, minimo) =>
+      `: with ${miles(n, "en")} correct ${n === 1 ? "case" : "cases"} there is no conformal threshold; it takes at least ${miles(minimo, "en")}.`,
+    conformal_bajo_el_umbral: (tauC, tau) =>
+      `: the conformal threshold (${tauC}) falls below the guaranteed threshold (${tau}), and no threshold gives both guarantees at once.`,
+  },
   filaExactitud: "Cases resolved right (decision and pause)",
   filaLatencia: "Median latency",
   filaLlamadas: "Model calls (with retries)",

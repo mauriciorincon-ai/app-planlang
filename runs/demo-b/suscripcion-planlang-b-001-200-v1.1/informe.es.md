@@ -155,4 +155,4 @@ Umbrales aplicados: U1 = 0,85 · U2 = 60 · U3 = 0 · U4 = 0,7 · en el plan: U1
 
 Revisión humana: En lotes, el oficial simulado sigue la verdad conocida del caso (DA-04); la vitrina lo divulga.
 
-Verificador 1.3.0 · planlang-informe/v1 · huella de este informe: `a2ecee530ef3e3a078b7e01c1e4b8ce618f27cd1e7eab8d178fb0062ba458dd8`
+Verificador 1.4.0 · planlang-informe/v1 · huella de este informe: `d499ca13c340986f6de9f7233d358ca338d5182f164ec333dc3f4c5008dbd294`

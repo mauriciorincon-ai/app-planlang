@@ -1,8 +1,8 @@
 /**
  * Textos de P7 Fichas (maqueta `docs/diseno/07-fichas.html`, aprobada en la mirada 4 de la Etapa de Diseño) y el
- * contenido de lo que viaja a hoja-de-vida: la ficha del agente A (contrato ficha técnica v1.3.1, frente Agentes; la
- * del B vive en `src/textos/demo-b/fichas.ts`), el `brochure-export.json` (contrato 1.0.0) y el complemento que planlang
- * propone para la ficha de la app (la arma hoja-de-vida). Las cifras no viven aquí: las ponen `src/lib/fichas/` desde el informe, la corrida y el repositorio.
+ * contenido de lo que viaja a hoja-de-vida: el `brochure-export.json` (contrato 1.0.0) y el complemento que planlang
+ * propone para la ficha de la app (la arma hoja-de-vida). Las fichas de los agentes A y B ya no se producen ni se
+ * entregan (decisión del 2026-10-25; devolución 026): aquí quedan solo los textos de la pantalla que las muestra. Las cifras no viven aquí: las ponen `src/lib/fichas/` desde el informe, la corrida y el repositorio.
  */
 import { tb, type TextoBilingue } from "@core/formatos/bilingue";
 import type { IdDemo } from "@/lib/demos";
@@ -15,24 +15,24 @@ export const TITULO_PAGINA = tb(
 );
 export const DESCRIPCION_PAGINA: Record<IdDemo, TextoBilingue> = {
   "demo-a": tb(
-    "La ficha de reproducibilidad del demo A y las dos fichas que viajan a la vitrina personal: la de la app y la del agente A, comprobadas contra su contrato. Simulación · no operativo.",
-    "Demo A's reproducibility record and the two records that travel to the personal showcase: the app's and agent A's, checked against their contract. Simulation · not operational.",
+    "La ficha de reproducibilidad del demo A, la ficha de la app, que viaja a la vitrina personal, y la del agente A, que ya no se entrega y se muestra aquí, comprobadas contra su contrato. Simulación · no operativo.",
+    "Demo A's reproducibility record, the app's record, which travels to the personal showcase, and agent A's, which is no longer delivered and is shown here, checked against their contract. Simulation · not operational.",
   ),
   "demo-b": tb(
-    "La ficha de reproducibilidad del demo B y las dos fichas que viajan a la vitrina personal: la de la app y la del agente B, comprobadas contra su contrato. Simulación · no operativo.",
-    "Demo B's reproducibility record and the two records that travel to the personal showcase: the app's and agent B's, checked against their contract. Simulation · not operational.",
+    "La ficha de reproducibilidad del demo B, la ficha de la app, que viaja a la vitrina personal, y la del agente B, que ya no se entrega y se muestra aquí, comprobadas contra su contrato. Simulación · no operativo.",
+    "Demo B's reproducibility record, the app's record, which travels to the personal showcase, and agent B's, which is no longer delivered and is shown here, checked against their contract. Simulation · not operational.",
   ),
 };
 
 export const PORTADA = {
   antetitulo: {
     "demo-a": tb(
-      "Demo A · lo que viaja a la vitrina personal",
-      "Demo A · what travels to the personal showcase",
+      "Demo A · las fichas y lo que viaja a la vitrina personal",
+      "Demo A · the records and what travels to the personal showcase",
     ),
     "demo-b": tb(
-      "Demo B · lo que viaja a la vitrina personal",
-      "Demo B · what travels to the personal showcase",
+      "Demo B · las fichas y lo que viaja a la vitrina personal",
+      "Demo B · the records and what travels to the personal showcase",
     ),
   } as Record<IdDemo, TextoBilingue>,
   titulo: tb(
@@ -40,16 +40,16 @@ export const PORTADA = {
     "The records: repeat it, and tell it in two minutes",
   ),
   guia: tb(
-    "Una ficha para quien quiera repetir la corrida y comprobar el informe; dos para quien visite la vitrina de hoja-de-vida y quiera saber en dos minutos qué es planlang y qué hace su agente.",
-    "One record for whoever wants to repeat the run and check the report; two for whoever visits the hoja-de-vida showcase and wants to know in two minutes what planlang is and what its agent does.",
+    "Una ficha para quien quiera repetir la corrida y comprobar el informe; una para quien visite la vitrina de hoja-de-vida y quiera saber en dos minutos qué es planlang; y la del agente, que ya no viaja y se queda aquí.",
+    "One record for whoever wants to repeat the run and check the report; one for whoever visits the hoja-de-vida showcase and wants to know in two minutes what planlang is; and the agent's, which no longer travels and stays here.",
   ),
 };
 
 export const MIRADA = {
   titulo: tb("Las fichas en una mirada", "The records at a glance"),
   avisoLider: tb(
-    "Ves las tres fichas como las verá cada lector.",
-    "You see the three records as each reader will.",
+    "Ves las tres fichas; la del agente ya no viaja a la vitrina personal.",
+    "You see the three records; the agent's no longer travels to the personal showcase.",
   ),
   avisoExperto: tb(
     "Se suman los pasos para repetir la corrida y, bajo cada ficha de la vitrina, de dónde sale cada cifra y la comprobación de cada campo contra el contrato v1.3.1.",
@@ -117,19 +117,19 @@ export const MIRADA = {
     ),
     agente: {
       "demo-a": tb(
-        "la ficha del agente A, para el frente Agentes",
-        "agent A's record, for the Agents front",
+        "la ficha del agente A: ya no se entrega, se muestra solo aquí",
+        "agent A's record: no longer delivered, shown only here",
       ),
       "demo-b": tb(
-        "la ficha del agente B, para el frente Agentes",
-        "agent B's record, for the Agents front",
+        "la ficha del agente B: ya no se entrega, se muestra solo aquí",
+        "agent B's record: no longer delivered, shown only here",
       ),
     } as Record<IdDemo, TextoBilingue>,
     nunca: {
       titulo: tb("Ningún enlace", "No link"),
       detalle: tb(
-        "viajan a hoja-de-vida por copia, en un PR de contenido",
-        "they travel to hoja-de-vida by copy, in a content PR",
+        "lo que viaja va a hoja-de-vida por copia, en un PR de contenido",
+        "what travels goes to hoja-de-vida by copy, in a content PR",
       ),
     },
   },
@@ -199,8 +199,8 @@ export const SECCION = {
     "demo-b": tb("La ficha del agente B", "Agent B's record"),
   } as Record<IdDemo, TextoBilingue>,
   agenteNota: tb(
-    "para el frente Agentes de la vitrina",
-    "for the showcase's Agents front",
+    "ya no se entrega: se muestra solo aquí",
+    "no longer delivered: shown only here",
   ),
   asi: tb(
     "así la pinta hoja-de-vida, con la piel de CV Viva",
@@ -334,11 +334,17 @@ export const CV = {
 
 export const TABLA = {
   entrega: tb("Lo que se entrega:", "What is delivered:"),
+  /** La ficha del agente: se comprueba contra el contrato, pero ya no se entrega (decisión del 2026-10-25). */
   comprobado: ((p: { version: string }) =>
     tb(
-      `Comprobado contra el contrato ficha técnica v${p.version} de hoja-de-vida. Un archivo por idioma: el contrato recibe la ficha en un idioma; se entrega el español.`,
-      `Checked against hoja-de-vida's technical-record contract v${p.version}. One file per language: the contract takes the record in one language; the Spanish one is delivered.`,
+      `Comprobado contra el contrato ficha técnica v${p.version} de hoja-de-vida. Ya no se entrega: se muestra aquí como parte de la simulación.`,
+      `Checked against hoja-de-vida's technical-record contract v${p.version}. It is no longer delivered: it is shown here as part of the simulation.`,
     )) as Plantilla<{ version: string }>,
+  /** Lo que «Lo que se entrega» dice de la ficha del agente. */
+  agenteSinEntrega: tb(
+    "nada: la ficha del agente ya no se entrega",
+    "nothing: the agent's record is no longer delivered",
+  ),
   comprobadoApp: ((p: { ficha: string; exportacion: string }) =>
     tb(
       `planlang entrega el export (contrato brochure-export ${p.exportacion}); con él y con el complemento, hoja-de-vida arma esta ficha, que aquí se comprueba contra el contrato ficha técnica v${p.ficha}. Un archivo por idioma; se entrega el español.`,
@@ -932,40 +938,46 @@ export const METRICAS_APP = {
 
 export const APP = {
   slug: "planlang",
+  /** La fecha en que se redactó este copy (devolución 026): entra en el «actualizado» del export. */
+  redactado_el: "2026-10-27",
   nombre: "planlang",
   tagline: tb(
-    "Planeé, construí y medí la brecha.",
-    "I planned, built and measured the gap.",
+    "Tu agente de IA, medido contra el plan que escribiste antes de construirlo.",
+    "Your AI agent, measured against the plan you wrote before building it.",
   ),
   intro: tb(
-    "Escribes el plan como un contrato —decisiones, riesgos, supuestos, criterios y umbrales, cada uno medible— y planlang lo usa para construir el agente, correrlo sobre casos con respuesta conocida y publicar la brecha. Luego mueves un umbral y ves qué habría costado.",
-    "You write the plan as a contract —decisions, risks, assumptions, criteria and thresholds, each one measurable— and planlang uses it to build the agent, run it on cases with a known answer and publish the gap. Then you move a threshold and see what it would have cost.",
+    "planlang convierte el plan de un proyecto de agentes de IA en un contrato verificable: qué decide el agente, qué puede fallar, qué se da por cierto y cómo se mide el éxito. Con ese contrato se construye el agente, se corre sobre cientos de casos de respuesta conocida y se publica la brecha entre lo planeado y lo ocurrido, fallas incluidas, en una vitrina estática que no llama a ningún modelo.",
+    "planlang turns the plan of an AI-agent project into a verifiable contract: what the agent decides, what can go wrong, what is taken for granted and how success is measured. With that contract the agent is built, run on hundreds of cases whose answer is known, and the gap between what was planned and what happened is published, failures included, in a static showcase that calls no model.",
   ),
   para_quien: tb(
-    "Para quien planea, construye o aprueba un proyecto de agentes de IA y hoy mide lo que el agente hace sin haber escrito antes qué debía hacer: mira trazas, corre evaluaciones sueltas y decide a ojo cuándo un resultado basta.",
-    "For whoever plans, builds or approves an AI-agent project and today measures what the agent does without having written down first what it was supposed to do: they look at traces, run loose evaluations and decide by eye when a result is enough.",
+    "Para quien planea, construye o aprueba agentes de IA y hoy los juzga mirando trazas y corriendo evaluaciones sueltas, sin haber escrito antes qué debían hacer. A quien decide le da un veredicto en palabras llanas; a quien construye, la regla, la señal y el caso detrás de cada cifra.",
+    "For whoever plans, builds or approves AI agents and today judges them by reading traces and running loose evaluations, without having written down first what they were meant to do. Whoever decides gets a verdict in plain words; whoever builds gets the rule, the signal and the case behind every figure.",
   ),
   diferencial: tb(
-    "Observar trazas y evaluar respuestas ya lo hacen muchas herramientas. Lo que no hace nadie es exigir el plan antes y medir contra él después: el informe de brecha plan → resultado, con el análisis de riesgos previo, y los umbrales del plan jugables sobre las trazas reales.",
-    "Observing traces and evaluating answers is done by many tools. What nobody does is demand the plan first and measure against it afterwards: the plan → result gap report, with the prior risk analysis, and the plan's thresholds playable over the real traces.",
+    "De 15 plataformas de evaluación revisadas en septiembre de 2026, ninguna obliga a planear antes de construir ni compara el plan con lo ocurrido. planlang hace las dos cosas: exige un plan medible, publica la brecha entre plan y resultado con los riesgos que se previeron y te deja mover los umbrales del plan sobre las decisiones reales del agente.",
+    "Of 15 evaluation platforms reviewed in September 2026, none requires planning before building or compares the plan with what happened. planlang does both: it demands a measurable plan, publishes the gap between plan and result with the risks that were foreseen, and lets you move the plan's thresholds over the agent's real decisions.",
   ),
   /** El titular de valor que planlang propone en el complemento de su ficha. */
   titular: tb(
-    "El plan de un agente se escribe como contrato, y un verificador sin IA publica, caso por caso, la brecha entre lo planeado y lo que el agente hizo, con sus fallas a la vista.",
-    "An agent's plan is written as a contract, and a verifier with no AI publishes, case by case, the gap between what was planned and what the agent did, with its failures in view.",
+    "El plan de un agente de IA queda escrito como contrato antes de construirlo, y un verificador sin IA publica, caso por caso, la brecha entre lo planeado y lo ocurrido, con sus fallas a la vista y sus umbrales listos para mover.",
+    "An AI agent's plan is written down as a contract before it is built, and a verifier with no AI publishes, case by case, the gap between what was planned and what happened, with its failures in plain sight and its thresholds ready to move.",
   ),
   limites: [
     tb(
-      "Es una simulación: no opera casos reales ni decide sobre personas.",
-      "It is a simulation: it handles no real cases and decides on no one.",
+      "Es una simulación: no opera casos reales ni decide sobre personas; las decisiones humanas de los demos se simularon con la respuesta conocida.",
+      "It is a simulation: it handles no real cases and decides on no one; the demos' human decisions were simulated with the known answer.",
     ),
     tb(
-      "El entrevistador corre en la consola, no en la vitrina: aquí se ve el plan que propuso para el demo B, revisado y aprobado por una persona.",
-      "The interviewer runs in the console, not in the showcase: here you see the plan it drafted for demo B, reviewed and approved by a person.",
+      "El entrevistador y las corridas viven en la terminal; el sitio muestra sus resultados, ya calculados y verificados.",
+      "The interviewer and the runs live in the terminal; the site shows their results, already computed and verified.",
     ),
     tb(
-      "Mide lo que el plan declaró; lo que no previó aparece como brecha, no como veredicto.",
-      "It measures what the plan declared; what it did not foresee shows up as a gap, not as a verdict.",
+      "Mide lo que el plan declaró: lo que el plan no previó aparece como brecha no prevista, no como veredicto.",
+      "It measures what the plan declared: what the plan did not foresee appears as an unforeseen gap, not as a verdict.",
+    ),
+    tb(
+      "El playground recalcula sobre lo que el agente ya hizo; fuera del rango observado, el resultado se marca «no observado».",
+      "The playground recomputes over what the agent already did; outside the observed range, the result is marked “not observed”.",
     ),
   ],
   nunca: [
@@ -978,19 +990,23 @@ export const APP = {
       "Lets a model decide whether the agent got it right.",
     ),
     tb(
-      "Niega o rechaza un caso sin que lo revise una persona.",
-      "Denies or rejects a case without a person reviewing it.",
+      "Emite una negación completa o un rechazo sin que lo revise una persona.",
+      "Issues a full denial or a rejection without a person reviewing it.",
+    ),
+    tb(
+      "Llama a un modelo para validar el plan, medir la brecha, recalcular umbrales o dibujar el agente.",
+      "Calls a model to validate the plan, measure the gap, recompute thresholds or draw the agent.",
     ),
     tb("Esconde un resultado desfavorable.", "Hides an unfavorable result."),
   ],
   enlaces: {
     razon: tb(
-      "La app privada no se publica. La vitrina viaja a hoja-de-vida como paquete estático, rotulado «Simulación · no operativo», y se muestra allí.",
-      "The private app is not published. The showcase travels to hoja-de-vida as a static package, labeled “Simulation · not operational”, and is shown there.",
+      "planlang no tiene dirección pública propia: su vitrina viaja al Portafolio como paquete estático, con el rótulo «Simulación · no operativo», y se recorre allí mismo.",
+      "planlang has no public address of its own: its showcase travels to the Portfolio as a static package, labeled “Simulation · not operational”, and is walked through there.",
     ),
     razon_repositorio: tb(
-      "El repositorio no se enlaza desde la vitrina (regla de cero enlaces del portafolio).",
-      "The repository is not linked from the showcase (the portfolio's zero-links rule).",
+      "El repositorio no se enlaza: el Portafolio no publica enlaces de acceso, por regla de la casa.",
+      "The repository is not linked: the Portfolio publishes no access links, by house rule.",
     ),
     brochure_archivo: tb(
       "sin archivo propio: la vitrina y sus fichas hacen de brochure (decisión del sprint 3)",
@@ -1003,72 +1019,308 @@ export const APP = {
   },
   privacidad: {
     detalle: tb(
-      "Todo caso, afiliado, médico, plan de beneficios, solicitante y lista de control es sintético, con semilla, y un validador de identificadores en CI rechaza cualquiera con forma real. La vitrina es estática: ningún visitante lanza llamadas a modelos ni a servicios.",
-      "Every case, member, physician, benefit plan, applicant and watchlist is synthetic, from a seed, and an identifier validator in CI rejects any with a real-looking form. The showcase is static: no visitor triggers calls to models or services.",
+      "Todo es sintético y sale de un generador con semilla: casos, afiliados, médicos, planes de beneficios, solicitantes y listas de control. En cada cambio, un validador automático rechaza cualquier identificador con forma real. La vitrina es estática: quien la visita no lanza ninguna llamada a modelos ni a servicios externos.",
+      "Everything is synthetic and comes from a seeded generator: cases, members, physicians, benefit plans, applicants and watchlists. On every change, an automated validator rejects any identifier with a real-looking form. The showcase is static: whoever visits it triggers no call to a model or to any external service.",
     ),
     datos_sinteticos: true,
     llamadas_a_modelos_en_la_vitrina: false,
     red_saliente_en_la_vitrina: false,
   },
+  /** El proceso BPMN de la ficha de la app: el de la planeadora (devolución 026), en español tal cual y con su inglés redactado. */
+  proceso: {
+    titulo: tb(
+      "Del plan a la brecha, con tu agente de IA",
+      "From plan to gap, with your AI agent",
+    ),
+    carriles: {
+      tu: tb("Tú · quien planea", "You · whoever plans"),
+      planlang: tb("planlang", "planlang"),
+      agente: tb("El agente · en lotes", "The agent · in batches"),
+      persona: tb("Una persona revisa", "A person reviews"),
+    } as Record<string, TextoBilingue>,
+    pasos: [
+      {
+        id: "ini",
+        tipo: "inicio",
+        carril: "tu",
+        texto: tb(
+          "Tienes un proyecto de agentes de IA",
+          "You have an AI-agent project",
+        ),
+      },
+      {
+        id: "entrevista",
+        tipo: "tarea",
+        carril: "tu",
+        texto: tb(
+          "Respondes la entrevista del plan",
+          "You answer the plan interview",
+        ),
+      },
+      {
+        id: "borrador",
+        tipo: "tarea",
+        carril: "planlang",
+        texto: tb(
+          "Redacta el borrador y marca contradicciones",
+          "Drafts the plan and flags contradictions",
+        ),
+      },
+      {
+        id: "valida",
+        tipo: "tarea",
+        carril: "planlang",
+        texto: tb("Valida el plan, sin IA", "Validates the plan, with no AI"),
+      },
+      {
+        id: "medible",
+        tipo: "decision",
+        carril: "planlang",
+        texto: tb("¿El plan se puede medir?", "Can the plan be measured?"),
+      },
+      {
+        id: "completa",
+        tipo: "tarea",
+        carril: "tu",
+        texto: tb("Completas lo que falta", "You fill in what is missing"),
+      },
+      {
+        id: "aprueba",
+        tipo: "tarea",
+        carril: "tu",
+        texto: tb(
+          "Apruebas el plan y queda sellado",
+          "You approve the plan and it is sealed",
+        ),
+      },
+      {
+        id: "casos",
+        tipo: "tarea",
+        carril: "planlang",
+        texto: tb(
+          "Genera casos con respuesta conocida",
+          "Generates cases with a known answer",
+        ),
+      },
+      {
+        id: "decide",
+        tipo: "tarea",
+        carril: "agente",
+        texto: tb(
+          "Decide cada caso según el plan",
+          "Decides each case according to the plan",
+        ),
+      },
+      {
+        id: "pausa",
+        tipo: "decision",
+        carril: "agente",
+        texto: tb(
+          "¿El plan exige una persona?",
+          "Does the plan require a person?",
+        ),
+      },
+      {
+        id: "revisa",
+        tipo: "tarea",
+        carril: "persona",
+        texto: tb("Revisa el caso y decide", "Reviews the case and decides"),
+      },
+      {
+        id: "traza",
+        tipo: "tarea",
+        carril: "agente",
+        texto: tb(
+          "Deja la traza de cada decisión",
+          "Leaves the trace of each decision",
+        ),
+      },
+      {
+        id: "verifica",
+        tipo: "tarea",
+        carril: "planlang",
+        texto: tb(
+          "Compara el plan con las trazas, sin IA",
+          "Compares the plan with the traces, with no AI",
+        ),
+      },
+      {
+        id: "publica",
+        tipo: "tarea",
+        carril: "planlang",
+        texto: tb(
+          "Publica la brecha, fallas incluidas",
+          "Publishes the gap, failures included",
+        ),
+      },
+      {
+        id: "umbrales",
+        tipo: "tarea",
+        carril: "tu",
+        texto: tb(
+          "Mueves umbrales y ves qué cambia",
+          "You move thresholds and see what changes",
+        ),
+      },
+      {
+        id: "ajustar",
+        tipo: "decision",
+        carril: "tu",
+        texto: tb("¿Cambias el plan?", "Do you change the plan?"),
+      },
+      {
+        id: "fin",
+        tipo: "fin",
+        carril: "tu",
+        texto: tb(
+          "Agente medido contra su plan",
+          "Agent measured against its plan",
+        ),
+      },
+    ] as {
+      id: string;
+      tipo: "inicio" | "tarea" | "decision" | "fin";
+      carril: string;
+      texto: TextoBilingue;
+    }[],
+    flujos: [
+      { de: "ini", a: "entrevista" },
+      { de: "entrevista", a: "borrador" },
+      { de: "borrador", a: "valida" },
+      { de: "valida", a: "medible" },
+      { de: "medible", a: "completa", etiqueta: tb("no", "no") },
+      { de: "completa", a: "valida" },
+      { de: "medible", a: "aprueba", etiqueta: tb("sí", "yes") },
+      { de: "aprueba", a: "casos" },
+      { de: "casos", a: "decide" },
+      { de: "decide", a: "pausa" },
+      { de: "pausa", a: "revisa", etiqueta: tb("sí", "yes") },
+      { de: "pausa", a: "traza", etiqueta: tb("no", "no") },
+      { de: "revisa", a: "traza" },
+      { de: "traza", a: "verifica" },
+      { de: "verifica", a: "publica" },
+      { de: "publica", a: "umbrales" },
+      { de: "umbrales", a: "ajustar" },
+      {
+        de: "ajustar",
+        a: "entrevista",
+        etiqueta: tb("sí, versión nueva", "yes, a new version"),
+      },
+      { de: "ajustar", a: "fin", etiqueta: tb("no", "no") },
+    ] as { de: string; a: string; etiqueta?: TextoBilingue }[],
+    anotaciones: [
+      {
+        paso: "borrador",
+        texto: tb(
+          "Pregunta en orden lo que exige la plantilla del sector, con un ejemplo en cada pregunta; jamás aprueba por ti.",
+          "Asks in order what the sector template requires, with an example in each question; it never approves for you.",
+        ),
+      },
+      {
+        paso: "valida",
+        texto: tb(
+          "Rechaza, con el motivo exacto, criterios sin regla, umbrales sin señal y riesgos graves sin mitigación.",
+          "Rejects, with the exact reason, criteria without a rule, thresholds without a signal and serious risks without mitigation.",
+        ),
+      },
+      {
+        paso: "decide",
+        texto: tb(
+          "Con la suscripción de Claude Code, de a 20 casos y con pausas; si la corrida se corta, retoma sin repetir.",
+          "With the Claude Code subscription, 20 cases at a time and with pauses; if the run is cut off, it resumes without repeating any.",
+        ),
+      },
+      {
+        paso: "revisa",
+        texto: tb(
+          "En los demos, esa persona se simula con la respuesta conocida del caso, y cada pantalla lo dice.",
+          "In the demos, that person is simulated with the case's known answer, and every screen says so.",
+        ),
+      },
+      {
+        paso: "verifica",
+        texto: tb(
+          "Sin ningún modelo: el mismo plan y las mismas trazas dan siempre el mismo informe, en español e inglés.",
+          "With no model at all: the same plan and the same traces always give the same report, in Spanish and English.",
+        ),
+      },
+      {
+        paso: "umbrales",
+        texto: tb(
+          "Se recalcula en el navegador sobre las decisiones reales; nadie vuelve a llamar al modelo.",
+          "Recomputed in the browser over the real decisions; nobody calls the model again.",
+        ),
+      },
+    ],
+  },
   /** Los seis grupos de la visión del producto con lo construido de cada uno (lo que sigue en el roadmap no cuenta). */
   grupos: [
     {
       id: "planear",
-      nombre: tb("Planear", "Plan"),
+      nombre: tb("Planea antes de construir", "Plan before you build"),
       linea: tb(
-        "El plan como contrato: la entrevista, las plantillas, el validador y el contrato para el constructor.",
-        "The plan as a contract: the interview, the templates, the validator and the builder's contract.",
+        "Escribes qué decide el agente, qué puede fallar y cómo se mide; un plan incompleto no pasa.",
+        "You write what the agent decides, what can fail and how it is measured; an incomplete plan does not pass.",
       ),
       estrella: false,
       features: [
         {
           id: "plantillas",
           nombre: tb(
-            "Plantillas de dominio como datos",
-            "Domain templates as data",
+            "Arranca con lo que tu sector exige",
+            "Start with what your sector requires",
           ),
           que_hace: tb(
-            "Actores, decisiones, riesgos y criterios típicos de salud, de vinculación financiera y de seguridad de IA, con las restricciones legales en lenguaje llano y con su fuente.",
-            "Typical actors, decisions, risks and criteria for health, financial onboarding and AI security, with the legal constraints in plain language and with their source.",
+            "Empiezas el plan con los actores, riesgos y criterios típicos de salud, finanzas o seguridad de IA, con las restricciones legales en lenguaje llano y su fuente. Sumar un sector nuevo es sumar un archivo de datos, sin tocar código.",
+            "You start the plan with the actors, risks and criteria typical of health, finance or AI security, with the legal constraints in plain language and their source. Adding a new sector means adding a data file, without touching code.",
           ),
           seccion_manual: tb("Validar un plan", "Validate a plan"),
         },
         {
           id: "validador",
-          nombre: tb("Validador del plan", "Plan validator"),
+          nombre: tb(
+            "Ningún plan a medias pasa",
+            "No half-finished plan gets through",
+          ),
           que_hace: tb(
-            "Ningún plan se aprueba con un criterio sin regla de medición, un umbral sin señal o un riesgo de prioridad alta sin mitigación; dice exactamente qué falta.",
-            "No plan is approved with a criterion without a measurement rule, a threshold without a signal or a high-priority risk without mitigation; it says exactly what is missing.",
+            "Sabes antes de construir si tu plan se puede medir. Un validador sin IA rechaza, con el motivo exacto, criterios sin regla, umbrales sin señal y riesgos graves sin mitigación. El plan aprobado queda sellado con una huella que delata cualquier cambio posterior.",
+            "You know before building whether your plan can be measured. A validator with no AI rejects, with the exact reason, criteria without a rule, thresholds without a signal and serious risks without mitigation. The approved plan is sealed with a fingerprint that exposes any later change.",
           ),
           seccion_manual: tb("Validar un plan", "Validate a plan"),
         },
         {
           id: "entrevistador",
-          nombre: tb("Entrevistador del plan", "Plan interviewer"),
+          nombre: tb(
+            "Un entrevistador que redacta tu plan",
+            "An interviewer that drafts your plan",
+          ),
           que_hace: tb(
-            "Pregunta en orden lo que la plantilla del dominio exige, redacta el borrador en español e inglés, señala sus contradicciones y nunca lo aprueba: eso lo hace el autor.",
-            "Asks in order what the domain template requires, drafts the plan in Spanish and English, flags its contradictions and never approves it: the author does.",
+            "Respondes preguntas en orden, cada una con un ejemplo, y obtienes el borrador de tu plan en español e inglés. Antes de entregarlo, señala lo que falta y las contradicciones. Nunca aprueba por ti: esa firma es tuya.",
+            "You answer questions in order, each with an example, and get the draft of your plan in Spanish and English. Before handing it over, it points out what is missing and the contradictions. It never approves for you: that signature is yours.",
           ),
           seccion_manual: tb("Entrevistar un plan", "Interview a plan"),
         },
         {
           id: "plan-sin-corrida",
           nombre: tb(
-            "Un plan real en un dominio nuevo",
-            "A real plan in a new domain",
+            "Planea un proyecto real, no solo los demos",
+            "Plan a real project, not only the demos",
           ),
           que_hace: tb(
-            "Entrevista el plan de cualquier proyecto sobre una plantilla de dominio que es solo datos y, aprobado, lo publica en la vitrina como «plan sin corrida»: el contrato, con lo que no hay a la vista. El primero es el de los dos agentes de HackGuard.",
-            "Interviews any project's plan over a domain template that is only data and, once approved, publishes it in the showcase as a «plan without a run»: the contract, with what is missing in plain sight. The first one is the plan of HackGuard's two agents.",
+            "El entrevistador recorre la plantilla del sector de cualquier proyecto y, cuando lo apruebas, el plan se publica en la vitrina como un contrato que dice lo que aún no tiene: trazas, brecha y playground. El primero fue el de los dos agentes de HackGuard.",
+            "The interviewer walks through the sector template for any project and, when you approve it, the plan is published in the showcase as a contract that states what it does not have yet: traces, gap and playground. The first one was HackGuard's two agents.",
           ),
           seccion_manual: tb("Planear un proyecto real", "Plan a real project"),
         },
         {
           id: "contrato",
-          nombre: tb("Contrato para el constructor", "The builder's contract"),
+          nombre: tb(
+            "El plan es el código que decide",
+            "The plan is the code that decides",
+          ),
           que_hace: tb(
-            "El plan entrega los nodos, las aristas con señal · operador · valor, las pausas humanas y las señales que la traza debe registrar; lo que decide el agente es literalmente lo que dice el plan.",
-            "The plan hands over the nodes, the edges as signal · operator · value, the human pauses and the signals the trace must record; what the agent decides is literally what the plan says.",
+            "Lo que el agente decide es literalmente lo que dice el plan. El plan fija sus piezas, cada regla de paso como señal, operador y valor (por ejemplo, «confianza menor que 0,75»), dónde decide una persona y qué debe registrar cada caso.",
+            "What the agent decides is literally what the plan says. The plan fixes its pieces, every step rule as signal, operator and value (for example, “confidence below 0.75”), where a person decides and what every case must record.",
           ),
           seccion_manual: tb("Validar un plan", "Validate a plan"),
         },
@@ -1076,22 +1328,25 @@ export const APP = {
     },
     {
       id: "correr",
-      nombre: tb("Correr", "Run"),
+      nombre: tb(
+        "Prueba con casos de respuesta conocida",
+        "Test with cases whose answer is known",
+      ),
       linea: tb(
-        "Casos con verdad conocida, los dos demos y las corridas por lotes.",
-        "Cases with a known truth, both demos and batch runs.",
+        "Dos demos con agentes reales corren sobre cientos de casos inventados cuya respuesta correcta ya se sabe.",
+        "Two demos with real agents run on hundreds of invented cases whose correct answer is already known.",
       ),
       estrella: false,
       features: [
         {
           id: "casos",
           nombre: tb(
-            "Casos sintéticos con verdad conocida",
-            "Synthetic cases with a known truth",
+            "Casos con la respuesta ya conocida",
+            "Cases whose answer is already known",
           ),
           que_hace: tb(
-            "Lotes reproducibles con semilla: normales, de borde, incompletos y adversarios; un validador garantiza que ningún identificador podría ser real.",
-            "Reproducible seeded batches: normal, edge, incomplete and adversarial; a validator guarantees that no identifier could be real.",
+            "Pruebas el agente sobre lotes inventados cuya respuesta correcta ya se sabe: casos normales, de borde, incompletos y trampas como instrucciones escondidas o nombres parecidos. Generarlos otra vez da los mismos casos, y un validador impide cualquier dato con forma de uno real.",
+            "You test the agent on invented batches whose correct answer is already known: normal cases, edge cases, incomplete ones and traps such as hidden instructions or similar names. Generating them again gives the same cases, and a validator blocks any data shaped like real data.",
           ),
           seccion_manual: tb(
             "Generar casos sintéticos",
@@ -1102,11 +1357,11 @@ export const APP = {
           id: "demo-a",
           nombre: tb(
             "Demo A: autorizaciones médicas",
-            "Demo A: medical prior authorizations",
+            "Demo A: medical authorizations",
           ),
           que_hace: tb(
-            "Un enrutador, un extractor, un verificador de cobertura por reglas y un redactor aprueban, aprueban en parte, niegan con causal o escalan a un auditor; ninguna negación completa sale sin una persona.",
-            "A router, an extractor, a rule-based coverage checker and a drafter approve, approve in part, deny with a stated cause or escalate to an auditor; no full denial goes out without a person.",
+            "Ves a un equipo de agentes decidir 200 solicitudes de autorización médica: aprueba, aprueba hasta el tope cubierto, niega con causal legal o pasa el caso a un auditor. Las urgencias se autorizan sin revisar cobertura, y ninguna negación completa sale sin una persona.",
+            "You watch a team of agents decide 200 medical authorization requests: approve, approve up to the covered cap, deny with a legal ground or hand the case to an auditor. Emergencies are authorized without checking coverage, and no full denial goes out without a person.",
           ),
           seccion_manual: tb("Correr un lote", "Run a batch"),
         },
@@ -1117,41 +1372,44 @@ export const APP = {
             "Demo B: onboarding with due diligence",
           ),
           que_hace: tb(
-            "Un extractor, un verificador de listas, un investigador que actúa desde el inicio de la zona gris y un puntaje de riesgo por reglas aprueban, revisan o rechazan; ningún rechazo sale sin el oficial de cumplimiento.",
-            "An extractor, a list checker, an investigator that acts from the start of the gray zone and a rule-based risk score approve, review or reject; no rejection goes out without the compliance officer.",
+            "Ves a los agentes decidir si un cliente se vincula: leen sus documentos, lo buscan en listas de control, investigan los nombres parecidos y puntúan su riesgo por reglas, sin atributos protegidos. Todo rechazo y todo riesgo alto pasan por el oficial de cumplimiento.",
+            "You watch the agents decide whether a client is onboarded: they read the documents, search watchlists, investigate similar names and score risk by rules, without protected attributes. Every rejection and every high risk goes through the compliance officer.",
           ),
           seccion_manual: tb("Correr el demo B", "Run demo B"),
         },
         {
           id: "expediente",
-          nombre: tb("Expediente por código", "Case file by code"),
+          nombre: tb(
+            "Un expediente que cita sus fuentes",
+            "A case file that cites its sources",
+          ),
           que_hace: tb(
-            "Cada caso del demo B termina en un expediente en español e inglés que escribe el código: cada conclusión cita la regla del plan o la coincidencia en una lista, con su versión.",
-            "Every demo B case ends in a case file in Spanish and English written by code: each conclusion cites the plan rule or the list match, with its version.",
+            "Cada solicitud del demo B termina en un expediente en español e inglés que escribe el código, no la IA. Cada conclusión cita la regla del plan o la coincidencia en una lista, con su versión y su fecha.",
+            "Every demo B request ends in a case file in Spanish and English written by code, not by the AI. Each conclusion cites the plan's rule or the watchlist match, with its version and date.",
           ),
           seccion_manual: tb("Leer un expediente", "Read a case file"),
         },
         {
           id: "documento-adverso",
           nombre: tb(
-            "Documento de decisión adversa",
-            "Adverse-decision document",
+            "Toda negación, explicada y apelable",
+            "Every denial, explained and appealable",
           ),
           que_hace: tb(
-            "Toda negación, también la parcial, produce por código un documento en español e inglés con la causal, la regla, los datos usados y la vía de contradicción.",
-            "Every denial, partial ones included, produces by code a document in Spanish and English with the cause, the rule, the data used and the way to contest it.",
+            "Si el agente niega un servicio, aunque sea en parte, sale un documento en español e inglés que arma el código: la causal legal, la regla aplicada, los datos usados, quién decidió y cómo contradecir la decisión.",
+            "If the agent denies a service, even in part, a document in Spanish and English is produced by code: the legal ground, the rule applied, the data used, who decided and how to contest the decision.",
           ),
           seccion_manual: tb("Correr un lote", "Run a batch"),
         },
         {
           id: "lotes",
           nombre: tb(
-            "Corridas por lotes y exportación",
-            "Batch runs and export",
+            "Corridas por lotes, sin perder un caso",
+            "Batch runs, without losing a case",
           ),
           que_hace: tb(
-            "Lotes acumulables sin duplicar casos, con el modelo servido por la suscripción de Claude Code; las trazas se exportan a un formato propio y versionado.",
-            "Accumulable batches without duplicate cases, with the model served by the Claude Code subscription; traces are exported to an own, versioned format.",
+            "Corres cientos de casos con la suscripción de Claude Code, de a 20 y con pausas. Si la corrida se corta, retoma donde quedó sin repetir ninguno, y cada caso deja su traza, cada decisión con su señal, en un formato propio y con huella.",
+            "You run hundreds of cases with the Claude Code subscription, 20 at a time and with pauses. If the run is cut off, it resumes where it stopped without repeating any, and every case leaves its trace, every decision with its signal, in a format of its own and with a fingerprint.",
           ),
           seccion_manual: tb("Correr un lote", "Run a batch"),
         },
@@ -1159,19 +1417,25 @@ export const APP = {
     },
     {
       id: "medir",
-      nombre: tb("Medir", "Measure"),
+      nombre: tb(
+        "Mide la brecha, sin IA de por medio",
+        "Measure the gap, with no AI in between",
+      ),
       linea: tb(
-        "El verificador de brecha y los supuestos medidos de verdad.",
-        "The gap verifier and assumptions measured for real.",
+        "Un verificador sin IA compara lo planeado con lo ocurrido y publica también lo que falló.",
+        "A verifier with no AI compares what was planned with what happened and also publishes what failed.",
       ),
       estrella: true,
       features: [
         {
           id: "verificador",
-          nombre: tb("Verificador de brecha", "Gap verifier"),
+          nombre: tb(
+            "El informe de brecha: plan contra realidad",
+            "The gap report: plan against reality",
+          ),
           que_hace: tb(
-            "Lee plan, trazas y evaluaciones y dice, criterio por criterio y riesgo por riesgo, qué se cumplió y en qué casos no; emite el informe en español e inglés, idéntico byte a byte.",
-            "Reads plan, traces and evaluations and says, criterion by criterion and risk by risk, what was met and in which cases it was not; it emits the report in Spanish and English, identical byte for byte.",
+            "Sabes, criterio por criterio y riesgo por riesgo, qué se cumplió y en qué casos no. Un verificador que no usa IA lee el plan y lo que hizo el agente, y escribe el informe en español e inglés, idéntico cada vez que se repite.",
+            "You know, criterion by criterion and risk by risk, what was met and in which cases it was not. A verifier that uses no AI reads the plan and what the agent did, and writes the report in Spanish and English, identical every time it is repeated.",
           ),
           seccion_manual: tb(
             "Leer el informe de brecha",
@@ -1181,12 +1445,12 @@ export const APP = {
         {
           id: "supuestos",
           nombre: tb(
-            "Supuestos con prueba barata",
-            "Assumptions with a cheap test",
+            "Supuestos puestos a prueba",
+            "Assumptions put to the test",
           ),
           que_hace: tb(
-            "«El modelo extrae con confianza calibrada» se mide de verdad —calibración y curva riesgo-cobertura— y queda confirmado, refutado o sin probar.",
-            "“The model extracts with calibrated confidence” is measured for real —calibration and risk-coverage curve— and ends up confirmed, refuted or untested.",
+            "Lo que el plan dio por cierto sin probarlo se mide y queda confirmado, refutado o sin probar. En el demo A cayeron dos: dos aclaraciones no bastaron, y varios agentes resultaron más lentos que uno solo.",
+            "What the plan took for granted without testing is measured and ends up confirmed, refuted or untested. In demo A two fell: two clarifications were not enough, and several agents turned out slower than a single one.",
           ),
           seccion_manual: tb(
             "Leer el informe de brecha",
@@ -1195,19 +1459,25 @@ export const APP = {
         },
         {
           id: "comparar",
-          nombre: tb("Comparar dos corridas", "Compare two runs"),
+          nombre: tb(
+            "Varios agentes frente a uno solo",
+            "Several agents against a single one",
+          ),
           que_hace: tb(
-            "Pone la corrida multiagente frente a su línea base de agente único, sobre los mismos casos: criterio por criterio, riesgo por riesgo y caso por caso, con las pausas frente a la verdad.",
-            "Puts the multi-agent run against its single-agent baseline, on the same cases: criterion by criterion, risk by risk and case by case, with the pauses against the truth.",
+            "Pones el equipo de agentes frente a un agente único, con el mismo plan y los mismos 200 casos, y comparas exactitud, tiempo, costo y casos distintos. En el demo A, el equipo acertó más (98 % frente a 90 %) pero tardó más.",
+            "You put the team of agents against a single agent, with the same plan and the same 200 cases, and compare accuracy, time, cost and differing cases. In demo A the team was more accurate (98% against 90%) but slower.",
           ),
           seccion_manual: tb("Comparar dos corridas", "Compare two runs"),
         },
         {
           id: "instrumento",
-          nombre: tb("Validación del instrumento", "Instrument validation"),
+          nombre: tb(
+            "Un medidor que también se mide",
+            "A gauge that is also gauged",
+          ),
           que_hace: tb(
-            "Brechas sembradas que el verificador debe detectar, planes con errores que debe rechazar y la prueba cruzada de que el playground reproduce las ramas del agente.",
-            "Seeded gaps the verifier must detect, flawed plans it must reject and the cross-check that the playground reproduces the agent's branches.",
+            "planlang pone a prueba su propia vara. Sembró 10 fallas a propósito y el verificador las encontró todas, sin falsas alarmas. Además rehízo las 1.204 decisiones de los agentes en otro lenguaje de programación, con cero diferencias.",
+            "planlang tests its own yardstick. It planted 10 failures on purpose and the verifier found every one, with no false alarms. It also redid the agents' 1,204 decisions in another programming language, with zero differences.",
           ),
           seccion_manual: tb(
             "Verificar las corridas y el instrumento",
@@ -1216,10 +1486,13 @@ export const APP = {
         },
         {
           id: "adr",
-          nombre: tb("Dos ADR de arranque", "Two starting ADRs"),
+          nombre: tb(
+            "Las reglas de fondo, por escrito",
+            "The underlying rules, in writing",
+          ),
           que_hace: tb(
-            "«Código primero» para los demos, y proveedor y cumplimiento para el uso de la suscripción, releído antes de cada entrega.",
-            "“Code first” for the demos, and provider and compliance for using the subscription, reread before every delivery.",
+            "Todo lo que se puede resolver con código se resuelve sin IA, y cada pieza del agente que no usa modelo dice por qué. El uso de la suscripción de Claude Code quedó decidido por escrito, con sus términos releídos antes de cada entrega.",
+            "Everything that can be solved with code is solved without AI, and every piece of the agent that uses no model says why. Using the Claude Code subscription was decided in writing, with its terms reread before each delivery.",
           ),
           seccion_manual: tb(
             "Verificar las corridas y el instrumento",
@@ -1230,22 +1503,25 @@ export const APP = {
     },
     {
       id: "jugar",
-      nombre: tb("Jugar", "Play"),
+      nombre: tb(
+        "Mueve un umbral, mira qué cambia",
+        "Move a threshold, see what changes",
+      ),
       linea: tb(
-        "Mover los umbrales sobre las trazas reales.",
-        "Move the thresholds over the real traces.",
+        "Pruebas otros valores del plan sobre las decisiones reales del agente, sin volver a llamar al modelo.",
+        "You try other plan values over the agent's real decisions, without calling the model again.",
       ),
       estrella: false,
       features: [
         {
           id: "playground",
           nombre: tb(
-            "Mover los umbrales del plan",
+            "Mueve los umbrales del plan",
             "Move the plan's thresholds",
           ),
           que_hace: tb(
-            "Deslizas los umbrales de cada demo (en el A, la confianza mínima, el alto costo, el máximo de aclaraciones o el modo Texas; en el B, la similitud, la zona gris, el riesgo y las inconsistencias) y ves qué casos cambian de camino, qué errores aparecen, cuánto trabajo humano cuesta y la curva riesgo-cobertura.",
-            "You slide each demo's thresholds (in A, the minimum confidence, the high cost, the clarification maximum or Texas mode; in B, the similarity, the gray zone, the risk and the inconsistencies) and see which cases change path, which errors appear, how much human work it costs and the risk-coverage curve.",
+            "Cambias un umbral, como la confianza mínima o el modo Texas, que manda a una persona toda negación, incluso parcial, y ves qué casos cambian de camino, qué errores aparecen y cuánto trabajo humano cuesta. Todo se recalcula en tu navegador, sin ningún modelo.",
+            "You change a threshold, such as minimum confidence or Texas mode, which sends every denial to a person, even a partial one, and you see which cases change path, which errors appear and how much human work it costs. Everything is recomputed in your browser, with no model.",
           ),
           seccion_manual: tb(
             "Mover umbrales en el playground",
@@ -1256,22 +1532,19 @@ export const APP = {
     },
     {
       id: "entender",
-      nombre: tb("Entender", "Understand"),
+      nombre: tb("El agente por dentro", "The agent from the inside"),
       linea: tb(
-        "El grafo real, nodo por nodo, contra el plan.",
-        "The real graph, node by node, against the plan.",
+        "El diagrama sale del código que corrió y señala cualquier pieza que el plan exige y no está.",
+        "The diagram comes from the code that ran and flags any piece the plan requires that is missing.",
       ),
       estrella: false,
       features: [
         {
           id: "visor",
-          nombre: tb(
-            "El grafo real desde el código",
-            "The real graph from the code",
-          ),
+          nombre: tb("El agente, tal como corrió", "The agent, as it ran"),
           que_hace: tb(
-            "El diagrama se genera desde el grafo compilado; cada nodo muestra su explicación para líderes y expertos, su código y sus trazas reales, y el diagrama señala cualquier ausencia frente al plan.",
-            "The diagram is generated from the compiled graph; each node shows its explanation for leaders and experts, its code and its real traces, and the diagram flags any absence against the plan.",
+            "Ves el diagrama del agente generado desde el código que corrió, no dibujado a mano. Tocas una pieza y aparece qué hace, su código y los casos reales que pasaron por ahí; si falta algo que el plan exige, el diagrama lo señala.",
+            "You see the agent's diagram generated from the code that ran, not drawn by hand. You tap a piece and it shows what it does, its code and the real cases that went through it; if something the plan requires is missing, the diagram flags it.",
           ),
           seccion_manual: tb("Abrir la vitrina", "Open the showcase"),
         },
@@ -1279,43 +1552,40 @@ export const APP = {
     },
     {
       id: "mostrar",
-      nombre: tb("Mostrar", "Show"),
+      nombre: tb("Recórrelo en el navegador", "Walk through it in the browser"),
       linea: tb(
-        "La vitrina bilingüe y sus fichas.",
-        "The bilingual showcase and its records.",
+        "La vitrina de planlang: un sitio bilingüe y sin servidor que se lee como líder o como experto.",
+        "planlang's showcase: a bilingual, serverless site read as a leader or as an expert.",
       ),
       estrella: false,
       features: [
         {
           id: "entrada",
-          nombre: tb("Página de entrada", "Home page"),
+          nombre: tb("La idea en una pantalla", "The idea on one screen"),
           que_hace: tb(
-            "La tesis en una pantalla para un visitante no técnico: todos observan, la mitad evalúa, casi nadie planeó qué evaluar.",
-            "The thesis on one screen for a non-technical visitor: everyone observes, half evaluate, almost nobody planned what to evaluate.",
+            "Entiendes de entrada por qué planear importa: según una encuesta de LangChain, el 89 % de los equipos observa sus agentes y el 52 % los evalúa, pero la encuesta ni pregunta si planearon qué evaluar. Debajo, el método en tres pasos y lo medido.",
+            "You understand right away why planning matters: according to a LangChain survey, 89% of teams observe their agents and 52% evaluate them, but the survey does not even ask whether they planned what to evaluate. Below, the method in three steps and what was measured.",
           ),
           seccion_manual: tb("Abrir la vitrina", "Open the showcase"),
         },
         {
           id: "pestanas",
-          nombre: tb(
-            "Plan, Agente, Brecha y Casos",
-            "Plan, Agent, Gap and Cases",
-          ),
+          nombre: tb("Cada demo, de punta a punta", "Each demo, end to end"),
           que_hace: tb(
-            "Por cada demo, en lenguaje llano con detalle para expertos, en español e inglés, en un teléfono de 380 px, con el rótulo «Simulación · no operativo» y la divulgación del revisor simulado.",
-            "For each demo, in plain language with detail for experts, in Spanish and English, on a 380 px phone, with the “Simulation · not operational” label and the simulated-reviewer disclosure.",
+            "Recorres cada demo en seis pantallas: plan, agente, brecha, playground, casos y fichas, en español o inglés, en tema claro u oscuro y desde el teléfono. Lees como líder, en palabras llanas, o como experto, con la regla detrás de cada cifra.",
+            "You walk through each demo in six screens: plan, agent, gap, playground, cases and records, in Spanish or English, in light or dark theme and from your phone. You read as a leader, in plain words, or as an expert, with the rule behind every figure.",
           ),
           seccion_manual: tb("Abrir la vitrina", "Open the showcase"),
         },
         {
           id: "fichas",
           nombre: tb(
-            "Fichas y paquete para la vitrina personal",
-            "Records and package for the personal showcase",
+            "Repetible y listo para el Portafolio",
+            "Repeatable and ready for the Portfolio",
           ),
           que_hace: tb(
-            "La ficha de reproducibilidad de cada demo, la de cada agente y estos hechos de la app, con el paquete estático que hoja-de-vida publica sin un solo enlace.",
-            "Each demo's reproducibility record, each agent's record and these app facts, with the static package hoja-de-vida publishes without a single link.",
+            "Cada corrida trae su ficha para obtener otra vez el mismo informe: versiones, huellas, semilla, modelo y fecha. La app arma además su propia ficha y el paquete estático que el Portafolio publica, sin un solo enlace y con la huella de cada archivo.",
+            "Every run comes with its record so the same report can be obtained again: versions, fingerprints, seed, model and date. The app also builds its own record and the static package the Portfolio publishes, with no link at all and with the fingerprint of every file.",
           ),
           seccion_manual: tb(
             "Entregar el paquete a hoja-de-vida",

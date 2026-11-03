@@ -14,7 +14,10 @@ import { Juego } from "@/components/playground/juego";
 import { Limites, MiradaPlayground } from "@/components/playground/mirada";
 import { datosDemo, type DatosDemo } from "@/lib/datos/vitrina";
 import { vistaCaso } from "@/lib/vista/caso";
+import { vistaGarantia } from "@/lib/vista/garantia";
 import { vistaPlayground } from "@/lib/vista/playground";
+import { garantiaDeCalibracion } from "@core/brecha/garantia";
+import { casosSinteticos } from "../../../scripts/garantia-contrato";
 import type { Idioma } from "@core/formatos/bilingue";
 
 const html = document.documentElement;
@@ -248,5 +251,157 @@ describe("regla 5-a: la forma no depende del perfil", () => {
       fireEvent.click(within(grupo).getByRole("button", { name: "Líder" })),
     );
     expect(forma(container)).toBe(antes);
+  });
+});
+
+/** La vitrina une la cifra y su signo con un espacio duro; aquí se lee con espacio normal. */
+const llano = (t: string | null | undefined) =>
+  (t ?? "").replaceAll("\u00a0", " ");
+const enZona = (c: HTMLElement) =>
+  [...c.querySelectorAll('[role="row"][data-zona="true"]')].map((x) =>
+    x.getAttribute("data-u"),
+  );
+
+describe("la zona respaldada por los datos (S8, ADR-018)", () => {
+  it("con el error del informe (10 %), la zona va de 0,50 a 0,90: banda con trama en la curva, filas marcadas y el deslizador adentro", () => {
+    const { container } = render(<Pagina idioma="es" />);
+    const panel = container.querySelector("#zona-respaldada")!;
+    expect(llano(panel.textContent)).toContain(
+      "Zona respaldada con 10 % de error: confianza mínima de 0,50 a 0,90.",
+    );
+    expect(llano(panel.textContent)).toContain(
+      "El U1 de la corrida (0,75) cae dentro.",
+    );
+    expect(llano(panel.textContent)).toContain(
+      "Seguridad exigida: 90 % (δ 0,10)",
+    );
+    expect(
+      screen.getByRole("radio", { name: /10\s%\s\(α\s0,10\)/ }),
+    ).toHaveProperty("checked", true);
+    // El color nunca va solo: trama en el SVG, glifo y texto en cada fila, leyenda con su nombre.
+    const svg = container.querySelector("#curva-pg")!;
+    expect(
+      svg.querySelector('[data-zona="respaldada"] rect[fill^="url(#"]'),
+    ).not.toBeNull();
+    expect(svg.querySelector("desc")!.textContent).toBe(
+      "zona respaldada de 0,50 a 0,90",
+    );
+    expect(enZona(container)).toEqual([
+      "0.5",
+      "0.55",
+      "0.6",
+      "0.65",
+      "0.7",
+      "0.75",
+      "0.8",
+      "0.85",
+      "0.9",
+    ]);
+    const fila = container.querySelector('[role="row"][data-u="0.75"]')!;
+    expect(fila.querySelector("svg")).not.toBeNull();
+    expect(fila.textContent).toContain("respaldado por los datos");
+    expect(container.querySelector('[data-zona="deslizador"]')).not.toBeNull();
+    expect(
+      container.querySelector('[data-zona-estado="dentro"]')!.textContent,
+    ).toBe("U1 0,75: dentro de la zona respaldada.");
+  });
+
+  it("elegir otro error cambia la zona; el deslizador dice si su valor cae debajo, adentro o encima", async () => {
+    const { container } = render(<Pagina idioma="es" />);
+    await act(async () =>
+      fireEvent.click(screen.getByRole("radio", { name: /5\s%\s\(α\s0,05\)/ })),
+    );
+    expect(
+      llano(container.querySelector("#zona-respaldada")!.textContent),
+    ).toContain("confianza mínima de 0,75 a 0,85");
+    expect(enZona(container)).toEqual(["0.75", "0.8", "0.85"]);
+    const u1 = screen.getByRole("slider", { name: /Confianza mínima/ });
+    await act(async () => fireEvent.change(u1, { target: { value: "0.6" } }));
+    expect(
+      container.querySelector('[data-zona-estado="fuera"]')!.textContent,
+    ).toContain("por debajo de la zona");
+    await act(async () => fireEvent.change(u1, { target: { value: "0.95" } }));
+    expect(
+      container.querySelector('[data-zona-estado="fuera"]')!.textContent,
+    ).toContain("por encima de la zona");
+    await act(async () => fireEvent.change(u1, { target: { value: "0.8" } }));
+    expect(
+      container.querySelector('[data-zona-estado="dentro"]')!.textContent,
+    ).toContain("dentro de la zona respaldada");
+    // La seguridad exigida no se mueve: es la misma en los tres niveles.
+    expect(
+      llano(container.querySelector("#zona-respaldada")!.textContent),
+    ).toContain("Seguridad exigida: 90 % (δ 0,10)");
+  });
+
+  it("dice lo que los datos no alcanzan, a la vista y sin esconderlo detrás del perfil", () => {
+    const { container } = render(<Pagina idioma="es" />);
+    const panel = llano(
+      container.querySelector("#zona-respaldada")!.textContent,
+    );
+    expect(panel).toContain(
+      "no se respalda con la secuencia que parte del umbral más alto",
+    );
+    expect(panel).toContain(
+      "La prueba parte del umbral más alto y baja hasta que uno no pasa",
+    );
+    expect(panel).toContain("harían falta 268 casos");
+    expect(panel).toContain("La etapa redactor no tiene verdad conocida");
+  });
+
+  it("sin zona (pocos casos) lo dice con el n que haría falta: ni banda, ni filas marcadas, ni zona en el deslizador", async () => {
+    const entrada = casosSinteticos().find((c) => c.nombre === "pocos-casos")!;
+    const isla = vistaPlayground(d, "es").isla;
+    const g = vistaGarantia(
+      garantiaDeCalibracion(entrada.entrada)!,
+      "U1",
+      2,
+      "es",
+    );
+    const { container } = render(<Juego datos={{ ...isla, garantia: g }} />);
+    const panel = llano(
+      container.querySelector("#zona-respaldada")!.textContent,
+    );
+    expect(panel).toContain("No hay zona respaldada con 10 % de error.");
+    expect(panel).toContain("harían falta 22 sin un solo error");
+    expect(container.querySelector('[data-zona="respaldada"]')).toBeNull();
+    expect(container.querySelector('[data-zona="deslizador"]')).toBeNull();
+    expect(enZona(container)).toEqual([]);
+    expect(
+      container.querySelector('[data-zona-estado="fuera"]')!.textContent,
+    ).toContain("no hay zona con este error aceptado");
+  });
+
+  it("sin garantía en el informe (el demo B no mide confianza), la sección de la curva es la de antes", async () => {
+    const isla = vistaPlayground(d, "es").isla;
+    const { container } = render(<Juego datos={{ ...isla, garantia: null }} />);
+    expect(container.querySelector("#zona-respaldada")).toBeNull();
+    expect(container.querySelector("[data-zona-estado]")).toBeNull();
+    expect(container.querySelector("#curva-pg")).not.toBeNull();
+  });
+
+  it("en inglés, el mismo panel redactado y con los números en inglés", async () => {
+    const { container } = render(<Pagina idioma="en" />);
+    const panel = llano(
+      container.querySelector("#zona-respaldada")!.textContent,
+    );
+    expect(panel).toContain("Where the threshold has the data's backing");
+    expect(panel).toContain(
+      "Backed zone at 10% error: minimum confidence from 0.50 to 0.90.",
+    );
+    expect(panel).toContain("Required confidence: 90% (δ 0.10)");
+    expect(panel).toContain("it would take 268 cases");
+    for (const residuo of ["Zona", "casos", "Seguridad", "Error que"])
+      expect(panel, residuo).not.toContain(residuo);
+  });
+
+  it("la forma del árbol no depende del perfil ni del movimiento: el HTML del servidor es el mismo", () => {
+    html.setAttribute("data-perfil", "lider");
+    const a = renderToStaticMarkup(<Pagina idioma="es" />);
+    html.setAttribute("data-perfil", "experto");
+    const b = renderToStaticMarkup(<Pagina idioma="es" />);
+    expect(a).toBe(b);
+    expect(a).toContain("Cobertura conjunta (Bonferroni)");
+    expect(a).toContain("solo-experto");
   });
 });

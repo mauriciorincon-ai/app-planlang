@@ -215,6 +215,10 @@ data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar l
   problema está en el plan, no en el agente).
 - **Las decisiones que no se pueden deshacer** dicen en el informe qué se eligió, si el plan escribió la opción en
   los dos idiomas (los planes v1.1 y v1.2 la escribieron solo en español: ahí el informe no la inventa en inglés).
+- **La garantía de la calibración (desde el sprint 8):** el supuesto S1 del A trae, además de ECE, AUROC y la curva,
+  qué umbral de confianza respaldan los datos para tres errores aceptados (5, 10 y 20 %), con 90 % de seguridad. Mira
+  «Calibración con garantía» más abajo. El informe lo escribe el verificador 1.4.0; regenerar un informe viejo
+  (`pnpm brecha:informe`) le agrega el bloque.
 - **Limitaciones:** el informe solo lee trazas cuyas huellas coinciden; si algo se alteró, se niega a
   medir y dice qué archivo falla.
 
@@ -249,7 +253,7 @@ data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar l
     documento de decisión adversa cuando lo hay (en el B, el expediente). En el A, que publica 200 casos, tienen
     página los 20 primeros y los que el informe nombra. Los demás aparecen sin enlace, con borde punteado, en la
     Brecha y en el Playground.
-  - **Fichas:** la ficha para repetir la corrida y las dos fichas que viajan a hoja-de-vida.
+  - **Fichas:** la ficha para repetir la corrida, la de la app, que viaja a hoja-de-vida, y la del agente del demo, que ya no se entrega y se muestra solo aquí.
 - **Limitaciones:**
   - El demo A publica la corrida de 200 del plan v1.5, con su línea base de un solo agente. El Agente lista las
     trazas de los 20 primeros casos y cuenta los demás.
@@ -269,6 +273,8 @@ data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar l
      5.000) o el máximo de aclaraciones (U3, de 0 a 4).
   3. Lee los casos que cambian y abre cualquiera con «ver su traza»: el caso se abre en el paso donde su camino
      se separa del que tomó el agente. La curva riesgo-cobertura marca dónde está el plan.
+  4. Bajo la curva está la **zona respaldada por los datos**: elige el error que aceptas (5, 10 o 20 %) y mira la
+     banda de trama sobre la curva y sobre el deslizador de U1 (más abajo, la sección «Calibración con garantía»).
 - **El modo Texas (U4)** obliga a que ninguna determinación adversa sea automática, ni siquiera la parcial. En la
   corrida de 200, encenderlo manda a una persona las nueve aprobaciones en parte. La pantalla dice que es la
   revisión que el modo Texas exige, no una de más.
@@ -280,19 +286,29 @@ data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar l
 
 ### Las fichas · desde el sprint 2
 
-- **Qué hace:** produce una ficha de reproducibilidad por demo y tres fichas que viajan.
+- **Qué hace:** produce una ficha de reproducibilidad por demo y la ficha de la app, que es la que viaja.
   - La **de reproducibilidad** tiene versiones, huellas, semilla, modelo, fecha y los pasos para repetir la
     corrida.
-  - La **de la app** sale de `docs/brochure-export.json` y suma los dos demos; hoja-de-vida la arma con su propio
-    diseño.
-  - La **del agente A** y la **del agente B** están en `content/agentes/planlang-demo-a.ficha-tecnica.json` y
-    `content/agentes/planlang-demo-b.ficha-tecnica.json`.
+  - La **de la app** sale de `docs/brochure-export.json` y de su complemento (`docs/fichas/planlang.complemento-propuesto.json`),
+    suma los dos demos y trae el proceso «Del plan a la brecha»; hoja-de-vida la arma con su propio diseño. El
+    mismo complemento se escribe en YAML en `docs/cv-viva/complemento.yaml`, para CV Viva.
+  - Las **fichas del agente A y del agente B** ya no se producen ni se entregan (decisión del 2026-10-25): no hay
+    archivos `content/agentes/*.json` ni su versión en inglés. La pantalla Fichas sigue mostrando la del agente del
+    demo, como parte de la simulación, y lo dice.
 
-  Las que viajan se validan contra el contrato de hoja-de-vida antes de escribirse.
+  Lo que viaja se valida contra el contrato de hoja-de-vida antes de escribirse. El copy de la ficha de la app
+  vive en `src/textos/fichas.ts`, con su fecha de redacción (`redactado_el`), y el hito que muestra es «H-2».
 
 - **Cómo se usa:** `pnpm fichas` las regenera; `pnpm fichas --verificar` solo dice si alguna está desactualizada.
-- **Limitaciones:** las fichas que viajan van en español, porque así lo pide el contrato de hoja-de-vida. En
-  planlang también existen en inglés.
+  `pnpm capturas:cv-viva` toma las capturas del brochure.
+- **Las capturas del brochure:** con `out/` construido (`pnpm build`), `pnpm capturas:cv-viva` toma las 21 de CV Viva
+  (la portada y 20 funcionalidades; el entrevistador no tiene pantalla) en `dist/cv-viva/`, que no se versiona. Cada
+  una es 1024×640 a densidad 1,5 (archivo de 1536×960), en tema claro y español, en WebP de hasta 80 KB. Los estados
+  (ruta, perfil, encabezado al que se desplaza y los pies) están en `docs/cv-viva/capturas.yaml`. Antes de cada toma
+  tapa con puntos todo nombre de persona, también los inventados, y se detiene si el texto trae un correo, un enlace o
+  `localhost`. El servidor escucha solo en `127.0.0.1:3201` y se cierra al terminar.
+- **Limitaciones:** lo que viaja va en español, porque así lo pide el contrato de hoja-de-vida. En planlang
+  también existe en inglés.
 
 ### Entregar el paquete a hoja-de-vida · desde el sprint 2
 
@@ -413,6 +429,41 @@ data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar l
   pruebas ⭐ de la guía siguen como pruebas, sin gate propio. La primera parada del gate viejo (correr un caso del demo B
   con tu suscripción) la corrió el constructor en el sprint 7.
 
+### Calibración con garantía · desde el sprint 8
+
+- **Qué hace:** responde «¿cómo sabes que tu evaluación es confiable?» con una garantía y su nivel, no con una curva.
+  Sobre los 159 casos medidos del demo A, dice qué confianza mínima respaldan los datos para que el agente decida solo,
+  con el error que aceptes y 90 % de seguridad. Tiene tres partes, cada una calculada de forma exacta:
+  1. **Umbral con garantía:** el más bajo cuyo error, entre lo que el agente decide solo, es a lo sumo el que aceptas
+     (Learn then Test).
+  2. **Umbral conformal:** el más alto que deja pasar sin persona al menos «1 menos el error» de los aciertos (marginal,
+     para casos como los medidos).
+  3. **Cobertura conjunta:** que la extracción y la aclaración acierten a la vez (Bonferroni). El redactor no tiene
+     verdad conocida en los casos y no entra.
+
+  La **zona respaldada** es lo que cumple las dos primeras. Por debajo, los datos no sostienen el error; por encima, se
+  escalan aciertos de más.
+
+- **Dónde se ve:** en el playground, bajo la curva (`/es/playground`, panel «Dónde el umbral tiene el respaldo de los
+  datos»), y en la Brecha, bajo el supuesto S1 (`/es/brecha`, `#s-S1`). El informe de cada corrida lo trae en su sección
+  de supuestos.
+- **Cómo se usa:**
+  1. En el playground, elige 5, 10 o 20 % de error. La seguridad exigida (90 %, δ = 0,10) no se mueve.
+  2. Mira la banda con trama sobre la curva, las filas marcadas con palomita en la tabla y el deslizador de U1: dice si
+     tu valor cae debajo, adentro o encima de la zona.
+  3. Con «Leer como · Experto» aparecen el método, las pruebas (con su p), el error conjunto observado y el alcance.
+- **Lo que los datos no alcanzan se dice, con el número que haría falta.** En el demo A, la cobertura conjunta no se
+  respalda con 5 % ni con 10 %: la prueba parte del umbral más alto, 0,95, donde la extracción falla en 3 de 134 casos
+  y, con esa tasa, harían falta 268 casos a 10 % y más de 2.680 a 5 %. Esa prueba es una secuencia fija y
+  conservadora: puede decir «no se respalda» donde otro orden pasaría, y la pantalla lo dice. Las corridas de 20 casos
+  no alcanzan ningún nivel con ese orden. Si no hay zona, la pantalla dice por qué: pocos casos, una tasa de error que
+  no baja del error aceptado, o un umbral conformal por debajo del umbral con garantía.
+- **Limitaciones conocidas:** la garantía vale para casos intercambiables con los medidos. Son sintéticos y el revisor
+  es simulado, así que no dice nada del tráfico real; un lote nuevo pide recalcular (`pnpm brecha:informe`). El demo B
+  queda «no observado»: su plan no mide confianza. Los tres niveles vienen del informe ya calculados: en el navegador
+  no se calcula nada al pintar. Este sprint solo lo probó en español; el inglés está redactado y llega a su prueba en el
+  cierre del hito.
+
 ### Preguntas frecuentes
 
 - **¿Por qué el informe dice «cumple con alertas»?** Porque el veredicto no mira solo los criterios: también los
@@ -426,6 +477,8 @@ data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar l
   vitrina de unos 30 MB a más de 100. Tienen página los 20 primeros y los que el informe nombra. Los demás siguen en
   la corrida, con su traza y su huella.
 - **¿Puedo cambiar un umbral y ver qué habría pasado?** Sí, en el playground de la vitrina (arriba).
+- **¿Cómo sé si un umbral de confianza tiene respaldo de los datos?** En el playground, bajo la curva, o en la Brecha,
+  bajo S1: la zona respaldada y lo que los datos no alcanzan (arriba, «Calibración con garantía»).
 
 ---
 
@@ -633,6 +686,10 @@ There are two ways to use it:
   not in the agent).
 - **One-way decisions** state in the report what was chosen, if the plan wrote the option in both languages
   (plans v1.1 and v1.2 wrote it only in Spanish: there the report does not make up an English one).
+- **The calibration guarantee (since sprint 8):** assumption S1 of demo A carries, besides ECE, AUROC and the curve,
+  which confidence threshold the data backs for three accepted errors (5, 10 and 20 %), at 90 % confidence. See
+  "Calibration with a guarantee" below. Verifier 1.4.0 writes it; regenerating an old report (`pnpm brecha:informe`)
+  adds the block.
 - **Limitations:** the report only reads traces whose fingerprints match; if something was altered, it
   refuses to measure and names the failing file.
 
@@ -669,7 +726,7 @@ There are two ways to use it:
     the adverse-decision document when there is one (in B, the case file). In A, which publishes 200 cases, the
     first 20 and the ones the report names have a page. The rest show up without a link, with a dotted border, in
     the Gap and the Playground.
-  - **Records:** the record to repeat the run and the two records that travel to hoja-de-vida.
+  - **Records:** the record to repeat the run, the app's, which travels to hoja-de-vida, and the demo agent's, which is no longer delivered and is shown only here.
 - **Limitations:**
   - Demo A publishes plan v1.5's 200-case run, with its single-agent baseline. The Agent screen lists the traces of
     the first 20 cases and counts the rest.
@@ -689,6 +746,8 @@ There are two ways to use it:
      or the clarification limit (U3, 0 to 4).
   3. Read the cases that change and open any of them with "see its trace": the case opens at the step where its
      path splits from the one the agent took. The risk-coverage curve marks where the plan sits.
+  4. Above the curve sits the **zone the data backs**: pick the error you accept (5, 10 or 20 %) and look at the
+     hatched band over the curve and over U1's slider (see "Calibration with a guarantee" below).
 - **Texas mode (U4)** makes sure no adverse determination is automatic, not even a partial one. In the 200-case
   run, turning it on sends the nine partial approvals to a person. The screen says it is the review Texas mode
   requires, not an extra one.
@@ -700,20 +759,30 @@ There are two ways to use it:
 
 ### The records · since sprint 2
 
-- **What it does:** produces one reproducibility record per demo and three records that travel.
+- **What it does:** produces one reproducibility record per demo and the app's record, which is the one that travels.
   - The **reproducibility** record has versions, fingerprints, seed, model, date and the steps to repeat
     the run.
-  - The **app** record comes from `docs/brochure-export.json` and adds up both demos; hoja-de-vida builds it with
-    its own design.
-  - The **agent A** and **agent B** records are in `content/agentes/planlang-demo-a.ficha-tecnica.json` and
-    `content/agentes/planlang-demo-b.ficha-tecnica.json`.
+  - The **app** record comes from `docs/brochure-export.json` and its complement
+    (`docs/fichas/planlang.complemento-propuesto.json`), adds up both demos and carries the process “From plan to
+    gap”; hoja-de-vida builds it with its own design. The same complement is written as YAML in
+    `docs/cv-viva/complemento.yaml`, for CV Viva.
+  - The **agent A and agent B** records are no longer produced or delivered (decision of 2026-10-25): there are no
+    `content/agentes/*.json` files nor their English version. The Records screen still shows the demo agent's
+    record, as part of the simulation, and says so.
 
-  The ones that travel are checked against hoja-de-vida's contract before they are written.
+  What travels is checked against hoja-de-vida's contract before it is written. The app record's copy lives in
+  `src/textos/fichas.ts`, with its writing date (`redactado_el`), and the milestone it shows is “H-2”.
 
 - **How to use it:** `pnpm fichas` regenerates them; `pnpm fichas --verificar` only says whether one is out
-  of date.
-- **Limitations:** the records that travel are in Spanish, because hoja-de-vida's contract asks for that.
-  In planlang they also exist in English.
+  of date. `pnpm capturas:cv-viva` takes the brochure's screenshots.
+- **The brochure screenshots:** with `out/` built (`pnpm build`), `pnpm capturas:cv-viva` takes CV Viva's 21 (the
+  cover and 20 features; the interviewer has no screen) into `dist/cv-viva/`, which is not versioned. Each one is
+  1024×640 at density 1.5 (a 1536×960 file), in the light theme and Spanish, as WebP of up to 80 KB. The states
+  (route, profile, the heading it scrolls to and the captions) are in `docs/cv-viva/capturas.yaml`. Before each shot
+  it covers every person's name with dots, invented ones too, and it stops if the text carries an email, a link or
+  `localhost`. The server listens only on `127.0.0.1:3201` and is closed when it finishes.
+- **Limitations:** what travels is in Spanish, because hoja-de-vida's contract asks for that. In planlang it also
+  exists in English.
 
 ### Hand the package to hoja-de-vida · since sprint 2
 
@@ -836,6 +905,41 @@ There are two ways to use it:
   remain as tests with no gate of their own. The old gate's first stop (running a demo B case with your subscription)
   was run by the builder in sprint 7.
 
+### Calibration with a guarantee · since sprint 8
+
+- **What it does:** answers "how do you know your evaluation is trustworthy?" with a guarantee and its level, not
+  with a curve. Over the 159 measured cases of demo A, it says which minimum confidence the data backs for the agent to
+  decide alone, at the error you accept and 90 % confidence. It has three parts, each exactly calculated:
+  1. **Guaranteed threshold:** the lowest one whose error, among what the agent decides alone, is at most the one you
+     accept (Learn then Test).
+  2. **Conformal threshold:** the highest one that lets at least "1 minus the error" of the correct cases through
+     without a person (marginal, for cases like the measured ones).
+  3. **Joint coverage:** that extraction and clarification are right together (Bonferroni). The writer has no ground
+     truth in the cases and is left out.
+
+  The **backed zone** is what meets the first two. Below it, the data cannot hold the error; above it, too many correct
+  cases are escalated.
+
+- **Where to see it:** in the playground, under the curve (`/en/playground`, the "Where the threshold has the data's
+  backing" panel), and in the Gap report, under assumption S1 (`/en/brecha`, `#s-S1`). Each run's report carries it in
+  its assumptions section.
+- **How to use it:**
+  1. In the playground, pick 5, 10 or 20 % error. The required confidence (90 %, δ = 0.10) does not move.
+  2. Look at the hatched band over the curve, the rows marked with a check in the table, and U1's slider: it says
+     whether your value falls below, inside or above the zone.
+  3. With "Read as · Expert" the method, the tests (with their p), the observed joint error and the scope appear.
+- **What the data does not reach is said, with the number it would take.** In demo A, the joint coverage is not
+  backed at 5 % nor at 10 %: the test starts at the highest threshold, 0.95, where extraction fails in 3 of 134 cases
+  and, at that rate, it would take 268 cases at 10 % and more than 2,680 at 5 %. That test is a fixed, conservative
+  sequence: it may say "not backed" where another order would pass, and the screen says so. The 20-case runs reach no
+  level in that order. When there is no zone, the screen says why: too few cases, an error rate that does not go below
+  the accepted error, or a conformal threshold below the guaranteed one.
+- **Known limitations:** the guarantee holds for cases exchangeable with the measured ones. They are synthetic and the
+  reviewer is simulated, so it says nothing about real traffic; a new batch needs a new calculation
+  (`pnpm brecha:informe`). Demo B stays "not observed": its plan does not measure confidence. The three levels come
+  from the report already calculated: nothing is calculated in the browser when painting. This sprint only tested it in
+  Spanish; the English is written and gets its test at the milestone close.
+
 ### Frequently asked questions
 
 - **Why does the report say “met with alerts”?** Because the verdict looks beyond the criteria: at the assumptions,
@@ -849,17 +953,20 @@ There are two ways to use it:
   about 30 MB to over 100. The first 20 and the ones the report names have a page. The rest stay in the run, with
   their trace and fingerprint.
 - **Can I change a threshold and see what would have happened?** Yes, in the showcase playground (above).
+- **How do I know whether a confidence threshold has the data's backing?** In the playground, under the curve, or in
+  the Gap report, under S1: the backed zone and what the data does not reach (above, "Calibration with a guarantee").
 
 ---
 
 ## Historial · History
 
-| Sprint          | Features añadidas a este manual · Features added to this manual                                                                                                                                        |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| S1 · 2026-09-27 | Validar un plan · generar casos sintéticos · correr un lote de 20 · leer el informe de brecha · verificar corridas e instrumento                                                                       |
-| S2 · 2026-10-02 | Abrir la vitrina (7 pantallas) · mover umbrales en el playground · las fichas · entregar el paquete a hoja-de-vida · lote de 200 y respaldo sin modelo (mejorado) · plan v1.3 y v1.4                   |
-| S3 · 2026-10-05 | Entrevistar un plan · correr el demo B · leer un expediente · publicar el design system · la vitrina con dos demos y la corrida de 200 del A (mejorado) · `--caso` en los lotes (mejorado) · plan v1.5 |
-| S4 · 2026-10-11 | Comparar dos corridas (la pantalla del A frente a su línea base, con sus casos enlazados)                                                                                                              |
-| S5 · 2026-10-11 | Planear un proyecto real (un dominio nuevo como datos · la entrevista de cualquier plan · la página del plan sin corrida)                                                                              |
-| S6 · 2026-10-11 | Planear una versión nueva del plan (la v2 de HackGuard con las respuestas que el usuario revisó · la página dice de quién son las respuestas y muestra la prioridad de acción de cada riesgo)          |
-| S7 · 2026-10-11 | Cerrar un hito con un solo gate (la guía abre con G1 a G8) · el contrato del grafo en detalle en la página del plan · `--salida` acotada · M1 contra «pendiente» en un umbral fijado (mejorado)        |
+| Sprint          | Features añadidas a este manual · Features added to this manual                                                                                                                                                                                   |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| S1 · 2026-09-27 | Validar un plan · generar casos sintéticos · correr un lote de 20 · leer el informe de brecha · verificar corridas e instrumento                                                                                                                  |
+| S2 · 2026-10-02 | Abrir la vitrina (7 pantallas) · mover umbrales en el playground · las fichas · entregar el paquete a hoja-de-vida · lote de 200 y respaldo sin modelo (mejorado) · plan v1.3 y v1.4                                                              |
+| S3 · 2026-10-05 | Entrevistar un plan · correr el demo B · leer un expediente · publicar el design system · la vitrina con dos demos y la corrida de 200 del A (mejorado) · `--caso` en los lotes (mejorado) · plan v1.5                                            |
+| S4 · 2026-10-11 | Comparar dos corridas (la pantalla del A frente a su línea base, con sus casos enlazados)                                                                                                                                                         |
+| S5 · 2026-10-11 | Planear un proyecto real (un dominio nuevo como datos · la entrevista de cualquier plan · la página del plan sin corrida)                                                                                                                         |
+| S6 · 2026-10-11 | Planear una versión nueva del plan (la v2 de HackGuard con las respuestas que el usuario revisó · la página dice de quién son las respuestas y muestra la prioridad de acción de cada riesgo)                                                     |
+| S7 · 2026-10-11 | Cerrar un hito con un solo gate (la guía abre con G1 a G8) · el contrato del grafo en detalle en la página del plan · `--salida` acotada · M1 contra «pendiente» en un umbral fijado (mejorado)                                                   |
+| S8 · 2026-11-02 | Calibración con garantía (la zona respaldada por los datos en el playground y en S1 de la Brecha · el verificador 1.4.0 · lo que los datos no alcanzan) · las fichas sin las de los demos y con el YAML del complemento · `pnpm capturas:cv-viva` |

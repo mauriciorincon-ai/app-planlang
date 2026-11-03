@@ -148,8 +148,9 @@ export const DEMOS = {
 /**
  * Lo que sigue del roadmap, «en construcción» en la Entrada (regla dura 15: lo del roadmap aparece desde el primer día;
  * AU-S2-6). Son los ids estables del bloque `roadmap:` de la ficha que define la planeadora (`SPRINT_002.md`), menos lo
- * que ya corrió en el S3: el demo B, que tiene su fila en la tabla, y el entrevistador, que propuso su plan. Ninguno se
- * simula.
+ * que ya corrió o ya tiene página: el demo B (S3), que tiene su fila en la tabla; el entrevistador, que propuso su
+ * plan (S3); «Comparar dos corridas» (S4) y «Calibración conformal y cobertura conjunta» (S8), que viven en la Brecha y
+ * el playground. Ninguno se simula.
  */
 export const EN_CONSTRUCCION = {
   titulo: tb("También en construcción", "Also under construction"),
@@ -158,13 +159,6 @@ export const EN_CONSTRUCCION = {
     "From the roadmap. None of it is simulated here.",
   ),
   items: [
-    {
-      id: "calibracion-conformal",
-      titulo: tb(
-        "Calibración conformal y cobertura conjunta",
-        "Conformal calibration and joint coverage",
-      ),
-    },
     {
       id: "recorrido-animado-de-un-caso",
       titulo: tb(
