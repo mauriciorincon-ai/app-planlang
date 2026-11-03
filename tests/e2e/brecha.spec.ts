@@ -93,3 +93,63 @@ test.describe("movimiento reducido", () => {
     await sinViolacionesAxe(page);
   });
 });
+
+/**
+ * S1 con su garantía (S8, ADR-018; e2e en español): bajo el supuesto de calibración, en llano, la zona respaldada del
+ * nivel que el informe declara, dónde cae el umbral de la corrida y lo que los datos no alcanzan; para el experto, la
+ * tabla de los tres niveles de α, el método y el alcance. La curva de S1 dibuja la zona con trama.
+ */
+test.describe("S1 con su garantía (es)", () => {
+  for (const tema of ["oscuro", "claro"])
+    for (const perfil of ["lider", "experto"])
+      test(`S1 dice qué respaldan los datos y qué no alcanzan: tema ${tema}, ${perfil}, sin desplazamiento ni violaciones`, async ({
+        page,
+      }) => {
+        const errores = consolaLimpia(page);
+        await page.goto(`/es/brecha?tema=${tema}&perfil=${perfil}`);
+        const s1 = page.locator("#s-S1");
+        await s1.scrollIntoViewIfNeeded();
+        const g = s1.locator('[data-garantia="s1"]');
+        const plano = async () =>
+          ((await g.textContent()) ?? "").replaceAll("\u00a0", " ");
+        expect(await plano()).toContain(
+          "Zona respaldada con 10 % de error: confianza mínima de 0,50 a 0,90.",
+        );
+        expect(await plano()).toContain(
+          "El U1 de la corrida (0,75) cae dentro.",
+        );
+        await expect(g.getByText(/los datos no lo alcanzan/)).toBeVisible();
+        await expect(
+          g.getByText(/La etapa redactor no tiene verdad/),
+        ).toBeVisible();
+        await expect(
+          s1.locator('#curva-S1 [data-zona="respaldada"]'),
+        ).toHaveCount(1);
+        // La tabla de los tres niveles es del experto: está en el árbol siempre y se ve solo en su perfil.
+        const tabla = g.getByRole("table", {
+          name: /Garantía de la calibración/,
+        });
+        await expect(tabla).toBeVisible({ visible: perfil === "experto" });
+        await expect(g.locator("[data-alfa]")).toHaveCount(3);
+        expect(await desbordeLateral(page)).toBeLessThanOrEqual(0);
+        await sinViolacionesAxe(page);
+        expect(errores).toEqual([]);
+      });
+
+  test("el informe y el playground dicen lo mismo de la zona: de 0,50 a 0,90 al 10 %", async ({
+    page,
+  }) => {
+    await page.goto("/es/brecha");
+    const enBrecha = (
+      (await page.locator('#s-S1 [data-garantia="s1"]').textContent()) ?? ""
+    ).replaceAll("\u00a0", " ");
+    await page.goto("/es/playground");
+    const enPlayground = (
+      (await page.locator("#zona-respaldada").textContent()) ?? ""
+    ).replaceAll("\u00a0", " ");
+    const lider =
+      "Aceptando hasta 10 % de error en lo que el agente decide solo, con 90 % de seguridad, los 159 casos medidos respaldan una confianza mínima de 0,50 a 0,90.";
+    expect(enBrecha).toContain(lider);
+    expect(enPlayground).toContain(lider);
+  });
+});

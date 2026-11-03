@@ -177,3 +177,156 @@ test.describe("movimiento reducido", () => {
     await sinViolacionesAxe(page);
   });
 });
+
+/**
+ * La zona respaldada por los datos (S8, ADR-018; e2e en español, el inglés al cierre del hito): con el error del informe
+ * (10 %), la zona va de 0,50 a 0,90 y el U1 de la corrida cae dentro; elegir otro error la cambia, con el teclado y el
+ * ratón; el deslizador dice si su valor cae debajo, adentro o encima; lo que los datos no alcanzan se lee sin abrir
+ * nada; y el color nunca va solo (trama, glifo y texto). Todo viene precalculado del informe: nada se calcula al pintar.
+ */
+const Z = {
+  panel: "#zona-respaldada",
+  opcion: (pct: string) => new RegExp(`^${pct}\\s%\\s\\(α`),
+  filasEnZona: '[role="row"][data-zona="true"]',
+};
+const textoPlano = (t: string | null) => (t ?? "").replaceAll("\u00a0", " ");
+
+test.describe("la zona respaldada (es)", () => {
+  for (const tema of ["oscuro", "claro"])
+    for (const perfil of ["lider", "experto"])
+      test(`con el error del informe, de 0,50 a 0,90 y el U1 de la corrida adentro: tema ${tema}, ${perfil}, sin desplazamiento ni violaciones`, async ({
+        page,
+      }) => {
+        const errores = consolaLimpia(page);
+        await page.goto(`/es/playground?tema=${tema}&perfil=${perfil}`);
+        const panel = page.locator(Z.panel);
+        await expect(
+          panel.getByRole("heading", {
+            name: "Dónde el umbral tiene el respaldo de los datos",
+          }),
+        ).toBeVisible();
+        await expect(
+          panel.getByRole("radio", { name: Z.opcion("10") }),
+        ).toBeChecked();
+        expect(textoPlano(await panel.textContent())).toContain(
+          "Zona respaldada con 10 % de error: confianza mínima de 0,50 a 0,90.",
+        );
+        expect(textoPlano(await panel.textContent())).toContain(
+          "Seguridad exigida: 90 % (δ 0,10)",
+        );
+        // Lo que los datos no alcanzan, a la vista del líder, sin abrir nada.
+        await expect(panel.getByText(/los datos no lo alcanzan/)).toBeVisible();
+        await expect(
+          panel.getByText(/La etapa redactor no tiene verdad/),
+        ).toBeVisible();
+        await expect(page.locator(Z.filasEnZona)).toHaveCount(9);
+        await expect(
+          page.locator('#w-U1 [data-zona-estado="dentro"]'),
+        ).toHaveText("U1 0,75: dentro de la zona respaldada.");
+        // El método y las pruebas son del experto: el bloque existe en los dos perfiles y se ve solo en el suyo.
+        await expect(
+          panel.getByText(/Learn then Test, secuencia fija/),
+        ).toBeVisible({
+          visible: perfil === "experto",
+        });
+        expect(await desbordeLateral(page)).toBeLessThanOrEqual(0);
+        await sinViolacionesAxe(page);
+        expect(errores).toEqual([]);
+      });
+
+  test("elegir 5 % estrecha la zona a 0,75–0,85; con el teclado se pasa de una opción a otra y el deslizador dice dónde cae su valor", async ({
+    page,
+  }) => {
+    await page.goto("/es/playground?tema=claro");
+    const panel = page.locator(Z.panel);
+    await panel.getByRole("radio", { name: Z.opcion("10") }).focus();
+    // Las flechas mueven el grupo de opciones (comportamiento del radio nativo): ← va a 5 %, → vuelve a 10 %, → a 20 %.
+    await page.keyboard.press("ArrowLeft");
+    await expect(
+      panel.getByRole("radio", { name: Z.opcion("5") }),
+    ).toBeChecked();
+    expect(textoPlano(await panel.textContent())).toContain(
+      "confianza mínima de 0,75 a 0,85",
+    );
+    await expect(page.locator(Z.filasEnZona)).toHaveCount(3);
+    // A 5 % la cobertura conjunta pide más de veinte veces los casos de hoy: se dice con su número.
+    expect(textoPlano(await panel.textContent())).toContain(
+      "más de 2.680 casos",
+    );
+    const u1 = page.getByRole("slider", { name: T.es.u1 });
+    await u1.focus();
+    await page.keyboard.press("ArrowLeft");
+    await page.keyboard.press("ArrowLeft");
+    await expect(u1).toHaveValue("0.65");
+    await expect(
+      page.locator('#w-U1 [data-zona-estado="fuera"]'),
+    ).toContainText("por debajo de la zona");
+    await page.keyboard.press("End");
+    await expect(
+      page.locator('#w-U1 [data-zona-estado="fuera"]'),
+    ).toContainText("por encima de la zona");
+    await page.keyboard.press("ArrowLeft");
+    await page.keyboard.press("ArrowLeft");
+    await expect(
+      page.locator('#w-U1 [data-zona-estado="dentro"]'),
+    ).toContainText("dentro de la zona respaldada");
+    // «Volver al plan» devuelve los umbrales, no el error elegido: es otra pregunta.
+    await panel.getByRole("radio", { name: Z.opcion("20") }).check();
+    expect(textoPlano(await panel.textContent())).toContain(
+      "confianza mínima de 0,50 a 0,95",
+    );
+    await expect(page.locator(Z.filasEnZona)).toHaveCount(10);
+    expect(await desbordeLateral(page)).toBeLessThanOrEqual(0);
+    await sinViolacionesAxe(page);
+  });
+
+  test("el color nunca va solo: la zona tiene trama en la curva y en el deslizador, un glifo y un texto en cada fila, y su leyenda", async ({
+    page,
+  }) => {
+    await page.goto("/es/playground?tema=oscuro&perfil=experto");
+    const svg = page.locator("#curva-pg");
+    await expect(
+      svg.locator('[data-zona="respaldada"] rect[fill^="url(#"]'),
+    ).toHaveCount(1);
+    await expect(svg.locator("desc")).toHaveText(
+      "zona respaldada de 0,50 a 0,90",
+    );
+    await expect(page.locator('#w-U1 [data-zona="deslizador"]')).toHaveCount(1);
+    const fila = page.locator('[role="row"][data-u="0.75"]');
+    await expect(fila.locator("svg")).toHaveCount(1);
+    await expect(fila).toContainText("respaldado por los datos");
+    await expect(
+      page.getByText("Zona respaldada", { exact: true }).first(),
+    ).toBeVisible();
+    // Las dos marcas (la trama diagonal y el borde discontinuo) son lo que el ojo ve aunque no distinga el verde.
+    const trama = await page
+      .locator('[role="row"][data-u="0.75"]')
+      .evaluate((f) => getComputedStyle(f).backgroundImage);
+    expect(trama).toContain("repeating-linear-gradient");
+  });
+
+  test("el demo B no mide la confianza: su playground no trae zona", async ({
+    page,
+  }) => {
+    await page.goto("/es/demo-b/playground");
+    await expect(page.locator(Z.panel)).toHaveCount(0);
+    await expect(page.locator("#curva-pg")).toHaveCount(0);
+  });
+
+  test.describe("movimiento reducido", () => {
+    test.use({ reducedMotion: "reduce" });
+    test("la zona y el selector son los mismos, sin animación, y axe sigue limpio", async ({
+      page,
+    }) => {
+      await page.goto("/es/playground?perfil=experto");
+      const panel = page.locator(Z.panel);
+      await panel.getByRole("radio", { name: Z.opcion("5") }).check();
+      await expect(page.locator(Z.filasEnZona)).toHaveCount(3);
+      const animaciones = await page.evaluate(
+        () => document.getAnimations().length,
+      );
+      expect(animaciones).toBe(0);
+      await sinViolacionesAxe(page);
+    });
+  });
+});
