@@ -142,3 +142,115 @@ export function enmendarBV11(v1: Plan): Record<string, unknown> {
   delete borrador.aprobado_el;
   return borrador;
 }
+
+/**
+ * La enmienda v1.1 → v1.2 (S9, «El reloj y los dueños»; aprobada por el usuario en el G-Plan del S9, chat de la
+ * planeadora, 2026-11-02): el demo B aprende a decir quién es el dueño de una empresa.
+ *   1. Nodo `beneficiarios` (regla, determinista): de la estructura societaria que extrae el modelo calcula quiénes son
+ *      los beneficiarios finales —los que tienen 25 % o más de participación efectiva, directa o indirecta, y la persona
+ *      que controla— y cruza a cada uno con las listas.
+ *   2. Arista «persona jurídica ⇒ beneficiarios» (desde el extractor) y arista «beneficiario con coincidencia ⇒ pausa
+ *      humana» (desde la decisión, con el mismo umbral U1 de la coincidencia de siempre, así el playground la mueve).
+ *   3. Tres señales nuevas en la traza: `tipo_solicitante`, `beneficiarios` y `similitud_beneficiarios_max`.
+ *   4. C7: en las solicitudes de persona jurídica, el conjunto de beneficiarios coincide con la verdad conocida en al
+ *      menos el 90 %.
+ * Cambia el contrato de grafo: las corridas de la v1 y la v1.1 no valen para ella (ADR-005). Los umbrales U1–U4 no
+ * cambian.
+ *
+ * El 25 % y la persona que controla son los de 31 CFR § 1010.230(d)(1) y (d)(2) («25 percent or more of the equity
+ * interests»; «a single individual with significant responsibility to control, manage, or direct»), leídos en su fuente
+ * el 2026-11-03. La norma no fija cómo se calcula la participación indirecta: el nodo la calcula multiplicando los
+ * porcentajes por cada camino y sumando los caminos (ADR-019).
+ */
+export function enmendarBV12(v11: Plan): Record<string, unknown> {
+  const g = v11.contrato_de_grafo;
+  if (g.nodos_esperados.some((n) => n.id === "beneficiarios"))
+    throw new Error("el v1.1 ya tiene el nodo beneficiarios");
+  if (v11.criterios_aceptacion.some((c) => c.id === "C7"))
+    throw new Error("el v1.1 ya tiene un C7");
+  const nodos = [...g.nodos_esperados];
+  nodos.splice(nodos.findIndex((n) => n.id === "extractor") + 1, 0, {
+    id: "beneficiarios",
+    tipo: "regla",
+  });
+  const aristas = [
+    {
+      desde: "extractor",
+      orden: 1,
+      senal: "tipo_solicitante",
+      operador: "igual_a",
+      valor: "juridica",
+      inclusivo: false,
+      si_verdadero: "beneficiarios",
+    },
+    ...g.aristas_condicionales,
+    {
+      desde: "decision",
+      orden: 7,
+      senal: "similitud_beneficiarios_max",
+      operador: "mayor_o_igual_que",
+      valor: "umbral.U1",
+      inclusivo: true,
+      si_verdadero: "pausa_humana",
+    },
+  ] as Plan["contrato_de_grafo"]["aristas_condicionales"];
+  const contrato_de_grafo: Plan["contrato_de_grafo"] = {
+    ...g,
+    nodos_esperados: nodos,
+    aristas_condicionales: aristas,
+    ramas_por_defecto: {
+      ...g.ramas_por_defecto,
+      extractor: "verificador_listas",
+    },
+    pausas_humanas: g.pausas_humanas.map((p) => ({
+      ...p,
+      payload_minimo: [...p.payload_minimo, "beneficiarios"],
+    })),
+    senales_obligatorias_en_traza: [
+      ...g.senales_obligatorias_en_traza,
+      "tipo_solicitante",
+      "beneficiarios",
+      "similitud_beneficiarios_max",
+    ],
+  };
+  const c7 = {
+    id: "C7",
+    enunciado: tb(
+      "En las solicitudes de persona jurídica, el conjunto de beneficiarios finales (25 % o más de participación efectiva, directa o indirecta, y la persona que controla; 31 CFR § 1010.230(d), consultado el 2026-11-03) coincide con la verdad conocida en al menos el 90 %.",
+      "In legal-entity requests, the set of beneficial owners (25% or more effective ownership, direct or indirect, and the person who controls; 31 CFR § 1010.230(d), read on 2026-11-03) matches the known truth in at least 90% of them.",
+    ),
+    tipo: "tasa",
+    regla_de_medicion: {
+      agregacion: "tasa",
+      condicion: "beneficiarios == verdad_conocida.beneficiarios",
+      poblacion: "tipo_solicitante == 'juridica'",
+    },
+    valor_objetivo: 0.9,
+    origen: "usuario",
+  } as Plan["criterios_aceptacion"][number];
+  const flujo_objetivo = [...v11.flujo_objetivo];
+  const iExtractor = flujo_objetivo.findIndex((f) =>
+    f.es.startsWith("El extractor saca los datos"),
+  );
+  if (iExtractor < 0) throw new Error("el v1.1 no trae el paso del extractor");
+  flujo_objetivo.splice(
+    iExtractor + 1,
+    0,
+    tb(
+      "Si el solicitante es una persona jurídica, un nodo de reglas calcula quiénes son sus beneficiarios finales a partir de la estructura societaria y cruza a cada uno con las listas; si alguno coincide, el caso va al oficial.",
+      "If the applicant is a legal entity, a rules node works out who its beneficial owners are from the ownership structure and checks each one against the lists; if any matches, the case goes to the officer.",
+    ),
+  );
+  const borrador: Record<string, unknown> = {
+    ...v11,
+    version: "1.2.0",
+    estado_aprobacion: "borrador",
+    huella: null,
+    flujo_objetivo,
+    criterios_aceptacion: [...v11.criterios_aceptacion, c7],
+    contrato_de_grafo,
+  };
+  delete borrador.aprobado_por;
+  delete borrador.aprobado_el;
+  return borrador;
+}
