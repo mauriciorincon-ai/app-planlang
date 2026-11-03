@@ -121,7 +121,7 @@ describe("la garantía de S1 del demo A, para pintar", () => {
     expect(v.tablaExperto.columnas).toHaveLength(7);
     for (const n of v.niveles) expect(n.fila).toHaveLength(7);
     expect(v.niveles[1]!.fila.map(llano)).toEqual([
-      "0,10",
+      "α 0,10",
       "0,50",
       "99,4 % · 3,2 %",
       "0,90",

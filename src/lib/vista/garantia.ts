@@ -228,7 +228,7 @@ export function vistaGarantia(
       noAlcanza: conjunta && c && c.umbral === null ? [conjunta] : [],
       experto,
       fila: [
-        alfaTexto,
+        `α ${alfaTexto}`,
         t.umbral === null ? EXPERTO.tabla.no[i] : u(t.umbral),
         t.cobertura === null
           ? "—"

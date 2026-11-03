@@ -217,7 +217,7 @@ describe("S1 con su garantía (S8, ADR-018)", () => {
       "0.1",
       "0.2",
     ]);
-    expect(llano(filas[1]!.textContent)).toContain("0,10 · el del informe");
+    expect(llano(filas[1]!.textContent)).toContain("α 0,10 · el del informe");
     expect(llano(filas[1]!.textContent)).toContain("0,50–0,90");
     expect(llano(filas[1]!.textContent)).toContain("no alcanza");
     expect(llano(filas[2]!.textContent)).toContain("0,50 (k = 2)");
