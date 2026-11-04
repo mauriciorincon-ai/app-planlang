@@ -13,7 +13,7 @@ controls. Effective ownership multiplies along each path and adds up the paths. 
 no owners, raises rule RB-03 and sends the case to a person. Each owner is checked against the lists, and the pause edge
 reuses U1. This amends ADR-013.
 
-**Estado:** aceptado · **Fecha:** 2026-11-03 · **Sprint:** S9 «El reloj y los dueños» (H-2), fase 2
+**Estado:** aceptado · **Fecha:** 2026-11-03 · **Sprint:** S9 «El reloj y los dueños» (H-2), fases 2 y 3
 **Cítese por tema:** «ADR código primero de plazos y beneficiarios».
 **Origen:** la orden del S9 (`portafolio/planlang/sprints/SPRINT_009.md`) y el G-Plan del 2026-11-02, que aprobó los planes
 A v1.6 y B v1.2 en el chat de la planeadora. Los dos llevan «Mauricio Rincón, 2026-11-02» y los escribió el CLI de
@@ -127,6 +127,27 @@ enmienda (`scripts/enmendar-plan-demo-{a,b}.ts`, con M1 dentro). `pnpm plan:apro
 - **§ 3, «NO entra en»:** se suman la participación efectiva, los beneficiarios finales y la validez de la estructura.
 - **Consecuencias:** con el v1.2 el grafo tiene diez nodos y nueve aristas, y el payload de la pausa incluye
   `beneficiarios`. Con el v1 siguen siendo nueve nodos y siete aristas.
+
+## Adenda de la fase 3 (2026-11-03): lo que midió el verificador 1.5.0
+
+1. **El verificador sube a 1.5.0.** `en_plazo` entra al contexto de cada caso solo si existe la capa de llegadas; sin
+   capa la señal falta y el criterio dice «señal faltante», nunca «cumple». Cada lado (corrida, repeticiones, línea base
+   y comparación) arma su propia cola: un lado nunca hereda la espera del otro.
+2. **C7 y la población.** En el lote `b-002-20` las 12 personas naturales no traían `tipo_solicitante` en su verdad
+   conocida y entraban a la población como «no evaluables»: C7 salía 0,4. El verificador toma `natural` por omisión en
+   el demo B (todo caso anterior al v1.2 era una persona natural). El denominador quedó en las 8 sociedades y C7 mide
+   8 de 8. Un test fija el valor por omisión.
+3. **Lo que C7 no prueba.** 8 sociedades orientan, no prueban: un 100 % sobre 8 deja un intervalo ancho. El lote no
+   trae ningún caso de inyección, así que C6 y R4 quedan «sin casos» y se publican así (P9).
+4. **Hallazgo de C11, publicado tal cual.** Con el auditor en 30 casos por día C11 cumple (espera mediana 18 minutos,
+   máxima 16 horas). Cumple en todo el tramo que el plan deja mover (10 a 60) y solo se rompe por debajo: la capacidad
+   mínima es 8 casos por día y con 7 salen 14 solicitudes tardías. El playground lo dice en pantalla, también cuando el
+   usuario está en el mínimo del rango. Ampliar el tramo jugable por debajo de 10 es una enmienda del plan que decide
+   el usuario; no se hizo en este sprint.
+5. **La capacidad es un caudal, no un costo.** Moverla cambia la espera y cuántas solicitudes salen de plazo; las horas
+   de auditor siguen siendo 12 minutos por pausa. El playground la trata como un segundo control con estado propio y
+   excluye de la cola los destinos «no observado» (abren C11 como «indeterminado», no como «cumple»).
+6. **Pago de deuda.** El export de fichas se tocó, así que este sprint paga el M7 del S8.
 
 ## Consecuencias
 
