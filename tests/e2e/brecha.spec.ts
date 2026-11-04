@@ -155,3 +155,52 @@ test.describe("S1 con su garantía (es)", () => {
     expect(enPlayground).toContain(lider);
   });
 });
+
+test.describe("los plazos del A y los dueños del B (es)", () => {
+  for (const perfil of ["lider", "experto"])
+    test(`el bloque de plazos dice el margen, dónde se rompe y que las llegadas son simuladas: ${perfil}, sin desplazamiento ni violaciones`, async ({
+      page,
+    }) => {
+      const errores = consolaLimpia(page);
+      await page.goto(`/es/brecha?tema=claro&perfil=${perfil}`);
+      const bloque = page.locator('[data-bloque="plazos"]');
+      await expect(
+        bloque.getByRole("heading", { name: "Plazos: el reloj simulado" }),
+      ).toBeVisible();
+      await expect(bloque).toContainText(
+        "Toda solicitud con plazo se decidió a tiempo. La que más esperó fue hospitalaria",
+      );
+      await expect(bloque).toContainText(
+        "el plazo se cumple desde 8 casos por día hábil y con una menos salen 14",
+      );
+      await expect(bloque).toContainText("Las horas de llegada son simuladas");
+      // El criterio C11 está en la lista, cumplido.
+      await expect(page.locator('[data-criterio="C11"]')).toContainText(
+        "cumple",
+        { ignoreCase: true },
+      );
+      // La tabla, los supuestos y la norma son del experto.
+      await expect(bloque.getByText("Consultada el 2026-11-03")).toBeVisible({
+        visible: perfil === "experto",
+      });
+      expect(await desbordeLateral(page)).toBeLessThanOrEqual(0);
+      await sinViolacionesAxe(page);
+      expect(errores).toEqual([]);
+    });
+
+  test("la Brecha del B dice los dueños de las sociedades y lo que el lote no probó", async ({
+    page,
+  }) => {
+    const errores = consolaLimpia(page);
+    await page.goto("/es/demo-b/brecha?tema=oscuro");
+    const bloque = page.locator('[data-bloque="duenos"]');
+    await expect(bloque).toContainText(
+      "De 8 sociedades, el conjunto de dueños finales coincidió con la verdad conocida en las 8.",
+    );
+    await expect(bloque).toContainText("no trae instrucciones escondidas");
+    await expect(page.locator('[data-bloque="plazos"]')).toHaveCount(0);
+    expect(await desbordeLateral(page)).toBeLessThanOrEqual(0);
+    await sinViolacionesAxe(page);
+    expect(errores).toEqual([]);
+  });
+});
