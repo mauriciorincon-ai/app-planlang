@@ -1,0 +1,674 @@
+{
+  "corrida_id": "simulado-b-002-20-base",
+  "formato": "planlang-ramas/v1",
+  "fuente": "python · app_agents.reglas_arista",
+  "huella": "2a5f5faa56b22e0e740fb235b00b919f088072cfdda610c27d9f448cf1363ea3",
+  "umbrales_aplicados": {
+    "U1": 0.85,
+    "U2": 60,
+    "U3": 0,
+    "U4": 0.7
+  },
+  "visitas": [
+    {
+      "caso_id": "B-001",
+      "desde": "agente_unico",
+      "paso": 2,
+      "rama_tomada": "beneficiarios",
+      "resultados": [
+        true
+      ]
+    },
+    {
+      "caso_id": "B-001",
+      "desde": "verificador_listas",
+      "paso": 4,
+      "rama_tomada": "puntaje",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "B-001",
+      "desde": "decision",
+      "paso": 6,
+      "rama_tomada": "redactor",
+      "resultados": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "B-002",
+      "desde": "agente_unico",
+      "paso": 2,
+      "rama_tomada": "verificador_listas",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "B-002",
+      "desde": "verificador_listas",
+      "paso": 3,
+      "rama_tomada": "puntaje",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "B-002",
+      "desde": "decision",
+      "paso": 5,
+      "rama_tomada": "redactor",
+      "resultados": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "B-003",
+      "desde": "agente_unico",
+      "paso": 2,
+      "rama_tomada": "verificador_listas",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "B-003",
+      "desde": "verificador_listas",
+      "paso": 3,
+      "rama_tomada": "puntaje",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "B-003",
+      "desde": "decision",
+      "paso": 5,
+      "rama_tomada": "pausa_humana",
+      "resultados": [
+        false,
+        false,
+        false,
+        true,
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "B-004",
+      "desde": "agente_unico",
+      "paso": 2,
+      "rama_tomada": "beneficiarios",
+      "resultados": [
+        true
+      ]
+    },
+    {
+      "caso_id": "B-004",
+      "desde": "verificador_listas",
+      "paso": 4,
+      "rama_tomada": "puntaje",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "B-004",
+      "desde": "decision",
+      "paso": 6,
+      "rama_tomada": "redactor",
+      "resultados": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "B-005",
+      "desde": "agente_unico",
+      "paso": 2,
+      "rama_tomada": "verificador_listas",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "B-005",
+      "desde": "verificador_listas",
+      "paso": 3,
+      "rama_tomada": "puntaje",
+      "resultados": [
+        true
+      ]
+    },
+    {
+      "caso_id": "B-005",
+      "desde": "decision",
+      "paso": 5,
+      "rama_tomada": "pausa_humana",
+      "resultados": [
+        false,
+        true,
+        true,
+        false,
+        false,
+        true,
+        false
+      ]
+    },
+    {
+      "caso_id": "B-006",
+      "desde": "agente_unico",
+      "paso": 2,
+      "rama_tomada": "verificador_listas",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "B-006",
+      "desde": "verificador_listas",
+      "paso": 3,
+      "rama_tomada": "puntaje",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "B-006",
+      "desde": "decision",
+      "paso": 5,
+      "rama_tomada": "pausa_humana",
+      "resultados": [
+        false,
+        false,
+        false,
+        true,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "B-007",
+      "desde": "agente_unico",
+      "paso": 2,
+      "rama_tomada": "verificador_listas",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "B-007",
+      "desde": "verificador_listas",
+      "paso": 3,
+      "rama_tomada": "puntaje",
+      "resultados": [
+        true
+      ]
+    },
+    {
+      "caso_id": "B-007",
+      "desde": "decision",
+      "paso": 5,
+      "rama_tomada": "redactor",
+      "resultados": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "B-008",
+      "desde": "agente_unico",
+      "paso": 2,
+      "rama_tomada": "verificador_listas",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "B-008",
+      "desde": "verificador_listas",
+      "paso": 3,
+      "rama_tomada": "puntaje",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "B-008",
+      "desde": "decision",
+      "paso": 5,
+      "rama_tomada": "redactor",
+      "resultados": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "B-009",
+      "desde": "agente_unico",
+      "paso": 2,
+      "rama_tomada": "beneficiarios",
+      "resultados": [
+        true
+      ]
+    },
+    {
+      "caso_id": "B-009",
+      "desde": "verificador_listas",
+      "paso": 4,
+      "rama_tomada": "puntaje",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "B-009",
+      "desde": "decision",
+      "paso": 6,
+      "rama_tomada": "redactor",
+      "resultados": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "B-010",
+      "desde": "agente_unico",
+      "paso": 2,
+      "rama_tomada": "beneficiarios",
+      "resultados": [
+        true
+      ]
+    },
+    {
+      "caso_id": "B-010",
+      "desde": "verificador_listas",
+      "paso": 4,
+      "rama_tomada": "puntaje",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "B-010",
+      "desde": "decision",
+      "paso": 6,
+      "rama_tomada": "redactor",
+      "resultados": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "B-011",
+      "desde": "agente_unico",
+      "paso": 2,
+      "rama_tomada": "verificador_listas",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "B-011",
+      "desde": "verificador_listas",
+      "paso": 3,
+      "rama_tomada": "puntaje",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "B-011",
+      "desde": "decision",
+      "paso": 5,
+      "rama_tomada": "pausa_humana",
+      "resultados": [
+        false,
+        false,
+        false,
+        true,
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "B-012",
+      "desde": "agente_unico",
+      "paso": 2,
+      "rama_tomada": "beneficiarios",
+      "resultados": [
+        true
+      ]
+    },
+    {
+      "caso_id": "B-012",
+      "desde": "verificador_listas",
+      "paso": 4,
+      "rama_tomada": "puntaje",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "B-012",
+      "desde": "decision",
+      "paso": 6,
+      "rama_tomada": "redactor",
+      "resultados": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "B-013",
+      "desde": "agente_unico",
+      "paso": 2,
+      "rama_tomada": "beneficiarios",
+      "resultados": [
+        true
+      ]
+    },
+    {
+      "caso_id": "B-013",
+      "desde": "verificador_listas",
+      "paso": 4,
+      "rama_tomada": "puntaje",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "B-013",
+      "desde": "decision",
+      "paso": 6,
+      "rama_tomada": "pausa_humana",
+      "resultados": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true
+      ]
+    },
+    {
+      "caso_id": "B-014",
+      "desde": "agente_unico",
+      "paso": 2,
+      "rama_tomada": "beneficiarios",
+      "resultados": [
+        true
+      ]
+    },
+    {
+      "caso_id": "B-014",
+      "desde": "verificador_listas",
+      "paso": 4,
+      "rama_tomada": "puntaje",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "B-014",
+      "desde": "decision",
+      "paso": 6,
+      "rama_tomada": "redactor",
+      "resultados": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "B-015",
+      "desde": "agente_unico",
+      "paso": 2,
+      "rama_tomada": "verificador_listas",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "B-015",
+      "desde": "verificador_listas",
+      "paso": 3,
+      "rama_tomada": "puntaje",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "B-015",
+      "desde": "decision",
+      "paso": 5,
+      "rama_tomada": "redactor",
+      "resultados": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "B-016",
+      "desde": "agente_unico",
+      "paso": 2,
+      "rama_tomada": "verificador_listas",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "B-016",
+      "desde": "verificador_listas",
+      "paso": 3,
+      "rama_tomada": "puntaje",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "B-016",
+      "desde": "decision",
+      "paso": 5,
+      "rama_tomada": "redactor",
+      "resultados": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "B-017",
+      "desde": "agente_unico",
+      "paso": 2,
+      "rama_tomada": "verificador_listas",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "B-017",
+      "desde": "verificador_listas",
+      "paso": 3,
+      "rama_tomada": "puntaje",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "B-017",
+      "desde": "decision",
+      "paso": 5,
+      "rama_tomada": "pausa_humana",
+      "resultados": [
+        false,
+        false,
+        false,
+        true,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "B-018",
+      "desde": "agente_unico",
+      "paso": 2,
+      "rama_tomada": "verificador_listas",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "B-018",
+      "desde": "verificador_listas",
+      "paso": 3,
+      "rama_tomada": "puntaje",
+      "resultados": [
+        true
+      ]
+    },
+    {
+      "caso_id": "B-018",
+      "desde": "decision",
+      "paso": 5,
+      "rama_tomada": "pausa_humana",
+      "resultados": [
+        false,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "B-019",
+      "desde": "agente_unico",
+      "paso": 2,
+      "rama_tomada": "verificador_listas",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "B-019",
+      "desde": "verificador_listas",
+      "paso": 3,
+      "rama_tomada": "puntaje",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "B-019",
+      "desde": "decision",
+      "paso": 5,
+      "rama_tomada": "redactor",
+      "resultados": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "caso_id": "B-020",
+      "desde": "agente_unico",
+      "paso": 2,
+      "rama_tomada": "beneficiarios",
+      "resultados": [
+        true
+      ]
+    },
+    {
+      "caso_id": "B-020",
+      "desde": "verificador_listas",
+      "paso": 4,
+      "rama_tomada": "puntaje",
+      "resultados": [
+        false
+      ]
+    },
+    {
+      "caso_id": "B-020",
+      "desde": "decision",
+      "paso": 6,
+      "rama_tomada": "redactor",
+      "resultados": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    }
+  ]
+}

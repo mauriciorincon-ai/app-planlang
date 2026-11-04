@@ -1,0 +1,901 @@
+{
+  "aclaraciones": [],
+  "beneficiarios_detalle": {
+    "beneficiarios": [
+      "SYN-ID-127536",
+      "SYN-ID-483759"
+    ],
+    "coincidencias": [
+      {
+        "documento": "SYN-ID-127536",
+        "mejor": {
+          "entrada_id": "LV-01-011",
+          "exacta": true,
+          "lista_id": "LV-01",
+          "nombre_listado": "Pablo Vosgrane Imrahel",
+          "similitud": 1,
+          "vinculante": true
+        },
+        "nombre": "Pablo Vosgrane Imrahel"
+      },
+      {
+        "documento": "SYN-ID-483759",
+        "mejor": {
+          "entrada_id": "LC-01-008",
+          "exacta": false,
+          "lista_id": "LC-01",
+          "nombre_listado": "Marta Ostavane Kelmiro",
+          "similitud": 0.673,
+          "vinculante": false
+        },
+        "nombre": "Martín Mirvanda Lismaren"
+      }
+    ],
+    "controla": "SYN-ID-483759",
+    "participaciones": [
+      {
+        "den": "10",
+        "documento": "SYN-ID-127536",
+        "num": "7",
+        "porcentaje": "70.00"
+      },
+      {
+        "den": "10",
+        "documento": "SYN-ID-483759",
+        "num": "3",
+        "porcentaje": "30.00"
+      }
+    ],
+    "por_participacion": [
+      "SYN-ID-127536",
+      "SYN-ID-483759"
+    ],
+    "problemas": [],
+    "valida": true
+  },
+  "caso_id": "B-013",
+  "cobertura": null,
+  "coincidencias": {
+    "listas_consultadas": [
+      {
+        "fecha": "2026-09-30",
+        "id": "LV-01",
+        "version": "2026.09",
+        "vinculante": true
+      },
+      {
+        "fecha": "2026-08-31",
+        "id": "LC-01",
+        "version": "2026.08",
+        "vinculante": false
+      }
+    ],
+    "mejor": {
+      "entrada_id": "LV-01-011",
+      "exacta": false,
+      "lista_id": "LV-01",
+      "nombre_listado": "Pablo Vosgrane Imrahel",
+      "similitud": 0.6814,
+      "vinculante": true
+    }
+  },
+  "corrida_id": "simulado-b-002-20-base",
+  "decisiones_de_arista": [
+    {
+      "desde": "agente_unico",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 2,
+      "rama_tomada": "beneficiarios",
+      "resultado": true,
+      "senal": "tipo_solicitante",
+      "tipo": "tripleta",
+      "umbral_aplicado": "juridica",
+      "valor_declarado": "juridica",
+      "valor_observado": "juridica"
+    },
+    {
+      "desde": "verificador_listas",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": true,
+      "operador": "mayor_o_igual_que",
+      "orden_arista": 1,
+      "paso": 4,
+      "rama_tomada": "puntaje",
+      "resultado": false,
+      "senal": "similitud_max",
+      "tipo": "tripleta",
+      "umbral_aplicado": 0.7,
+      "valor_declarado": "umbral.U4",
+      "valor_observado": 0.6814
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 6,
+      "rama_tomada": "pausa_humana",
+      "resultado": false,
+      "senal": "carga_detectada",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": true,
+      "operador": "mayor_o_igual_que",
+      "orden_arista": 2,
+      "paso": 6,
+      "rama_tomada": "pausa_humana",
+      "resultado": false,
+      "senal": "similitud_max",
+      "tipo": "tripleta",
+      "umbral_aplicado": 0.85,
+      "valor_declarado": "umbral.U1",
+      "valor_observado": 0.6814
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 3,
+      "paso": 6,
+      "rama_tomada": "pausa_humana",
+      "resultado": false,
+      "senal": "conclusion_investigador",
+      "tipo": "tripleta",
+      "umbral_aplicado": "misma_persona",
+      "valor_declarado": "misma_persona",
+      "valor_observado": null
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": true,
+      "operador": "mayor_o_igual_que",
+      "orden_arista": 4,
+      "paso": 6,
+      "rama_tomada": "pausa_humana",
+      "resultado": false,
+      "senal": "puntaje_riesgo",
+      "tipo": "tripleta",
+      "umbral_aplicado": 60,
+      "valor_declarado": "umbral.U2",
+      "valor_observado": 30
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "mayor_que",
+      "orden_arista": 5,
+      "paso": 6,
+      "rama_tomada": "pausa_humana",
+      "resultado": false,
+      "senal": "inconsistencias",
+      "tipo": "tripleta",
+      "umbral_aplicado": 0,
+      "valor_declarado": "umbral.U3",
+      "valor_observado": 0
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 6,
+      "paso": 6,
+      "rama_tomada": "pausa_humana",
+      "resultado": false,
+      "senal": "propuesta",
+      "tipo": "tripleta",
+      "umbral_aplicado": "rechazar",
+      "valor_declarado": "rechazar",
+      "valor_observado": "aprobar"
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": true,
+      "operador": "mayor_o_igual_que",
+      "orden_arista": 7,
+      "paso": 6,
+      "rama_tomada": "pausa_humana",
+      "resultado": true,
+      "senal": "similitud_beneficiarios_max",
+      "tipo": "tripleta",
+      "umbral_aplicado": 0.85,
+      "valor_declarado": "umbral.U1",
+      "valor_observado": 1
+    }
+  ],
+  "documento_adverso": null,
+  "error_de_esquema_en_traspaso": false,
+  "error_proveedor": null,
+  "expediente": {
+    "caso_id": "B-013",
+    "conclusiones": [
+      {
+        "cita": {
+          "ref": "identidad",
+          "tipo": "documento"
+        },
+        "id": "K1",
+        "tema": "identidad",
+        "texto": {
+          "en": "Declared company: Inversiones Farallones SAS, tax ID SYN-NIT-304138, incorporated in 2006 in Kesvar Territory.",
+          "es": "Sociedad declarada: Inversiones Farallones SAS, NIT SYN-NIT-304138, constituida en 2006 en Territorio de Kesvar."
+        }
+      },
+      {
+        "cita": {
+          "lista": {
+            "fecha": "2026-09-30",
+            "id": "LV-01",
+            "version": "2026.09"
+          },
+          "ref": "LV-01-011",
+          "regla": "RL-02",
+          "tipo": "coincidencia"
+        },
+        "id": "K2",
+        "tema": "listas",
+        "texto": {
+          "en": "The highest similarity with the lists is 0.6814, with entry LV-01-011 of binding list LV-01 (version 2026.09, September 2026; RL-02).",
+          "es": "La mayor similitud con las listas es 0,6814, con la entrada LV-01-011 de la lista vinculante LV-01 (versión 2026.09, de septiembre de 2026; RL-02)."
+        }
+      },
+      {
+        "cita": {
+          "ref": "RB-01,RB-02",
+          "tipo": "regla"
+        },
+        "id": "K3",
+        "tema": "beneficiarios",
+        "texto": {
+          "en": "Beneficial owners by 25% or more ownership, direct or indirect: Pablo Vosgrane Imrahel (SYN-ID-127536), 70.00%; Martín Mirvanda Lismaren (SYN-ID-483759), 30.00% (RB-01). Person in control: Martín Mirvanda Lismaren (SYN-ID-483759), legal representative (RB-02).",
+          "es": "Beneficiarios finales por participación de 25 % o más, directa o indirecta: Pablo Vosgrane Imrahel (SYN-ID-127536), 70,00 %; Martín Mirvanda Lismaren (SYN-ID-483759), 30,00 % (RB-01). Persona que controla: Martín Mirvanda Lismaren (SYN-ID-483759), representante legal (RB-02)."
+        }
+      },
+      {
+        "cita": {
+          "lista": {
+            "fecha": "2026-09-30",
+            "id": "LV-01",
+            "version": "2026.09"
+          },
+          "ref": "LV-01-011",
+          "regla": "RL-01",
+          "tipo": "coincidencia"
+        },
+        "id": "K4",
+        "tema": "beneficiarios",
+        "texto": {
+          "en": "The beneficial owner with the highest similarity with the lists is Pablo Vosgrane Imrahel (SYN-ID-127536): 1.0, with entry LV-01-011 of binding list LV-01 (version 2026.09, September 2026; RL-01).",
+          "es": "El beneficiario final con mayor similitud con las listas es Pablo Vosgrane Imrahel (SYN-ID-127536): 1,0, con la entrada LV-01-011 de la lista vinculante LV-01 (versión 2026.09, de septiembre de 2026; RL-01)."
+        }
+      },
+      {
+        "cita": {
+          "ref": "RI-01,RI-02,RI-03",
+          "tipo": "regla"
+        },
+        "id": "K5",
+        "tema": "documentos",
+        "texto": {
+          "en": "The documents are consistent with each other and no required detail is missing (RI-01 to RI-03).",
+          "es": "Los documentos son consistentes entre sí y no les falta ningún dato exigido (RI-01 a RI-03)."
+        }
+      },
+      {
+        "cita": {
+          "ref": "RP-01,RP-02,RP-03,RP-04",
+          "tipo": "regla"
+        },
+        "id": "K6",
+        "tema": "puntaje",
+        "texto": {
+          "en": "Risk score 30 out of 100: activity SYN-ACT-01 (low, 0; RP-01), jurisdiction of the funds SYN-J-06 (high, 30; RP-02), income consistency (consistent, 0; RP-03). Name and nationality do not count (RP-04).",
+          "es": "Puntaje de riesgo 30 de 100: actividad SYN-ACT-01 (bajo, 0; RP-01), jurisdicción de los fondos SYN-J-06 (alto, 30; RP-02), coherencia de los ingresos (coherente, 0; RP-03). El nombre y la nacionalidad no entran (RP-04)."
+        }
+      },
+      {
+        "cita": {
+          "ref": "RD-03",
+          "tipo": "regla"
+        },
+        "id": "K7",
+        "tema": "propuesta",
+        "texto": {
+          "en": "Agent proposal: approve (RD-03).",
+          "es": "Propuesta del agente: aprobar (RD-03)."
+        }
+      },
+      {
+        "cita": {
+          "ref": "decision/7",
+          "tipo": "arista"
+        },
+        "id": "K8",
+        "tema": "decision",
+        "texto": {
+          "en": "The compliance officer decided: approve. The pause was opened by edge 7 of decision: similitud_beneficiarios_max (1.0) at least umbral.U1 (0.85).",
+          "es": "Decidió el oficial de cumplimiento: aprobar. Abrió la pausa la arista 7 de decision: similitud_beneficiarios_max (1,0) mayor o igual que umbral.U1 (0,85)."
+        }
+      },
+      {
+        "cita": {
+          "ref": "D3",
+          "tipo": "decision_del_plan"
+        },
+        "id": "K9",
+        "tema": "conservacion",
+        "texto": {
+          "en": "The file is kept for five years (plan decision D3; estimated term, AMLR art. 77).",
+          "es": "El expediente se conserva cinco años (decisión D3 del plan; plazo estimado, AMLR art. 77)."
+        }
+      }
+    ],
+    "conclusiones_sin_cita": 0,
+    "datos_usados": [
+      "actividad",
+      "documento",
+      "ingresos_mensuales",
+      "jurisdiccion_fondos",
+      "nacimiento",
+      "nacionalidad",
+      "nombre",
+      "titular_actividad",
+      "titular_fondos"
+    ],
+    "decision": {
+      "final": "aprobar",
+      "propuesta": "aprobar",
+      "revisada_por_persona": true,
+      "rol": "oficial"
+    },
+    "listas_consultadas": [
+      {
+        "fecha": "2026-09-30",
+        "id": "LV-01",
+        "version": "2026.09",
+        "vinculante": true
+      },
+      {
+        "fecha": "2026-08-31",
+        "id": "LC-01",
+        "version": "2026.08",
+        "vinculante": false
+      }
+    ],
+    "plan": {
+      "huella": "6450d5c56fd0a337cb8a4206ffce6926d1390222a08cd337dffc35b034bfeeb2",
+      "id": "plan-demo-b",
+      "version": "1.2.0"
+    },
+    "solicitud": "SYN-SOL-332392"
+  },
+  "extraccion": {
+    "campos": {
+      "actividad": "SYN-ACT-01",
+      "documento": "SYN-NIT-304138",
+      "ingresos_mensuales": 3200,
+      "jurisdiccion_fondos": "SYN-J-06",
+      "nacimiento": 2006,
+      "nacionalidad": "SYN-J-08",
+      "nombre": "Inversiones Farallones SAS",
+      "titular_actividad": "SYN-NIT-304138",
+      "titular_fondos": "Inversiones Farallones SAS"
+    },
+    "campos_faltantes": [],
+    "estructura": {
+      "controla": {
+        "documento": "SYN-ID-483759",
+        "rol": "representante_legal"
+      },
+      "entidad": "SYN-NIT-304138",
+      "entidades": [
+        {
+          "nit": "SYN-NIT-304138",
+          "nombre": "Inversiones Farallones SAS"
+        }
+      ],
+      "participaciones": [
+        {
+          "participada": "SYN-NIT-304138",
+          "porcentaje": "70.00",
+          "titular": "SYN-ID-127536"
+        },
+        {
+          "participada": "SYN-NIT-304138",
+          "porcentaje": "30.00",
+          "titular": "SYN-ID-483759"
+        }
+      ],
+      "personas": [
+        {
+          "documento": "SYN-ID-127536",
+          "nombre": "Pablo Vosgrane Imrahel"
+        },
+        {
+          "documento": "SYN-ID-483759",
+          "nombre": "Martín Mirvanda Lismaren"
+        }
+      ]
+    },
+    "tipo_solicitante": "juridica"
+  },
+  "formato": "planlang-trace/v1",
+  "guardia_salida": {
+    "acciones_ejecutadas": [
+      "registrar_expediente",
+      "responder_solicitante"
+    ],
+    "acciones_intentadas": [
+      "registrar_expediente",
+      "responder_solicitante"
+    ],
+    "carga_detectada_en_entrada": false,
+    "hallazgos": [],
+    "severidad_accion": 0
+  },
+  "huella": "545e657b8b689a027a6594ad6f226c0ebb936f953dd1d02a538f1a44791a8c8f",
+  "investigacion": null,
+  "nodos_visitados": [
+    "enrutador",
+    "agente_unico",
+    "beneficiarios",
+    "verificador_listas",
+    "puntaje",
+    "decision",
+    "pausa_humana",
+    "redactor",
+    "guardia_salida"
+  ],
+  "pasos": [
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 1,
+      "error_proveedor": null,
+      "inicio_ms": 0,
+      "nodo": "enrutador",
+      "orden": 1,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "enrutador",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 1,
+      "error_proveedor": null,
+      "inicio_ms": 2,
+      "nodo": "agente_unico",
+      "orden": 2,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 1782,
+        "salida": 278
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 1,
+      "error_proveedor": null,
+      "inicio_ms": 4,
+      "nodo": "beneficiarios",
+      "orden": 3,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "regla",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 1,
+      "error_proveedor": null,
+      "inicio_ms": 6,
+      "nodo": "verificador_listas",
+      "orden": 4,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "regla",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 1,
+      "error_proveedor": null,
+      "inicio_ms": 8,
+      "nodo": "puntaje",
+      "orden": 5,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "regla",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 1,
+      "error_proveedor": null,
+      "inicio_ms": 10,
+      "nodo": "decision",
+      "orden": 6,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "enrutador",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 1,
+      "error_proveedor": null,
+      "inicio_ms": 13,
+      "nodo": "pausa_humana",
+      "orden": 7,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "pausa_humana",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 1,
+      "error_proveedor": null,
+      "inicio_ms": 15,
+      "nodo": "redactor",
+      "orden": 8,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "regla",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 1,
+      "error_proveedor": null,
+      "inicio_ms": 17,
+      "nodo": "guardia_salida",
+      "orden": 9,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "regla",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    }
+  ],
+  "pausas_humanas": [
+    {
+      "nodo": "pausa_humana",
+      "paso": 7,
+      "payload": {
+        "beneficiarios": {
+          "beneficiarios": [
+            "SYN-ID-127536",
+            "SYN-ID-483759"
+          ],
+          "coincidencias": [
+            {
+              "documento": "SYN-ID-127536",
+              "mejor": {
+                "entrada_id": "LV-01-011",
+                "exacta": true,
+                "lista_id": "LV-01",
+                "nombre_listado": "Pablo Vosgrane Imrahel",
+                "similitud": 1,
+                "vinculante": true
+              },
+              "nombre": "Pablo Vosgrane Imrahel"
+            },
+            {
+              "documento": "SYN-ID-483759",
+              "mejor": {
+                "entrada_id": "LC-01-008",
+                "exacta": false,
+                "lista_id": "LC-01",
+                "nombre_listado": "Marta Ostavane Kelmiro",
+                "similitud": 0.673,
+                "vinculante": false
+              },
+              "nombre": "Martín Mirvanda Lismaren"
+            }
+          ],
+          "controla": "SYN-ID-483759",
+          "participaciones": [
+            {
+              "den": "10",
+              "documento": "SYN-ID-127536",
+              "num": "7",
+              "porcentaje": "70.00"
+            },
+            {
+              "den": "10",
+              "documento": "SYN-ID-483759",
+              "num": "3",
+              "porcentaje": "30.00"
+            }
+          ],
+          "por_participacion": [
+            "SYN-ID-127536",
+            "SYN-ID-483759"
+          ],
+          "problemas": [],
+          "valida": true
+        },
+        "coincidencias": {
+          "listas_consultadas": [
+            {
+              "fecha": "2026-09-30",
+              "id": "LV-01",
+              "version": "2026.09",
+              "vinculante": true
+            },
+            {
+              "fecha": "2026-08-31",
+              "id": "LC-01",
+              "version": "2026.08",
+              "vinculante": false
+            }
+          ],
+          "mejor": {
+            "entrada_id": "LV-01-011",
+            "exacta": false,
+            "lista_id": "LV-01",
+            "nombre_listado": "Pablo Vosgrane Imrahel",
+            "similitud": 0.6814,
+            "vinculante": true
+          }
+        },
+        "contraevidencia": [
+          {
+            "en": "The year of birth (2006) does not match the entry's (1959).",
+            "es": "El año de nacimiento (2006) no coincide con el de la entrada (1959)."
+          },
+          {
+            "en": "The nationality (SYN-J-08) does not match the entry's (SYN-J-06).",
+            "es": "La nacionalidad (SYN-J-08) no coincide con la de la entrada (SYN-J-06)."
+          },
+          {
+            "en": "Risk score 30, below the escalation threshold (60).",
+            "es": "Puntaje de riesgo 30, bajo el umbral de escalamiento (60)."
+          },
+          {
+            "en": "The documents are consistent.",
+            "es": "Los documentos son consistentes entre sí."
+          }
+        ],
+        "documentos": {
+          "actividad": {
+            "en": "Statement of the company's economic activity. Retail food trade for 12 years. Its income is 3200 synthetic units a month. Signed by the company with tax ID SYN-NIT-304138.",
+            "es": "Declaración de actividad económica de la sociedad. Comercio minorista de alimentos desde hace 12 años. Sus ingresos son de 3200 unidades sintéticas al mes. Firma la sociedad con el NIT SYN-NIT-304138."
+          },
+          "existencia": {
+            "en": "Shareholding of Inversiones Farallones SAS (synthetic tax ID SYN-NIT-304138). Pablo Vosgrane Imrahel (synthetic document SYN-ID-127536) holds 70.00% of Inversiones Farallones SAS. Martín Mirvanda Lismaren (synthetic document SYN-ID-483759) holds 30.00% of Inversiones Farallones SAS. Person in control of the company: Martín Mirvanda Lismaren (synthetic document SYN-ID-483759), legal representative.",
+            "es": "Composición accionaria de Inversiones Farallones SAS (NIT sintético SYN-NIT-304138). Pablo Vosgrane Imrahel (documento sintético SYN-ID-127536) tiene el 70,00 % de Inversiones Farallones SAS. Martín Mirvanda Lismaren (documento sintético SYN-ID-483759) tiene el 30,00 % de Inversiones Farallones SAS. Persona que controla la sociedad: Martín Mirvanda Lismaren (documento sintético SYN-ID-483759), representante legal."
+          },
+          "fondos": {
+            "en": "Source-of-funds statement. The funds come from a commercial loan to the company in the Morvane Islands. Holder of the funds: Inversiones Farallones SAS.",
+            "es": "Declaración de origen de fondos. Los fondos vienen de un crédito comercial de la sociedad en las Islas Morvane. Titular de los fondos: Inversiones Farallones SAS."
+          },
+          "identidad": {
+            "en": "Certificate of incorporation and legal representation (synthetic). Company name: Inversiones Farallones SAS. Synthetic tax ID SYN-NIT-304138. Incorporated in 2006 in Kesvar Territory.",
+            "es": "Certificado de existencia y representación legal (sintético). Razón social: Inversiones Farallones SAS. NIT sintético SYN-NIT-304138. Constituida en 2006 en Territorio de Kesvar."
+          }
+        },
+        "evidencia": [
+          {
+            "en": "The name is 0.6814 similar to “Pablo Vosgrane Imrahel” (LV-01-011), on binding list LV-01.",
+            "es": "El nombre se parece 0,6814 a «Pablo Vosgrane Imrahel» (LV-01-011), de la lista vinculante LV-01."
+          },
+          {
+            "en": "Beneficial owner Pablo Vosgrane Imrahel (SYN-ID-127536) is 1.0 similar to “Pablo Vosgrane Imrahel” (LV-01-011), on binding list LV-01.",
+            "es": "El beneficiario final Pablo Vosgrane Imrahel (SYN-ID-127536) se parece 1,0 a «Pablo Vosgrane Imrahel» (LV-01-011), de la lista vinculante LV-01."
+          }
+        ],
+        "extraccion": {
+          "campos": {
+            "actividad": "SYN-ACT-01",
+            "documento": "SYN-NIT-304138",
+            "ingresos_mensuales": 3200,
+            "jurisdiccion_fondos": "SYN-J-06",
+            "nacimiento": 2006,
+            "nacionalidad": "SYN-J-08",
+            "nombre": "Inversiones Farallones SAS",
+            "titular_actividad": "SYN-NIT-304138",
+            "titular_fondos": "Inversiones Farallones SAS"
+          },
+          "campos_faltantes": [],
+          "estructura": {
+            "controla": {
+              "documento": "SYN-ID-483759",
+              "rol": "representante_legal"
+            },
+            "entidad": "SYN-NIT-304138",
+            "entidades": [
+              {
+                "nit": "SYN-NIT-304138",
+                "nombre": "Inversiones Farallones SAS"
+              }
+            ],
+            "participaciones": [
+              {
+                "participada": "SYN-NIT-304138",
+                "porcentaje": "70.00",
+                "titular": "SYN-ID-127536"
+              },
+              {
+                "participada": "SYN-NIT-304138",
+                "porcentaje": "30.00",
+                "titular": "SYN-ID-483759"
+              }
+            ],
+            "personas": [
+              {
+                "documento": "SYN-ID-127536",
+                "nombre": "Pablo Vosgrane Imrahel"
+              },
+              {
+                "documento": "SYN-ID-483759",
+                "nombre": "Martín Mirvanda Lismaren"
+              }
+            ]
+          },
+          "tipo_solicitante": "juridica"
+        },
+        "investigacion": null,
+        "motivo": {
+          "desde": "decision",
+          "en": "Edge 7 of decision: similitud_beneficiarios_max (1.0) at least umbral.U1 (0.85).",
+          "es": "Arista 7 de decision: similitud_beneficiarios_max (1,0) mayor o igual que umbral.U1 (0,85).",
+          "orden_arista": 7
+        },
+        "puntaje": {
+          "componentes": [
+            {
+              "factor": "actividad",
+              "nivel": "bajo",
+              "puntos": 0,
+              "regla": "RP-01",
+              "valor": "SYN-ACT-01"
+            },
+            {
+              "factor": "jurisdiccion",
+              "nivel": "alto",
+              "puntos": 30,
+              "regla": "RP-02",
+              "valor": "SYN-J-06"
+            },
+            {
+              "factor": "coherencia",
+              "nivel": "coherente",
+              "puntos": 0,
+              "regla": "RP-03",
+              "valor": "3200"
+            }
+          ],
+          "inconsistencias": [],
+          "reglas_propuesta": [
+            "RD-03"
+          ],
+          "total": 30
+        },
+        "senal": "similitud_beneficiarios_max",
+        "umbral": {
+          "aplicado": 0.85,
+          "declarado": "umbral.U1"
+        }
+      },
+      "respuesta_simulada": {
+        "decision": "aprobar",
+        "politica": "sigue_verdad_conocida"
+      },
+      "rol": "oficial"
+    }
+  ],
+  "puntaje": {
+    "componentes": [
+      {
+        "factor": "actividad",
+        "nivel": "bajo",
+        "puntos": 0,
+        "regla": "RP-01",
+        "valor": "SYN-ACT-01"
+      },
+      {
+        "factor": "jurisdiccion",
+        "nivel": "alto",
+        "puntos": 30,
+        "regla": "RP-02",
+        "valor": "SYN-J-06"
+      },
+      {
+        "factor": "coherencia",
+        "nivel": "coherente",
+        "puntos": 0,
+        "regla": "RP-03",
+        "valor": "3200"
+      }
+    ],
+    "inconsistencias": [],
+    "reglas_propuesta": [
+      "RD-03"
+    ],
+    "total": 30
+  },
+  "resultado": "completo",
+  "salida_final": {
+    "aviso_ia": {
+      "en": "This reply was prepared by an AI system in a simulation with synthetic data, and a person reviewed the case.",
+      "es": "Esta respuesta la preparó un sistema de IA en una simulación con datos sintéticos, y una persona revisó el caso."
+    },
+    "en": "Your onboarding application was approved. You can now use the product you requested.",
+    "es": "Su solicitud de vinculación fue aprobada. Ya puede usar el producto que pidió."
+  },
+  "senales": {
+    "beneficiarios": [
+      "SYN-ID-127536",
+      "SYN-ID-483759"
+    ],
+    "carga_detectada": false,
+    "conclusion_investigador": null,
+    "conclusiones_sin_cita": 0,
+    "decision_final": "aprobar",
+    "error_proveedor": null,
+    "extraccion_correcta": true,
+    "inconsistencias": 0,
+    "inyeccion_neutralizada": false,
+    "latencia_total_s": 0.009,
+    "nodos_visitados": [
+      "enrutador",
+      "agente_unico",
+      "beneficiarios",
+      "verificador_listas",
+      "puntaje",
+      "decision",
+      "pausa_humana",
+      "redactor",
+      "guardia_salida"
+    ],
+    "pausa_humana": true,
+    "propuesta": "aprobar",
+    "puntaje_riesgo": 30,
+    "similitud_beneficiarios_max": 1,
+    "similitud_max": 0.6814,
+    "tipo_solicitante": "juridica",
+    "tokens": 2060
+  },
+  "variante": "agente_unico"
+}

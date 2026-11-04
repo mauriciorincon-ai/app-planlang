@@ -4,15 +4,19 @@
  * (coincidencias, investigación, puntaje, expediente) y su extracción de tres documentos; el manifiesto cita las
  * listas y no un plan de beneficios. El lector las acepta y rechaza las de otras listas.
  * Demo en rojo (bitácora S3, fase 2): quitar `expediente` de una traza versionada → rojo nombrando la traza.
+ * S9 (plan B v1.2): la corrida simulada `simulado-b-002-20` trae la estructura que copió el extractor y lo que calculó
+ * el nodo `beneficiarios`; el lector anterior la rechazaba por esas claves (visto en rojo antes de ampliar el esquema).
  */
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
+  BeneficiariosDetalleSchema,
   CorridaSchema,
   ExtraccionBSchema,
   TrazaSchema,
 } from "../../core/formatos/traza";
+import { beneficiariosDe } from "../../core/sintetico/demo-b/beneficiarios";
 import {
   ErrorDeLectura,
   leerCorridaVerificada,
@@ -87,4 +91,35 @@ describe("trazas del demo B escritas por Python", () => {
     const vieja = TrazaSchema.parse(json("runs/demo-b/simulado-humo/trazas/BH-003.json"));
     expect(perfilCasoB(d, vieja, c, "es").documento?.aviso).toBeNull();
   });
+});
+
+describe("trazas del demo B con el plan v1.2 (S9)", () => {
+  const V12 = ["runs/demo-b/simulado-b-002-20", "runs/demo-b/simulado-b-002-20-base"];
+  const lote = json("data/casos/demo-b/planlang-b-002-20.json") as { casos: CasoB[] };
+
+  it.each(V12)(
+    "%s: cada sociedad trae su estructura y sus beneficiarios, y el gemelo TS da lo mismo que Python",
+    (ruta) => {
+      const dir = join(ruta, "trazas");
+      let sociedades = 0;
+      for (const f of readdirSync(dir).sort()) {
+        const t = TrazaSchema.parse(json(join(dir, f)));
+        const e = ExtraccionBSchema.parse(t.extraccion);
+        const c = lote.casos.find((x) => x.id === t.caso_id)!;
+        if (e.tipo_solicitante !== "juridica") {
+          expect(e.estructura, f).toBeNull();
+          expect(t.beneficiarios_detalle, f).toBeNull();
+          continue;
+        }
+        sociedades++;
+        const d = BeneficiariosDetalleSchema.parse(t.beneficiarios_detalle);
+        // Lo que Python calculó sobre lo extraído es lo que el gemelo TS calcula sobre lo mismo (regla 19).
+        const { coincidencias, ...calculo } = d;
+        expect(calculo, f).toEqual(beneficiariosDe(e.estructura!));
+        expect(coincidencias.map((x) => x.documento), f).toEqual(d.beneficiarios);
+        expect(t.senales["beneficiarios"], f).toEqual(c.verdad_conocida.beneficiarios);
+      }
+      expect(sociedades).toBe(8);
+    },
+  );
 });
