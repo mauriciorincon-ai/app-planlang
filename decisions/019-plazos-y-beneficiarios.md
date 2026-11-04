@@ -67,7 +67,9 @@ enmienda (`scripts/enmendar-plan-demo-{a,b}.ts`, con M1 dentro). `pnpm plan:apro
 - **Proveedor:** la suscripción por `ChatClaudeCode` (P6, ADR-002), fuera de CI y con los casos espaciados.
 - **Costo medido:** el humo real de 3 casos del 2026-11-03 (B-013, B-014 y B-002) costó en nominal US$ 0,0247, 0,0178
   y 0,0098 por caso. Las dos sociedades llevaron 4,5 y 4,8 mil tokens de entrada. La estructura no añade llamadas: añade
-  un documento y unos campos a la que ya había.
+  un documento y unos campos a la que ya había. El lote `suscripcion-planlang-b-002-20` (Sonnet, 2026-11-03, 20 de 20
+  sin error) hizo 23 llamadas: 20 del extractor y 3 del investigador. Costó US$ 0,2465 nominal. Su línea base hizo 20
+  llamadas por US$ 0,3803.
 - **Privacidad:** todo es sintético. NIT `SYN-NIT-`, documentos `SYN-ID-`, razones sociales de diccionario con el sufijo
   «SAS»; el validador de identificadores (E-11) los conoce.
 
