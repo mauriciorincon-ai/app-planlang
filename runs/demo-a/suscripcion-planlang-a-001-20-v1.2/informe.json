@@ -575,6 +575,7 @@
       "corrida_id": "suscripcion-planlang-a-001-20-v1.2-base",
       "huella": "c280b82a4c12874d8e43f9ccf39c72d506174a49c6f8bbe21a1827b8e68e3491"
     },
+    "llegadas": null,
     "plan": {
       "archivo": "plans/demo-a/v1.2.json",
       "huella": "9add6e5ad5515a03e9efb8c1c691e0c6b38d414622ae028dd5f7bb8b529592c2",
@@ -609,11 +610,11 @@
     },
     "verificador": {
       "formato": "planlang-informe/v1",
-      "version": "1.4.0"
+      "version": "1.5.0"
     }
   },
   "formato": "planlang-informe/v1",
-  "huella": "bf9efe35443ed5418a150869bc2d1273ea4a7a696bb1812786068c2d6bb800ba",
+  "huella": "e405e6b5cf1ec8a1b125aa8e6190850a66a6f81d69a1460feb90785609c0a85a",
   "plan_en_breve": {
     "decisiones_una_via": [
       {
@@ -801,6 +802,7 @@
       }
     ]
   },
+  "plazos": null,
   "resumen": {
     "criterios_destacados": [
       "C1",
@@ -1505,5 +1507,5 @@
     "bloqueantes": [],
     "valor": "cumple_con_alertas"
   },
-  "version_verificador": "1.4.0"
+  "version_verificador": "1.5.0"
 }

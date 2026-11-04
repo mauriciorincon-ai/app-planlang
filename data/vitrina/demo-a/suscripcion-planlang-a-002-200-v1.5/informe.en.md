@@ -1,12 +1,12 @@
 # Gap report — Medical prior authorizations (demo A)
 
-> **Simulation · not operational** · run `suscripcion-planlang-a-002-200-v1.5` · 2026-10-04 · plan 1.5.2
+> **Simulation · not operational** · run `suscripcion-planlang-a-002-200-v1.5` · 2026-10-04 · plan 1.6.0
 
 ## 1. Summary for the decision-maker
 
 **Verdict: ⚠ MEETS WITH WARNINGS**
 
-The plan was met with alerts. 200 synthetic cases were measured. Criteria: 10 met, 0 failed and 0 still open, out of 10. Risks that occurred: none. Human decisions were simulated.
+The plan was met with alerts. 200 synthetic cases were measured. Criteria: 11 met, 0 failed and 0 still open, out of 11. Risks that occurred: none. Human decisions were simulated.
 
 **Recommendation:** You may go on, carefully: this is already the full 200-case batch; before extending the agent, review S2, S3 and the unforeseen gaps.
 
@@ -61,12 +61,42 @@ The plan was met with alerts. 200 synthetic cases were measured. Criteria: 10 me
 | C8 | Every adverse decision carries a document with enumerated cause, rule, data used, plan version and appeal path, in ES and EN. | 31 | yes | yes | ✓ met | — |
 | C9 | The reviewing human sees the full case with evidence and counter-evidence. | 70 | yes | yes | ✓ met | — |
 | C10 | With Texas mode on, no denial, not even a partial one, without a human pause. | 200 | yes | yes | ✓ met | — |
+| C11 | Every inpatient request is decided within 72 hours and every outpatient request within 7 calendar days of arriving; emergencies do not wait (C4). | 177 | yes | yes | ✓ met | — |
 
 **Notes**
 
 - **C3** — 45 case(s) fall outside the population because the signal that defines it is null for them (the step that writes it did not run).
 - **C5** — The plan requires 3 runs only in batches of 20 cases (k_aplica_a: lote_demo_20); this batch has 200 cases and is measured in one run.
 - **C7** — The criterion is measured on the aggregate; the listed cases exceed the target one by one.
+
+### Deadlines: the simulated clock
+
+Each request arrives on one of the first 5 business days, at a time within the working day (08:00–17:00). A single auditor serves by class priority and, within it, in order of arrival, at 30 cases per business day. What the agent decides alone is decided on arrival; what pauses is decided when the auditor reaches it. The deadline runs on calendar time: the weekend counts.
+
+| Class | Deadline | Requests | Waited for the auditor | Past deadline | Median wait | Longest wait |
+| --- | --- | --- | --- | --- | --- | --- |
+| Inpatient | 72 hours | 54 | 30 | 0 | 18 min | 15 h 33 min |
+| Outpatient | 7 calendar days | 123 | 40 | 0 | 18 min | 16 h 0 min |
+
+70 requests went through the auditor: 14 per business day on average against a capacity of 30. The median wait is taken among those that waited.
+
+Auditor hours at the plan's human cost per case: 14 h.
+
+At 8 cases per day or more, every request is decided within its deadline; at 7, 14 go past their deadline. The range the plan lets you move in the playground is 10–60.
+
+No request went past its deadline at this capacity. Meeting the deadline in the simulation does not prove it would be met with other arrivals or another capacity: the playground lets you move it to see where it breaks.
+
+- 23 requests of the “emergency” class have no deadline in this simulation: they were decided on arrival and do not count toward the deadline.
+
+What this simulation assumes:
+
+- Arrivals are simulated: from the batch seed, each request arrives on a business day and at a time within the working day. They are not any member's real times.
+- A single auditor serves by priority (inpatient before outpatient) and, within each, in order of arrival. They work Monday to Friday within the working day, at the stated capacity. What the agent decides alone is decided on arrival; what pauses is decided when the queue reaches it.
+- The deadline runs on calendar time from the moment the request arrives, and the weekend counts even though the auditor does not work on it: a request that arrives on Friday afternoon spends the weekend out of its deadline.
+- The rule allows extending the deadline by up to 14 more calendar days in certain conditions. The simulation does not model extensions: an extended request would be measured as late.
+- The rule's deadlines bind the insurers it names (Medicare Advantage, Medicaid and CHIP). The demo's synthetic insurer is none of them: the rule is the reference for the deadline, not a requirement that reaches it.
+
+Source of the deadlines: CMS-0057-F, Advancing Interoperability and Improving Prior Authorization Processes (89 FR 8758, February 8, 2024; document 2024-00895), and 42 CFR 438.210(d): 72 hours for the expedited request and 7 calendar days for the standard one, from January 1, 2026. Read on 2026-11-03.
 
 ## 4. Foreseen risks
 
@@ -217,10 +247,11 @@ Cases where they differ: A-003, A-013, A-031, A-047, A-052, A-055, A-072, A-078,
 
 | Piece | What it is | SHA-256 fingerprint |
 | --- | --- | --- |
-| Plan | plan-demo-a 1.5.2 (`plans/demo-a/v1.5.2.json`) | `2dc1affac8e97d19d991fe9a89fc2f2c26d1ee7cad72be13ecfdd1ea90e4051d` |
+| Plan | plan-demo-a 1.6.0 (`plans/demo-a/v1.6.json`) | `b5d29ba673e89bfdeb03d39ef463f6e5b7ed3df4c54c20dd0a58bdf92a4d5dd4` |
 | Cases | planlang-a-002-200 · seed planlang-a-002 · n = 200 · generated with plan 1.5.0 | `5e76ef4cf562852c25aab2e041d55f17f809043450fe48e35c045cb419c8e62f` |
 | Run | suscripcion-planlang-a-002-200-v1.5 · 2026-10-04 · suscripcion/sonnet · multi-agent · run with plan 1.5.0 (same truth: same thresholds and graph contract, ADR-005) | `fdbffe765fc0e8309284bbc5c606dc67bc80b61b53cbf8a3772b3447eb8d71a0` |
 | Graph | exported graph version | `056407bf4c1238ca0448c11575ea9228d050596d02162cd0613f8c5090cc9117` |
+| Arrivals | simulated arrival times for the batch, with its seed (`data/casos/demo-a/planlang-a-002-200.llegadas.json`) | `288e8db6457909f303b1e732e98b9f3e69bb60c4aec8c52aef75ba6230f050e8` |
 | Baseline | suscripcion-planlang-a-002-200-v1.5-base | `1ab219ded7ae9d1ce14f4d7ff0e699b517926564afda1ac73c74301ea6cff5f7` |
 
 Sessions: 10 · cases run: 200 · with a provider error: 0 · usage limits reached: 0.
@@ -229,4 +260,4 @@ Applied thresholds: U1 = 0.75 · U2 = 1000 · U3 = 2 · U4 = false · in the pla
 
 Human review: In batches, the simulated reviewer follows the case's known truth (DA-04); the showcase discloses it.
 
-Verifier 1.4.0 · planlang-informe/v1 · fingerprint of this report: `bd4a99509f96feea091922741f8162b0fbbb466c90fedb69013f60494174e455`
+Verifier 1.5.0 · planlang-informe/v1 · fingerprint of this report: `7dd7033d8eb96f071467c3732aa5169fc3f0de9d2f1606a1905e53df750c9d27`

@@ -47,7 +47,7 @@ describe("comparación de dos corridas", () => {
     const cmp = await compararCorridas(
       entradaDesdeDisco(A, {
         base: `${A}-base`,
-        plan: "plans/demo-a/v1.5.2.json",
+        plan: "plans/demo-a/v1.6.json",
       }),
     );
     expect(jsonBonito(cmp as never)).toBe(
