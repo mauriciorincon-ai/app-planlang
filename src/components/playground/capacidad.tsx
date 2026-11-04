@@ -161,7 +161,56 @@ export function CapacidadDelAuditor({
           {r.en_cola === 0 ? (
             <p className="text-chico text-tinta-2">{PLAZOS.sinCola[i]}</p>
           ) : null}
-          <div className="overflow-x-auto">
+          {/* En el teléfono, una tarjeta por clase (como las tablas de la Brecha): seis columnas no caben en 380 px. */}
+          <div className="grid gap-2 escritorio:hidden" data-vista="tarjetas">
+            {r.clases.map((k) => {
+              const c = clase.get(k.clase)!;
+              return (
+                <dl
+                  key={k.clase}
+                  data-clase={k.clase}
+                  className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 gap-y-0.5 rounded-control border border-linea p-3 text-chico"
+                >
+                  <dt className="col-span-2 font-semibold">{c.nombre}</dt>
+                  <dt className="text-tinta-2">{PLAZOS.cabecera[1]![i]}</dt>
+                  <dd>{c.plazo}</dd>
+                  <dt className="text-tinta-2">{PLAZOS.cabecera[2]![i]}</dt>
+                  <dd className="tabular-nums">
+                    {fmt(k.en_cola)} / {fmt(k.n)}
+                  </dd>
+                  <dt className="text-tinta-2">{PLAZOS.cabecera[3]![i]}</dt>
+                  <dd
+                    className="tabular-nums"
+                    data-v={k.tardias === 0 ? "cumple" : "no-cumple"}
+                  >
+                    <span className="inline-flex items-center gap-1.5">
+                      <Marca
+                        tipo={k.tardias === 0 ? "cumple" : "no-cumple"}
+                        tam={13}
+                        className="text-v"
+                      />
+                      {fmt(k.tardias)} ·{" "}
+                      {(k.tardias === 0 ? PLAZOS.enPlazo : PLAZOS.fuera)[i]}
+                    </span>
+                  </dd>
+                  <dt className="text-tinta-2">{PLAZOS.cabecera[4]![i]}</dt>
+                  <dd className="tabular-nums">
+                    {PLAZOS.duracion(k.espera_mediana_min)[i]}
+                  </dd>
+                  <dt className="text-tinta-2">{PLAZOS.cabecera[5]![i]}</dt>
+                  <dd className="tabular-nums">
+                    {PLAZOS.duracion(k.espera_max_min)[i]}
+                  </dd>
+                </dl>
+              );
+            })}
+          </div>
+          <div
+            className="hidden overflow-x-auto escritorio:block"
+            role="region"
+            tabIndex={0}
+            aria-label={PLAZOS.tablaEtiqueta[i]}
+          >
             <table className="w-full min-w-[34rem] border-collapse text-chico">
               <caption className="sr-only">{PLAZOS.titulo[i]}</caption>
               <thead>
@@ -206,7 +255,7 @@ export function CapacidadDelAuditor({
                             tam={13}
                             className="text-v"
                           />
-                          {fmt(k.tardias)}{" "}
+                          {fmt(k.tardias)} ·{" "}
                           <span className="text-tinta-2">
                             {
                               (k.tardias === 0 ? PLAZOS.enPlazo : PLAZOS.fuera)[

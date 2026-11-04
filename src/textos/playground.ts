@@ -391,6 +391,7 @@ export const JUEGO = {
 export const PLAZOS = {
   titulo: tb("La capacidad del auditor", "The auditor’s capacity"),
   nombre: tb("Capacidad del auditor", "Auditor capacity"),
+  tablaEtiqueta: tb("Plazos por clase", "Deadlines by class"),
   chip: tb("simulado · llegadas del lote", "simulated · the batch’s arrivals"),
   descripcion: tb(
     "Cuántas solicitudes atiende el auditor en un día hábil. Con menos, las que pausan esperan más y algunas pueden salir de su plazo legal.",
@@ -452,8 +453,9 @@ export const PLAZOS = {
     tb("Espera mediana", "Median wait"),
     tb("Espera máxima", "Longest wait"),
   ] as readonly TextoBilingue[],
-  enPlazo: tb("en plazo", "on time"),
-  fuera: tb("fuera de plazo", "past deadline"),
+  // El estado de la clase junto a su cuenta de «fuera de plazo»: «0 · cumple», «3 · no cumple».
+  enPlazo: tb("cumple", "met"),
+  fuera: tb("no cumple", "not met"),
   tardia: ((p: { id: string; espera: string; plazo: string }) =>
     tb(
       `${p.id}: ${p.espera} de espera, con ${p.plazo} de plazo`,

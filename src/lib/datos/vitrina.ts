@@ -18,7 +18,8 @@ import {
 import { sha256Hex, verificarHuella } from "@core/formatos/huella";
 import type { JsonValor } from "@core/formatos/jcs";
 import { PlanSchema, type Plan } from "@core/plan/esquema";
-import { CapaDeLlegadasSchema, type CapaDeLlegadas } from "@core/plazos";
+import { CapaDeLlegadasSchema } from "@core/plazos/esquema";
+import type { CapaDeLlegadas } from "@core/plazos/tipos";
 import {
   ListasSchema,
   LoteBSchema,

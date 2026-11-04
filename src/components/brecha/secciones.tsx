@@ -350,7 +350,12 @@ function PlazosDeBrecha({
       ))}
       <BloqueExperto rotulo={p.rotuloExperto} className="mt-3">
         <p className="mb-2 text-dato text-tinta-2">{l.intro}</p>
-        <div className="overflow-x-auto">
+        <div
+          className="overflow-x-auto"
+          role="region"
+          tabIndex={0}
+          aria-label={p.titulo}
+        >
           <table className="w-full min-w-[34rem] border-collapse text-chico">
             <caption className="sr-only">{p.titulo}</caption>
             <thead>
