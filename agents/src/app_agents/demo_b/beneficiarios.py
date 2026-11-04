@@ -25,7 +25,10 @@ from collections.abc import Mapping, Sequence
 from fractions import Fraction
 from typing import Any
 
-PORCENTAJE_TEXTO = re.compile(r"^(100(\.0{1,2})?|\d{1,2}(\.\d{1,2})?)$")
+# Igual que la regex del gemelo TS (`core/sintetico/demo-b/beneficiarios.ts`): el texto entero y solo dígitos
+# ASCII. En Python `$` calza también antes de un salto de línea final y `\d` lee dígitos de cualquier
+# alfabeto; en JavaScript ninguna de las dos cosas pasa. El gate de contrato lo fija (auditoría S9, M1).
+PORCENTAJE_TEXTO = re.compile(r"(100(\.0{1,2})?|\d{1,2}(\.\d{1,2})?)", re.ASCII)
 UMBRAL = Fraction(25, 100)
 CIEN_POR_CIENTO = 10000
 
@@ -56,7 +59,7 @@ REGLAS_BENEFICIARIOS: dict[str, dict[str, str]] = {
 
 def centesimas(texto: Any) -> int | None:
     """«33.33» → 3333; `None` si no es un porcentaje con dos decimales a lo sumo."""
-    if not isinstance(texto, str) or not PORCENTAJE_TEXTO.match(texto):
+    if not isinstance(texto, str) or not PORCENTAJE_TEXTO.fullmatch(texto):
         return None
     entero, _, dec = texto.partition(".")
     return int(entero) * 100 + int(dec.ljust(2, "0"))

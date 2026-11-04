@@ -658,6 +658,45 @@
       }
     },
     {
+      "nombre": "porcentaje-con-salto-de-linea",
+      "resultado": {
+        "beneficiarios": null,
+        "controla": "SYN-ID-000001",
+        "participaciones": [],
+        "por_participacion": [],
+        "problemas": [
+          "porcentaje_invalido:SYN-ID-000001>SYN-NIT-100000"
+        ],
+        "valida": false
+      }
+    },
+    {
+      "nombre": "porcentaje-con-digitos-no-ascii",
+      "resultado": {
+        "beneficiarios": null,
+        "controla": "SYN-ID-000001",
+        "participaciones": [],
+        "por_participacion": [],
+        "problemas": [
+          "porcentaje_invalido:SYN-ID-000001>SYN-NIT-100000"
+        ],
+        "valida": false
+      }
+    },
+    {
+      "nombre": "porcentaje-con-espacio",
+      "resultado": {
+        "beneficiarios": null,
+        "controla": "SYN-ID-000001",
+        "participaciones": [],
+        "por_participacion": [],
+        "problemas": [
+          "porcentaje_invalido:SYN-ID-000001>SYN-NIT-100000"
+        ],
+        "valida": false
+      }
+    },
+    {
       "nombre": "referencias-rotas",
       "resultado": {
         "beneficiarios": null,

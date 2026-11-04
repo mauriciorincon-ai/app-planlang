@@ -1157,6 +1157,144 @@
     {
       "estructura": {
         "controla": {
+          "documento": "SYN-ID-000001",
+          "rol": "gerente_general"
+        },
+        "entidad": "SYN-NIT-100000",
+        "entidades": [
+          {
+            "nit": "SYN-NIT-100000",
+            "nombre": "Sociedad SYN-NIT-100000"
+          },
+          {
+            "nit": "SYN-NIT-200000",
+            "nombre": "Sociedad SYN-NIT-200000"
+          },
+          {
+            "nit": "SYN-NIT-300000",
+            "nombre": "Sociedad SYN-NIT-300000"
+          }
+        ],
+        "participaciones": [
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "25.00\n",
+            "titular": "SYN-ID-000001"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "75.00",
+            "titular": "SYN-ID-000002"
+          }
+        ],
+        "personas": [
+          {
+            "documento": "SYN-ID-000001",
+            "nombre": "Persona 1"
+          },
+          {
+            "documento": "SYN-ID-000002",
+            "nombre": "Persona 2"
+          }
+        ]
+      },
+      "nombre": "porcentaje-con-salto-de-linea"
+    },
+    {
+      "estructura": {
+        "controla": {
+          "documento": "SYN-ID-000001",
+          "rol": "gerente_general"
+        },
+        "entidad": "SYN-NIT-100000",
+        "entidades": [
+          {
+            "nit": "SYN-NIT-100000",
+            "nombre": "Sociedad SYN-NIT-100000"
+          },
+          {
+            "nit": "SYN-NIT-200000",
+            "nombre": "Sociedad SYN-NIT-200000"
+          },
+          {
+            "nit": "SYN-NIT-300000",
+            "nombre": "Sociedad SYN-NIT-300000"
+          }
+        ],
+        "participaciones": [
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "٢٥.٠٠",
+            "titular": "SYN-ID-000001"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "75.00",
+            "titular": "SYN-ID-000002"
+          }
+        ],
+        "personas": [
+          {
+            "documento": "SYN-ID-000001",
+            "nombre": "Persona 1"
+          },
+          {
+            "documento": "SYN-ID-000002",
+            "nombre": "Persona 2"
+          }
+        ]
+      },
+      "nombre": "porcentaje-con-digitos-no-ascii"
+    },
+    {
+      "estructura": {
+        "controla": {
+          "documento": "SYN-ID-000001",
+          "rol": "gerente_general"
+        },
+        "entidad": "SYN-NIT-100000",
+        "entidades": [
+          {
+            "nit": "SYN-NIT-100000",
+            "nombre": "Sociedad SYN-NIT-100000"
+          },
+          {
+            "nit": "SYN-NIT-200000",
+            "nombre": "Sociedad SYN-NIT-200000"
+          },
+          {
+            "nit": "SYN-NIT-300000",
+            "nombre": "Sociedad SYN-NIT-300000"
+          }
+        ],
+        "participaciones": [
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": " 25.00",
+            "titular": "SYN-ID-000001"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "75.00",
+            "titular": "SYN-ID-000002"
+          }
+        ],
+        "personas": [
+          {
+            "documento": "SYN-ID-000001",
+            "nombre": "Persona 1"
+          },
+          {
+            "documento": "SYN-ID-000002",
+            "nombre": "Persona 2"
+          }
+        ]
+      },
+      "nombre": "porcentaje-con-espacio"
+    },
+    {
+      "estructura": {
+        "controla": {
           "documento": "SYN-ID-000008",
           "rol": "gerente_general"
         },

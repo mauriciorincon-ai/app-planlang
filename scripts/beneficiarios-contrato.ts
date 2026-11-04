@@ -197,6 +197,24 @@ export const CASOS_A_MANO: readonly CasoDelContrato[] = [
       1,
     ),
   },
+  // Un texto hostil por caso: en uno solo, el primero inválido invalidaría la estructura en los dos lados y el gate no
+  // vería que uno de ellos acepta los otros (auditoría S9, M1: `$` de Python calza antes de un salto final y su `\d`
+  // lee dígitos de cualquier alfabeto; las regex de TS no).
+  ...[
+    ["porcentaje-con-salto-de-linea", "25.00\n"],
+    ["porcentaje-con-digitos-no-ascii", "٢٥.٠٠"],
+    ["porcentaje-con-espacio", " 25.00"],
+  ].map(([nombre, texto]): CasoDelContrato => ({
+    nombre: nombre!,
+    estructura: a_mano(
+      [
+        [P(1), S, texto!],
+        [P(2), S, "75.00"],
+      ],
+      2,
+      1,
+    ),
+  })),
   {
     nombre: "referencias-rotas",
     estructura: a_mano(
