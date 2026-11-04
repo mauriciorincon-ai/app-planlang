@@ -1964,7 +1964,8 @@ export const PLAN_POR_NODO: Record<
     decisiones: ["D2", "D3"],
     riesgos: ["R1", "R9", "R10"],
     supuestos: [],
-    criterios: ["C1", "C3", "C9", "C10"],
+    // C11 (plan v1.6): el plazo legal se gana o se pierde en la espera por el auditor, que es esta pausa.
+    criterios: ["C1", "C3", "C9", "C10", "C11"],
     umbrales: ["U1", "U2", "U3", "U4"],
   },
   redactor: {

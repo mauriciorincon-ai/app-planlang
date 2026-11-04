@@ -244,7 +244,7 @@ describe("lo que dicen las fichas sale de los datos", () => {
     );
     expect(valor("coincidencias_sin_persona")).toBe(0);
     expect(valor("rechazos_sin_persona")).toBe(0);
-    expect(valor("costo_por_caso")).toBe(0.015);
+    expect(valor("costo_por_caso")).toBe(0.012);
     expect(valor("latencia_mediana")).toBeUndefined();
     const nodos = b.plan.contrato_de_grafo.nodos_esperados.map((n) => n.id);
     expect(f.bloques.map((x) => x.orden)).toEqual(nodos.map((_, k) => k + 1));
@@ -271,7 +271,7 @@ describe("lo que dicen las fichas sale de los datos", () => {
       a.ficha_reproducibilidad.corrida.casos_ejecutados +
         b.ficha_reproducibilidad.corrida.casos_ejecutados,
     );
-    expect(m("costo_de_una_corrida").valor).toBe(5.2136);
+    expect(m("costo_de_una_corrida").valor).toBe(5.1671);
     for (const k of [
       "criterios_cumplidos",
       "casos_sinteticos",
@@ -279,7 +279,7 @@ describe("lo que dicen las fichas sale de los datos", () => {
     ])
       expect(m(k).detalle, k).toMatch(/Demo A: .+ Demo B: /);
     expect(m("costo_de_una_corrida").detalle).toContain(
-      "Demo A: US$ 4,9206 por 200 casos. Demo B: US$ 0,293 por 20 casos.",
+      "Demo A: US$ 4,9206 por 200 casos. Demo B: US$ 0,2465 por 20 casos.",
     );
   });
 

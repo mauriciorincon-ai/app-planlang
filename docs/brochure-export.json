@@ -212,16 +212,16 @@
   "metricas": [
     {
       "clave": "criterios_cumplidos",
-      "etiqueta": "criterios cumplidos en los planes de 2 demos, de 16",
-      "valor": 16,
+      "etiqueta": "criterios cumplidos en los planes de 2 demos, de 18",
+      "valor": 17,
       "unidad": "criterios",
       "fuente": "medido",
-      "detalle": "Demo A: 10 de 10, en el informe del verificador 1.4.0 sobre la corrida suscripcion-planlang-a-002-200-v1.5. Demo B: 6 de 6, en el informe del verificador 1.4.0 sobre la corrida suscripcion-planlang-b-001-20."
+      "detalle": "Demo A: 11 de 11, en el informe del verificador 1.5.0 sobre la corrida suscripcion-planlang-a-002-200-v1.5. Demo B: 6 de 7, en el informe del verificador 1.5.0 sobre la corrida suscripcion-planlang-b-002-20."
     },
     {
       "clave": "decisiones_cruzadas",
       "etiqueta": "decisiones rehechas en otro lenguaje, con 0 diferencias",
-      "valor": 1204,
+      "valor": 1244,
       "unidad": "decisiones",
       "fuente": "medido",
       "detalle": "Prueba cruzada RF-09.2 sobre 4 corridas de 2 demos: el intérprete de aristas de TypeScript rehace cada decisión que registró Python."
@@ -232,7 +232,7 @@
       "valor": 220,
       "unidad": "casos",
       "fuente": "medido",
-      "detalle": "Demo A: 200 casos en la corrida suscripcion-planlang-a-002-200-v1.5 y la línea base de agente único. Demo B: 20 casos en la corrida suscripcion-planlang-b-001-20 y la línea base de agente único."
+      "detalle": "Demo A: 200 casos en la corrida suscripcion-planlang-a-002-200-v1.5 y la línea base de agente único. Demo B: 20 casos en la corrida suscripcion-planlang-b-002-20 y la línea base de agente único."
     },
     {
       "clave": "llamadas_a_modelos_en_la_vitrina",
@@ -245,10 +245,10 @@
     {
       "clave": "costo_de_una_corrida",
       "etiqueta": "costo nominal de correr una vez cada demo (220 casos)",
-      "valor": 5.2136,
+      "valor": 5.1671,
       "unidad": "US$",
       "fuente": "calculada",
-      "detalle": "Demo A: US$ 4,9206 por 200 casos. Demo B: US$ 0,293 por 20 casos. Suma del costo nominal que el CLI declara por llamada, en las trazas de cada corrida; por la suscripción no se pagó aparte."
+      "detalle": "Demo A: US$ 4,9206 por 200 casos. Demo B: US$ 0,2465 por 20 casos. Suma del costo nominal que el CLI declara por llamada, en las trazas de cada corrida; por la suscripción no se pagó aparte."
     },
     {
       "clave": "funcionalidades",

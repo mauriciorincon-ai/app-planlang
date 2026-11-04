@@ -164,6 +164,10 @@ export const REPRO = {
       "regenera los casos desde la semilla; la huella debe coincidir",
       "regenerates the cases from the seed; the fingerprint must match",
     ),
+    llegadas: tb(
+      "rehace las horas de llegada simuladas del lote y las compara con las publicadas (el reloj de los plazos)",
+      "rebuilds the batch's simulated arrival times and compares them with the published ones (the deadlines' clock)",
+    ),
     lote: tb(
       "corre el lote en la máquina del autor, fuera de CI, con su suscripción",
       "runs the batch on the author's machine, outside CI, with their subscription",

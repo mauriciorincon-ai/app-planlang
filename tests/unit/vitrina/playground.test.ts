@@ -72,7 +72,7 @@ describe("el playground en una mirada", () => {
       "U4 es la función nombrada texas_y_no_aprobar(modo_texas, propuesta)",
     );
     expect(ficha(es, "Carga humana")).toContain(
-      "costo_humano_por_caso_min = 12 en los 4 umbrales del plan v1.5",
+      "costo_humano_por_caso_min = 12 en los 4 umbrales del plan v1.6",
     );
     expect(ficha(en, "Cross-check")).toContain(`0 differences in ${total}`);
   });

@@ -165,9 +165,34 @@ describe("regla 5-a: la forma no depende del perfil", () => {
 });
 
 describe("el documento de rechazo del B sin aviso de IA (regla dura 12, AU-S3-07)", () => {
-  it("B-005, B-006 y B-014 dicen la falla con su marca, en los dos idiomas; un documento del A con aviso no la dice", async () => {
-    const b = await datosDemo("demo-b");
-    for (const id of ["B-005", "B-006", "B-014"])
+  it("un documento de rechazo sin aviso dice la falla con su marca, en los dos idiomas; el que lo trae (y el del A) no la dice", async () => {
+    const real = await datosDemo("demo-b");
+    // La corrida publicada (S9) escribe el aviso en todo documento; el caso de la falla se arma quitándolo de B-005, como lo
+    // hacían las corridas del S3 anteriores a la fase 4.
+    const b = {
+      ...real,
+      corrida: {
+        ...real.corrida,
+        trazas: real.corrida.trazas.map((t) => {
+          if (t.caso_id !== "B-005") return t;
+          const { aviso_ia: _quitado, ...resto } =
+            t.documento_adverso as Record<string, unknown>;
+          void _quitado;
+          return { ...t, documento_adverso: resto } as typeof t;
+        }),
+      },
+    };
+    for (const idioma of ["es", "en"] as const) {
+      const { container, unmount } = render(
+        <Caso v={vistaCaso(real, "B-005", idioma)} idioma={idioma} />,
+      );
+      expect(
+        container.querySelector('[data-falla="aviso-ia"]'),
+        idioma,
+      ).toBeNull();
+      unmount();
+    }
+    for (const id of ["B-005"])
       for (const [idioma, chip, frase] of [
         ["es", "Sin aviso de IA", "Este documento no trae su aviso de IA"],
         ["en", "No AI notice", "This document carries no AI notice"],
@@ -193,8 +218,16 @@ describe("el documento de rechazo del B sin aviso de IA (regla dura 12, AU-S3-07
 describe("el aviso del A que promete de más (F22)", () => {
   it("donde la corrida dice «ninguna negación sin una persona» y tuvo aprobaciones en parte sin persona, lo dice al lado, en los dos idiomas", () => {
     for (const [idioma, chip, frase] of [
-      ["es", "Aviso inexacto", "9 aprobaciones en parte de esta corrida salieron sin una persona"],
-      ["en", "Inaccurate notice", "9 partial approvals in this run went out without a person"],
+      [
+        "es",
+        "Aviso inexacto",
+        "9 aprobaciones en parte de esta corrida salieron sin una persona",
+      ],
+      [
+        "en",
+        "Inaccurate notice",
+        "9 partial approvals in this run went out without a person",
+      ],
     ] as const) {
       // A-001 se aprueba: solo su respuesta lleva aviso. A-017 se niega con una persona: respuesta y documento.
       for (const [id, n] of [

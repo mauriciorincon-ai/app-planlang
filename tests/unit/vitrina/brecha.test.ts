@@ -37,7 +37,7 @@ describe("el veredicto y el balance", () => {
     expect(es.veredicto.lider).toContain("(S2)");
     expect(es.veredicto.lider).toContain("(S3)");
     // Verificador 1.3.0: C5 se mide en una corrida en el lote de 200 (k_aplica_a: lote_demo_20) y cumple.
-    expect(es.veredicto.lider).toMatch(/^Se cumplieron los 10 criterios/);
+    expect(es.veredicto.lider).toMatch(/^Se cumplieron los 11 criterios/);
     expect(es.veredicto.lider).not.toMatch(/incomplet/);
     expect(en.veredicto.lider).not.toMatch(/incomplete/);
     const total = d.informe.contrato_de_grafo.rf_09_2.reduce(

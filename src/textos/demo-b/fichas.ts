@@ -126,6 +126,13 @@ export const AGENTE_B = {
         "Turns the three documents into fields, with the catalog codes.",
       ),
     },
+    beneficiarios: {
+      nombre: tb("Cálculo de los dueños", "Ownership calculation"),
+      linea: tb(
+        "Calcula con aritmética exacta los dueños finales de una sociedad y los cruza con las listas, sin modelo.",
+        "Works out a company's beneficial owners with exact arithmetic and checks them against the lists, no model.",
+      ),
+    },
     verificador_listas: {
       nombre: tb("Verificador de listas", "List checker"),
       linea: tb(
@@ -257,6 +264,23 @@ export const AGENTE_B = {
         texto: tb("Extrae los campos", "Extracts the fields"),
       },
       {
+        id: "sociedad",
+        tipo: "decision",
+        carril: "agente",
+        nodo: "extractor",
+        texto: tb("¿Es una sociedad?", "Is it a company?"),
+      },
+      {
+        id: "duenos",
+        tipo: "tarea",
+        carril: "agente",
+        nodo: "beneficiarios",
+        texto: tb(
+          "Calcula sus dueños finales",
+          "Works out its beneficial owners",
+        ),
+      },
+      {
         id: "cruza",
         tipo: "tarea",
         carril: "agente",
@@ -356,7 +380,10 @@ export const AGENTE_B = {
       { de: "inicio", a: "entrega" },
       { de: "entrega", a: "marca" },
       { de: "marca", a: "extrae" },
-      { de: "extrae", a: "cruza" },
+      { de: "extrae", a: "sociedad" },
+      { de: "sociedad", a: "duenos", etiqueta: tb("sí", "yes") },
+      { de: "sociedad", a: "cruza", etiqueta: tb("no", "no") },
+      { de: "duenos", a: "cruza" },
       { de: "cruza", a: "gris" },
       { de: "gris", a: "investiga", etiqueta: tb("sí", "yes") },
       { de: "gris", a: "puntua", etiqueta: tb("no", "no") },
@@ -375,6 +402,13 @@ export const AGENTE_B = {
         texto: tb(
           "Ningún rechazo ni coincidencia en listas sale sin el oficial; en esta demo, el oficial se simuló en lote.",
           "No rejection and no list match goes out without the officer; in this demo, the officer was simulated in batch.",
+        ),
+      },
+      {
+        paso: "duenos",
+        texto: tb(
+          "Una estructura que no cierra no se adivina: no hay dueños y decide una persona.",
+          "A structure that does not add up is not guessed: there are no owners and a person decides.",
         ),
       },
       {

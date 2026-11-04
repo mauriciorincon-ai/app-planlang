@@ -1178,7 +1178,15 @@ export const SUPUESTOS = {
           `The test asked whether the model’s confidence separates hits from errors. Over ${n} measured cases it does: threshold U1 has measured backing.`,
         )) as Plantilla<number>,
     },
-    "demo-b": DIO_SUPUESTO_B,
+    "demo-b": {
+      ...DIO_SUPUESTO_B,
+      // S9 (plan B v1.2, lote de 20 con sociedades): el multiagente acertó igual que la línea base.
+      "S2:confirmado": ((p: ComparacionS3) =>
+        tb(
+          `El plan suponía que el extractor y el investigador, por separado, no rendirían peor que un solo agente. ${comparacionS3(p).es}: confirmado.`,
+          `The plan assumed that the extractor and the investigator, kept apart, would do no worse than a single agent. ${comparacionS3(p).en}: confirmed.`,
+        )) as Plantilla<ComparacionS3>,
+    },
   } as Record<IdDemo, Record<string, (p: never) => TextoBilingue>>,
   /** La nota de la cifra de un supuesto de tasa cuando el plan no la ata a un tope (el B). */
   aciertosNota: tb(

@@ -50,7 +50,7 @@ describe("P1 Entrada con la corrida real (plan v1.5, corrida de 200)", () => {
       ["D", 6],
       ["R", 10],
       ["S", 3],
-      ["C", 10],
+      ["C", 11],
       ["U", 4],
     ]);
     expect(v.plan.partes.find((p) => p.codigo === "C")?.fraccion).toBe(1);
@@ -74,25 +74,16 @@ describe("P1 Entrada con la corrida real (plan v1.5, corrida de 200)", () => {
     );
   });
 
-  it("Medí la brecha: 10 de 10 criterios (C5 medido en una corrida, verificador 1.3.0) y lo que falló, nombrado", () => {
+  it("Medí la brecha: 11 de 11 criterios (C5 medido en una corrida, verificador 1.3.0) y lo que falló, nombrado", () => {
     const v = vistaEntrada(datos, "es");
-    expect(v.brecha.cuadros).toHaveLength(10);
+    expect(v.brecha.cuadros).toHaveLength(11);
     expect(v.brecha.cuadros.map((c) => c.estado)).toEqual([
-      "cumple",
-      "cumple",
-      "cumple",
-      "cumple",
-      "cumple",
-      "cumple",
-      "cumple",
-      "cumple",
-      "cumple",
-      "cumple",
+      ...Array<string>(11).fill("cumple"),
     ]);
     expect(v.brecha.leyenda.criteriosCumplen).toBe(
-      `10${D}de${D}10 criterios cumplen`,
+      `11${D}de${D}11 criterios cumplen`,
     );
-    expect(v.brecha.etiquetaCuadros).toBe("10 criterios: 10 cumplen");
+    expect(v.brecha.etiquetaCuadros).toBe("11 criterios: 11 cumplen");
     expect(v.brecha.fallas).toEqual([
       { tipo: "fallo", texto: "Falló S2: dos aclaraciones bastan" },
       {
@@ -112,7 +103,7 @@ describe("P1 Entrada con la corrida real (plan v1.5, corrida de 200)", () => {
       "S3 failed: several agents, slower than one",
       `The unforeseen failed: 3${D}failures only an evaluator saw`,
     ]);
-    expect(en.brecha.etiquetaCuadros).toBe("10 criteria: 10 met");
+    expect(en.brecha.etiquetaCuadros).toBe("11 criteria: 11 met");
   });
 
   it("capacidad, veredicto, corrida y el bloque del experto", () => {
@@ -124,13 +115,13 @@ describe("P1 Entrada con la corrida real (plan v1.5, corrida de 200)", () => {
     const rf = datos.informe.contrato_de_grafo.rf_09_2;
     const total = rf.reduce((a, r) => a + r.visitas, 0);
     expect(v.capacidad.cruzada.cifra).toBe(`${total} · 0`);
-    expect(v.capacidad.balance.cifra).toBe(`10${D}de${D}10 · 0${D}de${D}10`);
+    expect(v.capacidad.balance.cifra).toBe(`11${D}de${D}11 · 0${D}de${D}10`);
     expect(v.veredicto).toEqual({
       valor: "cumple_con_alertas",
-      detalle: `10${D}de${D}10 criterios · 0${D}de${D}10 riesgos · 3${D}fallas`,
+      detalle: `11${D}de${D}11 criterios · 0${D}de${D}10 riesgos · 3${D}fallas`,
     });
     expect(v.corrida).toEqual({
-      texto: `plan v1.5 · 200 casos${D}×${D}1 + línea base · 2026-10-04`,
+      texto: `plan v1.6 · corrida con v1.5 · 200 casos${D}×${D}1 + línea base · 2026-10-04`,
       chip: "real · sprint 3",
     });
     expect(v.experto.cruzada).toContain(
@@ -161,13 +152,13 @@ describe("P1 Entrada con otra suerte (variantes)", () => {
     // C5, R1, S2, S3 y lo no previsto.
     expect(v.fallasALaVista.n).toBe(5);
     expect(v.brecha.etiquetaCuadros).toBe(
-      "10 criterios: 8 cumplen, 1 no cumplen (C5)",
+      "11 criterios: 9 cumplen, 1 no cumplen (C5)",
     );
     const en = vistaEntrada(d, "en");
     expect(en.brecha.fallas[0].texto).toMatch(/^C5 failed: /);
     expect(en.brecha.fallas[1].texto).toMatch(/^R1 occurred: /);
     expect(en.brecha.etiquetaCuadros).toBe(
-      "10 criteria: 8 met, 1 not met (C5)",
+      "11 criteria: 9 met, 1 not met (C5)",
     );
   });
 
@@ -181,7 +172,7 @@ describe("P1 Entrada con otra suerte (variantes)", () => {
     expect(v.fallasALaVista).toEqual({ n: 0, texto: "Ninguna falla" });
     expect(vistaEntrada(d, "en").fallasALaVista.texto).toBe("No failures");
     expect(v.veredicto.detalle).toBe(
-      `10${D}de${D}10 criterios · 0${D}de${D}10 riesgos`,
+      `11${D}de${D}11 criterios · 0${D}de${D}10 riesgos`,
     );
     expect(v.brecha.fallas).toEqual([]);
   });
@@ -196,7 +187,7 @@ describe("P1 Entrada con otra suerte (variantes)", () => {
     const v = vistaEntrada(d, "es");
     expect(v.fallasALaVista).toEqual({ n: 0, texto: "Ninguna falla" });
     expect(v.veredicto.detalle).toBe(
-      `9${D}de${D}10 criterios · 0${D}de${D}10 riesgos · 1${D}criterio incompleto`,
+      `10${D}de${D}11 criterios · 0${D}de${D}10 riesgos · 1${D}criterio incompleto`,
     );
     expect(v.brecha.fallas.map((f) => f.tipo)).toEqual(["sin-probar"]);
   });

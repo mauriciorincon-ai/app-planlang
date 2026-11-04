@@ -43,12 +43,12 @@ describe("las cifras se cuentan en el plan y el informe", () => {
           "#p-sup",
         ],
         // Verificador 1.3.0: C5 pide k = 3 solo en lotes de 20; en el de 200 se mide en una corrida y cumple.
-        ["10", "criterios", "10 cumplieron en la corrida", "#p-crit"],
+        ["11", "criterios", "11 cumplieron en la corrida", "#p-crit"],
         ["4", "umbrales", "jugables en el playground", "#p-umb"],
       ],
     );
     expect(en.cifras[1]!.detalle).toBe("6 high priority, 3 by legal control");
-    expect(en.cifras[3]!.detalle).toBe("10 met in the run");
+    expect(en.cifras[3]!.detalle).toBe("11 met in the run");
   });
 
   it("cada cifra lleva a una sección que existe", () => {
@@ -72,7 +72,9 @@ describe("las secciones", () => {
       expect(s.mas === null, s.id).toBe(s.resto.length === 0);
     }
     expect(seccion(es, "p-dec").mas).toBe("Ver 1 más: D6");
-    expect(seccion(en, "p-crit").mas).toBe("Show 5 more: C6, C7, C8, C9, C10");
+    expect(seccion(en, "p-crit").mas).toBe(
+      "Show 6 more: C6, C7, C8, C9, C10, C11",
+    );
   });
 
   it("riesgos por prioridad efectiva: el control legal sube R1, R10 y R6 y lo dice", () => {
@@ -165,18 +167,7 @@ describe("las secciones", () => {
     );
     expect(
       c.map((f) => (f.lado.tipo === "criterio" ? f.lado.estado.texto : "")),
-    ).toEqual([
-      "Cumplió",
-      "Cumplió",
-      "Cumplió",
-      "Cumplió",
-      "Cumplió",
-      "Cumplió",
-      "Cumplió",
-      "Cumplió",
-      "Cumplió",
-      "Cumplió",
-    ]);
+    ).toEqual([...Array<string>(11).fill("Cumplió")]);
   });
 
   it("umbrales: su valor como lo lee una persona y el enlace al playground", () => {
@@ -265,14 +256,14 @@ describe("el contrato del grafo", () => {
 describe("la mirada general", () => {
   it("parte de, hace y entrega, desde el plan", () => {
     expect(es.portada.antetitulo).toBe(
-      "Demo A · plan-demo-a 1.5.2 · aprobado el 2026-10-05",
+      "Demo A · plan-demo-a 1.6.0 · aprobado el 2026-11-02",
     );
     expect(es.parteDe[1]!.detalle).toBe(
       "plan de beneficios sintético: 40 procedimientos, 5 exentos, 6 exclusiones con causal y 6 topes de cobertura",
     );
     expect(es.hace.hecho).toBe(true);
     expect(es.entrega[0]!.detalle).toMatch(
-      /^plan-demo-a 1\.5\.2 · [0-9a-f]{12}…$/,
+      /^plan-demo-a 1\.6\.0 · [0-9a-f]{12}…$/,
     );
     expect(es.entrega[1]!.detalle).toBe(
       "8 nodos, 12 aristas con su regla y 18 señales que toda traza debe dejar",

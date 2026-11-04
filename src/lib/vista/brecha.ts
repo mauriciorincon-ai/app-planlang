@@ -531,6 +531,7 @@ export function vistaBrecha(d: DatosDemo, i: Idioma): VistaBrecha {
     d.lote,
     inf,
     d.manifiesto.playground,
+    d.llegadas,
   );
   const idsCriterios = inf.criterios.map((c) => c.id);
   const corridaId = inf.corrida_id;

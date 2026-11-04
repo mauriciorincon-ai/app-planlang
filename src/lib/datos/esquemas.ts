@@ -20,9 +20,18 @@ export const ManifiestoVitrinaSchema = z.object({
       corrida: RefCorrida.extend({ sprint: z.number().int().positive() }),
       repeticiones: z.array(RefCorrida),
       linea_base: RefCorrida.nullable(),
+      /**
+       * La capa de llegadas del lote (S9, `planlang-llegadas/v1`): con ella el informe mide los plazos y el playground mueve
+       * la capacidad del auditor. Solo el demo cuyo plan declara `simulacion_de_plazos` la trae.
+       */
+      llegadas: z
+        .object({ archivo: z.string().min(1), huella: Huella })
+        .optional(),
       informe: z.object({ archivo: z.string().min(1), huella: Huella }),
       /** La comparación con la línea base (S4): solo el demo cuya base tiene la misma corrida de 200 la declara. */
-      comparacion: z.object({ archivo: z.string().min(1), huella: Huella }).optional(),
+      comparacion: z
+        .object({ archivo: z.string().min(1), huella: Huella })
+        .optional(),
       /**
        * Lo que el playground necesita del demo y no dicen ni el plan ni la traza (`OpcionesDeDemo` de
        * `core/playground/compacto.ts`): la señal de la propuesta, su valor favorable y las claves que se conocen
@@ -80,16 +89,29 @@ export const ComparacionMinimaSchema = z
       })
       .passthrough(),
     lote: z
-      .object({ id: z.string().min(1), huella: Huella, n: z.number().int().positive() })
+      .object({
+        id: z.string().min(1),
+        huella: Huella,
+        n: z.number().int().positive(),
+      })
       .passthrough(),
     corridas: z.object({
-      multiagente: z.object({ corrida_id: z.string().min(1), huella: Huella }).passthrough(),
-      agente_unico: z.object({ corrida_id: z.string().min(1), huella: Huella }).passthrough(),
+      multiagente: z
+        .object({ corrida_id: z.string().min(1), huella: Huella })
+        .passthrough(),
+      agente_unico: z
+        .object({ corrida_id: z.string().min(1), huella: Huella })
+        .passthrough(),
     }),
-    lados: z.object({ multiagente: z.object({}).passthrough(), agente_unico: z.object({}).passthrough() }),
+    lados: z.object({
+      multiagente: z.object({}).passthrough(),
+      agente_unico: z.object({}).passthrough(),
+    }),
     criterios: z.array(z.object({ id: z.string().min(1) }).passthrough()),
     riesgos: z.array(z.object({ id: z.string().min(1) }).passthrough()),
-    casos_que_difieren: z.array(z.object({ id: z.string().min(1) }).passthrough()),
+    casos_que_difieren: z.array(
+      z.object({ id: z.string().min(1) }).passthrough(),
+    ),
     huella: Huella,
   })
   .passthrough();
@@ -351,6 +373,9 @@ export const PayloadPausaBSchema = z
       .object({
         campos: z.record(z.string(), z.unknown()),
         campos_faltantes: z.array(z.string()),
+        // Plan B v1.2 (S9): quién solicita y, si es una sociedad, la estructura que copió el extractor.
+        tipo_solicitante: z.string().nullable().optional(),
+        estructura: z.unknown().optional(),
       })
       .strict()
       .nullable(),
@@ -360,6 +385,8 @@ export const PayloadPausaBSchema = z
     puntaje: z.unknown(),
     evidencia: z.array(Bilingue),
     contraevidencia: z.array(Bilingue),
+    // Plan B v1.2 (S9): los dueños de la sociedad y su cruce con las listas (null si el solicitante es una persona).
+    beneficiarios: z.unknown().optional(),
   })
   .strict();
 

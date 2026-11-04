@@ -59,25 +59,26 @@ describe("la ficha de reproducibilidad", () => {
 
   it("los pasos para repetirla, con los archivos de su manifiesto, en los dos idiomas", () => {
     expect(es.repro.pasos.map((p) => p.comando)).toEqual([
-      "pnpm plan:validar --verificar plans/demo-a/v1.5.2.json",
+      "pnpm plan:validar --verificar plans/demo-a/v1.6.json",
       "pnpm casos:generar --versionados",
+      "pnpm llegadas:generar --verificar",
       // El plan y los casos con que corrió la corrida publicada (no los de omisión del comando).
       "pnpm lote:demo --plan plans/demo-a/v1.5.json --casos data/casos/demo-a/planlang-a-002-200.json",
       "pnpm trazas:verificar",
-      "pnpm brecha:informe --corrida runs/demo-a/suscripcion-planlang-a-002-200-v1.5 --plan plans/demo-a/v1.5.2.json --salida data/vitrina/demo-a/suscripcion-planlang-a-002-200-v1.5 --verificar",
+      "pnpm brecha:informe --corrida runs/demo-a/suscripcion-planlang-a-002-200-v1.5 --plan plans/demo-a/v1.6.json --salida data/vitrina/demo-a/suscripcion-planlang-a-002-200-v1.5 --verificar",
     ]);
-    expect(es.repro.pasos[2]!.texto).toContain(
+    expect(es.repro.pasos[3]!.texto).toContain(
       "el mismo comando 10 veces, de a 20 y espaciadas, hasta completar los 200 casos",
     );
-    // La línea base del B no sigue la convención (`-base` es la primera, descartada): se nombra.
+    // El B corre con el plan v1.2 sobre b-002-20: su línea base sí sigue la convención (`-base`), sin llegadas.
     expect(esB.repro.pasos.map((p) => p.comando)).toEqual([
-      "pnpm plan:validar --verificar plans/demo-b/v1.1.json",
+      "pnpm plan:validar --verificar plans/demo-b/v1.2.json",
       "pnpm casos:generar --versionados --demo b",
-      "pnpm lote:demo-b --plan plans/demo-b/v1.json --casos data/casos/demo-b/planlang-b-001-20.json",
+      "pnpm lote:demo-b --plan plans/demo-b/v1.2.json --casos data/casos/demo-b/planlang-b-002-20.json",
       "pnpm trazas:verificar",
-      "pnpm brecha:informe --corrida runs/demo-b/suscripcion-planlang-b-001-20 --plan plans/demo-b/v1.1.json --base runs/demo-b/suscripcion-planlang-b-001-20-base-v2 --salida data/vitrina/demo-b/suscripcion-planlang-b-001-20 --verificar",
+      "pnpm brecha:informe --corrida runs/demo-b/suscripcion-planlang-b-002-20 --plan plans/demo-b/v1.2.json --salida data/vitrina/demo-b/suscripcion-planlang-b-002-20 --verificar",
     ]);
-    expect(en.repro.pasos[4]!.texto).toBe(
+    expect(en.repro.pasos[5]!.texto).toBe(
       "redoes the report and compares it with the published one: it comes out identical byte for byte",
     );
   });
@@ -199,11 +200,11 @@ describe("cada ficha, como la pinta hoja-de-vida", () => {
     const cifra = (v: VistaFichas, f: "app" | "agente", k: string) =>
       v[f].cifras.find((c) => c.clave === k)!;
     expect(cifra(es, "app", "costo_de_una_corrida")).toMatchObject({
-      valor: "5,214",
+      valor: "5,167",
       unidad: "US$",
       fuenteTexto: "calculada",
     });
-    expect(cifra(en, "app", "costo_de_una_corrida").valor).toBe("5.214");
+    expect(cifra(en, "app", "costo_de_una_corrida").valor).toBe("5.167");
     expect(cifra(en, "app", "costo_de_una_corrida").fuenteTexto).toBe(
       "computed",
     );

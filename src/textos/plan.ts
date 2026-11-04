@@ -465,6 +465,10 @@ export const CRITERIO = {
         "Con el modo Texas encendido, ninguna negación, ni siquiera en parte, sale sin una persona.",
         "With Texas mode on, no denial, not even a partial one, goes out without a person.",
       ),
+      C11: tb(
+        "Toda solicitud hospitalaria se decide en 72 horas o menos y toda ambulatoria en 7 días calendario o menos; la urgencia no espera.",
+        "Every inpatient request is decided within 72 hours and every outpatient request within 7 calendar days; emergencies do not wait.",
+      ),
     },
     "demo-b": CRITERIO_LIDER_B,
   } as Record<IdDemo, Record<string, TextoBilingue>>,

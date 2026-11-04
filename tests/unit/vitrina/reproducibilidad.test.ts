@@ -90,7 +90,7 @@ describe("cómo se generó el lote (AU-S3-28)", () => {
     );
     const b = await datosDemo("demo-b");
     expect(fila(b, "es")).toBe(
-      "receta estandar · versión 1.0.0 · adversario 2 · borde 3 · faltante 3 · normal 12",
+      "receta juridicas · versión 1.1.0 · adversario 2 · borde 6 · faltante 2 · normal 10",
     );
   });
 });

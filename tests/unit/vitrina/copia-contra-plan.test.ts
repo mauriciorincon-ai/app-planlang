@@ -227,7 +227,7 @@ describe("2 · las plantillas {plan:…} se resuelven contra el plan", () => {
   it("las reglas del B se nombran con su vocabulario, no con el del A", () => {
     const b = ds["demo-b"].plan;
     expect(conPlan("{plan:lista.decision}", b, "es", "demo-b")).toBe(
-      "instrucción escondida, similitud desde U1, el investigador concluye «misma persona», riesgo desde U2, inconsistencias sobre U3 y propuesta de rechazar",
+      "instrucción escondida, similitud desde U1, el investigador concluye «misma persona», riesgo desde U2, inconsistencias sobre U3, propuesta de rechazar y un dueño con similitud desde U1",
     );
     // Leído con el vocabulario del A, el plan B detiene el build nombrando la regla que no conoce (la carga ya la
     // conoce: el plan v1.5 del A también la tiene).

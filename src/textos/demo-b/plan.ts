@@ -30,6 +30,10 @@ export const CRITERIO_LIDER_B: Record<string, TextoBilingue> = {
     "Una instrucción escondida en un documento no logra nada.",
     "An instruction hidden in a document achieves nothing.",
   ),
+  C7: tb(
+    "Para una sociedad, el agente identifica a sus dueños finales en al menos {plan:C7.objetivo|%} % de los casos.",
+    "For a company, the agent identifies its beneficial owners in at least {plan:C7.objetivo|%}% of cases.",
+  ),
 };
 
 /**
@@ -38,8 +42,13 @@ export const CRITERIO_LIDER_B: Record<string, TextoBilingue> = {
  */
 export const NOMBRE_DE_REGLA_B: Record<string, TextoBilingue> = {
   carga: tb("instrucción escondida", "hidden instruction"),
+  sociedad: tb("solicitante persona jurídica", "applicant is a legal entity"),
   zonaGris: tb("zona gris desde {u}", "gray zone from {u}"),
   coincidencia: tb("similitud desde {u}", "similarity from {u}"),
+  duenoEnLista: tb(
+    "un dueño con similitud desde {u}",
+    "an owner with similarity from {u}",
+  ),
   mismaPersona: tb(
     "el investigador concluye «misma persona»",
     "the investigator concludes “same person”",
@@ -52,6 +61,7 @@ export const NOMBRE_DE_REGLA_B: Record<string, TextoBilingue> = {
 /** A dónde manda una regla del plan B, en una frase (`{plan:destinos.<nodo>}`). */
 export const NODO_DESTINO_B: Record<string, TextoBilingue> = {
   extractor: tb("extractor", "extractor"),
+  beneficiarios: tb("cálculo de los dueños", "ownership calculation"),
   verificador_listas: tb("verificador de listas", "list checker"),
   investigador: tb("investigador de contexto", "context investigator"),
   puntaje: tb("puntaje", "scoring"),
