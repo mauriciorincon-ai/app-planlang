@@ -39,6 +39,7 @@ VOCABULARIO = (
     "adversario_detalle",
     "verdad_conocida",
     "umbral",
+    "en_plazo",
 )
 RESPUESTAS: dict[str, str] = {
     "P01": "Las vinculaciones se atascan revisando listas a mano. El agente arma el expediente para el "
