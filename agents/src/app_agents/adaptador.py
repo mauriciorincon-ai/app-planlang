@@ -294,9 +294,32 @@ class ChatClaudeCode(BaseChatModel):
         )
 
 
+def _sin_referencias(esquema: dict[str, Any]) -> dict[str, Any]:
+    """El JSON Schema con cada `$ref` a `$defs` puesto en su lugar (S9: la estructura societaria del B anida
+    modelos).
+
+    `--json-schema` recibe un esquema autocontenido; uno plano (sin `$defs`, todos los de antes) sale
+    idéntico."""
+    defs = esquema.get("$defs")
+    if not defs:
+        return esquema
+
+    def resolver(v: Any) -> Any:
+        if isinstance(v, dict):
+            ref = v.get("$ref")
+            if isinstance(ref, str) and ref.startswith("#/$defs/"):
+                return resolver(defs[ref.removeprefix("#/$defs/")])
+            return {k: resolver(x) for k, x in v.items() if k != "$defs"}
+        if isinstance(v, list):
+            return [resolver(x) for x in v]
+        return v
+
+    return resolver(esquema)
+
+
 def _esquema_y_modelo(schema: Any) -> tuple[dict[str, Any], type[BaseModel] | None]:
     if isinstance(schema, type) and issubclass(schema, BaseModel):
-        return schema.model_json_schema(), schema
+        return _sin_referencias(schema.model_json_schema()), schema
     if isinstance(schema, dict):
         return schema, None
     raise TypeError("schema debe ser un modelo Pydantic o un JSON Schema (dict)")

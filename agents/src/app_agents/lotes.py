@@ -374,7 +374,7 @@ def ejecutar_lote(
                 senales_obligatorias=plan.senales_obligatorias(),
                 error=error,
                 tipo_de_nodo=contrato.tipo_de_nodo,
-                extras=d.extras_traza,
+                extras=d.extras_de(contrato.tipos),
             )
             trazas[caso["id"]] = traza
             resumen.ejecutados.append(caso["id"])

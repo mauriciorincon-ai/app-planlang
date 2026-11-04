@@ -71,3 +71,56 @@ AGENTE_UNICO = (
     "- No decides aprobar ni rechazar.\n"
     "- razones_es y razones_en: una o dos frases cada una, en lenguaje llano, sin números de documento."
 )
+
+# S9 (plan B v1.2): la solicitud puede ser de una sociedad. Las reglas de campo son las mismas, leídas para
+# una sociedad, y el modelo copia la estructura societaria SIN calcular nada: quién es beneficiario lo
+# decide el código (nodo `beneficiarios`, 31 CFR § 1010.230(d)).
+REGLAS_SOCIEDAD = (
+    "11. tipo_solicitante: juridica si el documento de identidad es un certificado de existencia de una "
+    "sociedad; "
+    "natural si es el documento de una persona.\n"
+    "12. Si es una sociedad, los campos se leen para ella: nombre es la razón social; documento, su NIT "
+    "sintético "
+    "(SYN-NIT-…); nacimiento, el año de constitución; nacionalidad, el código SYN-J de la jurisdicción "
+    "donde se "
+    "constituyó; titular_actividad, el NIT con que firma la declaración de actividad; titular_fondos, el "
+    "titular que "
+    "cita el origen de fondos.\n"
+    "13. estructura: null si es una persona. Si es una sociedad, cópiala del certificado de composición "
+    "accionaria: "
+    "entidad, el NIT de la sociedad que solicita; entidades, cada sociedad que aparece con su NIT y su "
+    "razón social "
+    "(la que solicita incluida); personas, cada persona con su documento SYN-ID y su nombre; "
+    "participaciones, una por "
+    "cada frase «X tiene el N % de Y» (titular: el documento o el NIT de X; participada: el NIT de Y; "
+    "porcentaje: N "
+    "con punto decimal y dos decimales, p. ej. 60.00); controla, la persona que controla la sociedad con su "
+    "documento "
+    "y su cargo del catálogo (representante_legal, gerente_general, presidente, director_financiero o "
+    "socio_administrador).\n"
+    "14. No calcules participaciones ni sumes porcentajes, y no decidas quién es beneficiario: copia lo que "
+    "dice el "
+    "documento, tal como está escrito."
+)
+
+EXTRACTOR_CON_ESTRUCTURA = (
+    EXTRACTOR.replace(
+        "Conviertes los tres documentos de una solicitud en campos estructurados usando el catálogo.",
+        "Conviertes los documentos de una solicitud (de una persona o de una sociedad) en campos "
+        "estructurados "
+        "usando el catálogo.",
+    )
+    + "\n"
+    + REGLAS_SOCIEDAD
+)
+
+AGENTE_UNICO_CON_ESTRUCTURA = (
+    AGENTE_UNICO.replace(
+        "En una sola respuesta: extraes los campos de los tres documentos con el catálogo",
+        "En una sola respuesta: extraes los campos de los documentos (de una persona o de una sociedad) con "
+        "el "
+        "catálogo",
+    )
+    + "\nReglas para una sociedad (las mismas del extractor):\n"
+    + REGLAS_SOCIEDAD
+)

@@ -57,3 +57,84 @@ def crear_modelo_extraccion_e_identidad(
         razones_es=(str, ...),
         razones_en=(str, ...),
     )
+
+
+# ── S9 (plan B v1.2): la persona jurídica y su estructura societaria ────────────────────────────────
+
+# : Quién controla una sociedad, del catálogo de la norma (31 CFR § 1010.230(d)(2)(i)); el modelo no inventa
+# un cargo.
+ROLES_DE_CONTROL = (
+    "representante_legal",
+    "gerente_general",
+    "presidente",
+    "director_financiero",
+    "socio_administrador",
+)
+
+
+class EntidadEstructura(_Base):
+    nit: str
+    nombre: str
+
+
+class PersonaEstructura(_Base):
+    documento: str
+    nombre: str
+
+
+class Participacion(_Base):
+    titular: str
+    participada: str
+    # Texto con dos decimales a lo sumo («60.00»): el código lo lee en centésimas exactas y rechaza lo que
+    # no cierre.
+    porcentaje: str
+
+
+class Control(_Base):
+    documento: str
+    rol: Literal[ROLES_DE_CONTROL]  # type: ignore[valid-type]
+
+
+class Estructura(_Base):
+    entidad: str | None
+    entidades: list[EntidadEstructura]
+    personas: list[PersonaEstructura]
+    participaciones: list[Participacion]
+    controla: Control | None
+
+
+def _campos_de_solicitante() -> dict[str, Any]:
+    return {
+        "tipo_solicitante": (Literal["natural", "juridica"], ...),
+        "estructura": (Estructura | None, ...),
+    }
+
+
+def crear_modelo_extraccion_con_estructura(
+    codigos_actividad: list[str], codigos_jurisdiccion: list[str]
+) -> type[_Base]:
+    """`ExtraccionBEstructura` (plan B v1.2): los nueve campos, quién solicita y, si es una sociedad, su
+    estructura."""
+    return create_model(
+        "ExtraccionBEstructura",
+        __base__=_Base,
+        **_campos_extraccion(codigos_actividad, codigos_jurisdiccion),
+        **_campos_de_solicitante(),
+    )
+
+
+def crear_modelo_extraccion_e_identidad_con_estructura(
+    codigos_actividad: list[str], codigos_jurisdiccion: list[str]
+) -> type[_Base]:
+    """Línea base de agente único con la v1.2: lo mismo que su llamada de siempre, más la estructura
+    societaria."""
+    return create_model(
+        "ExtraccionEIdentidadEstructura",
+        __base__=_Base,
+        **_campos_extraccion(codigos_actividad, codigos_jurisdiccion),
+        conclusion_lista=(Literal["misma_persona", "homonimo", "sin_parecido"], ...),
+        entrada_lista=(str | None, ...),
+        razones_es=(str, ...),
+        razones_en=(str, ...),
+        **_campos_de_solicitante(),
+    )
