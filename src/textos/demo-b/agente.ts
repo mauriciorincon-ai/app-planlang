@@ -696,8 +696,8 @@ export const NODOS_B: Record<
         [
           tb("Adaptador", "Adapter"),
           tb(
-            '`ChatClaudeCode(model="{modelo}").with_structured_output(ExtraccionB)`',
-            '`ChatClaudeCode(model="{modelo}").with_structured_output(ExtraccionB)`',
+            '`ChatClaudeCode(model="{modelo}").with_structured_output(ExtraccionBEstructura)`',
+            '`ChatClaudeCode(model="{modelo}").with_structured_output(ExtraccionBEstructura)`',
           ),
         ],
         [LLAMADA, LLAMADA_TEXTO],
