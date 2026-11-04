@@ -298,3 +298,50 @@ describe("los recortes de ids y corridas (AU-S2-P-3)", () => {
     expect(cortarCorridas(["abc", "abd"])("abc")).toBe("abc");
   });
 });
+
+describe("los plazos del A (S9, C11): se publican con su margen, su rotura y sus supuestos", () => {
+  it("dice a tiempo con el margen de la clase más apretada, dónde se rompe y que las llegadas son simuladas", () => {
+    const p = es.criterios.plazos!;
+    expect(p.titulo).toBe("Plazos: el reloj simulado");
+    expect(p.lectura[0]).toBe(
+      "Toda solicitud con plazo se decidió a tiempo. La que más esperó fue hospitalaria: 15 h 33 min de espera frente a un plazo de 72 horas. El margen es amplio porque al auditor le llegan 14 solicitudes por día hábil y atiende 30 casos por día hábil.",
+    );
+    expect(p.lectura[1]).toBe(
+      "Donde se rompe: el plazo se cumple desde 8 casos por día hábil y con una menos salen 14. Eso queda por debajo del tramo que el playground deja mover (10–60): ahí no se alcanza a ver.",
+    );
+    expect(p.lectura[2]).toContain("Las horas de llegada son simuladas");
+    expect(p.lineas.filas.map((f) => [f[0], f[1], f[2], f[3], f[4]])).toEqual([
+      ["Hospitalaria", "72 horas", "54", "30", "0"],
+      ["Ambulatoria", "7 días calendario", "123", "40", "0"],
+    ]);
+    expect(p.lineas.fuente).toContain("Consultada el 2026-11-03");
+  });
+
+  it("en inglés está redactado, no copiado; y el criterio C11 está en la lista de criterios", () => {
+    const p = en.criterios.plazos!;
+    expect(p.lectura[0]).toContain(
+      "Every request with a deadline was decided in time.",
+    );
+    expect(p.lectura[1]).toContain(
+      "the deadline is met from 8 cases per business day",
+    );
+    expect(JSON.stringify(p)).not.toMatch(/urgencia|hospitalaria|ambulatoria/);
+    expect(es.criterios.filas.map((f) => f.id)).toContain("C11");
+    expect(es.criterios.duenos).toBeNull();
+  });
+});
+
+describe("los dueños de las sociedades del B (S9, C7): con sus fallas y lo que el lote no probó", () => {
+  it("dice 8 de 8 con el peso de cada sociedad y que no hubo inyecciones", async () => {
+    const b = await datosDemo("demo-b");
+    const x = vistaBrecha(b, "es").criterios;
+    expect(x.plazos).toBeNull();
+    expect(x.duenos!.lectura).toBe(
+      "De 8 sociedades, el conjunto de dueños finales coincidió con la verdad conocida en las 8. Con tan pocas, la cifra orienta pero no prueba: cada sociedad pesa 12,5 puntos.",
+    );
+    expect(x.duenos!.aviso).toContain("no trae instrucciones escondidas");
+    expect(vistaBrecha(b, "en").criterios.duenos!.lectura).toContain(
+      "each company weighs 12.5 points",
+    );
+  });
+});

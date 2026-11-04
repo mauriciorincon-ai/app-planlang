@@ -872,6 +872,77 @@ export const PLAN_EN_BREVE = {
     )) as Plantilla<number>,
 };
 
+/** La lectura llana de los plazos (S9) y de los dueños de las sociedades: lo que el líder necesita saber, con sus fallas. */
+export const PLAZOS_BRECHA = {
+  titulo: tb("Plazos: el reloj simulado", "Deadlines: the simulated clock"),
+  rotuloExperto: tb("La cola y sus supuestos", "The queue and its assumptions"),
+  aTiempo: ((p: {
+    peor: string;
+    espera: string;
+    plazo: string;
+    carga: string;
+    capacidad: string;
+    unidad: string;
+  }) =>
+    tb(
+      `Toda solicitud con plazo se decidió a tiempo. La que más esperó fue ${p.peor}: ${p.espera} de espera frente a un plazo de ${p.plazo}. El margen es amplio porque al auditor le llegan ${p.carga} solicitudes por día hábil y atiende ${p.capacidad} ${p.unidad}.`,
+      `Every request with a deadline was decided in time. The one that waited longest was ${p.peor}: ${p.espera} of waiting against a ${p.plazo} deadline. The margin is wide because the auditor receives ${p.carga} requests per business day and handles ${p.capacidad} ${p.unidad}.`,
+    )) as Plantilla<{
+    peor: string;
+    espera: string;
+    plazo: string;
+    carga: string;
+    capacidad: string;
+    unidad: string;
+  }>,
+  fuera: ((p: { n: number; capacidad: string; unidad: string }) =>
+    tb(
+      `${p.n} ${p.n === 1 ? "solicitud salió" : "solicitudes salieron"} de su plazo con ${p.capacidad} ${p.unidad}: la tabla de abajo dice cuáles y cuánto esperaron.`,
+      `${p.n} ${p.n === 1 ? "request went" : "requests went"} past ${p.n === 1 ? "its" : "their"} deadline at ${p.capacidad} ${p.unidad}: the table below says which and how long they waited.`,
+    )) as Plantilla<{ n: number; capacidad: string; unidad: string }>,
+  rompe: ((p: {
+    minima: string;
+    uno: string | null;
+    unidad: string;
+    fuera: boolean;
+    rango: string;
+  }) =>
+    tb(
+      `Donde se rompe: el plazo se cumple desde ${p.minima} ${p.unidad}${p.uno !== null ? ` y con una menos salen ${p.uno}` : ""}.${p.fuera ? ` Eso queda por debajo del tramo que el playground deja mover (${p.rango}): ahí no se alcanza a ver.` : ""}`,
+      `Where it breaks: the deadline is met from ${p.minima} ${p.unidad}${p.uno !== null ? ` and with one fewer, ${p.uno} go past it` : ""}.${p.fuera ? ` That is below the range the playground lets you move (${p.rango}): it cannot be seen there.` : ""}`,
+    )) as Plantilla<{
+    minima: string;
+    uno: string | null;
+    unidad: string;
+    fuera: boolean;
+    rango: string;
+  }>,
+  simulado: tb(
+    "Las horas de llegada son simuladas, con la semilla del lote: no son horas reales de nadie. Que el plazo se cumpla aquí no prueba que se cumpliría con otras llegadas.",
+    "The arrival times are simulated, with the batch’s seed: they are nobody’s real times. Meeting the deadline here does not prove it would be met with other arrivals.",
+  ),
+};
+
+export const DUENOS_BRECHA = {
+  titulo: tb("Dueños de las sociedades", "Owners of the companies"),
+  lectura: ((p: { n: number; bien: number; fallan: string[] }) => {
+    // Lo que pesa cada sociedad en la tasa, con un decimal: coma en español, punto en inglés.
+    const peso = (Math.round((100 / p.n) * 10) / 10).toString();
+    return tb(
+      p.fallan.length === 0
+        ? `De ${p.n} sociedades, el conjunto de dueños finales coincidió con la verdad conocida en las ${p.n}. Con tan pocas, la cifra orienta pero no prueba: cada sociedad pesa ${peso.replace(".", ",")} puntos.`
+        : `De ${p.n} sociedades, el conjunto de dueños finales coincidió con la verdad conocida en ${p.bien}. No coincidió en ${p.fallan.join(", ")}.`,
+      p.fallan.length === 0
+        ? `Of ${p.n} companies, the set of beneficial owners matched the known truth in all ${p.n}. With so few, the figure points the way but does not prove it: each company weighs ${peso} points.`
+        : `Of ${p.n} companies, the set of beneficial owners matched the known truth in ${p.bien}. It did not match in ${p.fallan.join(", ")}.`,
+    );
+  }) as Plantilla<{ n: number; bien: number; fallan: string[] }>,
+  sinInyeccion: tb(
+    "Este lote no trae instrucciones escondidas: lo que la guardia de entrada hace con ellas no se probó aquí.",
+    "This batch carries no hidden instructions: what the input guard does with them was not tested here.",
+  ),
+};
+
 export const CRITERIOS = {
   chip: ((p: { n: number; k: number }) =>
     tb(

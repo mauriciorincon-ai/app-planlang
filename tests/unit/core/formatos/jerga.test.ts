@@ -52,4 +52,22 @@ describe("presupuesto de líder y detector de jerga (ES/EN)", () => {
         .ok,
     ).toBe(true);
   });
+
+  it("S9: el léxico de la norma de plazos y de la de dueños es jerga; «dueños» y «plazo» no", () => {
+    expect(
+      terminosDetectados(
+        "Una solicitud expedita; el beneficiario final.",
+        "es",
+      ),
+    ).toEqual(["expedita", "beneficiario"]);
+    expect(
+      terminosDetectados("An expedited request; the beneficial owner.", "en"),
+    ).toEqual(["expedited", "beneficial"]);
+    expect(
+      terminosDetectados(
+        "Los dueños finales y el plazo de cada solicitud.",
+        "es",
+      ),
+    ).toEqual([]);
+  });
 });

@@ -12,6 +12,7 @@ import type { ResultadoSupuesto } from "@core/brecha/supuestos";
 import type { CategoriaBrecha } from "@core/brecha/brechas-no-previstas";
 import { SENAL_DE_CONFIANZA } from "@core/brecha/contexto";
 import { numCorto } from "@core/brecha/numeros";
+import { lineasDePlazos, type LineasDePlazos } from "@core/brecha/render-md";
 import { compactar } from "@core/playground/compactar";
 import type { Compacto } from "@core/playground/compacto";
 import { consecuencias, umbralesDelPlan } from "@core/playground/consecuencias";
@@ -31,6 +32,8 @@ import {
   CATEGORIA_LECTURA,
   COLUMNAS,
   CRITERIOS,
+  DUENOS_BRECHA,
+  PLAZOS_BRECHA,
   CUMPLIDO,
   CATEGORIA_CORTA,
   CRITERIO_EXIGENTE,
@@ -263,6 +266,14 @@ export interface Ejemplar {
   etiquetaCadena: string;
 }
 
+/** La sección de plazos de Brecha: la lectura llana y, para el experto, la tabla, la cola, los supuestos y la fuente. */
+export interface VistaPlazos {
+  titulo: string;
+  lectura: string[];
+  rotuloExperto: string;
+  lineas: LineasDePlazos;
+}
+
 export interface VistaBrecha {
   portada: { antetitulo: string };
   veredicto: {
@@ -307,7 +318,15 @@ export interface VistaBrecha {
     unaVia: { id: string; pregunta: string; justificacion: string | null }[];
     otras: string | null;
   };
-  criterios: { chip: string; lectura: string; filas: FilaCriterio[] };
+  criterios: {
+    chip: string;
+    lectura: string;
+    filas: FilaCriterio[];
+    /** La medición de plazos del A (S9); `null` si el informe no la trae. */
+    plazos: VistaPlazos | null;
+    /** Lo que se midió de los dueños de las sociedades (S9, B); `null` si el plan no lo mide. */
+    duenos: { titulo: string; lectura: string; aviso: string | null } | null;
+  };
   riesgos: {
     chip: string;
     lectura: string;
@@ -518,6 +537,102 @@ export function umbralQueLoRompe(
   return mejor
     ? { umbral: mejor.umbral, valor: mejor.valor, casos: mejor.casos }
     : null;
+}
+
+// ------------------------------------------------------------------------------------------------ plazos y dueños
+
+const MIN_POR_UNIDAD = { horas: 60, dias_calendario: 1440 } as const;
+
+/** La medición de plazos (S9) en palabras llanas: lo que se cumplió, con qué margen y dónde se rompe. */
+function vistaDePlazos(
+  inf: DatosDemo["informe"],
+  i: Idioma,
+): VistaPlazos | null {
+  const z = inf.plazos;
+  const lineas = lineasDePlazos(inf, i);
+  if (!z || !lineas) return null;
+  const unidad = X(z.capacidad.unidad, i);
+  const cap = decimal(z.capacidad.valor, 0, i);
+  const lectura: string[] = [];
+  if (z.tardias.length === 0) {
+    // La clase con menos margen: la mayor espera frente a su propio plazo.
+    const peor = z.clases
+      .filter((c) => c.en_cola > 0)
+      .map((c) => ({
+        c,
+        razon:
+          c.espera_max_min /
+          (c.plazo.cantidad * MIN_POR_UNIDAD[c.plazo.unidad]),
+      }))
+      .sort((a, b) => b.razon - a.razon)[0];
+    if (peor)
+      lectura.push(
+        X(
+          PLAZOS_BRECHA.aTiempo({
+            peor: peor.c.nombre[i].toLowerCase(),
+            espera: lineas.filas[z.clases.indexOf(peor.c)]![6]!,
+            plazo: lineas.filas[z.clases.indexOf(peor.c)]![1]!,
+            carga: numCorto(z.carga_por_dia, i, 1),
+            capacidad: cap,
+            unidad,
+          }),
+          i,
+        ),
+      );
+  } else
+    lectura.push(
+      X(
+        PLAZOS_BRECHA.fuera({ n: z.tardias.length, capacidad: cap, unidad }),
+        i,
+      ),
+    );
+  if (z.capacidad_minima)
+    lectura.push(
+      X(
+        PLAZOS_BRECHA.rompe({
+          minima: decimal(z.capacidad_minima.valor, 0, i),
+          uno:
+            z.capacidad_minima.tardias_con_una_menos === null
+              ? null
+              : String(z.capacidad_minima.tardias_con_una_menos),
+          unidad,
+          fuera: z.capacidad_minima.valor < z.capacidad.rango.min,
+          rango: `${z.capacidad.rango.min}–${z.capacidad.rango.max}`,
+        }),
+        i,
+      ),
+    );
+  lectura.push(X(PLAZOS_BRECHA.simulado, i));
+  return {
+    titulo: X(PLAZOS_BRECHA.titulo, i),
+    lectura,
+    rotuloExperto: X(PLAZOS_BRECHA.rotuloExperto, i),
+    lineas,
+  };
+}
+
+/** Lo que se midió de los dueños de las sociedades (C7 del B), con las fallas dichas y lo que el lote no probó. */
+function vistaDeDuenos(
+  d: DatosDemo,
+  i: Idioma,
+): VistaBrecha["criterios"]["duenos"] {
+  const c7 = d.informe.criterios.find((c) => c.id === "C7");
+  if (d.id !== "demo-b" || !c7 || c7.n_poblacion === 0) return null;
+  const fallan = c7.casos_que_incumplen;
+  const sinInyeccion =
+    d.informe.criterios.find((c) => c.id === "C6")?.estado === "sin_poblacion";
+  return {
+    titulo: X(DUENOS_BRECHA.titulo, i),
+    lectura: X(
+      DUENOS_BRECHA.lectura({
+        n: c7.n_poblacion,
+        bien: c7.n_poblacion - fallan.length,
+        fallan,
+      }),
+      i,
+    ),
+    aviso: sinInyeccion ? X(DUENOS_BRECHA.sinInyeccion, i) : null,
+  };
 }
 
 // ------------------------------------------------------------------------------------------------ la vista
@@ -1209,6 +1324,8 @@ export function vistaBrecha(d: DatosDemo, i: Idioma): VistaBrecha {
       i,
     ),
     filas: inf.criterios.map((c) => filaCriterio(c, latenciaDe, d, i)),
+    plazos: vistaDePlazos(inf, i),
+    duenos: vistaDeDuenos(d, i),
   };
 
   // --------------------------------------------------------------------- § 4 riesgos
