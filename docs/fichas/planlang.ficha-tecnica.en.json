@@ -1,6 +1,6 @@
 {
   "schema_version": "1.3.1",
-  "actualizado": "2026-11-02",
+  "actualizado": "2026-11-03",
   "pieza": {
     "slug": "planlang",
     "nombre": "planlang",
@@ -9,7 +9,7 @@
     "ciclo": "H-2",
     "version": "0.1.0",
     "sellado_en": null,
-    "sprints_cerrados": 8
+    "sprints_cerrados": 9
   },
   "promesa": {
     "tagline": "Your AI agent, measured against the plan you wrote before building it.",
@@ -46,15 +46,15 @@
   "cifras": [
     {
       "clave": "criterios_cumplidos",
-      "valor": 16,
+      "valor": 17,
       "unidad": "criteria",
-      "etiqueta": "criteria met across the plans of 2 demos, of 16",
+      "etiqueta": "criteria met across the plans of 2 demos, of 18",
       "fuente": "medido",
-      "detalle": "Demo A: 10 of 10, in verifier 1.4.0's report on run suscripcion-planlang-a-002-200-v1.5. Demo B: 6 of 6, in verifier 1.4.0's report on run suscripcion-planlang-b-001-20."
+      "detalle": "Demo A: 11 of 11, in verifier 1.5.0's report on run suscripcion-planlang-a-002-200-v1.5. Demo B: 6 of 7, in verifier 1.5.0's report on run suscripcion-planlang-b-002-20."
     },
     {
       "clave": "decisiones_cruzadas",
-      "valor": 1204,
+      "valor": 1244,
       "unidad": "decisions",
       "etiqueta": "decisions redone in another language, with 0 differences",
       "fuente": "medido",
@@ -66,7 +66,7 @@
       "unidad": "cases",
       "etiqueta": "synthetic cases with a known answer, across 2 demos",
       "fuente": "medido",
-      "detalle": "Demo A: 200 cases in run suscripcion-planlang-a-002-200-v1.5 and the single-agent baseline. Demo B: 20 cases in run suscripcion-planlang-b-001-20 and the single-agent baseline."
+      "detalle": "Demo A: 200 cases in run suscripcion-planlang-a-002-200-v1.5 and the single-agent baseline. Demo B: 20 cases in run suscripcion-planlang-b-002-20 and the single-agent baseline."
     },
     {
       "clave": "llamadas_a_modelos_en_la_vitrina",
@@ -78,11 +78,11 @@
     },
     {
       "clave": "costo_de_una_corrida",
-      "valor": 5.2136,
+      "valor": 5.1671,
       "unidad": "US$",
       "etiqueta": "nominal cost of running each demo once (220 cases)",
       "fuente": "calculada",
-      "detalle": "Demo A: US$ 4.9206 for 200 cases. Demo B: US$ 0.293 for 20 cases. Sum of the nominal cost the CLI declares per call, over each run's traces; through the subscription it was not paid separately."
+      "detalle": "Demo A: US$ 4.9206 for 200 cases. Demo B: US$ 0.2465 for 20 cases. Sum of the nominal cost the CLI declares per call, over each run's traces; through the subscription it was not paid separately."
     }
   ],
   "bloques": [
@@ -96,19 +96,19 @@
       "orden": 2,
       "nombre": "Test with cases whose answer is known",
       "linea": "Two demos with real agents run on hundreds of invented cases whose correct answer is already known.",
-      "cuenta": 6
+      "cuenta": 7
     },
     {
       "orden": 3,
       "nombre": "Measure the gap, with no AI in between",
       "linea": "A verifier with no AI compares what was planned with what happened and also publishes what failed.",
-      "cuenta": 5
+      "cuenta": 7
     },
     {
       "orden": 4,
       "nombre": "Move a threshold, see what changes",
       "linea": "You try other plan values over the agent's real decisions, without calling the model again.",
-      "cuenta": 1
+      "cuenta": 2
     },
     {
       "orden": 5,
@@ -378,7 +378,7 @@
       "etiqueta": "ciclo"
     },
     {
-      "valor": "8",
+      "valor": "9",
       "etiqueta": "sprints"
     },
     {
@@ -390,7 +390,7 @@
       "etiqueta": "version"
     },
     {
-      "valor": "18",
+      "valor": "19",
       "etiqueta": "decisiones"
     }
   ]

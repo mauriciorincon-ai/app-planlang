@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import json
 from collections.abc import Callable
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -42,6 +42,15 @@ class Demo:
     revisor: dict[str, str]
     medir: Callable[[dict[str, Any], dict[str, Any]], dict[str, Any]]
     extras_traza: tuple[str, ...]
+    #: Extras que viajan solo si el contrato declara su nodo (S9: el detalle de los beneficiarios del B v1.2);
+    #: así una corrida de un plan anterior sigue dando los mismos bytes.
+    extras_por_nodo: dict[str, tuple[str, ...]] = field(default_factory=dict)
+
+    def extras_de(self, tipos: dict[str, str]) -> tuple[str, ...]:
+        return (
+            *self.extras_traza,
+            *(x for n, xs in sorted(self.extras_por_nodo.items()) if n in tipos for x in xs),
+        )
 
     def mundo_del_lote(self, lote: dict[str, Any]) -> Path:
         """El mundo con que se generó el lote, buscado por su huella en su directorio. Sin uno que coincida,
@@ -139,6 +148,7 @@ def _demo_b() -> Demo:
         },
         medir=_medir_b,
         extras_traza=("coincidencias", "investigacion", "puntaje", "expediente"),
+        extras_por_nodo={"beneficiarios": ("beneficiarios_detalle",)},
     )
 
 

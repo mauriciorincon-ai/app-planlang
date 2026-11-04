@@ -59,7 +59,7 @@ describe("informe de la corrida simulada", () => {
       linea_base: null,
       repeticiones: [],
       umbrales_aplicados: { U1: 0.75 },
-      verificador: { version: "1.4.0" },
+      verificador: { version: "1.5.0" },
     });
     // S8: con 3 casos, la garantía de S1 dice en cada α que no alcanza y cuántos casos harían falta; los demás, null.
     const s1 = i.supuestos.find((s) => s.id === "S1")!;

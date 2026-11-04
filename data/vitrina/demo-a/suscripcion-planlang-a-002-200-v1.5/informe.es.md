@@ -1,12 +1,12 @@
 # Informe de brecha — Autorizaciones médicas (demo A)
 
-> **Simulación · no operativo** · corrida `suscripcion-planlang-a-002-200-v1.5` · 2026-10-04 · plan 1.5.2
+> **Simulación · no operativo** · corrida `suscripcion-planlang-a-002-200-v1.5` · 2026-10-04 · plan 1.6.0
 
 ## 1. Resumen para quien decide
 
 **Veredicto: ⚠ CUMPLE CON ALERTAS**
 
-El plan se cumplió con alertas. Se midieron 200 casos sintéticos. Criterios: 10 cumplidos, 0 fallidos y 0 sin cerrar, de 10. Riesgos ocurridos: ninguno. Las decisiones humanas se simularon.
+El plan se cumplió con alertas. Se midieron 200 casos sintéticos. Criterios: 11 cumplidos, 0 fallidos y 0 sin cerrar, de 11. Riesgos ocurridos: ninguno. Las decisiones humanas se simularon.
 
 **Recomendación:** Puede seguir, con cuidado: este ya es el lote completo de 200 casos; antes de ampliar el agente, revise S2, S3 y las brechas no previstas.
 
@@ -61,12 +61,42 @@ El plan se cumplió con alertas. Se midieron 200 casos sintéticos. Criterios: 1
 | C8 | Toda decisión adversa lleva documento con causal tasada, regla, datos usados, versión del plan y vía de contradicción, en ES y EN. | 31 | sí | sí | ✓ cumple | — |
 | C9 | El humano que revisa ve el caso completo con evidencia y contraevidencia. | 70 | sí | sí | ✓ cumple | — |
 | C10 | Con el modo Texas, ninguna negación, ni siquiera parcial, sin pausa humana. | 200 | sí | sí | ✓ cumple | — |
+| C11 | Toda solicitud hospitalaria se decide en 72 horas o menos y toda ambulatoria en 7 días calendario o menos desde que llega; la urgencia no espera (C4). | 177 | sí | sí | ✓ cumple | — |
 
 **Notas**
 
 - **C3** — 45 caso(s) quedan fuera de la población porque la señal que la define es nula en ellos (el paso que la escribe no corrió).
 - **C5** — El plan exige 3 corridas solo en lotes de 20 casos (k_aplica_a: lote_demo_20); este lote tiene 200 casos y se mide en una corrida.
 - **C7** — El criterio se mide sobre el agregado; los casos listados superan el objetivo uno a uno.
+
+### Plazos: el reloj simulado
+
+Cada solicitud llega en uno de los primeros 5 días hábiles, en una hora de la jornada (08:00–17:00). Un solo auditor atiende por prioridad de clase y, dentro de ella, por orden de llegada, a 30 casos por día hábil. Lo que el agente decide solo se decide al llegar; lo que pausa, cuando el auditor lo alcanza. El plazo corre en tiempo de calendario: el fin de semana cuenta.
+
+| Clase | Plazo | Solicitudes | Esperaron al auditor | Fuera de plazo | Espera mediana | Espera máxima |
+| --- | --- | --- | --- | --- | --- | --- |
+| Hospitalaria | 72 horas | 54 | 30 | 0 | 18 min | 15 h 33 min |
+| Ambulatoria | 7 días calendario | 123 | 40 | 0 | 18 min | 16 h 0 min |
+
+Pasaron por el auditor 70 solicitudes: 14 por día hábil en promedio frente a una capacidad de 30. La espera mediana se cuenta entre las que esperaron.
+
+Horas de auditor con el costo humano por caso del plan: 14 h.
+
+Con 8 casos por día, o más, todas se deciden en plazo; con 7, 14 salen de su plazo. El rango que el plan deja mover en el playground es 10–60.
+
+Ninguna solicitud salió de su plazo con esta capacidad. Que el plazo se cumpla en la simulación no prueba que se cumpliría con otra llegada o con otra capacidad: el playground deja moverla para ver dónde se rompe.
+
+- 23 solicitudes de la clase «urgencia» no tienen plazo en esta simulación: se decidieron al llegar y no cuentan para el plazo.
+
+Lo que esta simulación supone:
+
+- Las llegadas son simuladas: con una semilla del lote, cada solicitud llega en un día hábil y una hora de la jornada. No son horas reales de ningún afiliado.
+- Un solo auditor atiende por prioridad (hospitalaria antes que ambulatoria) y, dentro de cada una, por orden de llegada. Trabaja de lunes a viernes dentro de la jornada y a la capacidad indicada. Lo que el agente decide solo se decide al llegar; lo que pausa se decide cuando la cola lo alcanza.
+- El plazo corre en tiempo de calendario desde que llega la solicitud, y el fin de semana cuenta aunque el auditor no trabaje en él: una solicitud que llega el viernes por la tarde gasta el fin de semana de su plazo.
+- La norma permite prorrogar el plazo hasta 14 días calendario más en ciertas condiciones. La simulación no modela prórrogas: una solicitud prorrogada se mediría como tardía.
+- Los plazos de la norma obligan a las aseguradoras que ella nombra (Medicare Advantage, Medicaid y CHIP). La aseguradora sintética del demo no es ninguna de ellas: la norma es la referencia del plazo, no una exigencia que la alcance.
+
+Fuente de los plazos: CMS-0057-F, Advancing Interoperability and Improving Prior Authorization Processes (89 FR 8758, 8 de febrero de 2024; documento 2024-00895), y 42 CFR 438.210(d): 72 horas para la solicitud expedita y 7 días calendario para la estándar, desde el 1 de enero de 2026. Consultada el 2026-11-03.
 
 ## 4. Riesgos previstos
 
@@ -217,10 +247,11 @@ Casos donde difieren: A-003, A-013, A-031, A-047, A-052, A-055, A-072, A-078, A-
 
 | Pieza | Qué es | Huella SHA-256 |
 | --- | --- | --- |
-| Plan | plan-demo-a 1.5.2 (`plans/demo-a/v1.5.2.json`) | `2dc1affac8e97d19d991fe9a89fc2f2c26d1ee7cad72be13ecfdd1ea90e4051d` |
+| Plan | plan-demo-a 1.6.0 (`plans/demo-a/v1.6.json`) | `b5d29ba673e89bfdeb03d39ef463f6e5b7ed3df4c54c20dd0a58bdf92a4d5dd4` |
 | Casos | planlang-a-002-200 · semilla planlang-a-002 · n = 200 · generado con el plan 1.5.0 | `5e76ef4cf562852c25aab2e041d55f17f809043450fe48e35c045cb419c8e62f` |
 | Corrida | suscripcion-planlang-a-002-200-v1.5 · 2026-10-04 · suscripcion/sonnet · multiagente · ejecutada con el plan 1.5.0 (misma verdad: mismos umbrales y contrato de grafo, ADR-005) | `fdbffe765fc0e8309284bbc5c606dc67bc80b61b53cbf8a3772b3447eb8d71a0` |
 | Grafo | versión del grafo exportado | `056407bf4c1238ca0448c11575ea9228d050596d02162cd0613f8c5090cc9117` |
+| Llegadas | horas de llegada simuladas del lote, con su semilla (`data/casos/demo-a/planlang-a-002-200.llegadas.json`) | `288e8db6457909f303b1e732e98b9f3e69bb60c4aec8c52aef75ba6230f050e8` |
 | Línea base | suscripcion-planlang-a-002-200-v1.5-base | `1ab219ded7ae9d1ce14f4d7ff0e699b517926564afda1ac73c74301ea6cff5f7` |
 
 Sesiones: 10 · casos ejecutados: 200 · con error del proveedor: 0 · límites de uso alcanzados: 0.
@@ -229,4 +260,4 @@ Umbrales aplicados: U1 = 0,75 · U2 = 1000 · U3 = 2 · U4 = false · en el plan
 
 Revisión humana: En lotes, el revisor simulado sigue la verdad conocida del caso (DA-04); la vitrina lo divulga.
 
-Verificador 1.4.0 · planlang-informe/v1 · huella de este informe: `bd4a99509f96feea091922741f8162b0fbbb466c90fedb69013f60494174e455`
+Verificador 1.5.0 · planlang-informe/v1 · huella de este informe: `7dd7033d8eb96f071467c3732aa5169fc3f0de9d2f1606a1905e53df750c9d27`

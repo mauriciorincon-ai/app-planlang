@@ -97,16 +97,60 @@ export const ExtraccionSchema = z
   })
   .strict();
 
-/** Demo B (S3): la extracción de los tres documentos de la solicitud. */
+/**
+ * Demo B, plan v1.2 (S9): la estructura societaria tal como la copió el extractor. La forma la fija el esquema Pydantic
+ * del agente; el contenido puede no cerrar (un porcentaje mal escrito, alguien que falta) y eso lo decide el nodo
+ * `beneficiarios`, no este lector.
+ */
+export const EstructuraExtraidaSchema = z
+  .object({
+    entidad: z.string().nullable(),
+    entidades: z.array(
+      z.object({ nit: z.string(), nombre: z.string() }).strict(),
+    ),
+    personas: z.array(
+      z.object({ documento: z.string(), nombre: z.string() }).strict(),
+    ),
+    participaciones: z.array(
+      z
+        .object({
+          titular: z.string(),
+          participada: z.string(),
+          porcentaje: z.string(),
+        })
+        .strict(),
+    ),
+    controla: z
+      .object({ documento: z.string(), rol: z.string().min(1) })
+      .strict()
+      .nullable(),
+  })
+  .strict();
+
+/** Demo B (S3): la extracción de los tres documentos de la solicitud; con el plan v1.2, también quién solicita. */
 export const ExtraccionBSchema = z
   .object({
     campos: z.record(z.string(), Json),
     campos_faltantes: z.array(z.string()),
+    tipo_solicitante: z.enum(["natural", "juridica"]).nullable().optional(),
+    estructura: EstructuraExtraidaSchema.nullable().optional(),
   })
   .strict();
 
 const TextoBilingueTraza = z
   .object({ es: z.string(), en: z.string() })
+  .strict();
+
+/** Demo B: la entrada de las listas más parecida a un nombre. */
+const MejorCoincidenciaSchema = z
+  .object({
+    entrada_id: z.string().min(1),
+    exacta: z.boolean(),
+    lista_id: z.string().min(1),
+    nombre_listado: z.string().min(1),
+    similitud: z.number().min(0).max(1),
+    vinculante: z.boolean(),
+  })
   .strict();
 
 /** Demo B: la mejor coincidencia con las listas y la versión y fecha de cada lista consultada (D3). */
@@ -122,17 +166,40 @@ export const CoincidenciasSchema = z
         })
         .strict(),
     ),
-    mejor: z
-      .object({
-        entrada_id: z.string().min(1),
-        exacta: z.boolean(),
-        lista_id: z.string().min(1),
-        nombre_listado: z.string().min(1),
-        similitud: z.number().min(0).max(1),
-        vinculante: z.boolean(),
-      })
-      .strict()
-      .nullable(),
+    mejor: MejorCoincidenciaSchema.nullable(),
+  })
+  .strict();
+
+/**
+ * Demo B, plan v1.2 (S9): lo que calculó el nodo `beneficiarios` (31 CFR § 1010.230(d)) y la mejor coincidencia de cada
+ * beneficiario con las listas. Mismas claves que `ResultadoDeBeneficiarios` del gemelo TS, más las coincidencias.
+ */
+export const BeneficiariosDetalleSchema = z
+  .object({
+    valida: z.boolean(),
+    problemas: z.array(z.string().min(1)),
+    participaciones: z.array(
+      z
+        .object({
+          documento: z.string().min(1),
+          num: z.string().regex(/^\d+$/),
+          den: z.string().regex(/^[1-9]\d*$/),
+          porcentaje: z.string().min(1),
+        })
+        .strict(),
+    ),
+    por_participacion: z.array(z.string().min(1)),
+    controla: z.string().nullable(),
+    beneficiarios: z.array(z.string().min(1)).nullable(),
+    coincidencias: z.array(
+      z
+        .object({
+          documento: z.string().min(1),
+          nombre: z.string().nullable(),
+          mejor: MejorCoincidenciaSchema.nullable(),
+        })
+        .strict(),
+    ),
   })
   .strict();
 
@@ -241,6 +308,8 @@ export const TrazaSchema = z
     investigacion: InvestigacionSchema.nullable().optional(),
     puntaje: PuntajeTrazaSchema.nullable().optional(),
     expediente: ExpedienteSchema.nullable().optional(),
+    // Demo B, plan v1.2 (S9): solo si el plan declara el nodo `beneficiarios`.
+    beneficiarios_detalle: BeneficiariosDetalleSchema.nullable().optional(),
     huella: Huella,
   })
   .strict();

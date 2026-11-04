@@ -543,10 +543,29 @@
         }
       },
       "tipo": "absoluto"
+    },
+    {
+      "enunciado": {
+        "en": "Every inpatient request is decided within 72 hours and every outpatient request within 7 calendar days of arriving; emergencies do not wait (C4).",
+        "es": "Toda solicitud hospitalaria se decide en 72 horas o menos y toda ambulatoria en 7 días calendario o menos desde que llega; la urgencia no espera (C4)."
+      },
+      "id": "C11",
+      "objetivo": true,
+      "por_lado": {
+        "agente_unico": {
+          "estado": "cumple",
+          "valor_medido": true
+        },
+        "multiagente": {
+          "estado": "cumple",
+          "valor_medido": true
+        }
+      },
+      "tipo": "absoluto"
     }
   ],
   "formato": "planlang-comparacion/v1",
-  "huella": "cd3ab27a82d3adaf9e1cc2f77c11eb6883741abb570995a2051135dcd0831374",
+  "huella": "99f116350b6089b689012a4e29e73d0329e977875af9659b1808ebb331255d6d",
   "lados": {
     "agente_unico": {
       "decisiones": {
@@ -620,9 +639,9 @@
       "huella": "e1dc89c72a37bf780bd3ddd5225dff84284da6bedabe6aae9f8b3bc670c57ee1",
       "version": "1.5.0"
     },
-    "huella": "2dc1affac8e97d19d991fe9a89fc2f2c26d1ee7cad72be13ecfdd1ea90e4051d",
+    "huella": "b5d29ba673e89bfdeb03d39ef463f6e5b7ed3df4c54c20dd0a58bdf92a4d5dd4",
     "id": "plan-demo-a",
-    "version": "1.5.2"
+    "version": "1.6.0"
   },
   "riesgos": [
     {
@@ -837,5 +856,5 @@
     }
   ],
   "version_comparacion": "1.0.0",
-  "version_verificador": "1.4.0"
+  "version_verificador": "1.5.0"
 }

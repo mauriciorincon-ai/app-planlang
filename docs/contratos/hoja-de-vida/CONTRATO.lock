@@ -19,8 +19,9 @@
   "reglas_en_codigo": {
     "app-hoja-de-vida/src/lib/vitrina/ficha-tecnica/schema.ts": "06624045e99ac6e18d710d3c32f969308bfddc51111d6851cccb25336eb8ff62",
     "app-hoja-de-vida/src/lib/vitrina/schemas.ts": "3663f8a717e74c113f5edb65a2746b0b8f6c7004fc15bec3417385f3d2a3cb05",
-    "app-hoja-de-vida/src/lib/vitrina/ficha-tecnica/armar.ts": "98afa52de894df2659574c5a554cafeb4992c641ad1f6b927a50d03d4f93cb99",
-    "nota": "Las reglas que viven solo en el Zod del consumidor (el proceso BPMN de la ficha; el total = suma de los grupos y los enlaces en null del export) se reescriben en src/lib/fichas/contrato.ts, y el armado de la ficha de una app (export + complemento) en armarFichaApp de src/lib/fichas/armar.ts. Estas huellas dicen contra qué versión de ese código se escribieron: si cambian, se relee y se ajusta."
+    "app-hoja-de-vida/src/lib/vitrina/ficha-tecnica/armar.ts": "5b7a18bd18a4c17ca99f5d8700c85e7bf20502bdc454bd24e1c8125ce0934979",
+    "app-hoja-de-vida/src/lib/vitrina/ficha-tecnica/hitos.ts": "369062132d6b35403451dde92394e44b68642aab5d3fb3745cea07ebfb53f016",
+    "nota": "Las reglas que viven solo en el Zod del consumidor (el proceso BPMN de la ficha; el total = suma de los grupos y los enlaces en null del export) se reescriben en src/lib/fichas/contrato.ts, y el armado de la ficha de una app (export + complemento) en armarFichaApp de src/lib/fichas/armar.ts. Estas huellas dicen contra qué versión de ese código se escribieron: si cambian, se relee y se ajusta. Relectura del S9 (2026-11-03): el 2026-11-01 hoja-de-vida (77dd0c9, sprint 30) movió los hitos de armar.ts a hitos.ts (`hitosDe`) sin cambiar su resultado; los hitos de armarFichaApp ya eran los mismos (ciclo · sprints · sellada o construccion · version · decisiones), así que la réplica no cambia y hitos.ts entra al lock."
   },
   "fijado": "2026-10-01"
 }

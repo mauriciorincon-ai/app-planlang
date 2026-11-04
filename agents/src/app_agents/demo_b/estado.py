@@ -33,10 +33,18 @@ class EstadoB(TypedDict, total=False):
     inyeccion_neutralizada: bool | None
     severidad_accion: int | None
     error_proveedor: str | None
+    # S9 (plan B v1.2): quién solicita y, si es una sociedad, sus beneficiarios finales y su cruce con las
+    # listas.
+    tipo_solicitante: str | None
+    beneficiarios: list[str] | None
+    similitud_beneficiarios_max: float | None
     # Trabajo del grafo.
     extraccion: dict[str, Any] | None
     coincidencias: dict[str, Any] | None
     investigacion: dict[str, Any] | None
+    # S9: el cálculo del nodo `beneficiarios` (participaciones efectivas, problemas) y la coincidencia de
+    # cada dueño.
+    beneficiarios_detalle: dict[str, Any] | None
     # Línea base de agente único: lo que su única llamada juzgó sobre las listas (lo usa el verificador).
     juicio_unico: dict[str, Any] | None
     puntaje: dict[str, Any] | None
@@ -78,9 +86,13 @@ def estado_inicial(caso: dict[str, Any], umbrales: dict[str, Any]) -> EstadoB:
         "inyeccion_neutralizada": None,
         "severidad_accion": None,
         "error_proveedor": None,
+        "tipo_solicitante": None,
+        "beneficiarios": None,
+        "similitud_beneficiarios_max": None,
         "extraccion": None,
         "coincidencias": None,
         "investigacion": None,
+        "beneficiarios_detalle": None,
         "juicio_unico": None,
         "puntaje": None,
         "revision": None,

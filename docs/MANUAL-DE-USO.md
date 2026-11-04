@@ -275,11 +275,14 @@ data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar l
      se separa del que tomó el agente. La curva riesgo-cobertura marca dónde está el plan.
   4. Bajo la curva está la **zona respaldada por los datos**: elige el error que aceptas (5, 10 o 20 %) y mira la
      banda de trama sobre la curva y sobre el deslizador de U1 (más abajo, la sección «Calibración con garantía»).
+  5. Desde el sprint 9, más abajo, mueve también la **capacidad del auditor** y mira cuántas solicitudes salen de su
+     plazo legal (más abajo, «Plazos y beneficiario final»).
 - **El modo Texas (U4)** obliga a que ninguna determinación adversa sea automática, ni siquiera la parcial. En la
   corrida de 200, encenderlo manda a una persona las nueve aprobaciones en parte. La pantalla dice que es la
   revisión que el modo Texas exige, no una de más.
-- **En el demo B** se mueven cuatro umbrales: la similitud con una lista, el inicio de la zona gris del investigador,
-  el puntaje de riesgo y las inconsistencias. No hay modo Texas, y se cuentan casos, no minutos.
+- **En el demo B** se mueven cuatro umbrales: la similitud con una lista (U1, que desde el sprint 9 también vale para
+  el parecido de un dueño), el inicio de la zona gris del investigador, el puntaje de riesgo y las inconsistencias. No
+  hay modo Texas ni capacidad del auditor, y se cuentan casos, no minutos.
 - **Limitaciones:** fuera del rango que se observó en la corrida, el resultado se marca «no observado». Los
   criterios que dependen de lo que pasó después de un cambio quedan sin poder medirse en el caso que cambia:
   la traza no registró lo que no ocurrió.
@@ -464,6 +467,49 @@ data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar l
   no se calcula nada al pintar. Este sprint solo lo probó en español; el inglés está redactado y llega a su prueba en el
   cierre del hito.
 
+### Plazos y beneficiario final · desde el sprint 9
+
+- **Qué hace:** mide dos cosas que el plan prometía y ninguna herramienta de evaluación de agentes mide.
+  1. **El plazo legal (demo A, criterio C11):** si cada autorización se decidió dentro de su plazo. Un reloj simulado
+     y un solo auditor corren sobre las trazas que ya existen: cada solicitud llega un día hábil y una hora de la
+     jornada (con la semilla del lote), el auditor atiende por prioridad de clase y por orden de llegada, y lo que el
+     agente decide solo se decide al llegar. Los plazos son 72 horas para la hospitalaria y 7 días calendario para la
+     ambulatoria (CMS-0057-F, 89 FR 8758, consultada el 2026-11-03; el fin de semana cuenta). **Ningún caso se vuelve
+     a correr.**
+  2. **Los dueños (demo B, criterio C7):** cuando solicita una sociedad, el extractor copia su estructura y un código
+     sin IA calcula quiénes son los beneficiarios finales según 31 CFR § 1010.230(d): quien llega al 25 % o más,
+     directo o por cadenas de sociedades (el 25,00 % entra), y quien la controla. La cuenta es exacta, con fracciones.
+     Cada dueño se cruza con las listas y, si se parece, el caso va al oficial. Si la estructura no cierra (un ciclo,
+     más del 100 %, un porcentaje mal escrito), **no se adivina**: no hay dueños y decide una persona.
+- **Dónde se ve:**
+  - En la Brecha, bajo los criterios (`/es/brecha`): «Plazos: el reloj simulado» (A) y «Dueños de las sociedades» (B).
+  - En el playground (`/es/playground`), la sección «La capacidad del auditor».
+  - En el agente B, el nodo «Cálculo de los dueños», y en cada caso de una sociedad, el certificado de existencia y los
+    dueños que vio el oficial.
+- **Cómo se usa:**
+  1. En la Brecha, lee la fila C11 y el bloque de plazos: cuántas solicitudes esperaron, cuánto y dónde se rompe el
+     plazo.
+  2. En el playground, mueve la **capacidad del auditor** (de 10 a 60 casos por día hábil, de 5 en 5) y los umbrales:
+     mover un umbral cambia cuántas solicitudes van a una persona, mover la capacidad cambia cuánto esperan. La
+     pantalla dice cuántas salen de su plazo, por clase, y las horas de auditor.
+  3. Con «Leer como · Experto» aparecen la cola, sus supuestos y la fuente de la norma.
+- **Lo que midió, con sus fallas:**
+  - **C11 cumple** en la corrida de 200 del A: ninguna de las 177 solicitudes con plazo se pasó; la espera más larga
+    fue de 16 h. Pero **el plazo no se rompe en ningún punto del tramo que el plan deja mover (10 a 60)**: se rompe
+    con 7 casos por día (14 ambulatorias tardías) y se cumple desde 8. Ese punto queda por debajo del control del
+    playground, y la pantalla lo dice.
+  - **C7 cumple** en el lote `planlang-b-002-20` (20 casos: 8 sociedades y 12 personas): los dueños de las 8
+    sociedades coincidieron con la verdad conocida. Con 8 sociedades la cifra orienta pero no prueba; el lote no trae
+    instrucciones escondidas, así que C6 y R4 quedan sin casos que los prueben.
+- **Limitaciones conocidas:**
+  - Las llegadas son simuladas, no son horas reales de nadie.
+  - «Hospitalaria = expedita» es un supuesto de la simulación: la norma llama expedita a la solicitud que pondría en
+    grave riesgo la salud del afiliado.
+  - No se modela la prórroga de hasta 14 días de la regla 42 CFR 438.210(d), y los planes de salud calificados de los
+    mercados federales quedan fuera de esa disposición.
+  - Una persona natural no pasa por el cálculo de dueños, y el umbral colombiano del RUB no se modela.
+  - Este sprint solo lo probó en español; el inglés está redactado y llega a su prueba en el cierre del hito.
+
 ### Preguntas frecuentes
 
 - **¿Por qué el informe dice «cumple con alertas»?** Porque el veredicto no mira solo los criterios: también los
@@ -479,6 +525,11 @@ data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar l
 - **¿Puedo cambiar un umbral y ver qué habría pasado?** Sí, en el playground de la vitrina (arriba).
 - **¿Cómo sé si un umbral de confianza tiene respaldo de los datos?** En el playground, bajo la curva, o en la Brecha,
   bajo S1: la zona respaldada y lo que los datos no alcanzan (arriba, «Calibración con garantía»).
+- **¿Se cumplen los plazos legales?** En la corrida de 200 del A, sí (C11), con mucho margen, y el informe dice dónde
+  se rompe: con 7 casos por día. Las llegadas son simuladas (arriba, «Plazos y beneficiario final»).
+- **¿Cómo sabe el agente quién es el dueño de una sociedad?** No lo «sabe»: el modelo solo copia la estructura que trae
+  el certificado y un código exacto, sin IA, calcula los beneficiarios finales; si la estructura no cierra, decide una
+  persona.
 
 ---
 
@@ -748,11 +799,14 @@ There are two ways to use it:
      path splits from the one the agent took. The risk-coverage curve marks where the plan sits.
   4. Above the curve sits the **zone the data backs**: pick the error you accept (5, 10 or 20 %) and look at the
      hatched band over the curve and over U1's slider (see "Calibration with a guarantee" below).
+  5. Since sprint 9, further down, also move the **auditor's capacity** and see how many requests go past their legal
+     deadline (below, "Deadlines and beneficial owners").
 - **Texas mode (U4)** makes sure no adverse determination is automatic, not even a partial one. In the 200-case
   run, turning it on sends the nine partial approvals to a person. The screen says it is the review Texas mode
   requires, not an extra one.
-- **In demo B** four thresholds move: the similarity to a list, the start of the investigator's gray zone, the risk
-  score and the inconsistencies. There is no Texas mode, and it counts cases, not minutes.
+- **In demo B** four thresholds move: the similarity to a list (U1, which since sprint 9 also applies to an owner's
+  resemblance), the start of the investigator's gray zone, the risk score and the inconsistencies. There is no Texas
+  mode and no auditor capacity, and it counts cases, not minutes.
 - **Limitations:** outside the range seen in the run, the result is marked "not observed". Criteria that
   depend on what happened after a change cannot be measured in the case that changes: the trace did not
   record what did not happen.
@@ -940,6 +994,51 @@ There are two ways to use it:
   from the report already calculated: nothing is calculated in the browser when painting. This sprint only tested it in
   Spanish; the English is written and gets its test at the milestone close.
 
+### Deadlines and beneficial owners · since sprint 9
+
+- **What it does:** measures two things the plan promised and no agent evaluation tool measures.
+  1. **The legal deadline (demo A, criterion C11):** whether each authorization was decided within its deadline. A
+     simulated clock and a single auditor run over the traces that already exist: each request arrives on a business
+     day and at a time within the working day (with the batch's seed), the auditor serves by class priority and then
+     by arrival order, and what the agent decides alone is decided on arrival. The deadlines are 72 hours for the
+     inpatient class and 7 calendar days for the outpatient one (CMS-0057-F, 89 FR 8758, read on 2026-11-03; the
+     weekend counts). **No case is rerun.**
+  2. **The owners (demo B, criterion C7):** when a company applies, the extractor copies its structure and AI-free code
+     works out who the beneficial owners are under 31 CFR § 1010.230(d): whoever reaches 25% or more, directly or
+     through chains of companies (exactly 25.00% counts), and whoever controls it. The arithmetic is exact, with
+     fractions. Each owner is checked against the lists and, if one resembles an entry, the case goes to the officer.
+     If the structure does not add up (a cycle, more than 100%, a malformed percentage), **it is not guessed**: there
+     are no owners and a person decides.
+- **Where to see it:**
+  - In the Gap report, under the criteria (`/en/brecha`): "Deadlines: the simulated clock" (A) and "Owners of the
+    companies" (B).
+  - In the playground (`/en/playground`), the "The auditor's capacity" section.
+  - In agent B, the "Ownership calculation" node, and in each company's case, the certificate of existence and the
+    owners the officer saw.
+- **How to use it:**
+  1. In the Gap report, read the C11 row and the deadlines block: how many requests waited, how long and where the
+     deadline breaks.
+  2. In the playground, move the **auditor's capacity** (10 to 60 cases per business day, in steps of 5) and the
+     thresholds: moving a threshold changes how many requests go to a person, moving the capacity changes how long
+     they wait. The screen says how many go past their deadline, by class, and the auditor hours.
+  3. With "Read as · Expert" the queue, its assumptions and the norm's source appear.
+- **What it measured, failures included:**
+  - **C11 is met** in demo A's 200-case run: none of the 177 requests with a deadline went past it; the longest wait
+    was 16 h. But **the deadline does not break anywhere in the range the plan lets you move (10 to 60)**: it breaks at
+    7 cases per day (14 outpatient requests late) and holds from 8. That point is below the playground's control, and
+    the screen says so.
+  - **C7 is met** in the `planlang-b-002-20` batch (20 cases: 8 companies and 12 people): the owners of the 8 companies
+    matched the known truth. With 8 companies the figure points the way but does not prove it; the batch carries no
+    hidden instructions, so C6 and R4 have no case that tests them.
+- **Known limitations:**
+  - Arrivals are simulated, nobody's real times.
+  - "Inpatient = expedited" is a simulation assumption: the rule calls expedited the request that would seriously
+    jeopardize the member's health.
+  - The extension of up to 14 days in 42 CFR 438.210(d) is not modelled, and qualified health plans in the federal
+    marketplaces are outside that provision.
+  - A natural person does not go through the owners calculation, and the Colombian RUB threshold is not modelled.
+  - This sprint only tested it in Spanish; the English is written and gets its test at the milestone close.
+
 ### Frequently asked questions
 
 - **Why does the report say “met with alerts”?** Because the verdict looks beyond the criteria: at the assumptions,
@@ -955,6 +1054,11 @@ There are two ways to use it:
 - **Can I change a threshold and see what would have happened?** Yes, in the showcase playground (above).
 - **How do I know whether a confidence threshold has the data's backing?** In the playground, under the curve, or in
   the Gap report, under S1: the backed zone and what the data does not reach (above, "Calibration with a guarantee").
+- **Are the legal deadlines met?** In demo A's 200-case run, yes (C11), with a wide margin, and the report says where it
+  breaks: at 7 cases per day. Arrivals are simulated (above, "Deadlines and beneficial owners").
+- **How does the agent know who owns a company?** It does not "know": the model only copies the structure the
+  certificate carries and exact, AI-free code works out the beneficial owners; if the structure does not add up, a
+  person decides.
 
 ---
 
@@ -970,3 +1074,4 @@ There are two ways to use it:
 | S6 · 2026-10-11 | Planear una versión nueva del plan (la v2 de HackGuard con las respuestas que el usuario revisó · la página dice de quién son las respuestas y muestra la prioridad de acción de cada riesgo)                                                     |
 | S7 · 2026-10-11 | Cerrar un hito con un solo gate (la guía abre con G1 a G8) · el contrato del grafo en detalle en la página del plan · `--salida` acotada · M1 contra «pendiente» en un umbral fijado (mejorado)                                                   |
 | S8 · 2026-11-02 | Calibración con garantía (la zona respaldada por los datos en el playground y en S1 de la Brecha · el verificador 1.4.0 · lo que los datos no alcanzan) · las fichas sin las de los demos y con el YAML del complemento · `pnpm capturas:cv-viva` |
+| S9 · 2026-11-03 | Plazos y beneficiario final (el plazo legal del A medido en un reloj simulado · la capacidad del auditor en el playground · los dueños de las sociedades en el B · plan A v1.6 y B v1.2 · el verificador 1.5.0 · el lote `planlang-b-002-20`)     |

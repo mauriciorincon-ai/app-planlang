@@ -16,6 +16,10 @@ import type { JsonValor } from "../formatos/jcs";
 import type { CorridaLeida } from "../brecha/lector";
 import type { Informe } from "../brecha/informe";
 import { contextoDeObjeto, objetoDeCaso } from "../brecha/contexto";
+import { medirPlazos, minutosPorPersona } from "../brecha/plazos";
+import { configDeCola } from "../plazos/cola";
+import type { CapaDeLlegadas } from "../plazos/tipos";
+import { referencias, parsear } from "../brecha/condiciones";
 import { evaluarRegla, valoresDeMetrica } from "../brecha/reglas";
 import {
   esAristaTripleta,
@@ -200,21 +204,7 @@ function clasificarClaves(
     );
 }
 
-/**
- * El costo humano por caso que el plan declara en sus umbrales: `null` si no declara ninguno (el playground no lo
- * inventa); si declara varios distintos, el playground no sabe a cuál atribuir y lo dice.
- */
-export function minutosPorPersona(plan: Plan): number | null {
-  const costos = [
-    ...new Set(plan.umbrales.map((u) => u.costo_humano_por_caso_min)),
-  ].filter((c): c is number => typeof c === "number");
-  if (costos.length === 0) return null;
-  if (costos.length > 1)
-    throw new Error(
-      `playground: el plan declara varios costos humanos por caso en sus umbrales (${costos.join(", ")}); el playground suma uno solo.`,
-    );
-  return costos[0] as number;
-}
+export { minutosPorPersona } from "../brecha/plazos";
 
 export function compactar(
   plan: Plan,
@@ -222,6 +212,7 @@ export function compactar(
   lote: Lote,
   informe: Informe,
   demo: OpcionesDeDemo,
+  llegadas: CapaDeLlegadas | null = null,
 ): Compacto {
   const grafo = corrida.grafo;
   const ligaduras = ligadurasDeUmbrales(plan);
@@ -254,6 +245,16 @@ export function compactar(
   }
 
   const casosDelLote = casosPorId(lote);
+  // S9: la cola del auditor. Solo si el plan declara la simulación y el lote trae sus llegadas.
+  const sim = plan.simulacion_de_plazos;
+  const medidos =
+    sim && llegadas ? medirPlazos(sim, llegadas, corrida.trazas) : null;
+  const claseDe = new Map(
+    (medidos?.resultados ?? []).map((r) => [r.caso_id, r.clase] as const),
+  );
+  const llegadaDe = new Map(
+    (llegadas?.llegadas ?? []).map((l) => [l.caso_id, l] as const),
+  );
   const casos: CasoCompacto[] = corrida.trazas.map((traza) => {
     const caso = casosDelLote.get(traza.caso_id);
     if (!caso)
@@ -267,12 +268,7 @@ export function compactar(
       rama: (registros[0] as { rama_tomada: string }).rama_tomada,
     }));
     const objeto = objetoDeCaso(caso, traza, umbralesPlan);
-    clasificarClaves(
-      objeto,
-      previas,
-      demo.claves_del_desenlace ?? [],
-      caso.id,
-    );
+    clasificarClaves(objeto, previas, demo.claves_del_desenlace ?? [], caso.id);
     const caminos: Record<string, Evaluacion[]> = {};
     visitas.forEach((v, i) => {
       if (!jugables.includes(v.desde)) return;
@@ -313,6 +309,15 @@ export function compactar(
       debe_escalar: caso.verdad_conocida.debe_escalar,
       registrado: traza.pausas_humanas.length > 0 ? "persona" : "solo",
       senales_de_umbral,
+      ...(medidos
+        ? {
+            plazo: {
+              clase: claseDe.get(caso.id) ?? null,
+              dia: llegadaDe.get(caso.id)!.dia,
+              minuto: llegadaDe.get(caso.id)!.minuto,
+            },
+          }
+        : {}),
       visitas,
       evaluaciones: { registrado: evaluar(plan, caso, objeto), caminos },
     };
@@ -328,6 +333,7 @@ export function compactar(
       tipo: c.tipo,
       objetivo: c.valor_objetivo,
       con_metrica: c.regla_de_medicion.metrica !== undefined,
+      ...(leeEnPlazo(c.regla_de_medicion) ? { de_plazos: true as const } : {}),
       estado_informe: delInforme.estado,
       valor_informe: delInforme.valor_medido,
     };
@@ -362,5 +368,33 @@ export function compactar(
     },
     casos,
     criterios,
+    ...(medidos && sim
+      ? {
+          plazos: {
+            config: configDeCola(sim),
+            capacidad: {
+              valor: sim.capacidad_del_auditor.valor,
+              ...sim.capacidad_del_auditor.rango_jugable,
+            },
+          },
+        }
+      : {}),
   };
+}
+
+/**
+ * ¿La regla de un criterio lee `en_plazo`? Entonces no se rehace por caso sino con la cola. Solo se sabe rehacer el
+ * «todos cumplen» (el plazo legal de un caso se cumple o no); otra agregación sobre `en_plazo` detiene el build.
+ */
+function leeEnPlazo(
+  r: Plan["criterios_aceptacion"][number]["regla_de_medicion"],
+): boolean {
+  const lee = [r.poblacion, r.condicion, r.metrica]
+    .filter((t): t is string => t !== undefined)
+    .some((t) => referencias(parsear(t)).rutas.includes("en_plazo"));
+  if (lee && r.agregacion !== "todos_cumplen")
+    throw new Error(
+      `playground: un criterio que lee en_plazo con la agregación «${r.agregacion}» no se sabe rehacer con la cola; solo «todos_cumplen».`,
+    );
+  return lee;
 }

@@ -35,15 +35,15 @@ describe("docs/cv-viva/capturas.yaml", () => {
       ...config.sin_pantalla,
     ];
     expect([...cubiertas].sort()).toEqual([...funcionalidades].sort());
-    expect(config.capturas).toHaveLength(20);
+    expect(config.capturas).toHaveLength(24);
     expect(config.sin_pantalla).toEqual(["entrevistador"]);
   });
 
-  it("la portada y las 20 capturas: WebP sin repetir, ruta en español, perfil líder o experto, ancla válida", () => {
+  it("la portada y las 24 capturas: WebP sin repetir, ruta en español, perfil líder o experto, ancla válida", () => {
     const todas = [config.portada, ...config.capturas];
-    expect(todas).toHaveLength(21);
+    expect(todas).toHaveLength(25);
     const archivos = todas.map((e) => e.archivo);
-    expect(new Set(archivos).size).toBe(21);
+    expect(new Set(archivos).size).toBe(25);
     for (const e of todas) {
       expect(e.archivo, e.archivo).toMatch(/^[a-z0-9-]+\.webp$/);
       expect(e.ruta, e.archivo).toMatch(/^\/es(\/|$)/);

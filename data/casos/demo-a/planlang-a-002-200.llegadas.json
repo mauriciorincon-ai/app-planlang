@@ -1,0 +1,1013 @@
+{
+  "dias_habiles": 5,
+  "formato": "planlang-llegadas/v1",
+  "huella": "288e8db6457909f303b1e732e98b9f3e69bb60c4aec8c52aef75ba6230f050e8",
+  "llegadas": [
+    {
+      "caso_id": "A-001",
+      "dia": 3,
+      "minuto": 241
+    },
+    {
+      "caso_id": "A-002",
+      "dia": 2,
+      "minuto": 184
+    },
+    {
+      "caso_id": "A-003",
+      "dia": 3,
+      "minuto": 326
+    },
+    {
+      "caso_id": "A-004",
+      "dia": 0,
+      "minuto": 350
+    },
+    {
+      "caso_id": "A-005",
+      "dia": 0,
+      "minuto": 161
+    },
+    {
+      "caso_id": "A-006",
+      "dia": 1,
+      "minuto": 509
+    },
+    {
+      "caso_id": "A-007",
+      "dia": 2,
+      "minuto": 375
+    },
+    {
+      "caso_id": "A-008",
+      "dia": 2,
+      "minuto": 452
+    },
+    {
+      "caso_id": "A-009",
+      "dia": 1,
+      "minuto": 521
+    },
+    {
+      "caso_id": "A-010",
+      "dia": 4,
+      "minuto": 309
+    },
+    {
+      "caso_id": "A-011",
+      "dia": 1,
+      "minuto": 424
+    },
+    {
+      "caso_id": "A-012",
+      "dia": 2,
+      "minuto": 29
+    },
+    {
+      "caso_id": "A-013",
+      "dia": 0,
+      "minuto": 289
+    },
+    {
+      "caso_id": "A-014",
+      "dia": 0,
+      "minuto": 497
+    },
+    {
+      "caso_id": "A-015",
+      "dia": 4,
+      "minuto": 440
+    },
+    {
+      "caso_id": "A-016",
+      "dia": 0,
+      "minuto": 515
+    },
+    {
+      "caso_id": "A-017",
+      "dia": 4,
+      "minuto": 491
+    },
+    {
+      "caso_id": "A-018",
+      "dia": 0,
+      "minuto": 25
+    },
+    {
+      "caso_id": "A-019",
+      "dia": 0,
+      "minuto": 257
+    },
+    {
+      "caso_id": "A-020",
+      "dia": 1,
+      "minuto": 458
+    },
+    {
+      "caso_id": "A-021",
+      "dia": 0,
+      "minuto": 296
+    },
+    {
+      "caso_id": "A-022",
+      "dia": 3,
+      "minuto": 192
+    },
+    {
+      "caso_id": "A-023",
+      "dia": 3,
+      "minuto": 15
+    },
+    {
+      "caso_id": "A-024",
+      "dia": 2,
+      "minuto": 346
+    },
+    {
+      "caso_id": "A-025",
+      "dia": 3,
+      "minuto": 511
+    },
+    {
+      "caso_id": "A-026",
+      "dia": 4,
+      "minuto": 291
+    },
+    {
+      "caso_id": "A-027",
+      "dia": 1,
+      "minuto": 493
+    },
+    {
+      "caso_id": "A-028",
+      "dia": 2,
+      "minuto": 340
+    },
+    {
+      "caso_id": "A-029",
+      "dia": 0,
+      "minuto": 439
+    },
+    {
+      "caso_id": "A-030",
+      "dia": 4,
+      "minuto": 458
+    },
+    {
+      "caso_id": "A-031",
+      "dia": 4,
+      "minuto": 485
+    },
+    {
+      "caso_id": "A-032",
+      "dia": 4,
+      "minuto": 104
+    },
+    {
+      "caso_id": "A-033",
+      "dia": 2,
+      "minuto": 20
+    },
+    {
+      "caso_id": "A-034",
+      "dia": 4,
+      "minuto": 144
+    },
+    {
+      "caso_id": "A-035",
+      "dia": 0,
+      "minuto": 377
+    },
+    {
+      "caso_id": "A-036",
+      "dia": 3,
+      "minuto": 335
+    },
+    {
+      "caso_id": "A-037",
+      "dia": 4,
+      "minuto": 487
+    },
+    {
+      "caso_id": "A-038",
+      "dia": 4,
+      "minuto": 519
+    },
+    {
+      "caso_id": "A-039",
+      "dia": 0,
+      "minuto": 401
+    },
+    {
+      "caso_id": "A-040",
+      "dia": 0,
+      "minuto": 209
+    },
+    {
+      "caso_id": "A-041",
+      "dia": 4,
+      "minuto": 388
+    },
+    {
+      "caso_id": "A-042",
+      "dia": 2,
+      "minuto": 24
+    },
+    {
+      "caso_id": "A-043",
+      "dia": 4,
+      "minuto": 337
+    },
+    {
+      "caso_id": "A-044",
+      "dia": 2,
+      "minuto": 451
+    },
+    {
+      "caso_id": "A-045",
+      "dia": 3,
+      "minuto": 299
+    },
+    {
+      "caso_id": "A-046",
+      "dia": 4,
+      "minuto": 423
+    },
+    {
+      "caso_id": "A-047",
+      "dia": 0,
+      "minuto": 23
+    },
+    {
+      "caso_id": "A-048",
+      "dia": 1,
+      "minuto": 204
+    },
+    {
+      "caso_id": "A-049",
+      "dia": 3,
+      "minuto": 296
+    },
+    {
+      "caso_id": "A-050",
+      "dia": 0,
+      "minuto": 146
+    },
+    {
+      "caso_id": "A-051",
+      "dia": 0,
+      "minuto": 56
+    },
+    {
+      "caso_id": "A-052",
+      "dia": 0,
+      "minuto": 79
+    },
+    {
+      "caso_id": "A-053",
+      "dia": 3,
+      "minuto": 415
+    },
+    {
+      "caso_id": "A-054",
+      "dia": 3,
+      "minuto": 457
+    },
+    {
+      "caso_id": "A-055",
+      "dia": 2,
+      "minuto": 56
+    },
+    {
+      "caso_id": "A-056",
+      "dia": 3,
+      "minuto": 100
+    },
+    {
+      "caso_id": "A-057",
+      "dia": 0,
+      "minuto": 72
+    },
+    {
+      "caso_id": "A-058",
+      "dia": 1,
+      "minuto": 12
+    },
+    {
+      "caso_id": "A-059",
+      "dia": 4,
+      "minuto": 175
+    },
+    {
+      "caso_id": "A-060",
+      "dia": 3,
+      "minuto": 254
+    },
+    {
+      "caso_id": "A-061",
+      "dia": 4,
+      "minuto": 348
+    },
+    {
+      "caso_id": "A-062",
+      "dia": 0,
+      "minuto": 484
+    },
+    {
+      "caso_id": "A-063",
+      "dia": 2,
+      "minuto": 224
+    },
+    {
+      "caso_id": "A-064",
+      "dia": 0,
+      "minuto": 448
+    },
+    {
+      "caso_id": "A-065",
+      "dia": 3,
+      "minuto": 68
+    },
+    {
+      "caso_id": "A-066",
+      "dia": 1,
+      "minuto": 524
+    },
+    {
+      "caso_id": "A-067",
+      "dia": 1,
+      "minuto": 481
+    },
+    {
+      "caso_id": "A-068",
+      "dia": 4,
+      "minuto": 390
+    },
+    {
+      "caso_id": "A-069",
+      "dia": 0,
+      "minuto": 175
+    },
+    {
+      "caso_id": "A-070",
+      "dia": 2,
+      "minuto": 162
+    },
+    {
+      "caso_id": "A-071",
+      "dia": 3,
+      "minuto": 501
+    },
+    {
+      "caso_id": "A-072",
+      "dia": 2,
+      "minuto": 70
+    },
+    {
+      "caso_id": "A-073",
+      "dia": 2,
+      "minuto": 502
+    },
+    {
+      "caso_id": "A-074",
+      "dia": 1,
+      "minuto": 438
+    },
+    {
+      "caso_id": "A-075",
+      "dia": 4,
+      "minuto": 353
+    },
+    {
+      "caso_id": "A-076",
+      "dia": 0,
+      "minuto": 500
+    },
+    {
+      "caso_id": "A-077",
+      "dia": 2,
+      "minuto": 366
+    },
+    {
+      "caso_id": "A-078",
+      "dia": 3,
+      "minuto": 409
+    },
+    {
+      "caso_id": "A-079",
+      "dia": 1,
+      "minuto": 397
+    },
+    {
+      "caso_id": "A-080",
+      "dia": 1,
+      "minuto": 254
+    },
+    {
+      "caso_id": "A-081",
+      "dia": 0,
+      "minuto": 208
+    },
+    {
+      "caso_id": "A-082",
+      "dia": 3,
+      "minuto": 436
+    },
+    {
+      "caso_id": "A-083",
+      "dia": 0,
+      "minuto": 496
+    },
+    {
+      "caso_id": "A-084",
+      "dia": 4,
+      "minuto": 9
+    },
+    {
+      "caso_id": "A-085",
+      "dia": 2,
+      "minuto": 287
+    },
+    {
+      "caso_id": "A-086",
+      "dia": 3,
+      "minuto": 99
+    },
+    {
+      "caso_id": "A-087",
+      "dia": 2,
+      "minuto": 336
+    },
+    {
+      "caso_id": "A-088",
+      "dia": 0,
+      "minuto": 395
+    },
+    {
+      "caso_id": "A-089",
+      "dia": 1,
+      "minuto": 426
+    },
+    {
+      "caso_id": "A-090",
+      "dia": 3,
+      "minuto": 337
+    },
+    {
+      "caso_id": "A-091",
+      "dia": 0,
+      "minuto": 369
+    },
+    {
+      "caso_id": "A-092",
+      "dia": 4,
+      "minuto": 321
+    },
+    {
+      "caso_id": "A-093",
+      "dia": 4,
+      "minuto": 115
+    },
+    {
+      "caso_id": "A-094",
+      "dia": 0,
+      "minuto": 143
+    },
+    {
+      "caso_id": "A-095",
+      "dia": 3,
+      "minuto": 324
+    },
+    {
+      "caso_id": "A-096",
+      "dia": 4,
+      "minuto": 371
+    },
+    {
+      "caso_id": "A-097",
+      "dia": 2,
+      "minuto": 379
+    },
+    {
+      "caso_id": "A-098",
+      "dia": 2,
+      "minuto": 441
+    },
+    {
+      "caso_id": "A-099",
+      "dia": 1,
+      "minuto": 419
+    },
+    {
+      "caso_id": "A-100",
+      "dia": 2,
+      "minuto": 261
+    },
+    {
+      "caso_id": "A-101",
+      "dia": 4,
+      "minuto": 100
+    },
+    {
+      "caso_id": "A-102",
+      "dia": 1,
+      "minuto": 140
+    },
+    {
+      "caso_id": "A-103",
+      "dia": 4,
+      "minuto": 243
+    },
+    {
+      "caso_id": "A-104",
+      "dia": 1,
+      "minuto": 390
+    },
+    {
+      "caso_id": "A-105",
+      "dia": 2,
+      "minuto": 206
+    },
+    {
+      "caso_id": "A-106",
+      "dia": 1,
+      "minuto": 250
+    },
+    {
+      "caso_id": "A-107",
+      "dia": 4,
+      "minuto": 508
+    },
+    {
+      "caso_id": "A-108",
+      "dia": 4,
+      "minuto": 342
+    },
+    {
+      "caso_id": "A-109",
+      "dia": 3,
+      "minuto": 204
+    },
+    {
+      "caso_id": "A-110",
+      "dia": 4,
+      "minuto": 410
+    },
+    {
+      "caso_id": "A-111",
+      "dia": 4,
+      "minuto": 533
+    },
+    {
+      "caso_id": "A-112",
+      "dia": 2,
+      "minuto": 99
+    },
+    {
+      "caso_id": "A-113",
+      "dia": 0,
+      "minuto": 316
+    },
+    {
+      "caso_id": "A-114",
+      "dia": 3,
+      "minuto": 348
+    },
+    {
+      "caso_id": "A-115",
+      "dia": 1,
+      "minuto": 363
+    },
+    {
+      "caso_id": "A-116",
+      "dia": 2,
+      "minuto": 409
+    },
+    {
+      "caso_id": "A-117",
+      "dia": 1,
+      "minuto": 391
+    },
+    {
+      "caso_id": "A-118",
+      "dia": 1,
+      "minuto": 511
+    },
+    {
+      "caso_id": "A-119",
+      "dia": 2,
+      "minuto": 387
+    },
+    {
+      "caso_id": "A-120",
+      "dia": 2,
+      "minuto": 18
+    },
+    {
+      "caso_id": "A-121",
+      "dia": 3,
+      "minuto": 410
+    },
+    {
+      "caso_id": "A-122",
+      "dia": 4,
+      "minuto": 265
+    },
+    {
+      "caso_id": "A-123",
+      "dia": 3,
+      "minuto": 157
+    },
+    {
+      "caso_id": "A-124",
+      "dia": 0,
+      "minuto": 367
+    },
+    {
+      "caso_id": "A-125",
+      "dia": 2,
+      "minuto": 331
+    },
+    {
+      "caso_id": "A-126",
+      "dia": 1,
+      "minuto": 383
+    },
+    {
+      "caso_id": "A-127",
+      "dia": 1,
+      "minuto": 257
+    },
+    {
+      "caso_id": "A-128",
+      "dia": 2,
+      "minuto": 227
+    },
+    {
+      "caso_id": "A-129",
+      "dia": 0,
+      "minuto": 40
+    },
+    {
+      "caso_id": "A-130",
+      "dia": 1,
+      "minuto": 186
+    },
+    {
+      "caso_id": "A-131",
+      "dia": 2,
+      "minuto": 223
+    },
+    {
+      "caso_id": "A-132",
+      "dia": 1,
+      "minuto": 148
+    },
+    {
+      "caso_id": "A-133",
+      "dia": 0,
+      "minuto": 283
+    },
+    {
+      "caso_id": "A-134",
+      "dia": 4,
+      "minuto": 201
+    },
+    {
+      "caso_id": "A-135",
+      "dia": 1,
+      "minuto": 70
+    },
+    {
+      "caso_id": "A-136",
+      "dia": 2,
+      "minuto": 194
+    },
+    {
+      "caso_id": "A-137",
+      "dia": 4,
+      "minuto": 509
+    },
+    {
+      "caso_id": "A-138",
+      "dia": 3,
+      "minuto": 308
+    },
+    {
+      "caso_id": "A-139",
+      "dia": 1,
+      "minuto": 466
+    },
+    {
+      "caso_id": "A-140",
+      "dia": 1,
+      "minuto": 514
+    },
+    {
+      "caso_id": "A-141",
+      "dia": 4,
+      "minuto": 197
+    },
+    {
+      "caso_id": "A-142",
+      "dia": 1,
+      "minuto": 416
+    },
+    {
+      "caso_id": "A-143",
+      "dia": 1,
+      "minuto": 443
+    },
+    {
+      "caso_id": "A-144",
+      "dia": 3,
+      "minuto": 423
+    },
+    {
+      "caso_id": "A-145",
+      "dia": 3,
+      "minuto": 398
+    },
+    {
+      "caso_id": "A-146",
+      "dia": 1,
+      "minuto": 100
+    },
+    {
+      "caso_id": "A-147",
+      "dia": 4,
+      "minuto": 82
+    },
+    {
+      "caso_id": "A-148",
+      "dia": 3,
+      "minuto": 510
+    },
+    {
+      "caso_id": "A-149",
+      "dia": 3,
+      "minuto": 284
+    },
+    {
+      "caso_id": "A-150",
+      "dia": 1,
+      "minuto": 242
+    },
+    {
+      "caso_id": "A-151",
+      "dia": 2,
+      "minuto": 198
+    },
+    {
+      "caso_id": "A-152",
+      "dia": 0,
+      "minuto": 539
+    },
+    {
+      "caso_id": "A-153",
+      "dia": 1,
+      "minuto": 64
+    },
+    {
+      "caso_id": "A-154",
+      "dia": 0,
+      "minuto": 232
+    },
+    {
+      "caso_id": "A-155",
+      "dia": 3,
+      "minuto": 519
+    },
+    {
+      "caso_id": "A-156",
+      "dia": 2,
+      "minuto": 76
+    },
+    {
+      "caso_id": "A-157",
+      "dia": 2,
+      "minuto": 416
+    },
+    {
+      "caso_id": "A-158",
+      "dia": 2,
+      "minuto": 355
+    },
+    {
+      "caso_id": "A-159",
+      "dia": 1,
+      "minuto": 63
+    },
+    {
+      "caso_id": "A-160",
+      "dia": 1,
+      "minuto": 113
+    },
+    {
+      "caso_id": "A-161",
+      "dia": 1,
+      "minuto": 418
+    },
+    {
+      "caso_id": "A-162",
+      "dia": 1,
+      "minuto": 79
+    },
+    {
+      "caso_id": "A-163",
+      "dia": 2,
+      "minuto": 361
+    },
+    {
+      "caso_id": "A-164",
+      "dia": 3,
+      "minuto": 524
+    },
+    {
+      "caso_id": "A-165",
+      "dia": 1,
+      "minuto": 300
+    },
+    {
+      "caso_id": "A-166",
+      "dia": 2,
+      "minuto": 180
+    },
+    {
+      "caso_id": "A-167",
+      "dia": 4,
+      "minuto": 242
+    },
+    {
+      "caso_id": "A-168",
+      "dia": 2,
+      "minuto": 206
+    },
+    {
+      "caso_id": "A-169",
+      "dia": 0,
+      "minuto": 195
+    },
+    {
+      "caso_id": "A-170",
+      "dia": 3,
+      "minuto": 377
+    },
+    {
+      "caso_id": "A-171",
+      "dia": 3,
+      "minuto": 101
+    },
+    {
+      "caso_id": "A-172",
+      "dia": 0,
+      "minuto": 208
+    },
+    {
+      "caso_id": "A-173",
+      "dia": 2,
+      "minuto": 60
+    },
+    {
+      "caso_id": "A-174",
+      "dia": 0,
+      "minuto": 165
+    },
+    {
+      "caso_id": "A-175",
+      "dia": 1,
+      "minuto": 148
+    },
+    {
+      "caso_id": "A-176",
+      "dia": 4,
+      "minuto": 75
+    },
+    {
+      "caso_id": "A-177",
+      "dia": 4,
+      "minuto": 138
+    },
+    {
+      "caso_id": "A-178",
+      "dia": 4,
+      "minuto": 525
+    },
+    {
+      "caso_id": "A-179",
+      "dia": 4,
+      "minuto": 41
+    },
+    {
+      "caso_id": "A-180",
+      "dia": 3,
+      "minuto": 137
+    },
+    {
+      "caso_id": "A-181",
+      "dia": 4,
+      "minuto": 12
+    },
+    {
+      "caso_id": "A-182",
+      "dia": 1,
+      "minuto": 231
+    },
+    {
+      "caso_id": "A-183",
+      "dia": 2,
+      "minuto": 300
+    },
+    {
+      "caso_id": "A-184",
+      "dia": 0,
+      "minuto": 391
+    },
+    {
+      "caso_id": "A-185",
+      "dia": 2,
+      "minuto": 476
+    },
+    {
+      "caso_id": "A-186",
+      "dia": 4,
+      "minuto": 72
+    },
+    {
+      "caso_id": "A-187",
+      "dia": 0,
+      "minuto": 20
+    },
+    {
+      "caso_id": "A-188",
+      "dia": 1,
+      "minuto": 264
+    },
+    {
+      "caso_id": "A-189",
+      "dia": 4,
+      "minuto": 409
+    },
+    {
+      "caso_id": "A-190",
+      "dia": 4,
+      "minuto": 537
+    },
+    {
+      "caso_id": "A-191",
+      "dia": 1,
+      "minuto": 252
+    },
+    {
+      "caso_id": "A-192",
+      "dia": 0,
+      "minuto": 145
+    },
+    {
+      "caso_id": "A-193",
+      "dia": 1,
+      "minuto": 29
+    },
+    {
+      "caso_id": "A-194",
+      "dia": 0,
+      "minuto": 347
+    },
+    {
+      "caso_id": "A-195",
+      "dia": 4,
+      "minuto": 287
+    },
+    {
+      "caso_id": "A-196",
+      "dia": 4,
+      "minuto": 175
+    },
+    {
+      "caso_id": "A-197",
+      "dia": 4,
+      "minuto": 279
+    },
+    {
+      "caso_id": "A-198",
+      "dia": 2,
+      "minuto": 155
+    },
+    {
+      "caso_id": "A-199",
+      "dia": 4,
+      "minuto": 260
+    },
+    {
+      "caso_id": "A-200",
+      "dia": 2,
+      "minuto": 447
+    }
+  ],
+  "lote": {
+    "huella": "5e76ef4cf562852c25aab2e041d55f17f809043450fe48e35c045cb419c8e62f",
+    "id": "planlang-a-002-200",
+    "semilla": "planlang-a-002"
+  },
+  "minutos_de_jornada": 540
+}

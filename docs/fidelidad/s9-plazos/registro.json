@@ -1,0 +1,211 @@
+{
+  "formato": "planlang-capturas/v1",
+  "capturas": [
+    {
+      "pantalla": "playground",
+      "url": "/es/playground",
+      "ancho": 380,
+      "idioma": "es",
+      "tema": "oscuro",
+      "alto": 7923,
+      "sha256": "322879342f2103661ba13b5835ca8baee88155c5e82f3a7cb7ac713f96f13e8c",
+      "entera": "playground-380-oscuro-es.png",
+      "miniatura": "mini-playground-380-oscuro-es.jpg"
+    },
+    {
+      "pantalla": "playground",
+      "url": "/es/playground",
+      "ancho": 1280,
+      "idioma": "es",
+      "tema": "oscuro",
+      "alto": 4311,
+      "sha256": "5ec963f8991194ce4faf7057e00f4d1601893ae1f34665ef4b595871bc0cb830",
+      "entera": "playground-1280-oscuro-es.png",
+      "miniatura": "mini-playground-1280-oscuro-es.jpg"
+    },
+    {
+      "pantalla": "playground",
+      "url": "/es/playground",
+      "ancho": 380,
+      "idioma": "es",
+      "tema": "claro",
+      "alto": 7923,
+      "sha256": "4f33be1fe47da458f390e59e06569a05a36026dcf911f4e5f8d1d1ae19538b12",
+      "entera": "playground-380-claro-es.png",
+      "miniatura": "mini-playground-380-claro-es.jpg"
+    },
+    {
+      "pantalla": "playground",
+      "url": "/es/playground",
+      "ancho": 1280,
+      "idioma": "es",
+      "tema": "claro",
+      "alto": 4311,
+      "sha256": "5c392d31ac23f13870fee6658cce4bd7315e0232af35488e4eee16dce21eb03a",
+      "entera": "playground-1280-claro-es.png",
+      "miniatura": "mini-playground-1280-claro-es.jpg"
+    },
+    {
+      "pantalla": "brecha",
+      "url": "/es/brecha",
+      "ancho": 380,
+      "idioma": "es",
+      "tema": "oscuro",
+      "alto": 24105,
+      "sha256": "5429f038cde97a4c9811b831317dd63af45b8a587a4ef665751fd912d1d6614e",
+      "entera": "brecha-380-oscuro-es.png",
+      "miniatura": "mini-brecha-380-oscuro-es.jpg"
+    },
+    {
+      "pantalla": "brecha",
+      "url": "/es/brecha",
+      "ancho": 1280,
+      "idioma": "es",
+      "tema": "oscuro",
+      "alto": 12384,
+      "sha256": "05e2068e64e5a5bae3fb309e0d2795a619bfe679037db9faac04bd44246419eb",
+      "entera": "brecha-1280-oscuro-es.png",
+      "miniatura": "mini-brecha-1280-oscuro-es.jpg"
+    },
+    {
+      "pantalla": "brecha",
+      "url": "/es/brecha",
+      "ancho": 380,
+      "idioma": "es",
+      "tema": "claro",
+      "alto": 24105,
+      "sha256": "4e7beb8395a2a196e727c31357543557fed93bb618c262375ed805e3174e9199",
+      "entera": "brecha-380-claro-es.png",
+      "miniatura": "mini-brecha-380-claro-es.jpg"
+    },
+    {
+      "pantalla": "brecha",
+      "url": "/es/brecha",
+      "ancho": 1280,
+      "idioma": "es",
+      "tema": "claro",
+      "alto": 12384,
+      "sha256": "a97b9ab7023e117a9f82291780f44db0fc24d572953c7210d1cb42ed04ba19f3",
+      "entera": "brecha-1280-claro-es.png",
+      "miniatura": "mini-brecha-1280-claro-es.jpg"
+    },
+    {
+      "pantalla": "brecha-b",
+      "url": "/es/demo-b/brecha",
+      "ancho": 380,
+      "idioma": "es",
+      "tema": "oscuro",
+      "alto": 17694,
+      "sha256": "15b4d78b23fac58cb8377058336e643946a3493e4d33c9c37bebf8cf53904692",
+      "entera": "brecha-b-380-oscuro-es.png",
+      "miniatura": "mini-brecha-b-380-oscuro-es.jpg"
+    },
+    {
+      "pantalla": "brecha-b",
+      "url": "/es/demo-b/brecha",
+      "ancho": 1280,
+      "idioma": "es",
+      "tema": "oscuro",
+      "alto": 9561,
+      "sha256": "9b42465d92e65292bfd867b1a35bc37989a8b63c272217065c84fb339311ac68",
+      "entera": "brecha-b-1280-oscuro-es.png",
+      "miniatura": "mini-brecha-b-1280-oscuro-es.jpg"
+    },
+    {
+      "pantalla": "brecha-b",
+      "url": "/es/demo-b/brecha",
+      "ancho": 380,
+      "idioma": "es",
+      "tema": "claro",
+      "alto": 17694,
+      "sha256": "0f5c676b1598f1c17f3027098431142bf895f280768c20d1cf11ee297d523b29",
+      "entera": "brecha-b-380-claro-es.png",
+      "miniatura": "mini-brecha-b-380-claro-es.jpg"
+    },
+    {
+      "pantalla": "brecha-b",
+      "url": "/es/demo-b/brecha",
+      "ancho": 1280,
+      "idioma": "es",
+      "tema": "claro",
+      "alto": 9561,
+      "sha256": "185b67797b110202321969b06e86bd408d21d24c136e0c82845da1fc1e5249b1",
+      "entera": "brecha-b-1280-claro-es.png",
+      "miniatura": "mini-brecha-b-1280-claro-es.jpg"
+    }
+  ],
+  "recortes": [
+    {
+      "clave": "playground-capacidad",
+      "archivo": "Playground (/es/playground), «La capacidad del auditor»",
+      "estado": "tal como abre",
+      "mirar": "El deslizador de la capacidad con su marca «plan 30», la tabla por clase y la frase que dice si alguien sale de su plazo, con su símbolo y su texto.",
+      "esperada": "30 casos por día hábil (de 10 a 60); «Con 30 casos por día hábil, toda solicitud se decide dentro de su plazo.»; Hospitalaria 72 horas, 30 de 54 esperaron, «0 · cumple» en fuera de plazo, espera mediana 18 min y máxima 15 h 33 min; Ambulatoria 7 días calendario, 40 de 123, 0 fuera de plazo, 18 min y 16 h 0 min; «Con estos umbrales el plazo se cumple desde 8 casos por día hábil; con una menos salen 14. Queda por debajo de lo que este control deja mover (10–60).»",
+      "ruta": "/es/playground",
+      "ancho": 1280,
+      "tema": "oscuro",
+      "interaccion": null,
+      "imagen": "forma-playground-capacidad.jpg"
+    },
+    {
+      "clave": "playground-capacidad-movida",
+      "archivo": "Playground, la capacidad en 10 y U1 en 0,95 (pasada de interacción)",
+      "estado": "tras mover la capacidad a 10 y U1 a 0,95",
+      "mirar": "Que la frase y las cifras de la tabla cambien al mover los controles, que «movido desde 30» aparezca y que el punto donde se rompe siga diciéndose.",
+      "esperada": "«Con 10 casos por día hábil, toda solicitud se decide dentro de su plazo.» (con U1 en 0,95 pasan más solicitudes al auditor y la espera sube); «Con estos umbrales el plazo se cumple desde 9 casos por día hábil; con una menos salen 24.»; la chip «movido desde 30».",
+      "ruta": "/es/playground",
+      "ancho": 1280,
+      "tema": "claro",
+      "interaccion": "cambió",
+      "imagen": "forma-playground-capacidad-movida.jpg"
+    },
+    {
+      "clave": "playground-capacidad-movil",
+      "archivo": "Playground, la capacidad en el teléfono",
+      "estado": "tal como abre, 380 px",
+      "mirar": "Que cada clase se lea en su propia tarjeta (seis columnas no caben en 380 px), sin cortar cifras, y que la frase y el deslizador quepan.",
+      "esperada": "Nada se sale de la pantalla; una tarjeta por clase con plazo, cuántas esperaron, «0 · cumple» con su palomita, espera mediana y máxima; el deslizador y la frase se leen enteros.",
+      "ruta": "/es/playground",
+      "ancho": 380,
+      "tema": "claro",
+      "interaccion": null,
+      "imagen": "forma-playground-capacidad-movil.jpg"
+    },
+    {
+      "clave": "brecha-plazos-lider",
+      "archivo": "Brecha (/es/brecha), el bloque «Plazos: el reloj simulado», como líder",
+      "estado": "tal como abre",
+      "mirar": "Tres frases llanas: lo que se cumplió con su margen, dónde se rompe el plazo y que las llegadas son simuladas.",
+      "esperada": "«Toda solicitud con plazo se decidió a tiempo. La que más esperó fue hospitalaria: 15 h 33 min de espera frente a un plazo de 72 horas…»; «Donde se rompe: el plazo se cumple desde 8 casos por día hábil y con una menos salen 14. Eso queda por debajo del tramo que el playground deja mover (10–60)…»; «Las horas de llegada son simuladas…».",
+      "ruta": "/es/brecha",
+      "ancho": 1280,
+      "tema": "claro",
+      "interaccion": null,
+      "imagen": "forma-brecha-plazos-lider.jpg"
+    },
+    {
+      "clave": "brecha-plazos-experto",
+      "archivo": "Brecha, el bloque de plazos, perfil experto (pasada de interacción)",
+      "estado": "tras pulsar «Experto»",
+      "mirar": "Que aparezcan la cola, la tabla por clase, los supuestos de la simulación y la norma con su fecha de consulta.",
+      "esperada": "La tabla Hospitalaria / Ambulatoria con sus siete columnas; «Pasaron por el auditor 70 solicitudes: 14 por día hábil…»; «Horas de auditor… 14 h»; los cinco supuestos; «Fuente de los plazos: CMS-0057-F… Consultada el 2026-11-03».",
+      "ruta": "/es/brecha",
+      "ancho": 1280,
+      "tema": "oscuro",
+      "interaccion": "cambió",
+      "imagen": "forma-brecha-plazos-experto.jpg"
+    },
+    {
+      "clave": "brecha-b-duenos-movil",
+      "archivo": "Brecha del demo B (/es/demo-b/brecha), «Dueños de las sociedades», en el teléfono",
+      "estado": "tal como abre, 380 px",
+      "mirar": "Que diga cuántas sociedades se midieron, que 8 de 8 orienta pero no prueba y que el lote no probó las instrucciones escondidas.",
+      "esperada": "«De 8 sociedades, el conjunto de dueños finales coincidió con la verdad conocida en las 8. Con tan pocas, la cifra orienta pero no prueba: cada sociedad pesa 12,5 puntos.»; «Este lote no trae instrucciones escondidas…».",
+      "ruta": "/es/demo-b/brecha",
+      "ancho": 380,
+      "tema": "claro",
+      "interaccion": null,
+      "imagen": "forma-brecha-b-duenos-movil.jpg"
+    }
+  ]
+}

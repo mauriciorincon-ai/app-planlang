@@ -131,6 +131,22 @@ export function perfilDemoB(d: DatosDemoB, ctx: ContextoAgente): PerfilAgente {
     exactas: trazas.filter((t) => t.coincidencias?.mejor?.exacta === true)
       .length,
     zonaGris: con("investigador").length,
+    sociedades: con("beneficiarios").map((t) => t.caso_id),
+    duenos: con("beneficiarios").reduce(
+      (a, t) => a + (t.beneficiarios_detalle?.beneficiarios?.length ?? 0),
+      0,
+    ),
+    estructuraInvalida: con("beneficiarios")
+      .filter((t) => t.beneficiarios_detalle?.valida !== true)
+      .map((t) => t.caso_id),
+    // Lo que evaluó el propio grafo (la regla del dueño en lista cumplida), no una comparación rehecha aquí.
+    duenosEnLista: trazas
+      .filter((t) =>
+        t.decisiones_de_arista.some(
+          (x) => x.resultado && categoriaDeRegla(x, DEMO) === "duenoEnLista",
+        ),
+      )
+      .map((t) => t.caso_id),
     mismaPersona: conclusion("misma_persona"),
     homonimos: conclusion("homonimo"),
     umbralRiesgo: Number(uRiesgo.valor_en_plan),
@@ -208,6 +224,10 @@ export function perfilDemoB(d: DatosDemoB, ctx: ContextoAgente): PerfilAgente {
   const cifrasActividad: Record<ClaveActividadB, TextoBilingue> = {
     revisaEntrada: CIFRAS_ACTIVIDAD_B.cargas({ n: cargas.length, de: n }),
     lee: CIFRAS_ACTIVIDAD.casos({ n: con("extractor").length }),
+    duenos: CIFRAS_ACTIVIDAD_B.duenos({
+      n: cifrasDelNodo("beneficiarios").sociedades.length,
+      duenos: cifrasDelNodo("beneficiarios").duenos,
+    }),
     cruza: CIFRAS_ACTIVIDAD.sinModelo(con("verificador_listas").length),
     investiga: CIFRAS_ACTIVIDAD_B.zonaGris(con("investigador").length),
     puntua: CIFRAS_ACTIVIDAD.sinModelo(con("puntaje").length),
@@ -220,6 +240,7 @@ export function perfilDemoB(d: DatosDemoB, ctx: ContextoAgente): PerfilAgente {
   const corrioActividad: Record<ClaveActividadB, boolean> = {
     revisaEntrada: con("enrutador").length > 0,
     lee: con("extractor").length > 0,
+    duenos: con("beneficiarios").length > 0,
     cruza: con("verificador_listas").length > 0,
     investiga: con("investigador").length > 0,
     puntua: con("puntaje").length > 0,
@@ -253,6 +274,11 @@ export function perfilDemoB(d: DatosDemoB, ctx: ContextoAgente): PerfilAgente {
       casos: con("extractor").length,
       reintentos: cifrasDelNodo("extractor").reintentos,
     }),
+    duenos: CIFRAS_PUEDE_B.duenos({
+      n: cifrasDelNodo("beneficiarios").sociedades.length,
+      duenos: cifrasDelNodo("beneficiarios").duenos,
+      invalidas: cifrasDelNodo("beneficiarios").estructuraInvalida.length,
+    }),
     investiga: CIFRAS_PUEDE_B.investiga({
       n: con("investigador").length,
       misma: conclusion("misma_persona").length,
@@ -264,6 +290,9 @@ export function perfilDemoB(d: DatosDemoB, ctx: ContextoAgente): PerfilAgente {
   };
   const sinFondos = d.lote.casos.filter(
     (c) => c.entrada.documentos.fondos === null,
+  ).length;
+  const conExistencia = d.lote.casos.filter(
+    (c) => c.entrada.documentos.existencia !== undefined,
   ).length;
   const listas = d.listas.listas;
 
@@ -284,6 +313,16 @@ export function perfilDemoB(d: DatosDemoB, ctx: ContextoAgente): PerfilAgente {
         titulo: X(FICHA_B.recibe.fondos.titulo),
         detalle: X(FICHA_B.recibe.fondos.detalle({ sin: sinFondos, de: n })),
         corrio: true,
+      },
+      {
+        titulo: X(FICHA_B.recibe.existencia.titulo),
+        detalle: X(
+          FICHA_B.recibe.existencia.detalle({
+            n: conExistencia,
+            de: n,
+          }),
+        ),
+        corrio: conExistencia > 0,
       },
       {
         titulo: X(FICHA_B.recibe.listas.titulo),
@@ -530,6 +569,33 @@ export function perfilDemoB(d: DatosDemoB, ctx: ContextoAgente): PerfilAgente {
           },
         ];
         break;
+      case "beneficiarios": {
+        const bd = t.beneficiarios_detalle;
+        const maxima = bd?.coincidencias.reduce(
+          (m, x) => Math.max(m, x.mejor?.similitud ?? 0),
+          0,
+        );
+        celdas = [
+          bd?.beneficiarios?.join(", ") || "—",
+          siNo(bd?.valida === true, i),
+          bd?.valida === true && maxima !== undefined
+            ? decimal(maxima, decimalesDe(maxima), i)
+            : "—",
+        ];
+        pares = [
+          {
+            k: et[0]!,
+            v:
+              bd?.participaciones
+                .map(
+                  (x) =>
+                    `${x.documento} ${decimal(Number(x.porcentaje), 2, i)} %`,
+                )
+                .join(" · ") || "—",
+          },
+        ];
+        break;
+      }
       case "verificador_listas":
         celdas = [similitud, mejor?.entrada_id ?? "—", ultima?.rama ?? "—"];
         pares = [
@@ -678,6 +744,7 @@ export function perfilDemoB(d: DatosDemoB, ctx: ContextoAgente): PerfilAgente {
         );
       case "enrutador":
       case "extractor":
+      case "beneficiarios":
       case "puntaje":
       case "decision":
         return X(N[nodo]);

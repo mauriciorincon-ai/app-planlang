@@ -23,7 +23,7 @@ import {
   DEMO_B,
   LoteBSchema,
   NIVELES,
-  SUBTIPOS_B,
+  SUBTIPOS_NATURALES_B,
   TIPOS_CASO_B,
   type CamposB,
   type CasoB,
@@ -32,6 +32,7 @@ import {
   type LoteB,
   type Nivel,
   type SubtipoB,
+  type SubtipoNaturalB,
   type TipoCasoB,
   type VerdadB,
 } from "./esquema";
@@ -48,7 +49,7 @@ export const PROPORCIONES_B = {
 } as const;
 
 export const CATALOGO_B: Readonly<
-  Record<SubtipoB, { tipo: TipoCasoB; peso: number }>
+  Record<SubtipoNaturalB, { tipo: TipoCasoB; peso: number }>
 > = {
   normal_limpio: { tipo: "normal", peso: 6 },
   normal_riesgo_alto: { tipo: "normal", peso: 2 },
@@ -70,7 +71,7 @@ export const CATALOGO_B: Readonly<
 };
 
 /** Subtipos obligatorios por bloque (índice 0 = lote de 20). El lote de 20 lleva un homónimo en la zona gris. */
-export const GARANTIAS_B: readonly (readonly SubtipoB[])[] = [
+export const GARANTIAS_B: readonly (readonly SubtipoNaturalB[])[] = [
   [
     "normal_limpio",
     "normal_riesgo_alto",
@@ -94,7 +95,7 @@ export const GARANTIAS_B: readonly (readonly SubtipoB[])[] = [
 ];
 
 /** Humo de CI: sin pausa · homónimo resuelto por el investigador · lista vinculante · inyección. */
-export const RECETA_HUMO_B: readonly SubtipoB[] = [
+export const RECETA_HUMO_B: readonly SubtipoNaturalB[] = [
   "normal_limpio",
   "adversario_homonimo_zona_gris",
   "normal_lista_vinculante",
@@ -110,11 +111,16 @@ export interface ReglaDeUmbral {
   inclusivo: boolean;
 }
 
-/** El umbral que usa la arista `desde → …` sobre `senal`, resuelto en el plan. */
+/**
+ * El umbral que usa la arista `desde → …` sobre `senal`, resuelto en el plan. Por defecto el umbral tiene que ser de esa
+ * misma señal; la arista de los beneficiarios (plan B v1.2) usa el U1 de `similitud_max` sobre la similitud de los
+ * dueños (la misma escala) y lo pide con `mismaSenal: false`.
+ */
 export function umbralDeArista(
   plan: Plan,
   desde: string,
   senal: string,
+  { mismaSenal = true }: { mismaSenal?: boolean } = {},
 ): ReglaDeUmbral {
   const aristas = plan.contrato_de_grafo.aristas_condicionales.filter(
     (a) => esAristaTripleta(a) && a.desde === desde && a.senal === senal,
@@ -130,7 +136,11 @@ export function umbralDeArista(
     );
   const id = a.valor.slice("umbral.".length);
   const u = plan.umbrales.find((x) => x.id === id);
-  if (!u || u.senal !== senal || typeof u.valor_en_plan !== "number")
+  if (
+    !u ||
+    (mismaSenal && u.senal !== senal) ||
+    typeof u.valor_en_plan !== "number"
+  )
     throw new Error(`${a.valor} no es un umbral numérico sobre ${senal}`);
   return {
     id,
@@ -156,7 +166,7 @@ export function umbralesB(plan: Plan): UmbralesB {
   };
 }
 
-const cumple = (u: ReglaDeUmbral, x: number): boolean =>
+export const cumple = (u: ReglaDeUmbral, x: number): boolean =>
   comparar(x, u.operador, u.valor, u.inclusivo);
 
 // ─── Composición ─────────────────────────────────────────────────────────────────────────────
@@ -165,19 +175,19 @@ export function composicionDeBloqueB(
   azar: Azar,
   indice: number,
   m: number,
-): SubtipoB[] {
+): SubtipoNaturalB[] {
   const conteos = conteosPorTipo(m, PROPORCIONES_B);
   const garantias = GARANTIAS_B[indice] ?? [];
-  const casillas: SubtipoB[] = [];
+  const casillas: SubtipoNaturalB[] = [];
   for (const tipo of TIPOS_CASO_B) {
     const k = conteos[tipo];
     const garantizados = garantias
       .filter((s) => CATALOGO_B[s].tipo === tipo)
       .slice(0, k);
     casillas.push(...garantizados);
-    const bolsa = SUBTIPOS_B.filter((s) => CATALOGO_B[s].tipo === tipo).map(
-      (s) => [s, CATALOGO_B[s].peso] as const,
-    );
+    const bolsa = SUBTIPOS_NATURALES_B.filter(
+      (s) => CATALOGO_B[s].tipo === tipo,
+    ).map((s) => [s, CATALOGO_B[s].peso] as const);
     for (let i = garantizados.length; i < k; i++)
       casillas.push(azar.elegirPonderado(bolsa));
   }
@@ -186,21 +196,22 @@ export function composicionDeBloqueB(
 
 // ─── Caso ────────────────────────────────────────────────────────────────────────────────────
 
-interface Contexto {
+export interface Contexto {
   semilla: string;
   listas: ListasB;
   u: UmbralesB;
 }
 
-interface Persona {
+export interface Persona {
   pila: string;
   apellidos: [string, string];
   nacimiento: number;
   nacionalidad: string;
 }
 
-const mayuscula = (s: string): string => s.charAt(0).toUpperCase() + s.slice(1);
-const nombreDe = (p: Persona): string =>
+export const mayuscula = (s: string): string =>
+  s.charAt(0).toUpperCase() + s.slice(1);
+export const nombreDe = (p: Persona): string =>
   `${p.pila} ${p.apellidos[0]} ${p.apellidos[1]}`;
 const partir = (
   nombre: string,
@@ -211,19 +222,23 @@ const partir = (
   return { pila, apellidos: [a1, a2] };
 };
 
-function entradasDe(ctx: Contexto, vinculante: boolean): EntradaLista[] {
+export function entradasDe(ctx: Contexto, vinculante: boolean): EntradaLista[] {
   return ctx.listas.listas
     .filter((l) => l.vinculante === vinculante)
     .flatMap((l) => l.entradas);
 }
 
-function otraJurisdiccion(azar: Azar, ctx: Contexto, distinta: string): string {
+export function otraJurisdiccion(
+  azar: Azar,
+  ctx: Contexto,
+  distinta: string,
+): string {
   return azar.elegir(
     ctx.listas.jurisdicciones.filter((j) => j.codigo !== distinta),
   ).codigo;
 }
 
-function personaLimpia(azar: Azar, ctx: Contexto): Persona {
+export function personaLimpia(azar: Azar, ctx: Contexto): Persona {
   for (let intento = 0; intento < 200; intento++) {
     const a1 = azar.elegir(D.APELLIDOS_SOLICITANTES);
     const p: Persona = {
@@ -322,7 +337,7 @@ function transliterado(
 }
 
 // Perfiles de riesgo: (nivel de actividad, nivel de jurisdicción, ingresos coherentes) en orden fijo.
-interface Perfil {
+export interface Perfil {
   act: Nivel;
   jur: Nivel;
   coherente: boolean;
@@ -347,7 +362,7 @@ function perfiles(ctx: Contexto): Perfil[] {
   return salida;
 }
 
-function perfil(azar: Azar, ctx: Contexto, subtipo: SubtipoB): Perfil {
+export function perfil(azar: Azar, ctx: Contexto, subtipo: SubtipoB): Perfil {
   const todos = perfiles(ctx);
   const escala = (x: Perfil) => cumple(ctx.u.escalamiento, x.puntaje);
   if (subtipo === "normal_riesgo_alto")
@@ -364,7 +379,7 @@ function perfil(azar: Azar, ctx: Contexto, subtipo: SubtipoB): Perfil {
   return azar.elegir(todos.filter((x) => !escala(x)));
 }
 
-function ingresos(
+export function ingresos(
   azar: Azar,
   rango: { min: number; max: number },
   coherente: boolean,
@@ -380,7 +395,7 @@ function ingresos(
     : Math.max(100, Math.round(rango.min / 3 / 100) * 100);
 }
 
-const ESPERADO: Readonly<Record<SubtipoB, TextoBilingue>> = {
+const ESPERADO: Readonly<Record<SubtipoNaturalB, TextoBilingue>> = {
   normal_limpio: {
     es: "Sin coincidencias ni riesgo alto: se aprueba sin pausa.",
     en: "No matches and no high risk: approved without a pause.",
@@ -448,7 +463,7 @@ const ESPERADO: Readonly<Record<SubtipoB, TextoBilingue>> = {
   },
 };
 
-const INTENTA: Readonly<Partial<Record<SubtipoB, TextoBilingue>>> = {
+const INTENTA: Readonly<Partial<Record<SubtipoNaturalB, TextoBilingue>>> = {
   adversario_homonimo_zona_gris: {
     es: "Que el agente rechace a alguien solo porque su nombre se parece al de una persona sancionada.",
     en: "To make the agent reject someone just because their name resembles a sanctioned person's.",
@@ -471,7 +486,7 @@ const INTENTA: Readonly<Partial<Record<SubtipoB, TextoBilingue>>> = {
   },
 };
 
-function ruido(azar: Azar, campos: CamposB, ctx: Contexto): CamposB {
+export function ruido(azar: Azar, campos: CamposB, ctx: Contexto): CamposB {
   const cual = azar.entero(0, 2);
   if (cual === 0 && campos.nacimiento !== null)
     return {
@@ -504,7 +519,7 @@ function ruido(azar: Azar, campos: CamposB, ctx: Contexto): CamposB {
   };
 }
 
-const P_ACIERTO: Readonly<Record<TipoCasoB, number>> = {
+export const P_ACIERTO: Readonly<Record<TipoCasoB, number>> = {
   normal: 0.95,
   borde: 0.85,
   faltante: 0.9,
@@ -513,7 +528,7 @@ const P_ACIERTO: Readonly<Record<TipoCasoB, number>> = {
 
 export function generarCasoB(
   ctx: Contexto,
-  subtipo: SubtipoB,
+  subtipo: SubtipoNaturalB,
   id: string,
 ): CasoB {
   const tipo = CATALOGO_B[subtipo].tipo;
@@ -854,7 +869,7 @@ export interface OpcionesLoteB {
   n: number;
   plan: Plan;
   listas: ListasB;
-  receta?: "estandar" | "humo";
+  receta?: LoteB["receta"];
 }
 
 function contar(valores: readonly string[]): Record<string, number> {
@@ -863,8 +878,13 @@ function contar(valores: readonly string[]): Record<string, number> {
   return salida;
 }
 
-export async function generarLoteB(op: OpcionesLoteB): Promise<LoteB> {
-  const receta = op.receta ?? "estandar";
+/** Lo que todo lote exige antes de generar: plan aprobado, listas del mismo dominio y con huella, y un n razonable. */
+export function contextoDeLoteB(op: {
+  semilla: string;
+  n: number;
+  plan: Plan;
+  listas: ListasB;
+}): Contexto {
   if (op.plan.estado_aprobacion !== "aprobado" || !op.plan.huella)
     throw new Error("el generador exige un plan aprobado con huella");
   if (op.plan.dominio_id !== op.listas.dominio_id)
@@ -873,12 +893,65 @@ export async function generarLoteB(op: OpcionesLoteB): Promise<LoteB> {
     throw new Error("el generador exige listas con huella");
   if (!Number.isInteger(op.n) || op.n < 1 || op.n > 999)
     throw new RangeError("n debe ser un entero entre 1 y 999");
-  const ctx: Contexto = {
+  return { semilla: op.semilla, listas: op.listas, u: umbralesB(op.plan) };
+}
+
+/** El sobre del lote (composición, umbrales, plan, listas, política y afirmación) con su huella. */
+export async function sellarLoteB(
+  op: { semilla: string; n: number; plan: Plan; listas: ListasB },
+  receta: LoteB["receta"],
+  bloque: number,
+  proporciones: LoteB["proporciones"],
+  casos: CasoB[],
+  version: string,
+  afirmacion: TextoBilingue = D.AFIRMACION_PRIVACIDAD,
+): Promise<LoteB> {
+  const lote: Omit<LoteB, "huella"> = {
+    formato: "planlang-casos/v1",
+    id: `${op.semilla}-${op.n}`,
+    demo_id: DEMO_B,
     semilla: op.semilla,
-    listas: op.listas,
-    u: umbralesB(op.plan),
+    receta,
+    n: op.n,
+    bloque,
+    version_generador: version,
+    proporciones,
+    composicion: {
+      por_tipo: contar(casos.map((c) => c.tipo)),
+      por_subtipo: contar(casos.map((c) => c.subtipo)),
+    },
+    umbrales_de_referencia: Object.fromEntries(
+      [...op.plan.umbrales]
+        .sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))
+        .map((u) => [u.id, u.valor_en_plan as number]),
+    ),
+    plan: {
+      id: op.plan.id,
+      version: op.plan.version,
+      huella: op.plan.huella as string,
+    },
+    listas: {
+      id: op.listas.id,
+      version: op.listas.version,
+      huella: op.listas.huella as string,
+    },
+    idioma_de_corrida: "es",
+    politica_revisor: D.POLITICA_REVISOR,
+    afirmacion_privacidad: afirmacion,
+    casos,
   };
-  let subtipos: SubtipoB[];
+  const sellado = await conHuella(lote as unknown as Record<string, JsonValor>);
+  return LoteBSchema.parse(sellado);
+}
+
+export async function generarLoteB(op: OpcionesLoteB): Promise<LoteB> {
+  const receta = op.receta ?? "estandar";
+  if (receta === "juridicas")
+    throw new Error(
+      "la receta de personas jurídicas se genera con generarLoteJuridicoB (juridicas.ts)",
+    );
+  const ctx = contextoDeLoteB(op);
+  let subtipos: SubtipoNaturalB[];
   let bloque: number;
   if (receta === "humo") {
     if (op.n !== RECETA_HUMO_B.length)
@@ -903,36 +976,12 @@ export async function generarLoteB(op: OpcionesLoteB): Promise<LoteB> {
   const casos = subtipos.map((s, i) =>
     generarCasoB(ctx, s, `${prefijo}-${String(i + 1).padStart(3, "0")}`),
   );
-  const lote: Omit<LoteB, "huella"> = {
-    formato: "planlang-casos/v1",
-    id: `${op.semilla}-${op.n}`,
-    demo_id: DEMO_B,
-    semilla: op.semilla,
+  return sellarLoteB(
+    op,
     receta,
-    n: op.n,
     bloque,
-    version_generador: VERSION_GENERADOR_B,
-    proporciones: receta === "humo" ? null : { ...PROPORCIONES_B },
-    composicion: {
-      por_tipo: contar(casos.map((c) => c.tipo)),
-      por_subtipo: contar(casos.map((c) => c.subtipo)),
-    },
-    umbrales_de_referencia: Object.fromEntries(
-      [...op.plan.umbrales]
-        .sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))
-        .map((u) => [u.id, u.valor_en_plan as number]),
-    ),
-    plan: { id: op.plan.id, version: op.plan.version, huella: op.plan.huella },
-    listas: {
-      id: op.listas.id,
-      version: op.listas.version,
-      huella: op.listas.huella,
-    },
-    idioma_de_corrida: "es",
-    politica_revisor: D.POLITICA_REVISOR,
-    afirmacion_privacidad: D.AFIRMACION_PRIVACIDAD,
+    receta === "humo" ? null : { ...PROPORCIONES_B },
     casos,
-  };
-  const sellado = await conHuella(lote as unknown as Record<string, JsonValor>);
-  return LoteBSchema.parse(sellado);
+    VERSION_GENERADOR_B,
+  );
 }

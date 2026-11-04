@@ -3,7 +3,7 @@
   "demo_id": "fixture-dominio-nuevo",
   "fecha": "2026-10-04",
   "formato": "planlang-transcripcion/v1",
-  "huella": "396655c1d1a422307f5cc16bbcf112a23aef634721616c31cd0af9f4e9bfc40d",
+  "huella": "a31ec9d95dc708a66b2d217bffaf2005c6db946e4197a79dacfc5b8e13c7c57e",
   "idioma": "es",
   "llamadas_al_modelo": 8,
   "modelo": "simulado",
@@ -43,7 +43,7 @@
             "texto": "Las alertas de dependencias se acumulan sin leer. Los agentes proponen pruebas y asocian resultados, y jamás cierran un hallazgo por su cuenta."
           },
           "resultado": "redactada",
-          "tokens_entrada": 2011,
+          "tokens_entrada": 2015,
           "tokens_salida": 117
         }
       ]
@@ -130,7 +130,7 @@
             "texto": "Llega la tarea; si es investigar, el investigador propone y el código verifica las fuentes; si es extraer, se filtra el texto, se extraen campos con cita, el código verifica las citas y calcula el veredicto; una persona confirma."
           },
           "resultado": "redactada",
-          "tokens_entrada": 1999,
+          "tokens_entrada": 2002,
           "tokens_salida": 187
         }
       ]
@@ -180,7 +180,7 @@
             "texto": "Solo fuentes de la lista blanca, comprobadas por código."
           },
           "resultado": "redactada",
-          "tokens_entrada": 3147,
+          "tokens_entrada": 3150,
           "tokens_salida": 1134
         }
       ]
@@ -230,7 +230,7 @@
             "texto": "El veredicto lo calcula la regla del catálogo sobre campos con cita verificada."
           },
           "resultado": "redactada",
-          "tokens_entrada": 3233,
+          "tokens_entrada": 3236,
           "tokens_salida": 1216
         }
       ]
@@ -280,7 +280,7 @@
             "texto": "La severidad la fija siempre una persona."
           },
           "resultado": "redactada",
-          "tokens_entrada": 3298,
+          "tokens_entrada": 3301,
           "tokens_salida": 1290
         }
       ]
@@ -330,7 +330,7 @@
             "texto": "Una prueba nueva es borrador hasta que una persona la aprueba."
           },
           "resultado": "redactada",
-          "tokens_entrada": 3404,
+          "tokens_entrada": 3408,
           "tokens_salida": 1378
         }
       ]
@@ -460,7 +460,7 @@
             "texto": "Acepto los de la plantilla; los pruebo antes de construir."
           },
           "resultado": "redactada",
-          "tokens_entrada": 2411,
+          "tokens_entrada": 2414,
           "tokens_salida": 441
         }
       ]
@@ -568,7 +568,7 @@
             "texto": "Similitud mínima 0,95; al menos 3 fuentes verificadas; un marco de más de 120 días pasa a una persona."
           },
           "resultado": "redactada",
-          "tokens_entrada": 2459,
+          "tokens_entrada": 2463,
           "tokens_salida": 548
         }
       ]

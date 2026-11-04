@@ -1,0 +1,740 @@
+{
+  "aclaraciones": [],
+  "beneficiarios_detalle": {
+    "beneficiarios": [
+      "SYN-ID-269642",
+      "SYN-ID-377327",
+      "SYN-ID-748390",
+      "SYN-ID-754685"
+    ],
+    "coincidencias": [
+      {
+        "documento": "SYN-ID-269642",
+        "mejor": {
+          "entrada_id": "LC-01-003",
+          "exacta": false,
+          "lista_id": "LC-01",
+          "nombre_listado": "Óscar Nazrovi Torvask",
+          "similitud": 0.6876,
+          "vinculante": false
+        },
+        "nombre": "Paula Tescolar Ozcorra"
+      },
+      {
+        "documento": "SYN-ID-377327",
+        "mejor": {
+          "entrada_id": "LC-01-007",
+          "exacta": false,
+          "lista_id": "LC-01",
+          "nombre_listado": "Ana Nazrovi Fendralo",
+          "similitud": 0.666,
+          "vinculante": false
+        },
+        "nombre": "Gonzalo Mirvanda Escalvo"
+      },
+      {
+        "documento": "SYN-ID-748390",
+        "mejor": {
+          "entrada_id": "LC-01-007",
+          "exacta": false,
+          "lista_id": "LC-01",
+          "nombre_listado": "Ana Nazrovi Fendralo",
+          "similitud": 0.6884,
+          "vinculante": false
+        },
+        "nombre": "Tomás Galdrin Rindaval"
+      },
+      {
+        "documento": "SYN-ID-754685",
+        "mejor": {
+          "entrada_id": "LV-01-011",
+          "exacta": false,
+          "lista_id": "LV-01",
+          "nombre_listado": "Pablo Vosgrane Imrahel",
+          "similitud": 0.6618,
+          "vinculante": true
+        },
+        "nombre": "Simón Sorbelín Jornalés"
+      }
+    ],
+    "controla": "SYN-ID-377327",
+    "participaciones": [
+      {
+        "den": "25",
+        "documento": "SYN-ID-269642",
+        "num": "7",
+        "porcentaje": "28.00"
+      },
+      {
+        "den": "5",
+        "documento": "SYN-ID-377327",
+        "num": "1",
+        "porcentaje": "20.00"
+      },
+      {
+        "den": "50",
+        "documento": "SYN-ID-748390",
+        "num": "13",
+        "porcentaje": "26.00"
+      },
+      {
+        "den": "50",
+        "documento": "SYN-ID-754685",
+        "num": "13",
+        "porcentaje": "26.00"
+      }
+    ],
+    "por_participacion": [
+      "SYN-ID-269642",
+      "SYN-ID-748390",
+      "SYN-ID-754685"
+    ],
+    "problemas": [],
+    "valida": true
+  },
+  "caso_id": "B-014",
+  "cobertura": null,
+  "coincidencias": {
+    "listas_consultadas": [
+      {
+        "fecha": "2026-09-30",
+        "id": "LV-01",
+        "version": "2026.09",
+        "vinculante": true
+      },
+      {
+        "fecha": "2026-08-31",
+        "id": "LC-01",
+        "version": "2026.08",
+        "vinculante": false
+      }
+    ],
+    "mejor": {
+      "entrada_id": "LC-01-003",
+      "exacta": false,
+      "lista_id": "LC-01",
+      "nombre_listado": "Óscar Nazrovi Torvask",
+      "similitud": 0.6286,
+      "vinculante": false
+    }
+  },
+  "corrida_id": "simulado-b-002-20",
+  "decisiones_de_arista": [
+    {
+      "desde": "extractor",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 2,
+      "rama_tomada": "beneficiarios",
+      "resultado": true,
+      "senal": "tipo_solicitante",
+      "tipo": "tripleta",
+      "umbral_aplicado": "juridica",
+      "valor_declarado": "juridica",
+      "valor_observado": "juridica"
+    },
+    {
+      "desde": "verificador_listas",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": true,
+      "operador": "mayor_o_igual_que",
+      "orden_arista": 1,
+      "paso": 4,
+      "rama_tomada": "puntaje",
+      "resultado": false,
+      "senal": "similitud_max",
+      "tipo": "tripleta",
+      "umbral_aplicado": 0.7,
+      "valor_declarado": "umbral.U4",
+      "valor_observado": 0.6286
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 1,
+      "paso": 6,
+      "rama_tomada": "redactor",
+      "resultado": false,
+      "senal": "carga_detectada",
+      "tipo": "tripleta",
+      "umbral_aplicado": true,
+      "valor_declarado": true,
+      "valor_observado": false
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": true,
+      "operador": "mayor_o_igual_que",
+      "orden_arista": 2,
+      "paso": 6,
+      "rama_tomada": "redactor",
+      "resultado": false,
+      "senal": "similitud_max",
+      "tipo": "tripleta",
+      "umbral_aplicado": 0.85,
+      "valor_declarado": "umbral.U1",
+      "valor_observado": 0.6286
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 3,
+      "paso": 6,
+      "rama_tomada": "redactor",
+      "resultado": false,
+      "senal": "conclusion_investigador",
+      "tipo": "tripleta",
+      "umbral_aplicado": "misma_persona",
+      "valor_declarado": "misma_persona",
+      "valor_observado": null
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": true,
+      "operador": "mayor_o_igual_que",
+      "orden_arista": 4,
+      "paso": 6,
+      "rama_tomada": "redactor",
+      "resultado": false,
+      "senal": "puntaje_riesgo",
+      "tipo": "tripleta",
+      "umbral_aplicado": 60,
+      "valor_declarado": "umbral.U2",
+      "valor_observado": 20
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "mayor_que",
+      "orden_arista": 5,
+      "paso": 6,
+      "rama_tomada": "redactor",
+      "resultado": false,
+      "senal": "inconsistencias",
+      "tipo": "tripleta",
+      "umbral_aplicado": 0,
+      "valor_declarado": "umbral.U3",
+      "valor_observado": 0
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": false,
+      "operador": "igual_a",
+      "orden_arista": 6,
+      "paso": 6,
+      "rama_tomada": "redactor",
+      "resultado": false,
+      "senal": "propuesta",
+      "tipo": "tripleta",
+      "umbral_aplicado": "rechazar",
+      "valor_declarado": "rechazar",
+      "valor_observado": "aprobar"
+    },
+    {
+      "desde": "decision",
+      "entradas": null,
+      "funcion": null,
+      "inclusivo": true,
+      "operador": "mayor_o_igual_que",
+      "orden_arista": 7,
+      "paso": 6,
+      "rama_tomada": "redactor",
+      "resultado": false,
+      "senal": "similitud_beneficiarios_max",
+      "tipo": "tripleta",
+      "umbral_aplicado": 0.85,
+      "valor_declarado": "umbral.U1",
+      "valor_observado": 0.6884
+    }
+  ],
+  "documento_adverso": null,
+  "error_de_esquema_en_traspaso": false,
+  "error_proveedor": null,
+  "expediente": {
+    "caso_id": "B-014",
+    "conclusiones": [
+      {
+        "cita": {
+          "ref": "identidad",
+          "tipo": "documento"
+        },
+        "id": "K1",
+        "tema": "identidad",
+        "texto": {
+          "en": "Declared company: Constructora Farallones SAS, tax ID SYN-NIT-564482, incorporated in 2010 in Principality of Ostrel.",
+          "es": "Sociedad declarada: Constructora Farallones SAS, NIT SYN-NIT-564482, constituida en 2010 en Principado de Ostrel."
+        }
+      },
+      {
+        "cita": {
+          "lista": {
+            "fecha": "2026-08-31",
+            "id": "LC-01",
+            "version": "2026.08"
+          },
+          "ref": "LC-01-003",
+          "regla": "RL-02",
+          "tipo": "coincidencia"
+        },
+        "id": "K2",
+        "tema": "listas",
+        "texto": {
+          "en": "The highest similarity with the lists is 0.6286, with entry LC-01-003 of reference list LC-01 (version 2026.08, August 2026; RL-02).",
+          "es": "La mayor similitud con las listas es 0,6286, con la entrada LC-01-003 de la lista de consulta LC-01 (versión 2026.08, de agosto de 2026; RL-02)."
+        }
+      },
+      {
+        "cita": {
+          "ref": "RB-01,RB-02",
+          "tipo": "regla"
+        },
+        "id": "K3",
+        "tema": "beneficiarios",
+        "texto": {
+          "en": "Beneficial owners by 25% or more ownership, direct or indirect: Paula Tescolar Ozcorra (SYN-ID-269642), 28.00%; Tomás Galdrin Rindaval (SYN-ID-748390), 26.00%; Simón Sorbelín Jornalés (SYN-ID-754685), 26.00% (RB-01). Person in control: Gonzalo Mirvanda Escalvo (SYN-ID-377327), president (RB-02).",
+          "es": "Beneficiarios finales por participación de 25 % o más, directa o indirecta: Paula Tescolar Ozcorra (SYN-ID-269642), 28,00 %; Tomás Galdrin Rindaval (SYN-ID-748390), 26,00 %; Simón Sorbelín Jornalés (SYN-ID-754685), 26,00 % (RB-01). Persona que controla: Gonzalo Mirvanda Escalvo (SYN-ID-377327), presidente (RB-02)."
+        }
+      },
+      {
+        "cita": {
+          "lista": {
+            "fecha": "2026-08-31",
+            "id": "LC-01",
+            "version": "2026.08"
+          },
+          "ref": "LC-01-007",
+          "regla": "RL-02",
+          "tipo": "coincidencia"
+        },
+        "id": "K4",
+        "tema": "beneficiarios",
+        "texto": {
+          "en": "The beneficial owner with the highest similarity with the lists is Tomás Galdrin Rindaval (SYN-ID-748390): 0.6884, with entry LC-01-007 of reference list LC-01 (version 2026.08, August 2026; RL-02).",
+          "es": "El beneficiario final con mayor similitud con las listas es Tomás Galdrin Rindaval (SYN-ID-748390): 0,6884, con la entrada LC-01-007 de la lista de consulta LC-01 (versión 2026.08, de agosto de 2026; RL-02)."
+        }
+      },
+      {
+        "cita": {
+          "ref": "RI-01,RI-02,RI-03",
+          "tipo": "regla"
+        },
+        "id": "K5",
+        "tema": "documentos",
+        "texto": {
+          "en": "The documents are consistent with each other and no required detail is missing (RI-01 to RI-03).",
+          "es": "Los documentos son consistentes entre sí y no les falta ningún dato exigido (RI-01 a RI-03)."
+        }
+      },
+      {
+        "cita": {
+          "ref": "RP-01,RP-02,RP-03,RP-04",
+          "tipo": "regla"
+        },
+        "id": "K6",
+        "tema": "puntaje",
+        "texto": {
+          "en": "Risk score 20 out of 100: activity SYN-ACT-06 (medium, 20; RP-01), jurisdiction of the funds SYN-J-02 (low, 0; RP-02), income consistency (consistent, 0; RP-03). Name and nationality do not count (RP-04).",
+          "es": "Puntaje de riesgo 20 de 100: actividad SYN-ACT-06 (medio, 20; RP-01), jurisdicción de los fondos SYN-J-02 (bajo, 0; RP-02), coherencia de los ingresos (coherente, 0; RP-03). El nombre y la nacionalidad no entran (RP-04)."
+        }
+      },
+      {
+        "cita": {
+          "ref": "RD-03",
+          "tipo": "regla"
+        },
+        "id": "K7",
+        "tema": "propuesta",
+        "texto": {
+          "en": "Agent proposal: approve (RD-03).",
+          "es": "Propuesta del agente: aprobar (RD-03)."
+        }
+      },
+      {
+        "cita": {
+          "ref": "decision/por_defecto",
+          "tipo": "arista"
+        },
+        "id": "K8",
+        "tema": "decision",
+        "texto": {
+          "en": "Decision without a pause: approve. No edge of the decision node held and the plan does not require a person.",
+          "es": "Decisión sin pausa: aprobar. Ninguna arista del nodo de decisión se cumplió y el plan no pide una persona."
+        }
+      },
+      {
+        "cita": {
+          "ref": "D3",
+          "tipo": "decision_del_plan"
+        },
+        "id": "K9",
+        "tema": "conservacion",
+        "texto": {
+          "en": "The file is kept for five years (plan decision D3; estimated term, AMLR art. 77).",
+          "es": "El expediente se conserva cinco años (decisión D3 del plan; plazo estimado, AMLR art. 77)."
+        }
+      }
+    ],
+    "conclusiones_sin_cita": 0,
+    "datos_usados": [
+      "actividad",
+      "documento",
+      "ingresos_mensuales",
+      "jurisdiccion_fondos",
+      "nacimiento",
+      "nacionalidad",
+      "nombre",
+      "titular_actividad",
+      "titular_fondos"
+    ],
+    "decision": {
+      "final": "aprobar",
+      "propuesta": "aprobar",
+      "revisada_por_persona": false,
+      "rol": null
+    },
+    "listas_consultadas": [
+      {
+        "fecha": "2026-09-30",
+        "id": "LV-01",
+        "version": "2026.09",
+        "vinculante": true
+      },
+      {
+        "fecha": "2026-08-31",
+        "id": "LC-01",
+        "version": "2026.08",
+        "vinculante": false
+      }
+    ],
+    "plan": {
+      "huella": "6450d5c56fd0a337cb8a4206ffce6926d1390222a08cd337dffc35b034bfeeb2",
+      "id": "plan-demo-b",
+      "version": "1.2.0"
+    },
+    "solicitud": "SYN-SOL-192372"
+  },
+  "extraccion": {
+    "campos": {
+      "actividad": "SYN-ACT-06",
+      "documento": "SYN-NIT-564482",
+      "ingresos_mensuales": 19400,
+      "jurisdiccion_fondos": "SYN-J-02",
+      "nacimiento": 2010,
+      "nacionalidad": "SYN-J-07",
+      "nombre": "Constructora Farallones SAS",
+      "titular_actividad": "SYN-NIT-564482",
+      "titular_fondos": "Constructora Farallones SAS"
+    },
+    "campos_faltantes": [],
+    "estructura": {
+      "controla": {
+        "documento": "SYN-ID-377327",
+        "rol": "presidente"
+      },
+      "entidad": "SYN-NIT-564482",
+      "entidades": [
+        {
+          "nit": "SYN-NIT-564482",
+          "nombre": "Constructora Farallones SAS"
+        },
+        {
+          "nit": "SYN-NIT-187076",
+          "nombre": "Agroindustrial Pradolargo SAS"
+        },
+        {
+          "nit": "SYN-NIT-801246",
+          "nombre": "Comercializadora Valdecira SAS"
+        }
+      ],
+      "participaciones": [
+        {
+          "participada": "SYN-NIT-564482",
+          "porcentaje": "40.00",
+          "titular": "SYN-NIT-187076"
+        },
+        {
+          "participada": "SYN-NIT-564482",
+          "porcentaje": "40.00",
+          "titular": "SYN-NIT-801246"
+        },
+        {
+          "participada": "SYN-NIT-564482",
+          "porcentaje": "20.00",
+          "titular": "SYN-ID-377327"
+        },
+        {
+          "participada": "SYN-NIT-187076",
+          "porcentaje": "30.00",
+          "titular": "SYN-ID-748390"
+        },
+        {
+          "participada": "SYN-NIT-187076",
+          "porcentaje": "70.00",
+          "titular": "SYN-ID-269642"
+        },
+        {
+          "participada": "SYN-NIT-801246",
+          "porcentaje": "35.00",
+          "titular": "SYN-ID-748390"
+        },
+        {
+          "participada": "SYN-NIT-801246",
+          "porcentaje": "65.00",
+          "titular": "SYN-ID-754685"
+        }
+      ],
+      "personas": [
+        {
+          "documento": "SYN-ID-748390",
+          "nombre": "Tomás Galdrin Rindaval"
+        },
+        {
+          "documento": "SYN-ID-377327",
+          "nombre": "Gonzalo Mirvanda Escalvo"
+        },
+        {
+          "documento": "SYN-ID-269642",
+          "nombre": "Paula Tescolar Ozcorra"
+        },
+        {
+          "documento": "SYN-ID-754685",
+          "nombre": "Simón Sorbelín Jornalés"
+        }
+      ]
+    },
+    "tipo_solicitante": "juridica"
+  },
+  "formato": "planlang-trace/v1",
+  "guardia_salida": {
+    "acciones_ejecutadas": [
+      "registrar_expediente",
+      "responder_solicitante"
+    ],
+    "acciones_intentadas": [
+      "registrar_expediente",
+      "responder_solicitante"
+    ],
+    "carga_detectada_en_entrada": false,
+    "hallazgos": [],
+    "severidad_accion": 0
+  },
+  "huella": "8802a6e8619955f17d4e77e4b744563ce12706f1cfc582f875b5b3a4ab456230",
+  "investigacion": null,
+  "nodos_visitados": [
+    "enrutador",
+    "extractor",
+    "beneficiarios",
+    "verificador_listas",
+    "puntaje",
+    "decision",
+    "redactor",
+    "guardia_salida"
+  ],
+  "pasos": [
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 1,
+      "error_proveedor": null,
+      "inicio_ms": 0,
+      "nodo": "enrutador",
+      "orden": 1,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "enrutador",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 1,
+      "error_proveedor": null,
+      "inicio_ms": 2,
+      "nodo": "extractor",
+      "orden": 2,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "modelo",
+      "tokens": {
+        "entrada": 1296,
+        "salida": 394
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 1,
+      "error_proveedor": null,
+      "inicio_ms": 4,
+      "nodo": "beneficiarios",
+      "orden": 3,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "regla",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 1,
+      "error_proveedor": null,
+      "inicio_ms": 6,
+      "nodo": "verificador_listas",
+      "orden": 4,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "regla",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 1,
+      "error_proveedor": null,
+      "inicio_ms": 8,
+      "nodo": "puntaje",
+      "orden": 5,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "regla",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 1,
+      "error_proveedor": null,
+      "inicio_ms": 10,
+      "nodo": "decision",
+      "orden": 6,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "enrutador",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 1,
+      "error_proveedor": null,
+      "inicio_ms": 12,
+      "nodo": "redactor",
+      "orden": 7,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "regla",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    },
+    {
+      "costo_nominal_usd": 0,
+      "duracion_ms": 1,
+      "error_proveedor": null,
+      "inicio_ms": 14,
+      "nodo": "guardia_salida",
+      "orden": 8,
+      "reintentos_esquema": 0,
+      "tipo_nodo": "regla",
+      "tokens": {
+        "entrada": 0,
+        "salida": 0
+      }
+    }
+  ],
+  "pausas_humanas": [],
+  "puntaje": {
+    "componentes": [
+      {
+        "factor": "actividad",
+        "nivel": "medio",
+        "puntos": 20,
+        "regla": "RP-01",
+        "valor": "SYN-ACT-06"
+      },
+      {
+        "factor": "jurisdiccion",
+        "nivel": "bajo",
+        "puntos": 0,
+        "regla": "RP-02",
+        "valor": "SYN-J-02"
+      },
+      {
+        "factor": "coherencia",
+        "nivel": "coherente",
+        "puntos": 0,
+        "regla": "RP-03",
+        "valor": "19400"
+      }
+    ],
+    "inconsistencias": [],
+    "reglas_propuesta": [
+      "RD-03"
+    ],
+    "total": 20
+  },
+  "resultado": "completo",
+  "salida_final": {
+    "aviso_ia": {
+      "en": "This reply was prepared by an AI system in a simulation with synthetic data; no rule required a person to review the case.",
+      "es": "Esta respuesta la preparó un sistema de IA en una simulación con datos sintéticos; ninguna regla pidió que una persona revisara el caso."
+    },
+    "en": "Your onboarding application was approved. You can now use the product you requested.",
+    "es": "Su solicitud de vinculación fue aprobada. Ya puede usar el producto que pidió."
+  },
+  "senales": {
+    "beneficiarios": [
+      "SYN-ID-269642",
+      "SYN-ID-377327",
+      "SYN-ID-748390",
+      "SYN-ID-754685"
+    ],
+    "carga_detectada": false,
+    "conclusion_investigador": null,
+    "conclusiones_sin_cita": 0,
+    "decision_final": "aprobar",
+    "error_proveedor": null,
+    "extraccion_correcta": true,
+    "inconsistencias": 0,
+    "inyeccion_neutralizada": false,
+    "latencia_total_s": 0.008,
+    "nodos_visitados": [
+      "enrutador",
+      "extractor",
+      "beneficiarios",
+      "verificador_listas",
+      "puntaje",
+      "decision",
+      "redactor",
+      "guardia_salida"
+    ],
+    "pausa_humana": false,
+    "propuesta": "aprobar",
+    "puntaje_riesgo": 20,
+    "similitud_beneficiarios_max": 0.6884,
+    "similitud_max": 0.6286,
+    "tipo_solicitante": "juridica",
+    "tokens": 1690
+  },
+  "variante": "multiagente"
+}

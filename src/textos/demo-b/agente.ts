@@ -50,6 +50,14 @@ export interface CifrasDeNodoB {
   faltantes: string[];
   exactas: number;
   zonaGris: number;
+  /** Las sociedades que pasaron por el cálculo de dueños (plan B v1.2). */
+  sociedades: string[];
+  /** Cuántos beneficiarios finales calculó el nodo en total, entre las sociedades cuya estructura cerró. */
+  duenos: number;
+  /** Las sociedades cuya estructura no cerró (RB-03): sin beneficiarios, decide una persona. */
+  estructuraInvalida: string[];
+  /** Las sociedades con un dueño parecido a las listas en o sobre U1: fueron al oficial por esa regla. */
+  duenosEnLista: string[];
   mismaPersona: string[];
   homonimos: string[];
   /** El umbral de escalamiento por riesgo del plan (el que lee la regla «riesgo»). */
@@ -111,6 +119,17 @@ export const FICHA_B = {
               `De dónde viene el dinero y quién es su titular; ${p.sin} de ${p.de} casos ${p.sin === 1 ? "llegó" : "llegaron"} sin ella.`,
               `Where the money comes from and who holds it; ${p.sin} of ${p.de} cases came without it.`,
             )) as Plantilla<{ sin: number; de: number }>,
+    },
+    existencia: {
+      titulo: tb(
+        "El certificado de existencia de la sociedad",
+        "The company's certificate of existence",
+      ),
+      detalle: ((p: { n: number; de: number }) =>
+        tb(
+          `Quién tiene qué porcentaje de la sociedad y quién la controla; llegó con ${p.n} de los ${p.de} casos (los de una sociedad).`,
+          `Who holds what share of the company and who controls it; it came with ${p.n} of the ${p.de} cases (the company ones).`,
+        )) as Plantilla<{ n: number; de: number }>,
     },
     listas: {
       titulo: tb("Las listas de control", "The control lists"),
@@ -309,6 +328,7 @@ export const FICHA_B = {
 export type ClaveActividadB =
   | "revisaEntrada"
   | "lee"
+  | "duenos"
   | "cruza"
   | "investiga"
   | "puntua"
@@ -336,6 +356,16 @@ export const ACTIVIDADES_B: ReadonlyArray<{
       "Reads the three documents and turns them into data",
     ),
     nodos: ["extractor"],
+  },
+  {
+    clave: "duenos",
+    titulo: tb(
+      "Si es una sociedad, calcula quiénes son sus dueños finales",
+      "If it is a company, works out who its beneficial owners are",
+    ),
+    nodos: ["extractor", "beneficiarios"],
+    /** El caso va de un nodo al otro (se dibuja con flecha). */
+    flecha: true,
   },
   {
     clave: "cruza",
@@ -392,6 +422,11 @@ export const CIFRAS_ACTIVIDAD_B = {
       `${n} casos en la zona gris`,
       `${n} cases in the gray zone`,
     )) as Plantilla<number>,
+  duenos: ((p: { n: number; duenos: number }) =>
+    tb(
+      `${p.n} ${p.n === 1 ? "sociedad" : "sociedades"}, ${p.duenos} ${p.duenos === 1 ? "dueño final" : "dueños finales"}`,
+      `${p.n} ${p.n === 1 ? "company" : "companies"}, ${p.duenos} beneficial ${p.duenos === 1 ? "owner" : "owners"}`,
+    )) as Plantilla<{ n: number; duenos: number }>,
   expedientes: ((p: { n: number; documentos: number }) =>
     tb(
       `${p.n} expedientes; ${p.documentos} rechazos con su documento`,
@@ -400,7 +435,7 @@ export const CIFRAS_ACTIVIDAD_B = {
 };
 
 export type ClavePuedeB =
-  "lee" | "investiga" | "listas" | "pausas" | "inyeccion";
+  "lee" | "duenos" | "investiga" | "listas" | "pausas" | "inyeccion";
 
 export const PUEDE_B: ReadonlyArray<{
   clave: ClavePuedeB;
@@ -411,6 +446,13 @@ export const PUEDE_B: ReadonlyArray<{
     titulo: tb(
       "Leer documentos y volverlos datos en un formato fijo",
       "Read documents and turn them into data in a fixed format",
+    ),
+  },
+  {
+    clave: "duenos",
+    titulo: tb(
+      "Calcular con aritmética exacta quién está detrás de una sociedad",
+      "Work out with exact arithmetic who is behind a company",
     ),
   },
   {
@@ -444,6 +486,11 @@ export const PUEDE_B: ReadonlyArray<{
 ];
 
 export const CIFRAS_PUEDE_B = {
+  duenos: ((p: { n: number; duenos: number; invalidas: number }) =>
+    tb(
+      `${p.n} ${p.n === 1 ? "sociedad" : "sociedades"} con ${p.duenos} ${p.duenos === 1 ? "dueño final" : "dueños finales"}${p.invalidas ? `; ${p.invalidas} con una estructura que no cierra` : ""}`,
+      `${p.n} ${p.n === 1 ? "company" : "companies"} with ${p.duenos} beneficial ${p.duenos === 1 ? "owner" : "owners"}${p.invalidas ? `; ${p.invalidas} with a structure that does not add up` : ""}`,
+    )) as Plantilla<{ n: number; duenos: number; invalidas: number }>,
   investiga: ((p: { n: number; misma: number; homonimos: number }) =>
     tb(
       `${p.n} casos: ${p.misma} la misma persona y ${p.homonimos} ${p.homonimos === 1 ? "homónimo" : "homónimos"}`,
@@ -453,8 +500,8 @@ export const CIFRAS_PUEDE_B = {
 
 export const EXPERTO_B = {
   patron: tb(
-    "guardia de entrada + extractor e investigador de contexto (modelos) + verificador de listas, puntaje y redactor (reglas)",
-    "input guard + extractor and context investigator (models) + list checker, scoring and writer (rules)",
+    "guardia de entrada + extractor e investigador de contexto (modelos) + cálculo de dueños, verificador de listas, puntaje y redactor (reglas)",
+    "input guard + extractor and context investigator (models) + ownership calculation, list checker, scoring and writer (rules)",
   ),
   decision: tb(
     "D2, de dos vías: el investigador entra desde el inicio de la zona gris y se puede retirar",
@@ -489,6 +536,7 @@ export const REANUDACION_B = tb(
 export const REGLA_CORTA_B: Record<string, TextoBilingue> = {
   carga: tb("instrucción escondida", "hidden instruction"),
   mismaPersona: tb("misma persona", "same person"),
+  duenoEnLista: tb("dueño en una lista", "owner on a list"),
   rechazar: tb("rechazar", "reject"),
 };
 
@@ -499,6 +547,10 @@ export const MOTIVO_PAUSA_B: Record<string, TextoBilingue> = {
     "hidden instruction in a document",
   ),
   coincidencia: tb("similitud en o sobre U1", "similarity at or above U1"),
+  duenoEnLista: tb(
+    "un dueño de la sociedad, en o sobre U1",
+    "an owner of the company, at or above U1",
+  ),
   mismaPersona: tb(
     "el investigador concluyó «misma persona»",
     "the investigator concluded “same person”",
@@ -644,8 +696,8 @@ export const NODOS_B: Record<
         [
           tb("Adaptador", "Adapter"),
           tb(
-            '`ChatClaudeCode(model="{modelo}").with_structured_output(ExtraccionB)`',
-            '`ChatClaudeCode(model="{modelo}").with_structured_output(ExtraccionB)`',
+            '`ChatClaudeCode(model="{modelo}").with_structured_output(ExtraccionBEstructura)`',
+            '`ChatClaudeCode(model="{modelo}").with_structured_output(ExtraccionBEstructura)`',
           ),
         ],
         [LLAMADA, LLAMADA_TEXTO],
@@ -660,6 +712,89 @@ export const NODOS_B: Record<
       ],
     },
     fuentes: [F_NODOS, F_SALIDA],
+  },
+  beneficiarios: {
+    rol: tb(
+      "Si el solicitante es una sociedad, calcula quiénes son sus dueños finales y los cruza con las listas.",
+      "If the applicant is a company, it works out who its beneficial owners are and checks each against the lists.",
+    ),
+    recibe: {
+      titulo: tb(
+        "La estructura societaria que copió el extractor",
+        "The company structure the extractor copied",
+      ),
+      sub: tb(
+        "sociedades, personas, porcentajes y quién controla",
+        "companies, people, percentages and who is in control",
+      ),
+    },
+    entrega: {
+      titulo: tb(
+        "Los beneficiarios finales y el parecido de cada uno con las listas",
+        "The beneficial owners and how much each resembles the lists",
+      ),
+      sub: tb(
+        "o ninguno, si la estructura no cierra (RB-03)",
+        "or none, if the structure does not add up (RB-03)",
+      ),
+    },
+    paraQue: tb(
+      "Una sociedad no tiene un nombre propio que vigilar: lo que importa es quién está detrás. Calcularlo es aritmética, y la aritmética no se le pide a un modelo.",
+      "A company has no name of its own to watch: what matters is who stands behind it. Working that out is arithmetic, and arithmetic is not asked of a model.",
+    ),
+    como: tb(
+      "Sin modelo: multiplica los porcentajes a lo largo de cada camino de propiedad, suma los caminos que llegan a la misma persona y llama beneficiario a quien llega al 25 % o más (el 25,00 % entra) y a quien controla la sociedad (RB-01 y RB-02; 31 CFR § 1010.230(d), leída el 2026-11-03). La cuenta es exacta, con fracciones. Si la estructura no cierra (un ciclo, más del 100 %, un porcentaje mal escrito, alguien que no está en ella), no adivina: no hay beneficiarios, anota RB-03 y decide una persona.",
+      "No model: it multiplies the percentages along each ownership path, adds the paths that reach the same person and calls a beneficial owner whoever reaches 25% or more (exactly 25.00% counts) and whoever controls the company (RB-01 and RB-02; 31 CFR § 1010.230(d), read on 2026-11-03). The arithmetic is exact, with fractions. If the structure does not add up (a cycle, more than 100%, a malformed percentage, someone missing from it), it does not guess: there are no beneficial owners, it notes RB-03 and a person decides.",
+    ),
+    siFalla: tb(
+      "Un dueño con el 25 % pasaría sin mirarse contra las listas, o una sociedad opaca se aprobaría por no tener a quién mirar.",
+      "An owner with 25% would pass without being checked against the lists, or an opaque company would be approved for having no one to check.",
+    ),
+    seMide: tb(
+      "El conjunto de beneficiarios coincide con la verdad conocida en {plan:C7.objetivo|%} % o más de las sociedades (C7).",
+      "The set of beneficial owners matches the known truth in {plan:C7.objetivo|%}% or more of the companies (C7).",
+    ),
+    enLaCorrida: (c) =>
+      c.sociedades.length === 0
+        ? tb(
+            "Ninguna solicitud era de una sociedad: este nodo no corrió.",
+            "No application was from a company: this node did not run.",
+          )
+        : tb(
+            `Calculó los dueños de ${c.sociedades.length} ${c.sociedades.length === 1 ? "sociedad" : "sociedades"}: ${c.duenos} beneficiarios finales en total${c.estructuraInvalida.length ? `; la estructura de ${lista(c.estructuraInvalida, "y")} no cerraba` : ""}. ${c.duenosEnLista.length ? `En ${lista(c.duenosEnLista, "y")} un dueño se parece a una entrada de las listas: pasó al oficial.` : "Ningún dueño se parecía a una entrada de las listas."} Sin modelo: 0 tokens. ${c.criterios.es}`,
+            `It worked out the owners of ${c.sociedades.length} ${c.sociedades.length === 1 ? "company" : "companies"}: ${c.duenos} beneficial owners in total${c.estructuraInvalida.length ? `; the structure of ${lista(c.estructuraInvalida, "and")} did not add up` : ""}. ${c.duenosEnLista.length ? `In ${lista(c.duenosEnLista, "and")} an owner resembles a list entry: it went to the officer.` : "No owner resembled a list entry."} No model: 0 tokens. ${c.criterios.en}`,
+          ),
+    lee: tb(
+      "la estructura que copió el extractor y las listas de control",
+      "the structure the extractor copied and the control lists",
+    ),
+    modelo: {
+      rotulo: tb("Reglas de los dueños", "Ownership rules"),
+      filas: [
+        [
+          tb("RB-01", "RB-01"),
+          tb(
+            "es beneficiario quien tiene, directa o indirectamente, el 25 % o más de la participación",
+            "a beneficial owner is whoever holds, directly or indirectly, 25% or more of the ownership",
+          ),
+        ],
+        [
+          tb("RB-02", "RB-02"),
+          tb(
+            "también lo es la persona que controla la sociedad",
+            "so is the person who controls the company",
+          ),
+        ],
+        [
+          tb("RB-03", "RB-03"),
+          tb(
+            "si la estructura no cierra, no se calculan beneficiarios y decide una persona",
+            "if the structure does not add up, no beneficial owners are computed and a person decides",
+          ),
+        ],
+      ],
+    },
+    fuentes: [F_NODOS],
   },
   verificador_listas: {
     rol: tb(
@@ -1229,6 +1364,7 @@ export const NODOS_B: Record<
 export const CRITERIOS_EN_LA_CORRIDA_B: Record<string, string[]> = {
   enrutador: [],
   extractor: ["C5"],
+  beneficiarios: ["C7"],
   verificador_listas: ["C1"],
   investigador: ["C4"],
   puntaje: [],
@@ -1269,6 +1405,14 @@ export const PLAN_POR_NODO_B: Record<
     supuestos: ["S2"],
     criterios: ["C5"],
     umbrales: [],
+  },
+  beneficiarios: {
+    decisiones: [],
+    riesgos: [],
+    supuestos: [],
+    criterios: ["C7"],
+    umbrales: [],
+    senal: ["U1"],
   },
   verificador_listas: {
     decisiones: ["D1", "D2"],
@@ -1379,6 +1523,14 @@ export const TRAZAS_DE_NODO_B: Record<
       tb("Reintentos de formato", "Format retries"),
     ],
   },
+  beneficiarios: {
+    columnas: [
+      tb("Beneficiarios finales", "Beneficial owners"),
+      tb("Estructura", "Structure"),
+      tb("Parecido máximo de un dueño", "Highest owner similarity"),
+    ],
+    detalle: [tb("Participación efectiva", "Effective ownership")],
+  },
   verificador_listas: {
     columnas: [
       tb("Similitud máxima", "Highest similarity"),
@@ -1449,6 +1601,10 @@ export const NOTA_TRAZAS_B = {
   extractor: tb(
     "Toca un caso para ver sus documentos. Lo que extrajo, campo por campo, está en la página Casos.",
     "Tap a case to see its documents. What it extracted, field by field, is on the Cases page.",
+  ),
+  beneficiarios: tb(
+    "Cada fila es una sociedad: sus beneficiarios finales, si la estructura cerró y el mayor parecido de un dueño con las listas. Una persona natural no pasa por este nodo.",
+    "Each row is a company: its beneficial owners, whether the structure added up and the highest resemblance of an owner to the lists. A natural person does not go through this node.",
   ),
   verificador_listas: ((u4: string) =>
     tb(

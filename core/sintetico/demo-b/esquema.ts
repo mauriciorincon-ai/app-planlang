@@ -15,6 +15,10 @@ export const DEMO_B = "demo-b";
 export const CODIGO_JURISDICCION = /^SYN-J-\d{2}$/;
 export const CODIGO_ACTIVIDAD = /^SYN-ACT-\d{2}$/;
 export const DOCUMENTO_SINTETICO = /^SYN-ID-\d{6}$/;
+/** S9: el NIT sintético de una persona jurídica. */
+export const NIT_SINTETICO = /^SYN-NIT-\d{6}$/;
+/** El documento de quien solicita: el de una persona o el NIT de una sociedad (S9). */
+export const DOCUMENTO_O_NIT = /^SYN-(ID|NIT)-\d{6}$/;
 export const NIVELES = ["bajo", "medio", "alto"] as const;
 export type Nivel = (typeof NIVELES)[number];
 
@@ -171,7 +175,8 @@ export const TIPOS_CASO_B = [
 ] as const;
 export type TipoCasoB = (typeof TIPOS_CASO_B)[number];
 
-export const SUBTIPOS_B = [
+/** Los subtipos de persona natural (S3). Solo ellos entran a los bloques estándar: sus lotes no cambian un byte. */
+export const SUBTIPOS_NATURALES_B = [
   "normal_limpio",
   "normal_riesgo_alto",
   "normal_lista_vinculante",
@@ -189,6 +194,30 @@ export const SUBTIPOS_B = [
   "adversario_inyeccion",
   "adversario_documentos_contradictorios",
   "adversario_dato_sensible",
+] as const;
+export type SubtipoNaturalB = (typeof SUBTIPOS_NATURALES_B)[number];
+
+/**
+ * S9: los subtipos de persona jurídica, uno por cada estructura que el lote `planlang-b-002-20` necesita para medir C7
+ * (plan B v1.2): directa, control sin propiedad, indirecta que cruza el 25 %, indirecta justo debajo, exactamente el
+ * 25 % por dos caminos, un dueño homónimo de una persona sancionada, una cadena de cuatro niveles y una persona que
+ * llega al 25 % solo sumando dos caminos.
+ */
+export const SUBTIPOS_JURIDICOS_B = [
+  "normal_juridica_directa",
+  "normal_juridica_control_no_dueno",
+  "normal_juridica_cadena_profunda",
+  "borde_juridica_indirecta_cruza_25",
+  "borde_juridica_indirecta_bajo_25",
+  "borde_juridica_exacta_25",
+  "borde_juridica_dos_caminos",
+  "adversario_juridica_beneficiario_homonimo",
+] as const;
+export type SubtipoJuridicoB = (typeof SUBTIPOS_JURIDICOS_B)[number];
+
+export const SUBTIPOS_B = [
+  ...SUBTIPOS_NATURALES_B,
+  ...SUBTIPOS_JURIDICOS_B,
 ] as const;
 export type SubtipoB = (typeof SUBTIPOS_B)[number];
 
@@ -212,13 +241,13 @@ export const MOTIVOS_ESCALAMIENTO_B = [
 export const CamposBSchema = z
   .object({
     nombre: z.string().min(1).nullable(),
-    documento: z.string().regex(DOCUMENTO_SINTETICO).nullable(),
+    documento: z.string().regex(DOCUMENTO_O_NIT).nullable(),
     nacimiento: z.number().int().min(1900).max(2010).nullable(),
     nacionalidad: z.string().regex(CODIGO_JURISDICCION).nullable(),
     actividad: z.string().regex(CODIGO_ACTIVIDAD).nullable(),
     ingresos_mensuales: z.number().int().positive().nullable(),
     jurisdiccion_fondos: z.string().regex(CODIGO_JURISDICCION).nullable(),
-    titular_actividad: z.string().regex(DOCUMENTO_SINTETICO).nullable(),
+    titular_actividad: z.string().regex(DOCUMENTO_O_NIT).nullable(),
     titular_fondos: z.string().min(1).nullable(),
   })
   .strict();
@@ -227,6 +256,71 @@ export type CamposB = z.infer<typeof CamposBSchema>;
 export const CAMPOS_B = Object.keys(CamposBSchema.shape) as (keyof CamposB)[];
 
 const Documento = TextoBilingueSchema;
+
+/** S9: quién solicita. Los casos de persona natural de los lotes del S3 no traen el campo. */
+export const TIPOS_SOLICITANTE = ["natural", "juridica"] as const;
+
+/**
+ * S9: quién controla una sociedad, del catálogo de la norma (31 CFR § 1010.230(d)(2)(i): «an executive officer or
+ * senior manager»). El modelo elige de aquí; no inventa un cargo.
+ */
+export const ROLES_DE_CONTROL = [
+  "representante_legal",
+  "gerente_general",
+  "presidente",
+  "director_financiero",
+  "socio_administrador",
+] as const;
+
+/** Un porcentaje escrito con dos decimales a lo sumo (lo lee `beneficiarios.ts` en centésimas exactas). */
+const PORCENTAJE = /^(100(\.0{1,2})?|\d{1,2}(\.\d{1,2})?)$/;
+
+/**
+ * S9: la estructura societaria de una persona jurídica. `entidad` es la sociedad que solicita (está en `entidades`);
+ * cada participación dice qué parte de una sociedad tiene una persona u otra sociedad.
+ */
+export const EstructuraSchema = z
+  .object({
+    entidad: z.string().regex(NIT_SINTETICO),
+    entidades: z
+      .array(
+        z
+          .object({
+            nit: z.string().regex(NIT_SINTETICO),
+            nombre: z.string().min(1),
+          })
+          .strict(),
+      )
+      .min(1),
+    personas: z.array(
+      z
+        .object({
+          documento: z.string().regex(DOCUMENTO_SINTETICO),
+          nombre: z.string().min(1),
+        })
+        .strict(),
+    ),
+    participaciones: z
+      .array(
+        z
+          .object({
+            titular: z.string().regex(DOCUMENTO_O_NIT),
+            participada: z.string().regex(NIT_SINTETICO),
+            porcentaje: z.string().regex(PORCENTAJE),
+          })
+          .strict(),
+      )
+      .min(1),
+    controla: z
+      .object({
+        documento: z.string().regex(DOCUMENTO_SINTETICO),
+        rol: z.enum(ROLES_DE_CONTROL),
+      })
+      .strict()
+      .nullable(),
+  })
+  .strict();
+export type Estructura = z.infer<typeof EstructuraSchema>;
 
 export const EntradaBSchema = z
   .object({
@@ -238,6 +332,7 @@ export const EntradaBSchema = z
           "cuenta_corriente",
           "credito_de_consumo",
         ]),
+        tipo_solicitante: z.enum(TIPOS_SOLICITANTE).optional(),
       })
       .strict(),
     documentos: z
@@ -245,6 +340,8 @@ export const EntradaBSchema = z
         identidad: Documento,
         actividad: Documento,
         fondos: Documento.nullable(),
+        /** S9: el certificado de existencia con la composición accionaria (solo personas jurídicas). */
+        existencia: Documento.optional(),
       })
       .strict(),
   })
@@ -268,8 +365,18 @@ export const VerdadBSchema = z
     puntaje_riesgo: z.number().int().min(0).max(100),
     inconsistencias: z.number().int().min(0),
     reglas: z.array(z.string().regex(/^R[VDIP]-\d{2}$/)).min(1),
+    /** S9, solo personas jurídicas: quién solicita, su estructura y sus beneficiarios finales (por documento). */
+    tipo_solicitante: z.literal("juridica").optional(),
+    estructura: EstructuraSchema.optional(),
+    beneficiarios: z.array(z.string().regex(DOCUMENTO_SINTETICO)).optional(),
   })
   .strict()
+  .refine(
+    (v) =>
+      (v.tipo_solicitante === undefined) === (v.estructura === undefined) &&
+      (v.estructura === undefined) === (v.beneficiarios === undefined),
+    { message: "una persona jurídica trae su estructura y sus beneficiarios" },
+  )
   .refine((v) => !v.en_lista_vinculante || v.en_lista, {
     message: "quien está en una lista vinculante está en una lista",
   })
@@ -287,7 +394,7 @@ export const CasoBSchema = z
     adversario_detalle: z.enum(DETALLES_ADVERSARIO_B).nullable(),
     adversario: z
       .object({
-        vector: z.enum(["identidad", "actividad", "fondos"]),
+        vector: z.enum(["identidad", "actividad", "fondos", "existencia"]),
         carga: TextoBilingueSchema,
         intenta: TextoBilingueSchema,
       })
@@ -301,6 +408,8 @@ export const CasoBSchema = z
       .object({
         campos_extraidos: CamposBSchema,
         conclusion_investigador: z.enum(CONCLUSIONES),
+        /** S9: la estructura que devolverá el proveedor simulado (solo personas jurídicas). */
+        estructura_extraida: EstructuraSchema.optional(),
       })
       .strict(),
     semilla: z.string().min(1),
@@ -344,7 +453,7 @@ export const LoteBSchema = z
     id: z.string().min(1),
     demo_id: z.literal(DEMO_B),
     semilla: z.string().min(1),
-    receta: z.enum(["estandar", "humo"]),
+    receta: z.enum(["estandar", "humo", "juridicas"]),
     n: z.number().int().positive(),
     bloque: z.number().int().positive(),
     version_generador: z.string().regex(/^\d+\.\d+\.\d+$/),

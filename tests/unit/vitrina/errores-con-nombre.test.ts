@@ -232,23 +232,30 @@ describe("P3 Agente: lo que la vista cita por id (AU-S3-19)", () => {
 describe("P6 Caso del B: lo que vio el oficial (AU-S3-27)", () => {
   it("un payload de pausa que no es lo que registró la traza detiene el build nombrando caso y clave", async () => {
     const b = await datosDemo("demo-b");
-    expect(() => vistaCaso(b, "B-001", "es")).not.toThrow();
+    // B-013: una sociedad con un dueño parecido a la lista; su pausa trae también los dueños (S9).
+    expect(() => vistaCaso(b, "B-013", "es")).not.toThrow();
     // Valores que el esquema acepta (solo exige que viajen) y que no son los registrados.
     const distinto = {
       puntaje: { otro: true },
       coincidencias: { otro: true },
       documentos: { actividad: null },
+      beneficiarios: { otro: true },
     };
-    for (const clave of ["puntaje", "coincidencias", "documentos"] as const) {
+    for (const clave of [
+      "puntaje",
+      "coincidencias",
+      "documentos",
+      "beneficiarios",
+    ] as const) {
       const otro = {
         ...b,
         corrida: { ...b.corrida, trazas: structuredClone(b.corrida.trazas) },
       };
-      const t = otro.corrida.trazas.find((x) => x.caso_id === "B-001")!;
+      const t = otro.corrida.trazas.find((x) => x.caso_id === "B-013")!;
       (t.pausas_humanas[0]!.payload as Record<string, unknown>)[clave] =
         distinto[clave];
-      expect(() => vistaCaso(otro, "B-001", "es")).toThrow(
-        `en la pausa de B-001, «${clave}» no es lo que registró la traza`,
+      expect(() => vistaCaso(otro, "B-013", "es")).toThrow(
+        `en la pausa de B-013, «${clave}» no es lo que registró la traza`,
       );
     }
   });

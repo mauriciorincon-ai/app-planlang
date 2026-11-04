@@ -68,6 +68,7 @@ import {
   VISITA_DE,
 } from "@/textos/playground";
 import { Chip } from "../chip";
+import { CapacidadDelAuditor } from "./capacidad";
 import { claseBoton } from "../boton";
 import { Curva } from "../curva";
 import { cx } from "../cx";
@@ -779,7 +780,11 @@ export function Juego({ datos }: { datos: DatosIsla }) {
   const c = datos.compacto;
   const plan = useMemo(() => umbralesDelPlan(c), [c]);
   const [u, setU] = useState<Umbrales>(plan);
-  const r = useMemo(() => consecuencias(c, u), [c, u]);
+  // S9: la capacidad del auditor, con su propio estado; sin plazos en el plan, no hay control.
+  const [capacidad, setCapacidad] = useState<number | undefined>(
+    c.plazos?.capacidad.valor,
+  );
+  const r = useMemo(() => consecuencias(c, u, capacidad), [c, u, capacidad]);
   // La comprobación se calcula sobre lo que llegó al navegador, no se afirma (C-2).
   const reproducen = useMemo(() => casosQueReproducen(c), [c]);
   const obs = useMemo(() => observados(c, u), [c, u]);
@@ -1166,6 +1171,18 @@ export function Juego({ datos }: { datos: DatosIsla }) {
           <TablaDecisiones d={datos} r={r} cambia={cambia} i={i} />
         </BloqueExperto>
       </Seccion>
+
+      {datos.plazos && c.plazos && capacidad !== undefined && r.plazos ? (
+        <CapacidadDelAuditor
+          plazos={datos.plazos}
+          config={c.plazos}
+          valor={capacidad}
+          alCambiar={setCapacidad}
+          r={r.plazos}
+          noObservados={r.no_observados.length}
+          i={i}
+        />
+      ) : null}
 
       {curva && u1 !== null && umbralCurva ? (
         <Seccion

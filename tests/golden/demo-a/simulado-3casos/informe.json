@@ -488,6 +488,7 @@
       "version_grafo": "896708bdb11415ac928ba24776d3fa65d05bcc45f9d924a7f6c23ad5b4acff76"
     },
     "linea_base": null,
+    "llegadas": null,
     "plan": {
       "archivo": "plans/demo-a/v1.2.json",
       "huella": "9add6e5ad5515a03e9efb8c1c691e0c6b38d414622ae028dd5f7bb8b529592c2",
@@ -513,11 +514,11 @@
     },
     "verificador": {
       "formato": "planlang-informe/v1",
-      "version": "1.4.0"
+      "version": "1.5.0"
     }
   },
   "formato": "planlang-informe/v1",
-  "huella": "517bef65495135021d3a2e8fb4f9f76819f4fffc2037bb451369f9860f8d3aae",
+  "huella": "c4b12b64e02b47d603d83a8a518963d64d104abc91bdefddee854039c10e522d",
   "plan_en_breve": {
     "decisiones_una_via": [
       {
@@ -704,6 +705,7 @@
       }
     ]
   },
+  "plazos": null,
   "resumen": {
     "criterios_destacados": [
       "C3",
@@ -1361,5 +1363,5 @@
     "bloqueantes": [],
     "valor": "cumple_con_alertas"
   },
-  "version_verificador": "1.4.0"
+  "version_verificador": "1.5.0"
 }

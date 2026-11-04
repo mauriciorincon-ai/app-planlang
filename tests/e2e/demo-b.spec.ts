@@ -100,10 +100,12 @@ test("a 1280 px las siete pestañas caben sin deslizarse, en el A y en el B", as
   }
 });
 
-test("un caso del B: el expediente con cada conclusión citada y la instrucción escondida marcada como dato", async ({
+test("un caso del B: el expediente con cada conclusión citada, y en una sociedad los dueños y su certificado", async ({
   page,
 }) => {
-  await page.goto("/es/demo-b/caso/B-019");
+  // S9: el lote b-002-20 no trae instrucciones escondidas (la marca de la instrucción sigue cubierta por la prueba del A,
+  // A-016, y por las unitarias de la vista); su caso con sociedad trae el certificado y el cálculo de los dueños.
+  await page.goto("/es/demo-b/caso/B-013");
   const expediente = page.locator('section[aria-labelledby="c-exp"]');
   await expect(expediente).toBeVisible();
   const conclusiones = expediente.locator("ol > li");
@@ -112,8 +114,12 @@ test("un caso del B: el expediente con cada conclusión citada y la instrucción
   // Cada conclusión lleva su cita; una sin cita llevaría la marca de alerta.
   await expect(expediente.locator("ol > li small")).toHaveCount(n);
   await expect(expediente.locator("ol > li small svg")).toHaveCount(0);
-  // La instrucción plantada en el documento se pinta marcada, como dato del caso.
-  await expect(page.locator("mark").first()).toBeVisible();
+  // Los dueños finales, con su regla.
+  await expect(expediente).toContainText("Beneficiarios finales");
+  await expect(expediente).toContainText("RB-01");
+  await expect(
+    page.getByText("El certificado de existencia de la sociedad"),
+  ).toBeVisible();
 });
 
 test.describe("movimiento reducido", () => {

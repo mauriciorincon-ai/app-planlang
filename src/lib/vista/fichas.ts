@@ -181,6 +181,15 @@ export function pasosDeRepro(
       texto: P.plan[i],
     },
     { comando: COMANDOS[d.id].casos, texto: P.casos[i] },
+    // S9: si el manifiesto declara la capa de llegadas del lote, el reloj de los plazos se rehace y se compara.
+    ...(m.llegadas
+      ? [
+          {
+            comando: "pnpm llegadas:generar --verificar",
+            texto: P.llegadas[i],
+          },
+        ]
+      : []),
     {
       comando: `${COMANDOS[d.id].lote} --plan ${c.plan.archivo} --casos ${c.casos.archivo}`,
       texto:

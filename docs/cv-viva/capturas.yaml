@@ -92,6 +92,15 @@ capturas:
     pie:
       es: "La negación de A-017: causal legal, regla, datos y cómo contradecirla"
       en: "A-017's denial: legal ground, rule, data and how to appeal it"
+  - funcionalidad: "duenos"
+    archivo: "duenos.webp"
+    ruta: "/es/demo-b/caso/B-009"
+    perfil: "lider"
+    ancla: "^El expediente"
+    accion: null
+    pie:
+      es: "B-009: una sociedad, sus dueños por la cadena y el expediente que los cita"
+      en: "B-009: a company, its owners through the chain and the file that cites them"
   - funcionalidad: "lotes"
     archivo: "lotes.webp"
     ruta: "/es/agente"
@@ -108,8 +117,8 @@ capturas:
     ancla: "^El informe en una mirada$"
     accion: null
     pie:
-      es: "El veredicto del demo A: 10 de 10 criterios y sus tres fallas a la vista"
-      en: "Demo A's verdict: 10 of 10 criteria and its three failures in plain sight"
+      es: "El veredicto del demo A: 11 de 11 criterios y sus tres fallas a la vista"
+      en: "Demo A's verdict: 11 of 11 criteria and its three failures in plain sight"
   - funcionalidad: "supuestos"
     archivo: "supuestos.webp"
     ruta: "/es/brecha"
@@ -137,6 +146,24 @@ capturas:
     pie:
       es: "Las piezas exigidas, en el grafo; 1.124 decisiones rehechas, cero diferencias"
       en: "Required pieces, in the graph; 1,124 decisions redone, zero differences"
+  - funcionalidad: "garantia"
+    archivo: "garantia.webp"
+    ruta: "/es/playground"
+    perfil: "lider"
+    ancla: "^Dónde el umbral tiene el respaldo"
+    accion: null
+    pie:
+      es: "Qué umbral respaldan los datos: la zona sobre la curva, con el error que aceptas"
+      en: "Which threshold the data backs: the zone over the curve, at the error you accept"
+  - funcionalidad: "plazos"
+    archivo: "plazos.webp"
+    ruta: "/es/brecha"
+    perfil: "lider"
+    ancla: "^Plazos: el reloj simulado$"
+    accion: null
+    pie:
+      es: "El plazo legal del demo A: la espera por clase y dónde se rompe"
+      en: "Demo A's legal deadline: the wait by class and where it breaks"
   - funcionalidad: "adr"
     archivo: "adr.webp"
     ruta: "/es/agente"
@@ -155,6 +182,15 @@ capturas:
     pie:
       es: "Alto costo movido a 1600: 12 casos cambian de camino, con su costo"
       en: "High cost moved to 1600: 12 cases change path, with what it costs"
+  - funcionalidad: "capacidad"
+    archivo: "capacidad.webp"
+    ruta: "/es/playground"
+    perfil: "lider"
+    ancla: "^La capacidad del auditor$"
+    accion: null
+    pie:
+      es: "La capacidad del auditor: cuántas solicitudes salen de su plazo legal"
+      en: "The auditor's capacity: how many requests go past their legal deadline"
   - funcionalidad: "visor"
     archivo: "visor.webp"
     ruta: "/es/agente"

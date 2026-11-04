@@ -14,8 +14,10 @@
  * respaldo a la pausa humana sin proveedor; cambia el contrato de grafo). Con `--a 1.5`, la enmienda v1.4 → v1.5 del
  * S3 (aprobación parcial y modo Texas, M-16, M-8, unidad de U2; cambia el contrato de grafo). Con `--a 1.5.1`, la
  * enmienda v1.5 → v1.5.1 de la auditoría del S3 (solo redacción: S1, S3 y el problema; F8). Con `--a 1.5.2`, la
- * enmienda v1.5.1 → v1.5.2 de la segunda pasada de la casilla 4 (solo redacción: el enunciado de C1; A1).
- * Uso: `pnpm tsx scripts/enmendar-plan-demo-a.ts [--a 1.2|1.3|1.4|1.5|1.5.1|1.5.2] --por <nombre> --el <YYYY-MM-DD>`
+ * enmienda v1.5.1 → v1.5.2 de la segunda pasada de la casilla 4 (solo redacción: el enunciado de C1; A1). Con
+ * `--a 1.6`, la enmienda v1.5.2 → v1.6 del S9 (el plazo legal medible: C11 y la simulación de plazos).
+ * Un `--a` desconocido es un error, y un destino que ya existe no se reescribe (`scripts/_enmendar.ts`).
+ * Uso: `pnpm tsx scripts/enmendar-plan-demo-a.ts [--a 1.2|1.3|1.4|1.5|1.5.1|1.5.2|1.6] --por <nombre> --el <YYYY-MM-DD>`
  */
 import { aprobarPlan, cargarPlan } from "../core/plan";
 import {
@@ -26,8 +28,10 @@ import {
   enmendarAV15,
   enmendarAV151,
   enmendarAV152,
+  enmendarAV16,
 } from "./enmienda-plan-demo-a";
 import { argumentos, escribirJson, leerJson } from "./_io";
+import { elegirEnmienda, motivoDeDestinoOcupado } from "./_enmendar";
 
 const ENMIENDAS = {
   "1.1": {
@@ -65,6 +69,11 @@ const ENMIENDAS = {
     salida: "plans/demo-a/v1.5.2.json",
     f: enmendarAV152,
   },
+  "1.6": {
+    entrada: "plans/demo-a/v1.5.2.json",
+    salida: "plans/demo-a/v1.6.json",
+    f: enmendarAV16,
+  },
 } as const;
 
 async function main(): Promise<number> {
@@ -73,16 +82,17 @@ async function main(): Promise<number> {
     console.error("uso: enmendar-plan-demo-a --por <nombre> --el <YYYY-MM-DD>");
     return 2;
   }
-  const a =
-    args.a === "1.5.2" ||
-    args.a === "1.5.1" ||
-    args.a === "1.5" ||
-    args.a === "1.4" ||
-    args.a === "1.3" ||
-    args.a === "1.2"
-      ? args.a
-      : "1.1";
-  const { entrada: ENTRADA, salida: SALIDA, f } = ENMIENDAS[a];
+  const eleccion = elegirEnmienda(ENMIENDAS, args.a, "1.1");
+  if (!eleccion.ok) {
+    console.error(eleccion.motivo);
+    return 2;
+  }
+  const { entrada: ENTRADA, salida: SALIDA, f } = ENMIENDAS[eleccion.clave];
+  const ocupado = motivoDeDestinoOcupado(SALIDA);
+  if (ocupado) {
+    console.error(ocupado);
+    return 1;
+  }
   const previo = await cargarPlan(leerJson(ENTRADA));
   if (!previo.ok) throw new Error(`${ENTRADA} no carga`);
   const r = await aprobarPlan(f(previo.plan), {

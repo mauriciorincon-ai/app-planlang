@@ -67,6 +67,11 @@ const PRESENTACION: Readonly<
       cols: "minmax(0,0.8fr) minmax(0,0.5fr) minmax(0,1.4fr)",
       mono: [1, 2],
     },
+    // S9: los dueños finales (documentos, largos), si la estructura cerró y el mayor parecido de un dueño.
+    beneficiarios: {
+      cols: "minmax(0,1.6fr) minmax(0,0.5fr) minmax(0,0.7fr)",
+      mono: [0, 2],
+    },
     verificador_listas: {
       cols: "minmax(0,1.3fr) minmax(0,0.6fr) minmax(0,0.9fr)",
       mono: [1],

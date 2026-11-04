@@ -350,6 +350,70 @@ export const PlanBeneficiosSinteticoSchema = z
   })
   .strict();
 
+// --------------------------------------------------------------------------- simulación de plazos (S9)
+
+const HORA = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "hora HH:MM");
+
+/** Cuánto tiene una clase de solicitud para decidirse, contado desde que llega (calendario: el fin de semana corre). */
+export const PlazoSchema = z
+  .object({
+    cantidad: z.number().int().positive(),
+    unidad: z.enum(["horas", "dias_calendario"]),
+  })
+  .strict();
+
+/** Una clase de solicitud (un valor de `senal_de_clase`): su lugar en la cola y su plazo. */
+export const ClaseDePlazoSchema = z
+  .object({
+    valor: z.string().min(1),
+    nombre: TextoBilingueSchema,
+    /** 1 se atiende primero; las prioridades no se repiten. */
+    prioridad: z.number().int().positive(),
+    plazo: PlazoSchema,
+    /** A qué clase de la norma se asimila: es un supuesto de la simulación, no un dato del caso. */
+    equivale_a: TextoBilingueSchema,
+  })
+  .strict();
+
+/**
+ * Cómo se simula el reloj de un lote (S9, ADR-019): cuándo llegan las solicitudes, quién las atiende y cuánto tiene cada
+ * clase para decidirse. Vive FUERA de `umbrales` y de `contrato_de_grafo` a propósito: no cambia lo que el agente decide
+ * ni su verdad conocida, así que un plan que lo añade conserva las corridas anteriores (`mismaVerdad`, ADR-005).
+ * La capacidad es lo único jugable: cuántos casos atiende el auditor por día hábil.
+ */
+export const SimulacionDePlazosSchema = z
+  .object({
+    /** La señal de la traza cuyo valor dice la clase de cada solicitud (p. ej. el tipo de atención). */
+    senal_de_clase: z.string().min(1),
+    /** Las llegadas se reparten en estos días hábiles (lunes = 1). */
+    dias_habiles: z.number().int().min(1).max(5),
+    jornada: z.object({ inicio: HORA, fin: HORA }).strict(),
+    capacidad_del_auditor: z
+      .object({
+        valor: z.number().int().positive(),
+        unidad: TextoBilingueSchema,
+        rango_jugable: z
+          .object({
+            min: z.number().int().positive(),
+            max: z.number().int().positive(),
+            paso: z.number().int().positive(),
+          })
+          .strict(),
+      })
+      .strict(),
+    clases: z.array(ClaseDePlazoSchema).min(1),
+    /** Lo que la simulación supone y la norma no dice: se publica con el informe (P9). */
+    supuestos: z.array(TextoBilingueSchema).min(1),
+    fuente: z
+      .object({
+        norma: TextoBilingueSchema,
+        consultada: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+      })
+      .strict(),
+    origen: OrigenSchema.optional(),
+  })
+  .strict();
+
 export const VERSION_SEMANTICA = /^[0-9]+\.[0-9]+\.[0-9]+$/;
 
 export const PlanSchema = z
@@ -375,6 +439,7 @@ export const PlanSchema = z
     contrato_de_grafo: ContratoDeGrafoSchema,
     lotes: LotesSchema,
     plan_beneficios_sintetico: PlanBeneficiosSinteticoSchema.optional(),
+    simulacion_de_plazos: SimulacionDePlazosSchema.optional(),
     etiqueta_riesgo: TextoBilingueSchema.optional(),
     huella: z
       .string()
@@ -395,6 +460,8 @@ export type AristaTripleta = z.infer<typeof AristaTripletaSchema>;
 export type AristaFuncion = z.infer<typeof AristaFuncionSchema>;
 export type Evaluador = z.infer<typeof EvaluadorSchema>;
 export type PausaHumana = z.infer<typeof PausaHumanaSchema>;
+export type SimulacionDePlazos = z.infer<typeof SimulacionDePlazosSchema>;
+export type ClaseDePlazo = z.infer<typeof ClaseDePlazoSchema>;
 
 export function esAristaTripleta(a: AristaCondicional): a is AristaTripleta {
   return "senal" in a;

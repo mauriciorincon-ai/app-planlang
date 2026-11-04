@@ -12,7 +12,7 @@
 // `out/` o si `--pasada` cae dentro del repo. Solo hay datos sintéticos precompilados.
 //
 // Uso: pnpm build && node scripts/capturas-demo-b.mjs --pasada <carpeta fuera del repo>
-//        [--conjunto forma-b|mirada-3|comparar|planes|origen|contrato|garantia] [--destino docs/fidelidad/<conjunto>] [--techo 2097152]
+//        [--conjunto forma-b|mirada-3|comparar|planes|origen|contrato|garantia|plazos] [--destino docs/fidelidad/<conjunto>] [--techo 2097152]
 // Conjuntos: `forma-b` (S3 fase 3, la mirada 2: las pantallas del B) y `mirada-3` (S3 fase 4: el BLUEPRINT, el
 // expediente y el informe del B y los cambios de forma del A sobre la corrida de 200). El BLUEPRINT es el único
 // archivo que se sirve fuera de `out/` (`docs/BLUEPRINT.html`, autocontenido).
@@ -56,6 +56,7 @@ if (
     "origen",
     "contrato",
     "garantia",
+    "plazos",
   ].includes(CONJUNTO)
 ) {
   console.error(`capturas-demo-b: conjunto desconocido «${CONJUNTO}». Aborto.`);
@@ -77,7 +78,9 @@ const destino = resolve(
               ? "docs/fidelidad/s7-contrato"
               : CONJUNTO === "garantia"
                 ? "docs/fidelidad/s8-garantia"
-                : "docs/fidelidad/s3-mirada-3",
+                : CONJUNTO === "plazos"
+                  ? "docs/fidelidad/s9-plazos"
+                  : "docs/fidelidad/s3-mirada-3",
   ),
 );
 const BLUEPRINT = join(raiz, "docs", "BLUEPRINT.html");
@@ -94,6 +97,7 @@ function CONJUNTO_CALIDAD() {
     "origen",
     "contrato",
     "garantia",
+    "plazos",
   ].includes(arg("conjunto", "forma-b"))
     ? "70"
     : "52";
@@ -211,9 +215,10 @@ const COMBINACIONES = [
   { idioma: "en", tema: "oscuro" },
 ];
 const ANCHOS = [380, 1280];
-// S8: la regla 20 pide UN idioma por sprint; el segundo llega al cierre del hito. El conjunto «garantia» va en español.
+// S8 y S9: la regla 20 pide UN idioma por sprint; el segundo llega al cierre del hito. Los conjuntos «garantia» y
+// «plazos» van en español.
 const COMBOS =
-  arg("conjunto", "forma-b") === "garantia"
+  ["garantia", "plazos"].includes(arg("conjunto", "forma-b"))
     ? COMBINACIONES.filter((c) => c.idioma === "es")
     : COMBINACIONES;
 
@@ -941,6 +946,109 @@ const DECISIONES_GARANTIA = [
   },
 ];
 
+// ── el conjunto «plazos» (S9): la capacidad del auditor en el playground, el plazo y los dueños en la Brecha, y los
+//    dueños en un caso del B, en español, con su pasada de interacción (mover la capacidad, subir U1, cambiar de perfil) ─
+const PANTALLAS_PLAZOS = [
+  { clave: "playground", ruta: "/playground" },
+  { clave: "brecha", ruta: "/brecha" },
+  { clave: "brecha-b", ruta: "/demo-b/brecha" },
+];
+const DECISIONES_PLAZOS = [
+  {
+    clave: "playground-capacidad",
+    archivo: "Playground (/es/playground), «La capacidad del auditor»",
+    estado: "tal como abre",
+    ruta: "/es/playground",
+    ancho: 1280,
+    tema: "oscuro",
+    recorte: (page) =>
+      marco(page.locator('section[aria-labelledby="s-plazos-t"]')),
+    mirar:
+      "El deslizador de la capacidad con su marca «plan 30», la tabla por clase y la frase que dice si alguien sale de su plazo, con su símbolo y su texto.",
+    esperada:
+      "30 casos por día hábil (de 10 a 60); «Con 30 casos por día hábil, toda solicitud se decide dentro de su plazo.»; Hospitalaria 72 horas, 30 de 54 esperaron, «0 · cumple» en fuera de plazo, espera mediana 18 min y máxima 15 h 33 min; Ambulatoria 7 días calendario, 40 de 123, 0 fuera de plazo, 18 min y 16 h 0 min; «Con estos umbrales el plazo se cumple desde 8 casos por día hábil; con una menos salen 14. Queda por debajo de lo que este control deja mover (10–60).»",
+  },
+  {
+    clave: "playground-capacidad-movida",
+    archivo:
+      "Playground, la capacidad en 10 y U1 en 0,95 (pasada de interacción)",
+    estado: "tras mover la capacidad a 10 y U1 a 0,95",
+    ruta: "/es/playground",
+    ancho: 1280,
+    tema: "claro",
+    accion: async (page) => {
+      await page.getByRole("slider", { name: /Confianza mínima/ }).fill("0.95");
+      await page.getByRole("slider", { name: /Capacidad del auditor/ }).fill("10");
+    },
+    antes: (page) => page.locator("#k-plazos-frase").textContent(),
+    recorte: (page) =>
+      marco(page.locator('section[aria-labelledby="s-plazos-t"]')),
+    mirar:
+      "Que la frase y las cifras de la tabla cambien al mover los controles, que «movido desde 30» aparezca y que el punto donde se rompe siga diciéndose.",
+    esperada:
+      "«Con 10 casos por día hábil, toda solicitud se decide dentro de su plazo.» (con U1 en 0,95 pasan más solicitudes al auditor y la espera sube); «Con estos umbrales el plazo se cumple desde 9 casos por día hábil; con una menos salen 24.»; la chip «movido desde 30».",
+  },
+  {
+    clave: "playground-capacidad-movil",
+    archivo: "Playground, la capacidad en el teléfono",
+    estado: "tal como abre, 380 px",
+    ruta: "/es/playground",
+    ancho: 380,
+    tema: "claro",
+    recorte: (page) =>
+      marco(page.locator('section[aria-labelledby="s-plazos-t"]')),
+    mirar:
+      "Que cada clase se lea en su propia tarjeta (seis columnas no caben en 380 px), sin cortar cifras, y que la frase y el deslizador quepan.",
+    esperada:
+      "Nada se sale de la pantalla; una tarjeta por clase con plazo, cuántas esperaron, «0 · cumple» con su palomita, espera mediana y máxima; el deslizador y la frase se leen enteros.",
+  },
+  {
+    clave: "brecha-plazos-lider",
+    archivo: "Brecha (/es/brecha), el bloque «Plazos: el reloj simulado», como líder",
+    estado: "tal como abre",
+    ruta: "/es/brecha",
+    ancho: 1280,
+    tema: "claro",
+    recorte: (page) => marco(page.locator('[data-bloque="plazos"]')),
+    mirar:
+      "Tres frases llanas: lo que se cumplió con su margen, dónde se rompe el plazo y que las llegadas son simuladas.",
+    esperada:
+      "«Toda solicitud con plazo se decidió a tiempo. La que más esperó fue hospitalaria: 15 h 33 min de espera frente a un plazo de 72 horas…»; «Donde se rompe: el plazo se cumple desde 8 casos por día hábil y con una menos salen 14. Eso queda por debajo del tramo que el playground deja mover (10–60)…»; «Las horas de llegada son simuladas…».",
+  },
+  {
+    clave: "brecha-plazos-experto",
+    archivo: "Brecha, el bloque de plazos, perfil experto (pasada de interacción)",
+    estado: "tras pulsar «Experto»",
+    ruta: "/es/brecha",
+    ancho: 1280,
+    tema: "oscuro",
+    accion: async (page) =>
+      page
+        .getByRole("group", { name: "Leer como" })
+        .getByRole("button", { name: "Experto" })
+        .click(),
+    antes: (page) => page.locator("html").getAttribute("data-perfil"),
+    recorte: (page) => marco(page.locator('[data-bloque="plazos"]')),
+    mirar:
+      "Que aparezcan la cola, la tabla por clase, los supuestos de la simulación y la norma con su fecha de consulta.",
+    esperada:
+      "La tabla Hospitalaria / Ambulatoria con sus siete columnas; «Pasaron por el auditor 70 solicitudes: 14 por día hábil…»; «Horas de auditor… 14 h»; los cinco supuestos; «Fuente de los plazos: CMS-0057-F… Consultada el 2026-11-03».",
+  },
+  {
+    clave: "brecha-b-duenos-movil",
+    archivo: "Brecha del demo B (/es/demo-b/brecha), «Dueños de las sociedades», en el teléfono",
+    estado: "tal como abre, 380 px",
+    ruta: "/es/demo-b/brecha",
+    ancho: 380,
+    tema: "claro",
+    recorte: (page) => marco(page.locator('[data-bloque="duenos"]')),
+    mirar:
+      "Que diga cuántas sociedades se midieron, que 8 de 8 orienta pero no prueba y que el lote no probó las instrucciones escondidas.",
+    esperada:
+      "«De 8 sociedades, el conjunto de dueños finales coincidió con la verdad conocida en las 8. Con tan pocas, la cifra orienta pero no prueba: cada sociedad pesa 12,5 puntos.»; «Este lote no trae instrucciones escondidas…».",
+  },
+];
+
 const PANTALLAS =
   CONJUNTO === "forma-b"
     ? PANTALLAS_FORMA_B
@@ -954,7 +1062,9 @@ const PANTALLAS =
             ? PANTALLAS_CONTRATO
             : CONJUNTO === "garantia"
               ? PANTALLAS_GARANTIA
-              : PANTALLAS_MIRADA_3;
+              : CONJUNTO === "plazos"
+                ? PANTALLAS_PLAZOS
+                : PANTALLAS_MIRADA_3;
 const DECISIONES =
   CONJUNTO === "forma-b"
     ? DECISIONES_FORMA_B
@@ -968,7 +1078,9 @@ const DECISIONES =
             ? DECISIONES_CONTRATO
             : CONJUNTO === "garantia"
               ? DECISIONES_GARANTIA
-              : DECISIONES_MIRADA_3;
+              : CONJUNTO === "plazos"
+                ? DECISIONES_PLAZOS
+                : DECISIONES_MIRADA_3;
 
 rmSync(destino, { recursive: true, force: true });
 mkdirSync(destino, { recursive: true });
@@ -1028,6 +1140,7 @@ for (const c of capturas) {
       "origen",
       "contrato",
       "garantia",
+      "plazos",
     ].includes(CONJUNTO)
       ? 55
       : 45,
@@ -1127,7 +1240,7 @@ const html = `<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${CONJUNTO === "garantia" ? "La zona respaldada por los datos · mirada de forma (S8)" : CONJUNTO === "contrato" ? "Plan sin corrida · contrato del grafo en detalle · mirada de forma (S7)" : CONJUNTO === "origen" ? "Plan sin corrida v2 · mirada de forma (S6)" : CONJUNTO === "planes" ? "Plan sin corrida · mirada de forma (S5)" : CONJUNTO === "comparar" ? "Comparar dos corridas · mirada de forma (S4)" : CONJUNTO === "forma-b" ? "Demo B · mirada de forma (S3)" : "Mirada 3 · cierre (S3)"}</title>
+<title>${CONJUNTO === "plazos" ? "El plazo y los dueños · mirada de forma (S9)" : CONJUNTO === "garantia" ? "La zona respaldada por los datos · mirada de forma (S8)" : CONJUNTO === "contrato" ? "Plan sin corrida · contrato del grafo en detalle · mirada de forma (S7)" : CONJUNTO === "origen" ? "Plan sin corrida v2 · mirada de forma (S6)" : CONJUNTO === "planes" ? "Plan sin corrida · mirada de forma (S5)" : CONJUNTO === "comparar" ? "Comparar dos corridas · mirada de forma (S4)" : CONJUNTO === "forma-b" ? "Demo B · mirada de forma (S3)" : "Mirada 3 · cierre (S3)"}</title>
 <style>
 :root{--fondo:#0f1115;--sup:#171a21;--t1:#eceef2;--t2:#a9afbb;--linea:#2a2f3a}
 @media (prefers-color-scheme: light){:root{--fondo:#f7f7f5;--sup:#fff;--t1:#16181d;--t2:#4a505c;--linea:#d9dbe0}}
@@ -1144,7 +1257,11 @@ table{border-collapse:collapse;width:100%;font-size:13px;margin-top:8px}th,td{bo
 </head>
 <body><main>
 ${
-  CONJUNTO === "garantia"
+  CONJUNTO === "plazos"
+    ? `<p class="pregunta">¿La capacidad del auditor, el plazo legal y los dueños de las sociedades se leen como esperas en el playground y en la Brecha? Mira cada fila de la tabla con su recorte.</p>
+<h1>El plazo y los dueños · mirada de forma «no vista» (S9)</h1>
+<p>Vitrina construida con el commit en curso, servida desde <code>out/</code>. Clase de mirada: FORMA, registrada «no vista»; su veredicto viaja al gate del hito H-2 (el ensayo general). Solo en español: el inglés llega al cierre del hito. Las capturas enteras no se versionan: cada una queda con su huella SHA-256 y una miniatura de la parte de arriba.</p>`
+    : CONJUNTO === "garantia"
     ? `<p class="pregunta">¿La zona que los datos respaldan, y lo que no alcanzan, se leen como esperas en el playground y en la Brecha? Mira cada fila de la tabla con su recorte.</p>
 <h1>La zona respaldada por los datos · mirada de forma «no vista» (S8)</h1>
 <p>Vitrina construida con el commit en curso, servida desde <code>out/</code>. Clase de mirada: FORMA, registrada «no vista»; su veredicto viaja al gate del hito H-2 (el ensayo general). Solo en español: el inglés llega al cierre del hito. Las capturas enteras no se versionan: cada una se identifica por su huella SHA-256.</p>`
@@ -1180,7 +1297,7 @@ ${filas}
 <h2>Los recortes</h2>
 ${figuras}
 <h2>La pasada completa (${capturas.length} capturas)</h2>
-<p>${CONJUNTO === "garantia" ? "El playground y la Brecha" : CONJUNTO === "contrato" ? "El plan sin corrida de HackGuard (contrato en detalle)" : CONJUNTO === "origen" ? "El plan sin corrida de HackGuard" : CONJUNTO === "planes" ? "La Entrada y el plan sin corrida" : CONJUNTO === "comparar" ? "La pantalla" : CONJUNTO === "forma-b" ? "Cada pantalla del B y la entrada" : "Las pantallas que cambió el cierre"}, a 380 y 1280 px: en español en los dos temas${CONJUNTO === "garantia" ? "" : ", en inglés en oscuro"}. La miniatura es la parte de arriba; la huella identifica la captura entera que se leyó.</p>
+<p>${CONJUNTO === "plazos" ? "El playground y la Brecha de los dos demos" : CONJUNTO === "garantia" ? "El playground y la Brecha" : CONJUNTO === "contrato" ? "El plan sin corrida de HackGuard (contrato en detalle)" : CONJUNTO === "origen" ? "El plan sin corrida de HackGuard" : CONJUNTO === "planes" ? "La Entrada y el plan sin corrida" : CONJUNTO === "comparar" ? "La pantalla" : CONJUNTO === "forma-b" ? "Cada pantalla del B y la entrada" : "Las pantallas que cambió el cierre"}, a 380 y 1280 px: en español en los dos temas${["garantia", "plazos"].includes(CONJUNTO) ? "" : ", en inglés en oscuro"}. La miniatura es la parte de arriba; la huella identifica la captura entera que se leyó.</p>
 <div class="minis">
 ${minis}
 </div>

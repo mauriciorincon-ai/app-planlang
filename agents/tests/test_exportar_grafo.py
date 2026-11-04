@@ -10,6 +10,7 @@ from app_agents import exportar_grafo as eg
 from app_agents.canonico import huella
 from app_agents.demo_a.grafo import NODOS
 from app_agents.demo_b.grafo import NODOS as NODOS_B
+from app_agents.demo_b.grafo import NODOS_OPCIONALES as NODOS_OPCIONALES_B
 from app_agents.plan import RAIZ_REPO
 
 
@@ -73,7 +74,7 @@ def test_cada_nodo_del_b_trae_su_funcion_lineas_y_lo_que_escribe() -> None:
     datos = json.loads(eg.SALIDA_B.read_text(encoding="utf-8"))
     assert datos["huella"] == huella(datos)
     assert datos["demo_id"] == "demo-b"
-    assert list(datos["nodos"]) == sorted(NODOS_B)
+    assert list(datos["nodos"]) == sorted((*NODOS_B, *NODOS_OPCIONALES_B))
     for n, b in datos["nodos"].items():
         assert b["archivo"] == "agents/src/app_agents/demo_b/nodos.py"
         assert b["codigo"].startswith(f"def {n}(")

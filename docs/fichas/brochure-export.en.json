@@ -12,14 +12,14 @@
     "enlaces.produccion": "null cuando la app no tiene URL pública. `razon` explica por qué, y es lo que la vitrina muestra en lugar del enlace. Nunca se rellena con un enlace de repositorio ni con una promesa."
   },
   "schema_version": "1.0.0",
-  "actualizado": "2026-11-02",
+  "actualizado": "2026-11-03",
   "app": {
     "slug": "planlang",
     "nombre": "planlang",
     "ciclo": "H-2",
     "estado": "inicial",
     "sellado_en": null,
-    "sprints_cerrados": 8,
+    "sprints_cerrados": 9,
     "version_repo": "0.1.0"
   },
   "promesa": {
@@ -29,7 +29,7 @@
     "diferencial": "Of 15 evaluation platforms reviewed in September 2026, none requires planning before building or compares the plan with what happened. planlang does both: it demands a measurable plan, publishes the gap between plan and result with the risks that were foreseen, and lets you move the plan's thresholds over the agent's real decisions."
   },
   "funcionalidades": {
-    "total": 21,
+    "total": 25,
     "fuente_del_conteo": "docs/MANUAL-DE-USO.md",
     "descartadas": [],
     "grupos": [
@@ -108,6 +108,12 @@
             "seccion_manual": "Run a batch"
           },
           {
+            "id": "duenos",
+            "nombre": "Knows who stands behind a company",
+            "que_hace": "When the applicant is a company, the agent copies its ownership structure and AI-free code works out who the beneficial owners are: 25% or more, direct or through chains of companies, and whoever controls it, with exact arithmetic. If the structure does not add up, it does not guess: it sends it to a person.",
+            "seccion_manual": "Deadlines and beneficial owners"
+          },
+          {
             "id": "lotes",
             "nombre": "Batch runs, without losing a case",
             "que_hace": "You run hundreds of cases with the Claude Code subscription, 20 at a time and with pauses. If the run is cut off, it resumes where it stopped without repeating any, and every case leaves its trace, every decision with its signal, in a format of its own and with a fingerprint.",
@@ -146,6 +152,18 @@
             "seccion_manual": "Check the runs and the instrument"
           },
           {
+            "id": "garantia",
+            "nombre": "How much the data backs a threshold",
+            "que_hace": "The agent's confidence comes with its guarantee: the lowest threshold whose error, among what the agent decides alone, stays under the one you accept with the probability you set. If the data does not reach it, the report says so and how many cases it would take.",
+            "seccion_manual": "Calibration with a guarantee"
+          },
+          {
+            "id": "plazos",
+            "nombre": "The legal deadline, measured",
+            "que_hace": "A simulated clock and an auditor over the traces that already exist say whether each authorization was decided within its legal deadline: the wait of each class, the late ones by case and where the deadline breaks, even if that is outside what the playground lets you move. Without rerunning a case.",
+            "seccion_manual": "Deadlines and beneficial owners"
+          },
+          {
             "id": "adr",
             "nombre": "The underlying rules, in writing",
             "que_hace": "Everything that can be solved with code is solved without AI, and every piece of the agent that uses no model says why. Using the Claude Code subscription was decided in writing, with its terms reread before each delivery.",
@@ -164,6 +182,12 @@
             "nombre": "Move the plan's thresholds",
             "que_hace": "You change a threshold, such as minimum confidence or Texas mode, which sends every denial to a person, even a partial one, and you see which cases change path, which errors appear and how much human work it costs. Everything is recomputed in your browser, with no model.",
             "seccion_manual": "Move thresholds in the playground"
+          },
+          {
+            "id": "capacidad",
+            "nombre": "Move the auditor's capacity",
+            "que_hace": "You change how many requests the auditor handles per business day and see how many go past their legal deadline, by class, and how many auditor hours it costs, with the thresholds you are playing. It is recomputed in your browser, with the same clock as the report.",
+            "seccion_manual": "Deadlines and beneficial owners"
           }
         ]
       },
@@ -212,16 +236,16 @@
   "metricas": [
     {
       "clave": "criterios_cumplidos",
-      "etiqueta": "criteria met across the plans of 2 demos, of 16",
-      "valor": 16,
+      "etiqueta": "criteria met across the plans of 2 demos, of 18",
+      "valor": 17,
       "unidad": "criteria",
       "fuente": "medido",
-      "detalle": "Demo A: 10 of 10, in verifier 1.4.0's report on run suscripcion-planlang-a-002-200-v1.5. Demo B: 6 of 6, in verifier 1.4.0's report on run suscripcion-planlang-b-001-20."
+      "detalle": "Demo A: 11 of 11, in verifier 1.5.0's report on run suscripcion-planlang-a-002-200-v1.5. Demo B: 6 of 7, in verifier 1.5.0's report on run suscripcion-planlang-b-002-20."
     },
     {
       "clave": "decisiones_cruzadas",
       "etiqueta": "decisions redone in another language, with 0 differences",
-      "valor": 1204,
+      "valor": 1244,
       "unidad": "decisions",
       "fuente": "medido",
       "detalle": "RF-09.2 cross-check over 4 runs of 2 demos: the TypeScript edge interpreter redoes every decision Python recorded."
@@ -232,7 +256,7 @@
       "valor": 220,
       "unidad": "cases",
       "fuente": "medido",
-      "detalle": "Demo A: 200 cases in run suscripcion-planlang-a-002-200-v1.5 and the single-agent baseline. Demo B: 20 cases in run suscripcion-planlang-b-001-20 and the single-agent baseline."
+      "detalle": "Demo A: 200 cases in run suscripcion-planlang-a-002-200-v1.5 and the single-agent baseline. Demo B: 20 cases in run suscripcion-planlang-b-002-20 and the single-agent baseline."
     },
     {
       "clave": "llamadas_a_modelos_en_la_vitrina",
@@ -245,15 +269,15 @@
     {
       "clave": "costo_de_una_corrida",
       "etiqueta": "nominal cost of running each demo once (220 cases)",
-      "valor": 5.2136,
+      "valor": 5.1671,
       "unidad": "US$",
       "fuente": "calculada",
-      "detalle": "Demo A: US$ 4.9206 for 200 cases. Demo B: US$ 0.293 for 20 cases. Sum of the nominal cost the CLI declares per call, over each run's traces; through the subscription it was not paid separately."
+      "detalle": "Demo A: US$ 4.9206 for 200 cases. Demo B: US$ 0.2465 for 20 cases. Sum of the nominal cost the CLI declares per call, over each run's traces; through the subscription it was not paid separately."
     },
     {
       "clave": "funcionalidades",
       "etiqueta": "built features",
-      "valor": 21,
+      "valor": 25,
       "unidad": "features",
       "fuente": "medido",
       "detalle": "The product vision's features that work today: the two-week cut's and the roadmap ones built in S3 (the interviewer, demo B and its case file), counted against docs/MANUAL-DE-USO.md; what remains on the roadmap does not count."
@@ -261,7 +285,7 @@
     {
       "clave": "decisiones_registradas",
       "etiqueta": "recorded architecture decisions",
-      "valor": 18,
+      "valor": 19,
       "unidad": "ADR",
       "fuente": "medido",
       "detalle": "Files in decisions/."

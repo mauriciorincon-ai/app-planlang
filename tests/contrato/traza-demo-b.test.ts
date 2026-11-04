@@ -4,15 +4,19 @@
  * (coincidencias, investigación, puntaje, expediente) y su extracción de tres documentos; el manifiesto cita las
  * listas y no un plan de beneficios. El lector las acepta y rechaza las de otras listas.
  * Demo en rojo (bitácora S3, fase 2): quitar `expediente` de una traza versionada → rojo nombrando la traza.
+ * S9 (plan B v1.2): la corrida simulada `simulado-b-002-20` trae la estructura que copió el extractor y lo que calculó
+ * el nodo `beneficiarios`; el lector anterior la rechazaba por esas claves (visto en rojo antes de ampliar el esquema).
  */
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
+  BeneficiariosDetalleSchema,
   CorridaSchema,
   ExtraccionBSchema,
   TrazaSchema,
 } from "../../core/formatos/traza";
+import { beneficiariosDe } from "../../core/sintetico/demo-b/beneficiarios";
 import {
   ErrorDeLectura,
   leerCorridaVerificada,
@@ -87,4 +91,49 @@ describe("trazas del demo B escritas por Python", () => {
     const vieja = TrazaSchema.parse(json("runs/demo-b/simulado-humo/trazas/BH-003.json"));
     expect(perfilCasoB(d, vieja, c, "es").documento?.aviso).toBeNull();
   });
+});
+
+describe("trazas del demo B con el plan v1.2 (S9)", () => {
+  // Las simuladas y las reales del lote b-002-20. En las reales, acertar a la verdad es una medida (C7, en el informe), no
+  // parte del contrato: ahí solo se exige que el gemelo TS dé lo mismo que Python sobre lo que el modelo extrajo.
+  const V12 = [
+    "runs/demo-b/simulado-b-002-20",
+    "runs/demo-b/simulado-b-002-20-base",
+    "runs/demo-b/suscripcion-planlang-b-002-20",
+    "runs/demo-b/suscripcion-planlang-b-002-20-base",
+  ];
+  const lote = json("data/casos/demo-b/planlang-b-002-20.json") as { casos: CasoB[] };
+
+  it.each(V12)(
+    "%s: cada sociedad trae su estructura y sus beneficiarios, y el gemelo TS da lo mismo que Python",
+    (ruta) => {
+      const simulada = ruta.includes("simulado");
+      const dir = join(ruta, "trazas");
+      let sociedades = 0;
+      for (const f of readdirSync(dir).sort()) {
+        const t = TrazaSchema.parse(json(join(dir, f)));
+        const e = ExtraccionBSchema.parse(t.extraccion);
+        const v = lote.casos.find((x) => x.id === t.caso_id)!.verdad_conocida;
+        // La simulada responde lo que declaró el generador: ahí la medida tiene que ser exacta.
+        if (simulada)
+          expect(t.senales["beneficiarios"] ?? null, f).toEqual(
+            v.tipo_solicitante === "juridica" ? v.beneficiarios : null,
+          );
+        // El nodo corre si el extractor leyó una sociedad (la arista del plan), no si la verdad lo es.
+        if (e.tipo_solicitante !== "juridica") {
+          expect(t.beneficiarios_detalle ?? null, f).toBeNull();
+          continue;
+        }
+        sociedades++;
+        const d = BeneficiariosDetalleSchema.parse(t.beneficiarios_detalle);
+        // Lo que Python calculó sobre lo extraído es lo que el gemelo TS calcula sobre lo mismo (regla 19).
+        const { coincidencias, ...calculo } = d;
+        if (e.estructura) expect(calculo, f).toEqual(beneficiariosDe(e.estructura));
+        else expect(d.problemas, f).toEqual(["sin_estructura"]);
+        expect(coincidencias.map((x) => x.documento), f).toEqual(d.beneficiarios ?? []);
+      }
+      if (simulada) expect(sociedades).toBe(8);
+      else expect(sociedades).toBeGreaterThan(0);
+    },
+  );
 });

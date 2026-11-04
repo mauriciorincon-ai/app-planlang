@@ -1,0 +1,234 @@
+{
+  "casos": {
+    "archivo": "data/casos/demo-b/planlang-b-002-20.json",
+    "huella": "934f143ebf1316b3bca4de93df557927a87988192468c0990372e40b899bf405",
+    "id": "planlang-b-002-20",
+    "n_lote": 20,
+    "semilla": "planlang-b-002"
+  },
+  "casos_con_error": [],
+  "casos_ejecutados": [
+    "B-001",
+    "B-002",
+    "B-003",
+    "B-004",
+    "B-005",
+    "B-006",
+    "B-007",
+    "B-008",
+    "B-009",
+    "B-010",
+    "B-011",
+    "B-012",
+    "B-013",
+    "B-014",
+    "B-015",
+    "B-016",
+    "B-017",
+    "B-018",
+    "B-019",
+    "B-020"
+  ],
+  "corrida_id": "simulado-b-002-20",
+  "demo_id": "demo-b",
+  "fecha": "2026-11-03",
+  "ficha": {
+    "descripcion": {
+      "en": "Run over the synthetic batch planlang-b-002-20 with provider simulado (model simulado). Human decisions were simulated in batch: the compliance officer follows the case's known truth.",
+      "es": "Corrida sobre el lote sintético planlang-b-002-20 con el proveedor simulado (modelo simulado). Las decisiones humanas se simularon en lote: el oficial de cumplimiento sigue la verdad conocida del caso."
+    },
+    "etiqueta": {
+      "en": "Simulation · not operational",
+      "es": "Simulación · no operativo"
+    },
+    "nombre": {
+      "en": "Demo B · customer due-diligence onboarding",
+      "es": "Demo B · vinculación con debida diligencia"
+    }
+  },
+  "formato": "planlang-trace/v1",
+  "huella": "dea9966a270c23e7bff34d27cd250947b7a58a0b203db647ab25027a9a2799a0",
+  "listas": {
+    "archivo": "data/listas/demo-b.json",
+    "huella": "08445155c778d3b098b60e94a54618958e9f453725d76a6a9955e71393766753",
+    "id": "listas-demo-b",
+    "version": "1.0.0"
+  },
+  "modelo": "simulado",
+  "plan": {
+    "archivo": "plans/demo-b/v1.2.json",
+    "huella": "6450d5c56fd0a337cb8a4206ffce6926d1390222a08cd337dffc35b034bfeeb2",
+    "id": "plan-demo-b",
+    "version": "1.2.0"
+  },
+  "proveedor": "simulado",
+  "ramas_esperadas": {
+    "archivo": "ramas-esperadas.json",
+    "huella": "329076864201ce6e6883c750e579daad882cb2e50aa672185a80bf7ec5695f32"
+  },
+  "revisor_simulado": {
+    "en": "In batches, the simulated officer follows the case’s known truth (DA-04); the showcase discloses it.",
+    "es": "En lotes, el oficial simulado sigue la verdad conocida del caso (DA-04); la vitrina lo divulga."
+  },
+  "sesiones": [
+    {
+      "casos_ejecutados": [
+        "B-001",
+        "B-002",
+        "B-003",
+        "B-004",
+        "B-005",
+        "B-006",
+        "B-007",
+        "B-008",
+        "B-009",
+        "B-010",
+        "B-011",
+        "B-012",
+        "B-013",
+        "B-014",
+        "B-015",
+        "B-016",
+        "B-017",
+        "B-018",
+        "B-019",
+        "B-020"
+      ],
+      "detenida_por": null,
+      "fecha": "2026-11-03",
+      "limites_alcanzados": 0,
+      "numero": 1
+    }
+  ],
+  "tipo": "corrida",
+  "trazas": [
+    {
+      "archivo": "trazas/B-001.json",
+      "caso_id": "B-001",
+      "huella": "b139e020131f6333b4672e9303bbe087df0a645d0ae644e4469ab7afc1c7ac50",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/B-002.json",
+      "caso_id": "B-002",
+      "huella": "cd828912bd001475254226feb113b74f923dd4ee9330ca5d494093b5589b3228",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/B-003.json",
+      "caso_id": "B-003",
+      "huella": "ebb98811d05fbae9728e86f5e394431730d12d5c1674fe919edff2eb0378abc0",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/B-004.json",
+      "caso_id": "B-004",
+      "huella": "731dd2d14185fb65b0220a93f8298486f1ca033034e2e34b4cf5b8379dc9d803",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/B-005.json",
+      "caso_id": "B-005",
+      "huella": "3a9b0b0942663db07c93330cfa72929833e9330480e3124a81eab07aca0842f0",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/B-006.json",
+      "caso_id": "B-006",
+      "huella": "3b2b171383d369d26e2ebe0bf358fbbd36d09f988f51f9c35779bdc2a2a18361",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/B-007.json",
+      "caso_id": "B-007",
+      "huella": "346c0e9da39a0594353f5209fcbbac9b601fbfcd4753a6ff187d4a3349ab75e0",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/B-008.json",
+      "caso_id": "B-008",
+      "huella": "d5e29408d56e00ed1d27a9bcca691542e3bdf9a4ae58c9c6459978b54a4d8224",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/B-009.json",
+      "caso_id": "B-009",
+      "huella": "367d2fb3a9a244180c71290f548e0270b147c485fda7ad37576dbcec8af1ab5c",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/B-010.json",
+      "caso_id": "B-010",
+      "huella": "9777c0eae7c42684b6fe3d3aabc94907272fc4dafc0707d4c64d7da6c2d6f0c3",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/B-011.json",
+      "caso_id": "B-011",
+      "huella": "ad938429994bf1954c30eb84c8883fd3e296192d4005c8f40416c1072986642f",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/B-012.json",
+      "caso_id": "B-012",
+      "huella": "a16b42a9469b30f243975095581e229263f59fc7da9e8725c7c75b2bfce82ce1",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/B-013.json",
+      "caso_id": "B-013",
+      "huella": "988220485e014547bb906524461eb74c5c71c39ee3eb89d1eebc10d0eab7d9f6",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/B-014.json",
+      "caso_id": "B-014",
+      "huella": "8802a6e8619955f17d4e77e4b744563ce12706f1cfc582f875b5b3a4ab456230",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/B-015.json",
+      "caso_id": "B-015",
+      "huella": "5c9f9cdbef5666ef4565109aab1907599c7b0f470a86eb969b896a78f5505085",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/B-016.json",
+      "caso_id": "B-016",
+      "huella": "b04d653d38b8fff35a033e1a0d183646420dadc33f933fc566a087bc6f61c47c",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/B-017.json",
+      "caso_id": "B-017",
+      "huella": "14ad5c8369a519004d876a1d41294fdc02b13a39ec03373fe71dbcf2b3514816",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/B-018.json",
+      "caso_id": "B-018",
+      "huella": "bf875bfc05b200c4219ffa708ddf7e600431b0ade159edfeb3e688b2d38eccde",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/B-019.json",
+      "caso_id": "B-019",
+      "huella": "ab754256829d5a5b445e1eab0a25e8d668f7f788abf616959a68685b620be41e",
+      "resultado": "completo"
+    },
+    {
+      "archivo": "trazas/B-020.json",
+      "caso_id": "B-020",
+      "huella": "df39070996ded93aee4cda962af462bd0de389d01bac3266a5e4cb1252291755",
+      "resultado": "completo"
+    }
+  ],
+  "umbrales_aplicados": {
+    "U1": 0.85,
+    "U2": 60,
+    "U3": 0,
+    "U4": 0.7
+  },
+  "variante": "multiagente",
+  "version_grafo": "9f12e59acce2a9ae6089afec293b64dd3f31a87e6a0ed966aca19df017d227cd"
+}

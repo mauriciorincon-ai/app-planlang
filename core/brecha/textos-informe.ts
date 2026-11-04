@@ -123,6 +123,31 @@ export interface TextosInforme {
   fallido: string;
   adversario: string;
   ningunoEnLaCorrida: string;
+  // § 3, plazos (S9): solo si el plan declara la simulación y el lote trae llegadas
+  plazosTitulo: string;
+  plazosIntro: (
+    capacidad: string,
+    unidad: string,
+    inicio: string,
+    fin: string,
+    dias: number,
+  ) => string;
+  cabPlazos: readonly string[];
+  plazoDe: (cantidad: number, unidad: "horas" | "dias_calendario") => string;
+  duracion: (minutos: number) => string;
+  carga: (pausas: number, porDia: string, capacidad: number) => string;
+  horasDeAuditor: (horas: string) => string;
+  capacidadMinima: (
+    minima: number,
+    tardias: number | null,
+    rango: string,
+  ) => string;
+  sinTardias: string;
+  tardiasTitulo: string;
+  tardia: (id: string, clase: string, espera: string, plazo: string) => string;
+  sinPlazo: (clase: string, n: number) => string;
+  supuestosDePlazos: string;
+  fuenteDePlazos: (norma: string, consultada: string) => string;
   // § 8
   playground: string;
   cabPlayground: readonly string[];
@@ -137,6 +162,8 @@ export interface TextosInforme {
   piezaGrafo: string;
   piezaRepeticion: string;
   piezaLineaBase: string;
+  piezaLlegadas: string;
+  llegadasDelLote: string;
   casosDelLote: (
     id: string,
     semilla: string,
@@ -316,6 +343,44 @@ const ES: TextosInforme = {
   fallido: "Fallido",
   adversario: "Adversario neutralizado",
   ningunoEnLaCorrida: "ninguno en esta corrida.",
+  plazosTitulo: "### Plazos: el reloj simulado",
+  plazosIntro: (capacidad, unidad, inicio, fin, dias) =>
+    `Cada solicitud llega en uno de los primeros ${dias} días hábiles, en una hora de la jornada (${inicio}–${fin}). Un solo auditor atiende por prioridad de clase y, dentro de ella, por orden de llegada, a ${capacidad} ${unidad}. Lo que el agente decide solo se decide al llegar; lo que pausa, cuando el auditor lo alcanza. El plazo corre en tiempo de calendario: el fin de semana cuenta.`,
+  cabPlazos: [
+    "Clase",
+    "Plazo",
+    "Solicitudes",
+    "Esperaron al auditor",
+    "Fuera de plazo",
+    "Espera mediana",
+    "Espera máxima",
+  ],
+  plazoDe: (cantidad, unidad) =>
+    unidad === "horas"
+      ? `${cantidad} ${cantidad === 1 ? "hora" : "horas"}`
+      : `${cantidad} ${cantidad === 1 ? "día calendario" : "días calendario"}`,
+  duracion: (m) =>
+    m < 60
+      ? `${m} min`
+      : m < 1440
+        ? `${Math.floor(m / 60)} h ${m % 60} min`
+        : `${Math.floor(m / 1440)} d ${Math.floor((m % 1440) / 60)} h`,
+  carga: (pausas, porDia, capacidad) =>
+    `Pasaron por el auditor ${pausas} solicitudes: ${porDia} por día hábil en promedio frente a una capacidad de ${capacidad}. La espera mediana se cuenta entre las que esperaron.`,
+  horasDeAuditor: (horas) =>
+    `Horas de auditor con el costo humano por caso del plan: ${horas} h.`,
+  capacidadMinima: (minima, tardias, rango) =>
+    `Con ${minima} casos por día, o más, todas se deciden en plazo${tardias === null ? "" : `; con ${minima - 1}, ${tardias} ${tardias === 1 ? "sale" : "salen"} de su plazo`}. El rango que el plan deja mover en el playground es ${rango}.`,
+  sinTardias:
+    "Ninguna solicitud salió de su plazo con esta capacidad. Que el plazo se cumpla en la simulación no prueba que se cumpliría con otra llegada o con otra capacidad: el playground deja moverla para ver dónde se rompe.",
+  tardiasTitulo: "Solicitudes que salieron de su plazo:",
+  tardia: (id, clase, espera, plazo) =>
+    `${id} (${clase}): se decidió a los ${espera}, con ${plazo} de plazo.`,
+  sinPlazo: (clase, n) =>
+    `${n} ${n === 1 ? "solicitud" : "solicitudes"} de la clase «${clase}» no tiene${n === 1 ? "" : "n"} plazo en esta simulación: se decidieron al llegar y no cuentan para el plazo.`,
+  supuestosDePlazos: "Lo que esta simulación supone:",
+  fuenteDePlazos: (norma, consultada) =>
+    `Fuente de los plazos: ${norma} Consultada el ${consultada}.`,
   playground: "## 8. Lo que el playground permite explorar",
   cabPlayground: [
     "Umbral",
@@ -335,6 +400,8 @@ const ES: TextosInforme = {
   piezaGrafo: "Grafo",
   piezaRepeticion: "Repetición",
   piezaLineaBase: "Línea base",
+  piezaLlegadas: "Llegadas",
+  llegadasDelLote: "horas de llegada simuladas del lote, con su semilla",
   casosDelLote: (id, semilla, n, plan) =>
     `${id} · semilla ${semilla} · n = ${n} · generado con el plan ${plan}`,
   corridaDe: (id, fecha, proveedor, variante, plan) =>
@@ -501,6 +568,44 @@ const EN: TextosInforme = {
   fallido: "Failed",
   adversario: "Adversary neutralised",
   ningunoEnLaCorrida: "none in this run.",
+  plazosTitulo: "### Deadlines: the simulated clock",
+  plazosIntro: (capacidad, unidad, inicio, fin, dias) =>
+    `Each request arrives on one of the first ${dias} business days, at a time within the working day (${inicio}–${fin}). A single auditor serves by class priority and, within it, in order of arrival, at ${capacidad} ${unidad}. What the agent decides alone is decided on arrival; what pauses is decided when the auditor reaches it. The deadline runs on calendar time: the weekend counts.`,
+  cabPlazos: [
+    "Class",
+    "Deadline",
+    "Requests",
+    "Waited for the auditor",
+    "Past deadline",
+    "Median wait",
+    "Longest wait",
+  ],
+  plazoDe: (cantidad, unidad) =>
+    unidad === "horas"
+      ? `${cantidad} ${cantidad === 1 ? "hour" : "hours"}`
+      : `${cantidad} calendar ${cantidad === 1 ? "day" : "days"}`,
+  duracion: (m) =>
+    m < 60
+      ? `${m} min`
+      : m < 1440
+        ? `${Math.floor(m / 60)} h ${m % 60} min`
+        : `${Math.floor(m / 1440)} d ${Math.floor((m % 1440) / 60)} h`,
+  carga: (pausas, porDia, capacidad) =>
+    `${pausas} requests went through the auditor: ${porDia} per business day on average against a capacity of ${capacidad}. The median wait is taken among those that waited.`,
+  horasDeAuditor: (horas) =>
+    `Auditor hours at the plan's human cost per case: ${horas} h.`,
+  capacidadMinima: (minima, tardias, rango) =>
+    `At ${minima} cases per day or more, every request is decided within its deadline${tardias === null ? "" : `; at ${minima - 1}, ${tardias} go${tardias === 1 ? "es" : ""} past ${tardias === 1 ? "its" : "their"} deadline`}. The range the plan lets you move in the playground is ${rango}.`,
+  sinTardias:
+    "No request went past its deadline at this capacity. Meeting the deadline in the simulation does not prove it would be met with other arrivals or another capacity: the playground lets you move it to see where it breaks.",
+  tardiasTitulo: "Requests that went past their deadline:",
+  tardia: (id, clase, espera, plazo) =>
+    `${id} (${clase}): decided after ${espera}, against a ${plazo} deadline.`,
+  sinPlazo: (clase, n) =>
+    `${n} ${n === 1 ? "request" : "requests"} of the “${clase}” class ${n === 1 ? "has" : "have"} no deadline in this simulation: ${n === 1 ? "it was" : "they were"} decided on arrival and ${n === 1 ? "does" : "do"} not count toward the deadline.`,
+  supuestosDePlazos: "What this simulation assumes:",
+  fuenteDePlazos: (norma, consultada) =>
+    `Source of the deadlines: ${norma} Read on ${consultada}.`,
   playground: "## 8. What the playground lets you explore",
   cabPlayground: [
     "Threshold",
@@ -520,6 +625,8 @@ const EN: TextosInforme = {
   piezaGrafo: "Graph",
   piezaRepeticion: "Repetition",
   piezaLineaBase: "Baseline",
+  piezaLlegadas: "Arrivals",
+  llegadasDelLote: "simulated arrival times for the batch, with its seed",
   casosDelLote: (id, semilla, n, plan) =>
     `${id} · seed ${semilla} · n = ${n} · generated with plan ${plan}`,
   corridaDe: (id, fecha, proveedor, variante, plan) =>

@@ -47,14 +47,21 @@ class RespondedorSimulado:
     def __call__(self, peticion: dict[str, Any]) -> Any:
         titulo = (peticion.get("json_schema") or {}).get("title")
         sim = self.caso["simulacion"]
+        # S9 (plan B v1.2): quién solicita y la estructura que declaró el generador (null para una persona).
+        solicitante = {
+            "tipo_solicitante": self.caso["entrada"]["solicitud"].get("tipo_solicitante", "natural"),
+            "estructura": sim.get("estructura_extraida"),
+        }
         if titulo == "ExtraccionB":
             return dict(sim["campos_extraidos"])
+        if titulo == "ExtraccionBEstructura":
+            return {**sim["campos_extraidos"], **solicitante}
         if titulo == "Investigacion":
             return {
                 "conclusion": sim["conclusion_investigador"],
                 **self._razones(sim["conclusion_investigador"]),
             }
-        if titulo == "ExtraccionEIdentidad":
+        if titulo in ("ExtraccionEIdentidad", "ExtraccionEIdentidadEstructura"):
             v = self.caso["verdad_conocida"]
             conclusion = (
                 "sin_parecido" if v["conclusion_investigador"] is None else sim["conclusion_investigador"]
@@ -64,5 +71,6 @@ class RespondedorSimulado:
                 "conclusion_lista": conclusion,
                 "entrada_lista": v["entrada_lista"],
                 **self._razones("homonimo" if conclusion == "sin_parecido" else conclusion),
+                **(solicitante if titulo == "ExtraccionEIdentidadEstructura" else {}),
             }
         raise ValueError(f"petición simulada sin respuesta declarada: {titulo!r}")

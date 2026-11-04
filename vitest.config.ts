@@ -112,6 +112,13 @@ export default defineConfig({
           branches: 90,
           statements: 90,
         },
+        // S9: el reloj y la cola del auditor — núcleo determinista, como brecha y playground.
+        "core/plazos/**/*.ts": {
+          lines: 90,
+          functions: 90,
+          branches: 90,
+          statements: 90,
+        },
         // S2: el visor (conversor, validación, geometría, SVG) — núcleo determinista, como brecha y playground.
         "core/visor/**/*.ts": {
           lines: 90,

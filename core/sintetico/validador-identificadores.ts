@@ -13,7 +13,10 @@
  * Si algo aparece, el conjunto no se publica: el test que lo corre sobre `data/` y `runs/` es un gate.
  */
 import * as D from "./diccionarios";
-import { VOCABULARIO_PERSONAS_B } from "./demo-b/diccionarios";
+import {
+  VOCABULARIO_PERSONAS_B,
+  VOCABULARIO_SOCIEDADES_B,
+} from "./demo-b/diccionarios";
 import { normalizarNombre } from "./demo-b/similitud";
 
 export type ReglaIdentificador =
@@ -211,6 +214,9 @@ const CLAVES_IDENTIFICADOR = new Set([
   "nit",
   "numero_afiliacion",
   "titular_actividad",
+  // S9: la estructura societaria del demo B (quién tiene qué parte de qué sociedad).
+  "titular",
+  "participada",
 ]);
 const PREFIJO_SINTETICO = /^SYN-[A-Z]+-[0-9A-Z-]+$/;
 
@@ -222,17 +228,31 @@ const VOCABULARIO_PERSONAS = new Set<string>([
 ]);
 const PRESTADORES = new Set<string>(D.PRESTADORES);
 
-/** Demo B: claves que llevan el nombre de una persona y los padres donde aparecen. */
+/** Demo B: claves que llevan el nombre de una persona (o, desde el S9, de una sociedad) y los padres donde aparecen. */
 const CLAVES_NOMBRE_B = new Set(["nombre", "titular_fondos", "alias"]);
-const PADRES_NOMBRE_B = new Set(["entradas", "campos", "campos_extraidos"]);
+const PADRES_NOMBRE_B = new Set([
+  "entradas",
+  "campos",
+  "campos_extraidos",
+  "personas",
+  "entidades",
+]);
 /** Sin tildes ni mayúsculas (la normalización de la similitud): un modelo que devuelve «SORBELIN» no inventó a nadie. */
 const VOCABULARIO_B = new Set(VOCABULARIO_PERSONAS_B.map(normalizarNombre));
+/** S9: las razones sociales salen de su propio diccionario cerrado; una palabra de sociedad no hace válido a una persona. */
+const VOCABULARIO_SOCIEDADES = new Set(
+  VOCABULARIO_SOCIEDADES_B.map(normalizarNombre),
+);
 
 function nombreEnListaB(nombre: string): boolean {
   const tokens = normalizarNombre(nombre)
     .split(" ")
     .filter((t) => t.length > 0);
-  return tokens.length > 0 && tokens.every((t) => VOCABULARIO_B.has(t));
+  return (
+    tokens.length > 0 &&
+    (tokens.every((t) => VOCABULARIO_B.has(t)) ||
+      tokens.every((t) => VOCABULARIO_SOCIEDADES.has(t)))
+  );
 }
 
 function nombreEnLista(padre: string | undefined, nombre: string): boolean {

@@ -20,7 +20,8 @@ from app_agents.reglas_arista import (
     resolver_valor,
 )
 
-CORRIDAS = sorted(p.parent for p in (RAIZ_REPO / "runs" / "demo-a").glob("*/corrida.json"))
+# Toda corrida versionada de los dos demos (S9: también las del B, como hace el lado TypeScript).
+CORRIDAS = sorted(p.parent for p in (RAIZ_REPO / "runs").glob("*/*/corrida.json"))
 
 
 @pytest.mark.parametrize(
@@ -136,7 +137,7 @@ def test_decidir_evalua_todas_y_gana_la_primera_verdadera() -> None:
         decidir(aristas, "z", {"a": 5}, {"U2": 1}, paso=1)
 
 
-@pytest.mark.parametrize("corrida", CORRIDAS, ids=lambda p: p.name)
+@pytest.mark.parametrize("corrida", CORRIDAS, ids=lambda p: f"{p.parent.name}/{p.name}")
 def test_rf_09_2_lado_python_sobre_toda_corrida_versionada(corrida: Path) -> None:
     assert exportador.verificar_corrida(corrida) == []
 

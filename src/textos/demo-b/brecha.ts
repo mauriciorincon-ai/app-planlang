@@ -31,6 +31,7 @@ export const LECTURA_SUPUESTO_B: Record<string, LecturaDeFalla> = {
 export const NODO_EN_FRASE_B: Record<string, TextoBilingue> = {
   enrutador: tb("la guardia de entrada", "the input guard"),
   extractor: tb("el extractor", "the extractor"),
+  beneficiarios: tb("el cálculo de los dueños", "the ownership calculation"),
   verificador_listas: tb("el verificador de listas", "the watch-list checker"),
   investigador: tb("el investigador de contexto", "the context investigator"),
   puntaje: tb("el nodo de puntaje", "the scoring node"),

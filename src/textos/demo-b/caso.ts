@@ -83,6 +83,38 @@ export const SUBTIPO_B: Record<SubtipoB, TextoBilingue> = {
     "adversario: dato sensible",
     "adversarial: sensitive data",
   ),
+  normal_juridica_directa: tb(
+    "persona jurídica, socios directos",
+    "legal entity, direct partners",
+  ),
+  normal_juridica_control_no_dueno: tb(
+    "persona jurídica, controla quien no es socio",
+    "legal entity, controlled by a non-partner",
+  ),
+  normal_juridica_cadena_profunda: tb(
+    "persona jurídica, cadena de cuatro niveles",
+    "legal entity, four-level chain",
+  ),
+  borde_juridica_indirecta_cruza_25: tb(
+    "borde: dueño indirecto sobre el 25 %",
+    "edge: indirect owner above 25%",
+  ),
+  borde_juridica_indirecta_bajo_25: tb(
+    "borde: dueños indirectos en el 24,99 %",
+    "edge: indirect owners at 24.99%",
+  ),
+  borde_juridica_exacta_25: tb(
+    "borde: dueño en el 25 % exacto",
+    "edge: owner at exactly 25%",
+  ),
+  borde_juridica_dos_caminos: tb(
+    "borde: el 25 % solo sumando dos caminos",
+    "edge: 25% only by adding two paths",
+  ),
+  adversario_juridica_beneficiario_homonimo: tb(
+    "adversario: dueño homónimo de la lista",
+    "adversarial: owner who is a namesake on the list",
+  ),
 };
 
 /** El producto pedido, con su artículo, como entra al relato («pidió una cuenta corriente»). */
@@ -106,6 +138,10 @@ export const RECIBE_B = {
   fondos: tb(
     "La declaración de origen de fondos",
     "The source-of-funds statement",
+  ),
+  existencia: tb(
+    "El certificado de existencia de la sociedad",
+    "The company's certificate of existence",
   ),
   sinFondos: tb(
     "no la entregó: el dato que falta lo cuenta RI-01",
@@ -196,6 +232,16 @@ export const HIZO_B = {
           `Comparó el contexto con ${p.entrada} y concluyó: es un homónimo.`,
           `Compared the context with ${p.entrada} and concluded: it is a namesake.`,
         )) as Plantilla<{ misma: boolean; entrada: string }>,
+  beneficiarios: ((p: { valida: boolean; duenos: number; enLista: boolean }) =>
+    !p.valida
+      ? tb(
+          "Intentó calcular los dueños de la sociedad, pero la estructura no cierra: no adivinó, no hay beneficiarios (RB-03) y decide una persona.",
+          "It tried to work out the company's owners, but the structure does not add up: it did not guess, there are no beneficial owners (RB-03) and a person decides.",
+        )
+      : tb(
+          `Calculó con código los dueños de la sociedad: ${p.duenos} ${p.duenos === 1 ? "beneficiario final" : "beneficiarios finales"} (25 % o más, o quien controla). ${p.enLista ? "Un dueño se parece a una entrada de las listas." : "Ninguno se parece a las listas."}`,
+          `Worked out the company's owners with code: ${p.duenos} beneficial ${p.duenos === 1 ? "owner" : "owners"} (25% or more, or whoever is in control). ${p.enLista ? "One owner resembles a list entry." : "None resembles the lists."}`,
+        )) as Plantilla<{ valida: boolean; duenos: number; enLista: boolean }>,
   puntaje: ((p: {
     total: number;
     inconsistencias: number;
@@ -233,6 +279,16 @@ export const HIZO_B = {
 
 /** Por qué tomó la rama, en palabras llanas: por nodo y por la regla que se cumplió (o la de por defecto). */
 export const RAMA_B: Record<string, Record<string, TextoBilingue>> = {
+  extractor: {
+    defecto: tb(
+      "el solicitante es una persona: sigue al verificador de listas",
+      "the applicant is a person: on to the list checker",
+    ),
+    sociedad: tb(
+      "el solicitante es una persona jurídica: primero se calculan sus dueños",
+      "the applicant is a legal entity: its owners are worked out first",
+    ),
+  },
   verificador_listas: {
     defecto: tb(
       "la similitud está bajo U4: sigue al puntaje, sin investigador",
@@ -255,6 +311,10 @@ export const RAMA_B: Record<string, Record<string, TextoBilingue>> = {
     coincidencia: tb(
       "la similitud está en o sobre U1: pasa al oficial",
       "similarity is at or above U1: on to the officer",
+    ),
+    duenoEnLista: tb(
+      "un dueño de la sociedad se parece a una lista en o sobre U1: pasa al oficial",
+      "an owner of the company resembles a list at or above U1: on to the officer",
     ),
     mismaPersona: tb(
       "el investigador concluyó «misma persona»: pasa al oficial",
@@ -284,6 +344,10 @@ export const MOTIVO_B: Record<string, TextoBilingue> = {
   coincidencia: tb(
     "el nombre se parece a una entrada de las listas en o sobre el umbral U1",
     "the name resembles a list entry at or above threshold U1",
+  ),
+  duenoEnLista: tb(
+    "un dueño de la sociedad se parece a una entrada de las listas en o sobre el umbral U1",
+    "an owner of the company resembles a list entry at or above threshold U1",
   ),
   mismaPersona: tb(
     "el investigador concluyó que el solicitante puede ser la persona de la lista",
@@ -525,6 +589,7 @@ export const EXPEDIENTE_B = {
     listas: tb("Listas", "Lists"),
     investigacion: tb("Investigación", "Investigation"),
     documentos: tb("Documentos", "Documents"),
+    beneficiarios: tb("Beneficiarios finales", "Beneficial owners"),
     puntaje: tb("Puntaje", "Score"),
     propuesta: tb("Propuesta", "Proposal"),
     decision: tb("Decisión", "Decision"),

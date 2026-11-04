@@ -14,7 +14,7 @@ import {
   type Faltan,
   type GarantiaDeCalibracion,
 } from "./garantia";
-import { num, numCorto, pct } from "./numeros";
+import { miles, num, numCorto, pct } from "./numeros";
 import type { ResultadoSupuesto } from "./supuestos";
 import { TEXTOS_INFORME } from "./textos-informe";
 
@@ -50,6 +50,11 @@ const VEREDICTO: Record<Informe["veredicto"]["valor"], Tb> = {
   cumple: tb("✓ CUMPLE", "✓ MEETS"),
   cumple_con_alertas: tb("⚠ CUMPLE CON ALERTAS", "⚠ MEETS WITH WARNINGS"),
   no_cumple: tb("✗ NO CUMPLE", "✗ DOES NOT MEET"),
+};
+
+/** Las clases de solicitud que el plan no declara (no tienen plazo), redactadas en cada idioma. */
+const CLASE_SIN_PLAZO: Record<string, Tb> = {
+  urgencia: tb("urgencia", "emergency"),
 };
 
 const PRIORIDAD: Record<string, Tb> = {
@@ -277,6 +282,120 @@ function seccionCriterios(inf: Informe, i: Idioma): string {
     ),
     ...(notas.length > 0 ? ["", `**${t.notas}**`, "", ...notas] : []),
   ].join("\n");
+}
+
+/** Lo que dice la medición de plazos, ya escrito en un idioma: el Markdown y la página de Brecha pintan lo mismo. */
+export interface LineasDePlazos {
+  titulo: string;
+  intro: string;
+  cabecera: string[];
+  filas: string[][];
+  carga: string;
+  horas: string | null;
+  minima: string | null;
+  /** Las que salieron de plazo, una frase por caso; vacío si ninguna. */
+  tardias: { titulo: string; items: string[] };
+  /** «Ninguna solicitud salió de su plazo…» (solo si ninguna salió). */
+  sinTardias: string | null;
+  sinPlazo: string[];
+  supuestosTitulo: string;
+  supuestos: string[];
+  fuente: string;
+}
+
+/** La sección de plazos (S9) en un idioma; `null` si el informe no midió plazos. */
+export function lineasDePlazos(inf: Informe, i: Idioma): LineasDePlazos | null {
+  const z = inf.plazos;
+  if (!z) return null;
+  const t = TEXTOS_INFORME[i];
+  const nombreDe = new Map(z.clases.map((c) => [c.valor, c.nombre[i]]));
+  return {
+    titulo: t.plazosTitulo,
+    intro: t.plazosIntro(
+      miles(z.capacidad.valor, i),
+      z.capacidad.unidad[i],
+      z.jornada.inicio,
+      z.jornada.fin,
+      z.dias_habiles,
+    ),
+    cabecera: [...t.cabPlazos],
+    filas: z.clases.map((c) => [
+      c.nombre[i],
+      t.plazoDe(c.plazo.cantidad, c.plazo.unidad),
+      miles(c.n, i),
+      miles(c.en_cola, i),
+      miles(c.tardias, i),
+      t.duracion(c.espera_mediana_min),
+      t.duracion(c.espera_max_min),
+    ]),
+    carga: t.carga(
+      z.pausas,
+      numCorto(z.carga_por_dia, i, 1),
+      z.capacidad.valor,
+    ),
+    horas:
+      z.horas_de_auditor === null
+        ? null
+        : t.horasDeAuditor(numCorto(z.horas_de_auditor, i, 2)),
+    minima:
+      z.capacidad_minima === null
+        ? null
+        : t.capacidadMinima(
+            z.capacidad_minima.valor,
+            z.capacidad_minima.tardias_con_una_menos,
+            `${z.capacidad.rango.min}–${z.capacidad.rango.max}`,
+          ),
+    tardias: {
+      titulo: t.tardiasTitulo,
+      items: z.tardias.map((x) => {
+        const c = z.clases.find((k) => k.valor === x.clase)!;
+        return t.tardia(
+          x.caso_id,
+          nombreDe.get(x.clase) ?? x.clase,
+          t.duracion(x.espera_min),
+          t.plazoDe(c.plazo.cantidad, c.plazo.unidad),
+        );
+      }),
+    },
+    sinTardias: z.tardias.length === 0 ? t.sinTardias : null,
+    sinPlazo: z.sin_plazo.map((x) =>
+      t.sinPlazo(nombre(CLASE_SIN_PLAZO, x.clase, i), x.n),
+    ),
+    supuestosTitulo: t.supuestosDePlazos,
+    supuestos: z.supuestos.map((x) => x[i]),
+    fuente: t.fuenteDePlazos(z.fuente.norma[i], z.fuente.consultada),
+  };
+}
+
+/** La sección de plazos (S9) en Markdown: cuelga de los criterios y solo existe si el informe midió plazos. */
+function seccionPlazos(inf: Informe, i: Idioma): string[] {
+  const l = lineasDePlazos(inf, i);
+  if (!l) return [];
+  return [
+    "",
+    l.titulo,
+    "",
+    l.intro,
+    "",
+    tabla(l.cabecera, l.filas),
+    "",
+    l.carga,
+    ...(l.horas === null ? [] : ["", l.horas]),
+    ...(l.minima === null ? [] : ["", l.minima]),
+    "",
+    ...(l.sinTardias !== null
+      ? [l.sinTardias]
+      : [l.tardias.titulo, "", ...l.tardias.items.map((x) => `- ${x}`)]),
+    ...(l.sinPlazo.length === 0
+      ? []
+      : ["", ...l.sinPlazo.map((x) => `- ${x}`)]),
+    "",
+    l.supuestosTitulo,
+    "",
+    ...l.supuestos.map((x) => `- ${x}`),
+    "",
+    l.fuente,
+  ];
 }
 
 function valorRiesgo(r: ResultadoRiesgo, i: Idioma): string {
@@ -696,6 +815,15 @@ function seccionFicha(inf: Informe, i: Idioma): string {
       r.corrida_id,
       `\`${r.huella}\``,
     ]),
+    ...(f.llegadas
+      ? [
+          [
+            t.piezaLlegadas,
+            `${t.llegadasDelLote} (\`${f.llegadas.archivo}\`)`,
+            `\`${f.llegadas.huella}\``,
+          ],
+        ]
+      : []),
     ...(f.linea_base
       ? [
           [
@@ -742,7 +870,7 @@ export function renderizarInforme(inf: Informe, i: Idioma): string {
       cabecera,
       seccionResumen(inf, i),
       seccionPlan(inf, i),
-      seccionCriterios(inf, i),
+      [seccionCriterios(inf, i), ...seccionPlazos(inf, i)].join("\n"),
       seccionRiesgos(inf, i),
       seccionBrechas(inf, i),
       seccionSupuestos(inf, i),

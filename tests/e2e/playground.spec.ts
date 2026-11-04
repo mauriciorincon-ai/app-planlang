@@ -332,3 +332,96 @@ test.describe("la zona respaldada (es)", () => {
     });
   });
 });
+
+test.describe("la capacidad del auditor (es)", () => {
+  const seccion = (page: Page) =>
+    page.locator('section[aria-labelledby="s-plazos-t"]');
+  const frase = (page: Page) => page.locator("#k-plazos-frase");
+
+  for (const tema of ["oscuro", "claro"])
+    for (const perfil of ["lider", "experto"])
+      test(`con el plan: 30 casos por día hábil y toda solicitud en plazo, con su tabla y dónde se rompe: tema ${tema}, ${perfil}, sin desplazamiento ni violaciones`, async ({
+        page,
+      }) => {
+        const errores = consolaLimpia(page);
+        await page.goto(`/es/playground?tema=${tema}&perfil=${perfil}`);
+        const s = seccion(page);
+        await expect(
+          s.getByRole("heading", { name: "La capacidad del auditor" }),
+        ).toBeVisible();
+        const control = page.getByRole("slider", {
+          name: "Capacidad del auditor",
+        });
+        await expect(control).toHaveValue("30");
+        await expect(frase(page)).toHaveText(
+          "Con 30 casos por día hábil, toda solicitud se decide dentro de su plazo.",
+        );
+        const tabla = textoPlano(await s.textContent());
+        // Las dos clases del plan, con su plazo y cuántas esperaron (la tabla de escritorio y las tarjetas del teléfono).
+        expect(tabla).toContain("Hospitalaria");
+        expect(tabla).toContain("72 horas");
+        expect(tabla).toContain("30 / 54");
+        expect(tabla).toContain("7 días calendario");
+        expect(tabla).toContain("40 / 123");
+        // Dónde se rompe, aunque el control no deje llegar: se dice con su número.
+        expect(tabla).toContain(
+          "Con estos umbrales el plazo se cumple desde 8 casos por día hábil; con una menos salen 14. Queda por debajo de lo que este control deja mover (10–60).",
+        );
+        // El color nunca va solo: cada clase lleva su símbolo y su palabra.
+        await expect(
+          s.locator('table [data-v="cumple"] svg').first(),
+        ).toBeVisible({
+          visible: await s.locator("table").first().isVisible(),
+        });
+        expect(tabla).toContain("cumple");
+        expect(await desbordeLateral(page)).toBeLessThanOrEqual(0);
+        await sinViolacionesAxe(page);
+        expect(errores).toEqual([]);
+      });
+
+  test("con el teclado: la capacidad a 10 sigue en plazo y dice «movido desde 30»; subir U1 a 0,95 manda más solicitudes al auditor", async ({
+    page,
+  }) => {
+    await page.goto("/es/playground?tema=claro");
+    const control = page.getByRole("slider", { name: "Capacidad del auditor" });
+    await control.focus();
+    await page.keyboard.press("Home");
+    await expect(control).toHaveValue("10");
+    await expect(frase(page)).toHaveText(
+      "Con 10 casos por día hábil, toda solicitud se decide dentro de su plazo.",
+    );
+    await expect(seccion(page)).toContainText("movido desde 30");
+    // Con la capacidad del plan, U1 en 0,95 manda 4 hospitalarias más al auditor (34 de 54, no 30).
+    const u1 = page.getByRole("slider", { name: T.es.u1 });
+    await u1.focus();
+    await page.keyboard.press("End");
+    await expect(u1).toHaveValue("0.95");
+    expect(textoPlano(await seccion(page).textContent())).toContain("34 / 54");
+    // Con estos umbrales el plazo se rompe un poco más arriba: 9 casos por día hábil.
+    expect(textoPlano(await seccion(page).textContent())).toContain(
+      "se cumple desde 9 casos por día hábil; con una menos salen 24.",
+    );
+    expect(await desbordeLateral(page)).toBeLessThanOrEqual(0);
+    await sinViolacionesAxe(page);
+  });
+
+  test("en el teléfono cada clase es una tarjeta y nada desplaza la página de lado", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 380, height: 800 });
+    await page.goto("/es/playground?tema=claro");
+    const tarjetas = seccion(page).locator('[data-vista="tarjetas"] dl');
+    await expect(tarjetas).toHaveCount(2);
+    await expect(tarjetas.first()).toContainText("0 · cumple");
+    expect(await desbordeLateral(page)).toBeLessThanOrEqual(0);
+    await sinViolacionesAxe(page);
+  });
+
+  test("el demo B no tiene capacidad del auditor: su plan no declara plazos", async ({
+    page,
+  }) => {
+    await page.goto("/es/demo-b/playground");
+    await expect(seccion(page)).toHaveCount(0);
+    await expect(page.locator("#w-capacidad")).toHaveCount(0);
+  });
+});

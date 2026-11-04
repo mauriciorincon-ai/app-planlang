@@ -725,3 +725,110 @@ export function enmendarAV152(v151: Plan): Record<string, unknown> {
   delete borrador.aprobado_el;
   return borrador;
 }
+
+/**
+ * Enmienda v1.5.2 → v1.6 del S9 («El reloj y los dueños»; aprobada por el usuario en el G-Plan del S9, chat de la
+ * planeadora, 2026-11-02): el plazo legal se vuelve medible. Suma el criterio C11 y el bloque `simulacion_de_plazos`
+ * (llegadas en 5 días hábiles, la capacidad jugable del auditor y el plazo de cada clase). Umbrales y contrato de grafo
+ * intactos: la misma verdad (ADR-005), la corrida de 200 de la v1.5 sigue valiendo y el plazo se mide sobre sus trazas.
+ *
+ * Las normas se leyeron en su fuente el 2026-11-03: CMS-0057-F (89 FR 8758, 8 de febrero de 2024; documento 2024-00895)
+ * y 42 CFR 438.210(d). Dicen 72 horas para la solicitud expedita (la que podría poner en grave riesgo la salud del
+ * afiliado) y 7 días calendario para la estándar, desde el 1 de enero de 2026, y permiten prorrogar hasta 14 días
+ * calendario más. La norma no habla de «hospitalaria»: asimilarla a la expedita es un supuesto de la simulación, y así
+ * va rotulado en el plan.
+ */
+export function enmendarAV16(v152: Plan): Record<string, unknown> {
+  if (v152.criterios_aceptacion.some((c) => c.id === "C11"))
+    throw new Error("el v1.5.2 ya tiene un C11");
+  if (v152.simulacion_de_plazos !== undefined)
+    throw new Error("el v1.5.2 ya tiene simulacion_de_plazos");
+  const c11 = {
+    id: "C11",
+    enunciado: tb(
+      "Toda solicitud hospitalaria se decide en 72 horas o menos y toda ambulatoria en 7 días calendario o menos desde que llega; la urgencia no espera (C4).",
+      "Every inpatient request is decided within 72 hours and every outpatient request within 7 calendar days of arriving; emergencies do not wait (C4).",
+    ),
+    tipo: "absoluto",
+    regla_de_medicion: {
+      agregacion: "todos_cumplen",
+      condicion: "en_plazo == true",
+      poblacion: "tipo_atencion IN ['hospitalaria', 'ambulatoria']",
+    },
+    valor_objetivo: true,
+    origen: "usuario",
+  } as Plan["criterios_aceptacion"][number];
+  const simulacion_de_plazos: Plan["simulacion_de_plazos"] = {
+    senal_de_clase: "tipo_atencion",
+    dias_habiles: 5,
+    jornada: { inicio: "08:00", fin: "17:00" },
+    capacidad_del_auditor: {
+      valor: 30,
+      unidad: tb("casos por día hábil", "cases per business day"),
+      rango_jugable: { min: 10, max: 60, paso: 5 },
+    },
+    clases: [
+      {
+        valor: "hospitalaria",
+        nombre: tb("Hospitalaria", "Inpatient"),
+        prioridad: 1,
+        plazo: { cantidad: 72, unidad: "horas" },
+        equivale_a: tb(
+          "Solicitud expedita de la norma (72 horas). Es un supuesto de la simulación: la norma llama expedita a la que podría poner en grave riesgo la salud o la función del afiliado, no a la hospitalaria.",
+          "The rule's expedited request (72 hours). It is a simulation assumption: the rule calls expedited the one that could seriously jeopardize the member's health or function, not the inpatient one.",
+        ),
+      },
+      {
+        valor: "ambulatoria",
+        nombre: tb("Ambulatoria", "Outpatient"),
+        prioridad: 2,
+        plazo: { cantidad: 7, unidad: "dias_calendario" },
+        equivale_a: tb(
+          "Solicitud estándar de la norma (7 días calendario). Es un supuesto de la simulación: la norma llama estándar a la que no es expedita.",
+          "The rule's standard request (7 calendar days). It is a simulation assumption: the rule calls standard the one that is not expedited.",
+        ),
+      },
+    ],
+    supuestos: [
+      tb(
+        "Las llegadas son simuladas: con una semilla del lote, cada solicitud llega en un día hábil y una hora de la jornada. No son horas reales de ningún afiliado.",
+        "Arrivals are simulated: from the batch seed, each request arrives on a business day and at a time within the working day. They are not any member's real times.",
+      ),
+      tb(
+        "Un solo auditor atiende por prioridad (hospitalaria antes que ambulatoria) y, dentro de cada una, por orden de llegada. Trabaja de lunes a viernes dentro de la jornada y a la capacidad indicada. Lo que el agente decide solo se decide al llegar; lo que pausa se decide cuando la cola lo alcanza.",
+        "A single auditor serves by priority (inpatient before outpatient) and, within each, in order of arrival. They work Monday to Friday within the working day, at the stated capacity. What the agent decides alone is decided on arrival; what pauses is decided when the queue reaches it.",
+      ),
+      tb(
+        "El plazo corre en tiempo de calendario desde que llega la solicitud, y el fin de semana cuenta aunque el auditor no trabaje en él: una solicitud que llega el viernes por la tarde gasta el fin de semana de su plazo.",
+        "The deadline runs on calendar time from the moment the request arrives, and the weekend counts even though the auditor does not work on it: a request that arrives on Friday afternoon spends the weekend out of its deadline.",
+      ),
+      tb(
+        "La norma permite prorrogar el plazo hasta 14 días calendario más en ciertas condiciones. La simulación no modela prórrogas: una solicitud prorrogada se mediría como tardía.",
+        "The rule allows extending the deadline by up to 14 more calendar days in certain conditions. The simulation does not model extensions: an extended request would be measured as late.",
+      ),
+      tb(
+        "Los plazos de la norma obligan a las aseguradoras que ella nombra (Medicare Advantage, Medicaid y CHIP). La aseguradora sintética del demo no es ninguna de ellas: la norma es la referencia del plazo, no una exigencia que la alcance.",
+        "The rule's deadlines bind the insurers it names (Medicare Advantage, Medicaid and CHIP). The demo's synthetic insurer is none of them: the rule is the reference for the deadline, not a requirement that reaches it.",
+      ),
+    ],
+    fuente: {
+      norma: tb(
+        "CMS-0057-F, Advancing Interoperability and Improving Prior Authorization Processes (89 FR 8758, 8 de febrero de 2024; documento 2024-00895), y 42 CFR 438.210(d): 72 horas para la solicitud expedita y 7 días calendario para la estándar, desde el 1 de enero de 2026.",
+        "CMS-0057-F, Advancing Interoperability and Improving Prior Authorization Processes (89 FR 8758, February 8, 2024; document 2024-00895), and 42 CFR 438.210(d): 72 hours for the expedited request and 7 calendar days for the standard one, from January 1, 2026.",
+      ),
+      consultada: "2026-11-03",
+    },
+    origen: "usuario",
+  };
+  const borrador: Record<string, unknown> = {
+    ...v152,
+    version: "1.6.0",
+    estado_aprobacion: "borrador",
+    huella: null,
+    criterios_aceptacion: [...v152.criterios_aceptacion, c11],
+    simulacion_de_plazos,
+  };
+  delete borrador.aprobado_por;
+  delete borrador.aprobado_el;
+  return borrador;
+}

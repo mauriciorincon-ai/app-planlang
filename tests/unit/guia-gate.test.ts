@@ -109,7 +109,7 @@ describe("el gate de los hitos H-1 y H-2 en la guía", () => {
     const real = html.match(/<li[^>]*\bdata-minimo\b/g)?.length;
     expect(Number(/Gate mínimo ⭐: (\d+) pruebas/.exec(html)?.[1])).toBe(real);
     expect(Number(/Minimum gate ⭐: (\d+) tests/.exec(html)?.[1])).toBe(real);
-    expect(real).toBe(27);
+    expect(real).toBe(30);
   });
 
   it("la guía ya no habla el proceso viejo fuera de su historial y de la cabecera interna", () => {
@@ -130,6 +130,6 @@ describe("el gate de los hitos H-1 y H-2 en la guía", () => {
   });
 
   it("el estado de las casillas lleva el prefijo del sprint vigente", () => {
-    expect(html).toContain('var NS = "guia-planlang:s8:";');
+    expect(html).toContain('var NS = "guia-planlang:s9:";');
   });
 });

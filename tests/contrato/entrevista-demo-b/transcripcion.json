@@ -3,7 +3,7 @@
   "demo_id": "demo-b",
   "fecha": "2026-10-04",
   "formato": "planlang-transcripcion/v1",
-  "huella": "1395979c8b3be9622df9f5c6e598e941c8458b5cbfa766b35640a3b8f9d88821",
+  "huella": "825ed7d7a77824267ee19cbf3c79e856382ac6772a76d665a55db1e8d0d98e83",
   "idioma": "es",
   "llamadas_al_modelo": 9,
   "modelo": "simulado",
@@ -43,7 +43,7 @@
             "texto": "Las vinculaciones se atascan revisando listas a mano. El agente arma el expediente para el oficial y jamás rechaza a nadie sin una persona."
           },
           "resultado": "redactada",
-          "tokens_entrada": 1907,
+          "tokens_entrada": 1910,
           "tokens_salida": 111
         }
       ]
@@ -122,7 +122,7 @@
             "texto": "Llega la solicitud con sus documentos; se extraen los datos; se cruzan con las listas; si el parecido es dudoso, el investigador mira el contexto; se calcula el puntaje; decide el oficial cuando toca; se redacta el expediente."
           },
           "resultado": "redactada",
-          "tokens_entrada": 1888,
+          "tokens_entrada": 1892,
           "tokens_salida": 201
         }
       ]
@@ -172,7 +172,7 @@
             "texto": "La segunda opción: toda coincidencia en lista vinculante y toda aproximada sobre el umbral."
           },
           "resultado": "redactada",
-          "tokens_entrada": 2763,
+          "tokens_entrada": 2766,
           "tokens_salida": 849
         }
       ]
@@ -222,7 +222,7 @@
             "texto": "En cascada: reglas, luego el investigador de contexto y al final el oficial."
           },
           "resultado": "redactada",
-          "tokens_entrada": 2841,
+          "tokens_entrada": 2844,
           "tokens_salida": 918
         }
       ]
@@ -272,7 +272,7 @@
             "texto": "Entradas, reglas, versión de la lista, salida y quién revisó."
           },
           "resultado": "redactada",
-          "tokens_entrada": 2909,
+          "tokens_entrada": 2912,
           "tokens_salida": 980
         }
       ]
@@ -322,7 +322,7 @@
             "texto": "Puntaje por reglas: actividad, jurisdicción y coherencia entre ingresos y actividad. Ninguno es atributo protegido."
           },
           "resultado": "redactada",
-          "tokens_entrada": 2998,
+          "tokens_entrada": 3002,
           "tokens_salida": 1066
         }
       ]
@@ -448,7 +448,7 @@
             "texto": "Que la similitud de nombre sola da demasiados falsos positivos; se prueba en el lote de 20."
           },
           "resultado": "redactada",
-          "tokens_entrada": 2047,
+          "tokens_entrada": 2051,
           "tokens_salida": 292
         }
       ]
@@ -508,7 +508,7 @@
             "texto": "Acepto los cuatro y agrego: exactitud de extracción de al menos 90 %."
           },
           "resultado": "redactada",
-          "tokens_entrada": 2346,
+          "tokens_entrada": 2350,
           "tokens_salida": 574
         }
       ]
@@ -579,7 +579,7 @@
             "texto": "Similitud 0,9; escalamiento desde 70 puntos; tolero una inconsistencia; la zona gris empieza en 0,75."
           },
           "resultado": "redactada",
-          "tokens_entrada": 2476,
+          "tokens_entrada": 2480,
           "tokens_salida": 643
         }
       ]

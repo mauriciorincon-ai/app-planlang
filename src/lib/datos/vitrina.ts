@@ -18,6 +18,8 @@ import {
 import { sha256Hex, verificarHuella } from "@core/formatos/huella";
 import type { JsonValor } from "@core/formatos/jcs";
 import { PlanSchema, type Plan } from "@core/plan/esquema";
+import { CapaDeLlegadasSchema } from "@core/plazos/esquema";
+import type { CapaDeLlegadas } from "@core/plazos/tipos";
 import {
   ListasSchema,
   LoteBSchema,
@@ -70,6 +72,8 @@ interface DatosComunes {
   spike: SpikeLeido | null;
   /** La comparación con la línea base de agente único (S4), si el manifiesto la declara; si no, `null`. */
   comparacion: Comparacion | null;
+  /** La capa de llegadas del lote (S9), si el manifiesto la declara; si no, `null`. */
+  llegadas: CapaDeLlegadas | null;
 }
 
 /** El demo A: autorización previa; su mundo es el plan de beneficios sintético. */
@@ -352,7 +356,11 @@ export async function cargarDemo(
   let comparacion: Comparacion | null = null;
   if (demo.comparacion) {
     const cmpCrudo = leer(demo.comparacion.archivo);
-    await conHuellaDeclarada(demo.comparacion.archivo, cmpCrudo, demo.comparacion.huella);
+    await conHuellaDeclarada(
+      demo.comparacion.archivo,
+      cmpCrudo,
+      demo.comparacion.huella,
+    );
     ComparacionMinimaSchema.parse(cmpCrudo);
     const cmp = cmpCrudo as Comparacion;
     // La comparación tiene que ser del plan y de las corridas que declara el manifiesto, no de otras.
@@ -370,6 +378,33 @@ export async function cargarDemo(
     comparacion = cmp;
   }
 
+  // La capa de llegadas: su huella, que sea del lote de la corrida, y que sea la que midió el informe.
+  let llegadas: CapaDeLlegadas | null = null;
+  if (demo.llegadas) {
+    const capaCruda = leer(demo.llegadas.archivo);
+    await conHuellaDeclarada(
+      demo.llegadas.archivo,
+      capaCruda,
+      demo.llegadas.huella,
+    );
+    llegadas = CapaDeLlegadasSchema.parse(capaCruda);
+    if (llegadas.lote.huella !== informe.ficha_reproducibilidad.casos.huella)
+      throw new Error(
+        `vitrina: la capa de llegadas de «${id}» no es del lote de la corrida que declara el manifiesto.`,
+      );
+    if (informe.ficha_reproducibilidad.llegadas?.huella !== llegadas.huella)
+      throw new Error(
+        `vitrina: el informe de «${id}» no midió los plazos con la capa de llegadas que declara el manifiesto.`,
+      );
+    if (!plan.simulacion_de_plazos)
+      throw new Error(
+        `vitrina: el manifiesto de «${id}» declara llegadas, pero su plan no declara \`simulacion_de_plazos\`.`,
+      );
+  } else if (informe.ficha_reproducibilidad.llegadas)
+    throw new Error(
+      `vitrina: el informe de «${id}» midió plazos con una capa de llegadas que el manifiesto no declara.`,
+    );
+
   const comunes: DatosComunes = {
     manifiesto: demo,
     plan,
@@ -379,6 +414,7 @@ export async function cargarDemo(
     codigo,
     spike,
     comparacion,
+    llegadas,
   };
   switch (id) {
     case "demo-b": {

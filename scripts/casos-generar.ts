@@ -13,7 +13,6 @@ import { cargarPlan } from "../core/plan";
 import {
   generarListas,
   generarLote,
-  generarLoteB,
   PlanBeneficiosSchema,
   validarIdentificadores,
   type Lote,
@@ -24,6 +23,7 @@ import {
   LISTAS_DEMO_B,
   LOTES_VERSIONADOS,
   LOTES_VERSIONADOS_B,
+  generarLoteVersionadoB,
   markdownAfirmacion,
   PLAN_DEMO_B,
   RUTA_AFIRMACION_B,
@@ -65,11 +65,16 @@ function escribirSiLimpio(ruta: string, lote: Lote | LoteB): boolean {
 
 /** Demo B: las listas primero (los lotes las citan por huella), luego cada lote, todo solo si sale limpio. */
 async function versionadosB(): Promise<number> {
-  const plan = await cargarPlan(leerJson(PLAN_DEMO_B));
-  if (!plan.ok)
-    throw new Error(
-      `plan B rechazado: ${plan.motivos.map((m) => m.codigo).join(", ")}`,
-    );
+  for (const ruta of new Set([
+    PLAN_DEMO_B,
+    ...LOTES_VERSIONADOS_B.map((l) => l.plan),
+  ])) {
+    const plan = await cargarPlan(leerJson(ruta));
+    if (!plan.ok)
+      throw new Error(
+        `plan B rechazado (${ruta}): ${plan.motivos.map((m) => m.codigo).join(", ")}`,
+      );
+  }
   const listas = await generarListas();
   const hallazgos = validarIdentificadores(listas);
   if (hallazgos.length > 0) {
@@ -83,13 +88,7 @@ async function versionadosB(): Promise<number> {
   let ok = true;
   const lotes: LoteB[] = [];
   for (const l of LOTES_VERSIONADOS_B) {
-    const lote = await generarLoteB({
-      plan: plan.plan,
-      listas,
-      semilla: l.semilla,
-      n: l.n,
-      receta: l.receta,
-    });
+    const lote = await generarLoteVersionadoB(l, listas);
     ok = escribirSiLimpio(rutaDeLoteB(l.semilla, l.n), lote) && ok;
     lotes.push(lote);
   }

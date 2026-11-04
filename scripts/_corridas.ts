@@ -67,6 +67,20 @@ export function planDelLote(
   return null;
 }
 
+/**
+ * La capa de llegadas que acompaña a un lote por convención (`<lote>.llegadas.json`, a su lado), o `null`: solo se
+ * entrega si el plan que se verifica declara `simulacion_de_plazos`, que es lo único con lo que se lee.
+ */
+export function llegadasDelLote(
+  archivoDelLote: string,
+  plan: unknown,
+): { ruta: string; capa: unknown } | null {
+  if (!(plan as { simulacion_de_plazos?: unknown }).simulacion_de_plazos)
+    return null;
+  const ruta = archivoDelLote.replace(/\.json$/, ".llegadas.json");
+  return existsSync(ruta) ? { ruta, capa: json(ruta) } : null;
+}
+
 export function entradaDesdeDisco(
   ruta: string,
   opciones: {
@@ -89,9 +103,18 @@ export function entradaDesdeDisco(
     : planDeLaCorridaArchivo;
   const plan = json(planArchivo);
   const casos = json(join(raiz, m.casos.archivo));
+  const llegadas = llegadasDelLote(join(raiz, m.casos.archivo), plan);
   return {
     plan,
     casos,
+    ...(llegadas
+      ? {
+          llegadas: llegadas.capa,
+          archivoLlegadas: llegadas.ruta.slice(
+            raiz === "." ? 0 : raiz.length + 1,
+          ),
+        }
+      : {}),
     planDelLote: planDelLote(planArchivo, plan, casos),
     ...(opciones.plan
       ? {

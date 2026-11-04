@@ -307,3 +307,35 @@ describe("regla 5-a: la forma no depende del perfil ni del cliente", () => {
     expect(forma(container)).toBe(antes);
   });
 });
+
+describe("el agente B con el nodo de los dueños (S9)", () => {
+  it("cada nodo del contrato del B tiene su detalle con trazas, en los dos idiomas: un nodo sin su entrada detiene el render, no el build", async () => {
+    const b = await datosDemo("demo-b");
+    for (const idioma of ["es", "en"] as const) {
+      const v = vistaAgente(b, idioma);
+      expect(v.paneles.map((p) => p.id)).toContain("beneficiarios");
+      const seleccionables = new Set([
+        ...v.paneles.map((p) => p.id),
+        v.arista.id,
+      ]);
+      const { container, unmount } = render(
+        <Seleccion inicial="beneficiarios">
+          <SeccionGrafo
+            lienzo={v.lienzo}
+            svg={v.lienzo.svg}
+            seleccionables={seleccionables}
+            idioma={idioma}
+          />
+          <Detalle vista={v} idioma={idioma} />
+        </Seleccion>,
+      );
+      const panel = container.querySelector("#detalle-beneficiarios")!;
+      expect((panel as HTMLElement).hidden).toBe(false);
+      expect(panel.textContent).toContain(idioma === "es" ? "RB-03" : "RB-03");
+      expect(panel.textContent).toContain(
+        idioma === "es" ? "Reglas de los dueños" : "Ownership rules",
+      );
+      unmount();
+    }
+  });
+});

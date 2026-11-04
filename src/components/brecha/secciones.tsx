@@ -309,7 +309,116 @@ export function Criterios({ v, idioma }: { v: VistaBrecha; idioma: Idioma }) {
           </div>
         ))}
       </div>
+      {v.criterios.duenos ? (
+        <div className="mt-6 max-w-[72ch]" data-bloque="duenos">
+          <h3 className="mb-1 text-sub font-semibold">
+            {v.criterios.duenos.titulo}
+          </h3>
+          <p className="text-texto leading-[1.6]">
+            {v.criterios.duenos.lectura}
+          </p>
+          {v.criterios.duenos.aviso ? (
+            <p className="mt-1 text-dato text-tinta-2">
+              {v.criterios.duenos.aviso}
+            </p>
+          ) : null}
+        </div>
+      ) : null}
+      {v.criterios.plazos ? (
+        <PlazosDeBrecha p={v.criterios.plazos} idioma={idioma} />
+      ) : null}
     </SeccionB>
+  );
+}
+
+/** La medición de plazos (S9): la lectura llana para todos y, para el experto, la tabla, la cola, los supuestos y la fuente. */
+function PlazosDeBrecha({
+  p,
+  idioma,
+}: {
+  p: NonNullable<VistaBrecha["criterios"]["plazos"]>;
+  idioma: Idioma;
+}) {
+  const l = p.lineas;
+  return (
+    <div className="mt-6" data-bloque="plazos">
+      <h3 className="mb-1 text-sub font-semibold">{p.titulo}</h3>
+      {p.lectura.map((x) => (
+        <p key={x} className="mb-1.5 max-w-[72ch] text-texto leading-[1.6]">
+          {x}
+        </p>
+      ))}
+      <BloqueExperto rotulo={p.rotuloExperto} className="mt-3">
+        <p className="mb-2 text-dato text-tinta-2">{l.intro}</p>
+        <div
+          className="overflow-x-auto"
+          role="region"
+          tabIndex={0}
+          aria-label={p.titulo}
+        >
+          <table className="w-full min-w-[34rem] border-collapse text-chico">
+            <caption className="sr-only">{p.titulo}</caption>
+            <thead>
+              <tr className="text-left text-dato text-tinta-2">
+                {l.cabecera.map((h) => (
+                  <th key={h} scope="col" className="py-1.5 pr-3 font-semibold">
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {l.filas.map((f) => (
+                <tr key={f[0]} className="border-t border-linea">
+                  <th
+                    scope="row"
+                    className="py-1.5 pr-3 text-left font-semibold"
+                  >
+                    {f[0]}
+                  </th>
+                  {f.slice(1).map((c, k) => (
+                    <td key={k} className="py-1.5 pr-3 tabular-nums">
+                      {c}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="mt-2 text-dato">{l.carga}</p>
+        {l.horas ? <p className="text-dato">{l.horas}</p> : null}
+        {l.minima ? <p className="text-dato">{l.minima}</p> : null}
+        {l.sinTardias ? (
+          <p className="text-dato">{l.sinTardias}</p>
+        ) : (
+          <>
+            <p className="mt-1 text-dato font-semibold">{l.tardias.titulo}</p>
+            <ul className="list-disc pl-5 text-dato">
+              {l.tardias.items.map((x) => (
+                <li key={x}>{x}</li>
+              ))}
+            </ul>
+          </>
+        )}
+        {l.sinPlazo.length ? (
+          <ul className="mt-1 list-disc pl-5 text-dato">
+            {l.sinPlazo.map((x) => (
+              <li key={x}>{x}</li>
+            ))}
+          </ul>
+        ) : null}
+        <p className="mt-2 text-dato font-semibold">{l.supuestosTitulo}</p>
+        <ul className="list-disc pl-5 text-dato">
+          {l.supuestos.map((x) => (
+            <li key={x}>{x}</li>
+          ))}
+        </ul>
+        <p lang={idioma} className="mt-2 text-dato text-tinta-2">
+          {l.fuente}
+        </p>
+      </BloqueExperto>
+    </div>
   );
 }
 

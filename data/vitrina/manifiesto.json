@@ -4,8 +4,8 @@
   "demos": {
     "demo-a": {
       "plan": {
-        "archivo": "plans/demo-a/v1.5.2.json",
-        "huella": "2dc1affac8e97d19d991fe9a89fc2f2c26d1ee7cad72be13ecfdd1ea90e4051d"
+        "archivo": "plans/demo-a/v1.6.json",
+        "huella": "b5d29ba673e89bfdeb03d39ef463f6e5b7ed3df4c54c20dd0a58bdf92a4d5dd4"
       },
       "corrida": {
         "ruta": "runs/demo-a/suscripcion-planlang-a-002-200-v1.5",
@@ -17,13 +17,17 @@
         "ruta": "runs/demo-a/suscripcion-planlang-a-002-200-v1.5-base",
         "huella": "1ab219ded7ae9d1ce14f4d7ff0e699b517926564afda1ac73c74301ea6cff5f7"
       },
+      "llegadas": {
+        "archivo": "data/casos/demo-a/planlang-a-002-200.llegadas.json",
+        "huella": "288e8db6457909f303b1e732e98b9f3e69bb60c4aec8c52aef75ba6230f050e8"
+      },
       "informe": {
         "archivo": "data/vitrina/demo-a/suscripcion-planlang-a-002-200-v1.5/informe.json",
-        "huella": "bd4a99509f96feea091922741f8162b0fbbb466c90fedb69013f60494174e455"
+        "huella": "7dd7033d8eb96f071467c3732aa5169fc3f0de9d2f1606a1905e53df750c9d27"
       },
       "comparacion": {
         "archivo": "data/vitrina/demo-a/suscripcion-planlang-a-002-200-v1.5/comparacion.json",
-        "huella": "cd3ab27a82d3adaf9e1cc2f77c11eb6883741abb570995a2051135dcd0831374"
+        "huella": "99f116350b6089b689012a4e29e73d0329e977875af9659b1808ebb331255d6d"
       },
       "playground": {
         "senal_propuesta": "propuesta",
@@ -51,29 +55,30 @@
     },
     "demo-b": {
       "plan": {
-        "archivo": "plans/demo-b/v1.1.json",
-        "huella": "30728d949db2731d6a84d5e7f6191c03fcc49fdc702823e20dd3149648bc5910"
+        "archivo": "plans/demo-b/v1.2.json",
+        "huella": "6450d5c56fd0a337cb8a4206ffce6926d1390222a08cd337dffc35b034bfeeb2"
       },
       "corrida": {
-        "ruta": "runs/demo-b/suscripcion-planlang-b-001-20",
-        "huella": "112ccac9cf602829267257782355a8c2023f965781545d1b23a558825ff5fa99",
-        "sprint": 3
+        "ruta": "runs/demo-b/suscripcion-planlang-b-002-20",
+        "huella": "1a61149de5c959123e80565f770039370053d1cc80bca2f1d53edac5531d3670",
+        "sprint": 9
       },
       "repeticiones": [],
       "linea_base": {
-        "ruta": "runs/demo-b/suscripcion-planlang-b-001-20-base-v2",
-        "huella": "b4c91ee3933db445a763e6fd4ead18c91b9a54a565393247612661cbe43d7be7"
+        "ruta": "runs/demo-b/suscripcion-planlang-b-002-20-base",
+        "huella": "7b37121404d801d91f4a28f26e9d12756d649208f9d2d139ae31ba4f86923370"
       },
       "informe": {
-        "archivo": "data/vitrina/demo-b/suscripcion-planlang-b-001-20/informe.json",
-        "huella": "a9f6c13c15dea32d6c663839dacdbdad0ab0b6a983e43eebc39939f698c4a468"
+        "archivo": "data/vitrina/demo-b/suscripcion-planlang-b-002-20/informe.json",
+        "huella": "fc59f6babdee22552b7d921ab52d459ab6967e8703ef710ed74963c0c29eea21"
       },
       "playground": {
         "senal_propuesta": "propuesta",
         "valor_favorable": "aprobar",
         "claves_previas": [
           "extraccion",
-          "extraccion_correcta"
+          "extraccion_correcta",
+          "beneficiarios"
         ],
         "claves_del_desenlace": [
           "conclusiones_sin_cita",

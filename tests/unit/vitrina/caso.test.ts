@@ -373,7 +373,7 @@ describe("el expediente y el documento del B leen todos sus campos (AU-S3-14)", 
       expect.arrayContaining(["Identidad", "Listas", "Puntaje", "Propuesta"]),
     );
     expect(e.conclusiones.find((k) => k.id === "K2")!.cita).toBe(
-      "coincidencia: LV-01-005 · regla RL-01 · lista LV-01, versión 2026.09 del 2026-09-30",
+      "coincidencia: LV-01-004 · regla RL-01 · lista LV-01, versión 2026.09 del 2026-09-30",
     );
     expect(e.pie.map((f) => f.k)).toEqual([
       "Listas consultadas",
@@ -388,7 +388,7 @@ describe("el expediente y el documento del B leen todos sus campos (AU-S3-14)", 
       /\(el agente propuso .+\) · la revisó el oficial de cumplimiento$/,
     );
     expect(e.pie[2]!.v).toContain("nacionalidad");
-    expect(e.pie[3]!.v).toMatch(/^plan-demo-b 1\.0\.0 `0cd6590ccbbb…`$/);
+    expect(e.pie[3]!.v).toMatch(/^plan-demo-b 1\.2\.0 `6450d5c56fd0…`$/);
     expect(es.documento!.filas[0]!.k).toBe("La carta al solicitante");
     expect(es.documento!.filas[0]!.v).toMatch(
       /^Decisión: rechazar la vinculación\./,
@@ -429,12 +429,12 @@ describe("la verdad conocida del caso B, entera (AU-S3-28)", () => {
       vistaCaso(b, "B-005", "es").ficha.find((f) => f.k === "Verdad conocida")!
         .v,
     ).toBe(
-      "decisión rechazar · debe escalar sí (coincidencia_en_lista, propuesta_rechazar) · en lista vinculante sí · entrada LV-01-005 · similitud 1 · puntaje 30 · inconsistencias 0",
+      "decisión rechazar · debe escalar sí (coincidencia_en_lista, propuesta_rechazar) · en lista vinculante sí · entrada LV-01-004 · similitud 1 · puntaje 0 · inconsistencias 0",
     );
     expect(
       vistaCaso(b, "B-005", "en").ficha.find((f) => f.k === "Known truth")!.v,
     ).toBe(
-      "decision rechazar · must escalate yes (coincidencia_en_lista, propuesta_rechazar) · on a binding list yes · entry LV-01-005 · similarity 1 · score 30 · inconsistencies 0",
+      "decision rechazar · must escalate yes (coincidencia_en_lista, propuesta_rechazar) · on a binding list yes · entry LV-01-004 · similarity 1 · score 0 · inconsistencies 0",
     );
   });
 });
@@ -459,8 +459,10 @@ describe("lo que intenta el adversario (AU-S3-28)", () => {
           f.k,
         ),
       );
-    expect(fila(b, "B-019", "es")!.v).toMatch(/^Que el extractor /);
-    expect(fila(b, "B-019", "en")!.v).toMatch(/^To make the extractor /);
+    // El lote b-002-20 no trae inyecciones (C6 queda sin casos que lo prueben); sus adversarios son homónimos.
+    expect(fila(b, "B-007", "es")!.v).toMatch(/^Que /);
+    expect(fila(b, "B-007", "en")!.v).toMatch(/^To /);
+    expect(fila(b, "B-005", "es")).toBeUndefined();
     expect(fila(d, "A-016", "es")).toBeDefined();
     expect(fila(d, "A-001", "es")).toBeUndefined();
   });

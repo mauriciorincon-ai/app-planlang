@@ -41,7 +41,7 @@ import { pausaUnica } from "./plan-comun";
 import { delVocabulario } from "./vocabulario";
 
 const X = (t: TextoBilingue, i: Idioma) => t[i];
-const DOCUMENTOS = ["identidad", "actividad", "fondos"] as const;
+const DOCUMENTOS = ["identidad", "actividad", "fondos", "existencia"] as const;
 
 /** Un documento partido para marcar la instrucción escondida (índices impares), si la trae. */
 function partido(texto: string, carga: string | undefined): string[] {
@@ -85,6 +85,7 @@ export function perfilCasoB(
     identidad: RECIBE_B.identidad,
     actividad: RECIBE_B.actividad,
     fondos: RECIBE_B.fondos,
+    existencia: RECIBE_B.existencia,
   };
   const documentos = DOCUMENTOS.flatMap((k) => {
     const doc = docs[k];
@@ -135,6 +136,21 @@ export function perfilCasoB(
             entrada: t.investigacion?.entrada_id ?? "—",
           });
         break;
+      case "beneficiarios": {
+        const bd = t.beneficiarios_detalle;
+        h =
+          sinRespuesta ??
+          HIZO_B.beneficiarios({
+            valida: bd?.valida === true,
+            duenos: bd?.beneficiarios?.length ?? 0,
+            // Lo que evaluó el propio grafo (la regla del dueño en lista cumplida), no una comparación rehecha aquí.
+            enLista: t.decisiones_de_arista.some(
+              (x) =>
+                x.resultado && categoriaDeRegla(x, d.id) === "duenoEnLista",
+            ),
+          });
+        break;
+      }
       case "puntaje":
         h = HIZO_B.puntaje({
           total: pt?.total ?? 0,
@@ -510,27 +526,25 @@ export function payloadIgualALaTraza(
     coincidencias: unknown;
     investigacion: unknown;
     puntaje: unknown;
-    extraccion: { campos: unknown; campos_faltantes: unknown } | null;
+    extraccion: {
+      campos: unknown;
+      campos_faltantes: unknown;
+      tipo_solicitante?: unknown;
+      estructura?: unknown;
+    } | null;
+    beneficiarios?: unknown;
   },
   t: Traza,
   c: CasoB,
 ): void {
-  const ext = t.extraccion as {
-    campos?: unknown;
-    campos_faltantes?: unknown;
-  } | null;
   const pares: Array<[string, unknown, unknown]> = [
     ["documentos", payload.documentos, c.entrada.documentos],
     ["coincidencias", payload.coincidencias, t.coincidencias],
     ["investigacion", payload.investigacion, t.investigacion],
     ["puntaje", payload.puntaje, t.puntaje],
-    [
-      "extraccion",
-      payload.extraccion,
-      ext === null
-        ? null
-        : { campos: ext.campos, campos_faltantes: ext.campos_faltantes },
-    ],
+    // Con el plan B v1.2 la extracción trae también quién solicita y su estructura; el oficial ve la traza entera.
+    ["extraccion", payload.extraccion, t.extraccion],
+    ["beneficiarios", payload.beneficiarios, t.beneficiarios_detalle],
   ];
   for (const [clave, visto, registrado] of pares)
     if (jcs(visto ?? null) !== jcs(registrado ?? null))

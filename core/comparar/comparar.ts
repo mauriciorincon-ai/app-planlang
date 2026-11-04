@@ -6,6 +6,8 @@
 import { VERSION_VERIFICADOR } from "../brecha/informe";
 import type { Umbrales } from "../brecha/contexto";
 import { vistasDeCorrida, vistasDeSesiones } from "../brecha/contexto";
+import { enPlazoDe } from "../brecha/plazos";
+import type { CapaDeLlegadas } from "../plazos/tipos";
 import { evaluarCriterios, type ResultadoCriterio } from "../brecha/criterios";
 import { evaluarRiesgos, type ResultadoRiesgo } from "../brecha/detectores";
 import {
@@ -47,11 +49,14 @@ function medir(
   casos: ReadonlyMap<string, CasoDeDemo>,
   corrida: CorridaLeida,
   nLote: number,
+  llegadas: CapaDeLlegadas | null,
 ): Medicion {
+  // S9: cada lado se mide con su propia cola (no pausan los mismos casos), a la capacidad que declara el plan.
   const vistas = vistasDeCorrida(
     corrida.trazas,
     casos,
     corrida.manifiesto.umbrales_aplicados as Umbrales,
+    enPlazoDe(plan.simulacion_de_plazos, llegadas, corrida.trazas),
   );
   // Sin repeticiones (pass^k): el A no tiene criterio con k que aplique a su lote de 200. Si lo tuviera, habría que
   // pasarlas aquí y el veredicto del lado tomaría los `fueraPorProveedor` como lo hace el informe (AU-S4, M-1).
@@ -91,8 +96,8 @@ export async function compararCorridas(
     ]);
 
   const nLote = multi.manifiesto.casos.n_lote;
-  const m = medir(e.plan, e.casos, multi, nLote);
-  const b = medir(e.plan, e.casos, base, nLote);
+  const m = medir(e.plan, e.casos, multi, nLote, e.llegadas);
+  const b = medir(e.plan, e.casos, base, nLote, e.llegadas);
 
   const criterios: CriterioComparado[] = m.criterios.map((c) => {
     const cb = par(b.criterios, c.id);

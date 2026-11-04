@@ -12,7 +12,9 @@ from app_agents.canonico import HuellaInvalida, leer_verificando
 
 RAIZ = Path(__file__).resolve().parents[2]
 CASOS = RAIZ / "data" / "casos" / "demo-a"
-LOTES = sorted(CASOS.glob("*.json"))
+# S9: la capa de llegadas (`*.llegadas.json`) vive junto a su lote pero no es un lote.
+LOTES = sorted(p for p in CASOS.glob("*.json") if not p.name.endswith(".llegadas.json"))
+LLEGADAS = sorted(CASOS.glob("*.llegadas.json"))
 
 
 def test_hay_lotes_versionados() -> None:
@@ -22,6 +24,15 @@ def test_hay_lotes_versionados() -> None:
         "planlang-a-humo-3.json",
         "planlang-a-002-200.json",
     }
+
+
+@pytest.mark.parametrize("ruta", LLEGADAS, ids=lambda p: p.stem)
+def test_la_capa_de_llegadas_verifica_desde_python_y_cita_a_su_lote(ruta: Path) -> None:
+    llegadas = leer_verificando(ruta)
+    assert llegadas["formato"] == "planlang-llegadas/v1"
+    lote = leer_verificando(CASOS / ruta.name.replace(".llegadas.json", ".json"))
+    assert llegadas["lote"]["huella"] == lote["huella"]
+    assert sorted(x["caso_id"] for x in llegadas["llegadas"]) == sorted(c["id"] for c in lote["casos"])
 
 
 @pytest.mark.parametrize("ruta", LOTES, ids=lambda p: p.stem)

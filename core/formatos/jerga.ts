@@ -32,6 +32,11 @@ export const TERMINOS_VIGILADOS: Record<Idioma, readonly string[]> = {
     "rpn",
     "langgraph",
     "langchain",
+    // S9: el léxico de la norma de plazos y de la de dueños; el líder dice «dueños» y «plazo corto», no estos.
+    "expedita",
+    "expedito",
+    "beneficiario",
+    "beneficiarios",
   ],
   en: [
     "ece",
@@ -59,6 +64,8 @@ export const TERMINOS_VIGILADOS: Record<Idioma, readonly string[]> = {
     "rpn",
     "langgraph",
     "langchain",
+    "expedited",
+    "beneficial",
   ],
 };
 

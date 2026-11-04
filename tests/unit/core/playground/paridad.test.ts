@@ -28,6 +28,7 @@ import {
 } from "@core/playground/interprete";
 import { umbralesAplicados } from "@core/plan/contrato-constructor";
 import type { Plan } from "@core/plan/esquema";
+import { configDeCola, simularCola } from "@core/plazos";
 import { datosDemo } from "@/lib/datos/vitrina";
 
 async function base() {
@@ -38,6 +39,7 @@ async function base() {
     d.lote,
     d.informe,
     d.manifiesto.playground,
+    d.llegadas,
   );
   return { ...d, c };
 }
@@ -69,14 +71,46 @@ async function verificadorEnElCamino(plan: Plan, c: Compacto, u: Umbrales) {
           d.manifiesto.playground.senal_propuesta,
         )
       : registrado;
-    return {
-      caso_id: caso.id,
-      caso,
-      traza,
-      ctx: contextoDeObjeto(caso, objeto),
-    };
+    return { caso, traza, objeto };
   });
-  return { r, verificador: evaluarCriterios(plan, vistas) };
+  // S9: el oráculo del plazo es la cola de `core/plazos` corrida aparte, sobre lo que cada camino dice de la pausa de
+  // cada caso; el criterio lo mide el evaluador de reglas del verificador con `en_plazo`, no el atajo del playground.
+  const sim = plan.simulacion_de_plazos;
+  const llegadas = new Map(
+    (d.llegadas?.llegadas ?? []).map((l) => [l.caso_id, l]),
+  );
+  const enPlazo = new Map<string, boolean | null>();
+  if (sim && d.llegadas) {
+    const solicitudes = vistas
+      .filter((v) => typeof v.objeto.pausa_humana === "boolean")
+      .map((v) => ({
+        caso_id: v.caso.id,
+        clase:
+          typeof v.objeto[sim.senal_de_clase] === "string"
+            ? (v.objeto[sim.senal_de_clase] as string)
+            : null,
+        llegada: llegadas.get(v.caso.id)!,
+        pausa: v.objeto.pausa_humana === true,
+      }));
+    for (const x of simularCola(
+      configDeCola(sim),
+      solicitudes,
+      sim.capacidad_del_auditor.valor,
+    ))
+      enPlazo.set(x.caso_id, x.en_plazo);
+  }
+  const vistasDeReglas = vistas.map((v) => ({
+    caso_id: v.caso.id,
+    caso: v.caso,
+    traza: v.traza,
+    ctx: contextoDeObjeto(
+      v.caso,
+      enPlazo.has(v.caso.id)
+        ? { ...v.objeto, en_plazo: enPlazo.get(v.caso.id)! }
+        : v.objeto,
+    ),
+  }));
+  return { r, verificador: evaluarCriterios(plan, vistasDeReglas) };
 }
 
 describe("paridad del playground con el informe y con RF-09.2", () => {
@@ -381,6 +415,7 @@ describe("el compacto se niega a adivinar", () => {
         d.lote,
         d.informe,
         d.manifiesto.playground,
+        d.llegadas,
       ),
     ).toThrow(/senal_nueva/);
   });
@@ -469,7 +504,14 @@ describe("con otras reglas de medición, el compacto mide igual que el verificad
     // El informe de esa regla: el verificador sobre lo que se registró (el playground parte de ahí).
     const enPlan = await verificadorEnElCamino(
       plan,
-      compactar(d.plan, d.corrida, d.lote, d.informe, d.manifiesto.playground),
+      compactar(
+        d.plan,
+        d.corrida,
+        d.lote,
+        d.informe,
+        d.manifiesto.playground,
+        d.llegadas,
+      ),
       umbralesDelPlan(
         compactar(
           d.plan,
@@ -477,6 +519,7 @@ describe("con otras reglas de medición, el compacto mide igual que el verificad
           d.lote,
           d.informe,
           d.manifiesto.playground,
+          d.llegadas,
         ),
       ),
     );
@@ -492,6 +535,7 @@ describe("con otras reglas de medición, el compacto mide igual que el verificad
       d.lote,
       informe,
       d.manifiesto.playground,
+      d.llegadas,
     );
     for (const m of MOVIDOS) {
       const u = { ...umbralesDelPlan(c), ...m } as Umbrales;
@@ -553,7 +597,14 @@ describe("el compacto se niega a adivinar (las entradas)", () => {
     const plan = structuredClone(d.plan) as Plan;
     plan.umbrales[1]!.costo_humano_por_caso_min = 15;
     expect(() =>
-      compactar(plan, d.corrida, d.lote, d.informe, d.manifiesto.playground),
+      compactar(
+        plan,
+        d.corrida,
+        d.lote,
+        d.informe,
+        d.manifiesto.playground,
+        d.llegadas,
+      ),
     ).toThrow(/varios costos humanos/);
     for (const u of plan.umbrales)
       delete (u as { costo_humano_por_caso_min?: number })
@@ -565,6 +616,7 @@ describe("el compacto se niega a adivinar (las entradas)", () => {
       d.lote,
       d.informe,
       d.manifiesto.playground,
+      d.llegadas,
     );
     expect(c.minutos_por_persona).toBe(null);
     const r = consecuencias(c, umbralesDelPlan(c));
@@ -578,14 +630,28 @@ describe("el compacto se niega a adivinar (las entradas)", () => {
       criterios: d.informe.criterios.filter((x) => x.id !== "C9"),
     };
     expect(() =>
-      compactar(d.plan, d.corrida, d.lote, informe, d.manifiesto.playground),
+      compactar(
+        d.plan,
+        d.corrida,
+        d.lote,
+        informe,
+        d.manifiesto.playground,
+        d.llegadas,
+      ),
     ).toThrow(/no trae el criterio C9/);
     const lote = {
       ...d.lote,
       casos: d.lote.casos.filter((k) => k.id !== "A-001"),
     };
     expect(() =>
-      compactar(d.plan, d.corrida, lote, d.informe, d.manifiesto.playground),
+      compactar(
+        d.plan,
+        d.corrida,
+        lote,
+        d.informe,
+        d.manifiesto.playground,
+        d.llegadas,
+      ),
     ).toThrow(/A-001 no está en el lote/);
   });
   it("un camino sin su evaluación precalculada no se inventa", async () => {

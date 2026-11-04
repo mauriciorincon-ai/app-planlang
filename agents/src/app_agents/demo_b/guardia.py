@@ -24,9 +24,14 @@ DOCUMENTO = re.compile(r"SYN-ID-\d+")
 _FRASES = re.compile(r"(?<=[.!?])\s+")
 
 
+# : S9: el certificado de existencia con la composición accionaria (solo personas jurídicas) es un documento
+# más.
+DOCUMENTOS = ("identidad", "actividad", "fondos", "existencia")
+
+
 def textos_de_documentos(entrada: dict[str, Any]) -> list[str]:
     docs = entrada["documentos"]
-    return [docs[k]["es"] for k in ("identidad", "actividad", "fondos") if docs.get(k)]
+    return [docs[k]["es"] for k in DOCUMENTOS if docs.get(k)]
 
 
 def carga_en_documentos(entrada: dict[str, Any]) -> bool:
@@ -35,9 +40,14 @@ def carga_en_documentos(entrada: dict[str, Any]) -> bool:
 
 def minimizar(documentos: dict[str, Any]) -> dict[str, str | None]:
     """El texto en español de cada documento, sin teléfonos ni correos, y sin números de documento en el
-    origen de fondos (allí ninguno es del solicitante que haga falta extraer)."""
+    origen de fondos (allí ninguno es del solicitante que haga falta extraer). El certificado de existencia
+    (S9) conserva los documentos de las personas y los NIT: son la estructura que hay que copiar. Un
+    documento que la
+    solicitud no trae no aparece (los de persona natural nunca traen el certificado)."""
     salida: dict[str, str | None] = {}
-    for k in ("identidad", "actividad", "fondos"):
+    for k in DOCUMENTOS:
+        if k == "existencia" and k not in documentos:
+            continue
         d = documentos.get(k)
         if not d:
             salida[k] = None

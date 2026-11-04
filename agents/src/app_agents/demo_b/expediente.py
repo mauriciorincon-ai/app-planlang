@@ -10,6 +10,8 @@ from __future__ import annotations
 
 from typing import Any
 
+from app_agents.demo_b.beneficiarios import REGLAS_BENEFICIARIOS
+from app_agents.demo_b.esquemas import ROLES_DE_CONTROL
 from app_agents.demo_b.mundo import Listas
 from app_agents.nodos_base import valor_en_texto
 
@@ -35,7 +37,17 @@ CAMPO = {
     "jurisdiccion_fondos": ("jurisdicción de los fondos", "jurisdiction of the funds"),
     "titular_actividad": ("documento citado en la actividad", "document cited in the activity statement"),
     "titular_fondos": ("titular citado en el origen de fondos", "holder cited in the source of funds"),
+    "estructura": ("estructura societaria", "ownership structure"),
 }
+#: S9: cómo se nombra cada cargo de control del catálogo en el expediente.
+ROL = {
+    "representante_legal": ("representante legal", "legal representative"),
+    "gerente_general": ("gerente general", "general manager"),
+    "presidente": ("presidente", "president"),
+    "director_financiero": ("director financiero", "chief financial officer"),
+    "socio_administrador": ("socio administrador", "managing member"),
+}
+assert set(ROL) == set(ROLES_DE_CONTROL)
 MESES = {
     "01": ("enero", "January"),
     "02": ("febrero", "February"),
@@ -99,25 +111,120 @@ def _jur(listas: Listas, codigo: str | None) -> tuple[str, str]:
     return (j["nombre"]["es"], j["nombre"]["en"]) if j else ("sin dato", "no data")
 
 
+def _conclusiones_de_beneficiarios(estado: dict[str, Any], listas: Listas) -> list[dict[str, Any]]:
+    """S9: quiénes son los beneficiarios finales y por qué regla (RB-01, RB-02), y el dueño más parecido a las
+    listas; o, si la estructura no cierra, por qué no hay beneficiarios (RB-03). Nada si la solicitud es de
+    una persona."""
+    d = estado.get("beneficiarios_detalle")
+    if d is None:
+        return []
+    if not d["valida"]:
+        return [
+            _c(
+                "K",
+                "beneficiarios",
+                f"{REGLAS_BENEFICIARIOS['RB-03']['es']} Problemas: {', '.join(d['problemas'])}.",
+                f"{REGLAS_BENEFICIARIOS['RB-03']['en']} Problems: {', '.join(d['problemas'])}.",
+                {"tipo": "regla", "ref": "RB-03"},
+            )
+        ]
+    estructura = (estado.get("extraccion") or {}).get("estructura") or {}
+    nombre = {p.get("documento"): p.get("nombre") for p in estructura.get("personas") or []}
+    pct = {x["documento"]: x["porcentaje"] for x in d["participaciones"]}
+    por_part = d["por_participacion"]
+    partes_es = "; ".join(f"{nombre.get(x)} ({x}), {pct[x].replace('.', ',')} %" for x in por_part) or "nadie"
+    partes_en = "; ".join(f"{nombre.get(x)} ({x}), {pct[x]}%" for x in por_part) or "nobody"
+    control = estructura.get("controla") or {}
+    r_es, r_en = ROL.get(str(control.get("rol")), ("cargo sin dato", "role unknown"))
+    salida = [
+        _c(
+            "K",
+            "beneficiarios",
+            f"Beneficiarios finales por participación de 25 % o más, directa o indirecta: {partes_es} "
+            "(RB-01). "
+            + (
+                f"Persona que controla: {nombre.get(d['controla'])} ({d['controla']}), {r_es} (RB-02)."
+                if d["controla"]
+                else "La estructura no nombra a quien controla (RB-02)."
+            ),
+            f"Beneficial owners by 25% or more ownership, direct or indirect: {partes_en} (RB-01). "
+            + (
+                f"Person in control: {nombre.get(d['controla'])} ({d['controla']}), {r_en} (RB-02)."
+                if d["controla"]
+                else "The structure names no person in control (RB-02)."
+            ),
+            {"tipo": "regla", "ref": "RB-01,RB-02"},
+        )
+    ]
+    con = [x for x in d["coincidencias"] if x["mejor"]]
+    if con:
+        x = max(con, key=lambda c: (c["mejor"]["similitud"], c["documento"]))
+        m = x["mejor"]
+        lista = next(y for y in listas.consultadas() if y["id"] == m["lista_id"])
+        regla = "RL-01" if m["exacta"] else "RL-02"
+        tipo_es, tipo_en = ("vinculante", "binding") if m["vinculante"] else ("de consulta", "reference")
+        mes_es, mes_en = mes_y_anio(lista["fecha"])
+        salida.append(
+            _c(
+                "K",
+                "beneficiarios",
+                f"El beneficiario final con mayor similitud con las listas es {x['nombre']} "
+                f"({x['documento']}): "
+                f"{valor_en_texto(m['similitud'], 'es')}, con la entrada {m['entrada_id']} de la lista "
+                f"{tipo_es} "
+                f"{m['lista_id']} (versión {lista['version']}, de {mes_es}; {regla}).",
+                f"The beneficial owner with the highest similarity with the lists is {x['nombre']} "
+                f"({x['documento']}): "
+                f"{valor_en_texto(m['similitud'], 'en')}, with entry {m['entrada_id']} of {tipo_en} list "
+                f"{m['lista_id']} (version {lista['version']}, {mes_en}; {regla}).",
+                {
+                    "tipo": "coincidencia",
+                    "ref": m["entrada_id"],
+                    "regla": regla,
+                    "lista": {"fecha": lista["fecha"], "id": lista["id"], "version": lista["version"]},
+                },
+            )
+        )
+    return salida
+
+
 def construir_expediente(estado: dict[str, Any], listas: Listas, plan_ref: dict[str, Any]) -> dict[str, Any]:
     campos = (estado.get("extraccion") or {}).get("campos") or {}
     conclusiones: list[dict[str, Any]] = []
 
     j_es, j_en = _jur(listas, campos.get("nacionalidad"))
-    conclusiones.append(
-        _c(
-            "K1",
-            "identidad",
-            f"Identidad declarada: {campos.get('nombre') or 'sin nombre'}, documento "
-            f"{campos.get('documento') or 'sin dato'}, nacido en "
-            f"{campos.get('nacimiento') or 'año sin dato'}, "
-            f"nacionalidad {j_es}.",
-            f"Declared identity: {campos.get('nombre') or 'no name'}, document "
-            f"{campos.get('documento') or 'no data'}, born in {campos.get('nacimiento') or 'year unknown'}, "
-            f"nationality {j_en}.",
-            {"tipo": "documento", "ref": "identidad"},
+    es_sociedad = (estado.get("extraccion") or {}).get("tipo_solicitante") == "juridica"
+    if es_sociedad:
+        conclusiones.append(
+            _c(
+                "K1",
+                "identidad",
+                f"Sociedad declarada: {campos.get('nombre') or 'sin razón social'}, NIT "
+                f"{campos.get('documento') or 'sin dato'}, constituida en "
+                f"{campos.get('nacimiento') or 'año sin dato'} en {j_es}.",
+                f"Declared company: {campos.get('nombre') or 'no company name'}, tax ID "
+                f"{campos.get('documento') or 'no data'}, incorporated in "
+                f"{campos.get('nacimiento') or 'year unknown'} "
+                f"in {j_en}.",
+                {"tipo": "documento", "ref": "identidad"},
+            )
         )
-    )
+    else:
+        conclusiones.append(
+            _c(
+                "K1",
+                "identidad",
+                f"Identidad declarada: {campos.get('nombre') or 'sin nombre'}, documento "
+                f"{campos.get('documento') or 'sin dato'}, nacido en "
+                f"{campos.get('nacimiento') or 'año sin dato'}, "
+                f"nacionalidad {j_es}.",
+                f"Declared identity: {campos.get('nombre') or 'no name'}, document "
+                f"{campos.get('documento') or 'no data'}, born in "
+                f"{campos.get('nacimiento') or 'year unknown'}, "
+                f"nationality {j_en}.",
+                {"tipo": "documento", "ref": "identidad"},
+            )
+        )
 
     co = estado.get("coincidencias") or {}
     mejor = co.get("mejor")
@@ -170,6 +277,8 @@ def construir_expediente(estado: dict[str, Any], listas: Listas, plan_ref: dict[
                 {"tipo": "coincidencia", "ref": inv["entrada_id"]},
             )
         )
+
+    conclusiones += _conclusiones_de_beneficiarios(estado, listas)
 
     pt = estado.get("puntaje") or {}
     incs = pt.get("inconsistencias") or []

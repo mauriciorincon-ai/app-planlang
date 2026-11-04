@@ -26,7 +26,10 @@ export type CategoriaRegla =
   | "mismaPersona"
   | "riesgo"
   | "inconsistencias"
-  | "rechazar";
+  | "rechazar"
+  // Demo B (plan B v1.2): la sociedad pasa por el cálculo de sus dueños y un dueño parecido a la lista va al oficial.
+  | "sociedad"
+  | "duenoEnLista";
 
 const POR_SENAL_A: Readonly<Record<string, CategoriaRegla>> = {
   // M-16 (plan v1.5): la guardia de entrada deja la señal y la decisión la manda a una persona.
@@ -49,6 +52,8 @@ const POR_FUNCION_A: Readonly<Record<string, CategoriaRegla>> = {
 /** En el B, `similitud_max` decide en dos nodos: hacia el investigador (zona gris) y hacia el oficial (coincidencia). */
 const POR_SENAL_B: Readonly<Record<string, CategoriaRegla>> = {
   carga_detectada: "carga",
+  tipo_solicitante: "sociedad",
+  similitud_beneficiarios_max: "duenoEnLista",
   "verificador_listas:similitud_max": "zonaGris",
   "decision:similitud_max": "coincidencia",
   conclusion_investigador: "mismaPersona",
@@ -87,8 +92,10 @@ export const CATEGORIAS: Readonly<Record<IdDemo, readonly CategoriaRegla[]>> = {
   ],
   "demo-b": [
     "carga",
+    "sociedad",
     "zonaGris",
     "coincidencia",
+    "duenoEnLista",
     "mismaPersona",
     "riesgo",
     "inconsistencias",
