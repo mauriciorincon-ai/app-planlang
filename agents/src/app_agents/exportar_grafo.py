@@ -28,6 +28,7 @@ from app_agents.demo_a.grafo import NODOS
 from app_agents.demo_a.nodos import NodosDemoA
 from app_agents.demo_b.estado import EstadoB
 from app_agents.demo_b.grafo import NODOS as NODOS_B
+from app_agents.demo_b.grafo import NODOS_OPCIONALES as NODOS_OPCIONALES_B
 from app_agents.demo_b.nodos import NodosDemoB
 from app_agents.plan import RAIZ_REPO
 
@@ -96,7 +97,8 @@ def claves_que_escribe(funcion: Any) -> list[str]:
 
 GRAFOS = {
     "a": GrafoDeDemo("demo-a", tuple(NODOS), NodosDemoA, estado_mod.Estado),
-    "b": GrafoDeDemo("demo-b", tuple(NODOS_B), NodosDemoB, EstadoB),
+    # S9: también los nodos que solo se construyen si el plan los declara (el visor de la v1.2 los muestra).
+    "b": GrafoDeDemo("demo-b", (*NODOS_B, *NODOS_OPCIONALES_B), NodosDemoB, EstadoB),
 }
 
 
