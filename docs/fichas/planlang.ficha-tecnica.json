@@ -96,19 +96,19 @@
       "orden": 2,
       "nombre": "Prueba con casos de respuesta conocida",
       "linea": "Dos demos con agentes reales corren sobre cientos de casos inventados cuya respuesta correcta ya se sabe.",
-      "cuenta": 6
+      "cuenta": 7
     },
     {
       "orden": 3,
       "nombre": "Mide la brecha, sin IA de por medio",
       "linea": "Un verificador sin IA compara lo planeado con lo ocurrido y publica también lo que falló.",
-      "cuenta": 5
+      "cuenta": 7
     },
     {
       "orden": 4,
       "nombre": "Mueve un umbral, mira qué cambia",
       "linea": "Pruebas otros valores del plan sobre las decisiones reales del agente, sin volver a llamar al modelo.",
-      "cuenta": 1
+      "cuenta": 2
     },
     {
       "orden": 5,

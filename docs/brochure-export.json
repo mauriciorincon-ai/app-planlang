@@ -29,7 +29,7 @@
     "diferencial": "De 15 plataformas de evaluación revisadas en septiembre de 2026, ninguna obliga a planear antes de construir ni compara el plan con lo ocurrido. planlang hace las dos cosas: exige un plan medible, publica la brecha entre plan y resultado con los riesgos que se previeron y te deja mover los umbrales del plan sobre las decisiones reales del agente."
   },
   "funcionalidades": {
-    "total": 21,
+    "total": 25,
     "fuente_del_conteo": "docs/MANUAL-DE-USO.md",
     "descartadas": [],
     "grupos": [
@@ -108,6 +108,12 @@
             "seccion_manual": "Correr un lote"
           },
           {
+            "id": "duenos",
+            "nombre": "Sabe quién está detrás de una sociedad",
+            "que_hace": "Cuando quien solicita es una sociedad, el agente copia su estructura de dueños y un código sin IA calcula quiénes son los beneficiarios finales: el 25 % o más, directo o por cadenas de sociedades, y quien la controla, con aritmética exacta. Si la estructura no cierra, no adivina: la manda a una persona.",
+            "seccion_manual": "Plazos y beneficiario final"
+          },
+          {
             "id": "lotes",
             "nombre": "Corridas por lotes, sin perder un caso",
             "que_hace": "Corres cientos de casos con la suscripción de Claude Code, de a 20 y con pausas. Si la corrida se corta, retoma donde quedó sin repetir ninguno, y cada caso deja su traza, cada decisión con su señal, en un formato propio y con huella.",
@@ -146,6 +152,18 @@
             "seccion_manual": "Verificar las corridas y el instrumento"
           },
           {
+            "id": "garantia",
+            "nombre": "Cuánto respalda el dato a un umbral",
+            "que_hace": "La confianza del agente trae su garantía: el umbral más bajo cuyo error, entre lo que el agente decide solo, queda bajo el que aceptas con la probabilidad que fijas. Si los datos no alcanzan, el informe lo dice y cuántos casos harían falta.",
+            "seccion_manual": "Calibración con garantía"
+          },
+          {
+            "id": "plazos",
+            "nombre": "El plazo legal, medido",
+            "que_hace": "Un reloj simulado y un auditor sobre las trazas que ya existen dicen si cada autorización se decidió dentro de su plazo legal: la espera de cada clase, las que se pasaron por caso y dónde se rompe el plazo, aunque quede fuera de lo que el playground deja mover. Sin volver a correr un caso.",
+            "seccion_manual": "Plazos y beneficiario final"
+          },
+          {
             "id": "adr",
             "nombre": "Las reglas de fondo, por escrito",
             "que_hace": "Todo lo que se puede resolver con código se resuelve sin IA, y cada pieza del agente que no usa modelo dice por qué. El uso de la suscripción de Claude Code quedó decidido por escrito, con sus términos releídos antes de cada entrega.",
@@ -164,6 +182,12 @@
             "nombre": "Mueve los umbrales del plan",
             "que_hace": "Cambias un umbral, como la confianza mínima o el modo Texas, que manda a una persona toda negación, incluso parcial, y ves qué casos cambian de camino, qué errores aparecen y cuánto trabajo humano cuesta. Todo se recalcula en tu navegador, sin ningún modelo.",
             "seccion_manual": "Mover umbrales en el playground"
+          },
+          {
+            "id": "capacidad",
+            "nombre": "Mueve la capacidad del auditor",
+            "que_hace": "Cambias cuántas solicitudes atiende el auditor por día hábil y ves cuántas salen de su plazo legal, por clase, y cuántas horas de auditor cuesta, con los umbrales que estés jugando. Se recalcula en tu navegador, con el mismo reloj del informe.",
+            "seccion_manual": "Plazos y beneficiario final"
           }
         ]
       },
@@ -253,7 +277,7 @@
     {
       "clave": "funcionalidades",
       "etiqueta": "funcionalidades construidas",
-      "valor": 21,
+      "valor": 25,
       "unidad": "funcionalidades",
       "fuente": "medido",
       "detalle": "Las de la visión del producto que ya funcionan: las del corte de dos semanas y las del roadmap que se construyeron en el S3 (el entrevistador, el demo B y su expediente), contadas contra docs/MANUAL-DE-USO.md; lo que sigue en el roadmap no cuenta."

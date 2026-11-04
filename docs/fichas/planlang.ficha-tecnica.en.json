@@ -96,19 +96,19 @@
       "orden": 2,
       "nombre": "Test with cases whose answer is known",
       "linea": "Two demos with real agents run on hundreds of invented cases whose correct answer is already known.",
-      "cuenta": 6
+      "cuenta": 7
     },
     {
       "orden": 3,
       "nombre": "Measure the gap, with no AI in between",
       "linea": "A verifier with no AI compares what was planned with what happened and also publishes what failed.",
-      "cuenta": 5
+      "cuenta": 7
     },
     {
       "orden": 4,
       "nombre": "Move a threshold, see what changes",
       "linea": "You try other plan values over the agent's real decisions, without calling the model again.",
-      "cuenta": 1
+      "cuenta": 2
     },
     {
       "orden": 5,

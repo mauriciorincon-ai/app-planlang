@@ -1406,6 +1406,21 @@ export const APP = {
           seccion_manual: tb("Correr un lote", "Run a batch"),
         },
         {
+          id: "duenos",
+          nombre: tb(
+            "Sabe quién está detrás de una sociedad",
+            "Knows who stands behind a company",
+          ),
+          que_hace: tb(
+            "Cuando quien solicita es una sociedad, el agente copia su estructura de dueños y un código sin IA calcula quiénes son los beneficiarios finales: el 25 % o más, directo o por cadenas de sociedades, y quien la controla, con aritmética exacta. Si la estructura no cierra, no adivina: la manda a una persona.",
+            "When the applicant is a company, the agent copies its ownership structure and AI-free code works out who the beneficial owners are: 25% or more, direct or through chains of companies, and whoever controls it, with exact arithmetic. If the structure does not add up, it does not guess: it sends it to a person.",
+          ),
+          seccion_manual: tb(
+            "Plazos y beneficiario final",
+            "Deadlines and beneficial owners",
+          ),
+        },
+        {
           id: "lotes",
           nombre: tb(
             "Corridas por lotes, sin perder un caso",
@@ -1489,6 +1504,36 @@ export const APP = {
           ),
         },
         {
+          id: "garantia",
+          nombre: tb(
+            "Cuánto respalda el dato a un umbral",
+            "How much the data backs a threshold",
+          ),
+          que_hace: tb(
+            "La confianza del agente trae su garantía: el umbral más bajo cuyo error, entre lo que el agente decide solo, queda bajo el que aceptas con la probabilidad que fijas. Si los datos no alcanzan, el informe lo dice y cuántos casos harían falta.",
+            "The agent's confidence comes with its guarantee: the lowest threshold whose error, among what the agent decides alone, stays under the one you accept with the probability you set. If the data does not reach it, the report says so and how many cases it would take.",
+          ),
+          seccion_manual: tb(
+            "Calibración con garantía",
+            "Calibration with a guarantee",
+          ),
+        },
+        {
+          id: "plazos",
+          nombre: tb(
+            "El plazo legal, medido",
+            "The legal deadline, measured",
+          ),
+          que_hace: tb(
+            "Un reloj simulado y un auditor sobre las trazas que ya existen dicen si cada autorización se decidió dentro de su plazo legal: la espera de cada clase, las que se pasaron por caso y dónde se rompe el plazo, aunque quede fuera de lo que el playground deja mover. Sin volver a correr un caso.",
+            "A simulated clock and an auditor over the traces that already exist say whether each authorization was decided within its legal deadline: the wait of each class, the late ones by case and where the deadline breaks, even if that is outside what the playground lets you move. Without rerunning a case.",
+          ),
+          seccion_manual: tb(
+            "Plazos y beneficiario final",
+            "Deadlines and beneficial owners",
+          ),
+        },
+        {
           id: "adr",
           nombre: tb(
             "Las reglas de fondo, por escrito",
@@ -1530,6 +1575,21 @@ export const APP = {
           seccion_manual: tb(
             "Mover umbrales en el playground",
             "Move thresholds in the playground",
+          ),
+        },
+        {
+          id: "capacidad",
+          nombre: tb(
+            "Mueve la capacidad del auditor",
+            "Move the auditor's capacity",
+          ),
+          que_hace: tb(
+            "Cambias cuántas solicitudes atiende el auditor por día hábil y ves cuántas salen de su plazo legal, por clase, y cuántas horas de auditor cuesta, con los umbrales que estés jugando. Se recalcula en tu navegador, con el mismo reloj del informe.",
+            "You change how many requests the auditor handles per business day and see how many go past their legal deadline, by class, and how many auditor hours it costs, with the thresholds you are playing. It is recomputed in your browser, with the same clock as the report.",
+          ),
+          seccion_manual: tb(
+            "Plazos y beneficiario final",
+            "Deadlines and beneficial owners",
           ),
         },
       ],
