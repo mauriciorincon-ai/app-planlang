@@ -108,7 +108,7 @@ describe("la cola con los umbrales y la capacidad jugados", () => {
     expect(alto.en_cola).toBeGreaterThan(plan.en_cola);
   });
 
-  it("más capacidad nunca deja a nadie más tarde, en todo el rango jugable y con plazos que aprietan", async () => {
+  it("en este lote, más capacidad no suma solicitudes tardías en todo el rango jugable, con plazos que aprietan", async () => {
     const { c } = await base();
     const apretado = conPlazoCorto(c, 6 * 60);
     const cuentas = [10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60].map(

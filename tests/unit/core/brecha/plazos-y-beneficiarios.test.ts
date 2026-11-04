@@ -195,7 +195,7 @@ describe("la cola sobre las trazas, a otra capacidad", () => {
     expect(new Set(siete.map((r) => r.clase))).toEqual(
       new Set(["ambulatoria"]),
     );
-    // Más capacidad nunca deja a nadie más tarde.
+    // Con estos datos, más capacidad no suma solicitudes tardías (no es una ley de la cola: ver cola.test.ts).
     const cuentas = [1, 2, 3, 4, 5, 6, 7, 8, 10, 20, 30, 60].map(
       (c) => tardias(c).length,
     );

@@ -197,6 +197,25 @@ describe("simularCola", () => {
   });
 });
 
+describe("lo que más capacidad NO garantiza", () => {
+  it("puede dejar a UNA solicitud más tarde (prioridad sin interrupción), aunque el fin del lote no se atrase", () => {
+    // Con 10 por día cada solicitud toma 54 minutos; con 12, 45. A los 45 minutos la ambulatoria L2 ya espera y la
+    // hospitalaria H todavía no llegó: con 12 el auditor empieza L2 y H espera detrás; con 10 sigue con L1 y, al
+    // terminar, H ya está y pasa primero.
+    const lote = [
+      sol("L1", "ambulatoria", 0, 0),
+      sol("L2", "ambulatoria", 0, 40),
+      sol("H", "hospitalaria", 0, 50),
+    ];
+    const con = (c: number) => porId(simularCola(CONFIG, lote, c));
+    expect(con(10)["H"]!.espera_min).toBe(58);
+    expect(con(12)["H"]!.espera_min).toBe(85);
+    const fin = (c: number) =>
+      Math.max(...Object.values(con(c)).map((r) => r.decision_min));
+    expect(fin(12)).toBeLessThanOrEqual(fin(10));
+  });
+});
+
 describe("la cola con más capacidad", () => {
   const azar = crearAzar("cola/capacidad");
   const lote = Array.from({ length: 200 }, (_, i) =>

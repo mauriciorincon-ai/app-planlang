@@ -204,8 +204,9 @@ export interface CapacidadMinima {
 
 /**
  * La menor capacidad entera, de 1 hasta `tope`, con la que ninguna solicitud sale de su plazo; `null` si ni `tope` lo
- * logra. Más capacidad nunca deja a nadie más tarde (propiedad de la cola, probada), así que la primera que cumple es la
- * mínima.
+ * logra. El barrido sube de 1 en 1, así que la primera que cumple es la mínima. No supone que toda capacidad mayor
+ * cumpla también: con prioridad y sin interrupción, más capacidad puede dejar a UNA solicitud más tarde (aunque nunca
+ * el fin del lote), de modo que un «desde N» se publica solo después de comprobarlo sobre el tramo que se muestra.
  */
 export function capacidadMinima(
   config: ConfigDeCola,
