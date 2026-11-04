@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>El plazo y los dueños · mirada de forma (S9)</title>
+<style>
+:root{--fondo:#0f1115;--sup:#171a21;--t1:#eceef2;--t2:#a9afbb;--linea:#2a2f3a}
+@media (prefers-color-scheme: light){:root{--fondo:#f7f7f5;--sup:#fff;--t1:#16181d;--t2:#4a505c;--linea:#d9dbe0}}
+body{margin:0;background:var(--fondo);color:var(--t1);font:15px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1200px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:24px;margin:0 0 8px}h2{font-size:19px;margin:40px 0 8px}h3{font-size:16px;margin:0}
+p{color:var(--t2);max-width:80ch;margin:4px 0}code{font:12px ui-monospace,monospace}
+.pregunta{color:var(--t1);font-size:17px;font-weight:600}
+table{border-collapse:collapse;width:100%;font-size:13px;margin-top:8px}th,td{border-top:1px solid var(--linea);padding:8px;text-align:left;vertical-align:top}th{color:var(--t2);font-weight:500}
+.forma{margin-top:28px}.forma img{max-width:100%;height:auto;border:1px solid var(--linea);border-radius:6px;display:block;margin-top:8px}
+.minis{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:12px}
+.minis figure{margin:0}.minis img{width:100%;height:auto;border:1px solid var(--linea);border-radius:4px;display:block}.minis figcaption{font-size:11px;color:var(--t2);margin-top:4px;line-height:1.4}
+</style>
+</head>
+<body><main>
+<p class="pregunta">¿La capacidad del auditor, el plazo legal y los dueños de las sociedades se leen como esperas en el playground y en la Brecha? Mira cada fila de la tabla con su recorte.</p>
+<h1>El plazo y los dueños · mirada de forma «no vista» (S9)</h1>
+<p>Vitrina construida con el commit en curso, servida desde <code>out/</code>. Clase de mirada: FORMA, registrada «no vista»; su veredicto viaja al gate del hito H-2 (el ensayo general). Solo en español: el inglés llega al cierre del hito. Las capturas enteras no se versionan: cada una queda con su huella SHA-256 y una miniatura de la parte de arriba.</p>
+<h2>La matriz</h2>
+<table><thead><tr><th>#</th><th>Archivo / pantalla</th><th>Botón o estado</th><th>Qué mirar</th><th>Respuesta esperada</th><th>Tu respuesta</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Playground (/es/playground), «La capacidad del auditor»</td><td>tal como abre</td><td>El deslizador de la capacidad con su marca «plan 30», la tabla por clase y la frase que dice si alguien sale de su plazo, con su símbolo y su texto.</td><td>30 casos por día hábil (de 10 a 60); «Con 30 casos por día hábil, toda solicitud se decide dentro de su plazo.»; Hospitalaria 72 horas, 30 de 54 esperaron, «0 · cumple» en fuera de plazo, espera mediana 18 min y máxima 15 h 33 min; Ambulatoria 7 días calendario, 40 de 123, 0 fuera de plazo, 18 min y 16 h 0 min; «Con estos umbrales el plazo se cumple desde 8 casos por día hábil; con una menos salen 14. Queda por debajo de lo que este control deja mover (10–60).»</td><td>sin respuesta</td></tr>
+<tr><td>2</td><td>Playground, la capacidad en 10 y U1 en 0,95 (pasada de interacción)</td><td>tras mover la capacidad a 10 y U1 a 0,95</td><td>Que la frase y las cifras de la tabla cambien al mover los controles, que «movido desde 30» aparezca y que el punto donde se rompe siga diciéndose.</td><td>«Con 10 casos por día hábil, toda solicitud se decide dentro de su plazo.» (con U1 en 0,95 pasan más solicitudes al auditor y la espera sube); «Con estos umbrales el plazo se cumple desde 9 casos por día hábil; con una menos salen 24.»; la chip «movido desde 30».</td><td>sin respuesta</td></tr>
+<tr><td>3</td><td>Playground, la capacidad en el teléfono</td><td>tal como abre, 380 px</td><td>Que cada clase se lea en su propia tarjeta (seis columnas no caben en 380 px), sin cortar cifras, y que la frase y el deslizador quepan.</td><td>Nada se sale de la pantalla; una tarjeta por clase con plazo, cuántas esperaron, «0 · cumple» con su palomita, espera mediana y máxima; el deslizador y la frase se leen enteros.</td><td>sin respuesta</td></tr>
+<tr><td>4</td><td>Brecha (/es/brecha), el bloque «Plazos: el reloj simulado», como líder</td><td>tal como abre</td><td>Tres frases llanas: lo que se cumplió con su margen, dónde se rompe el plazo y que las llegadas son simuladas.</td><td>«Toda solicitud con plazo se decidió a tiempo. La que más esperó fue hospitalaria: 15 h 33 min de espera frente a un plazo de 72 horas…»; «Donde se rompe: el plazo se cumple desde 8 casos por día hábil y con una menos salen 14. Eso queda por debajo del tramo que el playground deja mover (10–60)…»; «Las horas de llegada son simuladas…».</td><td>sin respuesta</td></tr>
+<tr><td>5</td><td>Brecha, el bloque de plazos, perfil experto (pasada de interacción)</td><td>tras pulsar «Experto»</td><td>Que aparezcan la cola, la tabla por clase, los supuestos de la simulación y la norma con su fecha de consulta.</td><td>La tabla Hospitalaria / Ambulatoria con sus siete columnas; «Pasaron por el auditor 70 solicitudes: 14 por día hábil…»; «Horas de auditor… 14 h»; los cinco supuestos; «Fuente de los plazos: CMS-0057-F… Consultada el 2026-11-03».</td><td>sin respuesta</td></tr>
+<tr><td>6</td><td>Brecha del demo B (/es/demo-b/brecha), «Dueños de las sociedades», en el teléfono</td><td>tal como abre, 380 px</td><td>Que diga cuántas sociedades se midieron, que 8 de 8 orienta pero no prueba y que el lote no probó las instrucciones escondidas.</td><td>«De 8 sociedades, el conjunto de dueños finales coincidió con la verdad conocida en las 8. Con tan pocas, la cifra orienta pero no prueba: cada sociedad pesa 12,5 puntos.»; «Este lote no trae instrucciones escondidas…».</td><td>sin respuesta</td></tr>
+</tbody></table>
+<h2>Los recortes</h2>
+<section class="forma" id="playground-capacidad"><h3>1. Playground (/es/playground), «La capacidad del auditor»</h3><p>tal como abre · 1280 px · oscuro</p><img loading="lazy" src="forma-playground-capacidad.jpg" alt="El deslizador de la capacidad con su marca «plan 30», la tabla por clase y la frase que dice si alguien sale de su plazo, con su símbolo y su texto."></section>
+<section class="forma" id="playground-capacidad-movida"><h3>2. Playground, la capacidad en 10 y U1 en 0,95 (pasada de interacción)</h3><p>tras mover la capacidad a 10 y U1 a 0,95 · 1280 px · claro · la interacción cambió la página</p><img loading="lazy" src="forma-playground-capacidad-movida.jpg" alt="Que la frase y las cifras de la tabla cambien al mover los controles, que «movido desde 30» aparezca y que el punto donde se rompe siga diciéndose."></section>
+<section class="forma" id="playground-capacidad-movil"><h3>3. Playground, la capacidad en el teléfono</h3><p>tal como abre, 380 px · 380 px · claro</p><img loading="lazy" src="forma-playground-capacidad-movil.jpg" alt="Que cada clase se lea en su propia tarjeta (seis columnas no caben en 380 px), sin cortar cifras, y que la frase y el deslizador quepan."></section>
+<section class="forma" id="brecha-plazos-lider"><h3>4. Brecha (/es/brecha), el bloque «Plazos: el reloj simulado», como líder</h3><p>tal como abre · 1280 px · claro</p><img loading="lazy" src="forma-brecha-plazos-lider.jpg" alt="Tres frases llanas: lo que se cumplió con su margen, dónde se rompe el plazo y que las llegadas son simuladas."></section>
+<section class="forma" id="brecha-plazos-experto"><h3>5. Brecha, el bloque de plazos, perfil experto (pasada de interacción)</h3><p>tras pulsar «Experto» · 1280 px · oscuro · la interacción cambió la página</p><img loading="lazy" src="forma-brecha-plazos-experto.jpg" alt="Que aparezcan la cola, la tabla por clase, los supuestos de la simulación y la norma con su fecha de consulta."></section>
+<section class="forma" id="brecha-b-duenos-movil"><h3>6. Brecha del demo B (/es/demo-b/brecha), «Dueños de las sociedades», en el teléfono</h3><p>tal como abre, 380 px · 380 px · claro</p><img loading="lazy" src="forma-brecha-b-duenos-movil.jpg" alt="Que diga cuántas sociedades se midieron, que 8 de 8 orienta pero no prueba y que el lote no probó las instrucciones escondidas."></section>
+<h2>La pasada completa (12 capturas)</h2>
+<p>El playground y la Brecha de los dos demos, a 380 y 1280 px: en español en los dos temas. La miniatura es la parte de arriba; la huella identifica la captura entera que se leyó.</p>
+<div class="minis">
+<figure><img loading="lazy" src="mini-playground-380-oscuro-es.jpg" alt="playground 380 px oscuro es"><figcaption>playground · 380 · oscuro · es<br><code title="SHA-256 de la captura entera">322879342f21…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-playground-1280-oscuro-es.jpg" alt="playground 1280 px oscuro es"><figcaption>playground · 1280 · oscuro · es<br><code title="SHA-256 de la captura entera">5ec963f89911…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-playground-380-claro-es.jpg" alt="playground 380 px claro es"><figcaption>playground · 380 · claro · es<br><code title="SHA-256 de la captura entera">4f33be1fe47d…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-playground-1280-claro-es.jpg" alt="playground 1280 px claro es"><figcaption>playground · 1280 · claro · es<br><code title="SHA-256 de la captura entera">5c392d31ac23…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-brecha-380-oscuro-es.jpg" alt="brecha 380 px oscuro es"><figcaption>brecha · 380 · oscuro · es<br><code title="SHA-256 de la captura entera">5429f038cde9…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-brecha-1280-oscuro-es.jpg" alt="brecha 1280 px oscuro es"><figcaption>brecha · 1280 · oscuro · es<br><code title="SHA-256 de la captura entera">05e2068e64e5…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-brecha-380-claro-es.jpg" alt="brecha 380 px claro es"><figcaption>brecha · 380 · claro · es<br><code title="SHA-256 de la captura entera">4e7beb8395a2…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-brecha-1280-claro-es.jpg" alt="brecha 1280 px claro es"><figcaption>brecha · 1280 · claro · es<br><code title="SHA-256 de la captura entera">a97b9ab7023e…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-brecha-b-380-oscuro-es.jpg" alt="brecha-b 380 px oscuro es"><figcaption>brecha-b · 380 · oscuro · es<br><code title="SHA-256 de la captura entera">15b4d78b23fa…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-brecha-b-1280-oscuro-es.jpg" alt="brecha-b 1280 px oscuro es"><figcaption>brecha-b · 1280 · oscuro · es<br><code title="SHA-256 de la captura entera">9b42465d92e6…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-brecha-b-380-claro-es.jpg" alt="brecha-b 380 px claro es"><figcaption>brecha-b · 380 · claro · es<br><code title="SHA-256 de la captura entera">0f5c676b1598…</code></figcaption></figure>
+<figure><img loading="lazy" src="mini-brecha-b-1280-claro-es.jpg" alt="brecha-b 1280 px claro es"><figcaption>brecha-b · 1280 · claro · es<br><code title="SHA-256 de la captura entera">185b67797b11…</code></figcaption></figure>
+</div>
+</main></body>
+</html>
