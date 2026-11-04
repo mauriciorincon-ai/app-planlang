@@ -361,7 +361,7 @@
       "regla_de_medicion": {
         "agregacion": "tasa",
         "condicion": "beneficiarios == verdad_conocida.beneficiarios",
-        "poblacion": "tipo_solicitante == 'juridica'"
+        "poblacion": "verdad_conocida.tipo_solicitante == 'juridica'"
       },
       "tipo": "tasa",
       "valor_objetivo": 0.9
@@ -608,7 +608,7 @@
       "es": "La guardia de salida revisa el expediente."
     }
   ],
-  "huella": "21a1fc933ec1e11d2f4dca0c5a2ea139dfa0fddd8df82753096a1f6093aefdb0",
+  "huella": "6450d5c56fd0a337cb8a4206ffce6926d1390222a08cd337dffc35b034bfeeb2",
   "id": "plan-demo-b",
   "lotes": {
     "completo": 200,

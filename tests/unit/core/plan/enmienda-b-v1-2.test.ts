@@ -118,7 +118,7 @@ describe("plan v1.2 del demo B", () => {
     expect(c7.regla_de_medicion).toEqual({
       agregacion: "tasa",
       condicion: "beneficiarios == verdad_conocida.beneficiarios",
-      poblacion: "tipo_solicitante == 'juridica'",
+      poblacion: "verdad_conocida.tipo_solicitante == 'juridica'",
     });
     expect(c7.enunciado.es).toContain("31 CFR § 1010.230(d)");
     expect(c7.enunciado.en).toContain("31 CFR § 1010.230(d)");

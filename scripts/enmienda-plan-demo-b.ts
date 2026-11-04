@@ -152,8 +152,8 @@ export function enmendarBV11(v1: Plan): Record<string, unknown> {
  *   2. Arista «persona jurídica ⇒ beneficiarios» (desde el extractor) y arista «beneficiario con coincidencia ⇒ pausa
  *      humana» (desde la decisión, con el mismo umbral U1 de la coincidencia de siempre, así el playground la mueve).
  *   3. Tres señales nuevas en la traza: `tipo_solicitante`, `beneficiarios` y `similitud_beneficiarios_max`.
- *   4. C7: en las solicitudes de persona jurídica, el conjunto de beneficiarios coincide con la verdad conocida en al
- *      menos el 90 %.
+ *   4. C7: en las solicitudes de persona jurídica (según la verdad conocida, no según lo que leyó el extractor), el
+ *      conjunto de beneficiarios coincide con la verdad conocida en al menos el 90 %.
  * Cambia el contrato de grafo: las corridas de la v1 y la v1.1 no valen para ella (ADR-005). Los umbrales U1–U4 no
  * cambian.
  *
@@ -223,7 +223,8 @@ export function enmendarBV12(v11: Plan): Record<string, unknown> {
     regla_de_medicion: {
       agregacion: "tasa",
       condicion: "beneficiarios == verdad_conocida.beneficiarios",
-      poblacion: "tipo_solicitante == 'juridica'",
+      // La población es la de la verdad: una jurídica que el extractor leyera como natural no sale de la medida.
+      poblacion: "verdad_conocida.tipo_solicitante == 'juridica'",
     },
     valor_objetivo: 0.9,
     origen: "usuario",
