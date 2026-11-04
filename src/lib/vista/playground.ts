@@ -25,6 +25,7 @@ import {
   IPO,
   LIMITES,
   PORQUE_FUNCION,
+  PLAZOS,
   PORTADA,
   SENAL,
   SIMBOLO,
@@ -75,7 +76,20 @@ export interface DatosIsla {
    * el selector. `null` si el informe no la trae (el B no mide confianza) o no hay curva.
    */
   garantia: VistaGarantia | null;
+  /** El control de la capacidad del auditor (S9), ya escrito; `null` si el plan no declara plazos o el lote no trae llegadas. */
+  plazos: DatosPlazosIsla | null;
   version: string;
+}
+
+/** Lo que la isla necesita para pintar el control de la capacidad: los textos ya redactados en el idioma de la página. */
+export interface DatosPlazosIsla {
+  /** «casos por día hábil» (del plan). */
+  unidad: string;
+  descripcion: string;
+  /** Las clases del plan en su orden de prioridad: su nombre y su plazo, ya escritos. */
+  clases: { valor: string; nombre: string; plazo: string; plazoMin: number }[];
+  experto: string;
+  fuente: string;
 }
 
 export interface VistaPlayground {
@@ -202,9 +216,44 @@ function ordenDeEvaluacion(c: Compacto, nodos: string[]): string {
     .join(" · ");
 }
 
+function datosDePlazos(
+  d: DatosDemo,
+  c: Compacto,
+  i: Idioma,
+): DatosPlazosIsla | null {
+  const sim = d.plan.simulacion_de_plazos;
+  if (!sim || !c.plazos) return null;
+  const jornada = `${sim.jornada.inicio}–${sim.jornada.fin}`;
+  return {
+    unidad: X(sim.capacidad_del_auditor.unidad, i),
+    descripcion: X(PLAZOS.descripcion, i),
+    clases: sim.clases.map((k, j) => ({
+      valor: k.valor,
+      nombre: X(k.nombre, i),
+      plazo: X(PLAZOS.plazoDe(k.plazo), i),
+      plazoMin: c.plazos!.config.clases[j]!.plazo_min,
+    })),
+    experto: X(PLAZOS.experto({ jornada, dias: sim.dias_habiles }), i),
+    fuente: X(
+      PLAZOS.fuente({
+        norma: X(sim.fuente.norma, i),
+        consultada: sim.fuente.consultada,
+      }),
+      i,
+    ),
+  };
+}
+
 export function vistaPlayground(d: DatosDemo, i: Idioma): VistaPlayground {
   const inf = d.informe;
-  const c = compactar(d.plan, d.corrida, d.lote, inf, d.manifiesto.playground);
+  const c = compactar(
+    d.plan,
+    d.corrida,
+    d.lote,
+    inf,
+    d.manifiesto.playground,
+    d.llegadas,
+  );
   // Toda señal que decide tiene su nombre llano antes de que la isla las pinte (la isla no adivina uno).
   for (const s of senalesQueLeenLasAristas(c.aristas)) nombreLlano(s);
   // Igual con las funciones nombradas y los interruptores: la isla no narra una con el texto de otra (AU-S2-1).
@@ -399,6 +448,7 @@ export function vistaPlayground(d: DatosDemo, i: Idioma): VistaPlayground {
               i,
             )
           : null,
+      plazos: datosDePlazos(d, c, i),
       version: vPlan,
     },
     pie: pieDeCorrida(d, i),

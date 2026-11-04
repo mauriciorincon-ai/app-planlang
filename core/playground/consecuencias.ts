@@ -14,6 +14,13 @@ import type { EstadoCriterio } from "../brecha/criterios";
 import { maximo, mediana, promedio, redondear } from "../brecha/numeros";
 import type { JsonValor } from "../formatos/jcs";
 import {
+  capacidadMinima,
+  resumirPorClase,
+  simularCola,
+  type CapacidadMinima,
+} from "../plazos/cola";
+import type { ResumenDeClase, SolicitudDeCola } from "../plazos/tipos";
+import {
   recalcularVisita,
   type RegistroDeArista,
   type Senales,
@@ -81,6 +88,30 @@ export interface Observados {
   casos_en_el_umbral: string[];
 }
 
+/** Lo que la cola del auditor da con los umbrales y la capacidad jugados (S9); solo si el compacto trae plazos. */
+export interface ConsecuenciasDePlazos {
+  /** La capacidad con que se simuló: casos por día hábil. */
+  capacidad: number;
+  /** Por clase del plan, en su orden: cuántas hubo, cuántas esperaron, cuántas salieron de plazo, la espera mediana y máxima. */
+  clases: ResumenDeClase[];
+  /** Las que se decidieron fuera de plazo, con lo que les faltó. */
+  tardias: {
+    caso_id: string;
+    clase: string;
+    espera_min: number;
+    plazo_min: number;
+  }[];
+  /** Cuántas pasaron por el auditor. */
+  en_cola: number;
+  /** Los casos con clase con plazo que quedaron «no observados»: la cola no sabe si pausan, y no se miden. */
+  sin_medir: string[];
+  /**
+   * Dónde se rompe el plazo con estos umbrales: la menor capacidad, hasta el máximo jugable, con que nadie sale de su
+   * plazo; `null` si ni el máximo lo logra.
+   */
+  capacidad_minima: CapacidadMinima | null;
+}
+
 export interface Consecuencias {
   /** Ids de los umbrales que difieren del plan. */
   movidos: string[];
@@ -102,6 +133,8 @@ export interface Consecuencias {
   minutos_plan: number | null;
   criterios: CriterioRecalculado[];
   cumplen: number;
+  /** La cola del auditor, o `null` si el plan no declara plazos o el lote no trae llegadas. */
+  plazos: ConsecuenciasDePlazos | null;
 }
 
 export function umbralesDelPlan(c: Compacto): Umbrales {
@@ -320,7 +353,60 @@ export function casosQueReproducen(c: Compacto): number {
     .length;
 }
 
-export function consecuencias(c: Compacto, umbrales: Umbrales): Consecuencias {
+/**
+ * La cola del auditor con los destinos que estos umbrales dan: pasan por ella los casos que van a una persona y tienen
+ * una clase con plazo; los «no observados» quedan fuera (no se sabe a dónde irían) y se cuentan aparte.
+ */
+function colaDelAuditor(
+  c: Compacto,
+  destinos: Consecuencias["destinos"],
+  capacidad: number,
+): ConsecuenciasDePlazos | null {
+  const p = c.plazos;
+  if (!p) return null;
+  const solicitudes: SolicitudDeCola[] = [];
+  const sinMedir: string[] = [];
+  const conPlazo = new Set(p.config.clases.map((k) => k.valor));
+  c.casos.forEach((caso, k) => {
+    const destino = destinos[k] as Consecuencias["destinos"][number];
+    if (!caso.plazo) return;
+    if (destino.ahora === "no_observado") {
+      if (caso.plazo.clase !== null && conPlazo.has(caso.plazo.clase))
+        sinMedir.push(caso.id);
+      return;
+    }
+    solicitudes.push({
+      caso_id: caso.id,
+      clase: caso.plazo.clase,
+      llegada: { dia: caso.plazo.dia, minuto: caso.plazo.minuto },
+      pausa: destino.ahora === "persona",
+    });
+  });
+  const resultados = simularCola(p.config, solicitudes, capacidad);
+  const clases = resumirPorClase(p.config, resultados);
+  return {
+    capacidad,
+    clases,
+    tardias: resultados
+      .filter((r) => r.en_plazo === false)
+      .map((r) => ({
+        caso_id: r.caso_id,
+        clase: r.clase as string,
+        espera_min: r.espera_min,
+        plazo_min: r.plazo_min as number,
+      })),
+    en_cola: clases.reduce((n, x) => n + x.en_cola, 0),
+    sin_medir: sinMedir,
+    capacidad_minima: capacidadMinima(p.config, solicitudes, p.capacidad.max),
+  };
+}
+
+export function consecuencias(
+  c: Compacto,
+  umbrales: Umbrales,
+  /** Casos por día hábil que atiende el auditor; por omisión, la del plan. */
+  capacidad: number | undefined = c.plazos?.capacidad.valor,
+): Consecuencias {
   const delPlan = umbralesDelPlan(c);
   const movidos = c.umbrales
     .filter((u) => umbrales[u.id] !== u.valor_en_plan)
@@ -377,7 +463,36 @@ export function consecuencias(c: Compacto, umbrales: Umbrales): Consecuencias {
     });
   }
 
+  const plazos =
+    capacidad === undefined ? null : colaDelAuditor(c, destinos, capacidad);
+
   const criterios = c.criterios.map((cr, j) => {
+    // El plazo legal no sale de la evaluación por caso sino de la cola con la capacidad jugada.
+    if (cr.de_plazos && plazos) {
+      const enClase = plazos.clases.reduce((n, x) => n + x.n, 0);
+      // Como un «todos cumplen» del verificador: una que se pasó lo rompe; si no, un caso que no se pudo medir lo deja abierto.
+      const estado: EstadoCriterio =
+        enClase + plazos.sin_medir.length === 0
+          ? "sin_poblacion"
+          : plazos.tardias.length > 0
+            ? "incumple"
+            : plazos.sin_medir.length > 0
+              ? "indeterminado"
+              : "cumple";
+      const valor =
+        estado === "sin_poblacion"
+          ? null
+          : plazos.tardias.length === 0 && plazos.sin_medir.length === 0;
+      return {
+        id: cr.id,
+        estado,
+        estado_informe: cr.estado_informe,
+        valor,
+        casos_que_incumplen: plazos.tardias.map((x) => x.caso_id),
+        no_evaluables: plazos.sin_medir,
+        recalculado: estado !== cr.estado_informe || valor !== cr.valor_informe,
+      };
+    }
     const evals = c.casos.map((caso, k) => ({
       id: caso.id,
       e: (evaluaciones[k] as Evaluacion[])[j] as Evaluacion,
@@ -423,5 +538,6 @@ export function consecuencias(c: Compacto, umbrales: Umbrales): Consecuencias {
         : personas_plan * c.minutos_por_persona,
     criterios,
     cumplen: criterios.filter((x) => x.estado === "cumple").length,
+    plazos,
   };
 }

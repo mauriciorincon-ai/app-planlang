@@ -220,6 +220,12 @@ export const SENAL: Record<string, TextoBilingue> = {
   ),
   puntaje_riesgo: tb("puntaje de riesgo", "risk score"),
   inconsistencias: tb("inconsistencias", "inconsistencies"),
+  // Demo B (plan B v1.2): quién solicita y el parecido de sus dueños con las listas.
+  tipo_solicitante: tb("tipo de solicitante", "type of applicant"),
+  similitud_beneficiarios_max: tb(
+    "parecido de un dueño con una lista",
+    "an owner’s resemblance to a list",
+  ),
 };
 
 export const OPERADOR: Record<string, TextoBilingue> = {
@@ -376,6 +382,124 @@ export const JUEGO = {
     a: number;
     b: number;
   }>,
+};
+
+/**
+ * El control de la capacidad del auditor (S9, ADR-019): cuántas solicitudes atiende por día hábil. Mover un umbral cambia
+ * cuántas van a una persona; mover la capacidad cambia cuánto esperan, y la espera decide si se cumple el plazo legal.
+ */
+export const PLAZOS = {
+  titulo: tb("La capacidad del auditor", "The auditor’s capacity"),
+  nombre: tb("Capacidad del auditor", "Auditor capacity"),
+  chip: tb("simulado · llegadas del lote", "simulated · the batch’s arrivals"),
+  descripcion: tb(
+    "Cuántas solicitudes atiende el auditor en un día hábil. Con menos, las que pausan esperan más y algunas pueden salir de su plazo legal.",
+    "How many requests the auditor handles on a business day. With fewer, the ones that pause wait longer and some may go past their legal deadline.",
+  ),
+  rango: ((p: { min: string; max: string; unidad: string }) =>
+    tb(
+      `de ${p.min} a ${p.max} ${p.unidad}`,
+      `from ${p.min} to ${p.max} ${p.unidad}`,
+    )) as Plantilla<{ min: string; max: string; unidad: string }>,
+  valor: ((p: { v: string; unidad: string }) =>
+    tb(`${p.v} ${p.unidad}`, `${p.v} ${p.unidad}`)) as Plantilla<{
+    v: string;
+    unidad: string;
+  }>,
+  /** La frase del líder: lo que dice la cola con los umbrales y la capacidad jugados. */
+  todasEnPlazo: ((p: { cap: string; unidad: string }) =>
+    tb(
+      `Con ${p.cap} ${p.unidad}, toda solicitud se decide dentro de su plazo.`,
+      `At ${p.cap} ${p.unidad}, every request is decided within its deadline.`,
+    )) as Plantilla<{ cap: string; unidad: string }>,
+  salenDePlazo: ((p: { n: number; cap: string; unidad: string }) =>
+    tb(
+      `Con ${p.cap} ${p.unidad}, ${p.n} ${p.n === 1 ? "solicitud sale" : "solicitudes salen"} de su plazo.`,
+      `At ${p.cap} ${p.unidad}, ${p.n} ${p.n === 1 ? "request goes" : "requests go"} past ${p.n === 1 ? "its" : "their"} deadline.`,
+    )) as Plantilla<{ n: number; cap: string; unidad: string }>,
+  sinCola: tb(
+    "Con estos umbrales ninguna solicitud espera al auditor: el plazo no depende de su capacidad.",
+    "With these thresholds no request waits for the auditor: the deadline does not depend on its capacity.",
+  ),
+  /** Dónde se rompe el plazo con estos umbrales, aunque quede fuera del tramo que el control deja mover. */
+  rompe: ((p: {
+    minima: string;
+    unidad: string;
+    uno: string | null;
+    fuera: boolean;
+    rango: string;
+  }) =>
+    tb(
+      `Con estos umbrales el plazo se cumple desde ${p.minima} ${p.unidad}${p.uno !== null ? `; con una menos salen ${p.uno}` : ""}${p.fuera ? `. Queda por debajo de lo que este control deja mover (${p.rango}).` : "."}`,
+      `With these thresholds the deadline is met from ${p.minima} ${p.unidad}${p.uno !== null ? `; with one fewer, ${p.uno} go past it` : ""}${p.fuera ? `. That is below what this control lets you move (${p.rango}).` : "."}`,
+    )) as Plantilla<{
+    minima: string;
+    unidad: string;
+    uno: string | null;
+    fuera: boolean;
+    rango: string;
+  }>,
+  noSeCumple: ((p: { max: string; unidad: string }) =>
+    tb(
+      `Con estos umbrales ni con ${p.max} ${p.unidad} se cumple el plazo.`,
+      `With these thresholds the deadline is not met even at ${p.max} ${p.unidad}.`,
+    )) as Plantilla<{ max: string; unidad: string }>,
+  cabecera: [
+    tb("Clase", "Class"),
+    tb("Plazo", "Deadline"),
+    tb("Esperaron", "Waited"),
+    tb("Fuera de plazo", "Past deadline"),
+    tb("Espera mediana", "Median wait"),
+    tb("Espera máxima", "Longest wait"),
+  ] as readonly TextoBilingue[],
+  enPlazo: tb("en plazo", "on time"),
+  fuera: tb("fuera de plazo", "past deadline"),
+  tardia: ((p: { id: string; espera: string; plazo: string }) =>
+    tb(
+      `${p.id}: ${p.espera} de espera, con ${p.plazo} de plazo`,
+      `${p.id}: ${p.espera} wait, against a ${p.plazo} deadline`,
+    )) as Plantilla<{ id: string; espera: string; plazo: string }>,
+  masTardias: ((n: number) =>
+    tb(`y ${n} más`, `and ${n} more`)) as Plantilla<number>,
+  experto: ((p: { jornada: string; dias: number }) =>
+    tb(
+      `Cola de un auditor, no preemptiva, por prioridad de clase y orden de llegada; trabaja de lunes a viernes de ${p.jornada}; las llegadas se reparten en ${p.dias} días hábiles con la semilla del lote; el plazo corre en tiempo de calendario. Lo que el agente decide solo se decide al llegar.`,
+      `One non-preemptive auditor queue, by class priority and then arrival order; works Monday to Friday, ${p.jornada}; arrivals are spread over ${p.dias} business days with the batch’s seed; the deadline runs on calendar time. What the agent decides alone is decided on arrival.`,
+    )) as Plantilla<{ jornada: string; dias: number }>,
+  fuente: ((p: { norma: string; consultada: string }) =>
+    tb(
+      `${p.norma} Consultada el ${p.consultada}.`,
+      `${p.norma} Read on ${p.consultada}.`,
+    )) as Plantilla<{ norma: string; consultada: string }>,
+  sinMedir: tb(
+    "Los casos «no observados» no entran en la cola: no se sabe a dónde irían.",
+    "“Not observed” cases are left out of the queue: it is not known where they would go.",
+  ),
+  plazoDe: ((p: { cantidad: number; unidad: "horas" | "dias_calendario" }) =>
+    p.unidad === "horas"
+      ? tb(
+          `${p.cantidad} ${p.cantidad === 1 ? "hora" : "horas"}`,
+          `${p.cantidad} ${p.cantidad === 1 ? "hour" : "hours"}`,
+        )
+      : tb(
+          `${p.cantidad} ${p.cantidad === 1 ? "día calendario" : "días calendario"}`,
+          `${p.cantidad} calendar ${p.cantidad === 1 ? "day" : "days"}`,
+        )) as Plantilla<{
+    cantidad: number;
+    unidad: "horas" | "dias_calendario";
+  }>,
+  duracion: ((m: number) =>
+    m < 60
+      ? tb(`${m} min`, `${m} min`)
+      : m < 1440
+        ? tb(
+            `${Math.floor(m / 60)} h ${m % 60} min`,
+            `${Math.floor(m / 60)} h ${m % 60} min`,
+          )
+        : tb(
+            `${Math.floor(m / 1440)} d ${Math.floor((m % 1440) / 60)} h`,
+            `${Math.floor(m / 1440)} d ${Math.floor((m % 1440) / 60)} h`,
+          )) as Plantilla<number>,
 };
 
 export const CIFRAS = {

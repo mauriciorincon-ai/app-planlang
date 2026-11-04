@@ -15,6 +15,7 @@
 import type { JsonValor } from "../formatos/jcs";
 import type { AristaCondicional } from "../plan/esquema";
 import type { EstadoCriterio } from "../brecha/criterios";
+import type { ConfigDeCola } from "../plazos/tipos";
 import type { Senales } from "./aristas";
 
 /** A dónde lleva una rama: a una persona, al final sin persona, o a algo que la traza no registró. */
@@ -57,6 +58,8 @@ export interface CasoCompacto {
   registrado: "persona" | "solo";
   /** Valor final de la señal de cada umbral en la traza (lo que el informe llama «observados»). */
   senales_de_umbral: Record<string, JsonValor>;
+  /** Solo si el plan declara plazos (S9): la clase del caso y cuándo llegó en el reloj simulado del lote. */
+  plazo?: { clase: string | null; dia: number; minuto: number };
   visitas: VisitaCompacta[];
   /**
    * Por criterio (en el orden de `criterios`): su evaluación en lo registrado y, por cada camino posible, la del
@@ -75,6 +78,11 @@ export interface CriterioCompacto {
   objetivo: number | boolean;
   /** Si se mide con una métrica (mediana, promedio o máximo de un valor por caso). */
   con_metrica: boolean;
+  /**
+   * Solo si lee `en_plazo` (S9): su resultado no sale de la evaluación por caso sino de la cola con la capacidad jugada,
+   * porque qué casos esperan al auditor cambia con los umbrales.
+   */
+  de_plazos?: true;
   estado_informe: EstadoCriterio;
   valor_informe: number | boolean | null;
 }
@@ -108,6 +116,12 @@ export interface PropuestaParcial {
   senal_que_exige_persona: string;
 }
 
+/** La cola del auditor que el playground recalcula (S9): la jornada y los plazos del plan y la capacidad jugable. */
+export interface PlazosCompacto {
+  config: ConfigDeCola;
+  capacidad: { valor: number; min: number; max: number; paso: number };
+}
+
 export interface Compacto {
   /** La corrida de la que salió: el playground recalcula SUS decisiones (las de su prueba cruzada RF-09.2). */
   corrida_id: string;
@@ -128,4 +142,6 @@ export interface Compacto {
   propuesta: { senal: string; favorable: string; parcial?: PropuestaParcial };
   casos: CasoCompacto[];
   criterios: CriterioCompacto[];
+  /** Solo si el plan declara `simulacion_de_plazos` y el lote trae llegadas: sin él, el compacto conserva sus bytes. */
+  plazos?: PlazosCompacto;
 }
