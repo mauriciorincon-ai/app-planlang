@@ -369,3 +369,81 @@ export const AFIRMACION_PRIVACIDAD = par(
     "is read as an accusation against a real person; control: names from closed dictionaries, the identifier " +
     "validator in CI and the «Simulation · not operational» label on every screen.",
 );
+
+// ─── S9: personas jurídicas ──────────────────────────────────────────────────────────────────
+
+/**
+ * Razones sociales inventadas: un giro y un nombre propio que no existe, más «SAS». Ninguna palabra es un nombre de
+ * persona del demo: una razón social no se parece a nadie de las listas por casualidad.
+ */
+export const GIROS_SOCIEDAD = [
+  "Inversiones",
+  "Comercializadora",
+  "Distribuidora",
+  "Agroindustrial",
+  "Constructora",
+  "Textiles",
+] as const;
+export const NUCLEOS_SOCIEDAD = [
+  "Pradolargo",
+  "Altavera",
+  "Cumbrisa",
+  "Riolindo",
+  "Sauzaleda",
+  "Montebrío",
+  "Peñalvista",
+  "Valdecira",
+  "Robledal",
+  "Farallones",
+] as const;
+export const SUFIJO_SOCIEDAD = "SAS";
+
+/** Todo el vocabulario de sociedades del demo B, para el validador de identificadores. */
+export const VOCABULARIO_SOCIEDADES_B: readonly string[] = [
+  ...GIROS_SOCIEDAD,
+  ...NUCLEOS_SOCIEDAD,
+  SUFIJO_SOCIEDAD,
+];
+
+/** El origen de los fondos de una sociedad (los de la persona natural hablan en primera persona). */
+export const ORIGENES_FONDOS_SOCIEDAD: readonly TextoBilingue[] = [
+  par("las utilidades de la sociedad", "the company's profits"),
+  par(
+    "un aporte de capital de los socios",
+    "a capital contribution from the partners",
+  ),
+  par(
+    "la venta de un activo de la sociedad",
+    "the sale of one of the company's assets",
+  ),
+  par(
+    "un crédito comercial de la sociedad",
+    "a commercial loan to the company",
+  ),
+];
+
+/** Cómo se nombra en los documentos cada cargo de control del catálogo (`ROLES_DE_CONTROL`). */
+export const ROLES_DE_CONTROL_TEXTO: Readonly<Record<string, TextoBilingue>> = {
+  representante_legal: par("representante legal", "legal representative"),
+  gerente_general: par("gerente general", "general manager"),
+  presidente: par("presidente", "president"),
+  director_financiero: par("director financiero", "chief financial officer"),
+  socio_administrador: par("socio administrador", "managing member"),
+};
+
+/** S9: la afirmación del lote con personas jurídicas: además de las personas, las sociedades y sus NIT. */
+export const AFIRMACION_PRIVACIDAD_JURIDICAS = par(
+  "Todas las personas, sociedades, documentos, listas de control, actividades y jurisdicciones de este lote son " +
+    "inventadas con una semilla declarada. Ningún nombre se tomó de una lista ni de un registro mercantil real: las " +
+    "razones sociales juntan un giro y un nombre inventado de un diccionario cerrado, los NIT llevan el prefijo " +
+    "SYN-NIT- sin dígito de verificación y los documentos de las personas, el prefijo SYN-. Amenaza considerada: que " +
+    "una estructura se lea como la de una empresa real o señale a una persona real como dueña; control: nombres de " +
+    "diccionarios cerrados, validador de identificadores en CI y el rótulo «Simulación · no operativo» en toda " +
+    "pantalla.",
+  "Every person, company, document, control list, activity and jurisdiction in this batch is invented from a " +
+    "declared seed. No name was taken from a real list or a real company register: company names join a line of " +
+    "business and an invented name from a closed dictionary, tax IDs carry the SYN-NIT- prefix with no check digit and " +
+    "people's documents carry the SYN- prefix. Threat considered: that a structure is read as a real company's or " +
+    "points to a real person as an owner; control: names from closed dictionaries, the identifier validator in CI and " +
+    "the «Simulation · not operational» label on every screen.",
+);

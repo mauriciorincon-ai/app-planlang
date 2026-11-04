@@ -83,6 +83,38 @@ export const SUBTIPO_B: Record<SubtipoB, TextoBilingue> = {
     "adversario: dato sensible",
     "adversarial: sensitive data",
   ),
+  normal_juridica_directa: tb(
+    "persona jurídica, socios directos",
+    "legal entity, direct partners",
+  ),
+  normal_juridica_control_no_dueno: tb(
+    "persona jurídica, controla quien no es socio",
+    "legal entity, controlled by a non-partner",
+  ),
+  normal_juridica_cadena_profunda: tb(
+    "persona jurídica, cadena de cuatro niveles",
+    "legal entity, four-level chain",
+  ),
+  borde_juridica_indirecta_cruza_25: tb(
+    "borde: dueño indirecto sobre el 25 %",
+    "edge: indirect owner above 25%",
+  ),
+  borde_juridica_indirecta_bajo_25: tb(
+    "borde: dueños indirectos en el 24,99 %",
+    "edge: indirect owners at 24.99%",
+  ),
+  borde_juridica_exacta_25: tb(
+    "borde: dueño en el 25 % exacto",
+    "edge: owner at exactly 25%",
+  ),
+  borde_juridica_dos_caminos: tb(
+    "borde: el 25 % solo sumando dos caminos",
+    "edge: 25% only by adding two paths",
+  ),
+  adversario_juridica_beneficiario_homonimo: tb(
+    "adversario: dueño homónimo de la lista",
+    "adversarial: owner who is a namesake on the list",
+  ),
 };
 
 /** El producto pedido, con su artículo, como entra al relato («pidió una cuenta corriente»). */

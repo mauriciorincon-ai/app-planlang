@@ -1,3 +1,11 @@
+import { readFileSync } from "node:fs";
+import type { Plan } from "../core/plan";
+import {
+  generarLoteB,
+  generarLoteJuridicoB,
+  type ListasB,
+  type LoteB,
+} from "../core/sintetico";
 /**
  * Los lotes de casos que viven versionados en `data/casos/demo-a/` (fase 2 del S1). El test de
  * frescura los regenera y exige los mismos bytes; `pnpm casos:generar --versionados` los reescribe.
@@ -57,13 +65,39 @@ export const RUTA_AFIRMACION = `${DIRECTORIO_CASOS_DEMO_A}/AFIRMACION-DE-PRIVACI
  * de 20 es el primer bloque del de 200; el de humo alimenta la corrida simulada de CI.
  */
 export const PLAN_DEMO_B = "plans/demo-b/v1.json";
+/** S9: el plan B v1.2 (nodo de beneficiarios, C7), con que se genera el lote de personas jurídicas. */
+export const PLAN_DEMO_B_V12 = "plans/demo-b/v1.2.json";
 export const LISTAS_DEMO_B = "data/listas/demo-b.json";
 export const DIRECTORIO_CASOS_DEMO_B = "data/casos/demo-b";
-export const LOTES_VERSIONADOS_B = [
-  { semilla: "planlang-b-001", n: 20, receta: "estandar" },
-  { semilla: "planlang-b-001", n: 200, receta: "estandar" },
-  { semilla: "planlang-b-humo", n: 4, receta: "humo" },
-] as const;
+export const LOTES_VERSIONADOS_B: readonly {
+  semilla: string;
+  n: number;
+  receta: "estandar" | "humo" | "juridicas";
+  plan: string;
+}[] = [
+  { semilla: "planlang-b-001", n: 20, receta: "estandar", plan: PLAN_DEMO_B },
+  { semilla: "planlang-b-001", n: 200, receta: "estandar", plan: PLAN_DEMO_B },
+  { semilla: "planlang-b-humo", n: 4, receta: "humo", plan: PLAN_DEMO_B },
+  // S9: 8 personas jurídicas y 12 naturales, con el plan B v1.2 (su corrida es la `b-002-20`).
+  {
+    semilla: "planlang-b-002",
+    n: 20,
+    receta: "juridicas",
+    plan: PLAN_DEMO_B_V12,
+  },
+];
+/** Genera un lote versionado del B con su plan y su receta (la de personas jurídicas tiene su propio generador). */
+export async function generarLoteVersionadoB(
+  l: (typeof LOTES_VERSIONADOS_B)[number],
+  listas: ListasB,
+): Promise<LoteB> {
+  const plan = JSON.parse(readFileSync(l.plan, "utf8")) as Plan;
+  const op = { plan, listas, semilla: l.semilla, n: l.n };
+  return l.receta === "juridicas"
+    ? generarLoteJuridicoB(op)
+    : generarLoteB({ ...op, receta: l.receta });
+}
+
 export const rutaDeLoteB = (semilla: string, n: number): string =>
   `${DIRECTORIO_CASOS_DEMO_B}/${semilla}-${n}.json`;
 export const RUTA_AFIRMACION_B = `${DIRECTORIO_CASOS_DEMO_B}/AFIRMACION-DE-PRIVACIDAD.md`;
@@ -76,7 +110,10 @@ interface ResumenLote {
   afirmacion_privacidad: { es: string; en: string };
 }
 
-/** La afirmación de privacidad (I13) como documento legible, derivada de los lotes que cubre. */
+/**
+ * La afirmación de privacidad (I13) como documento legible, derivada de los lotes que cubre. Un lote con una afirmación
+ * propia (S9: el de personas jurídicas también habla de sociedades) la suma en su sección, con su versión del generador.
+ */
 export function markdownAfirmacion(
   lotes: readonly ResumenLote[],
   demo = "A",
@@ -84,6 +121,19 @@ export function markdownAfirmacion(
   const primero = lotes[0];
   if (!primero) throw new Error("sin lotes");
   const filas = lotes.map((l) => `| ${l.id} | ${l.n} | \`${l.huella}\` |`);
+  const propias = lotes.filter(
+    (l) =>
+      l.afirmacion_privacidad.es !== primero.afirmacion_privacidad.es ||
+      l.afirmacion_privacidad.en !== primero.afirmacion_privacidad.en,
+  );
+  const secciones = propias.flatMap((l) => [
+    `## ${l.id} · generador v${l.version_generador}`,
+    "",
+    l.afirmacion_privacidad.es,
+    "",
+    l.afirmacion_privacidad.en,
+    "",
+  ]);
   return [
     "# Afirmación de privacidad · Privacy claim",
     "",
@@ -99,6 +149,7 @@ export function markdownAfirmacion(
     "",
     primero.afirmacion_privacidad.en,
     "",
+    ...secciones,
     "## Lotes cubiertos · Batches covered",
     "",
     "| Lote · Batch | Casos · Cases | Huella · Fingerprint (SHA-256) |",
