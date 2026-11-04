@@ -162,7 +162,17 @@ export function simularCola(
   return resultados;
 }
 
-/** Por clase del plan, en su orden: cuántas solicitudes hubo, cuántas esperaron, cuántas salieron de plazo y la mayor espera. */
+/** La mediana por rango más cercano: el valor en la posición ⌈n/2⌉ del orden ascendente. Entera, sin promediar. */
+function medianaEntera(xs: readonly number[]): number {
+  if (xs.length === 0) return 0;
+  const orden = [...xs].sort((a, b) => a - b);
+  return orden[Math.ceil(orden.length / 2) - 1]!;
+}
+
+/**
+ * Por clase del plan, en su orden: cuántas solicitudes hubo, cuántas esperaron, cuántas salieron de plazo, la espera
+ * mediana de las que esperaron y la mayor espera.
+ */
 export function resumirPorClase(
   config: ConfigDeCola,
   resultados: readonly ResultadoDeCaso[],
@@ -174,7 +184,40 @@ export function resumirPorClase(
       n: delaClase.length,
       en_cola: delaClase.filter((r) => r.pausa).length,
       tardias: delaClase.filter((r) => r.en_plazo === false).length,
+      espera_mediana_min: medianaEntera(
+        delaClase.filter((r) => r.pausa).map((r) => r.espera_min),
+      ),
       espera_max_min: delaClase.reduce((m, r) => Math.max(m, r.espera_min), 0),
     };
   });
+}
+
+const tardiasDe = (rs: readonly ResultadoDeCaso[]): number =>
+  rs.filter((r) => r.en_plazo === false).length;
+
+/** Dónde se rompe el plazo: la menor capacidad con la que nadie sale de su plazo y cuántos salen con una menos. */
+export interface CapacidadMinima {
+  valor: number;
+  /** Cuántas salen de su plazo con `valor - 1`; `null` si `valor` es 1 (no hay una menos). */
+  tardias_con_una_menos: number | null;
+}
+
+/**
+ * La menor capacidad entera, de 1 hasta `tope`, con la que ninguna solicitud sale de su plazo; `null` si ni `tope` lo
+ * logra. Más capacidad nunca deja a nadie más tarde (propiedad de la cola, probada), así que la primera que cumple es la
+ * mínima.
+ */
+export function capacidadMinima(
+  config: ConfigDeCola,
+  solicitudes: readonly SolicitudDeCola[],
+  tope: number,
+): CapacidadMinima | null {
+  if (tardiasDe(simularCola(config, solicitudes, tope)) > 0) return null;
+  let c = 1;
+  while (c < tope && tardiasDe(simularCola(config, solicitudes, c)) > 0) c++;
+  return {
+    valor: c,
+    tardias_con_una_menos:
+      c > 1 ? tardiasDe(simularCola(config, solicitudes, c - 1)) : null,
+  };
 }

@@ -19,6 +19,10 @@ import {
   type Traza,
 } from "../formatos/traza";
 import { cargarPlan, mismaVerdad, type Plan } from "../plan";
+import { configDeCola } from "../plazos/cola";
+import { CapaDeLlegadasSchema } from "../plazos/esquema";
+import { problemasDeLaCapa } from "../plazos/llegadas";
+import type { CapaDeLlegadas } from "../plazos/tipos";
 import {
   casosPorId,
   esquemaDeLote,
@@ -60,6 +64,14 @@ export interface EntradaVerificador {
   planDeLaCorrida?: unknown;
   /** Ruta del plan verificado, para la ficha, cuando no es el que nombra el manifiesto. */
   archivoPlan?: string;
+  /**
+   * La capa de llegadas del lote (`planlang-llegadas/v1`, S9): cuándo llegó cada caso en el reloj simulado. Sin ella, el
+   * criterio de plazos queda sin medir y el informe lo dice; con ella se verifica su huella, que sea del lote y que
+   * encaje en la jornada del plan.
+   */
+  llegadas?: unknown;
+  /** Ruta de la capa, para la ficha. */
+  archivoLlegadas?: string;
 }
 
 export const CODIGOS_LECTURA = [
@@ -110,6 +122,8 @@ export interface EntradaLeida {
   corrida: CorridaLeida;
   repeticiones: CorridaLeida[];
   base: CorridaLeida | null;
+  /** La capa de llegadas verificada, o `null` si la entrada no la trajo. */
+  llegadas: CapaDeLlegadas | null;
 }
 
 const m = (
@@ -603,6 +617,10 @@ export async function leerEntrada(
         );
     }
     if (base) compatible(base, plan, lote, casos, "agente_unico", motivos);
+    const llegadas =
+      e.llegadas === undefined || e.llegadas === null
+        ? null
+        : await leerLlegadas(e.llegadas, carga.plan, lote, motivos);
     if (motivos.length === 0)
       return {
         plan: carga.plan,
@@ -613,9 +631,67 @@ export async function leerEntrada(
         corrida,
         repeticiones,
         base,
+        llegadas,
       };
   }
   throw new ErrorDeLectura(motivos);
+}
+
+/**
+ * La capa de llegadas contra el plan y el lote (S9): su esquema y su huella, que sea del lote que se mide y que cada caso
+ * tenga su llegada dentro de la jornada que el plan declara. Una capa sin bloque `simulacion_de_plazos` en el plan no
+ * tiene con qué leerse, y se rechaza.
+ */
+async function leerLlegadas(
+  bruta: unknown,
+  plan: Plan,
+  lote: LoteDeDemo,
+  motivos: MotivoLectura[],
+): Promise<CapaDeLlegadas | null> {
+  const capa = esquema<CapaDeLlegadas>(
+    CapaDeLlegadasSchema.safeParse(bruta),
+    "llegadas",
+    motivos,
+  );
+  if (!capa) return null;
+  await huellaCoincide(bruta, "llegadas", motivos);
+  if (capa.lote.huella !== lote.huella)
+    motivos.push(
+      m(
+        "REFERENCIA_ROTA",
+        "llegadas",
+        "la capa de llegadas es de otro lote que el que se mide",
+        "the arrivals layer belongs to another batch than the one being measured",
+      ),
+    );
+  const sim = plan.simulacion_de_plazos;
+  if (!sim) {
+    motivos.push(
+      m(
+        "PLAN_INVALIDO",
+        "plan",
+        "se entregó una capa de llegadas, pero el plan no declara `simulacion_de_plazos`",
+        "an arrivals layer was provided, but the plan does not declare `simulacion_de_plazos`",
+      ),
+    );
+    return null;
+  }
+  const { jornada_min } = configDeCola(sim);
+  for (const problema of problemasDeLaCapa(
+    capa,
+    lote.casos.map((c) => c.id),
+    sim.dias_habiles,
+    jornada_min,
+  ))
+    motivos.push(
+      m(
+        "REFERENCIA_ROTA",
+        "llegadas",
+        problema,
+        `the arrivals layer does not fit the batch: ${problema}`,
+      ),
+    );
+  return capa;
 }
 
 /**

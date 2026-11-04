@@ -257,6 +257,7 @@ describe("la cola con más capacidad", () => {
         n: 2,
         en_cola: 1,
         tardias: 0,
+        espera_mediana_min: 18,
         espera_max_min: 18,
       },
       {
@@ -264,8 +265,30 @@ describe("la cola con más capacidad", () => {
         n: 1,
         en_cola: 1,
         tardias: 0,
+        espera_mediana_min: 36,
         espera_max_min: 36,
       },
     ]);
+  });
+
+  it("la mediana es el rango más cercano de las que esperaron (entera, sin promediar) y 0 si ninguna esperó", () => {
+    // Cinco ambulatorias que pausan, todas llegan a la apertura: esperan 18, 36, 54, 72 y 90 minutos → mediana 54.
+    const cinco = ["a", "b", "c", "d", "e"].map((id) =>
+      sol(id, "ambulatoria", 0, 0),
+    );
+    const [, amb] = resumirPorClase(CONFIG, simularCola(CONFIG, cinco, 30));
+    expect(amb).toMatchObject({ espera_mediana_min: 54, espera_max_min: 90 });
+    // Cuatro: 18, 36, 54, 72 → posición ⌈4/2⌉ = 2 → 36 (el menor de los dos del medio).
+    const [, amb4] = resumirPorClase(
+      CONFIG,
+      simularCola(CONFIG, cinco.slice(0, 4), 30),
+    );
+    expect(amb4!.espera_mediana_min).toBe(36);
+    const sinPausa = cinco.map((x) => ({ ...x, pausa: false }));
+    const [, ninguna] = resumirPorClase(
+      CONFIG,
+      simularCola(CONFIG, sinPausa, 30),
+    );
+    expect(ninguna).toMatchObject({ en_cola: 0, espera_mediana_min: 0 });
   });
 });

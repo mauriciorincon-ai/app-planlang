@@ -4,7 +4,14 @@ export {
   problemasDeLaCapa,
   type EntradaDeLlegadas,
 } from "./llegadas";
-export { configDeCola, resumirPorClase, simularCola } from "./cola";
+export {
+  capacidadMinima,
+  configDeCola,
+  resumirPorClase,
+  simularCola,
+  type CapacidadMinima,
+} from "./cola";
+export { CapaDeLlegadasSchema } from "./esquema";
 export {
   DIAS_HABILES_POR_SEMANA,
   DIAS_POR_SEMANA,

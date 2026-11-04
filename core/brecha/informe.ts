@@ -33,6 +33,13 @@ import {
   type EntradaVerificador,
 } from "./lector";
 import { mediana, redondear } from "./numeros";
+import {
+  enPlazoDe,
+  informeDePlazos,
+  medirPlazos,
+  minutosPorPersona,
+  type InformeDePlazos,
+} from "./plazos";
 import { evaluarSupuestos, type ResultadoSupuesto } from "./supuestos";
 import {
   veredicto,
@@ -53,8 +60,11 @@ export const FORMATO_INFORME = "planlang-informe/v1";
  * evaluador opcional que no corrió dice «el plan no lo exige» (F19).
  * 1.4.0 (S8): cada supuesto trae `garantia`; el de calibración con curva, la garantía de `garantia.ts` (Learn then
  * Test, conformal y cobertura conjunta, para α = 0,05 · 0,10 · 0,20 con δ = 0,10; ADR-018), y los demás `null`.
+ * 1.5.0 (S9): `plazos` (el reloj y la cola de `core/plazos/` sobre las trazas, con la capa de llegadas del lote; ADR-019)
+ * y `ficha_reproducibilidad.llegadas`; las reglas ven `en_plazo` (C11) y, en el demo B, `verdad_conocida.tipo_solicitante`
+ * vale «natural» si el caso no lo declara (C7 mide solo las personas jurídicas).
  */
-export const VERSION_VERIFICADOR = "1.4.0";
+export const VERSION_VERIFICADOR = "1.5.0";
 
 export interface CasoEjemplar {
   caso_id: string;
@@ -124,6 +134,8 @@ export interface Informe {
     adversario_neutralizado: CasoEjemplar | null;
   };
   playground: { umbrales: UmbralJugable[]; limites: TextoBilingue[] };
+  /** El reloj simulado y la cola del auditor sobre las trazas (S9); `null` si el plan no declara plazos o el lote no trae llegadas. */
+  plazos: InformeDePlazos | null;
   ficha_reproducibilidad: {
     plan: { id: string; version: string; archivo: string; huella: string };
     casos: {
@@ -152,6 +164,8 @@ export interface Informe {
     };
     repeticiones: { corrida_id: string; huella: string }[];
     linea_base: { corrida_id: string; huella: string } | null;
+    /** La capa de llegadas con que se midieron los plazos (S9), o `null` si no hubo. */
+    llegadas: { archivo: string; huella: string; lote_huella: string } | null;
     umbrales_aplicados: Umbrales;
     umbrales_del_plan: Umbrales;
     revisor_simulado: TextoBilingue;
@@ -600,12 +614,24 @@ export async function generarInforme(
   const { plan, corrida } = e;
   const m = corrida.manifiesto;
   const umbrales = m.umbrales_aplicados as Umbrales;
-  const vistas = vistasDeCorrida(corrida.trazas, e.casos, umbrales);
+  // S9: la pre-pasada del reloj. Corre la cola sobre las trazas y deja `en_plazo` en el contexto de cada caso; sin capa
+  // de llegadas (o sin bloque en el plan), la regla de C11 queda «señal faltante» y el informe lo dice.
+  const sim = plan.simulacion_de_plazos;
+  const medidos =
+    sim && e.llegadas ? medirPlazos(sim, e.llegadas, corrida.trazas) : null;
+  const vistas = vistasDeCorrida(
+    corrida.trazas,
+    e.casos,
+    umbrales,
+    medidos?.enPlazo,
+  );
+  // Cada lado (repeticiones, línea base) se mide con su propia cola: no pausan los mismos casos.
   const vistasDe = (c: CorridaLeida) =>
     vistasDeCorrida(
       c.trazas,
       e.casos,
       c.manifiesto.umbrales_aplicados as Umbrales,
+      enPlazoDe(sim, e.llegadas, c.trazas),
     );
 
   const criterios = evaluarCriterios(
@@ -701,6 +727,10 @@ export async function generarInforme(
     contrato_de_grafo: contrato,
     casos_ejemplares: ejemplares(vistas, criterios, riesgos, evaluadores),
     playground: playground(plan, corrida, vistas, umbrales),
+    plazos:
+      sim && medidos
+        ? informeDePlazos(sim, medidos, minutosPorPersona(plan))
+        : null,
     ficha_reproducibilidad: {
       plan: {
         id: plan.id,
@@ -744,6 +774,13 @@ export async function generarInforme(
         ? {
             corrida_id: e.base.manifiesto.corrida_id,
             huella: e.base.manifiesto.huella,
+          }
+        : null,
+      llegadas: e.llegadas
+        ? {
+            archivo: entrada.archivoLlegadas ?? "",
+            huella: e.llegadas.huella,
+            lote_huella: e.llegadas.lote.huella,
           }
         : null,
       umbrales_aplicados: umbrales,

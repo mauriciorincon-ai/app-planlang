@@ -81,5 +81,7 @@ export interface ResumenDeClase {
   en_cola: number;
   /** Las que se decidieron fuera de plazo. */
   tardias: number;
+  /** La espera mediana entre las que esperaron al auditor (rango más cercano; 0 si ninguna esperó). */
+  espera_mediana_min: number;
   espera_max_min: number;
 }

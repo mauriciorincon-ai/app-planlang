@@ -7,6 +7,7 @@ import type { TextoBilingue } from "../formatos/bilingue";
 import type { JsonValor } from "../formatos/jcs";
 import type { Traza } from "../formatos/traza";
 import type { CasoDeDemo as Caso } from "../sintetico/de-demo";
+import { DEMO_B } from "../sintetico/demo-b/esquema";
 import {
   contextoDesdeObjeto,
   ErrorEvaluacion,
@@ -58,16 +59,16 @@ export const VOCABULARIO: Readonly<Record<string, TextoBilingue>> = {
     en: "What the adversary attacks: inyeccion, dato_sensible or homonimo (null if not adversarial).",
   },
   verdad_conocida: {
-    es: "La respuesta correcta del caso, fijada al generarlo.",
-    en: "The case's correct answer, fixed when it was generated.",
+    es: "La respuesta correcta del caso, fijada al generarlo. En el demo B, `tipo_solicitante` vale «natural» cuando el caso no lo declara.",
+    en: "The case's correct answer, fixed when it was generated. In demo B, `tipo_solicitante` is “natural” when the case does not declare it.",
   },
   umbral: {
     es: "Los umbrales aplicados en la corrida (umbral.U1, umbral.U2…).",
     en: "The thresholds applied in the run (umbral.U1, umbral.U2…).",
   },
   en_plazo: {
-    es: "Si el caso se decidió dentro del plazo de su clase en el reloj simulado del lote (null si el lote no trae llegadas o la clase no tiene plazo).",
-    en: "Whether the case was decided within its class deadline on the batch's simulated clock (null if the batch has no arrivals or the class has no deadline).",
+    es: "Si el caso se decidió dentro del plazo de su clase en el reloj simulado del lote. Vale null si la clase no tiene plazo (la urgencia no espera) y no existe si la corrida se verifica sin la capa de llegadas.",
+    en: "Whether the case was decided within its class deadline on the batch's simulated clock. It is null if the class has no deadline (emergencies do not wait) and it does not exist if the run is verified without the arrivals layer.",
   },
 };
 
@@ -141,13 +142,32 @@ export function documentoVerificado(doc: JsonValor | undefined): JsonValor {
   };
 }
 
+/**
+ * La verdad conocida tal como la leen las reglas. En el demo B, `tipo_solicitante` es opcional en el dato (los lotes
+ * anteriores al S9 no lo traen, y sus bytes no cambian) y su ausencia significa «persona natural», como lo entiende el
+ * agente simulado. Sin este valor por omisión, una regla cuya población dice `tipo_solicitante == 'juridica'` dejaría a
+ * cada persona natural dentro de la población como «no evaluable», en vez de fuera de ella.
+ */
+function verdadDeCaso(caso: Caso): JsonValor {
+  const v = caso.verdad_conocida as unknown as { [k: string]: JsonValor };
+  return caso.demo_id === DEMO_B && v["tipo_solicitante"] === undefined
+    ? { ...v, tipo_solicitante: "natural" }
+    : (v as JsonValor);
+}
+
+/** Si el caso se decidió en plazo, según la cola del lote: por id de caso. Ausente = el lote no trae llegadas. */
+export type EnPlazoPorCaso = ReadonlyMap<string, boolean | null>;
+
 export function objetoDeCaso(
   caso: Caso,
   traza: Traza,
   umbrales: Umbrales,
+  enPlazo?: EnPlazoPorCaso,
 ): Record<string, JsonValor> {
   return {
     ...traza.senales,
+    // S9: solo existe si el lote trae su capa de llegadas; sin ella la regla queda «señal faltante», no «incumple».
+    ...(enPlazo ? { en_plazo: enPlazo.get(caso.id) ?? null } : {}),
     todos: true,
     caso: caso.id,
     extraccion: (traza.extraccion ?? null) as JsonValor,
@@ -162,7 +182,7 @@ export function objetoDeCaso(
     tipo: caso.tipo,
     subtipo: caso.subtipo,
     adversario_detalle: caso.adversario_detalle,
-    verdad_conocida: caso.verdad_conocida as unknown as JsonValor,
+    verdad_conocida: verdadDeCaso(caso),
     umbral: umbrales,
   };
 }
@@ -171,8 +191,9 @@ export function contextoDeCaso(
   caso: Caso,
   traza: Traza,
   umbrales: Umbrales,
+  enPlazo?: EnPlazoPorCaso,
 ): Contexto {
-  return contextoDeObjeto(caso, objetoDeCaso(caso, traza, umbrales));
+  return contextoDeObjeto(caso, objetoDeCaso(caso, traza, umbrales, enPlazo));
 }
 
 /**
@@ -246,6 +267,7 @@ export function vistasDeCorrida(
   trazas: readonly Traza[],
   casos: ReadonlyMap<string, Caso>,
   umbrales: Umbrales,
+  enPlazo?: EnPlazoPorCaso,
 ): VistaDeCaso[] {
   return trazas.map((traza) => {
     const caso = casos.get(traza.caso_id) as Caso;
@@ -253,7 +275,7 @@ export function vistasDeCorrida(
       caso_id: traza.caso_id,
       caso,
       traza,
-      ctx: contextoDeCaso(caso, traza, umbrales),
+      ctx: contextoDeCaso(caso, traza, umbrales, enPlazo),
     };
   });
 }
