@@ -1,0 +1,703 @@
+{
+  "casos": [
+    {
+      "nombre": "lote:B-001:normal_juridica_cadena_profunda",
+      "resultado": {
+        "beneficiarios": [
+          "SYN-ID-255838",
+          "SYN-ID-895969"
+        ],
+        "controla": "SYN-ID-255838",
+        "participaciones": [
+          {
+            "den": "25",
+            "documento": "SYN-ID-116705",
+            "num": "6",
+            "porcentaje": "24.00"
+          },
+          {
+            "den": "5",
+            "documento": "SYN-ID-130033",
+            "num": "1",
+            "porcentaje": "20.00"
+          },
+          {
+            "den": "5",
+            "documento": "SYN-ID-255838",
+            "num": "1",
+            "porcentaje": "20.00"
+          },
+          {
+            "den": "25",
+            "documento": "SYN-ID-895969",
+            "num": "9",
+            "porcentaje": "36.00"
+          }
+        ],
+        "por_participacion": [
+          "SYN-ID-895969"
+        ],
+        "problemas": [],
+        "valida": true
+      }
+    },
+    {
+      "nombre": "lote:B-004:normal_juridica_directa",
+      "resultado": {
+        "beneficiarios": [
+          "SYN-ID-283693",
+          "SYN-ID-503561"
+        ],
+        "controla": "SYN-ID-283693",
+        "participaciones": [
+          {
+            "den": "5",
+            "documento": "SYN-ID-283693",
+            "num": "3",
+            "porcentaje": "60.00"
+          },
+          {
+            "den": "5",
+            "documento": "SYN-ID-503561",
+            "num": "2",
+            "porcentaje": "40.00"
+          }
+        ],
+        "por_participacion": [
+          "SYN-ID-283693",
+          "SYN-ID-503561"
+        ],
+        "problemas": [],
+        "valida": true
+      }
+    },
+    {
+      "nombre": "lote:B-009:borde_juridica_indirecta_cruza_25",
+      "resultado": {
+        "beneficiarios": [
+          "SYN-ID-203565",
+          "SYN-ID-340382"
+        ],
+        "controla": "SYN-ID-340382",
+        "participaciones": [
+          {
+            "den": "5",
+            "documento": "SYN-ID-131971",
+            "num": "1",
+            "porcentaje": "20.00"
+          },
+          {
+            "den": "10",
+            "documento": "SYN-ID-203565",
+            "num": "3",
+            "porcentaje": "30.00"
+          },
+          {
+            "den": "2",
+            "documento": "SYN-ID-340382",
+            "num": "1",
+            "porcentaje": "50.00"
+          }
+        ],
+        "por_participacion": [
+          "SYN-ID-203565",
+          "SYN-ID-340382"
+        ],
+        "problemas": [],
+        "valida": true
+      }
+    },
+    {
+      "nombre": "lote:B-010:borde_juridica_indirecta_bajo_25",
+      "resultado": {
+        "beneficiarios": [
+          "SYN-ID-653357"
+        ],
+        "controla": "SYN-ID-653357",
+        "participaciones": [
+          {
+            "den": "10000",
+            "documento": "SYN-ID-410607",
+            "num": "2499",
+            "porcentaje": "24.99"
+          },
+          {
+            "den": "10000",
+            "documento": "SYN-ID-412312",
+            "num": "2499",
+            "porcentaje": "24.99"
+          },
+          {
+            "den": "5000",
+            "documento": "SYN-ID-653357",
+            "num": "2501",
+            "porcentaje": "50.02"
+          }
+        ],
+        "por_participacion": [
+          "SYN-ID-653357"
+        ],
+        "problemas": [],
+        "valida": true
+      }
+    },
+    {
+      "nombre": "lote:B-012:borde_juridica_exacta_25",
+      "resultado": {
+        "beneficiarios": [
+          "SYN-ID-430536",
+          "SYN-ID-823058"
+        ],
+        "controla": "SYN-ID-823058",
+        "participaciones": [
+          {
+            "den": "4",
+            "documento": "SYN-ID-430536",
+            "num": "1",
+            "porcentaje": "25.00"
+          },
+          {
+            "den": "20",
+            "documento": "SYN-ID-546023",
+            "num": "3",
+            "porcentaje": "15.00"
+          },
+          {
+            "den": "5",
+            "documento": "SYN-ID-823058",
+            "num": "3",
+            "porcentaje": "60.00"
+          }
+        ],
+        "por_participacion": [
+          "SYN-ID-430536",
+          "SYN-ID-823058"
+        ],
+        "problemas": [],
+        "valida": true
+      }
+    },
+    {
+      "nombre": "lote:B-013:adversario_juridica_beneficiario_homonimo",
+      "resultado": {
+        "beneficiarios": [
+          "SYN-ID-127536",
+          "SYN-ID-483759"
+        ],
+        "controla": "SYN-ID-483759",
+        "participaciones": [
+          {
+            "den": "10",
+            "documento": "SYN-ID-127536",
+            "num": "7",
+            "porcentaje": "70.00"
+          },
+          {
+            "den": "10",
+            "documento": "SYN-ID-483759",
+            "num": "3",
+            "porcentaje": "30.00"
+          }
+        ],
+        "por_participacion": [
+          "SYN-ID-127536",
+          "SYN-ID-483759"
+        ],
+        "problemas": [],
+        "valida": true
+      }
+    },
+    {
+      "nombre": "lote:B-014:borde_juridica_dos_caminos",
+      "resultado": {
+        "beneficiarios": [
+          "SYN-ID-269642",
+          "SYN-ID-377327",
+          "SYN-ID-748390",
+          "SYN-ID-754685"
+        ],
+        "controla": "SYN-ID-377327",
+        "participaciones": [
+          {
+            "den": "25",
+            "documento": "SYN-ID-269642",
+            "num": "7",
+            "porcentaje": "28.00"
+          },
+          {
+            "den": "5",
+            "documento": "SYN-ID-377327",
+            "num": "1",
+            "porcentaje": "20.00"
+          },
+          {
+            "den": "50",
+            "documento": "SYN-ID-748390",
+            "num": "13",
+            "porcentaje": "26.00"
+          },
+          {
+            "den": "50",
+            "documento": "SYN-ID-754685",
+            "num": "13",
+            "porcentaje": "26.00"
+          }
+        ],
+        "por_participacion": [
+          "SYN-ID-269642",
+          "SYN-ID-748390",
+          "SYN-ID-754685"
+        ],
+        "problemas": [],
+        "valida": true
+      }
+    },
+    {
+      "nombre": "lote:B-020:normal_juridica_control_no_dueno",
+      "resultado": {
+        "beneficiarios": [
+          "SYN-ID-625319"
+        ],
+        "controla": "SYN-ID-625319",
+        "participaciones": [
+          {
+            "den": "5",
+            "documento": "SYN-ID-189929",
+            "num": "1",
+            "porcentaje": "20.00"
+          },
+          {
+            "den": "5",
+            "documento": "SYN-ID-482619",
+            "num": "1",
+            "porcentaje": "20.00"
+          },
+          {
+            "den": "5",
+            "documento": "SYN-ID-528950",
+            "num": "1",
+            "porcentaje": "20.00"
+          },
+          {
+            "den": "1",
+            "documento": "SYN-ID-625319",
+            "num": "0",
+            "porcentaje": "0.00"
+          },
+          {
+            "den": "5",
+            "documento": "SYN-ID-701978",
+            "num": "1",
+            "porcentaje": "20.00"
+          },
+          {
+            "den": "5",
+            "documento": "SYN-ID-980618",
+            "num": "1",
+            "porcentaje": "20.00"
+          }
+        ],
+        "por_participacion": [],
+        "problemas": [],
+        "valida": true
+      }
+    },
+    {
+      "nombre": "borde-25-exacto-por-dos-vias",
+      "resultado": {
+        "beneficiarios": [
+          "SYN-ID-000001",
+          "SYN-ID-000002"
+        ],
+        "controla": "SYN-ID-000002",
+        "participaciones": [
+          {
+            "den": "4",
+            "documento": "SYN-ID-000001",
+            "num": "1",
+            "porcentaje": "25.00"
+          },
+          {
+            "den": "5",
+            "documento": "SYN-ID-000002",
+            "num": "3",
+            "porcentaje": "60.00"
+          },
+          {
+            "den": "20",
+            "documento": "SYN-ID-000003",
+            "num": "3",
+            "porcentaje": "15.00"
+          }
+        ],
+        "por_participacion": [
+          "SYN-ID-000001",
+          "SYN-ID-000002"
+        ],
+        "problemas": [],
+        "valida": true
+      }
+    },
+    {
+      "nombre": "borde-24-99",
+      "resultado": {
+        "beneficiarios": [
+          "SYN-ID-000003"
+        ],
+        "controla": "SYN-ID-000003",
+        "participaciones": [
+          {
+            "den": "10000",
+            "documento": "SYN-ID-000001",
+            "num": "2499",
+            "porcentaje": "24.99"
+          },
+          {
+            "den": "10000",
+            "documento": "SYN-ID-000002",
+            "num": "2499",
+            "porcentaje": "24.99"
+          },
+          {
+            "den": "5000",
+            "documento": "SYN-ID-000003",
+            "num": "2501",
+            "porcentaje": "50.02"
+          }
+        ],
+        "por_participacion": [
+          "SYN-ID-000003"
+        ],
+        "problemas": [],
+        "valida": true
+      }
+    },
+    {
+      "nombre": "borde-24-995-se-muestra-25-y-no-llega",
+      "resultado": {
+        "beneficiarios": [
+          "SYN-ID-000002"
+        ],
+        "controla": null,
+        "participaciones": [
+          {
+            "den": "20000",
+            "documento": "SYN-ID-000001",
+            "num": "4999",
+            "porcentaje": "25.00"
+          },
+          {
+            "den": "10000",
+            "documento": "SYN-ID-000002",
+            "num": "5001",
+            "porcentaje": "50.01"
+          }
+        ],
+        "por_participacion": [
+          "SYN-ID-000002"
+        ],
+        "problemas": [],
+        "valida": true
+      }
+    },
+    {
+      "nombre": "dos-caminos-suman-26",
+      "resultado": {
+        "beneficiarios": [
+          "SYN-ID-000001",
+          "SYN-ID-000002",
+          "SYN-ID-000003",
+          "SYN-ID-000004"
+        ],
+        "controla": "SYN-ID-000002",
+        "participaciones": [
+          {
+            "den": "50",
+            "documento": "SYN-ID-000001",
+            "num": "13",
+            "porcentaje": "26.00"
+          },
+          {
+            "den": "5",
+            "documento": "SYN-ID-000002",
+            "num": "1",
+            "porcentaje": "20.00"
+          },
+          {
+            "den": "25",
+            "documento": "SYN-ID-000003",
+            "num": "7",
+            "porcentaje": "28.00"
+          },
+          {
+            "den": "50",
+            "documento": "SYN-ID-000004",
+            "num": "13",
+            "porcentaje": "26.00"
+          }
+        ],
+        "por_participacion": [
+          "SYN-ID-000001",
+          "SYN-ID-000003",
+          "SYN-ID-000004"
+        ],
+        "problemas": [],
+        "valida": true
+      }
+    },
+    {
+      "nombre": "cadena-de-cuatro-niveles",
+      "resultado": {
+        "beneficiarios": [
+          "SYN-ID-000001",
+          "SYN-ID-000002"
+        ],
+        "controla": "SYN-ID-000002",
+        "participaciones": [
+          {
+            "den": "25",
+            "documento": "SYN-ID-000001",
+            "num": "9",
+            "porcentaje": "36.00"
+          },
+          {
+            "den": "5",
+            "documento": "SYN-ID-000002",
+            "num": "1",
+            "porcentaje": "20.00"
+          },
+          {
+            "den": "25",
+            "documento": "SYN-ID-000003",
+            "num": "6",
+            "porcentaje": "24.00"
+          },
+          {
+            "den": "5",
+            "documento": "SYN-ID-000004",
+            "num": "1",
+            "porcentaje": "20.00"
+          }
+        ],
+        "por_participacion": [
+          "SYN-ID-000001"
+        ],
+        "problemas": [],
+        "valida": true
+      }
+    },
+    {
+      "nombre": "tercios-redondeo",
+      "resultado": {
+        "beneficiarios": [
+          "SYN-ID-000001",
+          "SYN-ID-000002",
+          "SYN-ID-000003"
+        ],
+        "controla": null,
+        "participaciones": [
+          {
+            "den": "10000",
+            "documento": "SYN-ID-000001",
+            "num": "3333",
+            "porcentaje": "33.33"
+          },
+          {
+            "den": "10000",
+            "documento": "SYN-ID-000002",
+            "num": "3333",
+            "porcentaje": "33.33"
+          },
+          {
+            "den": "5000",
+            "documento": "SYN-ID-000003",
+            "num": "1667",
+            "porcentaje": "33.34"
+          }
+        ],
+        "por_participacion": [
+          "SYN-ID-000001",
+          "SYN-ID-000002",
+          "SYN-ID-000003"
+        ],
+        "problemas": [],
+        "valida": true
+      }
+    },
+    {
+      "nombre": "solo-control",
+      "resultado": {
+        "beneficiarios": [
+          "SYN-ID-000006"
+        ],
+        "controla": "SYN-ID-000006",
+        "participaciones": [
+          {
+            "den": "5",
+            "documento": "SYN-ID-000001",
+            "num": "1",
+            "porcentaje": "20.00"
+          },
+          {
+            "den": "5",
+            "documento": "SYN-ID-000002",
+            "num": "1",
+            "porcentaje": "20.00"
+          },
+          {
+            "den": "5",
+            "documento": "SYN-ID-000003",
+            "num": "1",
+            "porcentaje": "20.00"
+          },
+          {
+            "den": "5",
+            "documento": "SYN-ID-000004",
+            "num": "1",
+            "porcentaje": "20.00"
+          },
+          {
+            "den": "5",
+            "documento": "SYN-ID-000005",
+            "num": "1",
+            "porcentaje": "20.00"
+          },
+          {
+            "den": "1",
+            "documento": "SYN-ID-000006",
+            "num": "0",
+            "porcentaje": "0.00"
+          }
+        ],
+        "por_participacion": [],
+        "problemas": [],
+        "valida": true
+      }
+    },
+    {
+      "nombre": "sin-control-ni-dueno-sobre-25",
+      "resultado": {
+        "beneficiarios": [],
+        "controla": null,
+        "participaciones": [
+          {
+            "den": "5",
+            "documento": "SYN-ID-000001",
+            "num": "1",
+            "porcentaje": "20.00"
+          },
+          {
+            "den": "5",
+            "documento": "SYN-ID-000002",
+            "num": "1",
+            "porcentaje": "20.00"
+          },
+          {
+            "den": "5",
+            "documento": "SYN-ID-000003",
+            "num": "1",
+            "porcentaje": "20.00"
+          },
+          {
+            "den": "5",
+            "documento": "SYN-ID-000004",
+            "num": "1",
+            "porcentaje": "20.00"
+          },
+          {
+            "den": "5",
+            "documento": "SYN-ID-000005",
+            "num": "1",
+            "porcentaje": "20.00"
+          }
+        ],
+        "por_participacion": [],
+        "problemas": [],
+        "valida": true
+      }
+    },
+    {
+      "nombre": "ciclo",
+      "resultado": {
+        "beneficiarios": null,
+        "controla": "SYN-ID-000001",
+        "participaciones": [],
+        "por_participacion": [],
+        "problemas": [
+          "ciclo:SYN-NIT-200000"
+        ],
+        "valida": false
+      }
+    },
+    {
+      "nombre": "suma-sobre-100",
+      "resultado": {
+        "beneficiarios": null,
+        "controla": "SYN-ID-000001",
+        "participaciones": [],
+        "por_participacion": [],
+        "problemas": [
+          "suma_sobre_100:SYN-NIT-100000"
+        ],
+        "valida": false
+      }
+    },
+    {
+      "nombre": "porcentaje-tres-decimales-y-cero",
+      "resultado": {
+        "beneficiarios": null,
+        "controla": "SYN-ID-000001",
+        "participaciones": [],
+        "por_participacion": [],
+        "problemas": [
+          "porcentaje_invalido:SYN-ID-000001>SYN-NIT-100000",
+          "porcentaje_invalido:SYN-ID-000002>SYN-NIT-100000",
+          "porcentaje_invalido:SYN-ID-000003>SYN-NIT-100000"
+        ],
+        "valida": false
+      }
+    },
+    {
+      "nombre": "referencias-rotas",
+      "resultado": {
+        "beneficiarios": null,
+        "controla": "SYN-ID-000008",
+        "participaciones": [],
+        "por_participacion": [],
+        "problemas": [
+          "referencia_rota:SYN-ID-000009",
+          "referencia_rota:SYN-NIT-999999",
+          "referencia_rota:SYN-ID-000008"
+        ],
+        "valida": false
+      }
+    },
+    {
+      "nombre": "sin-entidad",
+      "resultado": {
+        "beneficiarios": null,
+        "controla": "SYN-ID-000001",
+        "participaciones": [],
+        "por_participacion": [],
+        "problemas": [
+          "sin_entidad"
+        ],
+        "valida": false
+      }
+    },
+    {
+      "nombre": "id-repetido",
+      "resultado": {
+        "beneficiarios": null,
+        "controla": "SYN-ID-000001",
+        "participaciones": [],
+        "por_participacion": [],
+        "problemas": [
+          "id_repetido:SYN-ID-000001"
+        ],
+        "valida": false
+      }
+    }
+  ],
+  "formato": "planlang-contrato-beneficiarios/v1"
+}

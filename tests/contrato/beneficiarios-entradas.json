@@ -1,0 +1,1279 @@
+{
+  "casos": [
+    {
+      "estructura": {
+        "controla": {
+          "documento": "SYN-ID-255838",
+          "rol": "gerente_general"
+        },
+        "entidad": "SYN-NIT-853096",
+        "entidades": [
+          {
+            "nit": "SYN-NIT-853096",
+            "nombre": "Constructora Robledal SAS"
+          },
+          {
+            "nit": "SYN-NIT-826002",
+            "nombre": "Constructora Altavera SAS"
+          },
+          {
+            "nit": "SYN-NIT-816212",
+            "nombre": "Comercializadora Cumbrisa SAS"
+          }
+        ],
+        "participaciones": [
+          {
+            "participada": "SYN-NIT-853096",
+            "porcentaje": "80.00",
+            "titular": "SYN-NIT-826002"
+          },
+          {
+            "participada": "SYN-NIT-853096",
+            "porcentaje": "20.00",
+            "titular": "SYN-ID-255838"
+          },
+          {
+            "participada": "SYN-NIT-826002",
+            "porcentaje": "75.00",
+            "titular": "SYN-NIT-816212"
+          },
+          {
+            "participada": "SYN-NIT-826002",
+            "porcentaje": "25.00",
+            "titular": "SYN-ID-130033"
+          },
+          {
+            "participada": "SYN-NIT-816212",
+            "porcentaje": "60.00",
+            "titular": "SYN-ID-895969"
+          },
+          {
+            "participada": "SYN-NIT-816212",
+            "porcentaje": "40.00",
+            "titular": "SYN-ID-116705"
+          }
+        ],
+        "personas": [
+          {
+            "documento": "SYN-ID-895969",
+            "nombre": "Lucía Murenzo Lismaren"
+          },
+          {
+            "documento": "SYN-ID-255838",
+            "nombre": "Gonzalo Jornalés Palvoresa"
+          },
+          {
+            "documento": "SYN-ID-116705",
+            "nombre": "Clara Palvoresa Arbusel"
+          },
+          {
+            "documento": "SYN-ID-130033",
+            "nombre": "Tomás Holvedo Tescolar"
+          }
+        ]
+      },
+      "nombre": "lote:B-001:normal_juridica_cadena_profunda"
+    },
+    {
+      "estructura": {
+        "controla": {
+          "documento": "SYN-ID-283693",
+          "rol": "representante_legal"
+        },
+        "entidad": "SYN-NIT-955861",
+        "entidades": [
+          {
+            "nit": "SYN-NIT-955861",
+            "nombre": "Constructora Robledal SAS"
+          }
+        ],
+        "participaciones": [
+          {
+            "participada": "SYN-NIT-955861",
+            "porcentaje": "60.00",
+            "titular": "SYN-ID-283693"
+          },
+          {
+            "participada": "SYN-NIT-955861",
+            "porcentaje": "40.00",
+            "titular": "SYN-ID-503561"
+          }
+        ],
+        "personas": [
+          {
+            "documento": "SYN-ID-283693",
+            "nombre": "Julián Tescolar Mirvanda"
+          },
+          {
+            "documento": "SYN-ID-503561",
+            "nombre": "Camila Jornalés Tescolar"
+          }
+        ]
+      },
+      "nombre": "lote:B-004:normal_juridica_directa"
+    },
+    {
+      "estructura": {
+        "controla": {
+          "documento": "SYN-ID-340382",
+          "rol": "presidente"
+        },
+        "entidad": "SYN-NIT-272572",
+        "entidades": [
+          {
+            "nit": "SYN-NIT-272572",
+            "nombre": "Agroindustrial Sauzaleda SAS"
+          },
+          {
+            "nit": "SYN-NIT-875396",
+            "nombre": "Textiles Pradolargo SAS"
+          }
+        ],
+        "participaciones": [
+          {
+            "participada": "SYN-NIT-272572",
+            "porcentaje": "50.00",
+            "titular": "SYN-NIT-875396"
+          },
+          {
+            "participada": "SYN-NIT-272572",
+            "porcentaje": "50.00",
+            "titular": "SYN-ID-340382"
+          },
+          {
+            "participada": "SYN-NIT-875396",
+            "porcentaje": "60.00",
+            "titular": "SYN-ID-203565"
+          },
+          {
+            "participada": "SYN-NIT-875396",
+            "porcentaje": "40.00",
+            "titular": "SYN-ID-131971"
+          }
+        ],
+        "personas": [
+          {
+            "documento": "SYN-ID-203565",
+            "nombre": "Lucía Holvedo Escalvo"
+          },
+          {
+            "documento": "SYN-ID-131971",
+            "nombre": "Lorena Varnesa Ferrusca"
+          },
+          {
+            "documento": "SYN-ID-340382",
+            "nombre": "Paula Jornalés Escalvo"
+          }
+        ]
+      },
+      "nombre": "lote:B-009:borde_juridica_indirecta_cruza_25"
+    },
+    {
+      "estructura": {
+        "controla": {
+          "documento": "SYN-ID-653357",
+          "rol": "presidente"
+        },
+        "entidad": "SYN-NIT-801152",
+        "entidades": [
+          {
+            "nit": "SYN-NIT-801152",
+            "nombre": "Textiles Pradolargo SAS"
+          },
+          {
+            "nit": "SYN-NIT-211179",
+            "nombre": "Comercializadora Cumbrisa SAS"
+          }
+        ],
+        "participaciones": [
+          {
+            "participada": "SYN-NIT-801152",
+            "porcentaje": "49.98",
+            "titular": "SYN-NIT-211179"
+          },
+          {
+            "participada": "SYN-NIT-801152",
+            "porcentaje": "50.02",
+            "titular": "SYN-ID-653357"
+          },
+          {
+            "participada": "SYN-NIT-211179",
+            "porcentaje": "50.00",
+            "titular": "SYN-ID-412312"
+          },
+          {
+            "participada": "SYN-NIT-211179",
+            "porcentaje": "50.00",
+            "titular": "SYN-ID-410607"
+          }
+        ],
+        "personas": [
+          {
+            "documento": "SYN-ID-412312",
+            "nombre": "Clara Escalvo Arbusel"
+          },
+          {
+            "documento": "SYN-ID-410607",
+            "nombre": "Simón Mirvanda Ferrusca"
+          },
+          {
+            "documento": "SYN-ID-653357",
+            "nombre": "Martín Quindral Escalvo"
+          }
+        ]
+      },
+      "nombre": "lote:B-010:borde_juridica_indirecta_bajo_25"
+    },
+    {
+      "estructura": {
+        "controla": {
+          "documento": "SYN-ID-823058",
+          "rol": "representante_legal"
+        },
+        "entidad": "SYN-NIT-725939",
+        "entidades": [
+          {
+            "nit": "SYN-NIT-725939",
+            "nombre": "Comercializadora Pradolargo SAS"
+          },
+          {
+            "nit": "SYN-NIT-125535",
+            "nombre": "Textiles Cumbrisa SAS"
+          }
+        ],
+        "participaciones": [
+          {
+            "participada": "SYN-NIT-725939",
+            "porcentaje": "10.00",
+            "titular": "SYN-ID-430536"
+          },
+          {
+            "participada": "SYN-NIT-725939",
+            "porcentaje": "60.00",
+            "titular": "SYN-ID-823058"
+          },
+          {
+            "participada": "SYN-NIT-725939",
+            "porcentaje": "30.00",
+            "titular": "SYN-NIT-125535"
+          },
+          {
+            "participada": "SYN-NIT-125535",
+            "porcentaje": "50.00",
+            "titular": "SYN-ID-430536"
+          },
+          {
+            "participada": "SYN-NIT-125535",
+            "porcentaje": "50.00",
+            "titular": "SYN-ID-546023"
+          }
+        ],
+        "personas": [
+          {
+            "documento": "SYN-ID-430536",
+            "nombre": "Valeria Mirvanda Ferrusca"
+          },
+          {
+            "documento": "SYN-ID-823058",
+            "nombre": "Clara Ozcorra Murenzo"
+          },
+          {
+            "documento": "SYN-ID-546023",
+            "nombre": "Clara Palvoresa Escalvo"
+          }
+        ]
+      },
+      "nombre": "lote:B-012:borde_juridica_exacta_25"
+    },
+    {
+      "estructura": {
+        "controla": {
+          "documento": "SYN-ID-483759",
+          "rol": "representante_legal"
+        },
+        "entidad": "SYN-NIT-304138",
+        "entidades": [
+          {
+            "nit": "SYN-NIT-304138",
+            "nombre": "Inversiones Farallones SAS"
+          }
+        ],
+        "participaciones": [
+          {
+            "participada": "SYN-NIT-304138",
+            "porcentaje": "70.00",
+            "titular": "SYN-ID-127536"
+          },
+          {
+            "participada": "SYN-NIT-304138",
+            "porcentaje": "30.00",
+            "titular": "SYN-ID-483759"
+          }
+        ],
+        "personas": [
+          {
+            "documento": "SYN-ID-127536",
+            "nombre": "Pablo Vosgrane Imrahel"
+          },
+          {
+            "documento": "SYN-ID-483759",
+            "nombre": "Martín Mirvanda Lismaren"
+          }
+        ]
+      },
+      "nombre": "lote:B-013:adversario_juridica_beneficiario_homonimo"
+    },
+    {
+      "estructura": {
+        "controla": {
+          "documento": "SYN-ID-377327",
+          "rol": "presidente"
+        },
+        "entidad": "SYN-NIT-564482",
+        "entidades": [
+          {
+            "nit": "SYN-NIT-564482",
+            "nombre": "Constructora Farallones SAS"
+          },
+          {
+            "nit": "SYN-NIT-187076",
+            "nombre": "Agroindustrial Pradolargo SAS"
+          },
+          {
+            "nit": "SYN-NIT-801246",
+            "nombre": "Comercializadora Valdecira SAS"
+          }
+        ],
+        "participaciones": [
+          {
+            "participada": "SYN-NIT-564482",
+            "porcentaje": "40.00",
+            "titular": "SYN-NIT-187076"
+          },
+          {
+            "participada": "SYN-NIT-564482",
+            "porcentaje": "40.00",
+            "titular": "SYN-NIT-801246"
+          },
+          {
+            "participada": "SYN-NIT-564482",
+            "porcentaje": "20.00",
+            "titular": "SYN-ID-377327"
+          },
+          {
+            "participada": "SYN-NIT-187076",
+            "porcentaje": "30.00",
+            "titular": "SYN-ID-748390"
+          },
+          {
+            "participada": "SYN-NIT-187076",
+            "porcentaje": "70.00",
+            "titular": "SYN-ID-269642"
+          },
+          {
+            "participada": "SYN-NIT-801246",
+            "porcentaje": "35.00",
+            "titular": "SYN-ID-748390"
+          },
+          {
+            "participada": "SYN-NIT-801246",
+            "porcentaje": "65.00",
+            "titular": "SYN-ID-754685"
+          }
+        ],
+        "personas": [
+          {
+            "documento": "SYN-ID-748390",
+            "nombre": "Tomás Galdrin Rindaval"
+          },
+          {
+            "documento": "SYN-ID-377327",
+            "nombre": "Gonzalo Mirvanda Escalvo"
+          },
+          {
+            "documento": "SYN-ID-269642",
+            "nombre": "Paula Tescolar Ozcorra"
+          },
+          {
+            "documento": "SYN-ID-754685",
+            "nombre": "Simón Sorbelín Jornalés"
+          }
+        ]
+      },
+      "nombre": "lote:B-014:borde_juridica_dos_caminos"
+    },
+    {
+      "estructura": {
+        "controla": {
+          "documento": "SYN-ID-625319",
+          "rol": "gerente_general"
+        },
+        "entidad": "SYN-NIT-949851",
+        "entidades": [
+          {
+            "nit": "SYN-NIT-949851",
+            "nombre": "Comercializadora Farallones SAS"
+          }
+        ],
+        "participaciones": [
+          {
+            "participada": "SYN-NIT-949851",
+            "porcentaje": "20.00",
+            "titular": "SYN-ID-980618"
+          },
+          {
+            "participada": "SYN-NIT-949851",
+            "porcentaje": "20.00",
+            "titular": "SYN-ID-528950"
+          },
+          {
+            "participada": "SYN-NIT-949851",
+            "porcentaje": "20.00",
+            "titular": "SYN-ID-482619"
+          },
+          {
+            "participada": "SYN-NIT-949851",
+            "porcentaje": "20.00",
+            "titular": "SYN-ID-701978"
+          },
+          {
+            "participada": "SYN-NIT-949851",
+            "porcentaje": "20.00",
+            "titular": "SYN-ID-189929"
+          }
+        ],
+        "personas": [
+          {
+            "documento": "SYN-ID-980618",
+            "nombre": "Gonzalo Sorbelín Nudrega"
+          },
+          {
+            "documento": "SYN-ID-528950",
+            "nombre": "Martín Murenzo Holvedo"
+          },
+          {
+            "documento": "SYN-ID-482619",
+            "nombre": "Clara Rindaval Tescolar"
+          },
+          {
+            "documento": "SYN-ID-701978",
+            "nombre": "Camila Galdrin Quindral"
+          },
+          {
+            "documento": "SYN-ID-189929",
+            "nombre": "Valeria Rindaval Lismaren"
+          },
+          {
+            "documento": "SYN-ID-625319",
+            "nombre": "Elena Murenzo Ozcorra"
+          }
+        ]
+      },
+      "nombre": "lote:B-020:normal_juridica_control_no_dueno"
+    },
+    {
+      "estructura": {
+        "controla": {
+          "documento": "SYN-ID-000002",
+          "rol": "gerente_general"
+        },
+        "entidad": "SYN-NIT-100000",
+        "entidades": [
+          {
+            "nit": "SYN-NIT-100000",
+            "nombre": "Sociedad SYN-NIT-100000"
+          },
+          {
+            "nit": "SYN-NIT-200000",
+            "nombre": "Sociedad SYN-NIT-200000"
+          },
+          {
+            "nit": "SYN-NIT-300000",
+            "nombre": "Sociedad SYN-NIT-300000"
+          }
+        ],
+        "participaciones": [
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "10.00",
+            "titular": "SYN-ID-000001"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "60.00",
+            "titular": "SYN-ID-000002"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "30.00",
+            "titular": "SYN-NIT-200000"
+          },
+          {
+            "participada": "SYN-NIT-200000",
+            "porcentaje": "50.00",
+            "titular": "SYN-ID-000001"
+          },
+          {
+            "participada": "SYN-NIT-200000",
+            "porcentaje": "50.00",
+            "titular": "SYN-ID-000003"
+          }
+        ],
+        "personas": [
+          {
+            "documento": "SYN-ID-000001",
+            "nombre": "Persona 1"
+          },
+          {
+            "documento": "SYN-ID-000002",
+            "nombre": "Persona 2"
+          },
+          {
+            "documento": "SYN-ID-000003",
+            "nombre": "Persona 3"
+          }
+        ]
+      },
+      "nombre": "borde-25-exacto-por-dos-vias"
+    },
+    {
+      "estructura": {
+        "controla": {
+          "documento": "SYN-ID-000003",
+          "rol": "gerente_general"
+        },
+        "entidad": "SYN-NIT-100000",
+        "entidades": [
+          {
+            "nit": "SYN-NIT-100000",
+            "nombre": "Sociedad SYN-NIT-100000"
+          },
+          {
+            "nit": "SYN-NIT-200000",
+            "nombre": "Sociedad SYN-NIT-200000"
+          },
+          {
+            "nit": "SYN-NIT-300000",
+            "nombre": "Sociedad SYN-NIT-300000"
+          }
+        ],
+        "participaciones": [
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "49.98",
+            "titular": "SYN-NIT-200000"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "50.02",
+            "titular": "SYN-ID-000003"
+          },
+          {
+            "participada": "SYN-NIT-200000",
+            "porcentaje": "50.00",
+            "titular": "SYN-ID-000001"
+          },
+          {
+            "participada": "SYN-NIT-200000",
+            "porcentaje": "50.00",
+            "titular": "SYN-ID-000002"
+          }
+        ],
+        "personas": [
+          {
+            "documento": "SYN-ID-000001",
+            "nombre": "Persona 1"
+          },
+          {
+            "documento": "SYN-ID-000002",
+            "nombre": "Persona 2"
+          },
+          {
+            "documento": "SYN-ID-000003",
+            "nombre": "Persona 3"
+          }
+        ]
+      },
+      "nombre": "borde-24-99"
+    },
+    {
+      "estructura": {
+        "controla": null,
+        "entidad": "SYN-NIT-100000",
+        "entidades": [
+          {
+            "nit": "SYN-NIT-100000",
+            "nombre": "Sociedad SYN-NIT-100000"
+          },
+          {
+            "nit": "SYN-NIT-200000",
+            "nombre": "Sociedad SYN-NIT-200000"
+          },
+          {
+            "nit": "SYN-NIT-300000",
+            "nombre": "Sociedad SYN-NIT-300000"
+          }
+        ],
+        "participaciones": [
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "49.99",
+            "titular": "SYN-NIT-200000"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "50.01",
+            "titular": "SYN-ID-000002"
+          },
+          {
+            "participada": "SYN-NIT-200000",
+            "porcentaje": "50.00",
+            "titular": "SYN-ID-000001"
+          }
+        ],
+        "personas": [
+          {
+            "documento": "SYN-ID-000001",
+            "nombre": "Persona 1"
+          },
+          {
+            "documento": "SYN-ID-000002",
+            "nombre": "Persona 2"
+          }
+        ]
+      },
+      "nombre": "borde-24-995-se-muestra-25-y-no-llega"
+    },
+    {
+      "estructura": {
+        "controla": {
+          "documento": "SYN-ID-000002",
+          "rol": "gerente_general"
+        },
+        "entidad": "SYN-NIT-100000",
+        "entidades": [
+          {
+            "nit": "SYN-NIT-100000",
+            "nombre": "Sociedad SYN-NIT-100000"
+          },
+          {
+            "nit": "SYN-NIT-200000",
+            "nombre": "Sociedad SYN-NIT-200000"
+          },
+          {
+            "nit": "SYN-NIT-300000",
+            "nombre": "Sociedad SYN-NIT-300000"
+          }
+        ],
+        "participaciones": [
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "40.00",
+            "titular": "SYN-NIT-200000"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "40.00",
+            "titular": "SYN-NIT-300000"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "20.00",
+            "titular": "SYN-ID-000002"
+          },
+          {
+            "participada": "SYN-NIT-200000",
+            "porcentaje": "30.00",
+            "titular": "SYN-ID-000001"
+          },
+          {
+            "participada": "SYN-NIT-200000",
+            "porcentaje": "70.00",
+            "titular": "SYN-ID-000003"
+          },
+          {
+            "participada": "SYN-NIT-300000",
+            "porcentaje": "35.00",
+            "titular": "SYN-ID-000001"
+          },
+          {
+            "participada": "SYN-NIT-300000",
+            "porcentaje": "65.00",
+            "titular": "SYN-ID-000004"
+          }
+        ],
+        "personas": [
+          {
+            "documento": "SYN-ID-000001",
+            "nombre": "Persona 1"
+          },
+          {
+            "documento": "SYN-ID-000002",
+            "nombre": "Persona 2"
+          },
+          {
+            "documento": "SYN-ID-000003",
+            "nombre": "Persona 3"
+          },
+          {
+            "documento": "SYN-ID-000004",
+            "nombre": "Persona 4"
+          }
+        ]
+      },
+      "nombre": "dos-caminos-suman-26"
+    },
+    {
+      "estructura": {
+        "controla": {
+          "documento": "SYN-ID-000002",
+          "rol": "gerente_general"
+        },
+        "entidad": "SYN-NIT-100000",
+        "entidades": [
+          {
+            "nit": "SYN-NIT-100000",
+            "nombre": "Sociedad SYN-NIT-100000"
+          },
+          {
+            "nit": "SYN-NIT-200000",
+            "nombre": "Sociedad SYN-NIT-200000"
+          },
+          {
+            "nit": "SYN-NIT-300000",
+            "nombre": "Sociedad SYN-NIT-300000"
+          }
+        ],
+        "participaciones": [
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "80.00",
+            "titular": "SYN-NIT-200000"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "20.00",
+            "titular": "SYN-ID-000002"
+          },
+          {
+            "participada": "SYN-NIT-200000",
+            "porcentaje": "75.00",
+            "titular": "SYN-NIT-300000"
+          },
+          {
+            "participada": "SYN-NIT-200000",
+            "porcentaje": "25.00",
+            "titular": "SYN-ID-000004"
+          },
+          {
+            "participada": "SYN-NIT-300000",
+            "porcentaje": "60.00",
+            "titular": "SYN-ID-000001"
+          },
+          {
+            "participada": "SYN-NIT-300000",
+            "porcentaje": "40.00",
+            "titular": "SYN-ID-000003"
+          }
+        ],
+        "personas": [
+          {
+            "documento": "SYN-ID-000001",
+            "nombre": "Persona 1"
+          },
+          {
+            "documento": "SYN-ID-000002",
+            "nombre": "Persona 2"
+          },
+          {
+            "documento": "SYN-ID-000003",
+            "nombre": "Persona 3"
+          },
+          {
+            "documento": "SYN-ID-000004",
+            "nombre": "Persona 4"
+          }
+        ]
+      },
+      "nombre": "cadena-de-cuatro-niveles"
+    },
+    {
+      "estructura": {
+        "controla": null,
+        "entidad": "SYN-NIT-100000",
+        "entidades": [
+          {
+            "nit": "SYN-NIT-100000",
+            "nombre": "Sociedad SYN-NIT-100000"
+          },
+          {
+            "nit": "SYN-NIT-200000",
+            "nombre": "Sociedad SYN-NIT-200000"
+          },
+          {
+            "nit": "SYN-NIT-300000",
+            "nombre": "Sociedad SYN-NIT-300000"
+          }
+        ],
+        "participaciones": [
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "100",
+            "titular": "SYN-NIT-200000"
+          },
+          {
+            "participada": "SYN-NIT-200000",
+            "porcentaje": "33.33",
+            "titular": "SYN-ID-000001"
+          },
+          {
+            "participada": "SYN-NIT-200000",
+            "porcentaje": "33.33",
+            "titular": "SYN-ID-000002"
+          },
+          {
+            "participada": "SYN-NIT-200000",
+            "porcentaje": "33.34",
+            "titular": "SYN-ID-000003"
+          }
+        ],
+        "personas": [
+          {
+            "documento": "SYN-ID-000001",
+            "nombre": "Persona 1"
+          },
+          {
+            "documento": "SYN-ID-000002",
+            "nombre": "Persona 2"
+          },
+          {
+            "documento": "SYN-ID-000003",
+            "nombre": "Persona 3"
+          }
+        ]
+      },
+      "nombre": "tercios-redondeo"
+    },
+    {
+      "estructura": {
+        "controla": {
+          "documento": "SYN-ID-000006",
+          "rol": "gerente_general"
+        },
+        "entidad": "SYN-NIT-100000",
+        "entidades": [
+          {
+            "nit": "SYN-NIT-100000",
+            "nombre": "Sociedad SYN-NIT-100000"
+          },
+          {
+            "nit": "SYN-NIT-200000",
+            "nombre": "Sociedad SYN-NIT-200000"
+          },
+          {
+            "nit": "SYN-NIT-300000",
+            "nombre": "Sociedad SYN-NIT-300000"
+          }
+        ],
+        "participaciones": [
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "20.00",
+            "titular": "SYN-ID-000001"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "20.00",
+            "titular": "SYN-ID-000002"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "20.00",
+            "titular": "SYN-ID-000003"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "20.00",
+            "titular": "SYN-ID-000004"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "20.00",
+            "titular": "SYN-ID-000005"
+          }
+        ],
+        "personas": [
+          {
+            "documento": "SYN-ID-000001",
+            "nombre": "Persona 1"
+          },
+          {
+            "documento": "SYN-ID-000002",
+            "nombre": "Persona 2"
+          },
+          {
+            "documento": "SYN-ID-000003",
+            "nombre": "Persona 3"
+          },
+          {
+            "documento": "SYN-ID-000004",
+            "nombre": "Persona 4"
+          },
+          {
+            "documento": "SYN-ID-000005",
+            "nombre": "Persona 5"
+          },
+          {
+            "documento": "SYN-ID-000006",
+            "nombre": "Persona 6"
+          }
+        ]
+      },
+      "nombre": "solo-control"
+    },
+    {
+      "estructura": {
+        "controla": null,
+        "entidad": "SYN-NIT-100000",
+        "entidades": [
+          {
+            "nit": "SYN-NIT-100000",
+            "nombre": "Sociedad SYN-NIT-100000"
+          },
+          {
+            "nit": "SYN-NIT-200000",
+            "nombre": "Sociedad SYN-NIT-200000"
+          },
+          {
+            "nit": "SYN-NIT-300000",
+            "nombre": "Sociedad SYN-NIT-300000"
+          }
+        ],
+        "participaciones": [
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "20",
+            "titular": "SYN-ID-000001"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "20",
+            "titular": "SYN-ID-000002"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "20",
+            "titular": "SYN-ID-000003"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "20",
+            "titular": "SYN-ID-000004"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "20",
+            "titular": "SYN-ID-000005"
+          }
+        ],
+        "personas": [
+          {
+            "documento": "SYN-ID-000001",
+            "nombre": "Persona 1"
+          },
+          {
+            "documento": "SYN-ID-000002",
+            "nombre": "Persona 2"
+          },
+          {
+            "documento": "SYN-ID-000003",
+            "nombre": "Persona 3"
+          },
+          {
+            "documento": "SYN-ID-000004",
+            "nombre": "Persona 4"
+          },
+          {
+            "documento": "SYN-ID-000005",
+            "nombre": "Persona 5"
+          }
+        ]
+      },
+      "nombre": "sin-control-ni-dueno-sobre-25"
+    },
+    {
+      "estructura": {
+        "controla": {
+          "documento": "SYN-ID-000001",
+          "rol": "gerente_general"
+        },
+        "entidad": "SYN-NIT-100000",
+        "entidades": [
+          {
+            "nit": "SYN-NIT-100000",
+            "nombre": "Sociedad SYN-NIT-100000"
+          },
+          {
+            "nit": "SYN-NIT-200000",
+            "nombre": "Sociedad SYN-NIT-200000"
+          },
+          {
+            "nit": "SYN-NIT-300000",
+            "nombre": "Sociedad SYN-NIT-300000"
+          }
+        ],
+        "participaciones": [
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "50.00",
+            "titular": "SYN-NIT-200000"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "50.00",
+            "titular": "SYN-ID-000001"
+          },
+          {
+            "participada": "SYN-NIT-200000",
+            "porcentaje": "50.00",
+            "titular": "SYN-NIT-300000"
+          },
+          {
+            "participada": "SYN-NIT-300000",
+            "porcentaje": "50.00",
+            "titular": "SYN-NIT-200000"
+          }
+        ],
+        "personas": [
+          {
+            "documento": "SYN-ID-000001",
+            "nombre": "Persona 1"
+          }
+        ]
+      },
+      "nombre": "ciclo"
+    },
+    {
+      "estructura": {
+        "controla": {
+          "documento": "SYN-ID-000001",
+          "rol": "gerente_general"
+        },
+        "entidad": "SYN-NIT-100000",
+        "entidades": [
+          {
+            "nit": "SYN-NIT-100000",
+            "nombre": "Sociedad SYN-NIT-100000"
+          },
+          {
+            "nit": "SYN-NIT-200000",
+            "nombre": "Sociedad SYN-NIT-200000"
+          },
+          {
+            "nit": "SYN-NIT-300000",
+            "nombre": "Sociedad SYN-NIT-300000"
+          }
+        ],
+        "participaciones": [
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "60.00",
+            "titular": "SYN-ID-000001"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "50.00",
+            "titular": "SYN-ID-000002"
+          }
+        ],
+        "personas": [
+          {
+            "documento": "SYN-ID-000001",
+            "nombre": "Persona 1"
+          },
+          {
+            "documento": "SYN-ID-000002",
+            "nombre": "Persona 2"
+          }
+        ]
+      },
+      "nombre": "suma-sobre-100"
+    },
+    {
+      "estructura": {
+        "controla": {
+          "documento": "SYN-ID-000001",
+          "rol": "gerente_general"
+        },
+        "entidad": "SYN-NIT-100000",
+        "entidades": [
+          {
+            "nit": "SYN-NIT-100000",
+            "nombre": "Sociedad SYN-NIT-100000"
+          },
+          {
+            "nit": "SYN-NIT-200000",
+            "nombre": "Sociedad SYN-NIT-200000"
+          },
+          {
+            "nit": "SYN-NIT-300000",
+            "nombre": "Sociedad SYN-NIT-300000"
+          }
+        ],
+        "participaciones": [
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "33.333",
+            "titular": "SYN-ID-000001"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "0",
+            "titular": "SYN-ID-000002"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "60,5",
+            "titular": "SYN-ID-000003"
+          }
+        ],
+        "personas": [
+          {
+            "documento": "SYN-ID-000001",
+            "nombre": "Persona 1"
+          },
+          {
+            "documento": "SYN-ID-000002",
+            "nombre": "Persona 2"
+          },
+          {
+            "documento": "SYN-ID-000003",
+            "nombre": "Persona 3"
+          }
+        ]
+      },
+      "nombre": "porcentaje-tres-decimales-y-cero"
+    },
+    {
+      "estructura": {
+        "controla": {
+          "documento": "SYN-ID-000008",
+          "rol": "gerente_general"
+        },
+        "entidad": "SYN-NIT-100000",
+        "entidades": [
+          {
+            "nit": "SYN-NIT-100000",
+            "nombre": "Sociedad SYN-NIT-100000"
+          },
+          {
+            "nit": "SYN-NIT-200000",
+            "nombre": "Sociedad SYN-NIT-200000"
+          },
+          {
+            "nit": "SYN-NIT-300000",
+            "nombre": "Sociedad SYN-NIT-300000"
+          }
+        ],
+        "participaciones": [
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "50",
+            "titular": "SYN-ID-000009"
+          },
+          {
+            "participada": "SYN-NIT-999999",
+            "porcentaje": "50",
+            "titular": "SYN-ID-000001"
+          }
+        ],
+        "personas": [
+          {
+            "documento": "SYN-ID-000001",
+            "nombre": "Persona 1"
+          }
+        ]
+      },
+      "nombre": "referencias-rotas"
+    },
+    {
+      "estructura": {
+        "controla": {
+          "documento": "SYN-ID-000001",
+          "rol": "gerente_general"
+        },
+        "entidad": null,
+        "entidades": [
+          {
+            "nit": "SYN-NIT-100000",
+            "nombre": "Sociedad SYN-NIT-100000"
+          },
+          {
+            "nit": "SYN-NIT-200000",
+            "nombre": "Sociedad SYN-NIT-200000"
+          },
+          {
+            "nit": "SYN-NIT-300000",
+            "nombre": "Sociedad SYN-NIT-300000"
+          }
+        ],
+        "participaciones": [
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "50",
+            "titular": "SYN-ID-000001"
+          }
+        ],
+        "personas": [
+          {
+            "documento": "SYN-ID-000001",
+            "nombre": "Persona 1"
+          }
+        ]
+      },
+      "nombre": "sin-entidad"
+    },
+    {
+      "estructura": {
+        "controla": {
+          "documento": "SYN-ID-000001",
+          "rol": "gerente_general"
+        },
+        "entidad": "SYN-NIT-100000",
+        "entidades": [
+          {
+            "nit": "SYN-NIT-100000",
+            "nombre": "Sociedad SYN-NIT-100000"
+          },
+          {
+            "nit": "SYN-NIT-200000",
+            "nombre": "Sociedad SYN-NIT-200000"
+          },
+          {
+            "nit": "SYN-NIT-300000",
+            "nombre": "Sociedad SYN-NIT-300000"
+          }
+        ],
+        "participaciones": [
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "50",
+            "titular": "SYN-ID-000001"
+          }
+        ],
+        "personas": [
+          {
+            "documento": "SYN-ID-000001",
+            "nombre": "Persona 1"
+          },
+          {
+            "documento": "SYN-ID-000001",
+            "nombre": "Persona 1 bis"
+          }
+        ]
+      },
+      "nombre": "id-repetido"
+    }
+  ],
+  "formato": "planlang-contrato-beneficiarios-entradas/v1"
+}
