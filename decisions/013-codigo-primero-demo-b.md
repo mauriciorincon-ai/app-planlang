@@ -13,6 +13,8 @@ is not decided; it is retried.
 > **Cítese por tema:** «ADR código primero del demo B».
 
 **Estado:** aceptado · **Fecha:** 2026-10-04 · **Sprint:** S3 «Demo B y el cierre del ciclo» (fase 2)
+**Enmendado por:** ADR-019 (S9, plan B v1.2): el extractor también copia la estructura societaria y el código decide los
+beneficiarios finales; vea su «Enmienda de ADR-013».
 
 ## 1. La funcionalidad, en una frase de usuario
 
