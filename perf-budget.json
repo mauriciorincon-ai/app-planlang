@@ -115,5 +115,14 @@
         "budget": 2800
       }
     ]
+  },
+  {
+    "path": "/*/despliegue",
+    "timings": [
+      {
+        "metric": "largest-contentful-paint",
+        "budget": 2800
+      }
+    ]
   }
 ]

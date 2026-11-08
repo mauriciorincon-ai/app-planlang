@@ -196,7 +196,6 @@ describe("P1 Entrada renderizada", () => {
       "Medí la brecha",
       "Los demos",
       "Cumple con alertas",
-      "En construcción",
     ])
       expect(screen.getAllByText(t).length).toBeGreaterThan(0);
     expect(
@@ -289,7 +288,7 @@ describe("regla 5-a: la forma no depende del perfil ni del cliente", () => {
   });
 });
 
-describe("AU-S2-6 (S3): los dos demos tienen su fila real; lo que sigue del roadmap dice «en construcción» (regla dura 15)", () => {
+describe("AU-S2-6 (S3): los dos demos tienen su fila real; la VISION no deja nada «en construcción» en la Entrada (regla dura 15)", () => {
   it.each(["es", "en"] as const)("en %s", (idioma) => {
     const { container } = render(
       <Demos filas={filas[idioma]} idioma={idioma} />,
@@ -313,15 +312,11 @@ describe("AU-S2-6 (S3): los dos demos tienen su fila real; lo que sigue del road
       `/${idioma}/demo-b/agente`,
       `/${idioma}/demo-b/playground`,
       `/${idioma}/demo-b/caso`,
+      `/${idioma}/demo-b/despliegue`,
     ]);
-    // El entrevistador ya corrió (propuso el plan B), «Comparar dos corridas» ya tiene página (S4) y la calibración con
-    // garantía ya está en la Brecha y el playground (S8): salen del roadmap. Queda uno, en construcción.
-    const ids = [...container.querySelectorAll("[data-roadmap]")].map(
-      (x) => (x as HTMLElement).dataset.roadmap,
-    );
-    expect(ids).toEqual(["recorrido-animado-de-un-caso"]);
-    for (const li of container.querySelectorAll("[data-roadmap]"))
-      expect(li.querySelector('[data-v="beta"]')).not.toBeNull();
-    expect(container.querySelectorAll('[data-v="beta"]')).toHaveLength(1);
+    // Con el recorrido del caso y el diseño de despliegue (S10) la VISION está construida: nada queda «en
+    // construcción» en la Entrada, ni lista ni marca.
+    expect(container.querySelectorAll("[data-roadmap]")).toHaveLength(0);
+    expect(container.querySelectorAll('[data-v="beta"]')).toHaveLength(0);
   });
 });

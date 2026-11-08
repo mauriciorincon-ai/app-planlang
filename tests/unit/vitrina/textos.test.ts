@@ -11,6 +11,7 @@ import type { TextoBilingue } from "@core/formatos/bilingue";
 import { datosDemo } from "@/lib/datos/vitrina";
 import * as brecha from "@/textos/brecha";
 import * as comun from "@/textos/comun";
+import * as despliegue from "@/textos/despliegue";
 import * as entrada from "@/textos/entrada";
 import * as fichas from "@/textos/fichas";
 import * as garantia from "@/textos/garantia";
@@ -50,6 +51,7 @@ const todos = [
   ...bilingues(brecha, "brecha"),
   ...bilingues(playground, "playground"),
   ...bilingues(recorrido, "recorrido"),
+  ...bilingues(despliegue, "despliegue"),
   ...bilingues(garantia, "garantia"),
   ...bilingues(fichas, "fichas"),
   ...bilingues(planSinCorrida, "plan-sin-corrida"),

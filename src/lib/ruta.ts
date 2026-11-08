@@ -19,11 +19,12 @@ export const PANTALLAS = [
 ] as const;
 export type Pantalla = (typeof PANTALLAS)[number];
 /**
- * Las páginas de la vitrina: las pestañas (`PANTALLAS`) y las que no son pestaña. `comparar` (S4) se entra desde la
- * Entrada y desde la Brecha del A; no tiene pestaña y no existe en el demo B. `planes` (S5) es un plan aprobado sin
+ * Las páginas de la vitrina: las pestañas (`PANTALLAS`) y las que no son pestaña. `despliegue` (S10, el diseño de
+ * despliegue) se entra desde la Entrada y desde el Agente de cada demo; existe en los dos y tampoco tiene pestaña.
+ * `comparar` (S4) se entra desde la Entrada y desde la Brecha del A; no tiene pestaña y no existe en el demo B. `planes` (S5) es un plan aprobado sin
  * corrida (`/es/planes/<id>`): no es de ningún demo y no lleva segmento.
  */
-export type Pagina = Pantalla | "comparar" | "planes";
+export type Pagina = Pantalla | "comparar" | "planes" | "despliegue";
 
 /**
  * En qué demos existe una página (S7, B-5): las pestañas, en todos; `comparar`, solo en el A; `planes` en ninguno, es de

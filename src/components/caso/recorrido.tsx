@@ -14,7 +14,7 @@ import { Seccion } from "../seccion";
 import { TablaReglas } from "./caso";
 import { ControlRecorrido } from "./control-recorrido";
 
-const SALTO =
+export const SALTO =
   "sr-only focus:not-sr-only focus:inline-block focus:rounded-control focus:border focus:border-tinta-1 focus:bg-fondo focus:px-3 focus:py-2 focus:text-chico focus:text-tinta-1 focus:outline-2 focus:outline-offset-2 focus:outline-tinta-1";
 
 /**

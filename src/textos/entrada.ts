@@ -152,23 +152,6 @@ export const DEMOS = {
  * plan (S3); «Comparar dos corridas» (S4) y «Calibración conformal y cobertura conjunta» (S8), que viven en la Brecha y
  * el playground. Ninguno se simula.
  */
-export const EN_CONSTRUCCION = {
-  titulo: tb("También en construcción", "Also under construction"),
-  nota: tb(
-    "Del roadmap. Nada de esto se simula aquí.",
-    "From the roadmap. None of it is simulated here.",
-  ),
-  items: [
-    {
-      id: "recorrido-animado-de-un-caso",
-      titulo: tb(
-        "Recorrido animado de un caso por el grafo",
-        "Animated walk of one case through the graph",
-      ),
-    },
-  ],
-};
-
 export const PREGUNTA = {
   rotulo: tb(
     "La pregunta de entrevista de 2026",

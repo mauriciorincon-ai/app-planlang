@@ -10,8 +10,9 @@ import type { IdDemo } from "@/lib/demos";
 import { ruta } from "@/lib/ruta";
 import type { FilaDemo } from "@/lib/vista/entrada";
 import { PESTANAS, VEREDICTOS } from "@/textos/comun";
-import { DEMOS, EN_CONSTRUCCION, LIDER } from "@/textos/entrada";
+import { DEMOS, LIDER } from "@/textos/entrada";
 import { ENLACE as ENLACE_COMPARAR } from "@/textos/comparar";
+import { ENLACE as ENLACE_DESPLIEGUE } from "@/textos/despliegue";
 import { Baldosa } from "../baldosa";
 import { BotonEnlace } from "../boton";
 import { Chip } from "../chip";
@@ -174,6 +175,12 @@ export function Demos({
                   >
                     {DEMOS.unCaso[idioma]}
                   </a>
+                  <a
+                    className="text-tinta-2 hover:text-tinta-1"
+                    href={ruta(idioma, "despliegue", undefined, f.id)}
+                  >
+                    {ENLACE_DESPLIEGUE.rotulo[idioma]}
+                  </a>
                   {f.comparar ? (
                     <a
                       className="text-tinta-2 hover:text-tinta-1"
@@ -187,30 +194,6 @@ export function Demos({
             </div>
           );
         })}
-      </div>
-      <div className="mt-2 border-t border-linea pt-4">
-        <h3 className="text-sub font-semibold text-tinta-2">
-          {EN_CONSTRUCCION.titulo[idioma]}
-        </h3>
-        <p className="mt-1 text-apoyo text-tinta-2">
-          {EN_CONSTRUCCION.nota[idioma]}
-        </p>
-        <ul className="mt-3 grid gap-2">
-          {EN_CONSTRUCCION.items.map((x) => (
-            <li
-              key={x.id}
-              data-roadmap={x.id}
-              className="flex flex-wrap items-center gap-x-3 gap-y-1.5"
-            >
-              <Veredicto clase="beta" chico>
-                {VEREDICTOS.en_construccion[idioma]}
-              </Veredicto>
-              <span className="text-apoyo text-tinta-2">
-                {x.titulo[idioma]}
-              </span>
-            </li>
-          ))}
-        </ul>
       </div>
     </Seccion>
   );
