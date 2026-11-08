@@ -49,12 +49,22 @@ REGLAS_BENEFICIARIOS: dict[str, dict[str, str]] = {
     "RB-03": {
         "es": "La estructura societaria no cierra (un ciclo, una suma de más del 100 %, un porcentaje mal "
         "escrito o "
-        "alguien que no está en ella): no se calculan beneficiarios y decide una persona.",
+        "alguien que no está en ella): no se calculan beneficiarios y se suma una inconsistencia (RB-03): con la tolerancia que fija el plan "
+        "(0) decide una persona.",
         "en": "The ownership structure does not add up (a cycle, a total above 100%, a malformed "
         "percentage or "
-        "someone missing from it): no beneficial owners are computed and a person decides.",
+        "someone missing from it): no beneficial owners are computed and one inconsistency is added (RB-03): with the tolerance the plan "
+        "sets (0) a person decides.",
     },
 }
+
+
+# Tope de tamaño (S10, M3): la suma recorre CADA camino de propiedad, y en una estructura dirigida sin ciclos los
+# caminos crecen como 2^(n-2). Con estos topes el peor caso son ~16 mil caminos y la recursión no pasa de 16 niveles; más
+# grande que esto no se calcula (RB-03: decide una persona). Las mismas cifras viven en el gemelo TS.
+TOPE_ENTIDADES = 16
+TOPE_PERSONAS = 32
+TOPE_PARTICIPACIONES = 64
 
 
 def centesimas(texto: Any) -> int | None:
@@ -104,6 +114,15 @@ def _problemas(e: Mapping[str, Any]) -> list[str]:
     entidades = _lista(e.get("entidades"))
     personas = _lista(e.get("personas"))
     participaciones = _lista(e.get("participaciones"))
+    for campo, n, tope in (
+        ("entidades", len(entidades), TOPE_ENTIDADES),
+        ("personas", len(personas), TOPE_PERSONAS),
+        ("participaciones", len(participaciones), TOPE_PARTICIPACIONES),
+    ):
+        if n > tope:
+            p.append(f"demasiado_grande:{campo}")
+    if p:
+        return p
     nits = {str(x.get("nit")) for x in entidades}
     docs = {str(x.get("documento")) for x in personas}
     entidad = e.get("entidad")

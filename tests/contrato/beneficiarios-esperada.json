@@ -736,6 +736,67 @@
         ],
         "valida": false
       }
+    },
+    {
+      "nombre": "en-el-tope-16-sociedades",
+      "resultado": {
+        "beneficiarios": [
+          "SYN-ID-000001"
+        ],
+        "controla": "SYN-ID-000001",
+        "participaciones": [
+          {
+            "den": "1",
+            "documento": "SYN-ID-000001",
+            "num": "1",
+            "porcentaje": "100.00"
+          }
+        ],
+        "por_participacion": [
+          "SYN-ID-000001"
+        ],
+        "problemas": [],
+        "valida": true
+      }
+    },
+    {
+      "nombre": "sobre-el-tope-17-sociedades",
+      "resultado": {
+        "beneficiarios": null,
+        "controla": "SYN-ID-000001",
+        "participaciones": [],
+        "por_participacion": [],
+        "problemas": [
+          "demasiado_grande:entidades"
+        ],
+        "valida": false
+      }
+    },
+    {
+      "nombre": "sobre-el-tope-33-personas",
+      "resultado": {
+        "beneficiarios": null,
+        "controla": "SYN-ID-000001",
+        "participaciones": [],
+        "por_participacion": [],
+        "problemas": [
+          "demasiado_grande:personas"
+        ],
+        "valida": false
+      }
+    },
+    {
+      "nombre": "sobre-el-tope-65-participaciones",
+      "resultado": {
+        "beneficiarios": null,
+        "controla": "SYN-ID-000001",
+        "participaciones": [],
+        "por_participacion": [],
+        "problemas": [
+          "demasiado_grande:participaciones"
+        ],
+        "valida": false
+      }
     }
   ],
   "formato": "planlang-contrato-beneficiarios/v1"

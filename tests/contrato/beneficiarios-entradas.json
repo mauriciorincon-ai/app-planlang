@@ -1411,6 +1411,1041 @@
         ]
       },
       "nombre": "id-repetido"
+    },
+    {
+      "estructura": {
+        "controla": {
+          "documento": "SYN-ID-000001",
+          "rol": "gerente_general"
+        },
+        "entidad": "SYN-NIT-000001",
+        "entidades": [
+          {
+            "nit": "SYN-NIT-000001",
+            "nombre": "Sociedad SYN-NIT-000001"
+          },
+          {
+            "nit": "SYN-NIT-000002",
+            "nombre": "Sociedad SYN-NIT-000002"
+          },
+          {
+            "nit": "SYN-NIT-000003",
+            "nombre": "Sociedad SYN-NIT-000003"
+          },
+          {
+            "nit": "SYN-NIT-000004",
+            "nombre": "Sociedad SYN-NIT-000004"
+          },
+          {
+            "nit": "SYN-NIT-000005",
+            "nombre": "Sociedad SYN-NIT-000005"
+          },
+          {
+            "nit": "SYN-NIT-000006",
+            "nombre": "Sociedad SYN-NIT-000006"
+          },
+          {
+            "nit": "SYN-NIT-000007",
+            "nombre": "Sociedad SYN-NIT-000007"
+          },
+          {
+            "nit": "SYN-NIT-000008",
+            "nombre": "Sociedad SYN-NIT-000008"
+          },
+          {
+            "nit": "SYN-NIT-000009",
+            "nombre": "Sociedad SYN-NIT-000009"
+          },
+          {
+            "nit": "SYN-NIT-000010",
+            "nombre": "Sociedad SYN-NIT-000010"
+          },
+          {
+            "nit": "SYN-NIT-000011",
+            "nombre": "Sociedad SYN-NIT-000011"
+          },
+          {
+            "nit": "SYN-NIT-000012",
+            "nombre": "Sociedad SYN-NIT-000012"
+          },
+          {
+            "nit": "SYN-NIT-000013",
+            "nombre": "Sociedad SYN-NIT-000013"
+          },
+          {
+            "nit": "SYN-NIT-000014",
+            "nombre": "Sociedad SYN-NIT-000014"
+          },
+          {
+            "nit": "SYN-NIT-000015",
+            "nombre": "Sociedad SYN-NIT-000015"
+          },
+          {
+            "nit": "SYN-NIT-000016",
+            "nombre": "Sociedad SYN-NIT-000016"
+          }
+        ],
+        "participaciones": [
+          {
+            "participada": "SYN-NIT-000001",
+            "porcentaje": "100",
+            "titular": "SYN-NIT-000002"
+          },
+          {
+            "participada": "SYN-NIT-000002",
+            "porcentaje": "100",
+            "titular": "SYN-NIT-000003"
+          },
+          {
+            "participada": "SYN-NIT-000003",
+            "porcentaje": "100",
+            "titular": "SYN-NIT-000004"
+          },
+          {
+            "participada": "SYN-NIT-000004",
+            "porcentaje": "100",
+            "titular": "SYN-NIT-000005"
+          },
+          {
+            "participada": "SYN-NIT-000005",
+            "porcentaje": "100",
+            "titular": "SYN-NIT-000006"
+          },
+          {
+            "participada": "SYN-NIT-000006",
+            "porcentaje": "100",
+            "titular": "SYN-NIT-000007"
+          },
+          {
+            "participada": "SYN-NIT-000007",
+            "porcentaje": "100",
+            "titular": "SYN-NIT-000008"
+          },
+          {
+            "participada": "SYN-NIT-000008",
+            "porcentaje": "100",
+            "titular": "SYN-NIT-000009"
+          },
+          {
+            "participada": "SYN-NIT-000009",
+            "porcentaje": "100",
+            "titular": "SYN-NIT-000010"
+          },
+          {
+            "participada": "SYN-NIT-000010",
+            "porcentaje": "100",
+            "titular": "SYN-NIT-000011"
+          },
+          {
+            "participada": "SYN-NIT-000011",
+            "porcentaje": "100",
+            "titular": "SYN-NIT-000012"
+          },
+          {
+            "participada": "SYN-NIT-000012",
+            "porcentaje": "100",
+            "titular": "SYN-NIT-000013"
+          },
+          {
+            "participada": "SYN-NIT-000013",
+            "porcentaje": "100",
+            "titular": "SYN-NIT-000014"
+          },
+          {
+            "participada": "SYN-NIT-000014",
+            "porcentaje": "100",
+            "titular": "SYN-NIT-000015"
+          },
+          {
+            "participada": "SYN-NIT-000015",
+            "porcentaje": "100",
+            "titular": "SYN-NIT-000016"
+          },
+          {
+            "participada": "SYN-NIT-000016",
+            "porcentaje": "100",
+            "titular": "SYN-ID-000001"
+          }
+        ],
+        "personas": [
+          {
+            "documento": "SYN-ID-000001",
+            "nombre": "Persona 1"
+          }
+        ]
+      },
+      "nombre": "en-el-tope-16-sociedades"
+    },
+    {
+      "estructura": {
+        "controla": {
+          "documento": "SYN-ID-000001",
+          "rol": "gerente_general"
+        },
+        "entidad": "SYN-NIT-000001",
+        "entidades": [
+          {
+            "nit": "SYN-NIT-000001",
+            "nombre": "Sociedad SYN-NIT-000001"
+          },
+          {
+            "nit": "SYN-NIT-000002",
+            "nombre": "Sociedad SYN-NIT-000002"
+          },
+          {
+            "nit": "SYN-NIT-000003",
+            "nombre": "Sociedad SYN-NIT-000003"
+          },
+          {
+            "nit": "SYN-NIT-000004",
+            "nombre": "Sociedad SYN-NIT-000004"
+          },
+          {
+            "nit": "SYN-NIT-000005",
+            "nombre": "Sociedad SYN-NIT-000005"
+          },
+          {
+            "nit": "SYN-NIT-000006",
+            "nombre": "Sociedad SYN-NIT-000006"
+          },
+          {
+            "nit": "SYN-NIT-000007",
+            "nombre": "Sociedad SYN-NIT-000007"
+          },
+          {
+            "nit": "SYN-NIT-000008",
+            "nombre": "Sociedad SYN-NIT-000008"
+          },
+          {
+            "nit": "SYN-NIT-000009",
+            "nombre": "Sociedad SYN-NIT-000009"
+          },
+          {
+            "nit": "SYN-NIT-000010",
+            "nombre": "Sociedad SYN-NIT-000010"
+          },
+          {
+            "nit": "SYN-NIT-000011",
+            "nombre": "Sociedad SYN-NIT-000011"
+          },
+          {
+            "nit": "SYN-NIT-000012",
+            "nombre": "Sociedad SYN-NIT-000012"
+          },
+          {
+            "nit": "SYN-NIT-000013",
+            "nombre": "Sociedad SYN-NIT-000013"
+          },
+          {
+            "nit": "SYN-NIT-000014",
+            "nombre": "Sociedad SYN-NIT-000014"
+          },
+          {
+            "nit": "SYN-NIT-000015",
+            "nombre": "Sociedad SYN-NIT-000015"
+          },
+          {
+            "nit": "SYN-NIT-000016",
+            "nombre": "Sociedad SYN-NIT-000016"
+          },
+          {
+            "nit": "SYN-NIT-000017",
+            "nombre": "Sociedad SYN-NIT-000017"
+          }
+        ],
+        "participaciones": [
+          {
+            "participada": "SYN-NIT-000001",
+            "porcentaje": "100",
+            "titular": "SYN-NIT-000002"
+          },
+          {
+            "participada": "SYN-NIT-000002",
+            "porcentaje": "100",
+            "titular": "SYN-NIT-000003"
+          },
+          {
+            "participada": "SYN-NIT-000003",
+            "porcentaje": "100",
+            "titular": "SYN-NIT-000004"
+          },
+          {
+            "participada": "SYN-NIT-000004",
+            "porcentaje": "100",
+            "titular": "SYN-NIT-000005"
+          },
+          {
+            "participada": "SYN-NIT-000005",
+            "porcentaje": "100",
+            "titular": "SYN-NIT-000006"
+          },
+          {
+            "participada": "SYN-NIT-000006",
+            "porcentaje": "100",
+            "titular": "SYN-NIT-000007"
+          },
+          {
+            "participada": "SYN-NIT-000007",
+            "porcentaje": "100",
+            "titular": "SYN-NIT-000008"
+          },
+          {
+            "participada": "SYN-NIT-000008",
+            "porcentaje": "100",
+            "titular": "SYN-NIT-000009"
+          },
+          {
+            "participada": "SYN-NIT-000009",
+            "porcentaje": "100",
+            "titular": "SYN-NIT-000010"
+          },
+          {
+            "participada": "SYN-NIT-000010",
+            "porcentaje": "100",
+            "titular": "SYN-NIT-000011"
+          },
+          {
+            "participada": "SYN-NIT-000011",
+            "porcentaje": "100",
+            "titular": "SYN-NIT-000012"
+          },
+          {
+            "participada": "SYN-NIT-000012",
+            "porcentaje": "100",
+            "titular": "SYN-NIT-000013"
+          },
+          {
+            "participada": "SYN-NIT-000013",
+            "porcentaje": "100",
+            "titular": "SYN-NIT-000014"
+          },
+          {
+            "participada": "SYN-NIT-000014",
+            "porcentaje": "100",
+            "titular": "SYN-NIT-000015"
+          },
+          {
+            "participada": "SYN-NIT-000015",
+            "porcentaje": "100",
+            "titular": "SYN-NIT-000016"
+          },
+          {
+            "participada": "SYN-NIT-000016",
+            "porcentaje": "100",
+            "titular": "SYN-NIT-000017"
+          },
+          {
+            "participada": "SYN-NIT-000017",
+            "porcentaje": "100",
+            "titular": "SYN-ID-000001"
+          }
+        ],
+        "personas": [
+          {
+            "documento": "SYN-ID-000001",
+            "nombre": "Persona 1"
+          }
+        ]
+      },
+      "nombre": "sobre-el-tope-17-sociedades"
+    },
+    {
+      "estructura": {
+        "controla": {
+          "documento": "SYN-ID-000001",
+          "rol": "gerente_general"
+        },
+        "entidad": "SYN-NIT-100000",
+        "entidades": [
+          {
+            "nit": "SYN-NIT-100000",
+            "nombre": "Sociedad SYN-NIT-100000"
+          },
+          {
+            "nit": "SYN-NIT-200000",
+            "nombre": "Sociedad SYN-NIT-200000"
+          },
+          {
+            "nit": "SYN-NIT-300000",
+            "nombre": "Sociedad SYN-NIT-300000"
+          }
+        ],
+        "participaciones": [
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "3.00",
+            "titular": "SYN-ID-000001"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "3.00",
+            "titular": "SYN-ID-000002"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "3.00",
+            "titular": "SYN-ID-000003"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "3.00",
+            "titular": "SYN-ID-000004"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "3.00",
+            "titular": "SYN-ID-000005"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "3.00",
+            "titular": "SYN-ID-000006"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "3.00",
+            "titular": "SYN-ID-000007"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "3.00",
+            "titular": "SYN-ID-000008"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "3.00",
+            "titular": "SYN-ID-000009"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "3.00",
+            "titular": "SYN-ID-000010"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "3.00",
+            "titular": "SYN-ID-000011"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "3.00",
+            "titular": "SYN-ID-000012"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "3.00",
+            "titular": "SYN-ID-000013"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "3.00",
+            "titular": "SYN-ID-000014"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "3.00",
+            "titular": "SYN-ID-000015"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "3.00",
+            "titular": "SYN-ID-000016"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "3.00",
+            "titular": "SYN-ID-000017"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "3.00",
+            "titular": "SYN-ID-000018"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "3.00",
+            "titular": "SYN-ID-000019"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "3.00",
+            "titular": "SYN-ID-000020"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "3.00",
+            "titular": "SYN-ID-000021"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "3.00",
+            "titular": "SYN-ID-000022"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "3.00",
+            "titular": "SYN-ID-000023"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "3.00",
+            "titular": "SYN-ID-000024"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "3.00",
+            "titular": "SYN-ID-000025"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "3.00",
+            "titular": "SYN-ID-000026"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "3.00",
+            "titular": "SYN-ID-000027"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "3.00",
+            "titular": "SYN-ID-000028"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "3.00",
+            "titular": "SYN-ID-000029"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "3.00",
+            "titular": "SYN-ID-000030"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "3.00",
+            "titular": "SYN-ID-000031"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "3.00",
+            "titular": "SYN-ID-000032"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "3.00",
+            "titular": "SYN-ID-000033"
+          }
+        ],
+        "personas": [
+          {
+            "documento": "SYN-ID-000001",
+            "nombre": "Persona 1"
+          },
+          {
+            "documento": "SYN-ID-000002",
+            "nombre": "Persona 2"
+          },
+          {
+            "documento": "SYN-ID-000003",
+            "nombre": "Persona 3"
+          },
+          {
+            "documento": "SYN-ID-000004",
+            "nombre": "Persona 4"
+          },
+          {
+            "documento": "SYN-ID-000005",
+            "nombre": "Persona 5"
+          },
+          {
+            "documento": "SYN-ID-000006",
+            "nombre": "Persona 6"
+          },
+          {
+            "documento": "SYN-ID-000007",
+            "nombre": "Persona 7"
+          },
+          {
+            "documento": "SYN-ID-000008",
+            "nombre": "Persona 8"
+          },
+          {
+            "documento": "SYN-ID-000009",
+            "nombre": "Persona 9"
+          },
+          {
+            "documento": "SYN-ID-000010",
+            "nombre": "Persona 10"
+          },
+          {
+            "documento": "SYN-ID-000011",
+            "nombre": "Persona 11"
+          },
+          {
+            "documento": "SYN-ID-000012",
+            "nombre": "Persona 12"
+          },
+          {
+            "documento": "SYN-ID-000013",
+            "nombre": "Persona 13"
+          },
+          {
+            "documento": "SYN-ID-000014",
+            "nombre": "Persona 14"
+          },
+          {
+            "documento": "SYN-ID-000015",
+            "nombre": "Persona 15"
+          },
+          {
+            "documento": "SYN-ID-000016",
+            "nombre": "Persona 16"
+          },
+          {
+            "documento": "SYN-ID-000017",
+            "nombre": "Persona 17"
+          },
+          {
+            "documento": "SYN-ID-000018",
+            "nombre": "Persona 18"
+          },
+          {
+            "documento": "SYN-ID-000019",
+            "nombre": "Persona 19"
+          },
+          {
+            "documento": "SYN-ID-000020",
+            "nombre": "Persona 20"
+          },
+          {
+            "documento": "SYN-ID-000021",
+            "nombre": "Persona 21"
+          },
+          {
+            "documento": "SYN-ID-000022",
+            "nombre": "Persona 22"
+          },
+          {
+            "documento": "SYN-ID-000023",
+            "nombre": "Persona 23"
+          },
+          {
+            "documento": "SYN-ID-000024",
+            "nombre": "Persona 24"
+          },
+          {
+            "documento": "SYN-ID-000025",
+            "nombre": "Persona 25"
+          },
+          {
+            "documento": "SYN-ID-000026",
+            "nombre": "Persona 26"
+          },
+          {
+            "documento": "SYN-ID-000027",
+            "nombre": "Persona 27"
+          },
+          {
+            "documento": "SYN-ID-000028",
+            "nombre": "Persona 28"
+          },
+          {
+            "documento": "SYN-ID-000029",
+            "nombre": "Persona 29"
+          },
+          {
+            "documento": "SYN-ID-000030",
+            "nombre": "Persona 30"
+          },
+          {
+            "documento": "SYN-ID-000031",
+            "nombre": "Persona 31"
+          },
+          {
+            "documento": "SYN-ID-000032",
+            "nombre": "Persona 32"
+          },
+          {
+            "documento": "SYN-ID-000033",
+            "nombre": "Persona 33"
+          }
+        ]
+      },
+      "nombre": "sobre-el-tope-33-personas"
+    },
+    {
+      "estructura": {
+        "controla": {
+          "documento": "SYN-ID-000001",
+          "rol": "gerente_general"
+        },
+        "entidad": "SYN-NIT-100000",
+        "entidades": [
+          {
+            "nit": "SYN-NIT-100000",
+            "nombre": "Sociedad SYN-NIT-100000"
+          },
+          {
+            "nit": "SYN-NIT-200000",
+            "nombre": "Sociedad SYN-NIT-200000"
+          },
+          {
+            "nit": "SYN-NIT-300000",
+            "nombre": "Sociedad SYN-NIT-300000"
+          }
+        ],
+        "participaciones": [
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000001"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000002"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000003"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000004"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000005"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000001"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000002"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000003"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000004"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000005"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000001"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000002"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000003"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000004"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000005"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000001"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000002"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000003"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000004"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000005"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000001"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000002"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000003"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000004"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000005"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000001"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000002"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000003"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000004"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000005"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000001"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000002"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000003"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000004"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000005"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000001"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000002"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000003"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000004"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000005"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000001"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000002"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000003"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000004"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000005"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000001"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000002"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000003"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000004"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000005"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000001"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000002"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000003"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000004"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000005"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000001"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000002"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000003"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000004"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000005"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000001"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000002"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000003"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000004"
+          },
+          {
+            "participada": "SYN-NIT-100000",
+            "porcentaje": "1.00",
+            "titular": "SYN-ID-000005"
+          }
+        ],
+        "personas": [
+          {
+            "documento": "SYN-ID-000001",
+            "nombre": "Persona 1"
+          },
+          {
+            "documento": "SYN-ID-000002",
+            "nombre": "Persona 2"
+          },
+          {
+            "documento": "SYN-ID-000003",
+            "nombre": "Persona 3"
+          },
+          {
+            "documento": "SYN-ID-000004",
+            "nombre": "Persona 4"
+          },
+          {
+            "documento": "SYN-ID-000005",
+            "nombre": "Persona 5"
+          }
+        ]
+      },
+      "nombre": "sobre-el-tope-65-participaciones"
     }
   ],
   "formato": "planlang-contrato-beneficiarios-entradas/v1"

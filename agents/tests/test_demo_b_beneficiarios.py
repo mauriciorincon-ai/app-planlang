@@ -53,7 +53,10 @@ class Contador(RespondedorSimulado):
 
 
 def correr(
-    caso: dict[str, Any], plan: PlanCargado = PLAN, linea_base: bool = False
+    caso: dict[str, Any],
+    plan: PlanCargado = PLAN,
+    linea_base: bool = False,
+    umbrales: dict[str, Any] | None = None,
 ) -> tuple[dict[str, Any], list[str]]:
     construir = construir_grafo_linea_base if linea_base else construir_grafo
     app = construir(plan, LISTAS, checkpointer=InMemorySaver())
@@ -62,7 +65,7 @@ def correr(
     modelo = crear_modelo("simulado", respondedor=Contador(entorno, titulos))
     ctx = ContextoCasoB(caso["id"], modelo, entorno, RelojFijo())
     cfg = {"configurable": {"thread_id": caso["id"]}}
-    s = app.invoke(estado_inicial(caso, plan.umbrales()), cfg, context=ctx)
+    s = app.invoke(estado_inicial(caso, plan.umbrales(umbrales)), cfg, context=ctx)
     while "__interrupt__" in s:
         s = app.invoke(Command(resume=entorno.revisar(s["__interrupt__"][0].value)), cfg, context=ctx)
     return dict(app.get_state(cfg).values), titulos
@@ -178,6 +181,18 @@ def test_una_estructura_que_no_cierra_no_se_adivina_y_decide_una_persona(dano: A
     assert citas == [{"tipo": "regla", "ref": "RB-03"}]
 
 
+def test_una_estructura_que_no_cierra_es_una_inconsistencia_y_con_tolerancia_mayor_no_pausa() -> None:
+    """S9 M2: RB-03 suma UNA inconsistencia y la arista es `inconsistencias > U3`; la pausa depende de la
+    tolerancia (0 en el plan). El texto del manual y de la pantalla dice lo mismo (S10)."""
+    caso = copy.deepcopy(subtipo("normal_juridica_directa"))
+    caso["simulacion"]["estructura_extraida"]["participaciones"][0]["porcentaje"] = "no es un número"
+    en_el_plan, _ = correr(copy.deepcopy(caso))
+    tolerante, _ = correr(copy.deepcopy(caso), umbrales={"U3": 1})
+    assert en_el_plan["inconsistencias"] == tolerante["inconsistencias"] == 1
+    assert en_el_plan["pausa_humana"] is True
+    assert tolerante["pausa_humana"] is False
+
+
 def test_una_sociedad_sin_estructura_tampoco_se_adivina() -> None:
     caso = copy.deepcopy(subtipo("normal_juridica_directa"))
     caso["simulacion"]["estructura_extraida"] = None
@@ -193,3 +208,19 @@ def test_la_linea_base_resuelve_la_sociedad_con_una_sola_llamada() -> None:
     assert s["beneficiarios"] == caso["verdad_conocida"]["beneficiarios"]
     _, titulos_multi = correr(caso)
     assert titulos_multi[0] == "ExtraccionBEstructura"
+
+
+def test_el_esquema_acota_lo_que_el_modelo_puede_escribir() -> None:
+    """S10 M3: el esquema admite hasta el doble del tope del nodo; más de eso no llega al grafo."""
+    from pydantic import ValidationError
+
+    from app_agents.demo_b.beneficiarios import TOPE_ENTIDADES
+    from app_agents.demo_b.esquemas import Estructura
+
+    def con(n: int) -> dict[str, Any]:
+        entidades = [{"nit": f"SYN-NIT-{i:06d}", "nombre": f"S{i}"} for i in range(n)]
+        return {"entidad": "SYN-NIT-000000", "entidades": entidades, "personas": [], "participaciones": [], "controla": None}
+
+    Estructura.model_validate(con(2 * TOPE_ENTIDADES))
+    with pytest.raises(ValidationError):
+        Estructura.model_validate(con(2 * TOPE_ENTIDADES + 1))
