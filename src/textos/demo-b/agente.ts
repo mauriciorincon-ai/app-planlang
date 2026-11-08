@@ -743,8 +743,8 @@ export const NODOS_B: Record<
       "A company has no name of its own to watch: what matters is who stands behind it. Working that out is arithmetic, and arithmetic is not asked of a model.",
     ),
     como: tb(
-      "Sin modelo: multiplica los porcentajes a lo largo de cada camino de propiedad, suma los caminos que llegan a la misma persona y llama beneficiario a quien llega al 25 % o más (el 25,00 % entra) y a quien controla la sociedad (RB-01 y RB-02; 31 CFR § 1010.230(d), leída el 2026-11-03). La cuenta es exacta, con fracciones. Si la estructura no cierra (un ciclo, más del 100 %, un porcentaje mal escrito, alguien que no está en ella), no adivina: no hay beneficiarios, anota RB-03 y decide una persona.",
-      "No model: it multiplies the percentages along each ownership path, adds the paths that reach the same person and calls a beneficial owner whoever reaches 25% or more (exactly 25.00% counts) and whoever controls the company (RB-01 and RB-02; 31 CFR § 1010.230(d), read on 2026-11-03). The arithmetic is exact, with fractions. If the structure does not add up (a cycle, more than 100%, a malformed percentage, someone missing from it), it does not guess: there are no beneficial owners, it notes RB-03 and a person decides.",
+      "Sin modelo: multiplica los porcentajes a lo largo de cada camino de propiedad, suma los caminos que llegan a la misma persona y llama beneficiario a quien llega al 25 % o más (el 25,00 % entra) y a quien controla la sociedad (RB-01 y RB-02; 31 CFR § 1010.230(d), leída el 2026-11-03). La cuenta es exacta, con fracciones. Si la estructura no cierra (un ciclo, más del 100 %, un porcentaje mal escrito, alguien que no está en ella), no adivina: no hay beneficiarios y anota RB-03 como una inconsistencia: con la tolerancia del plan (0) decide una persona; si en el playground la subes a 1 o 2, esa estructura puede pasar sin pausa.",
+      "No model: it multiplies the percentages along each ownership path, adds the paths that reach the same person and calls a beneficial owner whoever reaches 25% or more (exactly 25.00% counts) and whoever controls the company (RB-01 and RB-02; 31 CFR § 1010.230(d), read on 2026-11-03). The arithmetic is exact, with fractions. If the structure does not add up (a cycle, more than 100%, a malformed percentage, someone missing from it), it does not guess: there are no beneficial owners, it notes RB-03 as one inconsistency: with the plan’s tolerance (0) a person decides; if you raise it to 1 or 2 in the playground, that structure can pass without a pause.",
     ),
     siFalla: tb(
       "Un dueño con el 25 % pasaría sin mirarse contra las listas, o una sociedad opaca se aprobaría por no tener a quién mirar.",
@@ -788,8 +788,8 @@ export const NODOS_B: Record<
         [
           tb("RB-03", "RB-03"),
           tb(
-            "si la estructura no cierra, no se calculan beneficiarios y decide una persona",
-            "if the structure does not add up, no beneficial owners are computed and a person decides",
+            "si la estructura no cierra, no se calculan beneficiarios y se suma una inconsistencia: con la tolerancia del plan (0) decide una persona",
+            "if the structure does not add up, no beneficial owners are computed and one inconsistency is added: with the plan’s tolerance (0) a person decides",
           ),
         ],
       ],

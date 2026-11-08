@@ -480,7 +480,8 @@ data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar l
      sin IA calcula quiénes son los beneficiarios finales según 31 CFR § 1010.230(d): quien llega al 25 % o más,
      directo o por cadenas de sociedades (el 25,00 % entra), y quien la controla. La cuenta es exacta, con fracciones.
      Cada dueño se cruza con las listas y, si se parece, el caso va al oficial. Si la estructura no cierra (un ciclo,
-     más del 100 %, un porcentaje mal escrito), **no se adivina**: no hay dueños y decide una persona.
+     más del 100 %, un porcentaje mal escrito), **no se adivina**: no hay dueños y cuenta como una inconsistencia (RB-03); con la tolerancia del plan (0)
+     decide una persona, y si en el playground la subes a 1 o 2 esa estructura puede pasar sin pausa.
 - **Dónde se ve:**
   - En la Brecha, bajo los criterios (`/es/brecha`): «Plazos: el reloj simulado» (A) y «Dueños de las sociedades» (B).
   - En el playground (`/es/playground`), la sección «La capacidad del auditor».
@@ -1008,7 +1009,8 @@ There are two ways to use it:
      through chains of companies (exactly 25.00% counts), and whoever controls it. The arithmetic is exact, with
      fractions. Each owner is checked against the lists and, if one resembles an entry, the case goes to the officer.
      If the structure does not add up (a cycle, more than 100%, a malformed percentage), **it is not guessed**: there
-     are no owners and a person decides.
+     are no owners and it counts as one inconsistency (RB-03); with the plan's tolerance (0) a person decides, and if
+     you raise it to 1 or 2 in the playground that structure can pass without a pause.
 - **Where to see it:**
   - In the Gap report, under the criteria (`/en/brecha`): "Deadlines: the simulated clock" (A) and "Owners of the
     companies" (B).
