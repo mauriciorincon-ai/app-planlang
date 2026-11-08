@@ -7,6 +7,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { crearAzar } from "../../../../core/sintetico/sfc32";
 import {
+  capacidadMinima,
   configDeCola,
   resumirPorClase,
   simularCola,
@@ -213,6 +214,65 @@ describe("lo que más capacidad NO garantiza", () => {
     const fin = (c: number) =>
       Math.max(...Object.values(con(c)).map((r) => r.decision_min));
     expect(fin(12)).toBeLessThanOrEqual(fin(10));
+  });
+});
+
+describe("capacidadMinima no es «desde N» (contraejemplo generado, sfc32)", () => {
+  // Plazos apretados (2 y 5 horas) y lotes de 6 con llegadas en la primera hora: lo bastante chicos para leerlos a mano.
+  const apretada: ConfigDeCola = {
+    ...CONFIG,
+    clases: [
+      { valor: "hospitalaria", prioridad: 1, plazo_min: 120 },
+      { valor: "ambulatoria", prioridad: 2, plazo_min: 300 },
+    ],
+  };
+  const loteDe = (semilla: number): SolicitudDeCola[] => {
+    const azar = crearAzar(`cola/contraejemplo/${semilla}`);
+    return Array.from({ length: 6 }, (_, i) =>
+      sol(
+        `C-${i}`,
+        azar.elegir(["hospitalaria", "ambulatoria"]),
+        0,
+        azar.entero(0, 200),
+      ),
+    );
+  };
+  const tardiasCon = (lote: SolicitudDeCola[], c: number) =>
+    simularCola(apretada, lote, c).filter((r) => r.en_plazo === false).length;
+
+  it("la semilla 27: cumple con 8 por día, sale UNA tardía con 9 y vuelve a cumplir más arriba", () => {
+    const lote = loteDe(27);
+    expect(capacidadMinima(apretada, lote, 60)).toEqual({
+      valor: 8,
+      tardias_con_una_menos: expect.any(Number),
+    });
+    expect(tardiasCon(lote, 8)).toBe(0);
+    expect(tardiasCon(lote, 9)).toBe(1);
+    expect(tardiasCon(lote, 60)).toBe(0);
+  });
+
+  it("no es casualidad de una semilla: de 100 lotes, varios que cumplen en N fallan con alguna capacidad mayor", () => {
+    let conRuptura = 0;
+    for (let s = 0; s < 100; s++) {
+      const lote = loteDe(s);
+      const m = capacidadMinima(apretada, lote, 60);
+      if (!m) continue;
+      for (let c = m.valor + 1; c <= 60; c++)
+        if (tardiasCon(lote, c) > 0) {
+          conRuptura++;
+          break;
+        }
+    }
+    expect(conRuptura).toBeGreaterThan(0);
+  });
+
+  it("por eso el mínimo es el primero que cumple y un «desde N» solo se publica comprobado: con 60 la cola sí cumple", () => {
+    for (const s of [20, 27, 45]) {
+      const lote = loteDe(s);
+      const m = capacidadMinima(apretada, lote, 60)!;
+      expect(tardiasCon(lote, m.valor)).toBe(0);
+      expect(tardiasCon(lote, m.valor - 1)).toBeGreaterThan(0);
+    }
   });
 });
 
