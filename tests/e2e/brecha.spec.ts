@@ -95,7 +95,7 @@ test.describe("movimiento reducido", () => {
 });
 
 /**
- * S1 con su garantía (S8, ADR-018; e2e en español): bajo el supuesto de calibración, en llano, la zona respaldada del
+ * S1 con su garantía (S8, ADR-018; e2e en español; el inglés, en `ingles-s8-s9.spec.ts`): bajo el supuesto de calibración, en llano, la zona respaldada del
  * nivel que el informe declara, dónde cae el umbral de la corrida y lo que los datos no alcanzan; para el experto, la
  * tabla de los tres niveles de α, el método y el alcance. La curva de S1 dibuja la zona con trama.
  */

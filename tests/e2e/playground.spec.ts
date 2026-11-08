@@ -179,7 +179,7 @@ test.describe("movimiento reducido", () => {
 });
 
 /**
- * La zona respaldada por los datos (S8, ADR-018; e2e en español, el inglés al cierre del hito): con el error del informe
+ * La zona respaldada por los datos (S8, ADR-018; e2e en español; el inglés, en `ingles-s8-s9.spec.ts`): con el error del informe
  * (10 %), la zona va de 0,50 a 0,90 y el U1 de la corrida cae dentro; elegir otro error la cambia, con el teclado y el
  * ratón; el deslizador dice si su valor cae debajo, adentro o encima; lo que los datos no alcanzan se lee sin abrir
  * nada; y el color nunca va solo (trama, glifo y texto). Todo viene precalculado del informe: nada se calcula al pintar.

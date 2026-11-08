@@ -464,8 +464,7 @@ data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar l
 - **Limitaciones conocidas:** la garantía vale para casos intercambiables con los medidos. Son sintéticos y el revisor
   es simulado, así que no dice nada del tráfico real; un lote nuevo pide recalcular (`pnpm brecha:informe`). El demo B
   queda «no observado»: su plan no mide confianza. Los tres niveles vienen del informe ya calculados: en el navegador
-  no se calcula nada al pintar. Este sprint solo lo probó en español; el inglés está redactado y llega a su prueba en el
-  cierre del hito.
+  no se calcula nada al pintar. Su prueba de punta a punta corre en español e inglés (`tests/e2e/ingles-s8-s9.spec.ts`, S10).
 
 ### Plazos y beneficiario final · desde el sprint 9
 
@@ -509,7 +508,7 @@ data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar l
   - No se modela la prórroga de hasta 14 días de la regla 42 CFR 438.210(d), y los planes de salud calificados de los
     mercados federales quedan fuera de esa disposición.
   - Una persona natural no pasa por el cálculo de dueños, y el umbral colombiano del RUB no se modela.
-  - Este sprint solo lo probó en español; el inglés está redactado y llega a su prueba en el cierre del hito.
+  - Su prueba de punta a punta corre en español e inglés (`tests/e2e/ingles-s8-s9.spec.ts`, S10).
 
 ### Recorrer un caso · desde el sprint 10
 
@@ -1043,8 +1042,8 @@ There are two ways to use it:
 - **Known limitations:** the guarantee holds for cases exchangeable with the measured ones. They are synthetic and the
   reviewer is simulated, so it says nothing about real traffic; a new batch needs a new calculation
   (`pnpm brecha:informe`). Demo B stays "not observed": its plan does not measure confidence. The three levels come
-  from the report already calculated: nothing is calculated in the browser when painting. This sprint only tested it in
-  Spanish; the English is written and gets its test at the milestone close.
+  from the report already calculated: nothing is calculated in the browser when painting. Its end-to-end test runs in
+  Spanish and English (`tests/e2e/ingles-s8-s9.spec.ts`, S10).
 
 ### Deadlines and beneficial owners · since sprint 9
 
@@ -1090,7 +1089,7 @@ There are two ways to use it:
   - The extension of up to 14 days in 42 CFR 438.210(d) is not modelled, and qualified health plans in the federal
     marketplaces are outside that provision.
   - A natural person does not go through the owners calculation, and the Colombian RUB threshold is not modelled.
-  - This sprint only tested it in Spanish; the English is written and gets its test at the milestone close.
+  - Its end-to-end test runs in Spanish and English (`tests/e2e/ingles-s8-s9.spec.ts`, S10).
 
 ### Walk through a case · since sprint 10
 
