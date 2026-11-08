@@ -121,7 +121,7 @@ describe("P1 Entrada con la corrida real (plan v1.5, corrida de 200)", () => {
       detalle: `11${D}de${D}11 criterios · 0${D}de${D}10 riesgos · 3${D}fallas`,
     });
     expect(v.corrida).toEqual({
-      texto: `plan v1.6 · corrida con v1.5 · 200 casos${D}×${D}1 + línea base · 2026-10-04`,
+      texto: `plan v1.6.1 · corrida con v1.5 · 200 casos${D}×${D}1 + línea base · 2026-10-04`,
       chip: "real · sprint 3",
     });
     expect(v.experto.cruzada).toContain(

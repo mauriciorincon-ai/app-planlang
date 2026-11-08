@@ -24,8 +24,9 @@ export function conteo(
 
 /** «1.2.0» → «v1.2»: la versión corta con que se nombra un plan en la vitrina. */
 export function versionCorta(version: string): string {
-  const [mayor, menor] = version.split(".");
-  return `v${mayor}.${menor ?? "0"}`;
+  const [mayor, menor, parche] = version.split(".");
+  // Una enmienda de parche (1.6.1) es otro plan sellado: dejarla en «v1.6» diría que se lee el anterior.
+  return `v${mayor}.${menor ?? "0"}${parche && parche !== "0" ? `.${parche}` : ""}`;
 }
 
 /** «a de b» / «a of b» con espacios duros alrededor de la preposición corta. */
