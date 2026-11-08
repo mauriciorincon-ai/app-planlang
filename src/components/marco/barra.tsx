@@ -130,7 +130,7 @@ export function Barra({
               href={ruta("es", pagina, id, demo)}
               hrefLang="es"
               lang="es"
-              aria-label="Español"
+              aria-label="ES · Español"
               aria-current={idioma === "es" ? "true" : undefined}
               className={SEG_OPCION}
             >
@@ -141,7 +141,7 @@ export function Barra({
               href={ruta("en", pagina, id, demo)}
               hrefLang="en"
               lang="en"
-              aria-label="English"
+              aria-label="EN · English"
               aria-current={idioma === "en" ? "true" : undefined}
               className={SEG_OPCION}
             >

@@ -375,6 +375,9 @@ function nodoSvg(n: NodoGeo, g: Gramatica, op: OpcionesSvg): string {
   const exigido = n.madurez === "exigido-por-el-plan";
   const forma = formaDeGlifo(g, n.tipo);
   const nombre = n.nombre.lineas[i].join("");
+  // WCAG 2.5.3 (axe 4.14, label-content-name-mismatch): el nombre accesible EMPIEZA por el texto visible, en el
+  // orden en que se pinta (código, insignia, nombre), y después añade lo que la vista no dice.
+  const visibleCodigo = n.codigo.lineas[i].join(" ");
   // El anillo de foco, a 4 px de la caja (oculto hasta el foco): distinto de la selección, que tiñe la caja
   // (AU-S2-14).
   let hijos =
@@ -417,6 +420,8 @@ function nodoSvg(n: NodoGeo, g: Gramatica, op: OpcionesSvg): string {
     ESTILOS.nodoCodigo.interlinea,
     n.codigo.lineas[i],
   );
+  // Un blanco entre los textos del nodo (el SVG no lo pinta): axe junta el texto visible sin separador.
+  hijos += "\n";
   const insignia = exigido
     ? { marca: MARCA_EXIGIDO, texto: EXIGIDO, clase: "aus" }
     : n.fueraDelContrato
@@ -459,6 +464,7 @@ function nodoSvg(n: NodoGeo, g: Gramatica, op: OpcionesSvg): string {
         ),
     );
   }
+  hijos += "\n";
   hijos += lineasDeTexto(
     "nombre",
     c.x + 12,
@@ -483,7 +489,10 @@ function nodoSvg(n: NodoGeo, g: Gramatica, op: OpcionesSvg): string {
       ["data-sel-id", sel ? n.id : undefined],
       ["tabindex", sel ? "0" : undefined],
       ["role", sel ? "button" : "img"],
-      ["aria-label", `${nombre}: ${tipo.nombre[i]}${estado}`],
+      [
+        "aria-label",
+        `${visibleCodigo}${insignia ? ` ${insignia.texto[i]}` : ""} ${nombre}: ${tipo.nombre[i]}${estado}`,
+      ],
     ],
     hijos,
   );

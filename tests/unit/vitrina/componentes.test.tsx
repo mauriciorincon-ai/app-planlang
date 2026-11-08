@@ -118,11 +118,11 @@ describe("marco: rótulo, barra y pie", () => {
       "Brecha",
     );
     expect(
-      screen.getByRole("link", { name: "English" }).getAttribute("href"),
+      screen.getByRole("link", { name: "EN · English" }).getAttribute("href"),
     ).toBe("/en/brecha");
     expect(
       screen
-        .getByRole("link", { name: "Español" })
+        .getByRole("link", { name: "ES · Español" })
         .getAttribute("aria-current"),
     ).toBe("true");
     expect(screen.getByText("Simulación · no operativo")).toBeInTheDocument();
