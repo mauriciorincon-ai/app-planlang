@@ -153,6 +153,18 @@ Calibration guarantee (δ = 0.10; the report declares α = 0.10). **Guaranteed t
 | 0.10 | none | — | none | none | no | not reached |
 | 0.20 | none | — | none | none | no | not reached |
 
+Tests at α = 0.05 (threshold: cases alone/errors, p; ✓ rejects H₀ “error > α”): 0.95: 2/0, p = 0.9025 ✗.
+
+Joint tests at α = 0.05 (per stage, with α = 0.025 and δ = 0.050; threshold: stage cases alone/errors, p): 0.95: extractor 2/0 p = 0.9506 ✗, clarification 2/0 p = 0.9506 ✗.
+
+Tests at α = 0.10 (threshold: cases alone/errors, p; ✓ rejects H₀ “error > α”): 0.95: 2/0, p = 0.8100 ✗.
+
+Joint tests at α = 0.10 (per stage, with α = 0.050 and δ = 0.050; threshold: stage cases alone/errors, p): 0.95: extractor 2/0 p = 0.9025 ✗, clarification 2/0 p = 0.9025 ✗.
+
+Tests at α = 0.20 (threshold: cases alone/errors, p; ✓ rejects H₀ “error > α”): 0.95: 2/0, p = 0.6400 ✗.
+
+Joint tests at α = 0.20 (per stage, with α = 0.100 and δ = 0.050; threshold: stage cases alone/errors, p): 0.95: extractor 2/0 p = 0.8100 ✗, clarification 2/0 p = 0.8100 ✗.
+
 Joint coverage (Bonferroni): extractor, clarification, each at α/2 and δ/2 on the same cases the agent decides alone ⇒ P(some stage fails) ≤ α with probability ≥ 1 − δ; the column gives the lowest threshold with that guarantee.
 
 Model stage with no ground truth in the case (not observed, and left out of the joint coverage): writer.

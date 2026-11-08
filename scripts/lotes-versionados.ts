@@ -18,8 +18,8 @@ import {
 export const PLAN_DEMO_A = "plans/demo-a/v1.1.json";
 export const PLAN_DEMO_A_V14 = "plans/demo-a/v1.4.json";
 export const PLAN_DEMO_A_V15 = "plans/demo-a/v1.5.json";
-/** S9: el plan que declara la simulación de plazos con que se miden las llegadas del lote de 200 (`scripts/llegadas-generar.ts`). */
-export const PLAN_DEMO_A_V16 = "plans/demo-a/v1.6.json";
+/** S9 y S10: el plan que declara la simulación de plazos con que se miden las llegadas del lote de 200 (v1.6.1 desde el S10: solo cambia el mínimo jugable de la capacidad). */
+export const PLAN_DEMO_A_VIGENTE = "plans/demo-a/v1.6.1.json";
 export const PLAN_BENEFICIOS_DEMO_A = "data/plan-beneficios/demo-a.json";
 export const PLAN_BENEFICIOS_DEMO_A_V2 = "data/plan-beneficios/demo-a-v2.json";
 export const DIRECTORIO_CASOS_DEMO_A = "data/casos/demo-a";

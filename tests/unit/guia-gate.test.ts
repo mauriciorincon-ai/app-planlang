@@ -1,8 +1,8 @@
 // @vitest-environment node
 /**
- * El bloque «Gate de los hitos H-1 y H-2» de la guía de prueba (S7). Las reglas del gate único son de la planeadora:
- * ≤ 10 preguntas de sí o no, numeradas G1…Gn, todas desde el teléfono con la vitrina de producción, nada en la
- * terminal ni en un archivo del repo, cada una en los dos idiomas, y ninguna dirección de producción en la guía. Aquí
+ * El bloque del gate único de la guía de prueba (S7; desde el S10, el «ensayo general del H-2», que corre contra la rama
+ * del PR en 127.0.0.1:3200 antes del merge, decisión 2a). Las reglas del gate único son de la planeadora:
+ * ≤ 10 preguntas de sí o no, numeradas G1…Gn, nada en la terminal ni en un archivo del repo, cada una en los dos idiomas, y ninguna dirección de producción en la guía. Aquí
  * se vigilan en el archivo para que el gate no se infle ni vuelva a hablar el idioma del proceso viejo.
  */
 import { readFileSync } from "node:fs";
@@ -32,7 +32,7 @@ function preguntas() {
   );
 }
 
-describe("el gate de los hitos H-1 y H-2 en la guía", () => {
+describe("el ensayo general del H-2 en la guía", () => {
   const g = preguntas();
 
   it("son de 1 a 10 preguntas, numeradas G1…Gn en orden, cada una con su casilla y su etiqueta de gate", () => {
@@ -93,7 +93,7 @@ describe("el gate de los hitos H-1 y H-2 en la guía", () => {
         html,
       )![1] as string;
     expect(bloque).toContain("~30 min");
-    expect(bloque).toContain("la vitrina de producción · tu teléfono");
+    expect(bloque).toContain("127.0.0.1:3200 · tu Mac, en la rama del PR");
     expect(bloque).not.toMatch(/https?:\/\//);
   });
 
@@ -130,6 +130,6 @@ describe("el gate de los hitos H-1 y H-2 en la guía", () => {
   });
 
   it("el estado de las casillas lleva el prefijo del sprint vigente", () => {
-    expect(html).toContain('var NS = "guia-planlang:s9:";');
+    expect(html).toContain('var NS = "guia-planlang:s10:";');
   });
 });

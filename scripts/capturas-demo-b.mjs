@@ -217,10 +217,9 @@ const COMBINACIONES = [
 const ANCHOS = [380, 1280];
 // S8 y S9: la regla 20 pide UN idioma por sprint; el segundo llega al cierre del hito. Los conjuntos «garantia» y
 // «plazos» van en español.
-const COMBOS =
-  ["garantia", "plazos"].includes(arg("conjunto", "forma-b"))
-    ? COMBINACIONES.filter((c) => c.idioma === "es")
-    : COMBINACIONES;
+const COMBOS = ["garantia", "plazos"].includes(arg("conjunto", "forma-b"))
+  ? COMBINACIONES.filter((c) => c.idioma === "es")
+  : COMBINACIONES;
 
 // ── 2. las decisiones de forma, con su fila de la matriz ───────────────────────────────────────────────
 const DECISIONES_FORMA_B = [
@@ -296,7 +295,7 @@ const DECISIONES_FORMA_B = [
     tema: "oscuro",
     recorte: (page) =>
       marco(page.locator("mark").first().locator("xpath=ancestor::ul[1]")),
-    mirar: "Los tres documentos de la solicitud y la instrucción plantada.",
+    mirar: "Los documentos de la solicitud y la instrucción plantada.",
     esperada:
       "Identidad, actividad y origen de fondos; la instrucción escondida va marcada (borde discontinuo y ⚠) como dato del caso: el agente no la siguió.",
   },
@@ -978,7 +977,9 @@ const DECISIONES_PLAZOS = [
     tema: "claro",
     accion: async (page) => {
       await page.getByRole("slider", { name: /Confianza mínima/ }).fill("0.95");
-      await page.getByRole("slider", { name: /Capacidad del auditor/ }).fill("10");
+      await page
+        .getByRole("slider", { name: /Capacidad del auditor/ })
+        .fill("10");
     },
     antes: (page) => page.locator("#k-plazos-frase").textContent(),
     recorte: (page) =>
@@ -1004,7 +1005,8 @@ const DECISIONES_PLAZOS = [
   },
   {
     clave: "brecha-plazos-lider",
-    archivo: "Brecha (/es/brecha), el bloque «Plazos: el reloj simulado», como líder",
+    archivo:
+      "Brecha (/es/brecha), el bloque «Plazos: el reloj simulado», como líder",
     estado: "tal como abre",
     ruta: "/es/brecha",
     ancho: 1280,
@@ -1017,7 +1019,8 @@ const DECISIONES_PLAZOS = [
   },
   {
     clave: "brecha-plazos-experto",
-    archivo: "Brecha, el bloque de plazos, perfil experto (pasada de interacción)",
+    archivo:
+      "Brecha, el bloque de plazos, perfil experto (pasada de interacción)",
     estado: "tras pulsar «Experto»",
     ruta: "/es/brecha",
     ancho: 1280,
@@ -1036,7 +1039,8 @@ const DECISIONES_PLAZOS = [
   },
   {
     clave: "brecha-b-duenos-movil",
-    archivo: "Brecha del demo B (/es/demo-b/brecha), «Dueños de las sociedades», en el teléfono",
+    archivo:
+      "Brecha del demo B (/es/demo-b/brecha), «Dueños de las sociedades», en el teléfono",
     estado: "tal como abre, 380 px",
     ruta: "/es/demo-b/brecha",
     ancho: 380,
@@ -1262,30 +1266,30 @@ ${
 <h1>El plazo y los dueños · mirada de forma «no vista» (S9)</h1>
 <p>Vitrina construida con el commit en curso, servida desde <code>out/</code>. Clase de mirada: FORMA, registrada «no vista»; su veredicto viaja al gate del hito H-2 (el ensayo general). Solo en español: el inglés llega al cierre del hito. Las capturas enteras no se versionan: cada una queda con su huella SHA-256 y una miniatura de la parte de arriba.</p>`
     : CONJUNTO === "garantia"
-    ? `<p class="pregunta">¿La zona que los datos respaldan, y lo que no alcanzan, se leen como esperas en el playground y en la Brecha? Mira cada fila de la tabla con su recorte.</p>
+      ? `<p class="pregunta">¿La zona que los datos respaldan, y lo que no alcanzan, se leen como esperas en el playground y en la Brecha? Mira cada fila de la tabla con su recorte.</p>
 <h1>La zona respaldada por los datos · mirada de forma «no vista» (S8)</h1>
 <p>Vitrina construida con el commit en curso, servida desde <code>out/</code>. Clase de mirada: FORMA, registrada «no vista»; su veredicto viaja al gate del hito H-2 (el ensayo general). Solo en español: el inglés llega al cierre del hito. Las capturas enteras no se versionan: cada una se identifica por su huella SHA-256.</p>`
-    : CONJUNTO === "contrato"
-      ? `<p class="pregunta">¿El contrato del grafo del plan de HackGuard se lee en detalle, en español y en inglés, y en el teléfono sin cortarse? Mira cada fila de la tabla con su recorte.</p>
+      : CONJUNTO === "contrato"
+        ? `<p class="pregunta">¿El contrato del grafo del plan de HackGuard se lee en detalle, en español y en inglés, y en el teléfono sin cortarse? Mira cada fila de la tabla con su recorte.</p>
 <h1>Plan sin corrida · contrato del grafo en detalle · mirada de forma «no vista» (S7)</h1>
 <p>Vitrina construida con el commit en curso, servida desde <code>out/</code>. Clase de mirada: FORMA, registrada «no vista»; su veredicto viaja al gate de los hitos H-1 y H-2 (bloque G de la guía). Las capturas enteras no se versionan: cada una se identifica por su huella SHA-256.</p>`
-      : CONJUNTO === "origen"
-        ? `<p class="pregunta">¿La ficha del plan de HackGuard dice de quién son las respuestas y qué versión quedó como historia? Mira la fila de la tabla con su recorte.</p>
+        : CONJUNTO === "origen"
+          ? `<p class="pregunta">¿La ficha del plan de HackGuard dice de quién son las respuestas y qué versión quedó como historia? Mira la fila de la tabla con su recorte.</p>
 <h1>Plan sin corrida v2 · mirada de forma «no vista» (S6)</h1>
 <p>Vitrina construida con el commit en curso, servida desde <code>out/</code>. Clase de mirada: FORMA, registrada «no vista»; su veredicto viaja al gate de los hitos H-1 y H-2 (bloque G de la guía). Las capturas enteras no se versionan: cada una se identifica por su huella SHA-256.</p>`
-        : CONJUNTO === "planes"
-          ? `<p class="pregunta">¿El plan de HackGuard, sin corrida, se lee como esperas? Mira cada fila de la tabla con su recorte.</p>
+          : CONJUNTO === "planes"
+            ? `<p class="pregunta">¿El plan de HackGuard, sin corrida, se lee como esperas? Mira cada fila de la tabla con su recorte.</p>
 <h1>Plan sin corrida · mirada de forma «no vista» (S5)</h1>
 <p>Vitrina construida con el commit en curso, servida desde <code>out/</code>. Clase de mirada: FORMA, registrada «no vista»; su veredicto viaja al gate de los hitos H-1 y H-2 (bloque G de la guía). Las capturas enteras no se versionan: cada una se identifica por su huella SHA-256.</p>`
-          : CONJUNTO === "comparar"
-            ? `<p class="pregunta">¿«Comparar dos corridas» se lee como esperas? Mira cada fila de la tabla con su recorte.</p>
+            : CONJUNTO === "comparar"
+              ? `<p class="pregunta">¿«Comparar dos corridas» se lee como esperas? Mira cada fila de la tabla con su recorte.</p>
 <h1>Comparar dos corridas · mirada de forma «no vista» (S4)</h1>
 <p>Vitrina construida con el commit en curso, servida desde <code>out/</code>. Clase de mirada: FORMA, registrada «no vista»; su veredicto viaja al gate de los hitos H-1 y H-2 (bloque G de la guía). Las capturas enteras no se versionan: cada una se identifica por su huella SHA-256.</p>`
-            : CONJUNTO === "forma-b"
-              ? `<p class="pregunta">¿Las pantallas del demo B tienen la forma que esperas? Mira cada fila de la tabla con su recorte.</p>
+              : CONJUNTO === "forma-b"
+                ? `<p class="pregunta">¿Las pantallas del demo B tienen la forma que esperas? Mira cada fila de la tabla con su recorte.</p>
 <h1>Demo B · mirada de forma «no vista» (S3, fase 3)</h1>
 <p>Vitrina construida con el commit en curso, servida desde <code>out/</code>. Clase de mirada: FORMA, registrada «no vista»; su veredicto viaja al gate de los hitos H-1 y H-2 (bloque G de la guía). Las capturas enteras no se versionan: cada una se identifica por su huella SHA-256.</p>`
-              : `<p class="pregunta">¿El BLUEPRINT, el expediente y el informe del B, y los cambios del A sobre la corrida de 200, se leen como esperas? Mira cada fila de la tabla con su recorte.</p>
+                : `<p class="pregunta">¿El BLUEPRINT, el expediente y el informe del B, y los cambios del A sobre la corrida de 200, se leen como esperas? Mira cada fila de la tabla con su recorte.</p>
 <h1>Mirada 3 · cierre del hito H-1, «no vista» (S3, fase 4)</h1>
 <p>Vitrina construida con el commit en curso, servida desde <code>out/</code>; el BLUEPRINT, desde <code>docs/</code>. Clase de mirada: FORMA y TEXTO, registrada «no vista»; su veredicto viaja al gate de los hitos H-1 y H-2 (bloque G de la guía), salvo las filas del BLUEPRINT y de la revisión del borrador del B, que son archivos del repo y quedan fuera del gate. Las capturas enteras no se versionan: cada una se identifica por su huella SHA-256.</p>`
 }

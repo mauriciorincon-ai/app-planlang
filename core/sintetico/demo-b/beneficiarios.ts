@@ -28,6 +28,15 @@ const CIEN = B(100);
 export const UMBRAL_CENTESIMAS = B(2500);
 const CIEN_POR_CIENTO = B(10000);
 
+/**
+ * Tope de tamaño (S10, M3): la suma recorre cada camino de propiedad y, sin ciclos, los caminos crecen como 2^(n-2).
+ * Con estos topes el peor caso son ~16 mil caminos y la recursión no pasa de 16 niveles; más grande no se calcula
+ * (RB-03: decide una persona). Las mismas cifras viven en `beneficiarios.py`.
+ */
+export const TOPE_ENTIDADES = 16;
+export const TOPE_PERSONAS = 32;
+export const TOPE_PARTICIPACIONES = 64;
+
 /** La estructura tal como llega: del generador (siempre válida) o de lo que extrajo un modelo (puede no serlo). */
 export interface EstructuraLeida {
   entidad: string | null;
@@ -86,9 +95,16 @@ function aPorcentaje(num: bigint, den: bigint): string {
   return `${c / CIEN}.${String(c % CIEN).padStart(2, "0")}`;
 }
 
-/** Lo que no deja calcular, en orden: entidad, ids repetidos, cada participación, cada suma, quien controla y ciclos. */
+/** Lo que no deja calcular, en orden: tamaño, entidad, ids repetidos, cada participación, cada suma, quien controla y ciclos. */
 function problemasDe(e: EstructuraLeida): string[] {
   const p: string[] = [];
+  for (const [campo, n, tope] of [
+    ["entidades", e.entidades.length, TOPE_ENTIDADES],
+    ["personas", e.personas.length, TOPE_PERSONAS],
+    ["participaciones", e.participaciones.length, TOPE_PARTICIPACIONES],
+  ] as const)
+    if (n > tope) p.push(`demasiado_grande:${campo}`);
+  if (p.length > 0) return p;
   const nits = new Set(e.entidades.map((x) => x.nit));
   const docs = new Set(e.personas.map((x) => x.documento));
   if (!e.entidad || !nits.has(e.entidad)) p.push("sin_entidad");

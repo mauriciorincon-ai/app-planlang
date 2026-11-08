@@ -1,6 +1,6 @@
 # Informe de brecha — Autorizaciones médicas (demo A)
 
-> **Simulación · no operativo** · corrida `suscripcion-planlang-a-002-200-v1.5` · 2026-10-04 · plan 1.6.0
+> **Simulación · no operativo** · corrida `suscripcion-planlang-a-002-200-v1.5` · 2026-10-04 · plan 1.6.1
 
 ## 1. Resumen para quien decide
 
@@ -82,7 +82,7 @@ Pasaron por el auditor 70 solicitudes: 14 por día hábil en promedio frente a u
 
 Horas de auditor con el costo humano por caso del plan: 14 h.
 
-Con 8 casos por día, o más, todas se deciden en plazo; con 7, 14 salen de su plazo. El rango que el plan deja mover en el playground es 10–60.
+Con 8 casos por día, o más, todas se deciden en plazo; con 7, 14 salen de su plazo. El rango que el plan deja mover en el playground es 5–60.
 
 Ninguna solicitud salió de su plazo con esta capacidad. Que el plazo se cumpla en la simulación no prueba que se cumpliría con otra llegada o con otra capacidad: el playground deja moverla para ver dónde se rompe.
 
@@ -90,6 +90,9 @@ Ninguna solicitud salió de su plazo con esta capacidad. Que el plazo se cumpla 
 
 Lo que esta simulación supone:
 
+- La clase de cada solicitud se lee de la señal «tipo_atencion» de la traza.
+- Hospitalaria: Solicitud expedita de la norma (72 horas). Es un supuesto de la simulación: la norma llama expedita a la que podría poner en grave riesgo la salud o la función del afiliado, no a la hospitalaria.
+- Ambulatoria: Solicitud estándar de la norma (7 días calendario). Es un supuesto de la simulación: la norma llama estándar a la que no es expedita.
 - Las llegadas son simuladas: con una semilla del lote, cada solicitud llega en un día hábil y una hora de la jornada. No son horas reales de ningún afiliado.
 - Un solo auditor atiende por prioridad (hospitalaria antes que ambulatoria) y, dentro de cada una, por orden de llegada. Trabaja de lunes a viernes dentro de la jornada y a la capacidad indicada. Lo que el agente decide solo se decide al llegar; lo que pausa se decide cuando la cola lo alcanza.
 - El plazo corre en tiempo de calendario desde que llega la solicitud, y el fin de semana cuenta aunque el auditor no trabaje en él: una solicitud que llega el viernes por la tarde gasta el fin de semana de su plazo.
@@ -188,6 +191,18 @@ Garantía de la calibración (δ = 0,10; el informe declara α = 0,10). **Umbral
 | 0,10 | 0,50 | 99,4 % · 3,2 % | 0,90 | 0,50–0,90 | sí | no alcanza |
 | 0,20 | 0,50 | 99,4 % · 3,2 % | 0,95 | 0,50–0,95 | sí | 0,50 (k = 2) |
 
+Pruebas a α = 0,05 (umbral: casos solos/errores, p; ✓ rechaza H₀ «error > α»): 0,95: 134/3, p = 0,0931 ✓ · 0,90: 142/3, p = 0,0716 ✓ · 0,85: 151/3, p = 0,0529 ✓ · 0,80: 153/3, p = 0,0494 ✓ · 0,75: 153/3, p = 0,0494 ✓ · 0,70: 156/4, p = 0,1056 ✗.
+
+Pruebas conjuntas a α = 0,05 (por etapa, con α = 0,025 y δ = 0,050; umbral: etapa casos solos/errores, p): 0,95: extractor 134/3 p = 0,5683 ✗, aclaración 134/2 p = 0,3461 ✗.
+
+Pruebas a α = 0,10 (umbral: casos solos/errores, p; ✓ rechaza H₀ «error > α»): 0,95: 134/3, p = 0,0005 ✓ · 0,90: 142/3, p = 0,0002 ✓ · 0,85: 151/3, p = 0,0001 ✓ · 0,80: 153/3, p = 0,0001 ✓ · 0,75: 153/3, p = 0,0001 ✓ · 0,70: 156/4, p = 0,0003 ✓ · 0,65: 156/4, p = 0,0003 ✓ · 0,60: 158/5, p = 0,0011 ✓ · 0,55: 158/5, p = 0,0011 ✓ · 0,50: 158/5, p = 0,0011 ✓.
+
+Pruebas conjuntas a α = 0,10 (por etapa, con α = 0,050 y δ = 0,050; umbral: etapa casos solos/errores, p): 0,95: extractor 134/3 p = 0,0931 ✗, aclaración 134/2 p = 0,0339 ✓.
+
+Pruebas a α = 0,20 (umbral: casos solos/errores, p; ✓ rechaza H₀ «error > α»): 0,95: 134/3, p < 0,0001 ✓ · 0,90: 142/3, p < 0,0001 ✓ · 0,85: 151/3, p < 0,0001 ✓ · 0,80: 153/3, p < 0,0001 ✓ · 0,75: 153/3, p < 0,0001 ✓ · 0,70: 156/4, p < 0,0001 ✓ · 0,65: 156/4, p < 0,0001 ✓ · 0,60: 158/5, p < 0,0001 ✓ · 0,55: 158/5, p < 0,0001 ✓ · 0,50: 158/5, p < 0,0001 ✓.
+
+Pruebas conjuntas a α = 0,20 (por etapa, con α = 0,100 y δ = 0,050; umbral: etapa casos solos/errores, p): 0,95: extractor 134/3 p = 0,0005 ✓, aclaración 134/2 p = 0,0001 ✓ · 0,90: extractor 142/3 p = 0,0002 ✓, aclaración 142/2 p < 0,0001 ✓ · 0,85: extractor 151/3 p = 0,0001 ✓, aclaración 151/2 p < 0,0001 ✓ · 0,80: extractor 153/3 p = 0,0001 ✓, aclaración 153/2 p < 0,0001 ✓ · 0,75: extractor 153/3 p = 0,0001 ✓, aclaración 153/2 p < 0,0001 ✓ · 0,70: extractor 156/4 p = 0,0003 ✓, aclaración 156/3 p = 0,0001 ✓ · 0,65: extractor 156/4 p = 0,0003 ✓, aclaración 156/3 p = 0,0001 ✓ · 0,60: extractor 158/5 p = 0,0011 ✓, aclaración 158/4 p = 0,0003 ✓ · 0,55: extractor 158/5 p = 0,0011 ✓, aclaración 158/4 p = 0,0003 ✓ · 0,50: extractor 158/5 p = 0,0011 ✓, aclaración 158/4 p = 0,0003 ✓.
+
 Cobertura conjunta (Bonferroni): extractor, aclaración, cada una con α/2 y δ/2 sobre los mismos casos que el agente decide solo ⇒ P(alguna etapa falla) ≤ α con probabilidad ≥ 1 − δ; la columna dice el umbral más bajo con esa garantía.
 
 Etapa con modelo sin verdad en el caso (no se observa y la cobertura conjunta no la incluye): redactor.
@@ -247,11 +262,11 @@ Casos donde difieren: A-003, A-013, A-031, A-047, A-052, A-055, A-072, A-078, A-
 
 | Pieza | Qué es | Huella SHA-256 |
 | --- | --- | --- |
-| Plan | plan-demo-a 1.6.0 (`plans/demo-a/v1.6.json`) | `b5d29ba673e89bfdeb03d39ef463f6e5b7ed3df4c54c20dd0a58bdf92a4d5dd4` |
+| Plan | plan-demo-a 1.6.1 (`plans/demo-a/v1.6.1.json`) | `1e309da7dc89bba027bea2254ea7429d798540afcedf23838494a59ffc212cba` |
 | Casos | planlang-a-002-200 · semilla planlang-a-002 · n = 200 · generado con el plan 1.5.0 | `5e76ef4cf562852c25aab2e041d55f17f809043450fe48e35c045cb419c8e62f` |
 | Corrida | suscripcion-planlang-a-002-200-v1.5 · 2026-10-04 · suscripcion/sonnet · multiagente · ejecutada con el plan 1.5.0 (misma verdad: mismos umbrales y contrato de grafo, ADR-005) | `fdbffe765fc0e8309284bbc5c606dc67bc80b61b53cbf8a3772b3447eb8d71a0` |
 | Grafo | versión del grafo exportado | `056407bf4c1238ca0448c11575ea9228d050596d02162cd0613f8c5090cc9117` |
-| Llegadas | horas de llegada simuladas del lote, con su semilla (`data/casos/demo-a/planlang-a-002-200.llegadas.json`) | `288e8db6457909f303b1e732e98b9f3e69bb60c4aec8c52aef75ba6230f050e8` |
+| Llegadas | horas de llegada simuladas del lote, con su semilla (`data/casos/demo-a/planlang-a-002-200.llegadas.json`) · sobre el lote `5e76ef4cf562852c25aab2e041d55f17f809043450fe48e35c045cb419c8e62f` | `288e8db6457909f303b1e732e98b9f3e69bb60c4aec8c52aef75ba6230f050e8` |
 | Línea base | suscripcion-planlang-a-002-200-v1.5-base | `1ab219ded7ae9d1ce14f4d7ff0e699b517926564afda1ac73c74301ea6cff5f7` |
 
 Sesiones: 10 · casos ejecutados: 200 · con error del proveedor: 0 · límites de uso alcanzados: 0.
@@ -260,4 +275,4 @@ Umbrales aplicados: U1 = 0,75 · U2 = 1000 · U3 = 2 · U4 = false · en el plan
 
 Revisión humana: En lotes, el revisor simulado sigue la verdad conocida del caso (DA-04); la vitrina lo divulga.
 
-Verificador 1.5.0 · planlang-informe/v1 · huella de este informe: `7dd7033d8eb96f071467c3732aa5169fc3f0de9d2f1606a1905e53df750c9d27`
+Verificador 1.5.0 · planlang-informe/v1 · huella de este informe: `e70eba17ff8ccb3f33ff50f101af86558b2d68b5ff58d5ca4369749ae78fede4`

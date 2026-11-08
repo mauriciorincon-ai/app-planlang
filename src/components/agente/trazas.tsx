@@ -5,6 +5,7 @@ import type { IdDemo } from "@/lib/demos";
 import type { FilaTraza, PanelNodo } from "@/lib/vista/agente";
 import { decimal } from "@/lib/vista/formato";
 import { PANEL } from "@/textos/agente";
+import { RECORRER } from "@/textos/recorrido";
 import { Chip } from "../chip";
 import { CODIGO_EN_LINEA } from "../con-codigo";
 import { cx } from "../cx";
@@ -225,6 +226,12 @@ function Fila({
             >
               {PANEL.trazas_.verCaso[idioma]} →
               <span className="sr-only"> {f.id}</span>
+            </a>
+            <a
+              href={f.recorrer}
+              className="ml-4 inline-flex items-center gap-1.5 text-dato text-tinta-1"
+            >
+              {RECORRER[idioma]} →<span className="sr-only"> {f.id}</span>
             </a>
           </p>
         </div>

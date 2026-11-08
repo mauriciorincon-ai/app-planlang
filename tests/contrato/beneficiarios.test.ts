@@ -56,6 +56,10 @@ describe("contrato de los beneficiarios Python → TS", () => {
       "sin-entidad",
       "id-repetido",
       "solo-control",
+      "en-el-tope-16-sociedades",
+      "sobre-el-tope-17-sociedades",
+      "sobre-el-tope-33-personas",
+      "sobre-el-tope-65-participaciones",
     ])
       expect(nombres).toContain(n);
   });
@@ -86,5 +90,23 @@ describe("contrato de los beneficiarios Python → TS", () => {
     ).toBe("25.00");
     expect(redondeo.por_participacion).toEqual(["SYN-ID-000002"]);
     expect(r("ciclo")).toMatchObject({ valida: false, beneficiarios: null });
+  });
+
+  it("el tope de tamaño: en el borde se calcula; un paso más es RB-03, igual en los dos lados (S10, M3)", () => {
+    const r = (n: string) => esperada.casos.find((c) => c.nombre === n)!.resultado;
+    expect(r("en-el-tope-16-sociedades")).toMatchObject({
+      valida: true,
+      beneficiarios: ["SYN-ID-000001"],
+    });
+    for (const [nombre, campo] of [
+      ["sobre-el-tope-17-sociedades", "entidades"],
+      ["sobre-el-tope-33-personas", "personas"],
+      ["sobre-el-tope-65-participaciones", "participaciones"],
+    ] as const)
+      expect(r(nombre)).toMatchObject({
+        valida: false,
+        beneficiarios: null,
+        problemas: [`demasiado_grande:${campo}`],
+      });
   });
 });

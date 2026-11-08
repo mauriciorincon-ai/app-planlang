@@ -141,7 +141,7 @@ export function Resumen({ v, idioma }: { v: VistaBrecha; idioma: Idioma }) {
               { titulo: R.id[idioma], ancho: "40px", mono: true },
               { titulo: R.criterio[idioma], ancho: "minmax(0,1.6fr)" },
               { titulo: R.medido[idioma], ancho: "minmax(0,0.9fr)" },
-              { titulo: R.estado[idioma], ancho: "minmax(0,0.8fr)" },
+              { titulo: R.estado[idioma], ancho: "auto" },
             ]}
             filas={v.resumen.destacados.map((d) => ({
               clave: d.id,

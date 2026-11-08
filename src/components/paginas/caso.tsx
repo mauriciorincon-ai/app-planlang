@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import type { Idioma } from "@core/formatos/bilingue";
 import { MiradaCaso, Oraculo, PortadaCaso } from "@/components/caso/cabecera";
 import { Caso } from "@/components/caso/caso";
+import { RecorridoCaso } from "@/components/caso/recorrido";
 import { CONT } from "@/components/cx";
 import { Marco } from "@/components/marco/marco";
 import { datosDemo } from "@/lib/datos/vitrina";
@@ -12,6 +13,7 @@ import {
   portadaCasos,
   vistaCaso,
 } from "@/lib/vista/caso";
+import { vistaRecorrido } from "@/lib/vista/recorrido";
 
 /** Los casos de la corrida del demo (uno por traza): las páginas de P6 que se generan. */
 export async function idsDeCasosDe(demo: IdDemo): Promise<{ id: string }[]> {
@@ -58,6 +60,8 @@ export async function PaginaCaso({
   const d = await datosDemo(demo);
   if (!idsDeCasos(d).includes(id)) notFound();
   const portada = portadaCasos(d, idioma);
+  const v = vistaCaso(d, id, idioma);
+  const traza = d.corrida.trazas.find((t) => t.caso_id === id)!;
   return (
     <Marco
       idioma={idioma}
@@ -76,7 +80,17 @@ export async function PaginaCaso({
           idioma={idioma}
           demo={demo}
         />
-        <Caso v={vistaCaso(d, id, idioma)} idioma={idioma} />
+        <Caso
+          v={v}
+          idioma={idioma}
+          camina={
+            <RecorridoCaso
+              r={vistaRecorrido(d, traza, idioma)}
+              pasos={v.pasos}
+              idioma={idioma}
+            />
+          }
+        />
       </div>
     </Marco>
   );

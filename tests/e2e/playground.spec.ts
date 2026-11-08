@@ -179,7 +179,7 @@ test.describe("movimiento reducido", () => {
 });
 
 /**
- * La zona respaldada por los datos (S8, ADR-018; e2e en español, el inglés al cierre del hito): con el error del informe
+ * La zona respaldada por los datos (S8, ADR-018; e2e en español; el inglés, en `ingles-s8-s9.spec.ts`): con el error del informe
  * (10 %), la zona va de 0,50 a 0,90 y el U1 de la corrida cae dentro; elegir otro error la cambia, con el teclado y el
  * ratón; el deslizador dice si su valor cae debajo, adentro o encima; lo que los datos no alcanzan se lee sin abrir
  * nada; y el color nunca va solo (trama, glifo y texto). Todo viene precalculado del informe: nada se calcula al pintar.
@@ -363,9 +363,9 @@ test.describe("la capacidad del auditor (es)", () => {
         expect(tabla).toContain("30 / 54");
         expect(tabla).toContain("7 días calendario");
         expect(tabla).toContain("40 / 123");
-        // Dónde se rompe, aunque el control no deje llegar: se dice con su número.
+        // Dónde se rompe, con su número; desde el plan v1.6.1 cae dentro del control (5–60).
         expect(tabla).toContain(
-          "Con estos umbrales el plazo se cumple desde 8 casos por día hábil; con una menos salen 14. Queda por debajo de lo que este control deja mover (10–60).",
+          "Con estos umbrales el plazo se cumple desde 8 casos por día hábil; con una menos salen 14. Cabe en lo que este control deja mover (5–60): baja la capacidad para verlo.",
         );
         // El color nunca va solo: cada clase lleva su símbolo y su palabra.
         await expect(
@@ -386,6 +386,12 @@ test.describe("la capacidad del auditor (es)", () => {
     const control = page.getByRole("slider", { name: "Capacidad del auditor" });
     await control.focus();
     await page.keyboard.press("Home");
+    // v1.6.1 (S10, decisión 1a): el control llega a 5, donde el plazo ya se rompe (hay solicitudes fuera de plazo).
+    await expect(control).toHaveValue("5");
+    await expect(frase(page)).toHaveText(
+      /^Con 5 casos por día hábil, \d+ solicitudes salen de su plazo\.$/,
+    );
+    await page.keyboard.press("ArrowRight");
     await expect(control).toHaveValue("10");
     await expect(frase(page)).toHaveText(
       "Con 10 casos por día hábil, toda solicitud se decide dentro de su plazo.",

@@ -7,56 +7,56 @@
     "hasta": 59
   },
   "formato": "planlang-grafo-codigo/v1",
-  "huella": "075f6c6d7883d45ba0275de6c625027c8fc4a03b46b0f83fa4a00d757f8a2c3b",
+  "huella": "f54cc5126b032dc2ee2c0521ac63983b7315f907e808e1160c743eab99243627",
   "nodos": {
     "beneficiarios": {
       "archivo": "agents/src/app_agents/demo_b/nodos.py",
       "codigo": "def beneficiarios(self, estado: EstadoB, runtime: Runtime[ContextoCasoB]) -> dict[str, Any]:\n    \"\"\"S9: los beneficiarios finales de la sociedad, por código (RB-01, RB-02), y el cruce de cada uno con\n    las listas (RL-01, RL-02). Sin estructura, o con una que no cierra (RB-03), no hay beneficiarios: las\n    dos señales quedan nulas y la inconsistencia la cuenta el nodo de puntaje.\"\"\"\n    reloj = runtime.context.reloj\n    inicio = reloj.ahora_ms()\n    estructura = (estado.get(\"extraccion\") or {}).get(\"estructura\")\n    if isinstance(estructura, dict):\n        r = beneficiarios_de(estructura)\n    else:\n        r = {\n            \"beneficiarios\": None,\n            \"controla\": None,\n            \"participaciones\": [],\n            \"por_participacion\": [],\n            \"problemas\": [\"sin_estructura\"],\n            \"valida\": False,\n        }\n    nombres = {p.get(\"documento\"): p.get(\"nombre\") for p in (estructura or {}).get(\"personas\") or []}\n    coincidencias = []\n    for doc in r[\"beneficiarios\"] or []:\n        c = mejor_coincidencia(nombres.get(doc), self.listas.datos)\n        coincidencias.append(\n            {\"documento\": doc, \"mejor\": c.como_dict() if c else None, \"nombre\": nombres.get(doc)}\n        )\n    similitud = (\n        max((x[\"mejor\"][\"similitud\"] for x in coincidencias if x[\"mejor\"]), default=0.0)\n        if r[\"valida\"]\n        else None\n    )\n    return {\n        \"beneficiarios\": r[\"beneficiarios\"],\n        \"similitud_beneficiarios_max\": similitud,\n        \"beneficiarios_detalle\": {**r, \"coincidencias\": coincidencias},\n        \"pasos\": [self._paso(estado, \"beneficiarios\", inicio, reloj.ahora_ms())],\n    }",
-      "desde": 159,
+      "desde": 164,
       "escribe": [
         "beneficiarios",
         "beneficiarios_detalle",
         "pasos",
         "similitud_beneficiarios_max"
       ],
-      "hasta": 194
+      "hasta": 199
     },
     "decision": {
       "archivo": "agents/src/app_agents/demo_b/nodos.py",
       "codigo": "def decision(self, estado: EstadoB, runtime: Runtime[ContextoCasoB]) -> dict[str, Any]:\n    reloj = runtime.context.reloj\n    inicio = reloj.ahora_ms()\n    _, regs = self._decidir(\"decision\", dict(estado), len(estado[\"pasos\"]) + 1)\n    return {\n        \"decisiones_de_arista\": regs,\n        \"pasos\": [self._paso(estado, \"decision\", inicio, reloj.ahora_ms())],\n    }",
-      "desde": 268,
+      "desde": 273,
       "escribe": [
         "decisiones_de_arista",
         "pasos"
       ],
-      "hasta": 275
+      "hasta": 280
     },
     "enrutador": {
       "archivo": "agents/src/app_agents/demo_b/nodos.py",
       "codigo": "def enrutador(self, estado: EstadoB, runtime: Runtime[ContextoCasoB]) -> dict[str, Any]:\n    \"\"\"La guardia de entrada (RG-01): deja `carga_detectada` antes de que nada lea los documentos.\"\"\"\n    reloj = runtime.context.reloj\n    inicio = reloj.ahora_ms()\n    senales = {\"carga_detectada\": carga_en_documentos(estado[\"entrada\"])}\n    regs: list[dict[str, Any]] = []\n    if self.cg.aristas_de(\"enrutador\"):\n        _, regs = self._decidir(\"enrutador\", {**estado, **senales}, len(estado[\"pasos\"]) + 1)\n    return {\n        **senales,\n        \"decisiones_de_arista\": regs,\n        \"pasos\": [self._paso(estado, \"enrutador\", inicio, reloj.ahora_ms())],\n    }",
-      "desde": 129,
+      "desde": 134,
       "escribe": [
         "carga_detectada",
         "decisiones_de_arista",
         "pasos"
       ],
-      "hasta": 141
+      "hasta": 146
     },
     "extractor": {
       "archivo": "agents/src/app_agents/demo_b/nodos.py",
       "codigo": "def extractor(self, estado: EstadoB, runtime: Runtime[ContextoCasoB]) -> dict[str, Any]:\n    ctx = runtime.context\n    inicio = ctx.reloj.ahora_ms()\n    docs = minimizar(estado[\"entrada\"][\"documentos\"])\n    prompt = f\"Catálogo:\\n{self.listas.catalogo_texto()}\\n\\n{self._documentos_en_prompt(docs)}\"\n    sistema = prompts.EXTRACTOR_CON_ESTRUCTURA if self.con_beneficiarios else prompts.EXTRACTOR\n    parsed, raw = self._llamar(ctx.modelo, self.modelo_extraccion, sistema, prompt, \"extractor\")\n    extraccion, senales = self._extraccion(como_json(parsed))\n    regs = self._enrutar_extraccion(\"extractor\", estado, senales)\n    return {\n        **senales,\n        \"extraccion\": extraccion,\n        \"decisiones_de_arista\": regs,\n        \"pasos\": [self._paso(estado, \"extractor\", inicio, ctx.reloj.ahora_ms(), raw)],\n    }",
-      "desde": 143,
+      "desde": 148,
       "escribe": [
         "decisiones_de_arista",
         "extraccion",
         "pasos"
       ],
-      "hasta": 157
+      "hasta": 162
     },
     "guardia_salida": {
       "archivo": "agents/src/app_agents/demo_b/nodos.py",
-      "codigo": "def guardia_salida(self, estado: EstadoB, runtime: Runtime[ContextoCasoB]) -> dict[str, Any]:\n    reloj = runtime.context.reloj\n    inicio = reloj.ahora_ms()\n    propios = {estado[\"entrada\"][\"solicitud\"][\"id\"]}\n    documento = self._campos(estado).get(\"documento\")\n    if documento:\n        propios.add(str(documento))\n    # S9: los dueños y las sociedades de la estructura son parte del expediente de la sociedad (la norma\n    # pide identificarlos); no son datos de un tercero.\n    estructura = (estado.get(\"extraccion\") or {}).get(\"estructura\") or {}\n    propios |= {str(x.get(\"nit\")) for x in estructura.get(\"entidades\") or []}\n    propios |= {str(x.get(\"documento\")) for x in estructura.get(\"personas\") or []}\n    r = revisar_salida(\n        estado[\"respuesta\"] or {\"es\": \"\", \"en\": \"\"},\n        estado[\"expediente\"] or {\"conclusiones\": []},\n        list(ACCIONES),\n        estado[\"entrada\"],\n        propios,\n    )\n    guardia = {\n        k: r[k]\n        for k in (\n            \"acciones_ejecutadas\",\n            \"acciones_intentadas\",\n            \"carga_detectada_en_entrada\",\n            \"hallazgos\",\n            \"severidad_accion\",\n        )\n    }\n    return {\n        \"salida_final\": {**r[\"salida\"], \"aviso_ia\": aviso_ia(bool(estado.get(\"pausa_humana\")))},\n        \"expediente\": r[\"expediente\"],\n        \"guardia_salida\": guardia,\n        \"severidad_accion\": r[\"severidad_accion\"],\n        \"inyeccion_neutralizada\": bool(estado.get(\"carga_detectada\")) and r[\"severidad_accion\"] == 0,\n        \"pasos\": [self._paso(estado, \"guardia_salida\", inicio, reloj.ahora_ms())],\n    }",
-      "desde": 497,
+      "codigo": "def guardia_salida(self, estado: EstadoB, runtime: Runtime[ContextoCasoB]) -> dict[str, Any]:\n    reloj = runtime.context.reloj\n    inicio = reloj.ahora_ms()\n    propios = {estado[\"entrada\"][\"solicitud\"][\"id\"]}\n    documento = self._campos(estado).get(\"documento\")\n    if documento:\n        propios.add(str(documento))\n    # S9: los dueños y las sociedades de la estructura son parte del expediente de la sociedad (la norma\n    # pide identificarlos), pero solo los que el certificado de la solicitud trae: la estructura la\n    # escribe el modelo y su palabra sola no vuelve «propio» a un identificador.\n    estructura = (estado.get(\"extraccion\") or {}).get(\"estructura\")\n    propios |= identificadores_de_la_estructura(estructura, estado[\"entrada\"][\"documentos\"])\n    r = revisar_salida(\n        estado[\"respuesta\"] or {\"es\": \"\", \"en\": \"\"},\n        estado[\"expediente\"] or {\"conclusiones\": []},\n        list(ACCIONES),\n        estado[\"entrada\"],\n        propios,\n    )\n    guardia = {\n        k: r[k]\n        for k in (\n            \"acciones_ejecutadas\",\n            \"acciones_intentadas\",\n            \"carga_detectada_en_entrada\",\n            \"hallazgos\",\n            \"severidad_accion\",\n        )\n    }\n    return {\n        \"salida_final\": {**r[\"salida\"], \"aviso_ia\": aviso_ia(bool(estado.get(\"pausa_humana\")))},\n        \"expediente\": r[\"expediente\"],\n        \"guardia_salida\": guardia,\n        \"severidad_accion\": r[\"severidad_accion\"],\n        \"inyeccion_neutralizada\": bool(estado.get(\"carga_detectada\")) and r[\"severidad_accion\"] == 0,\n        \"pasos\": [self._paso(estado, \"guardia_salida\", inicio, reloj.ahora_ms())],\n    }",
+      "desde": 502,
       "escribe": [
         "expediente",
         "guardia_salida",
@@ -65,23 +65,23 @@
         "salida_final",
         "severidad_accion"
       ],
-      "hasta": 533
+      "hasta": 538
     },
     "investigador": {
       "archivo": "agents/src/app_agents/demo_b/nodos.py",
       "codigo": "def investigador(self, estado: EstadoB, runtime: Runtime[ContextoCasoB]) -> dict[str, Any]:\n    \"\"\"Solo cuando el verificador lo manda (la zona gris del plan). Compara contexto, no decide.\"\"\"\n    ctx = runtime.context\n    inicio = ctx.reloj.ahora_ms()\n    mejor = (estado.get(\"coincidencias\") or {})[\"mejor\"]\n    e = self.listas.entrada(mejor[\"entrada_id\"]) or {}\n    campos = self._campos(estado)\n\n    def pais(codigo: str | None) -> str:\n        j = self.listas.jurisdiccion(codigo)\n        return f\"{j['nombre']['es']} ({codigo})\" if j else \"sin dato\"\n\n    alias = f\" (alias: {', '.join(e['alias'])})\" if e.get(\"alias\") else \"\"\n    prompt = (\n        f\"Solicitante: {campos.get('nombre')}; año de nacimiento: \"\n        f\"{campos.get('nacimiento') or 'sin dato'}; \"\n        f\"nacionalidad: {pais(campos.get('nacionalidad'))}.\\n\"\n        f\"Persona de la lista: {e.get('nombre')}{alias}; año de nacimiento: {e.get('nacimiento')}; \"\n        f\"nacionalidad: {pais(e.get('nacionalidad'))}.\\n\"\n        f\"Similitud de los nombres: {mejor['similitud']}.\"\n    )\n    parsed, raw = self._llamar(ctx.modelo, Investigacion, prompts.INVESTIGADOR, prompt, \"investigador\")\n    datos = como_json(parsed)\n    return {\n        \"conclusion_investigador\": datos[\"conclusion\"],\n        \"investigacion\": {\n            \"conclusion\": datos[\"conclusion\"],\n            \"entrada_id\": mejor[\"entrada_id\"],\n            \"razones\": {\"en\": datos[\"razones_en\"], \"es\": datos[\"razones_es\"]},\n        },\n        \"pasos\": [self._paso(estado, \"investigador\", inicio, ctx.reloj.ahora_ms(), raw)],\n    }",
-      "desde": 214,
+      "desde": 219,
       "escribe": [
         "conclusion_investigador",
         "investigacion",
         "pasos"
       ],
-      "hasta": 245
+      "hasta": 250
     },
     "pausa_humana": {
       "archivo": "agents/src/app_agents/demo_b/nodos.py",
       "codigo": "def pausa_humana(self, estado: EstadoB, runtime: Runtime[ContextoCasoB]) -> dict[str, Any]:\n    reloj = runtime.context.reloj\n    inicio = reloj.ahora_ms()\n    ultimo = max(d[\"paso\"] for d in estado[\"decisiones_de_arista\"])\n    disparo = next(d for d in estado[\"decisiones_de_arista\"] if d[\"paso\"] == ultimo and d[\"resultado\"])\n    evidencia, contraevidencia = self._evidencias(estado)\n    pausa = self.plan.contrato[\"pausas_humanas\"][0]\n    completo = {\n        \"motivo\": self.motivo(disparo),\n        \"senal\": disparo[\"senal\"] or disparo[\"funcion\"],\n        \"umbral\": {\"declarado\": disparo[\"valor_declarado\"], \"aplicado\": disparo[\"umbral_aplicado\"]},\n        \"extraccion\": estado.get(\"extraccion\"),\n        \"documentos\": estado[\"entrada\"][\"documentos\"],\n        \"coincidencias\": estado.get(\"coincidencias\"),\n        \"investigacion\": estado.get(\"investigacion\"),\n        \"puntaje\": estado.get(\"puntaje\"),\n        \"evidencia\": evidencia,\n        \"contraevidencia\": contraevidencia,\n        # S9: los dueños de la sociedad, su participación efectiva y su cruce con las listas (null si es\n        # persona).\n        \"beneficiarios\": estado.get(\"beneficiarios_detalle\"),\n    }\n    # M-8: el caso completo que pide el plan, ni una clave menos.\n    payload = {k: completo[k] for k in completo if k in pausa[\"payload_minimo\"]}\n    respuesta = interrupt(payload)\n    return {\n        \"pausa_humana\": True,\n        \"decision_final\": respuesta[\"decision\"],\n        \"revision\": respuesta,\n        \"pausas\": [\n            {\n                \"paso\": len(estado[\"pasos\"]) + 1,\n                \"nodo\": \"pausa_humana\",\n                \"rol\": pausa[\"rol\"],\n                \"payload\": payload,\n                \"respuesta_simulada\": {\n                    \"decision\": respuesta[\"decision\"],\n                    \"politica\": respuesta[\"politica\"],\n                },\n            }\n        ],\n        \"pasos\": [self._paso(estado, \"pausa_humana\", inicio, reloj.ahora_ms())],\n    }",
-      "desde": 431,
+      "desde": 436,
       "escribe": [
         "decision_final",
         "pasos",
@@ -89,12 +89,12 @@
         "pausas",
         "revision"
       ],
-      "hasta": 473
+      "hasta": 478
     },
     "puntaje": {
       "archivo": "agents/src/app_agents/demo_b/nodos.py",
       "codigo": "def puntaje(self, estado: EstadoB, runtime: Runtime[ContextoCasoB]) -> dict[str, Any]:\n    \"\"\"RI, RP y RD: inconsistencias, puntaje y propuesta por reglas declaradas, sin el nombre (RP-04).\"\"\"\n    reloj = runtime.context.reloj\n    inicio = reloj.ahora_ms()\n    campos = self._campos(estado)\n    incs = inconsistencias(campos)\n    detalle = estado.get(\"beneficiarios_detalle\")\n    if detalle is not None and not detalle[\"valida\"]:\n        incs.append({\"campo\": \"estructura\", \"regla\": \"RB-03\"})\n    pt = puntaje_de_campos(campos, self.listas.datos)\n    prop, reglas = propuesta(\n        estado.get(\"conclusion_investigador\"), (estado.get(\"coincidencias\") or {}).get(\"mejor\"), campos\n    )\n    return {\n        \"puntaje_riesgo\": pt[\"total\"],\n        \"inconsistencias\": len(incs),\n        \"propuesta\": prop,\n        \"puntaje\": {**pt, \"inconsistencias\": incs, \"reglas_propuesta\": reglas},\n        \"pasos\": [self._paso(estado, \"puntaje\", inicio, reloj.ahora_ms())],\n    }",
-      "desde": 247,
+      "desde": 252,
       "escribe": [
         "inconsistencias",
         "pasos",
@@ -102,12 +102,12 @@
         "puntaje",
         "puntaje_riesgo"
       ],
-      "hasta": 266
+      "hasta": 271
     },
     "redactor": {
       "archivo": "agents/src/app_agents/demo_b/nodos.py",
       "codigo": "def redactor(self, estado: EstadoB, runtime: Runtime[ContextoCasoB]) -> dict[str, Any]:\n    \"\"\"El expediente, la respuesta y el documento adverso, por código (tipo «regla» en el plan B).\"\"\"\n    reloj = runtime.context.reloj\n    inicio = reloj.ahora_ms()\n    decision = estado.get(\"decision_final\") or estado.get(\"propuesta\") or \"aprobar\"\n    self.exigir_persona(decision, estado)\n    vista = {**estado, \"decision_final\": decision}\n    expediente = construir_expediente(vista, self.listas, self.plan_ref)\n    doc = (\n        documento_adverso(vista, self.listas, self.plan_ref, expediente)\n        if decision == \"rechazar\"\n        else None\n    )\n    return {\n        \"decision_final\": decision,\n        \"expediente\": expediente,\n        \"conclusiones_sin_cita\": expediente[\"conclusiones_sin_cita\"],\n        \"respuesta\": respuesta_al_solicitante(decision),\n        \"documento_adverso\": doc,\n        \"pasos\": [self._paso(estado, \"redactor\", inicio, reloj.ahora_ms())],\n    }",
-      "desde": 475,
+      "desde": 480,
       "escribe": [
         "conclusiones_sin_cita",
         "decision_final",
@@ -116,19 +116,19 @@
         "pasos",
         "respuesta"
       ],
-      "hasta": 495
+      "hasta": 500
     },
     "verificador_listas": {
       "archivo": "agents/src/app_agents/demo_b/nodos.py",
       "codigo": "def verificador_listas(self, estado: EstadoB, runtime: Runtime[ContextoCasoB]) -> dict[str, Any]:\n    \"\"\"RL-01 y RL-02, deterministas. Sin nombre no hay similitud observada: la señal queda nula y ninguna\n    comparación la cumple (la falta del nombre la cuenta RI-01).\"\"\"\n    reloj = runtime.context.reloj\n    inicio = reloj.ahora_ms()\n    c = mejor_coincidencia(self._campos(estado).get(\"nombre\"), self.listas.datos)\n    senales = {\"similitud_max\": c.similitud if c else None}\n    _, regs = self._decidir(\"verificador_listas\", {**estado, **senales}, len(estado[\"pasos\"]) + 1)\n    return {\n        **senales,\n        \"coincidencias\": {\n            \"listas_consultadas\": self.listas.consultadas(),\n            \"mejor\": c.como_dict() if c else None,\n        },\n        \"decisiones_de_arista\": regs,\n        \"pasos\": [self._paso(estado, \"verificador_listas\", inicio, reloj.ahora_ms())],\n    }",
-      "desde": 196,
+      "desde": 201,
       "escribe": [
         "coincidencias",
         "decisiones_de_arista",
         "pasos",
         "similitud_max"
       ],
-      "hasta": 212
+      "hasta": 217
     }
   },
   "ruta": {

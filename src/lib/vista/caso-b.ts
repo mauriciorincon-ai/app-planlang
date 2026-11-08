@@ -208,6 +208,7 @@ export function perfilCasoB(
         "PRODUCTO_PEDIDO_B (src/textos/demo-b/caso.ts)",
       ),
       fondos: docs.fondos !== null,
+      existencia: docs.existencia !== undefined,
     }),
   ];
   if (carga) relato.push(RELATO_B.carga);

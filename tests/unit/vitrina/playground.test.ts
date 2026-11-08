@@ -7,6 +7,7 @@ import { beforeAll, describe, expect, it } from "vitest";
 import { consecuencias, umbralesDelPlan } from "@core/playground/consecuencias";
 import { datosDemo, type DatosDemo } from "@/lib/datos/vitrina";
 import { idsDeCasos } from "@/lib/vista/caso";
+import { porcentajeDelRango } from "@/lib/vista/formato";
 import { vistaPlayground, type VistaPlayground } from "@/lib/vista/playground";
 import { INTERRUPTOR, PORQUE_FUNCION } from "@/textos/playground";
 
@@ -144,6 +145,17 @@ describe("lo que la vista no inventa", () => {
 });
 
 describe("los datos de la isla", () => {
+  it("M4: cada clase de plazos trae cómo se lee frente a la norma, rotulado como supuesto, en los dos idiomas", () => {
+    const k = es.isla.plazos!.clases;
+    expect(k.map((x) => x.equivale)).toEqual(
+      d.plan.simulacion_de_plazos!.clases.map((c) => c.equivale_a.es),
+    );
+    expect(k[0]!.equivale).toContain("supuesto de la simulación");
+    expect(en.isla.plazos!.clases[0]!.equivale).toContain(
+      "simulation assumption",
+    );
+  });
+
   it("AU-S3-11: el compacto del A trae la aprobación parcial que el plan v1.5 deja salir sola sin modo Texas", () => {
     expect(es.isla.compacto.propuesta).toEqual({
       senal: "propuesta",
@@ -229,5 +241,14 @@ describe("AU-S2-1: la isla no narra una regla con el texto de otra", () => {
     } finally {
       PORQUE_FUNCION.texas_y_no_aprobar = t;
     }
+  });
+});
+
+describe("la marca del plan en el rango (S9 B5)", () => {
+  it("cae entre 0 y 100, y con min == max es 0 y no NaN", () => {
+    expect(porcentajeDelRango(30, 10, 60)).toBe(40);
+    expect(porcentajeDelRango(5, 5, 60)).toBe(0);
+    expect(porcentajeDelRango(60, 5, 60)).toBe(100);
+    expect(porcentajeDelRango(30, 30, 30)).toBe(0);
   });
 });

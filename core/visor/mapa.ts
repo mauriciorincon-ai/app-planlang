@@ -41,7 +41,14 @@ export const FUERA_DEL_CONTRATO = "planlang:fuera-del-contrato";
 export const CONTRATO_VERSION = "0.5.0";
 
 export interface GrafoParaMapa {
-  nodos: ReadonlyArray<{ id: string; tipo: string }>;
+  nodos: ReadonlyArray<{
+    id: string;
+    tipo: string;
+    /** La banda del nodo cuando no es la de su tipo (`BANDA_DE_TIPO`): el diseño de despliegue pone el canal en `entrada`. */
+    banda?: string;
+    /** La madurez del nodo cuando no es la que sale de estar o no en el grafo que corrió (`implementado` / `exigido-por-el-plan`). */
+    madurez?: NodoMapa["madurez"];
+  }>;
   aristas: ReadonlyArray<{
     source: string;
     target: string;
@@ -192,6 +199,7 @@ export function construirMapa(e: EntradaMapa): Mapa {
     e.contrato.nodos_esperados.map((n) => [n.id, n.tipo] as const),
   );
   const enGrafo = new Map(e.grafo.nodos.map((n) => [n.id, n.tipo] as const));
+  const delGrafo = new Map(e.grafo.nodos.map((n) => [n.id, n] as const));
   const ids = [
     ...e.contrato.nodos_esperados.map((n) => n.id),
     ...e.grafo.nodos.map((n) => n.id).filter((id) => !tipoPlan.has(id)),
@@ -208,14 +216,16 @@ export function construirMapa(e: EntradaMapa): Mapa {
     if (!textos) throw new Error(`visor: faltan los textos del nodo «${id}»`);
     const nodo: NodoMapa = {
       id: idDeMapa(id),
-      banda_id: BANDA_DE_TIPO[tipo] as string,
+      banda_id: delGrafo.get(id)?.banda ?? (BANDA_DE_TIPO[tipo] as string),
       tipo_id: tipo,
       nombre: nombreCodigo(id),
       orden: (i + 1) * 10,
       lider: textos.lider,
       experto: textos.experto,
       por_que_importa: textos.por_que_importa,
-      madurez: enGrafo.has(id) ? "implementado" : "exigido-por-el-plan",
+      madurez:
+        delGrafo.get(id)?.madurez ??
+        (enGrafo.has(id) ? "implementado" : "exigido-por-el-plan"),
       fuentes: textos.fuentes,
       fecha_verificacion: e.fecha,
     };

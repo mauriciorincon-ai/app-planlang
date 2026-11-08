@@ -171,14 +171,16 @@ export function observados(c: Compacto, umbrales: Umbrales): Observados[] {
   });
 }
 
-interface Desvio {
+/** Dónde se separa un caso del camino del agente: la visita `i` (en el orden del compacto) y la rama que toma ahí. */
+export interface Desvio {
   i: number;
   rama: string;
   registros: RegistroDeArista[];
   plan: RegistroDeArista[];
 }
 
-function desvioDe(
+/** La primera visita jugable del caso cuya rama cambia con estos umbrales; `null` si sigue el camino del agente. */
+export function desvioDe(
   c: Compacto,
   caso: CasoCompacto,
   umbrales: Umbrales,

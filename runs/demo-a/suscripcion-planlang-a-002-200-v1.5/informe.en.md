@@ -158,6 +158,18 @@ Calibration guarantee (δ = 0.10; the report declares α = 0.10). **Guaranteed t
 | 0.10 | 0.50 | 99.4% · 3.2% | 0.90 | 0.50–0.90 | yes | not reached |
 | 0.20 | 0.50 | 99.4% · 3.2% | 0.95 | 0.50–0.95 | yes | 0.50 (k = 2) |
 
+Tests at α = 0.05 (threshold: cases alone/errors, p; ✓ rejects H₀ “error > α”): 0.95: 134/3, p = 0.0931 ✓ · 0.90: 142/3, p = 0.0716 ✓ · 0.85: 151/3, p = 0.0529 ✓ · 0.80: 153/3, p = 0.0494 ✓ · 0.75: 153/3, p = 0.0494 ✓ · 0.70: 156/4, p = 0.1056 ✗.
+
+Joint tests at α = 0.05 (per stage, with α = 0.025 and δ = 0.050; threshold: stage cases alone/errors, p): 0.95: extractor 134/3 p = 0.5683 ✗, clarification 134/2 p = 0.3461 ✗.
+
+Tests at α = 0.10 (threshold: cases alone/errors, p; ✓ rejects H₀ “error > α”): 0.95: 134/3, p = 0.0005 ✓ · 0.90: 142/3, p = 0.0002 ✓ · 0.85: 151/3, p = 0.0001 ✓ · 0.80: 153/3, p = 0.0001 ✓ · 0.75: 153/3, p = 0.0001 ✓ · 0.70: 156/4, p = 0.0003 ✓ · 0.65: 156/4, p = 0.0003 ✓ · 0.60: 158/5, p = 0.0011 ✓ · 0.55: 158/5, p = 0.0011 ✓ · 0.50: 158/5, p = 0.0011 ✓.
+
+Joint tests at α = 0.10 (per stage, with α = 0.050 and δ = 0.050; threshold: stage cases alone/errors, p): 0.95: extractor 134/3 p = 0.0931 ✗, clarification 134/2 p = 0.0339 ✓.
+
+Tests at α = 0.20 (threshold: cases alone/errors, p; ✓ rejects H₀ “error > α”): 0.95: 134/3, p < 0.0001 ✓ · 0.90: 142/3, p < 0.0001 ✓ · 0.85: 151/3, p < 0.0001 ✓ · 0.80: 153/3, p < 0.0001 ✓ · 0.75: 153/3, p < 0.0001 ✓ · 0.70: 156/4, p < 0.0001 ✓ · 0.65: 156/4, p < 0.0001 ✓ · 0.60: 158/5, p < 0.0001 ✓ · 0.55: 158/5, p < 0.0001 ✓ · 0.50: 158/5, p < 0.0001 ✓.
+
+Joint tests at α = 0.20 (per stage, with α = 0.100 and δ = 0.050; threshold: stage cases alone/errors, p): 0.95: extractor 134/3 p = 0.0005 ✓, clarification 134/2 p = 0.0001 ✓ · 0.90: extractor 142/3 p = 0.0002 ✓, clarification 142/2 p < 0.0001 ✓ · 0.85: extractor 151/3 p = 0.0001 ✓, clarification 151/2 p < 0.0001 ✓ · 0.80: extractor 153/3 p = 0.0001 ✓, clarification 153/2 p < 0.0001 ✓ · 0.75: extractor 153/3 p = 0.0001 ✓, clarification 153/2 p < 0.0001 ✓ · 0.70: extractor 156/4 p = 0.0003 ✓, clarification 156/3 p = 0.0001 ✓ · 0.65: extractor 156/4 p = 0.0003 ✓, clarification 156/3 p = 0.0001 ✓ · 0.60: extractor 158/5 p = 0.0011 ✓, clarification 158/4 p = 0.0003 ✓ · 0.55: extractor 158/5 p = 0.0011 ✓, clarification 158/4 p = 0.0003 ✓ · 0.50: extractor 158/5 p = 0.0011 ✓, clarification 158/4 p = 0.0003 ✓.
+
 Joint coverage (Bonferroni): extractor, clarification, each at α/2 and δ/2 on the same cases the agent decides alone ⇒ P(some stage fails) ≤ α with probability ≥ 1 − δ; the column gives the lowest threshold with that guarantee.
 
 Model stage with no ground truth in the case (not observed, and left out of the joint coverage): writer.

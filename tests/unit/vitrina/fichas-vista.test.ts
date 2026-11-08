@@ -59,13 +59,13 @@ describe("la ficha de reproducibilidad", () => {
 
   it("los pasos para repetirla, con los archivos de su manifiesto, en los dos idiomas", () => {
     expect(es.repro.pasos.map((p) => p.comando)).toEqual([
-      "pnpm plan:validar --verificar plans/demo-a/v1.6.json",
+      "pnpm plan:validar --verificar plans/demo-a/v1.6.1.json",
       "pnpm casos:generar --versionados",
       "pnpm llegadas:generar --verificar",
       // El plan y los casos con que corrió la corrida publicada (no los de omisión del comando).
       "pnpm lote:demo --plan plans/demo-a/v1.5.json --casos data/casos/demo-a/planlang-a-002-200.json",
       "pnpm trazas:verificar",
-      "pnpm brecha:informe --corrida runs/demo-a/suscripcion-planlang-a-002-200-v1.5 --plan plans/demo-a/v1.6.json --salida data/vitrina/demo-a/suscripcion-planlang-a-002-200-v1.5 --verificar",
+      "pnpm brecha:informe --corrida runs/demo-a/suscripcion-planlang-a-002-200-v1.5 --plan plans/demo-a/v1.6.1.json --salida data/vitrina/demo-a/suscripcion-planlang-a-002-200-v1.5 --verificar",
     ]);
     expect(es.repro.pasos[3]!.texto).toContain(
       "el mismo comando 10 veces, de a 20 y espaciadas, hasta completar los 200 casos",
@@ -185,7 +185,7 @@ describe("cada ficha, como la pinta hoja-de-vida", () => {
     });
     // Con proceso no hay la nota de «sin proceso».
     expect(es.app.notas).toHaveLength(1);
-    expect(es.app.tieneSub).toBe("6 grupos · 25 funcionalidades.");
+    expect(es.app.tieneSub).toBe("6 grupos · 27 funcionalidades.");
     expect(es.app.hitos.map((h) => h.etiqueta)).toEqual([
       "ciclo",
       "sprints cerrados",

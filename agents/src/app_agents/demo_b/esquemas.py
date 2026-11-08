@@ -8,7 +8,9 @@ from __future__ import annotations
 
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, create_model
+from pydantic import BaseModel, ConfigDict, Field, create_model
+
+from .beneficiarios import TOPE_ENTIDADES, TOPE_PARTICIPACIONES, TOPE_PERSONAS
 
 
 class _Base(BaseModel):
@@ -97,9 +99,11 @@ class Control(_Base):
 
 class Estructura(_Base):
     entidad: str | None
-    entidades: list[EntidadEstructura]
-    personas: list[PersonaEstructura]
-    participaciones: list[Participacion]
+    # Dos veces el tope que el nodo calcula: el esquema acota lo que el modelo puede escribir; pasar el
+    # tope del nodo (pero no este) llega a RB-03 y decide una persona.
+    entidades: list[EntidadEstructura] = Field(max_length=2 * TOPE_ENTIDADES)
+    personas: list[PersonaEstructura] = Field(max_length=2 * TOPE_PERSONAS)
+    participaciones: list[Participacion] = Field(max_length=2 * TOPE_PARTICIPACIONES)
     controla: Control | None
 
 

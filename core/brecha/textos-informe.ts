@@ -74,6 +74,15 @@ export interface TextosInforme {
   cabComparacion: (base: string) => readonly string[];
   /** La garantía de la calibración (S8, ADR-018). Los números llegan ya escritos en el idioma. */
   garantia: (delta: string, alfa: string) => string;
+  /** Las pruebas exactas por umbral de un nivel (lo que el experto ve en la Brecha): `lista` ya viene escrita. */
+  pruebasPorUmbral: (alfa: string, lista: string) => string;
+  /** Las pruebas por etapa de la cobertura conjunta de un nivel, con el α y el δ que le tocan a cada etapa. */
+  pruebasConjuntas: (
+    alfa: string,
+    alfaEtapa: string,
+    deltaEtapa: string,
+    lista: string,
+  ) => string;
   cabGarantia: (aplicado: string | null) => readonly string[];
   noHay: string;
   noAlcanza: string;
@@ -147,6 +156,8 @@ export interface TextosInforme {
   tardia: (id: string, clase: string, espera: string, plazo: string) => string;
   sinPlazo: (clase: string, n: number) => string;
   supuestosDePlazos: string;
+  /** De qué señal de la traza sale la clase de cada solicitud (`simulacion_de_plazos.senal_de_clase`). */
+  claseDeSolicitud: (senal: string) => string;
   fuenteDePlazos: (norma: string, consultada: string) => string;
   // § 8
   playground: string;
@@ -164,6 +175,8 @@ export interface TextosInforme {
   piezaLineaBase: string;
   piezaLlegadas: string;
   llegadasDelLote: string;
+  /** «sobre el lote <huella>»: el lote con el que se generó la capa de llegadas. */
+  sobreElLote: string;
   casosDelLote: (
     id: string,
     semilla: string,
@@ -283,6 +296,10 @@ const ES: TextosInforme = {
     "Curva riesgo-cobertura (umbral de confianza → parte que el agente resuelve sola → errores entre esa parte):",
   cabCurva: ["Umbral", "Cobertura", "Riesgo", "Casos"],
   cabComparacion: (base) => ["", "Multiagente", `Agente único (${base})`],
+  pruebasPorUmbral: (alfa, lista) =>
+    `Pruebas a α = ${alfa} (umbral: casos solos/errores, p; ✓ rechaza H₀ «error > α»): ${lista}.`,
+  pruebasConjuntas: (alfa, alfaEtapa, deltaEtapa, lista) =>
+    `Pruebas conjuntas a α = ${alfa} (por etapa, con α = ${alfaEtapa} y δ = ${deltaEtapa}; umbral: etapa casos solos/errores, p): ${lista}.`,
   garantia: (delta, alfa) =>
     `Garantía de la calibración (δ = ${delta}; el informe declara α = ${alfa}). **Umbral con garantía** (Learn then Test, secuencia fija desde el umbral más alto): el más bajo cuyo error entre lo que el agente decide solo es ≤ α con probabilidad ≥ 1 − δ. **Umbral conformal**: el más alto que deja pasar sin persona al menos 1 − α de los aciertos (marginal, bajo intercambiabilidad). **Zona respaldada**: los umbrales de la rejilla con las dos a la vez.`,
   cabGarantia: (aplicado) => [
@@ -379,6 +396,8 @@ const ES: TextosInforme = {
   sinPlazo: (clase, n) =>
     `${n} ${n === 1 ? "solicitud" : "solicitudes"} de la clase «${clase}» no tiene${n === 1 ? "" : "n"} plazo en esta simulación: se decidieron al llegar y no cuentan para el plazo.`,
   supuestosDePlazos: "Lo que esta simulación supone:",
+  claseDeSolicitud: (senal) =>
+    `La clase de cada solicitud se lee de la señal «${senal}» de la traza.`,
   fuenteDePlazos: (norma, consultada) =>
     `Fuente de los plazos: ${norma} Consultada el ${consultada}.`,
   playground: "## 8. Lo que el playground permite explorar",
@@ -402,6 +421,7 @@ const ES: TextosInforme = {
   piezaLineaBase: "Línea base",
   piezaLlegadas: "Llegadas",
   llegadasDelLote: "horas de llegada simuladas del lote, con su semilla",
+  sobreElLote: "sobre el lote",
   casosDelLote: (id, semilla, n, plan) =>
     `${id} · semilla ${semilla} · n = ${n} · generado con el plan ${plan}`,
   corridaDe: (id, fecha, proveedor, variante, plan) =>
@@ -510,6 +530,10 @@ const EN: TextosInforme = {
     "Risk-coverage curve (confidence threshold → share the agent resolves alone → errors within that share):",
   cabCurva: ["Threshold", "Coverage", "Risk", "Cases"],
   cabComparacion: (base) => ["", "Multi-agent", `Single agent (${base})`],
+  pruebasPorUmbral: (alfa, lista) =>
+    `Tests at α = ${alfa} (threshold: cases alone/errors, p; ✓ rejects H₀ “error > α”): ${lista}.`,
+  pruebasConjuntas: (alfa, alfaEtapa, deltaEtapa, lista) =>
+    `Joint tests at α = ${alfa} (per stage, with α = ${alfaEtapa} and δ = ${deltaEtapa}; threshold: stage cases alone/errors, p): ${lista}.`,
   garantia: (delta, alfa) =>
     `Calibration guarantee (δ = ${delta}; the report declares α = ${alfa}). **Guaranteed threshold** (Learn then Test, fixed sequence from the highest threshold): the lowest one whose error among what the agent decides alone is ≤ α with probability ≥ 1 − δ. **Conformal threshold**: the highest one that lets at least 1 − α of the correct cases through without a person (marginal, under exchangeability). **Backed zone**: the grid thresholds that have both at once.`,
   cabGarantia: (aplicado) => [
@@ -604,6 +628,8 @@ const EN: TextosInforme = {
   sinPlazo: (clase, n) =>
     `${n} ${n === 1 ? "request" : "requests"} of the “${clase}” class ${n === 1 ? "has" : "have"} no deadline in this simulation: ${n === 1 ? "it was" : "they were"} decided on arrival and ${n === 1 ? "does" : "do"} not count toward the deadline.`,
   supuestosDePlazos: "What this simulation assumes:",
+  claseDeSolicitud: (senal) =>
+    `Each request's class is read from the “${senal}” signal of the trace.`,
   fuenteDePlazos: (norma, consultada) =>
     `Source of the deadlines: ${norma} Read on ${consultada}.`,
   playground: "## 8. What the playground lets you explore",
@@ -627,6 +653,7 @@ const EN: TextosInforme = {
   piezaLineaBase: "Baseline",
   piezaLlegadas: "Arrivals",
   llegadasDelLote: "simulated arrival times for the batch, with its seed",
+  sobreElLote: "over the batch",
   casosDelLote: (id, semilla, n, plan) =>
     `${id} · seed ${semilla} · n = ${n} · generated with plan ${plan}`,
   corridaDe: (id, fecha, proveedor, variante, plan) =>

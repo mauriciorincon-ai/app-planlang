@@ -362,7 +362,12 @@ export function lineasDePlazos(inf: Informe, i: Idioma): LineasDePlazos | null {
       t.sinPlazo(nombre(CLASE_SIN_PLAZO, x.clase, i), x.n),
     ),
     supuestosTitulo: t.supuestosDePlazos,
-    supuestos: z.supuestos.map((x) => x[i]),
+    // Cada clase dice cómo se lee frente a la norma (`equivale_a`, rotulado como supuesto) y luego los supuestos del plan.
+    supuestos: [
+      t.claseDeSolicitud(z.senal_de_clase),
+      ...z.clases.map((c) => `${c.nombre[i]}: ${c.equivale_a[i]}`),
+      ...z.supuestos.map((x) => x[i]),
+    ],
     fuente: t.fuenteDePlazos(z.fuente.norma[i], z.fuente.consultada),
   };
 }
@@ -532,6 +537,9 @@ function seccionBrechas(inf: Informe, i: Idioma): string {
 function seccionGarantia(g: GarantiaDeCalibracion, i: Idioma): string[] {
   const t = TEXTOS_INFORME[i];
   const u = (x: number) => num(x, i, 2);
+  // «p = 0,0931»; con 4 decimales un p de 0,00004 no es cero: «p < 0,0001».
+  const pT = (p: number) =>
+    p < 0.00005 ? `p < ${num(0.0001, i, 4)}` : `p = ${num(p, i, 4)}`;
   const etapa = (nodo: string) => t.etapa[nodo] ?? nodo;
   const aplicado = g.umbral_aplicado === null ? null : u(g.umbral_aplicado);
   const filas = g.niveles.map((n) => {
@@ -564,6 +572,43 @@ function seccionGarantia(g: GarantiaDeCalibracion, i: Idioma): string[] {
     "",
     tabla(t.cabGarantia(aplicado), filas),
   ];
+  // Los p por umbral (B7 del S8): la tabla dice qué umbral sale respaldado; esto, con qué números y qué p.
+  for (const n of g.niveles) {
+    const alfa = num(n.alfa, i, 2);
+    lineas.push(
+      "",
+      t.pruebasPorUmbral(
+        alfa,
+        n.umbral_con_garantia.pruebas
+          .map(
+            (p) =>
+              `${u(p.umbral)}: ${p.aceptados}/${p.errores}, ${pT(p.p)} ${p.rechaza ? "✓" : "✗"}`,
+          )
+          .join(" · "),
+      ),
+    );
+    const c = n.conjunta;
+    if (c)
+      lineas.push(
+        "",
+        t.pruebasConjuntas(
+          alfa,
+          num(c.alfa_por_etapa, i, 3),
+          num(c.delta_por_etapa, i, 3),
+          c.pruebas
+            .map(
+              (q) =>
+                `${u(q.umbral)}: ${q.etapas
+                  .map(
+                    (e) =>
+                      `${etapa(e.nodo)} ${e.aceptados}/${e.errores} ${pT(e.p)} ${e.rechaza ? "✓" : "✗"}`,
+                  )
+                  .join(", ")}`,
+            )
+            .join(" · "),
+        ),
+      );
+  }
   const conjunta = g.niveles.find((n) => n.conjunta)?.conjunta;
   if (conjunta)
     lineas.push(
@@ -819,7 +864,7 @@ function seccionFicha(inf: Informe, i: Idioma): string {
       ? [
           [
             t.piezaLlegadas,
-            `${t.llegadasDelLote} (\`${f.llegadas.archivo}\`)`,
+            `${t.llegadasDelLote} (\`${f.llegadas.archivo}\`) · ${t.sobreElLote} \`${f.llegadas.lote_huella}\``,
             `\`${f.llegadas.huella}\``,
           ],
         ]

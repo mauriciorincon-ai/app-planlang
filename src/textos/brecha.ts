@@ -885,8 +885,8 @@ export const PLAZOS_BRECHA = {
     unidad: string;
   }) =>
     tb(
-      `Toda solicitud con plazo se decidió a tiempo. La que más esperó fue ${p.peor}: ${p.espera} de espera frente a un plazo de ${p.plazo}. El margen es amplio porque al auditor le llegan ${p.carga} solicitudes por día hábil y atiende ${p.capacidad} ${p.unidad}.`,
-      `Every request with a deadline was decided in time. The one that waited longest was ${p.peor}: ${p.espera} of waiting against a ${p.plazo} deadline. The margin is wide because the auditor receives ${p.carga} requests per business day and handles ${p.capacidad} ${p.unidad}.`,
+      `Toda solicitud con plazo se decidió a tiempo. La que más esperó fue ${p.peor}: ${p.espera} de espera frente a un plazo de ${p.plazo}. Al auditor le llegan ${p.carga} solicitudes por día hábil y atiende ${p.capacidad} ${p.unidad}.`,
+      `Every request with a deadline was decided in time. The one that waited longest was ${p.peor}: ${p.espera} of waiting against a ${p.plazo} deadline. The auditor receives ${p.carga} requests per business day and handles ${p.capacidad} ${p.unidad}.`,
     )) as Plantilla<{
     peor: string;
     espera: string;
@@ -908,8 +908,8 @@ export const PLAZOS_BRECHA = {
     rango: string;
   }) =>
     tb(
-      `Donde se rompe: el plazo se cumple desde ${p.minima} ${p.unidad}${p.uno !== null ? ` y con una menos salen ${p.uno}` : ""}.${p.fuera ? ` Eso queda por debajo del tramo que el playground deja mover (${p.rango}): ahí no se alcanza a ver.` : ""}`,
-      `Where it breaks: the deadline is met from ${p.minima} ${p.unidad}${p.uno !== null ? ` and with one fewer, ${p.uno} go past it` : ""}.${p.fuera ? ` That is below the range the playground lets you move (${p.rango}): it cannot be seen there.` : ""}`,
+      `Donde se rompe: el plazo se cumple desde ${p.minima} ${p.unidad}${p.uno !== null ? ` y con una menos salen ${p.uno}` : ""}.${p.fuera ? ` Eso queda por debajo del tramo que el playground deja mover (${p.rango}): ahí no se alcanza a ver.` : ` Eso cae dentro del tramo que el playground deja mover (${p.rango}): baja la capacidad ahí para verlo.`}`,
+      `Where it breaks: the deadline is met from ${p.minima} ${p.unidad}${p.uno !== null ? ` and with one fewer, ${p.uno} go past it` : ""}.${p.fuera ? ` That is below the range the playground lets you move (${p.rango}): it cannot be seen there.` : ` That falls inside the range the playground lets you move (${p.rango}): lower the capacity there to see it.`}`,
     )) as Plantilla<{
     minima: string;
     uno: string | null;

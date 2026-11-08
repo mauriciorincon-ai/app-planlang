@@ -304,10 +304,10 @@ describe("los plazos del A (S9, C11): se publican con su margen, su rotura y sus
     const p = es.criterios.plazos!;
     expect(p.titulo).toBe("Plazos: el reloj simulado");
     expect(p.lectura[0]).toBe(
-      "Toda solicitud con plazo se decidió a tiempo. La que más esperó fue hospitalaria: 15 h 33 min de espera frente a un plazo de 72 horas. El margen es amplio porque al auditor le llegan 14 solicitudes por día hábil y atiende 30 casos por día hábil.",
+      "Toda solicitud con plazo se decidió a tiempo. La que más esperó fue hospitalaria: 15 h 33 min de espera frente a un plazo de 72 horas. Al auditor le llegan 14 solicitudes por día hábil y atiende 30 casos por día hábil.",
     );
     expect(p.lectura[1]).toBe(
-      "Donde se rompe: el plazo se cumple desde 8 casos por día hábil y con una menos salen 14. Eso queda por debajo del tramo que el playground deja mover (10–60): ahí no se alcanza a ver.",
+      "Donde se rompe: el plazo se cumple desde 8 casos por día hábil y con una menos salen 14. Eso cae dentro del tramo que el playground deja mover (5–60): baja la capacidad ahí para verlo.",
     );
     expect(p.lectura[2]).toContain("Las horas de llegada son simuladas");
     expect(p.lineas.filas.map((f) => [f[0], f[1], f[2], f[3], f[4]])).toEqual([
@@ -315,6 +315,19 @@ describe("los plazos del A (S9, C11): se publican con su margen, su rotura y sus
       ["Ambulatoria", "7 días calendario", "123", "40", "0"],
     ]);
     expect(p.lineas.fuente).toContain("Consultada el 2026-11-03");
+  });
+
+  it("M4 y B5: la señal de la clase y cómo se lee cada clase frente a la norma (supuesto) van antes de los supuestos del plan (ES y EN)", () => {
+    const e = es.criterios.plazos!.lineas.supuestos;
+    expect(e[0]).toMatch(/^La clase de cada solicitud se lee de la señal «/);
+    expect(e[1]).toMatch(/^Hospitalaria: Solicitud expedita de la norma/);
+    expect(e[1]).toContain("Es un supuesto de la simulación");
+    expect(e[2]).toMatch(/^Ambulatoria: Solicitud estándar de la norma/);
+    const n = en.criterios.plazos!.lineas.supuestos;
+    expect(n[0]).toMatch(/^Each request's class is read from the “/);
+    expect(n[1]).toMatch(/^Inpatient: The rule's expedited request/);
+    expect(n[1]).toContain("It is a simulation assumption");
+    expect(n.length).toBe(e.length);
   });
 
   it("en inglés está redactado, no copiado; y el criterio C11 está en la lista de criterios", () => {

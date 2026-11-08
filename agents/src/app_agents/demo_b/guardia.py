@@ -57,6 +57,27 @@ def minimizar(documentos: dict[str, Any]) -> dict[str, str | None]:
     return salida
 
 
+def _aparece_completo(identificador: str, texto: str) -> bool:
+    """El identificador está en el texto como token entero, no dentro de otro más largo."""
+    return re.search(rf"(?<![\w-]){re.escape(identificador)}(?![\w-])", texto) is not None
+
+
+def identificadores_de_la_estructura(
+    estructura: dict[str, Any] | None, documentos: dict[str, Any]
+) -> set[str]:
+    """Los NIT y documentos de la estructura que el expediente puede citar como PROPIOS del solicitante.
+
+    La estructura la escribe el modelo (viene del certificado de existencia, un dato no confiable); su palabra
+    no basta para dejar pasar un identificador por la guardia de salida: solo cuenta el que el certificado de
+    la propia solicitud trae literalmente. Un NIT o un documento que el modelo añade (alucinado o escondido
+    en un documento como carga) sigue siendo de un tercero y la guardia lo filtra."""
+    certificado = (documentos.get("existencia") or {}).get("es") or ""
+    estructura = estructura or {}
+    declarados = {str(x.get("nit")) for x in estructura.get("entidades") or []}
+    declarados |= {str(x.get("documento")) for x in estructura.get("personas") or []}
+    return {d for d in declarados if d and _aparece_completo(d, certificado)}
+
+
 def _limpiar(
     texto: str, permitidos: set[str], idioma: str, destino: str, hallazgos: list[dict[str, Any]]
 ) -> str:

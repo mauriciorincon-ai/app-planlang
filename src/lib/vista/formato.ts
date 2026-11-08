@@ -24,8 +24,9 @@ export function conteo(
 
 /** «1.2.0» → «v1.2»: la versión corta con que se nombra un plan en la vitrina. */
 export function versionCorta(version: string): string {
-  const [mayor, menor] = version.split(".");
-  return `v${mayor}.${menor ?? "0"}`;
+  const [mayor, menor, parche] = version.split(".");
+  // Una enmienda de parche (1.6.1) es otro plan sellado: dejarla en «v1.6» diría que se lee el anterior.
+  return `v${mayor}.${menor ?? "0"}${parche && parche !== "0" ? `.${parche}` : ""}`;
 }
 
 /** «a de b» / «a of b» con espacios duros alrededor de la preposición corta. */
@@ -79,4 +80,19 @@ export function enumerar(items: readonly string[], idioma: Idioma): string {
 export function decimalesDe(v: number): number {
   const d = /\.(\d+)/.exec(String(v))?.[1]?.length ?? 0;
   return Math.min(4, Math.max(2, d));
+}
+
+/** Cuántos decimales lleva un valor que se mueve de `paso` en `paso` (el del deslizador de un umbral). */
+export function decimalesDelPaso(paso: number): number {
+  const s = String(paso);
+  return s.includes(".") ? s.length - s.indexOf(".") - 1 : 0;
+}
+
+/** Dónde cae `valor` en el rango, de 0 a 100; con `min == max` el rango no tiene ancho y es 0 (no NaN). */
+export function porcentajeDelRango(
+  valor: number,
+  min: number,
+  max: number,
+): number {
+  return max === min ? 0 : ((valor - min) / (max - min)) * 100;
 }

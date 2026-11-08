@@ -46,7 +46,7 @@ AskUserQuestion: «LCP a 2,8 s en toda ruta, con ADR».
 ## Decisión
 
 - `perf-budget.json`: el LCP de cada entrada por ruta pasa de 2.500 a **2.800 ms**: `/es$`, `/en$`, `/*/plan$`,
-  `/*/agente`, `/*/caso/`, `/*/brecha`, `/*/comparar`, `/*/planes/` y `/*/fichas`. `/*/playground` ya estaba en 2.800
+  `/*/agente`, `/*/caso/`, `/*/brecha`, `/*/comparar`, `/*/planes/` y `/*/fichas`. (Enmienda del S10: `/*/despliegue`, la página del diseño de despliegue, nace con el mismo margen de 2.800 mientras dure Next 16.4; vuelve a 2,5 s con las demás.) `/*/playground` ya estaba en 2.800
   (ADR-011). Se conserva la partición por ruta: es la que permite volver una ruta a 2,5 s sin tocar las demás.
 - `tests/unit/guardias/lighthouse-urls.test.ts` declara cada ruta en `MARGENES`, con este ADR (y el playground con el
   011). La guardia sigue exigiendo que ninguna ruta pase de 2,5 s sin un margen declarado, y que cada URL medida caiga

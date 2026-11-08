@@ -46,6 +46,7 @@ const MARGENES: Record<string, { lcp: number; adr: string }> = {
       "/*/caso/",
       "/*/brecha",
       "/*/comparar",
+      "/*/despliegue",
       "/*/planes/",
       "/*/fichas",
     ].map((path) => [path, { lcp: 2800, adr: ADR_NEXT_16_4 }]),

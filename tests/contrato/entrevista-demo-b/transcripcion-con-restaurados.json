@@ -3,14 +3,14 @@
   "demo_id": "demo-b",
   "fecha": "2026-10-04",
   "formato": "planlang-transcripcion/v1",
-  "huella": "f0cda7ee687d43597623c9ab534e60646d2971bb754902cd1561f55f0b572cc4",
+  "huella": "8bf211577423d61708f9f575995c2037e755aca49d466c2cb5ffb7a6e3ea1c3c",
   "idioma": "es",
   "llamadas_al_modelo": 9,
   "modelo": "simulado",
   "pasadas": 1,
   "plan_id": "plan-demo-b",
   "plantilla": {
-    "huella": "0af3185fc663edd3ae7d3e91bf555d186b061a830ca657313308824f39204185",
+    "huella": "639f9fc1403ab162a2163f8ac3ddebd16e2bdd9daa748a8fb5f3778b48ebcc49",
     "id": "dom-financiero",
     "version": "1.1.0"
   },

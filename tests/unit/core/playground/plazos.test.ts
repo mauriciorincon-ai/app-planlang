@@ -45,7 +45,7 @@ describe("el compacto con plazos", () => {
     const { c } = await base();
     expect(c.plazos?.capacidad).toEqual({
       valor: 30,
-      min: 10,
+      min: 5,
       max: 60,
       paso: 5,
     });
@@ -136,12 +136,14 @@ describe("la cola con los umbrales y la capacidad jugados", () => {
     );
   });
 
-  it("lo que se mide sale de la cola: con los plazos del plan, el plazo se rompe por debajo del rango que el plan deja mover", async () => {
+  it("lo que se mide sale de la cola: con los plazos del plan, el plazo se rompe DENTRO del rango que el plan deja mover (v1.6.1: 5–60)", async () => {
     const { c, d } = await base();
     const min = c.plazos!.capacidad.min;
     const z = consecuencias(c, umbralesDelPlan(c)).plazos!;
-    expect(z.capacidad_minima!.valor).toBeLessThan(min);
-    // Lo que el control no deja mover se puede comprobar con la propia cola: con una menos que la mínima, salen.
+    // S10 (plan v1.6.1): el mínimo medido (8) cae dentro del rango, así que el control llega a verlo.
+    expect(z.capacidad_minima!.valor).toBeGreaterThanOrEqual(min);
+    expect(z.capacidad_minima!.valor - 1).toBeGreaterThanOrEqual(min);
+    // Con una menos que la mínima, salen; el playground puede mostrarlo.
     const con = (cap: number) =>
       consecuencias(c, umbralesDelPlan(c), cap).plazos!;
     expect(con(z.capacidad_minima!.valor).tardias).toHaveLength(0);

@@ -239,6 +239,52 @@ export const CASOS_A_MANO: readonly CasoDelContrato[] = [
       ],
     }),
   },
+  // Tope de tamaño (S10, M3): el borde exacto calcula; un paso más no se calcula en ninguno de los dos lados (sin el
+  // tope, los caminos de una estructura con diamantes crecen como 2^n y una cadena larga agota la pila).
+  ...[
+    ["en-el-tope-16-sociedades", 16],
+    ["sobre-el-tope-17-sociedades", 17],
+  ].map(([nombre, n]): CasoDelContrato => {
+    const nit = (i: number) => `SYN-NIT-${String(i + 1).padStart(6, "0")}`;
+    const entidades = Array.from({ length: n as number }, (_, i) => ({
+      nit: nit(i),
+      nombre: `Sociedad ${nit(i)}`,
+    }));
+    // Una cadena de sociedades al 100 % que termina en una persona.
+    const participaciones: [string, string, string][] = [];
+    for (let i = 0; i + 1 < (n as number); i++)
+      participaciones.push([nit(i + 1), nit(i), "100"]);
+    participaciones.push([P(1), nit((n as number) - 1), "100"]);
+    return {
+      nombre: nombre as string,
+      estructura: a_mano(participaciones, 1, 1, {
+        entidad: nit(0),
+        entidades,
+      }),
+    };
+  }),
+  {
+    nombre: "sobre-el-tope-33-personas",
+    estructura: a_mano(
+      Array.from(
+        { length: 33 },
+        (_, i) => [P(i + 1), S, "3.00"] as [string, string, string],
+      ),
+      33,
+      1,
+    ),
+  },
+  {
+    nombre: "sobre-el-tope-65-participaciones",
+    estructura: a_mano(
+      Array.from(
+        { length: 65 },
+        (_, i) => [P((i % 5) + 1), S, "1.00"] as [string, string, string],
+      ),
+      5,
+      1,
+    ),
+  },
 ];
 
 /** Lo que el serializador real produce: la estructura verdadera y la simulada de cada persona jurídica del lote. */

@@ -1,6 +1,6 @@
 {
   "schema_version": "1.3.1",
-  "actualizado": "2026-11-03",
+  "actualizado": "2026-11-08",
   "pieza": {
     "slug": "planlang",
     "nombre": "planlang",
@@ -9,7 +9,7 @@
     "ciclo": "H-2",
     "version": "0.1.0",
     "sellado_en": null,
-    "sprints_cerrados": 9
+    "sprints_cerrados": 10
   },
   "promesa": {
     "tagline": "Tu agente de IA, medido contra el plan que escribiste antes de construirlo.",
@@ -114,7 +114,7 @@
       "orden": 5,
       "nombre": "El agente por dentro",
       "linea": "El diagrama sale del código que corrió y señala cualquier pieza que el plan exige y no está.",
-      "cuenta": 1
+      "cuenta": 3
     },
     {
       "orden": 6,
@@ -378,7 +378,7 @@
       "etiqueta": "ciclo"
     },
     {
-      "valor": "9",
+      "valor": "10",
       "etiqueta": "sprints"
     },
     {

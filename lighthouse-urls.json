@@ -6,6 +6,7 @@
   "/es/brecha",
   "/es/comparar",
   "/es/playground",
+  "/es/despliegue",
   "/es/fichas",
   "/es/planes/hackguard-agentes",
   "/en",
@@ -15,6 +16,7 @@
   "/es/demo-b/caso/B-005",
   "/es/demo-b/brecha",
   "/es/demo-b/playground",
+  "/es/demo-b/despliegue",
   "/es/demo-b/fichas",
   "/en/demo-b/playground"
 ]

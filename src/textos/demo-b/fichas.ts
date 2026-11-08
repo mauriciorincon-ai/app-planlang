@@ -22,8 +22,8 @@ export const AGENTE_B = {
     "For a financial institution —a synthetic one— that onboards customers with due diligence: today an analyst checks every name against the control lists by hand, cannot tell which alarms were namesakes and leaves no written reason for each decision.",
   ),
   intro: tb(
-    "El agente lee los tres documentos de la solicitud, cruza el nombre con las listas, investiga el contexto desde el inicio de la zona gris y puntúa el riesgo con reglas que no miran el nombre; aprueba solo lo limpio, lleva lo demás al oficial con la evidencia y deja un expediente que cita la regla o la coincidencia de cada conclusión.",
-    "The agent reads the application's three documents, checks the name against the lists, investigates the context from the start of the gray zone and scores the risk with rules that ignore the name; it approves only the clean ones, brings the rest to the officer with the evidence and leaves a file that cites the rule or match behind each conclusion.",
+    "El agente lee los documentos de la solicitud, cruza el nombre con las listas, investiga el contexto desde el inicio de la zona gris y puntúa el riesgo con reglas que no miran el nombre; aprueba solo lo limpio, lleva lo demás al oficial con la evidencia y deja un expediente que cita la regla o la coincidencia de cada conclusión.",
+    "The agent reads the application's documents, checks the name against the lists, investigates the context from the start of the gray zone and scores the risk with rules that ignore the name; it approves only the clean ones, brings the rest to the officer with the evidence and leaves a file that cites the rule or match behind each conclusion.",
   ),
   titular: tb(
     "Un agente de vinculación cuyo plan salió de una entrevista y se verifica caso por caso: ninguna coincidencia en listas ni ningún rechazo sale sin una persona, y cada conclusión del expediente cita su regla.",
@@ -67,8 +67,8 @@ export const AGENTE_B = {
       ),
       detalle: ((n: number) =>
         tb(
-          `Criterio C5 del plan B, medido por el verificador: los campos extraídos de los tres documentos son los de la verdad conocida en los ${n} casos, en una sola corrida.`,
-          `Plan B's criterion C5, measured by the verifier: the fields extracted from the three documents are the known truth's in all ${n} cases, in a single run.`,
+          `Criterio C5 del plan B, medido por el verificador: los campos extraídos de los documentos son los de la verdad conocida en los ${n} casos, en una sola corrida.`,
+          `Plan B's criterion C5, measured by the verifier: the fields extracted from the documents are the known truth's in all ${n} cases, in a single run.`,
         )) as Plantilla<number>,
     },
     personas: {

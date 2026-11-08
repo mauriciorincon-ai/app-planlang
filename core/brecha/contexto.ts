@@ -6,8 +6,10 @@
 import type { TextoBilingue } from "../formatos/bilingue";
 import type { JsonValor } from "../formatos/jcs";
 import type { Traza } from "../formatos/traza";
-import type { CasoDeDemo as Caso } from "../sintetico/de-demo";
-import { DEMO_B } from "../sintetico/demo-b/esquema";
+import {
+  verdadConOmisiones,
+  type CasoDeDemo as Caso,
+} from "../sintetico/de-demo";
 import {
   contextoDesdeObjeto,
   ErrorEvaluacion,
@@ -143,17 +145,12 @@ export function documentoVerificado(doc: JsonValor | undefined): JsonValor {
 }
 
 /**
- * La verdad conocida tal como la leen las reglas. En el demo B, `tipo_solicitante` es opcional en el dato (los lotes
- * anteriores al S9 no lo traen, y sus bytes no cambian) y su ausencia significa «persona natural», como lo entiende el
- * agente simulado. Sin este valor por omisión, una regla cuya población dice `tipo_solicitante == 'juridica'` dejaría a
- * cada persona natural dentro de la población como «no evaluable», en vez de fuera de ella.
+ * La verdad conocida tal como la leen las reglas, con los valores por omisión de su demo (`verdadConOmisiones`, en
+ * `core/sintetico/de-demo.ts`). Sin ellos, una regla cuya población dice `tipo_solicitante == 'juridica'` dejaría a cada
+ * persona natural del B dentro de la población como «no evaluable», en vez de fuera de ella.
  */
-function verdadDeCaso(caso: Caso): JsonValor {
-  const v = caso.verdad_conocida as unknown as { [k: string]: JsonValor };
-  return caso.demo_id === DEMO_B && v["tipo_solicitante"] === undefined
-    ? { ...v, tipo_solicitante: "natural" }
-    : (v as JsonValor);
-}
+const verdadDeCaso = (caso: Caso): JsonValor =>
+  verdadConOmisiones(caso) as JsonValor;
 
 /** Si el caso se decidió en plazo, según la cola del lote: por id de caso. Ausente = el lote no trae llegadas. */
 export type EnPlazoPorCaso = ReadonlyMap<string, boolean | null>;

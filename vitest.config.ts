@@ -119,6 +119,13 @@ export default defineConfig({
           branches: 90,
           statements: 90,
         },
+        // S10: el diseño de despliegue — núcleo determinista, como el resto de `core/`.
+        "core/despliegue/**/*.ts": {
+          lines: 90,
+          functions: 90,
+          branches: 90,
+          statements: 90,
+        },
         // S2: el visor (conversor, validación, geometría, SVG) — núcleo determinista, como brecha y playground.
         "core/visor/**/*.ts": {
           lines: 90,

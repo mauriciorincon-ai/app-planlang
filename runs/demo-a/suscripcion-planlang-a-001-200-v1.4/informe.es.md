@@ -150,6 +150,18 @@ Garantía de la calibración (δ = 0,10; el informe declara α = 0,10). **Umbral
 | 0,10 | 0,50 | 99,4 % · 2 % | 0,85 | 0,50–0,85 | sí | 0,85 (k = 2) |
 | 0,20 | 0,50 | 99,4 % · 2 % | 0,90 | 0,50–0,90 | sí | 0,50 (k = 2) |
 
+Pruebas a α = 0,05 (umbral: casos solos/errores, p; ✓ rechaza H₀ «error > α»): 0,95: 111/1, p = 0,0230 ✓ · 0,90: 131/2, p = 0,0380 ✓ · 0,85: 141/2, p = 0,0258 ✓ · 0,80: 144/3, p = 0,0670 ✓ · 0,75: 147/3, p = 0,0606 ✓ · 0,70: 148/3, p = 0,0586 ✓ · 0,65: 148/3, p = 0,0586 ✓ · 0,60: 148/3, p = 0,0586 ✓ · 0,55: 152/3, p = 0,0512 ✓ · 0,50: 152/3, p = 0,0512 ✓.
+
+Pruebas conjuntas a α = 0,05 (por etapa, con α = 0,025 y δ = 0,050; umbral: etapa casos solos/errores, p): 0,95: extractor 111/1 p = 0,2315 ✗, aclaración 111/1 p = 0,2315 ✗.
+
+Pruebas a α = 0,10 (umbral: casos solos/errores, p; ✓ rechaza H₀ «error > α»): 0,95: 111/1, p = 0,0001 ✓ · 0,90: 131/2, p = 0,0001 ✓ · 0,85: 141/2, p < 0,0001 ✓ · 0,80: 144/3, p = 0,0002 ✓ · 0,75: 147/3, p = 0,0002 ✓ · 0,70: 148/3, p = 0,0001 ✓ · 0,65: 148/3, p = 0,0001 ✓ · 0,60: 148/3, p = 0,0001 ✓ · 0,55: 152/3, p = 0,0001 ✓ · 0,50: 152/3, p = 0,0001 ✓.
+
+Pruebas conjuntas a α = 0,10 (por etapa, con α = 0,050 y δ = 0,050; umbral: etapa casos solos/errores, p): 0,95: extractor 111/1 p = 0,0230 ✓, aclaración 111/1 p = 0,0230 ✓ · 0,90: extractor 131/2 p = 0,0380 ✓, aclaración 131/2 p = 0,0380 ✓ · 0,85: extractor 141/2 p = 0,0258 ✓, aclaración 141/2 p = 0,0258 ✓ · 0,80: extractor 144/3 p = 0,0670 ✗, aclaración 144/3 p = 0,0670 ✗.
+
+Pruebas a α = 0,20 (umbral: casos solos/errores, p; ✓ rechaza H₀ «error > α»): 0,95: 111/1, p < 0,0001 ✓ · 0,90: 131/2, p < 0,0001 ✓ · 0,85: 141/2, p < 0,0001 ✓ · 0,80: 144/3, p < 0,0001 ✓ · 0,75: 147/3, p < 0,0001 ✓ · 0,70: 148/3, p < 0,0001 ✓ · 0,65: 148/3, p < 0,0001 ✓ · 0,60: 148/3, p < 0,0001 ✓ · 0,55: 152/3, p < 0,0001 ✓ · 0,50: 152/3, p < 0,0001 ✓.
+
+Pruebas conjuntas a α = 0,20 (por etapa, con α = 0,100 y δ = 0,050; umbral: etapa casos solos/errores, p): 0,95: extractor 111/1 p = 0,0001 ✓, aclaración 111/1 p = 0,0001 ✓ · 0,90: extractor 131/2 p = 0,0001 ✓, aclaración 131/2 p = 0,0001 ✓ · 0,85: extractor 141/2 p < 0,0001 ✓, aclaración 141/2 p < 0,0001 ✓ · 0,80: extractor 144/3 p = 0,0002 ✓, aclaración 144/3 p = 0,0002 ✓ · 0,75: extractor 147/3 p = 0,0002 ✓, aclaración 147/4 p = 0,0007 ✓ · 0,70: extractor 148/3 p = 0,0001 ✓, aclaración 148/4 p = 0,0006 ✓ · 0,65: extractor 148/3 p = 0,0001 ✓, aclaración 148/4 p = 0,0006 ✓ · 0,60: extractor 148/3 p = 0,0001 ✓, aclaración 148/4 p = 0,0006 ✓ · 0,55: extractor 152/3 p = 0,0001 ✓, aclaración 152/4 p = 0,0005 ✓ · 0,50: extractor 152/3 p = 0,0001 ✓, aclaración 152/4 p = 0,0005 ✓.
+
 Cobertura conjunta (Bonferroni): extractor, aclaración, cada una con α/2 y δ/2 sobre los mismos casos que el agente decide solo ⇒ P(alguna etapa falla) ≤ α con probabilidad ≥ 1 − δ; la columna dice el umbral más bajo con esa garantía.
 
 Etapa con modelo sin verdad en el caso (no se observa y la cobertura conjunta no la incluye): redactor.

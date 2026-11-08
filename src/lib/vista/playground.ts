@@ -33,7 +33,7 @@ import {
 import type { Fila } from "./agente";
 import type { PuntoCurva } from "./brecha";
 import { nombreDeSubtipo, pieDeCorrida } from "./caso";
-import { decimal, enumerar, versionCorta } from "./formato";
+import { decimal, decimalesDelPaso, enumerar, versionCorta } from "./formato";
 import { vistaGarantia, type VistaGarantia } from "./garantia";
 import { enlaceACaso } from "./paginas-caso";
 
@@ -87,7 +87,13 @@ export interface DatosPlazosIsla {
   unidad: string;
   descripcion: string;
   /** Las clases del plan en su orden de prioridad: su nombre y su plazo, ya escritos. */
-  clases: { valor: string; nombre: string; plazo: string; plazoMin: number }[];
+  clases: {
+    valor: string;
+    nombre: string;
+    plazo: string;
+    /** Cómo se lee la clase frente a la norma (un supuesto de la simulación, ya escrito). */
+    equivale: string;
+  }[];
   experto: string;
   fuente: string;
 }
@@ -104,11 +110,6 @@ export interface VistaPlayground {
   nucleoDetalle: string;
   isla: DatosIsla;
   pie: string;
-}
-
-function decimalesDe(paso: number): number {
-  const s = String(paso);
-  return s.includes(".") ? s.length - s.indexOf(".") - 1 : 0;
 }
 
 /**
@@ -141,7 +142,7 @@ function ejemplo(c: Compacto, d: DatosDemo, i: Idioma): string | null {
   const plan = umbralesDelPlan(c);
   for (const u of c.umbrales) {
     if (u.rango === "booleano" || typeof u.valor_en_plan !== "number") continue;
-    const dec = decimalesDe(u.rango.paso);
+    const dec = decimalesDelPaso(u.rango.paso);
     for (let k = 1; ; k++) {
       const v = Math.round((u.valor_en_plan + k * u.rango.paso) * 1e6) / 1e6;
       if (v > u.rango.max + 1e-9) break;
@@ -227,11 +228,11 @@ function datosDePlazos(
   return {
     unidad: X(sim.capacidad_del_auditor.unidad, i),
     descripcion: X(PLAZOS.descripcion, i),
-    clases: sim.clases.map((k, j) => ({
+    clases: sim.clases.map((k) => ({
       valor: k.valor,
       nombre: X(k.nombre, i),
       plazo: X(PLAZOS.plazoDe(k.plazo), i),
-      plazoMin: c.plazos!.config.clases[j]!.plazo_min,
+      equivale: X(k.equivale_a, i),
     })),
     experto: X(PLAZOS.experto({ jornada, dias: sim.dias_habiles }), i),
     fuente: X(
@@ -407,7 +408,7 @@ export function vistaPlayground(d: DatosDemo, i: Idioma): VistaPlayground {
         valorPlan: u.valor_en_plan,
         rango: "min" in u.rango_jugable ? { ...u.rango_jugable } : null,
         decimales:
-          "min" in u.rango_jugable ? decimalesDe(u.rango_jugable.paso) : 0,
+          "min" in u.rango_jugable ? decimalesDelPaso(u.rango_jugable.paso) : 0,
       })),
       criterios: d.plan.criterios_aceptacion.map((cr) => {
         const r = cr.regla_de_medicion;
@@ -443,7 +444,7 @@ export function vistaPlayground(d: DatosDemo, i: Idioma): VistaPlayground {
               s1.garantia,
               u1.id,
               "min" in u1.rango_jugable
-                ? decimalesDe(u1.rango_jugable.paso)
+                ? decimalesDelPaso(u1.rango_jugable.paso)
                 : 2,
               i,
             )

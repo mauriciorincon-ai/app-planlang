@@ -184,6 +184,11 @@ try {
       await page.locator("#w-U2 input[type=range]").focus();
       for (let k = 0; k < 6; k++) await page.keyboard.press("ArrowRight");
     }
+    if (e.accion === "recorrido-paso-3") {
+      // El caso camina: tres pasos adelante con el botón, el estado que el pie describe.
+      const siguiente = page.getByRole("button", { name: "Paso siguiente" });
+      for (let k = 0; k < 3; k++) await siguiente.click();
+    }
     // Tapa los nombres de persona: un punto por letra, el espacio se queda.
     await page.evaluate((nombres) => {
       const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);

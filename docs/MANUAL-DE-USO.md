@@ -464,8 +464,7 @@ data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar l
 - **Limitaciones conocidas:** la garantía vale para casos intercambiables con los medidos. Son sintéticos y el revisor
   es simulado, así que no dice nada del tráfico real; un lote nuevo pide recalcular (`pnpm brecha:informe`). El demo B
   queda «no observado»: su plan no mide confianza. Los tres niveles vienen del informe ya calculados: en el navegador
-  no se calcula nada al pintar. Este sprint solo lo probó en español; el inglés está redactado y llega a su prueba en el
-  cierre del hito.
+  no se calcula nada al pintar. Su prueba de punta a punta corre en español e inglés (`tests/e2e/ingles-s8-s9.spec.ts`, S10).
 
 ### Plazos y beneficiario final · desde el sprint 9
 
@@ -480,7 +479,8 @@ data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar l
      sin IA calcula quiénes son los beneficiarios finales según 31 CFR § 1010.230(d): quien llega al 25 % o más,
      directo o por cadenas de sociedades (el 25,00 % entra), y quien la controla. La cuenta es exacta, con fracciones.
      Cada dueño se cruza con las listas y, si se parece, el caso va al oficial. Si la estructura no cierra (un ciclo,
-     más del 100 %, un porcentaje mal escrito), **no se adivina**: no hay dueños y decide una persona.
+     más del 100 %, un porcentaje mal escrito), **no se adivina**: no hay dueños y cuenta como una inconsistencia (RB-03); con la tolerancia del plan (0)
+     decide una persona, y si en el playground la subes a 1 o 2 esa estructura puede pasar sin pausa.
 - **Dónde se ve:**
   - En la Brecha, bajo los criterios (`/es/brecha`): «Plazos: el reloj simulado» (A) y «Dueños de las sociedades» (B).
   - En el playground (`/es/playground`), la sección «La capacidad del auditor».
@@ -489,15 +489,15 @@ data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar l
 - **Cómo se usa:**
   1. En la Brecha, lee la fila C11 y el bloque de plazos: cuántas solicitudes esperaron, cuánto y dónde se rompe el
      plazo.
-  2. En el playground, mueve la **capacidad del auditor** (de 10 a 60 casos por día hábil, de 5 en 5) y los umbrales:
+  2. En el playground, mueve la **capacidad del auditor** (de 5 a 60 casos por día hábil, de 5 en 5) y los umbrales:
      mover un umbral cambia cuántas solicitudes van a una persona, mover la capacidad cambia cuánto esperan. La
      pantalla dice cuántas salen de su plazo, por clase, y las horas de auditor.
   3. Con «Leer como · Experto» aparecen la cola, sus supuestos y la fuente de la norma.
 - **Lo que midió, con sus fallas:**
   - **C11 cumple** en la corrida de 200 del A: ninguna de las 177 solicitudes con plazo se pasó; la espera más larga
-    fue de 16 h. Pero **el plazo no se rompe en ningún punto del tramo que el plan deja mover (10 a 60)**: se rompe
-    con 7 casos por día (14 ambulatorias tardías) y se cumple desde 8. Ese punto queda por debajo del control del
-    playground, y la pantalla lo dice.
+    fue de 16 h. Pero **el plazo se rompe dentro del tramo que el plan deja mover (5 a 60)**: con 7 casos por día
+    salen 14 ambulatorias tardías y se cumple desde 8. Desde el plan v1.6.1 (S10) el control llega hasta 5, así que
+    el playground deja ver el punto exacto donde se rompe.
   - **C7 cumple** en el lote `planlang-b-002-20` (20 casos: 8 sociedades y 12 personas): los dueños de las 8
     sociedades coincidieron con la verdad conocida. Con 8 sociedades la cifra orienta pero no prueba; el lote no trae
     instrucciones escondidas, así que C6 y R4 quedan sin casos que los prueben.
@@ -508,7 +508,54 @@ data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar l
   - No se modela la prórroga de hasta 14 días de la regla 42 CFR 438.210(d), y los planes de salud calificados de los
     mercados federales quedan fuera de esa disposición.
   - Una persona natural no pasa por el cálculo de dueños, y el umbral colombiano del RUB no se modela.
-  - Este sprint solo lo probó en español; el inglés está redactado y llega a su prueba en el cierre del hito.
+  - Su prueba de punta a punta corre en español e inglés (`tests/e2e/ingles-s8-s9.spec.ts`, S10).
+
+### Recorrer un caso · desde el sprint 10
+
+- **Qué hace:** sigue **un caso real** por el diagrama del agente, un paso a la vez, con su traza: qué nodo lo atendió, qué
+  señal leyó, qué regla aplicó con lo que observó, por dónde siguió y dónde esperó a una persona. La pausa humana dice
+  quién decidió y qué (en el lote es un revisor simulado que sigue la verdad conocida, y la pantalla lo dice).
+  Donde una regla lee un umbral del plan, responde «¿y con otro umbral?»: el valor más cercano con el que **este caso**
+  habría tomado otra rama en ese paso. Lo calcula el mismo intérprete de aristas del playground.
+- **Dónde se ve:**
+  - En la página de cada caso (`/es/caso/A-016`, y en el B bajo `/es/demo-b/caso/…`), la sección «El caso camina por el
+    grafo».
+  - En el agente (`/es/agente`), en la lista de trazas, el enlace «Recorrer →» junto a «Ver caso →».
+- **Cómo se usa:**
+  1. Abre un caso y baja a «El caso camina por el grafo».
+  2. Avanza con «Paso siguiente» y «Paso anterior», o con las flechas ← → del teclado; «Reproducir» recorre el caso
+     solo y se detiene al llegar al último paso. Con el sistema en «reducir movimiento», «Reproducir» avanza **un** paso
+     por pulsación y nada se anima.
+  3. Lee el panel del paso (en «Experto» trae la regla y los valores; en «Líder», lo que pasó en palabras llanas) o el
+     recorrido en texto, que dice lo mismo que el diagrama. «Saltar el diagrama» lleva directo al texto.
+  4. En «¿Y con otro umbral?», el enlace «Probar U… = … en el playground» abre el playground con ese valor ya puesto.
+- **Limitaciones conocidas:**
+  - Lo que habría pasado **después** de tomar la rama nueva no lo registró ninguna traza: el panel solo dice a dónde
+    lleva esa rama, nunca el desenlace.
+  - Si el valor más cercano que cambia algo separa el caso antes, o si ningún valor jugable cambia la rama, o si las
+    reglas del nodo comparan con valores fijos y no con un umbral, el panel dice «No observado» y la razón.
+  - Es un caso sintético con su traza publicada; no hay recorrido de casos que no tengan traza en la corrida.
+
+### Leer el diseño de despliegue · desde el sprint 10
+
+- **Qué hace:** muestra **cómo se pondría a correr** cada demo, generado desde su plan y su corrida publicada. Es un
+  diseño: no despliega nada y la página lo rotula «Diseño · no desplegado».
+  - **El plano:** siete componentes (canal, orquestador con su checkpointer, puerto de modelo, guardia, cola humana,
+    trazas y observabilidad). Los que ya tienen código en el repo dicen cuál; los que no, dicen «sin código aún».
+  - **Lo medido:** la latencia por nodo (mediana y máximo), el costo nominal por caso y la capacidad del auditor, todo de
+    las trazas y del informe de la corrida publicada. Lo que la corrida no midió dice «no medido» (el demo B no tiene
+    simulación de plazos, así que su capacidad queda «no medida»).
+  - **Riesgo por riesgo:** qué componente lleva el control de cada riesgo del plan. Es la lectura del autor sobre la
+    mitigación que declara el plan; una prueba garantiza que ningún riesgo quede sin su fila, y la página lo dice.
+- **Dónde se ve:** `/es/despliegue` (demo A) y `/es/demo-b/despliegue` (demo B); en la entrada (`/es`), el enlace «Diseño de
+  despliegue» en la fila de cada demo.
+- **Cómo se usa:** lee el plano y, debajo, el mismo plano en texto («Saltar el diagrama»); compara lo medido con lo que el
+  plan prometía y revisa qué componente cubre qué riesgo. Cada componente dice, en una línea para el líder y otra para
+  el experto, qué hace y para qué.
+- **Limitaciones conocidas:**
+  - No hay hosting, proveedor ni URL en el diseño: dice qué haría falta, no dónde correría.
+  - La capacidad se mide en casos por día hábil del auditor simulado; cuántas personas hacen falta no se calcula aquí.
+  - En producción el checkpointer tendría que ser de un almacén compartido: eso no se midió.
 
 ### Preguntas frecuentes
 
@@ -530,6 +577,11 @@ data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar l
 - **¿Cómo sabe el agente quién es el dueño de una sociedad?** No lo «sabe»: el modelo solo copia la estructura que trae
   el certificado y un código exacto, sin IA, calcula los beneficiarios finales; si la estructura no cierra, decide una
   persona.
+- **¿Por dónde pasó un caso concreto y qué habría pasado con otro umbral?** En la página del caso, «El caso camina por
+  el grafo» (arriba, «Recorrer un caso»); lo que habría pasado después de la rama nueva no se observó.
+- **¿Qué haría falta para ponerlo a correr y qué se midió?** «Diseño de despliegue» dice qué componentes harían falta y
+  lo medido (latencia, costo nominal de tokens y capacidad del auditor); el costo de alojarlo no se midió, y no
+  nombra hosting ni proveedor (arriba, «Leer el diseño de despliegue»).
 
 ---
 
@@ -991,8 +1043,8 @@ There are two ways to use it:
 - **Known limitations:** the guarantee holds for cases exchangeable with the measured ones. They are synthetic and the
   reviewer is simulated, so it says nothing about real traffic; a new batch needs a new calculation
   (`pnpm brecha:informe`). Demo B stays "not observed": its plan does not measure confidence. The three levels come
-  from the report already calculated: nothing is calculated in the browser when painting. This sprint only tested it in
-  Spanish; the English is written and gets its test at the milestone close.
+  from the report already calculated: nothing is calculated in the browser when painting. Its end-to-end test runs in
+  Spanish and English (`tests/e2e/ingles-s8-s9.spec.ts`, S10).
 
 ### Deadlines and beneficial owners · since sprint 9
 
@@ -1008,7 +1060,8 @@ There are two ways to use it:
      through chains of companies (exactly 25.00% counts), and whoever controls it. The arithmetic is exact, with
      fractions. Each owner is checked against the lists and, if one resembles an entry, the case goes to the officer.
      If the structure does not add up (a cycle, more than 100%, a malformed percentage), **it is not guessed**: there
-     are no owners and a person decides.
+     are no owners and it counts as one inconsistency (RB-03); with the plan's tolerance (0) a person decides, and if
+     you raise it to 1 or 2 in the playground that structure can pass without a pause.
 - **Where to see it:**
   - In the Gap report, under the criteria (`/en/brecha`): "Deadlines: the simulated clock" (A) and "Owners of the
     companies" (B).
@@ -1018,15 +1071,15 @@ There are two ways to use it:
 - **How to use it:**
   1. In the Gap report, read the C11 row and the deadlines block: how many requests waited, how long and where the
      deadline breaks.
-  2. In the playground, move the **auditor's capacity** (10 to 60 cases per business day, in steps of 5) and the
+  2. In the playground, move the **auditor's capacity** (5 to 60 cases per business day, in steps of 5) and the
      thresholds: moving a threshold changes how many requests go to a person, moving the capacity changes how long
      they wait. The screen says how many go past their deadline, by class, and the auditor hours.
   3. With "Read as · Expert" the queue, its assumptions and the norm's source appear.
 - **What it measured, failures included:**
   - **C11 is met** in demo A's 200-case run: none of the 177 requests with a deadline went past it; the longest wait
-    was 16 h. But **the deadline does not break anywhere in the range the plan lets you move (10 to 60)**: it breaks at
-    7 cases per day (14 outpatient requests late) and holds from 8. That point is below the playground's control, and
-    the screen says so.
+    was 16 h. But **the deadline breaks inside the range the plan lets you move (5 to 60)**: at 7 cases per
+    day, 14 outpatient requests go late, and it holds from 8. Since plan v1.6.1 (S10) the control reaches down to 5, so
+    the playground lets you see exactly where it breaks.
   - **C7 is met** in the `planlang-b-002-20` batch (20 cases: 8 companies and 12 people): the owners of the 8 companies
     matched the known truth. With 8 companies the figure points the way but does not prove it; the batch carries no
     hidden instructions, so C6 and R4 have no case that tests them.
@@ -1037,7 +1090,58 @@ There are two ways to use it:
   - The extension of up to 14 days in 42 CFR 438.210(d) is not modelled, and qualified health plans in the federal
     marketplaces are outside that provision.
   - A natural person does not go through the owners calculation, and the Colombian RUB threshold is not modelled.
-  - This sprint only tested it in Spanish; the English is written and gets its test at the milestone close.
+  - Its end-to-end test runs in Spanish and English (`tests/e2e/ingles-s8-s9.spec.ts`, S10).
+
+### Walk through a case · since sprint 10
+
+- **What it does:** follows **one real case** through the agent's diagram, one step at a time, using its trace: which
+  node handled it, which signal it read, which rule it applied with what it observed, where it went next and where it
+  waited for a person. The human pause says who decided and what (in the batch it is a simulated reviewer that follows
+  the known truth, and the screen says so).
+  Where a rule reads a plan threshold, it answers "what about another threshold?": the nearest value at which **this
+  case** would have taken another branch at that step. The playground's own edge interpreter computes it.
+- **Where to see it:**
+  - On each case's page (`/en/caso/A-016`, and for B under `/en/demo-b/caso/…`), the section "The case walks the
+    graph".
+  - On the agent (`/en/agente`), in the trace list, the "Walk through →" link next to "See case →".
+- **How to use it:**
+  1. Open a case and scroll to "The case walks the graph".
+  2. Move with "Next step" and "Previous step", or with the ← → arrow keys; "Play" walks the case on its own and stops
+     at the last step. With the system set to "reduce motion", "Play" advances **one** step per press and nothing is
+     animated.
+  3. Read the step panel (in "Expert" it carries the rule and the values; in "Leader", what happened in plain words) or
+     the walkthrough in text, which says the same as the diagram. "Skip the diagram" jumps straight to the text.
+  4. Under "What about another threshold?", the link "Try U… = … in the playground" opens the playground with that
+     value already set.
+- **Known limitations:**
+  - What would have happened **after** taking the new branch was recorded by no trace: the panel only says where that
+    branch leads, never the outcome.
+  - If the nearest value that changes anything splits the case earlier, or if no playable value changes the branch, or
+    if the node's rules compare against fixed values rather than a threshold, the panel says "Not observed" and why.
+  - It is a synthetic case with its published trace; cases without a trace in the run have no walkthrough.
+
+### Read the deployment design · since sprint 10
+
+- **What it does:** shows **how each demo would be put to run**, generated from its plan and its published run. It is a
+  design: it deploys nothing, and the page labels it "Design · not deployed".
+  - **The blueprint:** seven components (channel, orchestrator with its checkpointer, model port, guardrail, human
+    queue, traces and observability). The ones that already have code in the repo say which; the ones that do not say
+    "no code yet".
+  - **What was measured:** latency per node (median and maximum), nominal cost per case and the auditor's capacity,
+    all from the published run's traces and report. What the run did not measure says "not measured" (demo B has no
+    deadline simulation, so its capacity stays "not measured").
+  - **Risk by risk:** which component carries the control for each risk in the plan. It is the author's reading of the
+    mitigation the plan declares; a test guarantees no risk is left without its row, and the page says so.
+- **Where to see it:** `/en/despliegue` (demo A) and `/en/demo-b/despliegue` (demo B); on the entry page (`/en`), the
+  "Deployment design" link in each demo's row.
+- **How to use it:** read the blueprint and, below it, the same blueprint in text ("Skip the diagram"); compare what was
+  measured with what the plan promised and check which component covers which risk. Each component says, in one line for the leader and
+  one for the expert, what it does and what it is for.
+- **Known limitations:**
+  - The design names no hosting, provider or URL: it says what would be needed, not where it would run.
+  - Capacity is measured in cases per business day of the simulated auditor; how many people are needed is not worked
+    out here.
+  - In production the checkpointer would have to be a shared store: that was not measured.
 
 ### Frequently asked questions
 
@@ -1059,19 +1163,25 @@ There are two ways to use it:
 - **How does the agent know who owns a company?** It does not "know": the model only copies the structure the
   certificate carries and exact, AI-free code works out the beneficial owners; if the structure does not add up, a
   person decides.
+- **Where did a given case go and what would another threshold have done?** On the case's page, "The case walks the
+  graph" (above, "Walk through a case"); what would have happened after the new branch was not observed.
+- **What would it take to run it and what was measured?** "Deployment design" says which components would be needed and
+  what was measured (latency, nominal token cost and the auditor's capacity); the cost of hosting it was not measured,
+  and no hosting or provider is named (above, "Read the deployment design").
 
 ---
 
 ## Historial · History
 
-| Sprint          | Features añadidas a este manual · Features added to this manual                                                                                                                                                                                   |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| S1 · 2026-09-27 | Validar un plan · generar casos sintéticos · correr un lote de 20 · leer el informe de brecha · verificar corridas e instrumento                                                                                                                  |
-| S2 · 2026-10-02 | Abrir la vitrina (7 pantallas) · mover umbrales en el playground · las fichas · entregar el paquete a hoja-de-vida · lote de 200 y respaldo sin modelo (mejorado) · plan v1.3 y v1.4                                                              |
-| S3 · 2026-10-05 | Entrevistar un plan · correr el demo B · leer un expediente · publicar el design system · la vitrina con dos demos y la corrida de 200 del A (mejorado) · `--caso` en los lotes (mejorado) · plan v1.5                                            |
-| S4 · 2026-10-11 | Comparar dos corridas (la pantalla del A frente a su línea base, con sus casos enlazados)                                                                                                                                                         |
-| S5 · 2026-10-11 | Planear un proyecto real (un dominio nuevo como datos · la entrevista de cualquier plan · la página del plan sin corrida)                                                                                                                         |
-| S6 · 2026-10-11 | Planear una versión nueva del plan (la v2 de HackGuard con las respuestas que el usuario revisó · la página dice de quién son las respuestas y muestra la prioridad de acción de cada riesgo)                                                     |
-| S7 · 2026-10-11 | Cerrar un hito con un solo gate (la guía abre con G1 a G8) · el contrato del grafo en detalle en la página del plan · `--salida` acotada · M1 contra «pendiente» en un umbral fijado (mejorado)                                                   |
-| S8 · 2026-11-02 | Calibración con garantía (la zona respaldada por los datos en el playground y en S1 de la Brecha · el verificador 1.4.0 · lo que los datos no alcanzan) · las fichas sin las de los demos y con el YAML del complemento · `pnpm capturas:cv-viva` |
-| S9 · 2026-11-03 | Plazos y beneficiario final (el plazo legal del A medido en un reloj simulado · la capacidad del auditor en el playground · los dueños de las sociedades en el B · plan A v1.6 y B v1.2 · el verificador 1.5.0 · el lote `planlang-b-002-20`)     |
+| Sprint           | Features añadidas a este manual · Features added to this manual                                                                                                                                                                                                    |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| S1 · 2026-09-27  | Validar un plan · generar casos sintéticos · correr un lote de 20 · leer el informe de brecha · verificar corridas e instrumento                                                                                                                                   |
+| S2 · 2026-10-02  | Abrir la vitrina (7 pantallas) · mover umbrales en el playground · las fichas · entregar el paquete a hoja-de-vida · lote de 200 y respaldo sin modelo (mejorado) · plan v1.3 y v1.4                                                                               |
+| S3 · 2026-10-05  | Entrevistar un plan · correr el demo B · leer un expediente · publicar el design system · la vitrina con dos demos y la corrida de 200 del A (mejorado) · `--caso` en los lotes (mejorado) · plan v1.5                                                             |
+| S4 · 2026-10-11  | Comparar dos corridas (la pantalla del A frente a su línea base, con sus casos enlazados)                                                                                                                                                                          |
+| S5 · 2026-10-11  | Planear un proyecto real (un dominio nuevo como datos · la entrevista de cualquier plan · la página del plan sin corrida)                                                                                                                                          |
+| S6 · 2026-10-11  | Planear una versión nueva del plan (la v2 de HackGuard con las respuestas que el usuario revisó · la página dice de quién son las respuestas y muestra la prioridad de acción de cada riesgo)                                                                      |
+| S7 · 2026-10-11  | Cerrar un hito con un solo gate (la guía abre con G1 a G8) · el contrato del grafo en detalle en la página del plan · `--salida` acotada · M1 contra «pendiente» en un umbral fijado (mejorado)                                                                    |
+| S8 · 2026-11-02  | Calibración con garantía (la zona respaldada por los datos en el playground y en S1 de la Brecha · el verificador 1.4.0 · lo que los datos no alcanzan) · las fichas sin las de los demos y con el YAML del complemento · `pnpm capturas:cv-viva`                  |
+| S9 · 2026-11-03  | Plazos y beneficiario final (el plazo legal del A medido en un reloj simulado · la capacidad del auditor en el playground · los dueños de las sociedades en el B · plan A v1.6 y B v1.2 · el verificador 1.5.0 · el lote `planlang-b-002-20`)                      |
+| S10 · 2026-11-08 | Recorrer un caso (el caso camina por el grafo con su contrafactual de umbral · «Recorrer» en las trazas del agente) · leer el diseño de despliegue (un plano por demo con lo medido y el control de cada riesgo) · plan A v1.6.1 (capacidad del auditor de 5 a 60) |

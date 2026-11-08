@@ -70,7 +70,7 @@
 <body>
 <main>
   <h1>planlang — Blueprint de infraestructura <span class="badge">as-built</span></h1>
-  <p class="meta">Hito: <strong>H-2 Uso real</strong> (cierre) · Sprints: <strong>H-1 S1–S3 · H-2 S4–S7</strong> · Última actualización: <strong>2026-10-11</strong></p>
+  <p class="meta">Hito: <strong>H-2 Producto completo</strong> (cierre) · Sprints: <strong>H-1 S1–S3 · H-2 S4–S10</strong> · Última actualización: <strong>2026-11-08</strong></p>
   <p class="nota"><strong>Qué es.</strong> El mapa de toda la infraestructura que sostiene planlang, escrito con lo que está desplegado de verdad. Es vivo y acumulativo: el hito siguiente lo actualiza y anota sus cambios en el historial del pie. <strong>No trae ninguna URL de producción ni de previews</strong> (regla 17 del repo): la producción se describe por quién puede verla, nunca por dónde entrar.</p>
 
   <h2>Diagrama</h2>
@@ -111,7 +111,7 @@
     <rect class="caja caja-principal" x="360" y="230" width="250" height="118" rx="10"/>
     <text class="titulo-caja" x="485" y="256" text-anchor="middle">GitHub · repositorio público</text>
     <text class="detalle-caja" x="485" y="276" text-anchor="middle">código · planes · casos · corridas · informes</text>
-    <text class="detalle-caja" x="485" y="293" text-anchor="middle">ruleset: 4 checks · un PR vivo</text>
+    <text class="detalle-caja" x="485" y="293" text-anchor="middle">ruleset: 5 checks · un PR vivo</text>
     <text class="detalle-caja" x="485" y="310" text-anchor="middle">sin push directo a main · merge del usuario</text>
     <text class="detalle-caja" x="485" y="327" text-anchor="middle">gitleaks en cada commit</text>
 
@@ -184,7 +184,7 @@
     <thead><tr><th>Quién</th><th>Qué ve</th><th>Cómo se comprobó</th></tr></thead>
     <tbody>
       <tr><td>Un visitante cualquiera, sin sesión de Vercel</td><td><span class="nadie">Nada de la app privada.</span> Todo despliegue, de preview o de producción, lo manda al login de Vercel.</td><td>2026-10-04: petición anónima a la raíz, a <code>/es</code> y a <code>/es/demo-b/brecha</code> del preview del PR #14 y a la raíz de producción → 302 al inicio de sesión de Vercel. La URL no se escribe aquí.</td></tr>
-      <tr><td>Un visitante de hoja-de-vida</td><td>La vitrina de planlang como página del proyecto: los dos demos, sus informes de brecha y sus fichas, con el rótulo «Simulación · no operativo». Es un paquete estático; no llama a ningún modelo ni a LangSmith.</td><td>El paquete sale de <code>pnpm paquete:vitrina</code> y lo comprueban <code>pnpm paquete:verificar</code> y su e2e (sin URL, sin maqueta, con el manifiesto de huellas).</td></tr>
+      <tr><td>Un visitante de hoja-de-vida</td><td>La vitrina de planlang como página del proyecto: los dos demos con su plan, su agente, su brecha, su playground, el recorrido de un caso y el diseño de despliegue documentado, con el rótulo «Simulación · no operativo». Es un paquete estático; no llama a ningún modelo ni a LangSmith.</td><td>El paquete sale de <code>pnpm paquete:vitrina</code> y lo comprueban <code>pnpm paquete:verificar</code> y su e2e (sin URL, sin maqueta, con el manifiesto de huellas).</td></tr>
       <tr><td>Tú, con tu sesión de Vercel</td><td>La app privada completa: cada preview de PR y la producción.</td><td>Es como se recorre el preview de cada PR.</td></tr>
     </tbody>
   </table>
@@ -195,8 +195,8 @@
   <table>
     <thead><tr><th>Pieza</th><th>Servicio + plan</th><th>Detalle operativo</th></tr></thead>
     <tbody>
-      <tr><td>Código / versionamiento</td><td>GitHub <code>mauriciorincon-ai/app-planlang</code> (público), plan Free</td><td>Ruleset <code>main-protegida</code>: sin borrado ni push forzado, PR obligatorio y cuatro checks requeridos (<code>quality</code>, <code>e2e</code>, <code>lighthouse</code>, <code>python</code>). <strong>Un solo PR vivo por app</strong> (regla 18, kit v2.1.0; Dependabot cuenta): un segundo PR solo va si su cuerpo empieza con «complementa #N: …». Rama por sprint; el merge lo hace el usuario con squash. El campo «website» del repo apunta al propio repo.</td></tr>
-      <tr><td>CI/CD</td><td>GitHub Actions (minutos sin costo en repo público)</td><td><code>CI</code>: <code>quality</code> (dependencias contra main, typecheck, lint, pruebas con cobertura, trazas, build, export, diagrama = grafo, auditoría) → <code>e2e</code> (Playwright con axe, dos idiomas, dos temas, 380 px y escritorio, paridad en Chromium, Firefox y WebKit) y <code>lighthouse</code> (presupuestos, categorías y margen de LCP). <code>CI Python</code>: <code>python</code> (ruff, pytest con cobertura ≥ 70 %, <code>pip-audit</code>). <code>un-pr-vivo</code> (kit v2.1.0): un flujo aparte (<code>un-pr-vivo.yml</code>) cuyo único job falla el PR si hay otro abierto y el suyo no se declara complementario; no es un check requerido del ruleset. En total, tres flujos y cinco jobs. Dependabot: npm cada semana y acciones de GitHub cada mes, cada uno en un solo grupo. Las corridas en CI usan el modelo simulado.</td></tr>
+      <tr><td>Código / versionamiento</td><td>GitHub <code>mauriciorincon-ai/app-planlang</code> (público), plan Free</td><td>Ruleset <code>main-protegida</code>: sin borrado ni push forzado, PR obligatorio y cinco checks requeridos (<code>quality</code>, <code>e2e</code>, <code>lighthouse</code>, <code>python</code>, <code>un-pr-vivo</code>). <strong>Un solo PR vivo por app</strong> (regla 18, kit v2.1.0; Dependabot cuenta): un segundo PR solo va si su cuerpo empieza con «complementa #N: …». Rama por sprint; el merge lo hace el usuario con squash. El campo «website» del repo apunta al propio repo.</td></tr>
+      <tr><td>CI/CD</td><td>GitHub Actions (minutos sin costo en repo público)</td><td><code>CI</code>: <code>quality</code> (dependencias contra main, typecheck, lint, pruebas con cobertura, trazas, build, export, diagrama = grafo, auditoría) → <code>e2e</code> (Playwright con axe, dos idiomas, dos temas, 380 px y escritorio, paridad en Chromium, Firefox y WebKit) y <code>lighthouse</code> (presupuestos, categorías y margen de LCP). <code>CI Python</code>: <code>python</code> (ruff, pytest con cobertura ≥ 70 %, <code>pip-audit</code>). <code>un-pr-vivo</code> (kit v2.1.0): un flujo aparte (<code>un-pr-vivo.yml</code>) cuyo único job falla el PR si hay otro abierto y el suyo no se declara complementario; es el quinto check requerido del ruleset. En total, tres flujos y cinco jobs. Dependabot: npm cada semana y acciones de GitHub cada mes, cada uno en un solo grupo. Las corridas en CI usan el modelo simulado.</td></tr>
       <tr><td>Hosting / publicación</td><td>Vercel Hobby (app privada) · paquete estático para hoja-de-vida</td><td>Export estático de Next.js 16 (<code>output: "export"</code>). Preview por PR y producción desde <code>main</code>, los dos con Vercel Authentication. Hobby es de uso no comercial: planlang es una pieza de portafolio. La vitrina pública vive dentro de hoja-de-vida, que la recibe por copia.</td></tr>
       <tr><td>Base de datos</td><td><strong>Sin BD</strong></td><td>Planes (<code>plans/</code>), dominios y casos sintéticos (<code>data/</code>), corridas <code>planlang-trace/v1</code> (<code>runs/</code>, solo de agregar) e informes son archivos versionados con huella SHA-256 sobre JSON canónico (RFC 8785). La vitrina los lee y los verifica al compilar; en el navegador no se consulta nada.</td></tr>
       <tr><td>Auth</td><td>No aplica dentro de la app</td><td>No hay cuentas ni sesiones propias. Lo único que restringe el acceso es Vercel Authentication sobre los despliegues.</td></tr>
@@ -221,6 +221,7 @@
     <tbody>
       <tr><td>2026-10-04</td><td>H-1 (S1–S3)</td><td>Versión inicial, en el cierre de construcción.</td></tr>
       <tr><td>2026-10-11</td><td>H-2 (S4–S7)</td><td>Kit v2.1.0: el flujo <code>un-pr-vivo</code> (un job) y la regla de un solo PR vivo, Dependabot de acciones mensual, cinco jobs de CI con cuatro checks requeridos. Nuevo: la fila «Lo que la app escribe» (derivados 700/600). Sin cambio de hosting, secretos ni costo.</td></tr>
+      <tr><td>2026-11-08</td><td>H-2 (S8–S10)</td><td>Corrección: el ruleset exige cinco checks (<code>un-pr-vivo</code> es el quinto; el blueprint decía cuatro). La vitrina suma el recorrido de un caso y la página «Diseño de despliegue» de cada demo (rotulada «Diseño · no desplegado»: dibuja lo que correría, no despliega nada); las fichas de los demos A y B ya no se producen. Sin cambio de hosting, secretos ni costo.</td></tr>
     </tbody>
   </table>
   </div>

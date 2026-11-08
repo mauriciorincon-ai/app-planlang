@@ -39,7 +39,12 @@ from app_agents.demo_b.expediente import (
     documento_adverso,
     respuesta_al_solicitante,
 )
-from app_agents.demo_b.guardia import carga_en_documentos, minimizar, revisar_salida
+from app_agents.demo_b.guardia import (
+    carga_en_documentos,
+    identificadores_de_la_estructura,
+    minimizar,
+    revisar_salida,
+)
 from app_agents.demo_b.mundo import Listas
 from app_agents.demo_b.reglas import CAMPOS, CAMPOS_EXIGIDOS, inconsistencias, propuesta, puntaje_de_campos
 from app_agents.demo_b.similitud import mejor_coincidencia
@@ -502,10 +507,10 @@ class NodosDemoB(NodosBase):
         if documento:
             propios.add(str(documento))
         # S9: los dueños y las sociedades de la estructura son parte del expediente de la sociedad (la norma
-        # pide identificarlos); no son datos de un tercero.
-        estructura = (estado.get("extraccion") or {}).get("estructura") or {}
-        propios |= {str(x.get("nit")) for x in estructura.get("entidades") or []}
-        propios |= {str(x.get("documento")) for x in estructura.get("personas") or []}
+        # pide identificarlos), pero solo los que el certificado de la solicitud trae: la estructura la
+        # escribe el modelo y su palabra sola no vuelve «propio» a un identificador.
+        estructura = (estado.get("extraccion") or {}).get("estructura")
+        propios |= identificadores_de_la_estructura(estructura, estado["entrada"]["documentos"])
         r = revisar_salida(
             estado["respuesta"] or {"es": "", "en": ""},
             estado["expediente"] or {"conclusiones": []},

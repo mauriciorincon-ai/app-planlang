@@ -18,6 +18,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import {
+  useEffect,
   useId,
   useMemo,
   useState,
@@ -28,6 +29,7 @@ import type { Idioma } from "@core/formatos/bilingue";
 import type { JsonValor } from "@core/formatos/jcs";
 import type { RegistroDeArista, Umbrales } from "@core/playground/aristas";
 import type { Desenlace } from "@core/playground/compacto";
+import { umbralesDeConsulta } from "@core/playground/contrafactual";
 import {
   casosQueReproducen,
   consecuencias,
@@ -780,6 +782,17 @@ export function Juego({ datos }: { datos: DatosIsla }) {
   const c = datos.compacto;
   const plan = useMemo(() => umbralesDelPlan(c), [c]);
   const [u, setU] = useState<Umbrales>(plan);
+  // El enlace del contrafactual de un caso (`?u=U3:0`) abre el playground con ese valor. Se lee tras hidratar: el
+  // HTML del build es el del plan y el árbol no cambia, solo el estado (S10).
+  useEffect(() => {
+    const desde = umbralesDeConsulta(
+      c,
+      new URLSearchParams(window.location.search).get("u"),
+    );
+    // Leer la URL solo es posible en el navegador: el primer render ya coincidió con el servidor.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (desde) setU(desde);
+  }, [c]);
   // S9: la capacidad del auditor, con su propio estado; sin plazos en el plan, no hay control.
   const [capacidad, setCapacidad] = useState<number | undefined>(
     c.plazos?.capacidad.valor,
