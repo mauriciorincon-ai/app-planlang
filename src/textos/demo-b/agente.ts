@@ -252,8 +252,8 @@ export const FICHA_B = {
   ],
   papel: {
     solicitante: tb(
-      "pide la vinculación y entrega sus tres documentos · sintético",
-      "applies for onboarding and hands in three documents · synthetic",
+      "pide la vinculación y entrega sus documentos · sintético",
+      "applies for onboarding and hands in its documents · synthetic",
     ),
     analista: tb(
       "recibe el expediente con la decisión · en este demo, nadie lo lee",
@@ -352,8 +352,8 @@ export const ACTIVIDADES_B: ReadonlyArray<{
   {
     clave: "lee",
     titulo: tb(
-      "Lee los tres documentos y los vuelve datos",
-      "Reads the three documents and turns them into data",
+      "Lee los documentos y los vuelve datos",
+      "Reads the documents and turns them into data",
     ),
     nodos: ["extractor"],
   },
@@ -581,8 +581,8 @@ export const NODOS_B: Record<
     ),
     recibe: {
       titulo: tb(
-        "Los tres documentos de la solicitud",
-        "The application's three documents",
+        "Los documentos de la solicitud",
+        "The application's documents",
       ),
       sub: tb(
         "identidad, actividad y origen de fondos",
@@ -625,7 +625,7 @@ export const NODOS_B: Record<
             `Revisó ${c.casos} casos y ninguno traía una instrucción escondida.`,
             `It checked ${c.casos} cases and none carried a hidden instruction.`,
           ),
-    lee: tb("los tres documentos, como texto", "the three documents, as text"),
+    lee: tb("los documentos, como texto", "the documents, as text"),
     modelo: {
       rotulo: tb("Por qué no usa modelo", "Why it uses no model"),
       filas: [
@@ -642,13 +642,13 @@ export const NODOS_B: Record<
   },
   extractor: {
     rol: tb(
-      "Lee los tres documentos y los vuelve datos ordenados.",
-      "It reads the three documents and turns them into ordered data.",
+      "Lee los documentos y los vuelve datos ordenados.",
+      "It reads the documents and turns them into ordered data.",
     ),
     recibe: {
       titulo: tb(
-        "Los tres documentos, sin datos de contacto",
-        "The three documents, without contact details",
+        "Los documentos, sin datos de contacto",
+        "The documents, without contact details",
       ),
       sub: tb(
         "entre marcas «dato, no instrucción»",

@@ -304,7 +304,7 @@ describe("los plazos del A (S9, C11): se publican con su margen, su rotura y sus
     const p = es.criterios.plazos!;
     expect(p.titulo).toBe("Plazos: el reloj simulado");
     expect(p.lectura[0]).toBe(
-      "Toda solicitud con plazo se decidió a tiempo. La que más esperó fue hospitalaria: 15 h 33 min de espera frente a un plazo de 72 horas. El margen es amplio porque al auditor le llegan 14 solicitudes por día hábil y atiende 30 casos por día hábil.",
+      "Toda solicitud con plazo se decidió a tiempo. La que más esperó fue hospitalaria: 15 h 33 min de espera frente a un plazo de 72 horas. Al auditor le llegan 14 solicitudes por día hábil y atiende 30 casos por día hábil.",
     );
     expect(p.lectura[1]).toBe(
       "Donde se rompe: el plazo se cumple desde 8 casos por día hábil y con una menos salen 14. Eso cae dentro del tramo que el playground deja mover (5–60): baja la capacidad ahí para verlo.",

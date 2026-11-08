@@ -63,6 +63,45 @@ export interface ZonaDeLaCurva {
   titulo: string;
 }
 
+const ANCHO_CARACTER = 6.6;
+const FILAS_ROTULO = [186, 172, 158];
+const FILAS_ROTULO_BORDE = [140, 126, 112];
+
+/**
+ * Dónde va el rótulo de cada grupo de la curva mini. Con la cobertura entre 84 y 99 % los grupos quedan a pocos
+ * píxeles unos de otros y sus rótulos se pisaban: cada uno toma la primera fila en la que no toca al anterior (los
+ * del borde derecho, alineados a su final, tienen sus propias filas). Si ninguna cabe, va a la última.
+ */
+export function rotulosDeGrupos(
+  grupos: ReadonlyArray<{
+    umbrales: number[];
+    cobertura: number;
+    riesgo: number | null;
+  }>,
+  rotulo: (umbrales: number[]) => string,
+  fy: (riesgo: number) => number,
+) {
+  const ultimo = new Map<string, number>();
+  return [...grupos]
+    .sort((a, b) => a.cobertura - b.cobertura)
+    .map((g) => {
+      const x = fx(g.cobertura);
+      const y = g.riesgo === null ? Y0 : fy(g.riesgo);
+      const texto = rotulo(g.umbrales);
+      const borde = x > X1 - 40;
+      const ancho = texto.length * ANCHO_CARACTER + 6;
+      const desde = borde ? x - ancho : x - ancho / 2;
+      const hasta = borde ? x : x + ancho / 2;
+      const filas = borde ? FILAS_ROTULO_BORDE : FILAS_ROTULO;
+      const fila =
+        filas.find(
+          (f) => desde > (ultimo.get(`${borde}${f}`) ?? -Infinity) + 4,
+        ) ?? (filas[filas.length - 1] as number);
+      ultimo.set(`${borde}${fila}`, hasta);
+      return { g, x, y, texto, borde, fila };
+    });
+}
+
 export function Curva({
   puntos,
   plan,
@@ -199,37 +238,30 @@ export function Curva({
         </text>
       </g>
       {mini
-        ? grupos.map((g) => {
-            if (g === gPlan) return null;
-            const x = fx(g.cobertura);
-            const y = g.riesgo === null ? Y0 : fy(g.riesgo);
-            const alto = 186;
-            const borde = x > X1 - 40;
-            return (
-              <g key={g.umbrales.join("-")}>
-                <line
-                  x1={x}
-                  y1={y - 5}
-                  x2={x}
-                  y2={y + 5}
-                  className="stroke-tinta-2"
+        ? rotulosDeGrupos(
+            grupos.filter((g) => g !== gPlan),
+            textos.grupo,
+            fy,
+          ).map(({ g, x, y, texto, borde, fila }) => (
+            <g key={g.umbrales.join("-")}>
+              <line
+                x1={x}
+                y1={y - 5}
+                x2={x}
+                y2={y + 5}
+                className="stroke-tinta-2"
+              />
+              <text x={x} y={fila} textAnchor={borde ? "end" : "middle"}>
+                {texto}
+              </text>
+              {borde ? (
+                <path
+                  d={`M${x - 2},${fila + 4} L${x - 1},${y - 8}`}
+                  className="fill-none stroke-tinta-2"
                 />
-                <text
-                  x={x}
-                  y={borde ? 140 : alto}
-                  textAnchor={borde ? "end" : "middle"}
-                >
-                  {textos.grupo(g.umbrales)}
-                </text>
-                {borde ? (
-                  <path
-                    d={`M${x - 2},144 L${x - 1},${y - 8}`}
-                    className="fill-none stroke-tinta-2"
-                  />
-                ) : null}
-              </g>
-            );
-          })
+              ) : null}
+            </g>
+          ))
         : null}
       {trazo ? (
         <path

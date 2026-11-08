@@ -1,5 +1,5 @@
 /**
- * La copia propia del demo B en P6 Caso: lo que recibe (tres documentos y una solicitud), qué hizo cada nodo, por qué
+ * La copia propia del demo B en P6 Caso: lo que recibe (tres o cuatro documentos y una solicitud), qué hizo cada nodo, por qué
  * tomó cada rama, el relato, el documento de rechazo y el expediente con sus citas. Lo que cambia de un caso a otro
  * se arma con plantillas desde la traza; ningún caso lleva texto escrito a mano. Vive aparte para que la guardia
  * «copia contra plan» la lea contra el plan B.
@@ -369,16 +369,35 @@ export const MOTIVO_B: Record<string, TextoBilingue> = {
 
 /** El relato del caso: una frase por lo que ocurrió, armada desde la traza. */
 export const RELATO_B = {
-  pidio: ((p: { producto: TextoBilingue; fondos: boolean }) =>
-    p.fondos
+  /**
+   * Tres documentos (identidad, actividad y origen de fondos) y, de una persona jurídica, un cuarto: el certificado de
+   * existencia con la composición accionaria. El relato cuenta los que ese caso trae, no un número fijo.
+   */
+  pidio: ((p: {
+    producto: TextoBilingue;
+    fondos: boolean;
+    existencia: boolean;
+  }) => {
+    const total = p.existencia
+      ? { es: "cuatro", en: "four" }
+      : { es: "tres", en: "three" };
+    const entregados = p.existencia
+      ? { es: "tres", en: "three" }
+      : { es: "dos", en: "two" };
+    return p.fondos
       ? tb(
-          `El solicitante pidió ${p.producto.es} y entregó sus tres documentos.`,
-          `The applicant asked for ${p.producto.en} and handed in all three documents.`,
+          `El solicitante pidió ${p.producto.es} y entregó sus ${total.es} documentos.`,
+          `The applicant asked for ${p.producto.en} and handed in all ${total.en} documents.`,
         )
       : tb(
-          `El solicitante pidió ${p.producto.es} y entregó dos de los tres documentos: le faltó el de origen de fondos.`,
-          `The applicant asked for ${p.producto.en} and handed in two of the three documents: the source-of-funds one was missing.`,
-        )) as Plantilla<{ producto: TextoBilingue; fondos: boolean }>,
+          `El solicitante pidió ${p.producto.es} y entregó ${entregados.es} de los ${total.es} documentos: le faltó el de origen de fondos.`,
+          `The applicant asked for ${p.producto.en} and handed in ${entregados.en} of the ${total.en} documents: the source-of-funds one was missing.`,
+        );
+  }) as Plantilla<{
+    producto: TextoBilingue;
+    fondos: boolean;
+    existencia: boolean;
+  }>,
   carga: tb(
     "Uno de sus documentos escondía una instrucción para el sistema: la guardia de entrada la marcó antes de que la leyera un modelo.",
     "One of the documents hid an instruction for the system: the input guard flagged it before any model read it.",

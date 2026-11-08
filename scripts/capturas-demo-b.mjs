@@ -296,7 +296,7 @@ const DECISIONES_FORMA_B = [
     tema: "oscuro",
     recorte: (page) =>
       marco(page.locator("mark").first().locator("xpath=ancestor::ul[1]")),
-    mirar: "Los tres documentos de la solicitud y la instrucción plantada.",
+    mirar: "Los documentos de la solicitud y la instrucción plantada.",
     esperada:
       "Identidad, actividad y origen de fondos; la instrucción escondida va marcada (borde discontinuo y ⚠) como dato del caso: el agente no la siguió.",
   },
