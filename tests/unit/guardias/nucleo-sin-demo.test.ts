@@ -10,7 +10,6 @@
  * nombrada con sus entradas; las dos orillas la implementan).
  */
 import { readdirSync, readFileSync, type Dirent } from "node:fs";
-import { join } from "node:path";
 import ts from "typescript";
 import { describe, expect, it } from "vitest";
 

@@ -49,14 +49,13 @@ describe("plan v1.6.1 del demo A", () => {
     });
     // Todo lo demás, igual: se compara el plan sin lo que la enmienda cambia por diseño.
     const sinLoQueCambia = (p: Plan) => {
-      const {
-        version: _v,
-        huella: _h,
-        aprobado_el: _a,
-        simulacion_de_plazos: sim,
-        ...resto
-      } = p;
-      const { capacidad_del_auditor: _c, ...simResto } = sim!;
+      const { simulacion_de_plazos: sim, ...resto } = structuredClone(
+        p,
+      ) as Partial<Plan>;
+      const simResto: Record<string, unknown> = { ...sim };
+      delete simResto.capacidad_del_auditor;
+      for (const k of ["version", "huella", "aprobado_el"] as const)
+        delete resto[k];
       return { resto, simResto };
     };
     expect(sinLoQueCambia(v161)).toEqual(sinLoQueCambia(v16));
@@ -69,7 +68,8 @@ describe("plan v1.6.1 del demo A", () => {
 
   it("rojo: no se enmienda un plan que ya no tiene el mínimo en 10, ni uno sin simulación de plazos", () => {
     expect(() => enmendarAV161(v161)).toThrow(/mínimo en 10/);
-    const { simulacion_de_plazos: _s, ...sin } = v16;
+    const sin = { ...v16 } as Partial<Plan>;
+    delete sin.simulacion_de_plazos;
     expect(() => enmendarAV161(sin as Plan)).toThrow(/simulacion_de_plazos/);
   });
 });
