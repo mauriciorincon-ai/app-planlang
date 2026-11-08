@@ -160,6 +160,9 @@ export const MADUREZ = {
   "en-construccion": tb("Sin código aún", "No code yet"),
 } as const;
 
+/** Lo que dice la caja del plano: corto, para que quepa en su ancho (el texto completo va en «El diseño en texto»). */
+export const MADUREZ_CAJA = tb("sin código", "no code");
+
 export const SECCIONES = {
   plano: tb("Los siete componentes", "The seven components"),
   medido: tb("Lo que sí se midió", "What was measured"),
@@ -172,8 +175,8 @@ export const SECCIONES = {
 
 export const PLANO = {
   lectura: tb(
-    "De la solicitud a la salida, de izquierda a derecha. El glifo y la etiqueta de cada caja dicen el tipo; «sin código aún» marca lo que sería nuevo.",
-    "From request to output, left to right. The glyph and the label of each box say the type; “no code yet” marks what would be new.",
+    "De la solicitud a la salida, de izquierda a derecha. El glifo y la etiqueta de cada caja dicen el tipo; «sin código» en una caja (y «Sin código aún» en el texto de abajo) marca lo que sería nuevo.",
+    "From request to output, left to right. The glyph and the label of each box say the type; “no code” on a box (and “No code yet” in the text below) marks what would be new.",
   ),
   region: tb("Diagrama del diseño de despliegue", "Deployment design diagram"),
   indice: tb("Capas del diagrama", "Diagram layers"),

@@ -31,6 +31,7 @@ import {
   COMPONENTE,
   FUENTES,
   MADUREZ,
+  MADUREZ_CAJA,
   MEDIDO,
   PLANO,
   PORTADA,
@@ -191,7 +192,7 @@ function dibujar(d: DatosDemo): { diseno: DisenoDeDespliegue; geo: Geometria } {
       ...Object.fromEntries(
         diseno.componentes
           .filter((c) => c.madurez === "en-construccion")
-          .map((c) => [idDeMapa(c.id), MADUREZ["en-construccion"]]),
+          .map((c) => [idDeMapa(c.id), MADUREZ_CAJA]),
       ),
       ...(pausa
         ? { [idDeMapa("cola_humana")]: { es: pausa.rol, en: pausa.rol } }
