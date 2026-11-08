@@ -344,7 +344,7 @@ export const COLUMNAS_LISTA = {
   componente: tb("Componente", "Component"),
 };
 
-/** Leídas el 2026-11-08: la página existe y cubre lo que el componente afirma. */
+/** Comprobado al cierre del S10 (2026-11-08): las dos páginas responden; que cubran lo que el componente afirma es lectura del autor. */
 const FECHA_FUENTES = "2026-11-08";
 const F_PERSISTENCIA: Fuente = {
   url: "https://docs.langchain.com/oss/python/langgraph/persistence",

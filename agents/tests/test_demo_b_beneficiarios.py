@@ -249,3 +249,14 @@ def test_la_guardia_de_salida_solo_deja_propio_lo_que_el_certificado_trae() -> N
     assert identificadores_de_la_estructura(estructura, sociedad["entrada"]["documentos"]) == {verdadero}
     assert identificadores_de_la_estructura(None, sociedad["entrada"]["documentos"]) == set()
     assert identificadores_de_la_estructura(estructura, {}) == set()
+
+
+def test_un_identificador_que_solo_es_parte_de_otro_del_certificado_no_cuenta() -> None:
+    """Auditoría S10 (B3): un fragmento de un identificador más largo no cuenta; se exige el token entero."""
+    sociedad = next(c for c in LOTE["casos"] if c["entrada"]["documentos"].get("existencia"))
+    documentos = sociedad["entrada"]["documentos"]
+    verdadero = sociedad["verdad_conocida"]["estructura"]["personas"][0]["documento"]
+    fragmento = verdadero[:-1]
+    assert fragmento in documentos["existencia"]["es"]
+    estructura = {"entidades": [], "personas": [{"documento": verdadero}, {"documento": fragmento}]}
+    assert identificadores_de_la_estructura(estructura, documentos) == {verdadero}

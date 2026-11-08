@@ -8,8 +8,9 @@
  * Lo que no se midió se dice «no medido» (P15): ni un host, ni un precio de servidor, ni un cálculo de personas que el
  * plan no declare. La unidad de la capacidad es la del plan («casos por día hábil»), no «auditores por día».
  *
- * El núcleo no nombra ningún demo: lo que es de un demo (qué riesgo protege qué componente) llega como dato en
- * `controles`, y el plan trae sus riesgos, su pausa humana y su capacidad.
+ * El núcleo no decide nada por demo: lo que es de un demo (qué riesgo protege qué componente) llega como dato en
+ * `controles`, y el plan trae sus riesgos, su pausa humana y su capacidad. Las rutas de `evidencia` son datos
+ * fijos de lo que existe en `agents/` (hoy solo el A tiene su código citado); la prueba de existencia vive en los tests.
  */
 import type { TextoBilingue, TextoLibre } from "../formatos/bilingue";
 import { comoBilingue } from "../formatos/bilingue";

@@ -927,8 +927,8 @@ export const METRICAS_APP = {
     etiqueta: tb("funcionalidades construidas", "built features"),
     unidad: tb("funcionalidades", "features"),
     detalle: tb(
-      "Las de la visión del producto que ya funcionan: las del corte de dos semanas y las del roadmap que se construyeron en el S3 (el entrevistador, el demo B y su expediente), contadas contra docs/MANUAL-DE-USO.md; lo que sigue en el roadmap no cuenta.",
-      "The product vision's features that work today: the two-week cut's and the roadmap ones built in S3 (the interviewer, demo B and its case file), counted against docs/MANUAL-DE-USO.md; what remains on the roadmap does not count.",
+      "Las de la visión del producto que ya funcionan, contadas contra las secciones de docs/MANUAL-DE-USO.md (una visión de 23 funcionalidades se reparte en 27 secciones del manual); ninguna queda en el roadmap.",
+      "The product vision's features that work today, counted against the sections of docs/MANUAL-DE-USO.md (a vision of 23 features splits into 27 manual sections); none is left on the roadmap.",
     ),
   },
   decisionesRegistradas: {

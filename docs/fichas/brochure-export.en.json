@@ -292,7 +292,7 @@
       "valor": 27,
       "unidad": "features",
       "fuente": "medido",
-      "detalle": "The product vision's features that work today: the two-week cut's and the roadmap ones built in S3 (the interviewer, demo B and its case file), counted against docs/MANUAL-DE-USO.md; what remains on the roadmap does not count."
+      "detalle": "The product vision's features that work today, counted against the sections of docs/MANUAL-DE-USO.md (a vision of 23 features splits into 27 manual sections); none is left on the roadmap."
     },
     {
       "clave": "decisiones_registradas",

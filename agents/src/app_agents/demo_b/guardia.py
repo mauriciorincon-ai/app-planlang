@@ -57,6 +57,11 @@ def minimizar(documentos: dict[str, Any]) -> dict[str, str | None]:
     return salida
 
 
+def _aparece_completo(identificador: str, texto: str) -> bool:
+    """El identificador está en el texto como token entero, no dentro de otro más largo."""
+    return re.search(rf"(?<![\w-]){re.escape(identificador)}(?![\w-])", texto) is not None
+
+
 def identificadores_de_la_estructura(
     estructura: dict[str, Any] | None, documentos: dict[str, Any]
 ) -> set[str]:
@@ -70,7 +75,7 @@ def identificadores_de_la_estructura(
     estructura = estructura or {}
     declarados = {str(x.get("nit")) for x in estructura.get("entidades") or []}
     declarados |= {str(x.get("documento")) for x in estructura.get("personas") or []}
-    return {d for d in declarados if d and d in certificado}
+    return {d for d in declarados if d and _aparece_completo(d, certificado)}
 
 
 def _limpiar(

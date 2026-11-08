@@ -579,8 +579,9 @@ data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar l
   persona.
 - **¿Por dónde pasó un caso concreto y qué habría pasado con otro umbral?** En la página del caso, «El caso camina por
   el grafo» (arriba, «Recorrer un caso»); lo que habría pasado después de la rama nueva no se observó.
-- **¿Cuánto costaría y qué haría falta para ponerlo a correr?** Lo dice «Diseño de despliegue», con lo medido y sin
-  hosting ni proveedor nombrados (arriba, «Leer el diseño de despliegue»).
+- **¿Qué haría falta para ponerlo a correr y qué se midió?** «Diseño de despliegue» dice qué componentes harían falta y
+  lo medido (latencia, costo nominal de tokens y capacidad del auditor); el costo de alojarlo no se midió, y no
+  nombra hosting ni proveedor (arriba, «Leer el diseño de despliegue»).
 
 ---
 
@@ -1164,8 +1165,9 @@ There are two ways to use it:
   person decides.
 - **Where did a given case go and what would another threshold have done?** On the case's page, "The case walks the
   graph" (above, "Walk through a case"); what would have happened after the new branch was not observed.
-- **What would it cost and what would it take to run it?** "Deployment design" says so, with what was measured and no
-  hosting or provider named (above, "Read the deployment design").
+- **What would it take to run it and what was measured?** "Deployment design" says which components would be needed and
+  what was measured (latency, nominal token cost and the auditor's capacity); the cost of hosting it was not measured,
+  and no hosting or provider is named (above, "Read the deployment design").
 
 ---
 

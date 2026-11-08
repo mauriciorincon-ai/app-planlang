@@ -145,13 +145,6 @@ export const DEMOS = {
   chipInforme: tb("real · informe del verificador", "real · verifier’s report"),
 };
 
-/**
- * Lo que sigue del roadmap, «en construcción» en la Entrada (regla dura 15: lo del roadmap aparece desde el primer día;
- * AU-S2-6). Son los ids estables del bloque `roadmap:` de la ficha que define la planeadora (`SPRINT_002.md`), menos lo
- * que ya corrió o ya tiene página: el demo B (S3), que tiene su fila en la tabla; el entrevistador, que propuso su
- * plan (S3); «Comparar dos corridas» (S4) y «Calibración conformal y cobertura conjunta» (S8), que viven en la Brecha y
- * el playground. Ninguno se simula.
- */
 export const PREGUNTA = {
   rotulo: tb(
     "La pregunta de entrevista de 2026",

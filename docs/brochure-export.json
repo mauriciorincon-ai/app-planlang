@@ -292,7 +292,7 @@
       "valor": 27,
       "unidad": "funcionalidades",
       "fuente": "medido",
-      "detalle": "Las de la visión del producto que ya funcionan: las del corte de dos semanas y las del roadmap que se construyeron en el S3 (el entrevistador, el demo B y su expediente), contadas contra docs/MANUAL-DE-USO.md; lo que sigue en el roadmap no cuenta."
+      "detalle": "Las de la visión del producto que ya funcionan, contadas contra las secciones de docs/MANUAL-DE-USO.md (una visión de 23 funcionalidades se reparte en 27 secciones del manual); ninguna queda en el roadmap."
     },
     {
       "clave": "decisiones_registradas",

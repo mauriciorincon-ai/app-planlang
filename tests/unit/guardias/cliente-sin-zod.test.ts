@@ -24,7 +24,7 @@ function resolver(desde: string, spec: string): string | null {
   else if (spec.startsWith("@/")) base = join(RAIZ, "src", spec.slice(2));
   else if (spec.startsWith(".")) base = resolve(dirname(desde), spec);
   else return null;
-  for (const e of [".ts", ".tsx", "/index.ts"])
+  for (const e of [".ts", ".tsx", "/index.ts", "/index.tsx"])
     if (existsSync(base + e) && statSync(base + e).isFile()) return base + e;
   return null;
 }
