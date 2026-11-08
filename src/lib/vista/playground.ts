@@ -125,15 +125,6 @@ function nombreLlano(s: string): TextoBilingue {
   return n;
 }
 
-/** Dónde cae `valor` en el rango, de 0 a 100; con `min == max` el rango no tiene ancho y es 0 (no NaN). */
-export function porcentajeDelRango(
-  valor: number,
-  min: number,
-  max: number,
-): number {
-  return max === min ? 0 : ((valor - min) / (max - min)) * 100;
-}
-
 /** El valor de un umbral como se lee en la vitrina (0,75 · 1000). */
 export function valorUmbral(v: number, decimales: number, i: Idioma): string {
   return decimal(v, decimales, i);

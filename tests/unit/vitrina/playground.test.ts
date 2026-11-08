@@ -7,11 +7,8 @@ import { beforeAll, describe, expect, it } from "vitest";
 import { consecuencias, umbralesDelPlan } from "@core/playground/consecuencias";
 import { datosDemo, type DatosDemo } from "@/lib/datos/vitrina";
 import { idsDeCasos } from "@/lib/vista/caso";
-import {
-  porcentajeDelRango,
-  vistaPlayground,
-  type VistaPlayground,
-} from "@/lib/vista/playground";
+import { porcentajeDelRango } from "@/lib/vista/formato";
+import { vistaPlayground, type VistaPlayground } from "@/lib/vista/playground";
 import { INTERRUPTOR, PORQUE_FUNCION } from "@/textos/playground";
 
 let d: DatosDemo;

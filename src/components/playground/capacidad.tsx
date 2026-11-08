@@ -11,11 +11,8 @@ import { useId } from "react";
 import type { Idioma } from "@core/formatos/bilingue";
 import type { PlazosCompacto } from "@core/playground/compacto";
 import type { ConsecuenciasDePlazos } from "@core/playground/consecuencias";
-import { decimal, enumerar } from "@/lib/vista/formato";
-import {
-  porcentajeDelRango,
-  type DatosPlazosIsla,
-} from "@/lib/vista/playground";
+import { decimal, enumerar, porcentajeDelRango } from "@/lib/vista/formato";
+import type { DatosPlazosIsla } from "@/lib/vista/playground";
 import { JUEGO, PLAZOS } from "@/textos/playground";
 import { Chip } from "../chip";
 import { cx } from "../cx";

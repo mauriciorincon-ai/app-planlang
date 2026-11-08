@@ -87,3 +87,12 @@ export function decimalesDelPaso(paso: number): number {
   const s = String(paso);
   return s.includes(".") ? s.length - s.indexOf(".") - 1 : 0;
 }
+
+/** Dónde cae `valor` en el rango, de 0 a 100; con `min == max` el rango no tiene ancho y es 0 (no NaN). */
+export function porcentajeDelRango(
+  valor: number,
+  min: number,
+  max: number,
+): number {
+  return max === min ? 0 : ((valor - min) / (max - min)) * 100;
+}
