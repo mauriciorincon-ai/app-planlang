@@ -87,7 +87,13 @@ export interface DatosPlazosIsla {
   unidad: string;
   descripcion: string;
   /** Las clases del plan en su orden de prioridad: su nombre y su plazo, ya escritos. */
-  clases: { valor: string; nombre: string; plazo: string; plazoMin: number }[];
+  clases: {
+    valor: string;
+    nombre: string;
+    plazo: string;
+    /** Cómo se lee la clase frente a la norma (un supuesto de la simulación, ya escrito). */
+    equivale: string;
+  }[];
   experto: string;
   fuente: string;
 }
@@ -122,6 +128,15 @@ function nombreLlano(s: string): TextoBilingue {
       `vitrina: la señal «${s}» decide en el grafo y el playground no tiene su nombre llano (src/textos/playground.ts, SENAL).`,
     );
   return n;
+}
+
+/** Dónde cae `valor` en el rango, de 0 a 100; con `min == max` el rango no tiene ancho y es 0 (no NaN). */
+export function porcentajeDelRango(
+  valor: number,
+  min: number,
+  max: number,
+): number {
+  return max === min ? 0 : ((valor - min) / (max - min)) * 100;
 }
 
 /** El valor de un umbral como se lee en la vitrina (0,75 · 1000). */
@@ -227,11 +242,11 @@ function datosDePlazos(
   return {
     unidad: X(sim.capacidad_del_auditor.unidad, i),
     descripcion: X(PLAZOS.descripcion, i),
-    clases: sim.clases.map((k, j) => ({
+    clases: sim.clases.map((k) => ({
       valor: k.valor,
       nombre: X(k.nombre, i),
       plazo: X(PLAZOS.plazoDe(k.plazo), i),
-      plazoMin: c.plazos!.config.clases[j]!.plazo_min,
+      equivale: X(k.equivale_a, i),
     })),
     experto: X(PLAZOS.experto({ jornada, dias: sim.dias_habiles }), i),
     fuente: X(

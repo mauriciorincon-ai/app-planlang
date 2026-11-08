@@ -12,7 +12,10 @@ import type { Idioma } from "@core/formatos/bilingue";
 import type { PlazosCompacto } from "@core/playground/compacto";
 import type { ConsecuenciasDePlazos } from "@core/playground/consecuencias";
 import { decimal, enumerar } from "@/lib/vista/formato";
-import type { DatosPlazosIsla } from "@/lib/vista/playground";
+import {
+  porcentajeDelRango,
+  type DatosPlazosIsla,
+} from "@/lib/vista/playground";
 import { JUEGO, PLAZOS } from "@/textos/playground";
 import { Chip } from "../chip";
 import { cx } from "../cx";
@@ -42,7 +45,7 @@ export function CapacidadDelAuditor({
   const id = useId();
   const cap = config.capacidad;
   const movido = valor !== cap.valor;
-  const pct = ((cap.valor - cap.min) / (cap.max - cap.min)) * 100;
+  const pct = porcentajeDelRango(cap.valor, cap.min, cap.max);
   const nota = `${id}-nota`;
   const unidad = plazos.unidad;
   const fmt = (x: number) => decimal(x, 0, i);
@@ -314,6 +317,11 @@ export function CapacidadDelAuditor({
           {noObservados > 0 ? (
             <p className="text-dato text-tinta-2">{PLAZOS.sinMedir[i]}</p>
           ) : null}
+          <ul className="solo-experto grid gap-0.5 text-dato text-tinta-2">
+            {plazos.clases.map((k) => (
+              <li key={k.valor}>{`${k.nombre}: ${k.equivale}`}</li>
+            ))}
+          </ul>
           <p className="solo-experto text-dato text-tinta-2">{plazos.fuente}</p>
           <span className="sr-only">
             {enumerar(

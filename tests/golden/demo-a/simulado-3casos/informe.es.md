@@ -153,6 +153,18 @@ Garantía de la calibración (δ = 0,10; el informe declara α = 0,10). **Umbral
 | 0,10 | no hay | — | no hay | no hay | no | no alcanza |
 | 0,20 | no hay | — | no hay | no hay | no | no alcanza |
 
+Pruebas a α = 0,05 (umbral: casos solos/errores, p; ✓ rechaza H₀ «error > α»): 0,95: 2/0, p = 0,9025 ✗.
+
+Pruebas conjuntas a α = 0,05 (por etapa, con α = 0,025 y δ = 0,050; umbral: etapa casos solos/errores, p): 0,95: extractor 2/0 p = 0,9506 ✗, aclaración 2/0 p = 0,9506 ✗.
+
+Pruebas a α = 0,10 (umbral: casos solos/errores, p; ✓ rechaza H₀ «error > α»): 0,95: 2/0, p = 0,8100 ✗.
+
+Pruebas conjuntas a α = 0,10 (por etapa, con α = 0,050 y δ = 0,050; umbral: etapa casos solos/errores, p): 0,95: extractor 2/0 p = 0,9025 ✗, aclaración 2/0 p = 0,9025 ✗.
+
+Pruebas a α = 0,20 (umbral: casos solos/errores, p; ✓ rechaza H₀ «error > α»): 0,95: 2/0, p = 0,6400 ✗.
+
+Pruebas conjuntas a α = 0,20 (por etapa, con α = 0,100 y δ = 0,050; umbral: etapa casos solos/errores, p): 0,95: extractor 2/0 p = 0,8100 ✗, aclaración 2/0 p = 0,8100 ✗.
+
 Cobertura conjunta (Bonferroni): extractor, aclaración, cada una con α/2 y δ/2 sobre los mismos casos que el agente decide solo ⇒ P(alguna etapa falla) ≤ α con probabilidad ≥ 1 − δ; la columna dice el umbral más bajo con esa garantía.
 
 Etapa con modelo sin verdad en el caso (no se observa y la cobertura conjunta no la incluye): redactor.

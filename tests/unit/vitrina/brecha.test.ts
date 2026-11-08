@@ -317,6 +317,19 @@ describe("los plazos del A (S9, C11): se publican con su margen, su rotura y sus
     expect(p.lineas.fuente).toContain("Consultada el 2026-11-03");
   });
 
+  it("M4 y B5: la señal de la clase y cómo se lee cada clase frente a la norma (supuesto) van antes de los supuestos del plan (ES y EN)", () => {
+    const e = es.criterios.plazos!.lineas.supuestos;
+    expect(e[0]).toMatch(/^La clase de cada solicitud se lee de la señal «/);
+    expect(e[1]).toMatch(/^Hospitalaria: Solicitud expedita de la norma/);
+    expect(e[1]).toContain("Es un supuesto de la simulación");
+    expect(e[2]).toMatch(/^Ambulatoria: Solicitud estándar de la norma/);
+    const n = en.criterios.plazos!.lineas.supuestos;
+    expect(n[0]).toMatch(/^Each request's class is read from the “/);
+    expect(n[1]).toMatch(/^Inpatient: The rule's expedited request/);
+    expect(n[1]).toContain("It is a simulation assumption");
+    expect(n.length).toBe(e.length);
+  });
+
   it("en inglés está redactado, no copiado; y el criterio C11 está en la lista de criterios", () => {
     const p = en.criterios.plazos!;
     expect(p.lectura[0]).toContain(

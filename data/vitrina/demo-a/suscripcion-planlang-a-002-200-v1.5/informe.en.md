@@ -90,6 +90,9 @@ No request went past its deadline at this capacity. Meeting the deadline in the 
 
 What this simulation assumes:
 
+- Each request's class is read from the “tipo_atencion” signal of the trace.
+- Inpatient: The rule's expedited request (72 hours). It is a simulation assumption: the rule calls expedited the one that could seriously jeopardize the member's health or function, not the inpatient one.
+- Outpatient: The rule's standard request (7 calendar days). It is a simulation assumption: the rule calls standard the one that is not expedited.
 - Arrivals are simulated: from the batch seed, each request arrives on a business day and at a time within the working day. They are not any member's real times.
 - A single auditor serves by priority (inpatient before outpatient) and, within each, in order of arrival. They work Monday to Friday within the working day, at the stated capacity. What the agent decides alone is decided on arrival; what pauses is decided when the queue reaches it.
 - The deadline runs on calendar time from the moment the request arrives, and the weekend counts even though the auditor does not work on it: a request that arrives on Friday afternoon spends the weekend out of its deadline.
@@ -188,6 +191,18 @@ Calibration guarantee (δ = 0.10; the report declares α = 0.10). **Guaranteed t
 | 0.10 | 0.50 | 99.4% · 3.2% | 0.90 | 0.50–0.90 | yes | not reached |
 | 0.20 | 0.50 | 99.4% · 3.2% | 0.95 | 0.50–0.95 | yes | 0.50 (k = 2) |
 
+Tests at α = 0.05 (threshold: cases alone/errors, p; ✓ rejects H₀ “error > α”): 0.95: 134/3, p = 0.0931 ✓ · 0.90: 142/3, p = 0.0716 ✓ · 0.85: 151/3, p = 0.0529 ✓ · 0.80: 153/3, p = 0.0494 ✓ · 0.75: 153/3, p = 0.0494 ✓ · 0.70: 156/4, p = 0.1056 ✗.
+
+Joint tests at α = 0.05 (per stage, with α = 0.025 and δ = 0.050; threshold: stage cases alone/errors, p): 0.95: extractor 134/3 p = 0.5683 ✗, clarification 134/2 p = 0.3461 ✗.
+
+Tests at α = 0.10 (threshold: cases alone/errors, p; ✓ rejects H₀ “error > α”): 0.95: 134/3, p = 0.0005 ✓ · 0.90: 142/3, p = 0.0002 ✓ · 0.85: 151/3, p = 0.0001 ✓ · 0.80: 153/3, p = 0.0001 ✓ · 0.75: 153/3, p = 0.0001 ✓ · 0.70: 156/4, p = 0.0003 ✓ · 0.65: 156/4, p = 0.0003 ✓ · 0.60: 158/5, p = 0.0011 ✓ · 0.55: 158/5, p = 0.0011 ✓ · 0.50: 158/5, p = 0.0011 ✓.
+
+Joint tests at α = 0.10 (per stage, with α = 0.050 and δ = 0.050; threshold: stage cases alone/errors, p): 0.95: extractor 134/3 p = 0.0931 ✗, clarification 134/2 p = 0.0339 ✓.
+
+Tests at α = 0.20 (threshold: cases alone/errors, p; ✓ rejects H₀ “error > α”): 0.95: 134/3, p < 0.0001 ✓ · 0.90: 142/3, p < 0.0001 ✓ · 0.85: 151/3, p < 0.0001 ✓ · 0.80: 153/3, p < 0.0001 ✓ · 0.75: 153/3, p < 0.0001 ✓ · 0.70: 156/4, p < 0.0001 ✓ · 0.65: 156/4, p < 0.0001 ✓ · 0.60: 158/5, p < 0.0001 ✓ · 0.55: 158/5, p < 0.0001 ✓ · 0.50: 158/5, p < 0.0001 ✓.
+
+Joint tests at α = 0.20 (per stage, with α = 0.100 and δ = 0.050; threshold: stage cases alone/errors, p): 0.95: extractor 134/3 p = 0.0005 ✓, clarification 134/2 p = 0.0001 ✓ · 0.90: extractor 142/3 p = 0.0002 ✓, clarification 142/2 p < 0.0001 ✓ · 0.85: extractor 151/3 p = 0.0001 ✓, clarification 151/2 p < 0.0001 ✓ · 0.80: extractor 153/3 p = 0.0001 ✓, clarification 153/2 p < 0.0001 ✓ · 0.75: extractor 153/3 p = 0.0001 ✓, clarification 153/2 p < 0.0001 ✓ · 0.70: extractor 156/4 p = 0.0003 ✓, clarification 156/3 p = 0.0001 ✓ · 0.65: extractor 156/4 p = 0.0003 ✓, clarification 156/3 p = 0.0001 ✓ · 0.60: extractor 158/5 p = 0.0011 ✓, clarification 158/4 p = 0.0003 ✓ · 0.55: extractor 158/5 p = 0.0011 ✓, clarification 158/4 p = 0.0003 ✓ · 0.50: extractor 158/5 p = 0.0011 ✓, clarification 158/4 p = 0.0003 ✓.
+
 Joint coverage (Bonferroni): extractor, clarification, each at α/2 and δ/2 on the same cases the agent decides alone ⇒ P(some stage fails) ≤ α with probability ≥ 1 − δ; the column gives the lowest threshold with that guarantee.
 
 Model stage with no ground truth in the case (not observed, and left out of the joint coverage): writer.
@@ -251,7 +266,7 @@ Cases where they differ: A-003, A-013, A-031, A-047, A-052, A-055, A-072, A-078,
 | Cases | planlang-a-002-200 · seed planlang-a-002 · n = 200 · generated with plan 1.5.0 | `5e76ef4cf562852c25aab2e041d55f17f809043450fe48e35c045cb419c8e62f` |
 | Run | suscripcion-planlang-a-002-200-v1.5 · 2026-10-04 · suscripcion/sonnet · multi-agent · run with plan 1.5.0 (same truth: same thresholds and graph contract, ADR-005) | `fdbffe765fc0e8309284bbc5c606dc67bc80b61b53cbf8a3772b3447eb8d71a0` |
 | Graph | exported graph version | `056407bf4c1238ca0448c11575ea9228d050596d02162cd0613f8c5090cc9117` |
-| Arrivals | simulated arrival times for the batch, with its seed (`data/casos/demo-a/planlang-a-002-200.llegadas.json`) | `288e8db6457909f303b1e732e98b9f3e69bb60c4aec8c52aef75ba6230f050e8` |
+| Arrivals | simulated arrival times for the batch, with its seed (`data/casos/demo-a/planlang-a-002-200.llegadas.json`) · over the batch `5e76ef4cf562852c25aab2e041d55f17f809043450fe48e35c045cb419c8e62f` | `288e8db6457909f303b1e732e98b9f3e69bb60c4aec8c52aef75ba6230f050e8` |
 | Baseline | suscripcion-planlang-a-002-200-v1.5-base | `1ab219ded7ae9d1ce14f4d7ff0e699b517926564afda1ac73c74301ea6cff5f7` |
 
 Sessions: 10 · cases run: 200 · with a provider error: 0 · usage limits reached: 0.
