@@ -33,7 +33,7 @@ export interface NivelVista {
   aplicado: string | null;
   /**
    * La cobertura conjunta de este nivel en llano: si los datos la respaldan o lo que no alcanzan (y el n que haría
-   * falta). `null` con menos de dos etapas medidas: la conjunta sería la de la etapa sola.
+   * falta). Con una sola etapa medida dice que no hay nada que sumar; `null` si no hay etapas.
    */
   conjunta: string | null;
   /** Registro de experto: las pruebas del nivel, la cobertura conjunta y el error conjunto observado. */
@@ -130,8 +130,11 @@ function conjuntaEnLlano(
   ctx: { alfa: string; seguridad: string; dec: number },
   i: Idioma,
 ): string | null {
-  // Con una sola etapa medida, la conjunta es la de la etapa: no hay nada que sumar.
-  if (c.k < 2) return null;
+  // Con una sola etapa medida, la conjunta es la de la etapa: no hay nada que sumar, y el líder lo dice (no calla).
+  if (c.k < 2)
+    return c.nodos.length === 1
+      ? LIDER.conjuntaUnaEtapa({ etapa: nombres(c.nodos, i) })[i]
+      : null;
   const u = (x: number) => decimal(x, ctx.dec, i);
   const etapas = nombres(c.nodos, i);
   if (c.umbral !== null)

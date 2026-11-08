@@ -249,6 +249,12 @@ export const LIDER = {
     errores: number;
     etapa: string;
   }>,
+  /** Con una sola etapa medida no hay nada que sumar: se dice, en vez de callar (S8, B7 del lote del hito). */
+  conjuntaUnaEtapa: ((p: { etapa: string }) =>
+    tb(
+      `De las etapas del agente solo se midió una (${p.etapa}): no hay cobertura conjunta que sumar, es la de esa etapa sola.`,
+      `Only one stage of the agent was measured (${p.etapa}): there is no joint coverage to add up, it is that stage's own.`,
+    )) as Plantilla<{ etapa: string }>,
   conjuntaSi: ((p: {
     alfa: string;
     seguridad: string;

@@ -249,12 +249,14 @@ describe("los niveles sin zona dicen por qué, con los números", () => {
     expect(t.conjunta).toContain("más casos con esa tasa no lo respaldan");
   });
 
-  it("una sola etapa medida no tiene cobertura conjunta que sumar en llano (el experto sí la ve)", () => {
+  it("una sola etapa medida: el líder lo dice (no hay cobertura conjunta que sumar) y el experto la ve", () => {
     const v = vistaGarantia(sintetica("pocos-casos"), "U1", 2, "es");
     for (const n of v.niveles) {
-      expect(n.conjunta).toBeNull();
+      expect(n.conjunta).toMatch(/solo se midió una \(.+\): no hay cobertura/);
       expect(n.experto.join(" ")).toContain("Cobertura conjunta (Bonferroni)");
     }
+    const en = vistaGarantia(sintetica("pocos-casos"), "U1", 2, "en");
+    expect(en.niveles[0]!.conjunta).toMatch(/^Only one stage of the agent/);
   });
 });
 
