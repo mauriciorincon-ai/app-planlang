@@ -26,6 +26,7 @@ from app_agents.adaptador import crear_modelo
 from app_agents.demo_b.agente_unico import construir_grafo_linea_base
 from app_agents.demo_b.estado import ContextoCasoB, estado_inicial
 from app_agents.demo_b.grafo import construir_grafo
+from app_agents.demo_b.guardia import identificadores_de_la_estructura
 from app_agents.demo_b.mundo import cargar_listas
 from app_agents.demo_b.simulacion import EntornoSimulado, RespondedorSimulado
 from app_agents.exportador import verificar_corrida
@@ -230,3 +231,21 @@ def test_el_esquema_acota_lo_que_el_modelo_puede_escribir() -> None:
     Estructura.model_validate(con(2 * TOPE_ENTIDADES))
     with pytest.raises(ValidationError):
         Estructura.model_validate(con(2 * TOPE_ENTIDADES + 1))
+
+
+def test_la_guardia_de_salida_solo_deja_propio_lo_que_el_certificado_trae() -> None:
+    """B6: la estructura la escribe el modelo; un identificador que el certificado de la solicitud no trae
+    no se vuelve «propio» porque el modelo lo listó (alucinación o carga escondida): la guardia lo filtra."""
+    sociedad = next(c for c in LOTE["casos"] if c["entrada"]["documentos"].get("existencia"))
+    certificado = sociedad["entrada"]["documentos"]["existencia"]["es"]
+    verdadero = sociedad["verdad_conocida"]["estructura"]["personas"][0]["documento"]
+    assert verdadero in certificado
+    ajeno = "SYN-ID-999999"
+    assert ajeno not in certificado
+    estructura = {
+        "entidades": [],
+        "personas": [{"documento": verdadero}, {"documento": ajeno}],
+    }
+    assert identificadores_de_la_estructura(estructura, sociedad["entrada"]["documentos"]) == {verdadero}
+    assert identificadores_de_la_estructura(None, sociedad["entrada"]["documentos"]) == set()
+    assert identificadores_de_la_estructura(estructura, {}) == set()
