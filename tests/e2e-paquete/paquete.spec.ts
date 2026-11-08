@@ -57,21 +57,29 @@ test("desde la raíz, todos los enlaces de la vitrina cargan dentro del paquete 
         pendientes.push(h.split("#")[0]!);
     }
   }
-  // Por idioma: la Entrada y, por demo, sus 6 pestañas (el índice de casos incluido) y sus casos con página (ADR-014);
+  // Por idioma: la Entrada y, por demo, sus 7 pestañas (el índice de casos y, desde el S10, el diseño de despliegue incluidos) y sus casos con página (ADR-014);
   // en el A, además, la comparación con la línea base (S4, `comparar`, que no es pestaña):
   // en el A, los de la corrida de 200 que llevan página (los enlaza el selector, todos alcanzables); en el B, sus 20.
   // La raíz entra con ?elegir.
   const paginas = [...vistas].filter((v) => !v.includes("?"));
   expect(PAGINAS_A).toBeGreaterThan(20);
   expect(paginas.length).toBeGreaterThanOrEqual(
-    2 * (1 + (7 + PAGINAS_A) + (6 + 20)),
+    2 * (1 + (8 + PAGINAS_A) + (7 + 20)),
   );
   expect(paginas.filter((v) => /\/caso\/A-\d+\.html$/.test(v)).length).toBe(
     2 * PAGINAS_A,
   );
   expect(paginas.filter((v) => v.includes("/demo-b/")).length).toBe(
-    2 * (6 + 20),
+    2 * (7 + 20),
   );
+  // S10: el diseño de despliegue es una pestaña más de cada demo, en los dos idiomas.
+  for (const d of [
+    "es/despliegue",
+    "en/despliegue",
+    "es/demo-b/despliegue",
+    "en/demo-b/despliegue",
+  ])
+    expect(paginas).toContain(`${BASE}/${d}.html`);
   // Y los planes sin corrida (S5, `planes`, de ningún demo): el de HackGuard, en los dos idiomas.
   expect(paginas.filter((v) => /\/planes\/[^/]+\.html$/.test(v))).toEqual(
     expect.arrayContaining([
