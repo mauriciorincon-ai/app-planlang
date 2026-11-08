@@ -1520,10 +1520,7 @@ export const APP = {
         },
         {
           id: "plazos",
-          nombre: tb(
-            "El plazo legal, medido",
-            "The legal deadline, measured",
-          ),
+          nombre: tb("El plazo legal, medido", "The legal deadline, measured"),
           que_hace: tb(
             "Un reloj simulado y un auditor sobre las trazas que ya existen dicen si cada autorización se decidió dentro de su plazo legal: la espera de cada clase, las que se pasaron por caso y dónde se rompe el plazo, aunque quede fuera de lo que el playground deja mover. Sin volver a correr un caso.",
             "A simulated clock and an auditor over the traces that already exist say whether each authorization was decided within its legal deadline: the wait of each class, the late ones by case and where the deadline breaks, even if that is outside what the playground lets you move. Without rerunning a case.",
@@ -1611,6 +1608,33 @@ export const APP = {
             "You see the agent's diagram generated from the code that ran, not drawn by hand. You tap a piece and it shows what it does, its code and the real cases that went through it; if something the plan requires is missing, the diagram flags it.",
           ),
           seccion_manual: tb("Abrir la vitrina", "Open the showcase"),
+        },
+        {
+          id: "recorrido",
+          nombre: tb(
+            "Un caso real, paso a paso",
+            "One real case, step by step",
+          ),
+          que_hace: tb(
+            "Sigues un caso por el diagrama del agente, un paso a la vez: qué dato leyó, qué regla aplicó, por dónde siguió y dónde esperó a una persona. Y cada regla con umbral responde «¿y si el umbral fuera otro?»: con qué valor el caso habría ido a otra rama, con un enlace al playground con ese valor puesto.",
+            'You follow one case through the agent\'s diagram, one step at a time: what data it read, which rule it applied, where it went next and where it waited for a person. And every rule with a threshold answers "what if the threshold were different?": with which value the case would have gone to another branch, with a link to the playground with that value already set.',
+          ),
+          seccion_manual: tb("Recorrer un caso", "Walk through a case"),
+        },
+        {
+          id: "despliegue",
+          nombre: tb(
+            "El plano de cómo correría en producción",
+            "The blueprint of how it would run in production",
+          ),
+          que_hace: tb(
+            "Ves, generado desde el plan y la corrida publicada, el diseño de despliegue de cada demo: los siete componentes, qué componente lleva el control de cada riesgo del plan y lo medido (latencia por nodo, costo por caso y la capacidad del auditor). Lo que no se midió dice «no medido»; no despliega nada.",
+            "You see, generated from the plan and the published run, each demo's deployment design: the seven components, which component carries the control for each of the plan's risks and what was measured (latency per node, cost per case and the auditor's capacity). What was not measured says \"not measured\"; it deploys nothing.",
+          ),
+          seccion_manual: tb(
+            "Leer el diseño de despliegue",
+            "Read the deployment design",
+          ),
         },
       ],
     },

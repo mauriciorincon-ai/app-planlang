@@ -35,21 +35,23 @@ describe("docs/cv-viva/capturas.yaml", () => {
       ...config.sin_pantalla,
     ];
     expect([...cubiertas].sort()).toEqual([...funcionalidades].sort());
-    expect(config.capturas).toHaveLength(24);
+    expect(config.capturas).toHaveLength(26);
     expect(config.sin_pantalla).toEqual(["entrevistador"]);
   });
 
-  it("la portada y las 24 capturas: WebP sin repetir, ruta en español, perfil líder o experto, ancla válida", () => {
+  it("la portada y las 26 capturas: WebP sin repetir, ruta en español, perfil líder o experto, ancla válida", () => {
     const todas = [config.portada, ...config.capturas];
-    expect(todas).toHaveLength(25);
+    expect(todas).toHaveLength(27);
     const archivos = todas.map((e) => e.archivo);
-    expect(new Set(archivos).size).toBe(25);
+    expect(new Set(archivos).size).toBe(27);
     for (const e of todas) {
       expect(e.archivo, e.archivo).toMatch(/^[a-z0-9-]+\.webp$/);
       expect(e.ruta, e.archivo).toMatch(/^\/es(\/|$)/);
       expect(["lider", "experto"], e.archivo).toContain(e.perfil);
       if (e.ancla) expect(() => new RegExp(e.ancla!), e.archivo).not.toThrow();
-      expect([null, "u2-a-1600"], e.archivo).toContain(e.accion);
+      expect([null, "u2-a-1600", "recorrido-paso-3"], e.archivo).toContain(
+        e.accion,
+      );
     }
     expect(config.portada.archivo).toBe("entrada.webp");
   });
@@ -63,7 +65,7 @@ describe("docs/cv-viva/capturas.yaml", () => {
     }
   });
 
-  it("`pnpm capturas:cv-viva` existe y el único estado con acción es el playground con U2 a 1600", () => {
+  it("`pnpm capturas:cv-viva` existe y solo dos estados llevan acción: el playground con U2 a 1600 y el recorrido en su paso 3", () => {
     const pkg = JSON.parse(readFileSync("package.json", "utf8")) as {
       scripts: Record<string, string>;
     };
@@ -72,6 +74,6 @@ describe("docs/cv-viva/capturas.yaml", () => {
     );
     expect(
       config.capturas.filter((c) => c.accion).map((c) => c.funcionalidad),
-    ).toEqual(["playground"]);
+    ).toEqual(["playground", "recorrido"]);
   });
 });

@@ -29,7 +29,7 @@
     "diferencial": "Of 15 evaluation platforms reviewed in September 2026, none requires planning before building or compares the plan with what happened. planlang does both: it demands a measurable plan, publishes the gap between plan and result with the risks that were foreseen, and lets you move the plan's thresholds over the agent's real decisions."
   },
   "funcionalidades": {
-    "total": 25,
+    "total": 27,
     "fuente_del_conteo": "docs/MANUAL-DE-USO.md",
     "descartadas": [],
     "grupos": [
@@ -202,6 +202,18 @@
             "nombre": "The agent, as it ran",
             "que_hace": "You see the agent's diagram generated from the code that ran, not drawn by hand. You tap a piece and it shows what it does, its code and the real cases that went through it; if something the plan requires is missing, the diagram flags it.",
             "seccion_manual": "Open the showcase"
+          },
+          {
+            "id": "recorrido",
+            "nombre": "One real case, step by step",
+            "que_hace": "You follow one case through the agent's diagram, one step at a time: what data it read, which rule it applied, where it went next and where it waited for a person. And every rule with a threshold answers \"what if the threshold were different?\": with which value the case would have gone to another branch, with a link to the playground with that value already set.",
+            "seccion_manual": "Walk through a case"
+          },
+          {
+            "id": "despliegue",
+            "nombre": "The blueprint of how it would run in production",
+            "que_hace": "You see, generated from the plan and the published run, each demo's deployment design: the seven components, which component carries the control for each of the plan's risks and what was measured (latency per node, cost per case and the auditor's capacity). What was not measured says \"not measured\"; it deploys nothing.",
+            "seccion_manual": "Read the deployment design"
           }
         ]
       },
@@ -277,7 +289,7 @@
     {
       "clave": "funcionalidades",
       "etiqueta": "built features",
-      "valor": 25,
+      "valor": 27,
       "unidad": "features",
       "fuente": "medido",
       "detalle": "The product vision's features that work today: the two-week cut's and the roadmap ones built in S3 (the interviewer, demo B and its case file), counted against docs/MANUAL-DE-USO.md; what remains on the roadmap does not count."

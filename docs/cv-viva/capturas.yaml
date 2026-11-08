@@ -2,7 +2,7 @@
 # 1024×640 a DPR 1,5 (archivo de 1536×960), tema claro, español, WebP de hasta 80 KB; datos 100 % sintéticos.
 # Cada entrada es un ESTADO de la vitrina: `ruta` y `perfil` (líder o experto), `ancla` (el encabezado, como expresión
 # regular, al que se desplaza la página; vacío = arriba) y `accion` (u2-a-1600: U2 movido con el teclado, como el `u2a1600`
-# del arnés de la app). `pie` es el texto de la ficha en CV Viva. Los pies y los estados vienen de RESPUESTA-026.md.
+# del arnés de la app; recorrido-paso-3: el caso del recorrido, tres pasos adelante). `pie` es el texto de la ficha en CV Viva. Los pies y los estados vienen de RESPUESTA-026.md.
 # «entrada» (la funcionalidad) usa un estado distinto al de la portada: «Cómo funciona», debajo del titular.
 portada:
   archivo: "entrada.webp"
@@ -200,6 +200,24 @@ capturas:
     pie:
       es: "El grafo del agente, dibujado desde el código que corrió, por capas"
       en: "The agent's graph, drawn from the code that ran, layer by layer"
+  - funcionalidad: "recorrido"
+    archivo: "recorrido.webp"
+    ruta: "/es/caso/A-016"
+    perfil: "lider"
+    ancla: "^El caso camina por el grafo$"
+    accion: "recorrido-paso-3"
+    pie:
+      es: "Un caso real por el diagrama del agente, paso a paso, y qué umbral lo habría desviado"
+      en: "One real case through the agent's diagram, step by step, and which threshold would have diverted it"
+  - funcionalidad: "despliegue"
+    archivo: "despliegue.webp"
+    ruta: "/es/despliegue"
+    perfil: "lider"
+    ancla: "^Los siete componentes$"
+    accion: null
+    pie:
+      es: "Cómo correría en producción: componentes, lo medido y el control de cada riesgo"
+      en: "How it would run in production: components, what was measured and each risk's control"
   - funcionalidad: "entrada"
     archivo: "entrada-como-funciona.webp"
     ruta: "/es"

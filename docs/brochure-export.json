@@ -29,7 +29,7 @@
     "diferencial": "De 15 plataformas de evaluación revisadas en septiembre de 2026, ninguna obliga a planear antes de construir ni compara el plan con lo ocurrido. planlang hace las dos cosas: exige un plan medible, publica la brecha entre plan y resultado con los riesgos que se previeron y te deja mover los umbrales del plan sobre las decisiones reales del agente."
   },
   "funcionalidades": {
-    "total": 25,
+    "total": 27,
     "fuente_del_conteo": "docs/MANUAL-DE-USO.md",
     "descartadas": [],
     "grupos": [
@@ -202,6 +202,18 @@
             "nombre": "El agente, tal como corrió",
             "que_hace": "Ves el diagrama del agente generado desde el código que corrió, no dibujado a mano. Tocas una pieza y aparece qué hace, su código y los casos reales que pasaron por ahí; si falta algo que el plan exige, el diagrama lo señala.",
             "seccion_manual": "Abrir la vitrina"
+          },
+          {
+            "id": "recorrido",
+            "nombre": "Un caso real, paso a paso",
+            "que_hace": "Sigues un caso por el diagrama del agente, un paso a la vez: qué dato leyó, qué regla aplicó, por dónde siguió y dónde esperó a una persona. Y cada regla con umbral responde «¿y si el umbral fuera otro?»: con qué valor el caso habría ido a otra rama, con un enlace al playground con ese valor puesto.",
+            "seccion_manual": "Recorrer un caso"
+          },
+          {
+            "id": "despliegue",
+            "nombre": "El plano de cómo correría en producción",
+            "que_hace": "Ves, generado desde el plan y la corrida publicada, el diseño de despliegue de cada demo: los siete componentes, qué componente lleva el control de cada riesgo del plan y lo medido (latencia por nodo, costo por caso y la capacidad del auditor). Lo que no se midió dice «no medido»; no despliega nada.",
+            "seccion_manual": "Leer el diseño de despliegue"
           }
         ]
       },
@@ -277,7 +289,7 @@
     {
       "clave": "funcionalidades",
       "etiqueta": "funcionalidades construidas",
-      "valor": 25,
+      "valor": 27,
       "unidad": "funcionalidades",
       "fuente": "medido",
       "detalle": "Las de la visión del producto que ya funcionan: las del corte de dos semanas y las del roadmap que se construyeron en el S3 (el entrevistador, el demo B y su expediente), contadas contra docs/MANUAL-DE-USO.md; lo que sigue en el roadmap no cuenta."
