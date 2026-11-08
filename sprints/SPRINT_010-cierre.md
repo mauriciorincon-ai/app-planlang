@@ -1,0 +1,39 @@
+---
+sprint: 010
+app: planlang
+hito: H-2
+opened: 2026-11-08
+closed: 2026-11-08
+branch: sprint-010/el-caso-camina
+pr:
+---
+
+# Sprint 010 · cierre — El caso camina y el despliegue tiene plano
+
+- **Objetivo / resultado:** cerrar el H-2 con las dos funcionalidades que faltaban de la VISION —recorrido animado de un caso y diseño de despliegue documentado—, pagar el lote del hito y dejar la rama lista para el ensayo general. Cumplido en código, tests y documentos; **el ensayo del usuario (decisión 2a) está pendiente y su veredicto se escribe aquí, en el mismo PR, antes del squash.**
+- **Estado:** construido y auditado; PR listo para el ensayo del usuario. **Estimado / real:** 6 h / 3,6 h activas (salida de `horas-sprint` abajo). **Diferencia:** −2,4 h (−40 %).
+
+```
+| Commits | Sesiones | Horas activas | Span (primer → último commit) |
+| 30 | 1 | 3,6 h | 2026-11-08 07:41 → 2026-11-08 10:46 (3,1 h) |   (+ los commits de verificación y auditoría de después)
+| F1 | 14 | 1,0 h |   (plan 1,5 h)
+| F2 | 4 | 0,7 h |   (plan 2 h)
+| F3 | 12 | 1,9 h |   (plan 2,5 h)
+```
+
+- **Entregables:** F1 PR #26 de Dependabot absorbido (8 subidas; nombres accesibles que empiezan por el texto visible en `barra.tsx` y `core/visor/svg.ts`, axe 4.14 intacto), `CLAUDE.md` y `.claude/rules/motor.md` iguales a la orden (`cmp` 0), `docs/CONSTITUCION-CONTRA-CODIGO.md`, plan A **v1.6.1** (solo capacidad del auditor 5–60, decisión 1a) y el lote del motor (M2 · M3 con topes y caso hostil · M4 · `cola.ts` con contraejemplo · B2 guardia a todo `core/` · B5 · B6 · B7 · `garantia.ts`). F2 `core/visor/recorrido-de-caso.ts` (V5/V12, contrafactual con el intérprete del playground, `?u=` al playground) y su vista en los casos A y B. F3 `core/despliegue/` y las páginas `/es|en/despliegue` y `/demo-b/despliegue`, lote de interfaz y documentos, e2e en inglés, manual ES/EN, BLUEPRINT, brochure (27), guía con el bloque del ensayo (G1–G10), `design-sync/`.
+- **Demos en rojo (vistas fallar y volver a verde):** F2 un paso que se sigue a sí mismo → V5; animación en la hoja principal → G12; umbral contrafactual desfasado → el test de igualdad con el playground. F3 un riesgo sin control → «R5»; mostrar la capacidad mínima → «casos por día hábil»; evidencia de «implementado» → `adaptador.py`; un componente de cliente que importa `vista/playground` → `cliente-sin-zod` con la cadena de imports. El test de igualdad se endureció: ahora cubre todas las corridas publicadas y que ningún valor más cercano separe el caso.
+- **Lo que dice el informe (P9):** el despliegue publica lo medido en la corrida de 200 (costo nominal por caso, latencia por nodo, capacidad: 8 casos por día hábil bastan, con 7 salen 14 tardías) y dice **«no medido»** donde no hay dato (la capacidad del B, el costo de alojar nada, concurrencia, caída del proveedor); canal y observabilidad se publican «sin código aún». El contrafactual dice «no observado» para lo que pasaría después de la rama nueva (P15).
+- **Desviaciones:** **D1** `runs/**` tocado (la orden lo prohíbe): 10 `informe.{es,en}.md` de 5 corridas con +12 líneas (p por umbral y conjunta, lote de llegadas); los regenera `pnpm brecha:informe` y `tests/integration/informes-versionados.test.ts` exige que coincidan con el renderizador, así que revertirlos pone la suite en rojo; `informe.json`, `trazas/` y `corrida.json` intactos. **D2** el brochure cuenta **27** funcionalidades (secciones del manual), no «23 de 23»: la VISION tiene 23 y enumera 25; el texto publicado lo dice. **D3** la captura `playground` de CV Viva no cabe en 80 KB: sigue fallando y no se forzó. **D4** las capturas en inglés fueron la pasada de medición del arnés de la vitrina (el script de CV Viva es ES por contrato).
+- **Decisiones:** 1a (plan A v1.6.1, rango 5–60) y 2a (ensayo antes del merge) del usuario; el G-Plan de v1.6.1 consta en el registro del plan («aprobado en el G-Plan del S10, chat de la planeadora, 2026-11-08»). Nada se descartó.
+- **Constitución contra el código (los parciales que van a la planeadora):** de 75 afirmaciones, 64 ciertas, 7 parciales y 4 no verificables. `CLAUDE.md` dice «faltan 2» (ya construidos) y no lista `core/despliegue`, la ruta `/despliegue` ni v1.6.1; `plans/` trae además `v0-*` y `hackguard-agentes/v2/`; Python es `>=3.12,<3.15`; `InMemorySaver` corre en las corridas simuladas, no solo en tests; no hay test npm ↔ Python entre lockfiles (regla 28, deuda H-3). `VISION.md:56` nombra «diseño de despliegue» y es de la planeadora.
+- **Auditoría (una pasada, auditor Sonnet 5.5 · high, 31 min; 4 casillas):** 0 C, 0 A, 6 M, 5 B. Pagados en `5125788`: M1 (la guía decía rango 10–60 y 77 huellas; ahora 5–60 y 78) · M2 (detalle del brochure) · M3 (D1–D3 de arriba) · M4 (umbral ≥ 90 % para `core/despliegue`) · M5 (la FAQ prometía costo de alojar) · M6 (comentario de fuentes; las dos URL responden 200) · B1 · B2 · B3 (filtro por token entero, con prueba) · B5 · B6. Después, leyendo capturas como imagen: «Sin código aún» se cortaba en la caja del plano (A y B, dos temas) → «sin código» `39dbf64`. Casilla 3 sin hallazgos (`cero-enlaces` limpio, homepage = el repo).
+- **Deuda al lote del hito (H-3):** B4 `src/lib/vista/despliegue.ts:304` (la tabla de latencia muestra el id del nodo, no su nombre llano) · captura `playground` `scripts/capturas-cv-viva.mjs:242` · Lighthouse con margen < 10 % (aviso, no rojo): `/es|en/playground` y `/demo-b/playground` LCP 2,704 s vs 2,8 s (3,4 %), `/es/brecha` 2,606 s (6,9 %), **medidos antes de sacar zod del bundle del playground, sin repetir** · `pnpm audit`: 6 moderadas/bajas (`fast-uri`, `glob`, `minimatch`; el gate `--audit-level high` pasa) · prettier no es gate y 25 archivos ya venían sin formato.
+- **Fase > 50 %:** ninguna (1,0 · 0,7 · 1,9 h contra 1,5 · 2 · 2,5). **Modelo por fase y desvío:** F1 Sonnet 5.5, F2 Opus 5.5, F3 Sonnet 5.5 + advisor Opus, como el plan; esfuerzo `high`. Haiku solo en los subagentes Explore. **Relevos:** ninguno.
+- **Tokens (piloto; fuente: transcripción de la sesión):** subagentes 6 = 5 Explore (Haiku) + el auditor (Sonnet, 194 422 tokens); advisor 3 consultas (la última antes del cierre); compactaciones 7 (2 las escribió el usuario con `/compact`, el resto automáticas); `/model` y `/effort` los escribió el usuario. Se pide `/advisor off`.
+- **Verificación:** VERIFICACION_PENDIENTE
+- **Aprendizajes:** un check que mide «no se encima» no mide «no se corta»: el recorte solo apareció al leer la imagen; un valor que cruza de una vista de servidor a un componente de cliente puede arrastrar Zod entero al navegador, y el barrido de hosts del paquete —no la CI— fue quien lo vio (ahora lo vigila una guardia). **Recomendación:** que la planeadora regenere `CLAUDE.md` (faltan 2 → 0) y decida si el paquete entra a la CI.
+- **Deploy-check:** pasan 2 (10 capturas leídas como imagen, ES, dos temas, teléfono y escritorio, sin desborde), 3, 4, 5, 6 y 7, 9, 10 (n/a: sin aprovisionamiento, sin protecciones del sistema, sin derivados nuevos); **pendientes 1** (el ensayo del usuario) **y 8** (checks del PR).
+- **Veredicto del ensayo del usuario (2a):** pendiente.
+- **Servidores al STOP:** `lsof` LISTEN en este repo: 0 (queda el test-server de la extensión Playwright de VS Code, que no cuenta).
+- **Para mergear:** squash y borrar la rama; después `/cierre-sprint planlang`.
