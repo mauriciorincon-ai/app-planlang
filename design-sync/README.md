@@ -8,8 +8,8 @@ Espejo publicable del design system de planlang para Claude Design (regla 16 de 
 fija: `design-system.md` (fuente de verdad) → `design-sync/` (este bundle, deriva) → el proyecto en Claude Design
 (vitrina, jamás se edita allá). El destino y el registro de publicación viven en `project.json`.
 
-**Estado:** sin publicar. Se publica después del gate único de los hitos H-1 y H-2 (el bloque G de la guía de prueba),
-cuando el usuario invoque `/design-sync`; ese gate no ocurre en un sprint.
+**Estado:** sin publicar. Se publica después del ensayo general del H-2 (el bloque G de la guía de prueba, que corre el
+usuario contra la rama del PR del sprint 10), cuando invoque `/design-sync`; ese ensayo no ocurre dentro de un sprint.
 
 ## Qué trae
 
@@ -41,6 +41,12 @@ Las pantallas que llegaron en los hitos H-2 no trajeron componentes nuevos: se a
 - **Plan sin corrida** (S5 a S7, `/es/planes/<id>`): Veredicto (el rótulo «Sin corrida», con su símbolo y su texto),
   Tabla de filas (el contrato del grafo en detalle: nodos, aristas, ramas por defecto y pausas) y Botones y chips (quién
   propuso cada elemento).
+- **El caso camina** (S10, `/es/caso/<id>`): Nodo y arista (el lienzo del agente con el paso activo, visitado y
+  pendiente, siempre con glifo y texto además del color), Botones y chips (anterior, siguiente, reproducir) y Tabla de
+  filas (el texto equivalente de cada paso).
+- **Diseño de despliegue** (S10, `/es/despliegue`): Nodo y arista (el plano de siete componentes, generado por el
+  mismo conversor; «en construcción» se dice en la caja, no solo en el color), Tabla de filas (latencia, costo y control
+  de cada riesgo) y Rótulo y barra («Diseño · no desplegado»).
 
 ## Lo que no está aquí
 
