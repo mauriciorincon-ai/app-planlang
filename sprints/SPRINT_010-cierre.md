@@ -5,7 +5,7 @@ hito: H-2
 opened: 2026-11-08
 closed: 2026-11-08
 branch: sprint-010/el-caso-camina
-pr:
+pr: 27
 ---
 
 # Sprint 010 · cierre — El caso camina y el despliegue tiene plano
