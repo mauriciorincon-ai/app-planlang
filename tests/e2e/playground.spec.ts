@@ -386,6 +386,12 @@ test.describe("la capacidad del auditor (es)", () => {
     const control = page.getByRole("slider", { name: "Capacidad del auditor" });
     await control.focus();
     await page.keyboard.press("Home");
+    // v1.6.1 (S10, decisión 1a): el control llega a 5, donde el plazo ya se rompe (hay solicitudes fuera de plazo).
+    await expect(control).toHaveValue("5");
+    await expect(frase(page)).toHaveText(
+      /^Con 5 casos por día hábil, \d+ solicitudes salen de su plazo\.$/,
+    );
+    await page.keyboard.press("ArrowRight");
     await expect(control).toHaveValue("10");
     await expect(frase(page)).toHaveText(
       "Con 10 casos por día hábil, toda solicitud se decide dentro de su plazo.",
