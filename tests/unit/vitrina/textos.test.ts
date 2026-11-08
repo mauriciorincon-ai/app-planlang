@@ -17,6 +17,7 @@ import * as garantia from "@/textos/garantia";
 import * as plan from "@/textos/plan";
 import * as planSinCorrida from "@/textos/plan-sin-corrida";
 import * as playground from "@/textos/playground";
+import * as recorrido from "@/textos/recorrido";
 import * as agenteB from "@/textos/demo-b/agente";
 import * as brechaB from "@/textos/demo-b/brecha";
 import * as casoB from "@/textos/demo-b/caso";
@@ -48,6 +49,7 @@ const todos = [
   ...bilingues(plan, "plan"),
   ...bilingues(brecha, "brecha"),
   ...bilingues(playground, "playground"),
+  ...bilingues(recorrido, "recorrido"),
   ...bilingues(garantia, "garantia"),
   ...bilingues(fichas, "fichas"),
   ...bilingues(planSinCorrida, "plan-sin-corrida"),

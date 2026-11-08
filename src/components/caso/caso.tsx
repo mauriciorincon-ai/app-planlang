@@ -247,7 +247,7 @@ function Cifras({ v }: { v: VistaCaso }) {
 const COLS_REGLAS =
   "24px minmax(0,1.4fr) minmax(0,1.1fr) minmax(0,1.2fr) 64px minmax(0,1fr)";
 
-function TablaReglas({
+export function TablaReglas({
   reglas,
   idioma,
 }: {
@@ -388,7 +388,16 @@ function Paso({ p, idioma }: { p: PasoCaso; idioma: Idioma }) {
 }
 
 /** Un caso de punta a punta: cabecera, recibe → hace → entrega, recorrido, pausa, respuesta, documento y señales. */
-export function Caso({ v, idioma }: { v: VistaCaso; idioma: Idioma }) {
+export function Caso({
+  v,
+  idioma,
+  camina,
+}: {
+  v: VistaCaso;
+  idioma: Idioma;
+  /** El recorrido animado del caso sobre el lienzo del agente (S10): va antes del recorrido paso a paso. */
+  camina?: ReactNode;
+}) {
   return (
     <>
       <section aria-labelledby="c-caso" className="pt-8 pb-10">
@@ -403,6 +412,8 @@ export function Caso({ v, idioma }: { v: VistaCaso; idioma: Idioma }) {
           <Definiciones filas={v.ficha} />
         </BloqueExperto>
       </section>
+
+      {camina}
 
       <Seccion
         id="c-rec"
