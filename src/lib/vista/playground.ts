@@ -33,7 +33,7 @@ import {
 import type { Fila } from "./agente";
 import type { PuntoCurva } from "./brecha";
 import { nombreDeSubtipo, pieDeCorrida } from "./caso";
-import { decimal, enumerar, versionCorta } from "./formato";
+import { decimal, decimalesDelPaso, enumerar, versionCorta } from "./formato";
 import { vistaGarantia, type VistaGarantia } from "./garantia";
 import { enlaceACaso } from "./paginas-caso";
 
@@ -112,11 +112,6 @@ export interface VistaPlayground {
   pie: string;
 }
 
-function decimalesDe(paso: number): number {
-  const s = String(paso);
-  return s.includes(".") ? s.length - s.indexOf(".") - 1 : 0;
-}
-
 /**
  * El nombre llano de una señal. Una señal que decide en el grafo y no tiene nombre detiene el build nombrándola: la
  * vitrina no pone el código donde iba la palabra.
@@ -156,7 +151,7 @@ function ejemplo(c: Compacto, d: DatosDemo, i: Idioma): string | null {
   const plan = umbralesDelPlan(c);
   for (const u of c.umbrales) {
     if (u.rango === "booleano" || typeof u.valor_en_plan !== "number") continue;
-    const dec = decimalesDe(u.rango.paso);
+    const dec = decimalesDelPaso(u.rango.paso);
     for (let k = 1; ; k++) {
       const v = Math.round((u.valor_en_plan + k * u.rango.paso) * 1e6) / 1e6;
       if (v > u.rango.max + 1e-9) break;
@@ -422,7 +417,7 @@ export function vistaPlayground(d: DatosDemo, i: Idioma): VistaPlayground {
         valorPlan: u.valor_en_plan,
         rango: "min" in u.rango_jugable ? { ...u.rango_jugable } : null,
         decimales:
-          "min" in u.rango_jugable ? decimalesDe(u.rango_jugable.paso) : 0,
+          "min" in u.rango_jugable ? decimalesDelPaso(u.rango_jugable.paso) : 0,
       })),
       criterios: d.plan.criterios_aceptacion.map((cr) => {
         const r = cr.regla_de_medicion;
@@ -458,7 +453,7 @@ export function vistaPlayground(d: DatosDemo, i: Idioma): VistaPlayground {
               s1.garantia,
               u1.id,
               "min" in u1.rango_jugable
-                ? decimalesDe(u1.rango_jugable.paso)
+                ? decimalesDelPaso(u1.rango_jugable.paso)
                 : 2,
               i,
             )

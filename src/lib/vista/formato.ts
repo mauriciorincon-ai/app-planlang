@@ -80,3 +80,9 @@ export function decimalesDe(v: number): number {
   const d = /\.(\d+)/.exec(String(v))?.[1]?.length ?? 0;
   return Math.min(4, Math.max(2, d));
 }
+
+/** Cuántos decimales lleva un valor que se mueve de `paso` en `paso` (el del deslizador de un umbral). */
+export function decimalesDelPaso(paso: number): number {
+  const s = String(paso);
+  return s.includes(".") ? s.length - s.indexOf(".") - 1 : 0;
+}

@@ -49,7 +49,13 @@ import {
 } from "./plan-comun";
 import { primerosDelLote, PRIMEROS_CON_PAGINA } from "./paginas-caso";
 import { delVocabulario } from "./vocabulario";
-import { GRAMATICA, grafoParaMapa, lienzo, type Lienzo } from "./visor";
+import {
+  GRAMATICA,
+  grafoParaMapa,
+  lienzo,
+  type EntradaLienzo,
+  type Lienzo,
+} from "./visor";
 
 export { valorDeUmbral };
 
@@ -112,6 +118,8 @@ export interface FilaTraza {
   solicitud: string;
   pares: Array<{ k: string; v: string }>;
   enlace: string;
+  /** El mismo caso, en su recorrido animado sobre el lienzo (S10). */
+  recorrer: string;
 }
 /** Qué dice un campo del panel del líder (elige su ícono; `falta` se pinta en tinta 2). */
 export type ClaveCampo =
@@ -248,6 +256,32 @@ function perfilDe(d: DatosDemo, ctx: ContextoAgente): PerfilAgente {
   }
 }
 
+/**
+ * La entrada del lienzo del agente que corrió y su clave de memoria: la comparten P3 Agente y el recorrido de un caso,
+ * así que los dos dibujan el MISMO mapa (una sola geometría por build).
+ */
+export function entradaDelLienzo(d: DatosDemo): {
+  entrada: EntradaLienzo;
+  clave: string;
+} {
+  const grafo = d.corrida.grafo;
+  return {
+    entrada: {
+      demo: d.id,
+      grafo: grafoParaMapa(grafo),
+      contrato: d.plan.contrato_de_grafo,
+      sujeto: { id: d.id, nombre: d.corrida.manifiesto.ficha.nombre },
+      version: d.corrida.manifiesto.plan.version,
+      fecha: d.corrida.manifiesto.fecha,
+      modelo: d.corrida.manifiesto.modelo,
+      codigo: d.codigo.nodos,
+      trazas: d.corrida.trazas,
+    },
+    // La huella de la corrida entra a la clave: sus trazas son los recorridos del mapa (contrato 0.5.0 § 3.5).
+    clave: `${grafo.huella}:${d.plan.huella}:${d.manifiesto.corrida.huella}`,
+  };
+}
+
 export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
   const ctx = contextoAgente(d, i);
   const perfil = perfilDe(d, ctx);
@@ -287,35 +321,20 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
   // seleccionable del lienzo y su panel es el de la arista (RF-08.4 por arista condicional queda en el roadmap, C-1).
   const { umbral: u1, regla: reglaU1 } = perfil.arista;
   const lineaU1 = `l-${idDeMapa(reglaU1.desde)}-a-${idDeMapa(reglaU1.si_verdadero)}`;
-  const lienzoVista = lienzo(
-    {
-      demo: d.id,
-      grafo: grafoParaMapa(grafo),
-      contrato: d.plan.contrato_de_grafo,
-      sujeto: { id: d.id, nombre: demo },
-      version: d.corrida.manifiesto.plan.version,
-      fecha,
-      modelo,
-      codigo: d.codigo.nodos,
-      trazas: d.corrida.trazas,
-    },
-    // La huella de la corrida entra a la clave: sus trazas son los recorridos del mapa (contrato 0.5.0 § 3.5).
-    `${grafo.huella}:${d.plan.huella}:${d.manifiesto.corrida.huella}`,
-    i,
-    {
-      ns: "agente",
-      titulo: GRAFO.svgTitulo({
-        demo,
-        sprint,
-        corrida,
-        nodos: d.plan.contrato_de_grafo.nodos_esperados.length,
-        reglas: d.plan.contrato_de_grafo.aristas_condicionales.length,
-      }),
-      descripcion: GRAFO.svgDescripcion,
-      // La línea que abre el panel es la de la regla que elige el perfil, no un par escrito (C-1).
-      lineasSeleccionables: [lineaU1],
-    },
-  );
+  const delAgente = entradaDelLienzo(d);
+  const lienzoVista = lienzo(delAgente.entrada, delAgente.clave, i, {
+    ns: "agente",
+    titulo: GRAFO.svgTitulo({
+      demo,
+      sprint,
+      corrida,
+      nodos: d.plan.contrato_de_grafo.nodos_esperados.length,
+      reglas: d.plan.contrato_de_grafo.aristas_condicionales.length,
+    }),
+    descripcion: GRAFO.svgDescripcion,
+    // La línea que abre el panel es la de la regla que elige el perfil, no un par escrito (C-1).
+    lineasSeleccionables: [lineaU1],
+  });
   const comp = lienzoVista.comparacion;
   const experto: VistaAgente["experto"] = {
     grupos: [
@@ -707,6 +726,7 @@ export function vistaAgente(d: DatosDemo, i: Idioma): VistaAgente {
       solicitud: f.solicitud,
       pares: f.pares,
       enlace: ruta(i, "caso", t.caso_id, d.id),
+      recorrer: `${ruta(i, "caso", t.caso_id, d.id)}#c-camina`,
     };
   };
 

@@ -34,6 +34,7 @@ import type {
   Fuente,
   Gramatica,
   Mapa,
+  Recorrido,
   TextoIdioma,
 } from "@core/visor/tipos";
 import {
@@ -443,4 +444,55 @@ export function lienzo(
     lista,
     comparacion,
   };
+}
+
+/**
+ * El lienzo del recorrido de UN caso: el mismo dibujo que P3 Agente (misma clave, una sola geometría por build) con el
+ * recorrido del caso dentro del mapa, validado por las reglas del contrato (V5 y V12, `validarMapa`): un paso que no
+ * sigue a uno anterior o una bifurcación sin declarar detienen el build. El SVG no es seleccionable: lo que cambia de
+ * paso a paso es el atributo `data-paso` del contenedor, no el SVG (G12).
+ */
+export function lienzoDeRecorrido(
+  e: EntradaLienzo,
+  clave: string,
+  i: Idioma,
+  op: { ns: string; titulo: TextoIdioma; descripcion: TextoIdioma },
+  recorrido: Recorrido,
+): Pick<Lienzo, "svg" | "columnas"> {
+  const { mapa, geo } = dibujo(e, clave);
+  const errores = erroresDe(
+    validarMapa({ ...mapa, recorridos: [recorrido] }, GRAMATICA, {
+      cobertura: "letra",
+      excepciones: EXCEPCIONES_PLANLANG,
+    }),
+  );
+  if (errores.length)
+    throw new Error(
+      `vitrina: el recorrido «${recorrido.id}» no pasa la validación del contrato: ${errores.map((x) => `${x.regla} ${x.id} ${x.mensaje}`).join(" · ")}`,
+    );
+  return {
+    svg: aSvg(geo, GRAMATICA, {
+      idioma: i,
+      ns: op.ns,
+      titulo: op.titulo,
+      descripcion: op.descripcion,
+      seleccionables: false,
+    }),
+    columnas: geo.bandas.map((b) => ({ numero: b.numero, x: b.x })),
+  };
+}
+
+/** Los textos de cada nodo del mapa, por id del código (los del recorrido de un caso salen de aquí). */
+export function textosDelMapa(mapa: Mapa): Record<string, TextosDeNodo> {
+  return Object.fromEntries(
+    mapa.nodos.map((n) => [
+      idDeCodigo(n.id),
+      {
+        lider: n.lider,
+        experto: n.experto,
+        por_que_importa: n.por_que_importa,
+        fuentes: n.fuentes,
+      },
+    ]),
+  );
 }
