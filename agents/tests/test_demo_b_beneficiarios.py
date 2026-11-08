@@ -219,7 +219,13 @@ def test_el_esquema_acota_lo_que_el_modelo_puede_escribir() -> None:
 
     def con(n: int) -> dict[str, Any]:
         entidades = [{"nit": f"SYN-NIT-{i:06d}", "nombre": f"S{i}"} for i in range(n)]
-        return {"entidad": "SYN-NIT-000000", "entidades": entidades, "personas": [], "participaciones": [], "controla": None}
+        return {
+            "entidad": "SYN-NIT-000000",
+            "entidades": entidades,
+            "personas": [],
+            "participaciones": [],
+            "controla": None,
+        }
 
     Estructura.model_validate(con(2 * TOPE_ENTIDADES))
     with pytest.raises(ValidationError):

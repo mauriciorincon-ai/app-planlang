@@ -99,8 +99,8 @@ class Control(_Base):
 
 class Estructura(_Base):
     entidad: str | None
-    # Dos veces el tope que el nodo calcula: el esquema acota lo que el modelo puede escribir; pasar el tope del nodo
-    # (pero no este) llega a RB-03 y decide una persona.
+    # Dos veces el tope que el nodo calcula: el esquema acota lo que el modelo puede escribir; pasar el
+    # tope del nodo (pero no este) llega a RB-03 y decide una persona.
     entidades: list[EntidadEstructura] = Field(max_length=2 * TOPE_ENTIDADES)
     personas: list[PersonaEstructura] = Field(max_length=2 * TOPE_PERSONAS)
     participaciones: list[Participacion] = Field(max_length=2 * TOPE_PARTICIPACIONES)
