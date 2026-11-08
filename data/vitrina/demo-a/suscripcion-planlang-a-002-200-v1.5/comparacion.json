@@ -565,7 +565,7 @@
     }
   ],
   "formato": "planlang-comparacion/v1",
-  "huella": "99f116350b6089b689012a4e29e73d0329e977875af9659b1808ebb331255d6d",
+  "huella": "4968ecad671031a6c6fa841260bf78980b81d6db11125b49eaf722e62d09c28d",
   "lados": {
     "agente_unico": {
       "decisiones": {
@@ -639,9 +639,9 @@
       "huella": "e1dc89c72a37bf780bd3ddd5225dff84284da6bedabe6aae9f8b3bc670c57ee1",
       "version": "1.5.0"
     },
-    "huella": "b5d29ba673e89bfdeb03d39ef463f6e5b7ed3df4c54c20dd0a58bdf92a4d5dd4",
+    "huella": "1e309da7dc89bba027bea2254ea7429d798540afcedf23838494a59ffc212cba",
     "id": "plan-demo-a",
-    "version": "1.6.0"
+    "version": "1.6.1"
   },
   "riesgos": [
     {

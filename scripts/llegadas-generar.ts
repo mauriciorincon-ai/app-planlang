@@ -15,12 +15,13 @@ import {
   llegadasDelLote,
   type CapaDeLlegadas,
 } from "../core/plazos";
+import { jcs } from "../core/formatos/jcs";
 import { argumentos, escribirJson, leerJson } from "./_io";
-import { PLAN_DEMO_A_V16, rutaDeLote } from "./lotes-versionados";
+import { PLAN_DEMO_A_VIGENTE, rutaDeLote } from "./lotes-versionados";
 
-/** Los lotes con capa de llegadas: hoy el de 200 de la v1.5 del A, medido con el plan v1.6. */
+/** Los lotes con capa de llegadas: hoy el de 200 de la v1.5 del A, medido con el plan v1.6.1. */
 export const LLEGADAS_VERSIONADAS = [
-  { semilla: "planlang-a-002", n: 200, plan: PLAN_DEMO_A_V16 },
+  { semilla: "planlang-a-002", n: 200, plan: PLAN_DEMO_A_VIGENTE },
 ] as const;
 
 export const rutaDeLlegadas = (semilla: string, n: number): string =>
@@ -59,8 +60,10 @@ async function main(): Promise<number> {
     const ruta = rutaDeLlegadas(l.semilla, l.n);
     const capa = await capaDelLote(rutaDeLote(l.semilla, l.n), l.plan);
     if (args.verificar === true) {
-      const enDisco = JSON.stringify(leerJson(ruta));
-      if (enDisco !== JSON.stringify(capa)) {
+      // Forma canónica (JCS): el archivo guarda las claves ordenadas y el generador las arma en otro orden; lo que
+      // importa es que el contenido y la huella sean los mismos (el S9 comparaba cadenas y fallaba siempre).
+      const enDisco = jcs(leerJson(ruta));
+      if (enDisco !== jcs(capa)) {
         console.error(`${ruta}: no es lo que sale del generador`);
         distintas++;
       } else console.log(`OK ${ruta} · huella ${capa.huella}`);

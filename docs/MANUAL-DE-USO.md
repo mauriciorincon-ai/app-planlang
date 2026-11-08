@@ -490,15 +490,15 @@ data/casos/demo-a/planlang-a-002-200.json` y repite el comando hasta completar l
 - **Cómo se usa:**
   1. En la Brecha, lee la fila C11 y el bloque de plazos: cuántas solicitudes esperaron, cuánto y dónde se rompe el
      plazo.
-  2. En el playground, mueve la **capacidad del auditor** (de 10 a 60 casos por día hábil, de 5 en 5) y los umbrales:
+  2. En el playground, mueve la **capacidad del auditor** (de 5 a 60 casos por día hábil, de 5 en 5) y los umbrales:
      mover un umbral cambia cuántas solicitudes van a una persona, mover la capacidad cambia cuánto esperan. La
      pantalla dice cuántas salen de su plazo, por clase, y las horas de auditor.
   3. Con «Leer como · Experto» aparecen la cola, sus supuestos y la fuente de la norma.
 - **Lo que midió, con sus fallas:**
   - **C11 cumple** en la corrida de 200 del A: ninguna de las 177 solicitudes con plazo se pasó; la espera más larga
-    fue de 16 h. Pero **el plazo no se rompe en ningún punto del tramo que el plan deja mover (10 a 60)**: se rompe
-    con 7 casos por día (14 ambulatorias tardías) y se cumple desde 8. Ese punto queda por debajo del control del
-    playground, y la pantalla lo dice.
+    fue de 16 h. Pero **el plazo se rompe dentro del tramo que el plan deja mover (5 a 60)**: con 7 casos por día
+    salen 14 ambulatorias tardías y se cumple desde 8. Desde el plan v1.6.1 (S10) el control llega hasta 5, así que
+    el playground deja ver el punto exacto donde se rompe.
   - **C7 cumple** en el lote `planlang-b-002-20` (20 casos: 8 sociedades y 12 personas): los dueños de las 8
     sociedades coincidieron con la verdad conocida. Con 8 sociedades la cifra orienta pero no prueba; el lote no trae
     instrucciones escondidas, así que C6 y R4 quedan sin casos que los prueben.
@@ -1020,15 +1020,15 @@ There are two ways to use it:
 - **How to use it:**
   1. In the Gap report, read the C11 row and the deadlines block: how many requests waited, how long and where the
      deadline breaks.
-  2. In the playground, move the **auditor's capacity** (10 to 60 cases per business day, in steps of 5) and the
+  2. In the playground, move the **auditor's capacity** (5 to 60 cases per business day, in steps of 5) and the
      thresholds: moving a threshold changes how many requests go to a person, moving the capacity changes how long
      they wait. The screen says how many go past their deadline, by class, and the auditor hours.
   3. With "Read as · Expert" the queue, its assumptions and the norm's source appear.
 - **What it measured, failures included:**
   - **C11 is met** in demo A's 200-case run: none of the 177 requests with a deadline went past it; the longest wait
-    was 16 h. But **the deadline does not break anywhere in the range the plan lets you move (10 to 60)**: it breaks at
-    7 cases per day (14 outpatient requests late) and holds from 8. That point is below the playground's control, and
-    the screen says so.
+    was 16 h. But **the deadline breaks inside the range the plan lets you move (5 to 60)**: at 7 cases per
+    day, 14 outpatient requests go late, and it holds from 8. Since plan v1.6.1 (S10) the control reaches down to 5, so
+    the playground lets you see exactly where it breaks.
   - **C7 is met** in the `planlang-b-002-20` batch (20 cases: 8 companies and 12 people): the owners of the 8 companies
     matched the known truth. With 8 companies the figure points the way but does not prove it; the batch carries no
     hidden instructions, so C6 and R4 have no case that tests them.

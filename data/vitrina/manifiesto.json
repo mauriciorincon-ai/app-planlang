@@ -4,8 +4,8 @@
   "demos": {
     "demo-a": {
       "plan": {
-        "archivo": "plans/demo-a/v1.6.json",
-        "huella": "b5d29ba673e89bfdeb03d39ef463f6e5b7ed3df4c54c20dd0a58bdf92a4d5dd4"
+        "archivo": "plans/demo-a/v1.6.1.json",
+        "huella": "1e309da7dc89bba027bea2254ea7429d798540afcedf23838494a59ffc212cba"
       },
       "corrida": {
         "ruta": "runs/demo-a/suscripcion-planlang-a-002-200-v1.5",
@@ -23,11 +23,11 @@
       },
       "informe": {
         "archivo": "data/vitrina/demo-a/suscripcion-planlang-a-002-200-v1.5/informe.json",
-        "huella": "7dd7033d8eb96f071467c3732aa5169fc3f0de9d2f1606a1905e53df750c9d27"
+        "huella": "e70eba17ff8ccb3f33ff50f101af86558b2d68b5ff58d5ca4369749ae78fede4"
       },
       "comparacion": {
         "archivo": "data/vitrina/demo-a/suscripcion-planlang-a-002-200-v1.5/comparacion.json",
-        "huella": "99f116350b6089b689012a4e29e73d0329e977875af9659b1808ebb331255d6d"
+        "huella": "4968ecad671031a6c6fa841260bf78980b81d6db11125b49eaf722e62d09c28d"
       },
       "playground": {
         "senal_propuesta": "propuesta",

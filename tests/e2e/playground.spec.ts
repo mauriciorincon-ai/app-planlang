@@ -363,9 +363,9 @@ test.describe("la capacidad del auditor (es)", () => {
         expect(tabla).toContain("30 / 54");
         expect(tabla).toContain("7 días calendario");
         expect(tabla).toContain("40 / 123");
-        // Dónde se rompe, aunque el control no deje llegar: se dice con su número.
+        // Dónde se rompe, con su número; desde el plan v1.6.1 cae dentro del control (5–60).
         expect(tabla).toContain(
-          "Con estos umbrales el plazo se cumple desde 8 casos por día hábil; con una menos salen 14. Queda por debajo de lo que este control deja mover (10–60).",
+          "Con estos umbrales el plazo se cumple desde 8 casos por día hábil; con una menos salen 14. Cabe en lo que este control deja mover (5–60): baja la capacidad para verlo.",
         );
         // El color nunca va solo: cada clase lleva su símbolo y su palabra.
         await expect(

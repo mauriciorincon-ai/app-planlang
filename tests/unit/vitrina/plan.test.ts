@@ -256,14 +256,14 @@ describe("el contrato del grafo", () => {
 describe("la mirada general", () => {
   it("parte de, hace y entrega, desde el plan", () => {
     expect(es.portada.antetitulo).toBe(
-      "Demo A · plan-demo-a 1.6.0 · aprobado el 2026-11-02",
+      "Demo A · plan-demo-a 1.6.1 · aprobado el 2026-11-08",
     );
     expect(es.parteDe[1]!.detalle).toBe(
       "plan de beneficios sintético: 40 procedimientos, 5 exentos, 6 exclusiones con causal y 6 topes de cobertura",
     );
     expect(es.hace.hecho).toBe(true);
     expect(es.entrega[0]!.detalle).toMatch(
-      /^plan-demo-a 1\.6\.0 · [0-9a-f]{12}…$/,
+      /^plan-demo-a 1\.6\.1 · [0-9a-f]{12}…$/,
     );
     expect(es.entrega[1]!.detalle).toBe(
       "8 nodos, 12 aristas con su regla y 18 señales que toda traza debe dejar",

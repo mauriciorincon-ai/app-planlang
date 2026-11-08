@@ -10,13 +10,13 @@
 /**
  * La isla de cada demo: dónde vive (sin idioma delante), su golden y cuántas huellas da el barrido (el plan más un valor
  * por paso de cada deslizador y uno por interruptor). A: 10 valores de U1, 49 de U2, 5 de U3, el interruptor de Texas y
- * 11 de la capacidad del auditor (S9: de 10 a 60 de 5 en 5).
+ * 12 de la capacidad del auditor (S9: de 10 a 60 de 5 en 5; S10, plan v1.6.1: de 5 a 60).
  * B: 41 de U1 y 41 de U4 (similitud de 0,6 a 1,0 de a 0,01), 101 de U2 (puntaje de 0 a 100) y 3 de U3 (inconsistencias
  * de 0 a 2); sin interruptor. El golden del A conserva su nombre del S2. `playground-paridad.test.tsx` comprueba que
  * cada ruta es la de `SEGMENTO_DEMO`.
  */
 export const ISLAS = [
-  { demo: "demo-a", ruta: "playground", golden: "isla", huellas: 77 },
+  { demo: "demo-a", ruta: "playground", golden: "isla", huellas: 78 },
   {
     demo: "demo-b",
     ruta: "demo-b/playground",

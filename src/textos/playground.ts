@@ -431,8 +431,8 @@ export const PLAZOS = {
     rango: string;
   }) =>
     tb(
-      `Con estos umbrales el plazo se cumple desde ${p.minima} ${p.unidad}${p.uno !== null ? `; con una menos salen ${p.uno}` : ""}${p.fuera ? `. Queda por debajo de lo que este control deja mover (${p.rango}).` : "."}`,
-      `With these thresholds the deadline is met from ${p.minima} ${p.unidad}${p.uno !== null ? `; with one fewer, ${p.uno} go past it` : ""}${p.fuera ? `. That is below what this control lets you move (${p.rango}).` : "."}`,
+      `Con estos umbrales el plazo se cumple desde ${p.minima} ${p.unidad}${p.uno !== null ? `; con una menos salen ${p.uno}` : ""}${p.fuera ? `. Queda por debajo de lo que este control deja mover (${p.rango}).` : `. Cabe en lo que este control deja mover (${p.rango}): baja la capacidad para verlo.`}`,
+      `With these thresholds the deadline is met from ${p.minima} ${p.unidad}${p.uno !== null ? `; with one fewer, ${p.uno} go past it` : ""}${p.fuera ? `. That is below what this control lets you move (${p.rango}).` : `. It fits within what this control lets you move (${p.rango}): lower the capacity to see it.`}`,
     )) as Plantilla<{
     minima: string;
     unidad: string;

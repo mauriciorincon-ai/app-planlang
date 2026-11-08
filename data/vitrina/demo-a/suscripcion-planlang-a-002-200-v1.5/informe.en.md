@@ -1,6 +1,6 @@
 # Gap report — Medical prior authorizations (demo A)
 
-> **Simulation · not operational** · run `suscripcion-planlang-a-002-200-v1.5` · 2026-10-04 · plan 1.6.0
+> **Simulation · not operational** · run `suscripcion-planlang-a-002-200-v1.5` · 2026-10-04 · plan 1.6.1
 
 ## 1. Summary for the decision-maker
 
@@ -82,7 +82,7 @@ Each request arrives on one of the first 5 business days, at a time within the w
 
 Auditor hours at the plan's human cost per case: 14 h.
 
-At 8 cases per day or more, every request is decided within its deadline; at 7, 14 go past their deadline. The range the plan lets you move in the playground is 10–60.
+At 8 cases per day or more, every request is decided within its deadline; at 7, 14 go past their deadline. The range the plan lets you move in the playground is 5–60.
 
 No request went past its deadline at this capacity. Meeting the deadline in the simulation does not prove it would be met with other arrivals or another capacity: the playground lets you move it to see where it breaks.
 
@@ -247,7 +247,7 @@ Cases where they differ: A-003, A-013, A-031, A-047, A-052, A-055, A-072, A-078,
 
 | Piece | What it is | SHA-256 fingerprint |
 | --- | --- | --- |
-| Plan | plan-demo-a 1.6.0 (`plans/demo-a/v1.6.json`) | `b5d29ba673e89bfdeb03d39ef463f6e5b7ed3df4c54c20dd0a58bdf92a4d5dd4` |
+| Plan | plan-demo-a 1.6.1 (`plans/demo-a/v1.6.1.json`) | `1e309da7dc89bba027bea2254ea7429d798540afcedf23838494a59ffc212cba` |
 | Cases | planlang-a-002-200 · seed planlang-a-002 · n = 200 · generated with plan 1.5.0 | `5e76ef4cf562852c25aab2e041d55f17f809043450fe48e35c045cb419c8e62f` |
 | Run | suscripcion-planlang-a-002-200-v1.5 · 2026-10-04 · suscripcion/sonnet · multi-agent · run with plan 1.5.0 (same truth: same thresholds and graph contract, ADR-005) | `fdbffe765fc0e8309284bbc5c606dc67bc80b61b53cbf8a3772b3447eb8d71a0` |
 | Graph | exported graph version | `056407bf4c1238ca0448c11575ea9228d050596d02162cd0613f8c5090cc9117` |
@@ -260,4 +260,4 @@ Applied thresholds: U1 = 0.75 · U2 = 1000 · U3 = 2 · U4 = false · in the pla
 
 Human review: In batches, the simulated reviewer follows the case's known truth (DA-04); the showcase discloses it.
 
-Verifier 1.5.0 · planlang-informe/v1 · fingerprint of this report: `7dd7033d8eb96f071467c3732aa5169fc3f0de9d2f1606a1905e53df750c9d27`
+Verifier 1.5.0 · planlang-informe/v1 · fingerprint of this report: `e70eba17ff8ccb3f33ff50f101af86558b2d68b5ff58d5ca4369749ae78fede4`

@@ -1,6 +1,6 @@
 # Informe de brecha — Autorizaciones médicas (demo A)
 
-> **Simulación · no operativo** · corrida `suscripcion-planlang-a-002-200-v1.5` · 2026-10-04 · plan 1.6.0
+> **Simulación · no operativo** · corrida `suscripcion-planlang-a-002-200-v1.5` · 2026-10-04 · plan 1.6.1
 
 ## 1. Resumen para quien decide
 
@@ -82,7 +82,7 @@ Pasaron por el auditor 70 solicitudes: 14 por día hábil en promedio frente a u
 
 Horas de auditor con el costo humano por caso del plan: 14 h.
 
-Con 8 casos por día, o más, todas se deciden en plazo; con 7, 14 salen de su plazo. El rango que el plan deja mover en el playground es 10–60.
+Con 8 casos por día, o más, todas se deciden en plazo; con 7, 14 salen de su plazo. El rango que el plan deja mover en el playground es 5–60.
 
 Ninguna solicitud salió de su plazo con esta capacidad. Que el plazo se cumpla en la simulación no prueba que se cumpliría con otra llegada o con otra capacidad: el playground deja moverla para ver dónde se rompe.
 
@@ -247,7 +247,7 @@ Casos donde difieren: A-003, A-013, A-031, A-047, A-052, A-055, A-072, A-078, A-
 
 | Pieza | Qué es | Huella SHA-256 |
 | --- | --- | --- |
-| Plan | plan-demo-a 1.6.0 (`plans/demo-a/v1.6.json`) | `b5d29ba673e89bfdeb03d39ef463f6e5b7ed3df4c54c20dd0a58bdf92a4d5dd4` |
+| Plan | plan-demo-a 1.6.1 (`plans/demo-a/v1.6.1.json`) | `1e309da7dc89bba027bea2254ea7429d798540afcedf23838494a59ffc212cba` |
 | Casos | planlang-a-002-200 · semilla planlang-a-002 · n = 200 · generado con el plan 1.5.0 | `5e76ef4cf562852c25aab2e041d55f17f809043450fe48e35c045cb419c8e62f` |
 | Corrida | suscripcion-planlang-a-002-200-v1.5 · 2026-10-04 · suscripcion/sonnet · multiagente · ejecutada con el plan 1.5.0 (misma verdad: mismos umbrales y contrato de grafo, ADR-005) | `fdbffe765fc0e8309284bbc5c606dc67bc80b61b53cbf8a3772b3447eb8d71a0` |
 | Grafo | versión del grafo exportado | `056407bf4c1238ca0448c11575ea9228d050596d02162cd0613f8c5090cc9117` |
@@ -260,4 +260,4 @@ Umbrales aplicados: U1 = 0,75 · U2 = 1000 · U3 = 2 · U4 = false · en el plan
 
 Revisión humana: En lotes, el revisor simulado sigue la verdad conocida del caso (DA-04); la vitrina lo divulga.
 
-Verificador 1.5.0 · planlang-informe/v1 · huella de este informe: `7dd7033d8eb96f071467c3732aa5169fc3f0de9d2f1606a1905e53df750c9d27`
+Verificador 1.5.0 · planlang-informe/v1 · huella de este informe: `e70eba17ff8ccb3f33ff50f101af86558b2d68b5ff58d5ca4369749ae78fede4`

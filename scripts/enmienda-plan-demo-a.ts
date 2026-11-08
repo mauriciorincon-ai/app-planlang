@@ -832,3 +832,34 @@ export function enmendarAV16(v152: Plan): Record<string, unknown> {
   delete borrador.aprobado_el;
   return borrador;
 }
+
+/**
+ * Enmienda v1.6.0 → v1.6.1 (S10, decisión 1a del G-Plan, chat de la planeadora, 2026-11-08): el rango jugable de la
+ * capacidad del auditor baja su mínimo de 10 a 5, para que el playground llegue a donde se rompe C11 (con 7 casos por
+ * día hábil salen 14 ambulatorias tardías; el mínimo medido es 8). Es la ÚNICA diferencia: umbrales, contrato de
+ * grafo, criterios, clases, supuestos y fuente quedan como en la v1.6, así que `mismaVerdad` no cambia y ninguna
+ * corrida publicada deja de valer.
+ */
+export function enmendarAV161(v16: Plan): Record<string, unknown> {
+  const sim = v16.simulacion_de_plazos;
+  if (sim === undefined)
+    throw new Error("el v1.6 no tiene simulacion_de_plazos");
+  if (sim.capacidad_del_auditor.rango_jugable.min !== 10)
+    throw new Error("el v1.6 ya no tiene el mínimo en 10");
+  const borrador: Record<string, unknown> = {
+    ...v16,
+    version: "1.6.1",
+    estado_aprobacion: "borrador",
+    huella: null,
+    simulacion_de_plazos: {
+      ...sim,
+      capacidad_del_auditor: {
+        ...sim.capacidad_del_auditor,
+        rango_jugable: { ...sim.capacidad_del_auditor.rango_jugable, min: 5 },
+      },
+    },
+  };
+  delete borrador.aprobado_por;
+  delete borrador.aprobado_el;
+  return borrador;
+}

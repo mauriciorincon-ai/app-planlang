@@ -15,9 +15,10 @@
  * S3 (aprobación parcial y modo Texas, M-16, M-8, unidad de U2; cambia el contrato de grafo). Con `--a 1.5.1`, la
  * enmienda v1.5 → v1.5.1 de la auditoría del S3 (solo redacción: S1, S3 y el problema; F8). Con `--a 1.5.2`, la
  * enmienda v1.5.1 → v1.5.2 de la segunda pasada de la casilla 4 (solo redacción: el enunciado de C1; A1). Con
- * `--a 1.6`, la enmienda v1.5.2 → v1.6 del S9 (el plazo legal medible: C11 y la simulación de plazos).
+ * `--a 1.6`, la enmienda v1.5.2 → v1.6 del S9 (el plazo legal medible: C11 y la simulación de plazos). Con
+ * `--a 1.6.1`, la enmienda v1.6 → v1.6.1 del S10 (solo el mínimo jugable de la capacidad del auditor: 10 → 5).
  * Un `--a` desconocido es un error, y un destino que ya existe no se reescribe (`scripts/_enmendar.ts`).
- * Uso: `pnpm tsx scripts/enmendar-plan-demo-a.ts [--a 1.2|1.3|1.4|1.5|1.5.1|1.5.2|1.6] --por <nombre> --el <YYYY-MM-DD>`
+ * Uso: `pnpm tsx scripts/enmendar-plan-demo-a.ts [--a 1.2|1.3|1.4|1.5|1.5.1|1.5.2|1.6|1.6.1] --por <nombre> --el <YYYY-MM-DD>`
  */
 import { aprobarPlan, cargarPlan } from "../core/plan";
 import {
@@ -29,6 +30,7 @@ import {
   enmendarAV151,
   enmendarAV152,
   enmendarAV16,
+  enmendarAV161,
 } from "./enmienda-plan-demo-a";
 import { argumentos, escribirJson, leerJson } from "./_io";
 import { elegirEnmienda, motivoDeDestinoOcupado } from "./_enmendar";
@@ -73,6 +75,11 @@ const ENMIENDAS = {
     entrada: "plans/demo-a/v1.5.2.json",
     salida: "plans/demo-a/v1.6.json",
     f: enmendarAV16,
+  },
+  "1.6.1": {
+    entrada: "plans/demo-a/v1.6.json",
+    salida: "plans/demo-a/v1.6.1.json",
+    f: enmendarAV161,
   },
 } as const;
 

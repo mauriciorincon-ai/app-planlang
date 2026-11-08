@@ -18,7 +18,7 @@ import type { Plan } from "../../core/plan";
  * mismos bytes en Node (aquí), Chromium (`escritorio`), Firefox y WebKit. Se empaqueta `core/plazos/index.ts` con lo que
  * importa por valor (incluido `sfc32`, transpilado con el `typescript` del repo, sin dependencias nuevas), se evalúa en
  * la página y se compara el JSON con el de Node: las llegadas sorteadas de un lote, y la cola del lote publicado del demo
- * A a cada capacidad jugable (10 a 60), con lo que cada caso pausó en la corrida de 200.
+ * A a cada capacidad jugable (5 a 60), con lo que cada caso pausó en la corrida de 200.
  */
 
 /** Un empaquetado mínimo: cada módulo como función CommonJS, los `require` relativos resueltos a su ruta. */
@@ -68,9 +68,11 @@ function empaquetar(entrada: string): string {
 }
 
 const CORRIDA = "runs/demo-a/suscripcion-planlang-a-002-200-v1.5/trazas";
-const CAPACIDADES = [10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60];
+const CAPACIDADES = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60];
 
-const plan = JSON.parse(readFileSync("plans/demo-a/v1.6.json", "utf8")) as Plan;
+const plan = JSON.parse(
+  readFileSync("plans/demo-a/v1.6.1.json", "utf8"),
+) as Plan;
 const capa = JSON.parse(
   readFileSync("data/casos/demo-a/planlang-a-002-200.llegadas.json", "utf8"),
 ) as CapaDeLlegadas;
